@@ -687,7 +687,7 @@ function seaConfirmGate(key,message,retry){
  const dismiss=()=>{if(handled)return;handled=true;panel.remove();seaApprovedAction=null;if(panel._returnFocus?.isConnected)panel._returnFocus.focus()};
  yes.onclick=()=>{if(handled)return;handled=true;panel.remove();if(panel._returnFocus?.isConnected)panel._returnFocus.focus();seaApprovedAction=key;try{retry()}finally{seaApprovedAction=null}};
  no.onclick=dismiss;
- panel.onkeydown=e=>{if(e.key==='Escape'){e.preventDefault();dismiss()}else if(e.key==='Tab'){if(e.shiftKey&&document.activeElement===no){e.preventDefault();yes.focus()}else if(!e.shiftKey&&document.activeElement===yes){e.preventDefault();no.focus()}}};
+ panel.onkeydown=e=>{if(e.key==='Escape'){e.preventDefault();dismiss()}else if(e.key==='Tab'){if(e.shiftKey&&document.activeElement===yes){e.preventDefault();no.focus()}else if(!e.shiftKey&&document.activeElement===no){e.preventDefault();yes.focus()}}};
  actions.append(yes,no);panel.append(msg,actions);no.focus();
  return false;
 }
