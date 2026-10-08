@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#252a27">
+<title>Systems Engineering Awareness</title>
+{{SEA_STYLES}}
+</head>
+<body>
+<a class="skip-link" href="#mainContent"><span data-i18n="common.skip"></span></a>
+<header>
+  <div class="brand"><div class="mark">SE</div><div><h1 data-i18n="app.title">Systems Engineering Awareness</h1><small data-i18n="role"></small></div></div>
+  <div class="top"><button id="langBtn" class="btn ghost" type="button">FR</button></div>
+</header>
+<div id="storageNotice" class="notice bad hidden" role="status"></div><div class="status"><span class="badge">v3.0.0-local</span><span class="badge" data-i18n="role"></span><span id="phaseBadge" class="badge"></span><span id="sessionBadge" class="badge"></span></div>
+<main id="mainContent">
+<section id="setup" class="section active">
+  <div class="hero"><div class="kicker" data-i18n="setup.kicker"></div><h2 data-i18n="setup.title"></h2><p data-i18n="setup.desc"></p></div>
+  <div class="grid two">
+    <div class="card">
+      <div class="field"><label for="teamCount" data-i18n="setup.teams"></label><select id="teamCount"></select></div>
+      <div class="callout-rule"><strong data-i18n="setup.reveal.round"></strong></div><details><summary><strong data-i18n="setup.otherReveal"></strong></summary><div class="field" style="margin-top:10px"><label for="revealMode" data-i18n="setup.reveal"></label><select id="revealMode"><option value="ROUND" data-i18n="setup.reveal.round"></option><option value="JIT" data-i18n="setup.reveal.jit"></option><option value="MANUAL" data-i18n="setup.reveal.manual"></option></select></div></details>
+      <div class="grid two">
+        <div class="field"><label for="timingMode" data-i18n="setup.timing"></label><select id="timingMode"><option value="TIMED" data-i18n="setup.timed"></option><option value="UNTIMED" data-i18n="setup.untimed"></option></select></div>
+        <div class="field"><label for="bidSeconds" data-i18n="setup.bidWindow"></label><input id="bidSeconds" type="number" min="10" max="120" step="5" value="30"></div>
+      </div>
+      <p><button id="generateBtn" class="btn primary" type="button" data-i18n="setup.generate"></button></p>
+      <div id="setupStatus" class="notice info" role="status" aria-live="polite"></div>
+      <div id="recoveryStatus" class="notice info" role="status" aria-live="polite" data-i18n="setup.recovery"></div>
+    </div>
+    <div class="card subtle">
+      <h3 data-i18n="setup.sessionCode"></h3>
+      <div id="sessionCode" class="metric"><div class="value code-box">-</div></div>
+      <p data-i18n="setup.assignmentNote"></p>
+      <div class="callout-rule" data-i18n="setup.privateMarket"></div><p class="muted" data-i18n="setup.randomHonesty"></p>
+      <p data-i18n="vehicle.instructorHint"></p><div id="setupVehicleStatus" class="notice info" role="status"></div><div id="assignmentList" class="inventory" style="margin-top:12px"></div>
+      <p><button id="startTutorialBtn" class="btn good" type="button" disabled data-i18n="setup.startTutorial"></button></p>
+    </div>
+  </div>
+</section>
+
+<section id="practice" class="section">
+  <div class="hero"><div class="kicker" data-i18n="practice.kicker"></div><h2 data-i18n="practice.title"></h2><p data-i18n="practice.desc"></p></div>
+  <div class="auction">
+    <div class="gamecard"><div class="band"><span data-i18n="category.CAPACITY"></span><span>TRAIN-CAP</span></div><div class="body"><div class="art" id="practiceArt" aria-label="Training capacity illustration"></div><h3 data-i18n="practice.cardTitle"></h3><div class="effects"><div class="effect"><span data-i18n="practice.capacity"></span><strong>+4</strong><small data-i18n="practice.persons"></small></div><div class="effect"><span data-i18n="practice.mobility"></span><strong>-10</strong><small>km/h</small></div></div><div class="price" data-practice-price></div></div></div>
+    <div class="card">
+      <div id="practiceStatus" class="notice info"></div>
+      <p class="inline"><button id="practiceReveal" class="btn secondary" type="button" data-i18n="practice.reveal"></button><button id="practiceOpen" class="btn primary" type="button" data-i18n="practice.open"></button><button id="practiceAccept" class="btn" type="button" data-i18n="practice.accept"></button><button id="practiceClose" class="btn danger" type="button" data-i18n="practice.close"></button></p>
+      <p class="inline"><button id="practiceReset" class="btn" type="button" data-i18n="practice.reset"></button><button id="toPlanning" class="btn good" type="button" disabled data-i18n="practice.toPlanning"></button></p>
+    </div>
+  </div>
+</section>
+
+<section id="planning" class="section">
+  <div class="hero"><div class="kicker" data-i18n="planning.kicker"></div><h2 data-i18n="planning.title"></h2><p data-i18n="planning.desc"></p></div>
+  <div class="card"><p data-i18n="vehicle.instructorHint"></p><div id="planningVehicleStatus" class="notice info" role="status"></div><div id="vehicleMix" class="notice info"></div><div id="planningTeams" class="inventory"></div><p><button id="startAuctionBtn" class="btn primary" type="button" data-i18n="planning.startAuction"></button></p></div>
+</section>
+
+<section id="auction" class="section">
+  <div class="hero"><div class="kicker" data-i18n="auction.kicker"></div><h2 data-i18n="auction.title"></h2><p id="auctionRule"></p></div>
+  <div class="workflow" id="workflow"></div>
+  <div class="card"><div class="space"><h3 id="roundHeading"></h3><span id="lotBadge" class="badge"></span></div><div id="market" class="market"></div></div>
+  <div class="auction">
+    <div class="gamecard"><div class="band"><span id="cardCat"></span><span id="cardId"></span></div><div class="body"><div class="art" id="cardArt"></div><h3 id="cardTitle"></h3><div id="cardEffects" class="effects"></div><div class="space"><strong id="startPrice"></strong><strong id="leaderText"></strong></div></div></div>
+    <div class="grid">
+      <div class="card">
+        <h3 data-i18n="auction.title"></h3>
+        <div class="grid three">
+          <div class="metric"><div class="label" data-i18n="auction.currentLeader"></div><div class="value" id="leaderSummary">-</div></div>
+          <div class="metric"><div class="label" data-i18n="auction.nextLegal"></div><div class="value" id="nextBid">-</div></div>
+          <div class="metric"><div class="label" data-i18n="auction.time"></div><div class="value" id="timerValue">-</div></div>
+        </div>
+        <p class="inline"><button id="revealBtn" class="btn secondary" type="button" data-i18n="auction.reveal"></button><button id="openBtn" class="btn primary" type="button" data-i18n="auction.open"></button><button id="pauseBtn" class="btn" type="button" data-i18n="auction.pause"></button><button id="extendBtn" class="btn" type="button" data-i18n="auction.extend"></button></p>
+        <h4 data-i18n="auction.acceptCaller"></h4><p class="muted" data-i18n="auction.acceptDesc"></p><div id="bidRoster" class="ledger"></div>
+        <hr><h4 data-i18n="auction.commitTitle"></h4><div id="commitSummary" class="notice info"></div>
+        <p class="inline"><button id="commitLeaderBtn" class="btn danger" type="button" data-i18n="auction.commitLeader"></button><button id="commitUnsoldBtn" class="btn" type="button" data-i18n="auction.commitUnsold"></button></p>
+        <details><summary><strong data-i18n="auction.correct"></strong></summary><p class="muted" data-i18n="auction.correctDesc"></p><div class="grid two"><div class="field"><label for="winnerSelect" data-i18n="auction.winner"></label><select id="winnerSelect"></select></div><div class="field"><label for="finalPrice" data-i18n="auction.finalPrice"></label><input id="finalPrice" inputmode="numeric" maxlength="12"></div></div><div class="field"><label for="saleCorrectionReason" data-i18n="auction.correctionReason"></label><input id="saleCorrectionReason" maxlength="120"><small data-i18n="common.warningInfo"></small></div><button id="commitCorrectedBtn" class="btn danger" type="button" data-i18n="auction.commitCorrected"></button></details>
+        <div id="timerAnnouncement" class="sr-only" role="status" aria-live="polite"></div><div id="commitStatus" class="notice info" role="status" aria-live="polite"></div>
+        <details><summary><strong data-i18n="auction.correction"></strong></summary><p class="muted" data-i18n="auction.correctionDesc"></p><div class="field"><label for="correctionReason" data-i18n="auction.correctionReason"></label><input id="correctionReason" maxlength="120"><small class="muted" data-i18n="common.warningInfo"></small></div><button id="voidCurrentBtn" class="btn danger" type="button" data-i18n="auction.void"></button></details>
+        <p><button id="advanceBtn" class="btn good" type="button" data-i18n="auction.advance"></button></p>
+      </div>
+      <details class="card"><summary><strong data-i18n="auction.ledger"></strong></summary><div id="ledger" class="ledger"></div></details>
+    </div>
+  </div>
+</section>
+
+<section id="build" class="section">
+  <div class="hero"><div class="kicker" data-i18n="build.kicker"></div><h2 data-i18n="build.title"></h2><p data-i18n="build.desc"></p></div>
+  <div id="authoritativeBuild" class="grid two"></div>
+  <p><button id="openSubmissionsBtn" class="btn primary" type="button" data-i18n="build.openSubmissions"></button></p>
+</section>
+
+<section id="submit" class="section">
+  <div class="hero"><div class="kicker" data-i18n="submit.kicker"></div><h2 data-i18n="submit.title"></h2><p data-i18n="submit.desc"></p></div>
+  <div class="notice info" data-i18n="submit.incentive"></div>
+  <div id="privateSubmitGuard" class="notice info"><p data-i18n="submit.privateHint"></p><button id="privateSubmitBtn" class="btn" type="button" data-i18n="submit.privateOpen"></button></div><div id="submissionRows" class="card"></div>
+  <p><button id="closeSubmissionsBtn" class="btn primary" type="button" data-i18n="submit.close"></button></p>
+</section>
+
+<section id="debrief" class="section">
+  <div class="hero"><div class="kicker" data-i18n="debrief.kicker"></div><h2 data-i18n="debrief.title"></h2></div>
+  <div class="grid two"><div id="ranking" class="card"></div><div class="card"><h3 data-i18n="debrief.prompts"></h3><ol><li data-i18n="debrief.p1"></li><li data-i18n="debrief.p2"></li><li data-i18n="debrief.p3"></li><li data-i18n="debrief.p4"></li><li data-i18n="debrief.p5"></li><li data-i18n="debrief.p6"></li><li data-i18n="debrief.p7"></li><li data-i18n="debrief.p8"></li></ol><p><strong data-i18n="debrief.transfer"></strong></p></div></div>
+  <p><button id="closeRoomBtn" class="btn primary" type="button" data-i18n="debrief.close"></button></p>
+</section>
+
+<section id="closed" class="section">
+  <div class="hero"><div class="kicker" data-i18n="closed.kicker"></div><h2 data-i18n="closed.title"></h2><p data-i18n="closed.note"></p></div>
+  <div class="card"><h3 data-i18n="closed.ledger"></h3><div id="closedLedger" class="ledger"></div></div>
+</section>
+
+<p class="footer"><span data-i18n="common.noBackend"></span> <span data-i18n="common.syntheticDeck"></span></p>
+</main>
+{{SEA_SCRIPT}}
+</body></html>
