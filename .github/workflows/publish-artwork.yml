@@ -1,53 +1,36 @@
-name: Publish SEA artwork
+name: Validate SEA artwork
 on:
   push:
     branches: [main]
     paths:
       - .github/workflows/publish-artwork.yml
       - SEA_Instructor_Standalone.html
+      - SEA_Student_Standalone.html
+      - assets/v1/**
   workflow_dispatch:
 permissions:
-  contents: write
+  contents: read
 jobs:
-  publish:
+  validate:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          persist-credentials: true
-      - name: Extract approved embedded WebP assets
+      - name: Verify 77 SVG and WebP artwork pairs
         run: |
           python3 - <<'PY'
-          import base64, json, re
+          import struct
+          import xml.etree.ElementTree as ET
           from pathlib import Path
 
-          source=Path("SEA_Instructor_Standalone.html").read_text(encoding="utf-8")
-          def read_map(name):
-              m=re.search(r"const "+name+r"=Object\.freeze\((\{[^\n]+\})\);",source)
-              if not m: raise SystemExit("Missing embedded data: "+name)
-              return json.loads(m.group(1))
-          card=read_map("EMBEDDED_WEBP")
-          extra=read_map("EXTRA_WEBP")
-          assert len(card)==70, len(card)
-          assert len(extra)==7, len(extra)
-          vehicles={"VEH-COMBAT":"combat","VEH-RECCE":"recce","VEH-TROOP":"troop-carrier","VEH-COMMAND":"command-post","VEH-RECOVERY":"recovery","VEH-MINE":"mine-clearing"}
-          entries={f"assets/v1/cards/{k}.webp":v for k,v in card.items()}
-          entries.update({f"assets/v1/vehicles/{slug}.webp":extra[key] for key,slug in vehicles.items()})
-          entries["assets/v1/practice/TRAIN-CAP.webp"]=extra["TRAIN-CAP"]
-          for path,value in entries.items():
-              data=base64.b64decode(value,validate=True)
-              if not (data[:4]==b"RIFF" and data[8:12]==b"WEBP"):raise SystemExit("Invalid WebP: "+path)
-              target=Path(path)
-              target.parent.mkdir(parents=True,exist_ok=True)
-              target.write_bytes(data)
-          print("Verified",len(entries),"WebP images")
+          root = Path("assets/v1")
+          svg = {p.relative_to(root).with_suffix("") for p in root.rglob("*.svg")}
+          webp = {p.relative_to(root).with_suffix("") for p in root.rglob("*.webp")}
+          assert len(svg) == len(webp) == 77, (len(svg), len(webp))
+          assert svg == webp, (sorted(svg-webp), sorted(webp-svg))
+          for item in sorted(svg):
+              ET.parse(root / item.with_suffix(".svg"))
+              data = (root / item.with_suffix(".webp")).read_bytes()
+              assert len(data) >= 20 and data[:4] == b"RIFF" and data[8:12] == b"WEBP", str(item)
+              assert struct.unpack_from("<I", data, 4)[0] + 8 == len(data), str(item)
+          print("Validated", len(svg), "SVG/WebP artwork pairs")
           PY
-      - name: Commit generated artwork
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add assets/v1/cards/*.webp assets/v1/vehicles/*.webp assets/v1/practice/*.webp
-          if ! git diff --cached --quiet; then
-            git commit -m "Publish 77 versioned HQ WebP assets from standalone application"
-            git push
-          fi
