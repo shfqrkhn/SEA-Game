@@ -32,6 +32,16 @@ Card rules, labels, descriptions, prices, calculations, instructor ledger and st
 
 The content is **synthetic instructional artwork**, not an approved depiction of actual equipment. The reconstructed game deck still needs balance/content approval.
 
+## Source and reproducible builds
+
+The canonical development inputs are `source/shared/engine.js`, `source/shared/styles.css`, `source/instructor.js`, `source/student.js`, and the two `source/*.template.html` files. The root HTML applications remain independently usable, self-contained distribution artifacts.
+
+- `node tools/build.mjs` regenerates both standalone applications with no dependencies.
+- `node tools/build.mjs --check` verifies byte-for-byte source-to-distribution parity without changing files.
+- `node tools/test.mjs` runs JavaScript syntax and initial shared-rule/visibility checks.
+
+Do not edit the generated HTML directly. Rebuild and validate after source changes. The shared engine currently covers common game constants, reveal visibility, and the two-win auction eligibility rule; the remaining game logic still needs systematic extraction, behavioral test coverage, and target-browser validation before the implementation qualifies as a complete clean-room recreation.
+
 ## Verification boundaries
 
 Source-level JavaScript parsing, asset-count and image-integrity checks can be performed locally. The full eight-phase instructor and student journeys, accessibility, cross-browser `file://` handling, and final classroom acceptance still require representative browser/device testing. The browser's session storage does not provide long-term persistence or cross-device backup. The student application does not automatically synchronize with the instructor.
