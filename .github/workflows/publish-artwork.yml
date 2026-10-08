@@ -28,8 +28,8 @@ jobs:
               scripts = re.findall(r"<script>(.*?)</script>", html, re.I | re.S)
               assert len(scripts) == 1, (name, len(scripts))
               assert html.count("<svg ") >= 77, (name, "missing embedded vector artwork")
-              assert 'id="seaArtworkMode"' in html, (name, "artwork fallback settings absent")
-              assert "Square-edge visual language" not in html or "border-radius:0!important" in html
+              assert "const initial=(navigator.onLine===false||location.protocol==='file:')?local:remote;" in html, (name, "automatic artwork fallback absent")
+              assert "border-radius:0!important" in html, (name, "square-edge styling absent")
               assert "Clean Minimal is the only visual system" in html
               assert not re.search(r"seaQa|seaPhases|seaTheme|SEA_THEMES|data-sea-theme|id=\"seaTheme\"", html), (name, "retired controls remain")
               with tempfile.NamedTemporaryFile(suffix=".js", mode="w", encoding="utf-8") as f:

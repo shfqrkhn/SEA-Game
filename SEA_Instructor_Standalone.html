@@ -681,8 +681,8 @@ function art(card){
  const fallback=placeholderArt(card);
  if(!Object.prototype.hasOwnProperty.call(BUILTIN_CARD_ART,card.id))return fallback;
  const id=encodeURIComponent(card.id);
- const local='./assets/v1/cards/'+id+'.webp';
- const remote='https://shfqrkhn.github.io/SEA-Game/assets/v1/cards/'+id+'.webp';
+ const local=card.id==='TRAIN-CAP'?'./assets/v1/practice/TRAIN-CAP.webp':'./assets/v1/cards/'+id+'.webp';
+ const remote=card.id==='TRAIN-CAP'?'https://shfqrkhn.github.io/SEA-Game/assets/v1/practice/TRAIN-CAP.webp':'https://shfqrkhn.github.io/SEA-Game/assets/v1/cards/'+id+'.webp';
  const initial=(navigator.onLine===false||location.protocol==='file:')?local:remote;
  const other=initial===local?remote:local;
  const onlineAllowed=location.protocol!=='file:'&&navigator.onLine!==false;
