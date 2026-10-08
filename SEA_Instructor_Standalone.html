@@ -523,11 +523,11 @@ main{max-width:1440px;padding:12px 18px 24px}
         <hr><h4 data-i18n="auction.commitTitle"></h4><div id="commitSummary" class="notice info"></div>
         <p class="inline"><button id="commitLeaderBtn" class="btn danger" type="button" data-i18n="auction.commitLeader"></button><button id="commitUnsoldBtn" class="btn" type="button" data-i18n="auction.commitUnsold"></button></p>
         <details><summary><strong data-i18n="auction.correct"></strong></summary><p class="muted" data-i18n="auction.correctDesc"></p><div class="grid two"><div class="field"><label for="winnerSelect" data-i18n="auction.winner"></label><select id="winnerSelect"></select></div><div class="field"><label for="finalPrice" data-i18n="auction.finalPrice"></label><input id="finalPrice" inputmode="numeric" maxlength="12"></div></div><div class="field"><label for="saleCorrectionReason" data-i18n="auction.correctionReason"></label><input id="saleCorrectionReason" maxlength="120"><small data-i18n="common.warningInfo"></small></div><button id="commitCorrectedBtn" class="btn danger" type="button" data-i18n="auction.commitCorrected"></button></details>
-        <div id="timerAnnouncement" class="sr-only" role="status" aria-live="polite"></div><div id="commitStatus" class="notice info" role="status" aria-live="polite"></div><p class="sea-hint">The committed lot stays visible until you select Advance. / Le lot conclu reste visible jusqu’au passage au lot suivant.</p>
+        <div id="timerAnnouncement" class="sr-only" role="status" aria-live="polite"></div><div id="commitStatus" class="notice info" role="status" aria-live="polite"></div>
         <details><summary><strong data-i18n="auction.correction"></strong></summary><p class="muted" data-i18n="auction.correctionDesc"></p><div class="field"><label for="correctionReason" data-i18n="auction.correctionReason"></label><input id="correctionReason" maxlength="120"><small class="muted" data-i18n="common.warningInfo"></small></div><button id="voidCurrentBtn" class="btn danger" type="button" data-i18n="auction.void"></button></details>
         <p><button id="advanceBtn" class="btn good" type="button" data-i18n="auction.advance"></button></p>
       </div>
-      <div class="card"><h3 data-i18n="auction.ledger"></h3><div id="ledger" class="ledger"></div></div>
+      <details class="card"><summary><strong data-i18n="auction.ledger"></strong></summary><div id="ledger" class="ledger"></div></details>
     </div>
   </div>
 </section>
