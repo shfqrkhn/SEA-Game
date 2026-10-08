@@ -14,6 +14,9 @@ for(const name of ['instructor','student']){
  console.log(name+': syntax and basic UI contract PASS');
 }
 const source=read('source/instructor.js');
+const engine=read('source/shared/engine.js');
+new Script(engine,{filename:'source/shared/engine.js'});
+assert.match(engine,/const APP=Object\.freeze\(/,'Canonical game constants');
 const visibility=source.match(/function visibleLot\(i\)\{[^\n]+\}/)?.[0];
 assert.ok(visibility,'Instructor visibility rule must exist');
 for(const [mode,index,revealed,expected] of [
@@ -21,7 +24,7 @@ for(const [mode,index,revealed,expected] of [
  ['JIT',4,false,false],['JIT',4,true,true],['JIT',5,true,false],
  ['MANUAL',3,false,true],['MANUAL',4,false,false],['MANUAL',4,true,true],['MANUAL',5,true,false]
 ]){
- const fn=runInNewContext(visibility+';visibleLot',{state:{revealMode:mode,lot:4,revealed}});
+ const fn=runInNewContext(engine+'\n'+visibility+';visibleLot',{state:{revealMode:mode,lot:4,revealed}});
  assert.equal(fn(index),expected,mode+' lot='+index+' revealed='+revealed);
 }
 assert.match(source,/state\.market\.slice\(0,state\.round\)/,'Previous rounds must remain inspectable');
