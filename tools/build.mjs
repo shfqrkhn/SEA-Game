@@ -11,7 +11,7 @@ for(const [name,target] of [['instructor','SEA_Instructor_Standalone.html'],['st
  const js=read('source/'+name+'.js');
  if(template.split('{{SEA_STYLES}}').length!==2||template.split('{{SEA_SCRIPT}}').length!==2)throw Error(name+': template slots invalid');
  new Script(js,{filename:'source/'+name+'.js'});
- const html=template.replace('{{SEA_STYLES}}','<style>'+css+'</style>').replace('{{SEA_SCRIPT}}','<script>'+js+'</script>');
+ const html=template.replace('{{SEA_STYLES}}',()=>'<style>'+css+'</style>').replace('{{SEA_SCRIPT}}',()=>'<script>'+js+'</script>');
  if(!html.startsWith('<!doctype html>')||!html.endsWith('</html>'))throw Error(name+': malformed output');
  if(/\\b(?:confirm|alert|prompt)\\s*\\(/.test(js))throw Error(name+': native dialog introduced');
  if(check){
