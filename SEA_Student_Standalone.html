@@ -428,6 +428,50 @@ details{padding-top:8px;margin-top:8px}
 }
 @media(prefers-reduced-motion:reduce){.btn:active:not(:disabled){transform:none}}
 
+
+/* Six visual concepts: presentation only, game state and permissions unchanged. */
+body[data-sea-theme="tactical"],body[data-sea-theme="mission"],body[data-sea-theme="briefing"]{color-scheme:dark;--canvas:#101b20;--surface:#1b2a30;--surface-2:#22343a;--surface-3:#30434a;--ink:#edf3ef;--muted:#b2c5c4;--line:#455f65;--line-strong:#77939b;--charcoal:#0a151a;--slate:#294346;--blue:#326f82;--olive:#688c78;--amber:#f1bc6a;--green:#327657;--red:#a34b4c;--focus:#a2dfff;--shadow:0 10px 30px #030d1250}
+body[data-sea-theme="tactical"]{--canvas:#121c23;--surface:#1b2a30;--blue:#276b7d;--amber:#e9bd78}
+body[data-sea-theme="mission"]{--canvas:#0e2126;--surface:#152d32;--surface-2:#1b373d;--blue:#157a89;--amber:#f0ba58}
+body[data-sea-theme="briefing"]{--canvas:#151b21;--surface:#222c32;--surface-2:#303a3e;--blue:#9b783f;--amber:#ffd28b}
+body[data-sea-theme="minimal"]{--canvas:#f7f7f4;--surface:#fff;--surface-2:#f0f2ee;--ink:#17272b;--muted:#58686b;--line:#d7dedb;--line-strong:#9aa9a5;--charcoal:#fefefd;--slate:#466d62;--blue:#1a5b52;--olive:#50775c;--amber:#865e23;--green:#286b56;--red:#9c4747;--shadow:0 2px 8px #122d2410}
+body[data-sea-theme="dual"]{--canvas:#e8efef;--surface:#fff;--surface-2:#edf3f1;--charcoal:#173d43;--slate:#315965;--blue:#175b71;--amber:#94601b;--green:#215b48}
+body[data-sea-theme="student"]{--canvas:#f0f5f2;--surface:#fff;--surface-2:#e5efe9;--charcoal:#153e32;--slate:#2b5947;--blue:#176b50;--amber:#996326;--green:#176d4a}
+body[data-sea-theme="minimal"] header{border-bottom:2px solid #d7dedb;box-shadow:none;color:#17272b}
+body[data-sea-theme="minimal"] .brand small{color:#55675e}
+body[data-sea-theme="minimal"] .btn.ghost{color:#19352a;border-color:#baccc4}
+body[data-sea-theme="minimal"] .mark{background:#245b4e;color:#fff}
+body[data-sea-theme="minimal"] .status{background:#f0f3ef}
+body[data-sea-theme="minimal"] .card{box-shadow:0 1px 4px #1c3f3211}
+body[data-sea-theme="briefing"] main{background:linear-gradient(140deg,#2b3435 0%,transparent 48%),var(--canvas)}
+body[data-sea-theme="briefing"] .card,body[data-sea-theme="briefing"] .gamecard{box-shadow:0 12px 32px #050b0c77;border-color:#586569}
+body[data-sea-theme="briefing"] .gamecard .art{height:clamp(170px,29vh,350px)}
+body[data-sea-theme="mission"] .card,body[data-sea-theme="mission"] .gamecard{border-top:3px solid #318a92}
+body[data-sea-theme="tactical"] .card,body[data-sea-theme="tactical"] .gamecard{border-top:2px solid #547567}
+body[data-sea-theme="dual"] .status,body[data-sea-theme="student"] .status{background:#e0ebe6}
+body[data-sea-theme="dual"] .card{border-left:3px solid #779a9e}
+body[data-sea-theme="student"] .btn.primary{background:#186c50;border-color:#186c50}
+body[data-sea-theme="student"] .gamecard{border-top:3px solid #2a7d60}
+body[data-sea-theme="tactical"] .btn.primary,body[data-sea-theme="mission"] .btn.primary{background:#286a57;border-color:#5c9784}
+body[data-sea-theme="briefing"] .btn.primary{background:#936c31;border-color:#bb9456;color:#fff}
+body[data-sea-theme="tactical"] .field input,body[data-sea-theme="tactical"] .field select,body[data-sea-theme="tactical"] .field textarea,
+body[data-sea-theme="mission"] .field input,body[data-sea-theme="mission"] .field select,body[data-sea-theme="mission"] .field textarea,
+body[data-sea-theme="briefing"] .field input,body[data-sea-theme="briefing"] .field select,body[data-sea-theme="briefing"] .field textarea,
+body[data-sea-theme="tactical"] .btn:not(.primary):not(.ghost):not(.secondary):not(.good):not(.danger),
+body[data-sea-theme="mission"] .btn:not(.primary):not(.ghost):not(.secondary):not(.good):not(.danger),
+body[data-sea-theme="briefing"] .btn:not(.primary):not(.ghost):not(.secondary):not(.good):not(.danger){background:#eff3f0;color:#182c27;border-color:#829c93}
+body[data-sea-theme="tactical"] .notice,body[data-sea-theme="mission"] .notice,body[data-sea-theme="briefing"] .notice{color:#22332b}
+body[data-sea-theme="tactical"] .effect,body[data-sea-theme="mission"] .effect,body[data-sea-theme="briefing"] .effect{background:#273d42;color:#eaf3ed}
+body[data-sea-theme="tactical"] .effect small,body[data-sea-theme="mission"] .effect small,body[data-sea-theme="briefing"] .effect small{color:#c8d6d0}
+body[data-sea-theme="tactical"] .market-card,body[data-sea-theme="mission"] .market-card,body[data-sea-theme="briefing"] .market-card{background:var(--surface-2)}
+body[data-sea-theme="tactical"] .inv,body[data-sea-theme="mission"] .inv,body[data-sea-theme="briefing"] .inv{background:var(--surface-2)}
+body[data-sea-theme="tactical"] .sea-settings,body[data-sea-theme="mission"] .sea-settings,body[data-sea-theme="briefing"] .sea-settings{background:#1f3036;color:#f0f4ef}
+body[data-sea-theme="tactical"] .sea-settings select,body[data-sea-theme="mission"] .sea-settings select,body[data-sea-theme="briefing"] .sea-settings select{background:#f5f6f1;color:#1e3030}
+body[data-sea-theme="tactical"] .callout-rule,body[data-sea-theme="mission"] .callout-rule,body[data-sea-theme="briefing"] .callout-rule{background:#29444c}
+body[data-sea-theme="tactical"] .workflow .current,body[data-sea-theme="mission"] .workflow .current,body[data-sea-theme="briefing"] .workflow .current{background:#4b5f4d;color:#f8f8f0}
+body[data-sea-theme="dual"] .auction{grid-template-columns:minmax(0,1.2fr) minmax(300px,1fr)}
+body[data-sea-theme="student"] .auction{grid-template-columns:minmax(0,1.45fr) minmax(275px,.85fr)}
+@media(max-width:900px){body[data-sea-theme="dual"] .auction,body[data-sea-theme="student"] .auction{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -439,6 +483,9 @@ details{padding-top:8px;margin-top:8px}
 <div id="storageNotice" class="notice bad hidden" role="status"></div><div class="status"><span class="badge">v3.0.0-local</span><span id="vehicleBadge" class="badge"></span><span class="badge" data-i18n="role"></span><span id="phaseBadge" class="badge"></span><span id="sessionBadge" class="badge"></span></div>
 <aside id="seaSettings" class="sea-settings hidden" aria-label="Settings / Paramètres">
  <h2>Settings / Paramètres</h2>
+ <label for="seaTheme">Visual design / Apparence</label>
+ <select id="seaTheme"><option value="tactical">1 · Modern Tactical / Tactique</option><option value="mission">2 · Mission Control / Commandement</option><option value="minimal">3 · Clean Minimal / Minimaliste</option><option value="briefing">4 · Immersive Briefing / Immersion</option><option value="dual">5 · Instructor Dual View / Double vue</option><option value="student">6 · Student Interface / Étudiant</option></select>
+ <p class="sea-hint">Appearance only; rules and game data stay unchanged. / Apparence uniquement; les règles restent inchangées.</p>
  <label for="seaArtworkMode">Artwork delivery / Chargement des images</label>
  <select id="seaArtworkMode"><option value="auto">Auto (online, local, SVG fallback)</option><option value="online">Online first (GitHub WebP)</option><option value="local">Local first (extracted ZIP WebP)</option><option value="offline">Fully offline (embedded SVG only)</option></select>
  <p class="sea-hint" id="seaArtworkHelp" role="status">Every mode retains an embedded SVG fallback. No game rules change.</p>
@@ -642,8 +689,11 @@ function seaNotify(message){
 const SEA_ART_MODES=new Set(['auto','online','local','offline']);
 const SEA_SETTINGS_KEY='SEA_STUDENT_VIEW_PREFS';
 let seaArtworkMode='auto';
-function seaPreferenceRead(){try{const x=JSON.parse(sessionStorage.getItem(SEA_SETTINGS_KEY)||'{}');if(SEA_ART_MODES.has(x.artwork))seaArtworkMode=x.artwork}catch{}}
-function seaPreferenceSave(){try{sessionStorage.setItem(SEA_SETTINGS_KEY,JSON.stringify({artwork:seaArtworkMode}))}catch{}}
+const SEA_THEMES=new Set(['tactical','mission','minimal','briefing','dual','student']);
+let seaTheme='student';
+function seaApplyTheme(){document.body.dataset.seaTheme=seaTheme;document.getElementById('seaTheme').value=seaTheme}
+function seaPreferenceRead(){try{const x=JSON.parse(sessionStorage.getItem(SEA_SETTINGS_KEY)||'{}');if(SEA_ART_MODES.has(x.artwork))seaArtworkMode=x.artwork;if(SEA_THEMES.has(x.theme))seaTheme=x.theme}catch{}}
+function seaPreferenceSave(){try{sessionStorage.setItem(SEA_SETTINGS_KEY,JSON.stringify({artwork:seaArtworkMode,theme:seaTheme}))}catch{}}
 function art(card){
  const fallback=placeholderArt(card);
  if(!Object.prototype.hasOwnProperty.call(BUILTIN_CARD_ART,card.id)||seaArtworkMode==='offline')return fallback;
@@ -813,7 +863,8 @@ $("#finishAuctionBtn").onclick=()=>{if(state.phase!=="auction")return;if(confirm
 $("#toClosed").onclick=()=>{if(state.phase!=="debrief")return;phase("closed");renderAll()};
 
 function seaConfigureSettings(){
- seaPreferenceRead();$('#seaArtworkMode').value=seaArtworkMode;
+ seaPreferenceRead();$('#seaArtworkMode').value=seaArtworkMode;seaApplyTheme();
+ $('#seaTheme').onchange=()=>{seaTheme=$('#seaTheme').value;if(!SEA_THEMES.has(seaTheme))return;seaApplyTheme();seaPreferenceSave()};
  $('#settingsBtn').onclick=()=>{const opened=!$('#seaSettings').classList.toggle('hidden');$('#settingsBtn').setAttribute('aria-expanded',String(opened))};
  $('#seaArtworkMode').onchange=()=>{seaArtworkMode=$('#seaArtworkMode').value;if(!SEA_ART_MODES.has(seaArtworkMode))seaArtworkMode='auto';seaPreferenceSave();renderAll()};
 }
