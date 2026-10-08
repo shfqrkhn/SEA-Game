@@ -508,6 +508,41 @@ body[data-sea-theme="student"] .btn{border-radius:9px}
  body[data-sea-theme] .auction{grid-template-columns:minmax(0,1fr)}
 }
 
+
+/* Contrast and semantic surfaces: theme overrides outrank earlier global colors. */
+body:is([data-sea-theme="tactical"],[data-sea-theme="mission"],[data-sea-theme="briefing"]) .hero h2,
+body:is([data-sea-theme="tactical"],[data-sea-theme="mission"],[data-sea-theme="briefing"]) .card h3,
+body:is([data-sea-theme="tactical"],[data-sea-theme="mission"],[data-sea-theme="briefing"]) .card h4,
+body:is([data-sea-theme="tactical"],[data-sea-theme="mission"],[data-sea-theme="briefing"]) .gamecard h3,
+body:is([data-sea-theme="tactical"],[data-sea-theme="mission"],[data-sea-theme="briefing"]) .metric .value{color:#f4f7f4}
+body:is([data-sea-theme="tactical"],[data-sea-theme="mission"],[data-sea-theme="briefing"]) .hero p,
+body:is([data-sea-theme="tactical"],[data-sea-theme="mission"],[data-sea-theme="briefing"]) .metric .label{color:#c3d5d3}
+body:is([data-sea-theme="tactical"],[data-sea-theme="mission"],[data-sea-theme="briefing"]) .badge{background:#304a51;color:#f6f8f4;border-color:#729296}
+body:is([data-sea-theme="tactical"],[data-sea-theme="mission"],[data-sea-theme="briefing"]) .status{background:#263b40;color:#f2f7f4;border-color:#52737b}
+body:is([data-sea-theme="tactical"],[data-sea-theme="mission"],[data-sea-theme="briefing"]) .card,
+body:is([data-sea-theme="tactical"],[data-sea-theme="mission"],[data-sea-theme="briefing"]) .gamecard{color:var(--ink)}
+body:is([data-sea-theme="tactical"],[data-sea-theme="mission"],[data-sea-theme="briefing"]) .btn:not(.primary):not(.secondary):not(.good):not(.danger):not(.ghost){background:#e9f0eb;color:#16312b;border-color:#9fb6ab}
+body:is([data-sea-theme="tactical"],[data-sea-theme="mission"],[data-sea-theme="briefing"]) .btn:not(.primary):not(.secondary):not(.good):not(.danger):not(.ghost):hover:not(:disabled){background:#d0e1d7;color:#102820}
+body:is([data-sea-theme="tactical"],[data-sea-theme="mission"],[data-sea-theme="briefing"]) .btn.ghost:hover:not(:disabled){background:#35515c;color:#fff}
+body:is([data-sea-theme="tactical"],[data-sea-theme="mission"],[data-sea-theme="briefing"]) .btn.primary:hover:not(:disabled){background:#205b4d;color:#fff}
+body:is([data-sea-theme="tactical"],[data-sea-theme="mission"],[data-sea-theme="briefing"]) .btn.secondary:hover:not(:disabled){background:#425a50;color:#fff}
+body:is([data-sea-theme="tactical"],[data-sea-theme="mission"],[data-sea-theme="briefing"]) .btn.good:hover:not(:disabled){background:#295f43;color:#fff}
+body[data-sea-theme="minimal"] header{background:#fff;color:#17272b;border-bottom:2px solid #cbd9d1}
+body[data-sea-theme="minimal"] .brand small{color:#49645a}
+body[data-sea-theme="minimal"] .btn.ghost{color:#19352a;background:transparent;border-color:#8ba99c}
+body[data-sea-theme="minimal"] .btn.ghost:hover:not(:disabled){background:#e2eee7;color:#19352a}
+body[data-sea-theme="minimal"] .mark{background:#245b4e;color:#fff}
+body[data-sea-theme="minimal"] .hero h2{color:#17272b}
+body[data-sea-theme="minimal"] .card h3,body[data-sea-theme="minimal"] .gamecard h3{color:#19352a}
+body[data-sea-theme="student"] .hero h2{color:#153e32}
+body[data-sea-theme="student"] .hero p{color:#36594b}
+body[data-sea-theme="dual"] .hero h2{color:#173d43}
+body[data-sea-theme="dual"] .hero p{color:#365a61}
+body[data-sea-theme="minimal"] .status,body[data-sea-theme="dual"] .status,body[data-sea-theme="student"] .status{color:#18362b}
+body[data-sea-theme] .notice.info{color:#263943}
+body[data-sea-theme] .notice.good{color:#29402b}
+body[data-sea-theme] .notice.bad{color:#512e2b}
+
 </style>
 </head>
 <body>
