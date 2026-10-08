@@ -370,6 +370,19 @@ main{max-width:1360px}
 .sea-settings .sea-hint{color:var(--muted);font-size:14px}
 #seaQaFrame{display:block;background:#fff;width:100%;max-width:100%;height:680px;border:2px solid var(--line-strong);border-radius:6px;margin:12px 0}
 @media(max-width:520px){.sea-settings{padding:12px;margin:8px 12px}#seaQaFrame{height:530px}}
+
+/* Dense desktop layout: retain 44px hit targets and responsive breakpoints. */
+@media (min-width:1000px) and (min-height:700px){
+ main{max-width:1360px;padding:14px 20px 28px}
+ .section>*+*{margin-top:10px}
+ .hero{margin-bottom:10px}
+ .hero h2{font-size:30px;margin:2px 0 4px}
+ .card{padding:12px}
+ .card h3{margin-bottom:7px}
+ .grid,.auction{gap:12px}
+ .art{height:clamp(145px,16vh,200px)}
+ .field{margin-bottom:8px}
+}
 </style>
 </head>
 <body>
@@ -423,7 +436,7 @@ main{max-width:1360px}
     <div class="gamecard"><div class="band"><span id="cardCat">—</span><span id="cardId">—</span></div><div class="body"><div id="cardArt" class="art"></div><h3 id="cardTitle"></h3><div id="cardEffects" class="effects"></div><strong id="startPrice"></strong></div></div>
     <div class="grid">
       <div class="card"><h3 data-i18n="auction.currentCard"></h3><div class="field"><label for="cardInput" data-i18n="auction.cardInput"></label><input id="cardInput" autocomplete="off" maxlength="24"></div><p><button id="loadCardBtn" class="btn secondary" type="button" data-i18n="auction.load"></button></p><div class="field"><label for="wtp" data-i18n="auction.wtp"></label><input id="wtp" inputmode="numeric"></div><div class="field"><label for="decision" data-i18n="auction.note"></label><textarea id="decision" maxlength="600" data-i18n-placeholder="auction.notePlaceholder"></textarea><small class="muted" data-i18n="common.warningInfo"></small></div><div id="gapNotice" class="notice info"></div></div>
-      <div class="card"><h3 data-i18n="auction.afterClose"></h3><div class="field"><label for="wonPrice" data-i18n="auction.winPrice"></label><input id="wonPrice" inputmode="numeric"></div><p class="inline"><button id="recordWinBtn" class="btn good" type="button" data-i18n="auction.won"></button><button id="advanceLocalBtn" class="btn" type="button" data-i18n="auction.notOurs"></button></p></div>
+      <div class="card"><h3 data-i18n="auction.afterClose"></h3><div class="field"><label for="wonPrice" data-i18n="auction.winPrice"></label><input id="wonPrice" inputmode="numeric" autocomplete="off" min="0" type="number" step="1"></div><p class="inline"><button id="recordWinBtn" class="btn good" type="button" data-i18n="auction.won"></button><button id="advanceLocalBtn" class="btn" type="button" data-i18n="auction.notOurs"></button></p></div>
       <div class="card"><h3 data-i18n="auction.inventory"></h3><div id="snapshotMetrics" class="grid two"></div><div id="auctionInventory" class="purchase-list"></div></div>
     </div>
   </div>
@@ -672,7 +685,7 @@ function renderPlanning(){
 function currentExpectedSlot(){return SLOT_ORDER[state.lot]}
 
 function loadCurrentCard(){if(state.phase!=='auction')return;const raw=$('#cardInput').value.trim().toUpperCase(),c=CARD_INDEX.get(raw);if(!c)return seaNotify(t('errors.badCard'));const slot=currentExpectedSlot();if(c.cat!==slot)return seaNotify(t('errors.wrongSlot',{slot:categoryName(slot)}));state.currentCard=cardAt(c.id,state.round+1,state.lot+1);saveState();renderAuction()}
-function renderCard(){const c=state.currentCard;if(!c){$("#cardCat").textContent="—";$("#cardId").textContent="—";$("#cardTitle").textContent=t("common.hidden");$("#cardEffects").innerHTML="";$("#cardArt").innerHTML=`<div style="height:100%;display:grid;place-items:center">${t("common.hidden")}</div>`;$("#startPrice").textContent="";return}$("#cardCat").textContent=categoryName(c.cat);$("#cardId").textContent=c.id;$("#cardTitle").textContent=c.title[lang];$("#cardEffects").innerHTML=effectsHtml(c);$("#cardArt").innerHTML=art(c);$("#startPrice").textContent=t("common.starting",{amount:money(c.start)})}
+function renderCard(){const c=state.currentCard;if(!c){$("#cardCat").textContent="—";$("#cardId").textContent="—";$("#cardTitle").textContent=t("common.hidden");$("#cardEffects").innerHTML="";$("#cardArt").innerHTML=`<div style="height:100%;display:grid;place-items:center">${t("common.hidden")}</div>`;$("#startPrice").textContent="";$("#wonPrice").value="";$("#wonPrice").dataset.cardId="";return}$("#cardCat").textContent=categoryName(c.cat);$("#cardId").textContent=c.id;$("#cardTitle").textContent=c.title[lang];$("#cardEffects").innerHTML=effectsHtml(c);$("#cardArt").innerHTML=art(c);$("#startPrice").textContent=t("common.starting",{amount:money(c.start)});const paid=$("#wonPrice");if(paid.dataset.cardId!==c.id){paid.value=String(c.start);paid.dataset.cardId=c.id}}
 
 function renderGaps(){
  const c=state.currentCard,parts=[];for(const[k,min]of Object.entries(req(state.team))){const now=state.team.totals[k],after=c?now+(c.e[k]||0):now;
@@ -682,7 +695,7 @@ function renderGaps(){
 function renderSnapshot(){const tm=state.team;$("#snapshotMetrics").innerHTML=`<div class="metric"><div class="label">${t("common.cost")}</div><div class="value">${money(tm.cost)}</div></div><div class="metric"><div class="label">${t("common.score")}</div><div class="value">${score(tm)}</div></div>`;$("#auctionInventory").innerHTML=tm.purchases.length?tm.purchases.map(p=>`<div class="purchase-row"><span>R${p.round}·L${p.lot}</span><span>${esc(p.id)} — ${esc(p.title[lang])}</span><strong>${money(p.paid)}</strong></div>`).join(""):`<div class="muted">${t("auction.noPurchases")}</div>`}
 function renderAuction(){$("#roundSelect").value=String(state.round+1);$("#lotSelect").value=String(state.lot+1);const s=scratch();$("#wtp").value=s.wtp;$("#decision").value=s.note;renderCard();renderGaps();renderSnapshot();saveState()}
 
-function setPosition(){if(state.phase!=='auction')return;const round=Number($('#roundSelect').value),lot=Number($('#lotSelect').value);if(!Number.isInteger(round)||round<1||round>7||!Number.isInteger(lot)||lot<1||lot>10)return;state.round=round-1;state.lot=lot-1;state.currentCard=null;$('#cardInput').value='';$('#wonPrice').value='';renderAuction()}
+function setPosition(){if(state.phase!=='auction')return;const round=Number($('#roundSelect').value),lot=Number($('#lotSelect').value);if(!Number.isInteger(round)||round<1||round>7||!Number.isInteger(lot)||lot<1||lot>10)return;state.round=round-1;state.lot=lot-1;state.currentCard=null;$('#cardInput').value='';$('#wonPrice').value='';$('#wonPrice').dataset.cardId='';renderAuction()}
 
 function recordWin(){
  if(state.phase!=='auction'||!state.lockedMission)return false;
@@ -691,7 +704,7 @@ function recordWin(){
  catch(e){seaNotify(t(e.message==='duplicate'?'errors.duplicate':e.message==='limit'?'errors.purchaseLimit':'errors.moneyRange'));return false}
 }
 
-function advancePosition(){if(state.phase!=='auction')return false;if(state.lot<9)state.lot++;else if(state.round<6){state.round++;state.lot=0}else{state.currentCard=null;phase('build');renderAll();return true}state.currentCard=null;$('#cardInput').value='';$('#wonPrice').value='';renderAuction();return true}
+function advancePosition(){if(state.phase!=='auction')return false;if(state.lot<9)state.lot++;else if(state.round<6){state.round++;state.lot=0}else{state.currentCard=null;phase('build');renderAll();return true}state.currentCard=null;$('#cardInput').value='';$('#wonPrice').value='';$('#wonPrice').dataset.cardId='';renderAuction();return true}
 
 function renderReconcileInventory(){
  $('#reconcileInventory').innerHTML=state.team.purchases.length?state.team.purchases.map((p,i)=>`<div class="purchase-row"><span>R${p.round}·L${p.lot}</span><span>${esc(p.id)} — ${esc(p.title[lang])}</span><span><strong>${money(p.paid)}</strong> <button class="btn" data-remove-purchase="${i}">${t('common.remove')}</button></span></div>`).join(''):`<div class="muted">${t('auction.noPurchases')}</div>`;
