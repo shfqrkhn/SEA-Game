@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SEA Game | Delivery QA</title>
+<style>
+:root{color-scheme:light;font:16px/1.5 system-ui,sans-serif;background:#f5f3ed;color:#212b28}
+body{max-width:920px;margin:auto;padding:clamp(16px,4vw,40px)}
+a{color:#16517a}a:focus-visible,button:focus-visible{outline:3px solid #125fd0;outline-offset:3px}
+section{background:white;border:1px solid #c6c9c4;padding:20px;border-radius:12px;margin:16px 0}
+button{font:inherit;padding:10px 16px;cursor:pointer}
+output{display:block;white-space:pre-wrap;overflow-wrap:anywhere}
+img{display:block;max-width:100%;height:auto;background:#eeeae1;border:1px solid #bbb}
+code{overflow-wrap:anywhere}
+</style></head><body>
+<h1>SEA Game delivery QA</h1>
+<p>Manual testing aid for the <a href="./">SEA Game GitHub Pages site</a>. This page tests selected resource fetches, not complete gameplay, visual similarity, accessibility, or offline standalone behavior.</p>
+<section><h2>Launch applications</h2><p><a href="./SEA_Instructor_Standalone.html">Instructor Master</a> · <a href="./SEA_Student_Standalone.html">Student Companion</a></p><p>In each application, test an entire game using pointer, keyboard and touch, then test English and French. Download each HTML and open it from disk with network disconnected to confirm its independent offline fallback.</p></section>
+<section><h2>Representative artwork assets</h2><p>Images below should render on GitHub Pages if their respective paths exist. Their presence does not establish all 77 asset pairs are correct.</p><h3>WebP</h3><img src="./assets/v1/cards/CAP-A.webp" alt="CAP-A WebP diagnostic" loading="lazy"><h3>SVG</h3><img src="./assets/v1/cards/CAP-A.svg" alt="CAP-A SVG diagnostic" loading="lazy"></section>
+<section><h2>Delivery checks</h2><p id="context"></p><button id="run" type="button">Run network checks</button><output id="results" role="status" aria-live="polite">Not run.</output></section>
+<section><h2>Required manual acceptance</h2><ul><li>Instructor and student: complete normal gameplay, including invalid actions and reset.</li><li>Language: both English and French, including mobile layouts.</li><li>Network on: compare WebP illustrations against embedded fallbacks.</li><li>Network off: test each standalone HTML saved by itself.</li><li>Extracted repository ZIP: test relative local WebP loading with network off.</li><li>Check focus visibility, zoom, reduced motion, screen reader labels, and touch targets.</li></ul><p>Do not use this diagnostic as a release approval by itself.</p></section>
+<script>
+(function(){
+'use strict';
+const list=['SEA_Instructor_Standalone.html','SEA_Student_Standalone.html','assets/v1/cards/CAP-A.webp','assets/v1/cards/CAP-A.svg','assets/v1/vehicles/command-post.webp','assets/v1/vehicles/command-post.svg','assets/v1/practice/TRAIN-CAP.webp','assets/v1/practice/TRAIN-CAP.svg'];
+document.getElementById('context').textContent='Protocol: '+location.protocol+' | browser reports online: '+navigator.onLine;
+document.getElementById('run').addEventListener('click',async function(){
+ const out=document.getElementById('results');out.textContent='Running…';
+ const lines=[];
+ for(const path of list){
+ try{
+  const response=await fetch(new URL(path,location.href),{cache:'no-store'});
+  lines.push((response.ok?'PASS ':'FAIL ')+response.status+' '+path+' ('+(response.headers.get('content-type')||'unknown type')+')');
+ }catch(e){lines.push('BLOCKED '+path+': '+String(e));}
+ }
+ out.textContent=lines.join('\n')+'\nThese checks do not prove the images display or the applications play correctly.';
+});
+})();
+</script></body></html>
