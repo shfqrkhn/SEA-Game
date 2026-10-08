@@ -656,16 +656,17 @@ let seaApprovedAction=null;
 function seaConfirmGate(key,message,retry){
  if(seaApprovedAction===key){seaApprovedAction=null;return true}
  let panel=document.getElementById('seaInlineConfirm');
- if(!panel){panel=document.createElement('section');panel.id='seaInlineConfirm';panel.className='card';panel.setAttribute('role','group');panel.setAttribute('aria-labelledby','seaConfirmMessage');panel.style.cssText='position:sticky;top:48px;z-index:55;margin:0 12px;padding:12px;border:2px solid var(--blue);background:#fff;color:#17272b;box-shadow:0 3px 10px #17272b22';document.querySelector('header').insertAdjacentElement('afterend',panel)}
+ if(!panel){panel=document.createElement('section');panel.id='seaInlineConfirm';panel.className='card';panel.setAttribute('role','dialog');panel.setAttribute('aria-labelledby','seaConfirmMessage');panel._returnFocus=document.activeElement;panel.style.cssText='position:sticky;top:48px;z-index:55;margin:0 12px;padding:12px;border:2px solid var(--blue);background:#fff;color:#17272b;box-shadow:0 3px 10px #17272b22';document.querySelector('header').insertAdjacentElement('afterend',panel)}
  panel.replaceChildren();
  const msg=document.createElement('p');msg.id='seaConfirmMessage';msg.style.margin='0 0 8px';msg.textContent=message;
  const actions=document.createElement('div');actions.className='inline';
  const yes=document.createElement('button');yes.type='button';yes.className='btn primary';yes.textContent=lang==='fr'?'Confirmer':'Confirm';
  const no=document.createElement('button');no.type='button';no.className='btn';no.textContent=lang==='fr'?'Annuler':'Cancel';
- const dismiss=()=>{panel.remove();seaApprovedAction=null};
- yes.onclick=()=>{panel.remove();seaApprovedAction=key;try{retry()}finally{seaApprovedAction=null}};
+ let handled=false;
+ const dismiss=()=>{if(handled)return;handled=true;panel.remove();seaApprovedAction=null;if(panel._returnFocus?.isConnected)panel._returnFocus.focus()};
+ yes.onclick=()=>{if(handled)return;handled=true;panel.remove();if(panel._returnFocus?.isConnected)panel._returnFocus.focus();seaApprovedAction=key;try{retry()}finally{seaApprovedAction=null}};
  no.onclick=dismiss;
- panel.onkeydown=e=>{if(e.key==='Escape'){e.preventDefault();dismiss()}};
+ panel.onkeydown=e=>{if(e.key==='Escape'){e.preventDefault();dismiss()}else if(e.key==='Tab'){if(e.shiftKey&&document.activeElement===no){e.preventDefault();yes.focus()}else if(!e.shiftKey&&document.activeElement===yes){e.preventDefault();no.focus()}}};
  actions.append(yes,no);panel.append(msg,actions);no.focus();
  return false;
 }
