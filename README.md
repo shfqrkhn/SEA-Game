@@ -28,7 +28,7 @@ Card rules, labels, descriptions, prices, calculations, instructor ledger and st
 - `assets/v1/cards/` - 70 WebP images plus 70 corresponding editable conceptual SVGs, keyed by card ID
 - `assets/v1/vehicles/` - six WebP mission illustrations and their SVG references
 - `assets/v1/practice/` - one WebP training image and SVG reference
-- `.github/workflows/publish-artwork.yml` - reproducible extraction of the approved embedded WebP bytes into the repository
+- `.github/workflows/publish-artwork.yml` - read-only integrity checks for all 77 SVG/WebP asset pairs, standalone JavaScript syntax, and retired interface controls
 
 The content is **synthetic instructional artwork**, not an approved depiction of actual equipment. The reconstructed game deck still needs balance/content approval.
 
