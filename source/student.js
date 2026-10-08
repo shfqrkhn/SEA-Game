@@ -35,7 +35,6 @@ function validateBase(x){
 }
 
 
-const APP={version:"3.0.0-local",ruleset:"STANDARD",deck:"synthetic-v1",rounds:7,lotsPerRound:10,bidIncrementCents:5000000};
 const OPTIONAL_PROTOTYPE_FEATURES=Object.freeze({placeholderArtwork:false});
 const SLOT_ORDER=["CAPACITY","MOBILITY","FIREPOWER","PROTECTION","COMMS","SA","ACCESSORIES","SE_PROCESS","SE_PROCESS","SE_PROCESS"];
 const LABELS={CAP:{en:["Capacity","persons"],fr:["Capacité","personnes"]},MOB:{en:["Mobility","km/h"],fr:["Mobilité","km/h"]},FP:{en:["Firepower","points"],fr:["Puissance de feu","points"]},PRO:{en:["Protection","points"],fr:["Protection","points"]},COM:{en:["Communications","km"],fr:["Communications","km"]},SA:{en:["Situational awareness","ways"],fr:["Connaissance de la situation","moyens"]},REC:{en:["Recovery","ways"],fr:["Dépannage","moyens"]},MC:{en:["Mine clearing","ways"],fr:["Déminage","moyens"]}};
