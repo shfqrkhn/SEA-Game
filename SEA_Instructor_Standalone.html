@@ -841,7 +841,18 @@ function renderPlanning(){
  const counts=MISSION_IDS.map(id=>`${MISSIONS[id][lang]}: ${state.teams.filter(tm=>tm.mission===id).length}`).join(' · ');
  $('#vehicleMix').textContent=counts+'\n'+t('vehicle.mix');
 }
-function renderMarket(){const row=state.market[state.round];$("#market").innerHTML=row.map((c,i)=>{const vis=visibleLot(i);return`<div class="market-card ${i===state.lot?"current":""} ${vis?"":"hiddenlot"}"><div class="slot">${t("common.lot",{n:i+1})}</div><strong>${vis?esc(c.title[lang]):t("common.hidden")}</strong><div>${vis?money(c.start):"-"}</div></div>`}).join("")}
+function renderMarket(){const row=state.market[state.round];$("#market").innerHTML=row.map((c,i)=>{const vis=visibleLot(i);return`<div class="market-card ${i===state.lot?"current":""} ${vis?"":"hiddenlot"}"><div class="slot">${t("common.lot",{n:i+1})}</div><strong>${vis?esc(c.title[lang]):t("common.hidden")}</strong><div>${vis?money(c.start):"-"}</div></div>`}).join("");
+ // Committed earlier rounds remain public in every reveal mode, including JIT.
+ // The validated ledger guarantees that all prior-round lots were committed.
+ const history=state.market.slice(0,state.round).flatMap((past,r)=>past.map((c,i)=>`<div class="market-card"><div class="slot">${t("common.round",{n:r+1})} / ${t("common.lot",{n:i+1})}</div><strong>${esc(c.title[lang])}</strong><div>${money(c.start)}</div></div>`));
+ let archive=document.getElementById("publicLotHistory");
+ if(!history.length){if(archive)archive.remove();return}
+ if(!archive){archive=document.createElement("details");archive.id="publicLotHistory";archive.className="card";$("#market").insertAdjacentElement("afterend",archive)}
+ const expanded=archive.open;
+ const label=lang==="fr"?"Lots précédemment révélés":"Previously revealed lots";
+ archive.innerHTML=`<summary>${label} (${history.length})</summary><div class="market">${history.join("")}</div>`;
+ archive.open=expanded;
+}
 function renderCurrentCard(){const c=currentCard(),vis=visibleLot(state.lot);$("#cardCat").textContent=vis?categoryName(c.cat):"-";$("#cardId").textContent=vis?c.id:"-";$("#cardTitle").textContent=vis?c.title[lang]:t("common.hidden");$("#cardEffects").innerHTML=vis?effectsHtml(c):"";$("#cardArt").innerHTML=vis?art(c):`<div style="height:100%;display:grid;place-items:center">${t("common.hidden")}</div>`;$("#startPrice").textContent=vis?t("common.starting",{amount:money(c.start)}):"";$("#leaderText").textContent=state.leader?t("common.team",{n:state.leader})+" · "+money(state.currentBid):t("common.noLeader")}
 
 function acceptTeamBid(id,intended){
