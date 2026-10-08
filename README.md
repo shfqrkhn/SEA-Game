@@ -17,3 +17,7 @@ See `assets/v1/cards/README.md` for naming and creation rules.
 ## Quality boundary
 
 These two files are implementation candidates derived from the v3.0.0 application; no full browser, device, accessibility, or classroom acceptance suite has been demonstrated. Verify `file://` use with network disabled and all phases before classroom release. Do not enter personal, Protected, Classified, real-project, or operational information.
+
+
+## Illustrations
+70 named SVG card visuals live in assets/v1/cards/. Download either standalone HTML for offline use; remote artwork is an optional enhancement.
