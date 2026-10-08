@@ -35,7 +35,6 @@ function validateBase(x){
 }
 
 
-const APP={version:"3.0.0-local",ruleset:"STANDARD",deck:"synthetic-v1",rounds:7,lotsPerRound:10,bidIncrementCents:5000000};
 const OPTIONAL_PROTOTYPE_FEATURES=Object.freeze({placeholderArtwork:false});
 const SLOT_ORDER=["CAPACITY","MOBILITY","FIREPOWER","PROTECTION","COMMS","SA","ACCESSORIES","SE_PROCESS","SE_PROCESS","SE_PROCESS"];
 const LABELS={CAP:{en:["Capacity","persons"],fr:["Capacité","personnes"]},MOB:{en:["Mobility","km/h"],fr:["Mobilité","km/h"]},FP:{en:["Firepower","points"],fr:["Puissance de feu","points"]},PRO:{en:["Protection","points"],fr:["Protection","points"]},COM:{en:["Communications","km"],fr:["Communications","km"]},SA:{en:["Situational awareness","ways"],fr:["Connaissance de la situation","moyens"]},REC:{en:["Recovery","ways"],fr:["Dépannage","moyens"]},MC:{en:["Mine clearing","ways"],fr:["Déminage","moyens"]}};
@@ -231,7 +230,7 @@ function restoreState(){
 }
 function marketFromSeed(seed){const r=rng("MARKET|"+seed),p={};for(const[k,v]of Object.entries(POOLS))p[k]=shuffle(v,r);const c={CAPACITY:0,MOBILITY:0,FIREPOWER:0,PROTECTION:0,COMMS:0,SA:0,ACCESSORIES:0,SE_PROCESS:0};return Array.from({length:7},(_,ri)=>SLOT_ORDER.map((slot,li)=>{const d=p[slot][c[slot]++];return{id:d[0],title:{en:d[1][0],fr:d[1][1]},start:d[2]*100,e:{...d[3]},cat:slot,round:ri+1,lot:li+1,instance:`R${ri+1}-L${li+1}-${d[0]}`}}))}
 function currentCard(){return state.market[state.round]?.[state.lot]}
-function visibleLot(i){if(state.revealMode==="ROUND")return true;if(state.revealMode==="JIT")return i<=state.lot;return i<state.lot||(i===state.lot&&state.revealed)}
+function visibleLot(i){return SEA_AUCTION.visible(state.revealMode,state.lot,state.revealed,i)}
 function effectiveEntry(round=state.round+1,lot=state.lot+1){const xs=state.ledger.filter(x=>x.round===round&&x.lot===lot);if(!xs.length)return null;const last=xs[xs.length-1];return last.kind==="VOID"?null:last}
 function committed(){return !!effectiveEntry()}
 function appendLog(e){state.ledger.push(Object.freeze({...e,seq:++state.seq}));saveState()}
