@@ -16,6 +16,10 @@ for(const name of ['instructor','student']){
 const source=read('source/instructor.js');
 const engine=read('source/shared/engine.js');
 new Script(engine,{filename:'source/shared/engine.js'});
+for(const [wins,eligible] of [[0,true],[1,true],[2,false],[3,false],[-1,false],[1.5,false]]){
+ const actual=runInNewContext(engine+';SEA_AUCTION.canWin('+wins+')');
+ assert.equal(actual,eligible,'Two-win cap, wins='+wins);
+}
 assert.match(engine,/const APP=Object\.freeze\(/,'Canonical game constants');
 const visibility=source.match(/function visibleLot\(i\)\{[^\n]+\}/)?.[0];
 assert.ok(visibility,'Instructor visibility rule must exist');
