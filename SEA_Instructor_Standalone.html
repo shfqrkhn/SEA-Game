@@ -383,6 +383,51 @@ main{max-width:1360px}
  .art{height:clamp(145px,16vh,200px)}
  .field{margin-bottom:8px}
 }
+
+/* Compact control-room layout; preserves full-width touch controls on small screens. */
+:root{--canvas:#e9edeb;--surface:#fbfcfa;--surface-2:#e6ece8;--line:#c6d1ca;--line-strong:#82978b;--charcoal:#162b29;--slate:#284842;--blue:#225e71;--amber:#99621b;--green:#2e654a;--r-sm:7px;--r-md:12px;--shadow:0 3px 14px rgba(15,43,33,.07)}
+body{background:radial-gradient(ellipse at 86% -18%,#d8e4dd 0%,transparent 52%),var(--canvas);line-height:1.35}
+header{min-height:54px;padding:7px clamp(12px,2vw,24px);box-shadow:0 3px 12px rgba(8,25,21,.14)}
+.mark{background:#b9d6c2;color:#17372c;border-radius:9px}
+.brand h1{font-weight:750;letter-spacing:.025em}
+.status{padding:4px clamp(12px,2vw,24px);min-height:36px;background:#dce7df;gap:6px}
+.badge{min-height:24px;border-radius:7px;background:#fff9;border-color:#b3c4b7;font-size:11px;letter-spacing:.02em}
+main{max-width:1480px;padding:clamp(10px,1.4vw,20px) clamp(12px,2vw,26px) 28px}
+.section>*+*{margin-top:10px}
+.hero{max-width:none;margin-bottom:10px;display:flex;align-items:baseline;column-gap:15px;row-gap:3px;flex-wrap:wrap}
+.hero h2{font-size:clamp(23px,2.35vw,32px);line-height:1.13;margin:0;letter-spacing:-.03em}
+.hero p{font-size:13px;line-height:1.35;margin:0;max-width:66ch}
+.kicker{font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:800;color:#436759}
+.card{padding:clamp(11px,1.15vw,16px);box-shadow:var(--shadow)}
+.card h3{font-size:16px;line-height:1.3;margin-bottom:8px}
+.card h4{margin-bottom:5px}
+.grid,.auction{gap:clamp(8px,1.2vw,15px)}
+.field{gap:4px;margin-bottom:8px}
+.field label{font-size:12px;letter-spacing:.02em}
+.field input,.field select,.field textarea{min-height:42px;padding:7px 10px}
+.field textarea{min-height:70px}
+.btn{border-radius:8px;padding:8px 12px;box-shadow:none}
+.btn.primary{background:#17677a;border-color:#17677a}
+.btn:active:not(:disabled){transform:translateY(1px)}
+.notice{padding:8px 11px;font-size:13px}
+details{padding-top:8px;margin-top:8px}
+@media (min-width:1100px) and (min-height:680px){
+ main{padding-top:10px}
+ .section>*+*{margin-top:8px}
+ .hero{margin-bottom:8px}
+ .auction{grid-template-columns:minmax(0,1.23fr) minmax(310px,.86fr)}
+ .art{height:clamp(135px,18vh,230px)}
+}
+@media (max-width:700px){
+ header{align-items:flex-start;gap:8px}
+ .hero{display:block}
+ .hero h2{margin:2px 0 5px}
+ .hero p{font-size:13px}
+ .card{padding:12px}
+ .grid,.auction{gap:10px}
+}
+@media(prefers-reduced-motion:reduce){.btn:active:not(:disabled){transform:none}}
+
 </style>
 </head>
 <body>
