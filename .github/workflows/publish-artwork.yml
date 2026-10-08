@@ -15,6 +15,29 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Validate standalone app scripts and release invariants
+        run: |
+          python3 - <<'PY'
+          import re
+          import subprocess
+          import tempfile
+          from pathlib import Path
+
+          for name in ("SEA_Instructor_Standalone.html", "SEA_Student_Standalone.html"):
+              html = Path(name).read_text(encoding="utf-8")
+              scripts = re.findall(r"<script(?:\\s[^>]*)?>([\\s\\S]*?)</script>", html, re.I)
+              assert len(scripts) == 1, (name, len(scripts))
+              assert html.count("<svg ") >= 77, (name, "missing embedded vector artwork")
+              assert 'id="seaArtworkMode"' in html, (name, "artwork fallback settings absent")
+              assert "Square-edge visual language" not in html or "border-radius:0!important" in html
+              assert "Clean Minimal is the only visual system" in html
+              assert not re.search(r"seaQa|seaPhases|seaTheme|SEA_THEMES|data-sea-theme|id=\"seaTheme\"", html), (name, "retired controls remain")
+              with tempfile.NamedTemporaryFile(suffix=".js", mode="w", encoding="utf-8") as f:
+                  f.write(scripts[0])
+                  f.flush()
+                  subprocess.run(["node", "--check", f.name], check=True)
+              print(name, "script syntax and release invariants OK")
+          PY
       - name: Verify 77 SVG and WebP artwork pairs
         run: |
           python3 - <<'PY'
