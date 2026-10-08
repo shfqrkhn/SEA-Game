@@ -1,23 +1,39 @@
 # SEA Game - Systems Engineering Awareness
 
-## Use offline (the primary distribution mode)
+## Launch and distribution
 
-Download **SEA_Instructor_Standalone.html** or **SEA_Student_Standalone.html** and open the downloaded file directly in a browser. Each is a self-contained HTML application: game rules, translations, UI/CSS, logic, and embedded fallback vector art are available without a network, server, install, PWA service worker, or account.
+[GitHub Pages launcher](https://shfqrkhn.github.io/SEA-Game/)
 
-The instructor screen and ledger remain authoritative. The student companion does not synchronize with it. Session recovery uses browser session storage and may not survive browser closure.
+- [Instructor Master](SEA_Instructor_Standalone.html)
+- [Student Companion](SEA_Student_Standalone.html)
 
-## Optional online artwork
+For **guaranteed offline gameplay**, download an HTML file and open it directly as `file://`. Each HTML contains all of its CSS, JavaScript, game data, translations, 70 high-detail card images, six mission illustrations, training artwork, and vector artwork fallback. No web server, account, external JavaScript, service worker, or internet is required.
 
-Each HTML attempts to display per-card WebP illustrations at `https://shfqrkhn.github.io/SEA-Game/assets/v1/cards/<CARD-ID>.webp`, using fixed validated card IDs. If offline or image loading fails, local SVG remains visible; gameplay does not wait for images. No external JS, CSS, runtime manifest, fonts, scripts, or API are required.
+For the **local raster collection**, [download the repository ZIP](https://github.com/shfqrkhn/SEA-Game/archive/refs/heads/main.zip), extract it and open one of the two standalone HTML files without moving it from the extracted folder.
 
-Approved production artwork is **not yet uploaded**; currently the image fallback is expected. The reconstructed synthetic card deck and balance still require approval.
+## Three-tier image chain
 
-See `assets/v1/cards/README.md` for naming and creation rules.
+For each card, the browser renders the embedded artwork immediately and optionally substitutes:
 
-## Quality boundary
+1. HTTPS WebP from `https://shfqrkhn.github.io/SEA-Game/assets/v1/cards/CAP-A.webp` (example).
+2. On remote load failure, the exact same local file at `./assets/v1/cards/CAP-A.webp`.
+3. If both fail, the built-in raster-backed SVG. A purely vector card-specific illustration remains behind it for browser compatibility.
 
-These two files are implementation candidates derived from the v3.0.0 application; no full browser, device, accessibility, or classroom acceptance suite has been demonstrated. Verify `file://` use with network disabled and all phases before classroom release. Do not enter personal, Protected, Classified, real-project, or operational information.
+The six vehicle profile images and practice illustration follow the same chain. The SVG presentation embeds the WebP bytes for fidelity; it is **not** a purely vector recreation of the photorealistic artwork.
 
+Card rules, labels, descriptions, prices, calculations, instructor ledger and student work remain local application data. Images contain no authoritative rule text. Session state is not sent to GitHub.
 
-## Illustrations
-70 named SVG card visuals live in assets/v1/cards/. Download either standalone HTML for offline use; remote artwork is an optional enhancement.
+## Art inventory
+
+- `assets/v1/cards/` - 70 WebP images plus 70 corresponding editable conceptual SVGs, keyed by card ID
+- `assets/v1/vehicles/` - six WebP mission illustrations and their SVG references
+- `assets/v1/practice/` - one WebP training image and SVG reference
+- `.github/workflows/publish-artwork.yml` - reproducible extraction of the approved embedded WebP bytes into the repository
+
+The content is **synthetic instructional artwork**, not an approved depiction of actual equipment. The reconstructed game deck still needs balance/content approval.
+
+## Verification boundaries
+
+Source-level JavaScript parsing, asset-count and image-integrity checks can be performed locally. The full eight-phase instructor and student journeys, accessibility, cross-browser `file://` handling, and final classroom acceptance still require representative browser/device testing. The browser's session storage does not provide long-term persistence or cross-device backup. The student application does not automatically synchronize with the instructor.
+
+Do not enter personal, Protected, Classified, real-project, or operational information.
