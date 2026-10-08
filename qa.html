@@ -24,14 +24,14 @@
 <section><h2>4. Resource audit — all 156 paths</h2><p>Checks both HTML applications and 77 SVG/WebP pairs with HTTP status, response type, and nonempty body. This is a delivery audit only: it cannot assert visual similarity, rule preservation, offline operation, or complete browser compatibility.</p>
 <div class="toolbar"><button type="button" id="runAudit" class="primary">Audit all resources</button><button type="button" id="stopAudit">Stop audit</button><button type="button" id="copyAudit">Copy results</button></div><p id="auditSummary" role="status">Not run.</p><output id="auditResult">Run audit to check committed paths.</output>
 </section>
-<section><h2>5. Human acceptance matrix</h2><p>Use the real applications in section 1. Mark a test complete only when observed on the target device and browser. Checks are held in this page's memory only and disappear on reload.</p>
+<section><h2>5. Static application structure checks</h2><p>Parses both committed HTML documents without executing their scripts. Checks lifecycle sections, language selector, embedded artwork map, and external script dependencies. This does not verify gameplay.</p><button class="primary" id="runStructure" type="button">Check both HTML structures</button><output id="structureResult" role="status">Not run.</output></section><section><h2>6. Human acceptance matrix</h2><p>Use the real applications in section 1. Mark a test complete only when observed on the target device and browser. Checks are held in this page's memory only and disappear on reload.</p>
 <div class="toolbar"><label for="matrixRole">Role <select id="matrixRole"><option value="instructor">Instructor</option><option value="student">Student</option></select></label><label for="matrixPhase">Phase <select id="matrixPhase"></select></label><button type="button" id="copyChecklist">Copy acceptance record</button><button type="button" id="clearChecklist">Clear checks</button></div>
 <div id="checks" class="checks"></div><p id="progress" role="status"></p>
 </section>
-<section><h2>6. Negative, offline, and recovery testing</h2><div class="checks" id="manualEdge"></div>
+<section><h2>7. Negative, offline, and recovery testing</h2><div class="checks" id="manualEdge"></div>
 <p class="warning"><strong>Offline limitation:</strong> Loading this GitHub Pages workbench requires a network. To test the standalone requirement, save each HTML independently, disconnect the network, open it with <code>file://</code>, and complete representative gameplay. For local WebP mode, download and extract the repository ZIP and repeat with the network disconnected. Only manual execution can confirm those paths.</p>
 </section>
-<section><h2>7. Review coverage and release decision</h2><p>Review setup, tutorial, planning, auction, build, submit, debrief, and closed screens for both roles; verify both languages, keyboard-only, pointer-only, touch-only, 200% zoom, 320px reflow, reduced motion, focus and status announcements. Check number formats, invalid inputs, recovery, and the original instructor/student independence.</p>
+<section><h2>8. Review coverage and release decision</h2><p>Review setup, tutorial, planning, auction, build, submit, debrief, and closed screens for both roles; verify both languages, keyboard-only, pointer-only, touch-only, 200% zoom, 320px reflow, reduced motion, focus and status announcements. Check number formats, invalid inputs, recovery, and the original instructor/student independence.</p>
 <div id="decision" class="warning" role="status">No release acceptance is inferred from this workbench. Functional and human QA remain pending until explicitly observed.</div>
 </section>
 </main>
@@ -92,6 +92,23 @@ $('runAudit').addEventListener('click',async()=>{stop=false;const lines=[];$('ru
  if(i%8===0){$('auditSummary').textContent=(i+1)+' / '+resourcePaths.length+' resources checked'}
  }
  last=lines.join('\n');$('auditResult').textContent=last;const passed=lines.filter(s=>s.startsWith('PASS')).length;$('auditSummary').textContent=passed+' / '+resourcePaths.length+' resources passed. '+(stop?'Audit interrupted.':'Resource checks finished; not gameplay certification.');$('runAudit').disabled=false;
+});
+$('runStructure').addEventListener('click',async()=>{
+ const lines=[];
+ for(const file of ['SEA_Instructor_Standalone.html','SEA_Student_Standalone.html']){
+  try{
+   const response=await fetch('./'+file,{cache:'no-store'});
+   if(!response.ok)throw Error('HTTP '+response.status);
+   const source=await response.text(),dom=new DOMParser().parseFromString(source,'text/html');
+   for(const id of ['setup','practice','planning','auction','build','submit','debrief','closed'])
+    lines.push((dom.getElementById(id)?'PASS ':'FAIL ')+file+' lifecycle #'+id);
+   lines.push((dom.getElementById('langBtn')?'PASS ':'FAIL ')+file+' language switch');
+   lines.push((source.includes('const BUILTIN_CARD_ART=Object.freeze(')?'PASS ':'FAIL ')+file+' embedded artwork map present');
+   const external=dom.querySelectorAll('script[src]').length;
+   lines.push((external===0?'PASS ':'FAIL ')+file+' external script tags: '+external);
+  }catch(e){lines.push('BLOCKED '+file+' '+String(e))}
+ }
+ $('structureResult').textContent=lines.join('\n')+'\nStructure checks do not exercise application behavior.';
 });
 const common=['Visible text and controls','Keyboard-only navigation and focus','Pointer-only flow','Touch targets and gestures','English/French completeness','320px and tablet layout','200% zoom and text reflow','Screen-reader labels and status','Error handling and recovery','Color contrast and noncolor cues','No horizontal overflow','Accurate counters and saved state'];
 const specific={
