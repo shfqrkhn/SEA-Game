@@ -472,6 +472,42 @@ body[data-sea-theme="tactical"] .workflow .current,body[data-sea-theme="mission"
 body[data-sea-theme="dual"] .auction{grid-template-columns:minmax(0,1.2fr) minmax(300px,1fr)}
 body[data-sea-theme="student"] .auction{grid-template-columns:minmax(0,1.45fr) minmax(275px,.85fr)}
 @media(max-width:900px){body[data-sea-theme="dual"] .auction,body[data-sea-theme="student"] .auction{grid-template-columns:1fr}}
+
+/* Six differentiated visual systems, scoped to presentation only. */
+body[data-sea-theme="tactical"]{--r-md:3px;--r-sm:2px;--shadow:0 3px 0 #09181c}
+body[data-sea-theme="tactical"] .hero{border-left:4px solid #8bb7a3;padding-left:16px}
+body[data-sea-theme="tactical"] .kicker{letter-spacing:.13em;text-transform:uppercase;font-size:11px}
+body[data-sea-theme="mission"]{--r-md:10px;--r-sm:6px;--shadow:0 5px 24px #00101444}
+body[data-sea-theme="mission"] .status{background:#123338;border-bottom:2px solid #4d9e9b}
+body[data-sea-theme="mission"] .hero{padding:14px 18px;border:1px solid #3c6871;background:linear-gradient(90deg,#19424a,#102930)}
+body[data-sea-theme="mission"] .metric{border-left:3px solid #6cb0ad}
+body[data-sea-theme="minimal"]{--r-md:0px;--r-sm:2px;--shadow:none}
+body[data-sea-theme="minimal"] .hero h2{font-weight:480;letter-spacing:-.04em}
+body[data-sea-theme="minimal"] .card,body[data-sea-theme="minimal"] .gamecard{border-color:#e3e8e2;border-width:0 0 1px;box-shadow:none}
+body[data-sea-theme="briefing"]{--r-md:14px;--r-sm:7px;--shadow:0 12px 28px #050b0c66}
+body[data-sea-theme="briefing"] .hero{padding:20px 22px;border-bottom:3px solid #c9a26c;background:linear-gradient(120deg,#26353c,#17252b)}
+body[data-sea-theme="briefing"] .hero h2{font-family:Georgia,serif;font-weight:500}
+body[data-sea-theme="dual"]{--r-md:5px;--r-sm:3px}
+body[data-sea-theme="dual"] .hero{border-bottom:2px solid #7caaa4;padding-bottom:10px}
+body[data-sea-theme="dual"] .card{border-top:3px solid #6d9a9c}
+body[data-sea-theme="student"]{--r-md:14px;--r-sm:8px;--shadow:0 4px 18px #123f3020}
+body[data-sea-theme="student"] .hero{padding:14px 18px;border-radius:12px;background:#e2ede6}
+body[data-sea-theme="student"] .btn{border-radius:9px}
+@media(min-width:901px){
+ body[data-sea-theme="mission"] main{max-width:1440px}
+ body[data-sea-theme="mission"] .auction{grid-template-columns:minmax(0,1fr) minmax(400px,1.15fr)}
+ body[data-sea-theme="tactical"] main{max-width:1330px}
+ body[data-sea-theme="tactical"] .auction{grid-template-columns:minmax(0,1.1fr) minmax(350px,1fr)}
+ body[data-sea-theme="minimal"] main{max-width:1080px}
+ body[data-sea-theme="dual"] main{max-width:1500px}
+ body[data-sea-theme="dual"] .auction{grid-template-columns:minmax(0,1fr) minmax(390px,1.15fr)}
+}
+@media(max-width:600px){
+ body[data-sea-theme] .hero{padding:10px 12px}
+ body[data-sea-theme] .hero h2{font-size:clamp(23px,7vw,31px)}
+ body[data-sea-theme] .auction{grid-template-columns:minmax(0,1fr)}
+}
+
 </style>
 </head>
 <body>
