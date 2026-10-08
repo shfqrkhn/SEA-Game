@@ -13,7 +13,7 @@ for(const [name,target] of [['instructor','SEA_Instructor_Standalone.html'],['st
  new Script(js,{filename:'source/'+name+'.js'});
  const html=template.replace('{{SEA_STYLES}}',()=>'<style>'+css+'</style>').replace('{{SEA_SCRIPT}}',()=>'<script>'+js+'</script>');
  if(!html.startsWith('<!doctype html>')||!html.endsWith('</html>'))throw Error(name+': malformed output');
- if(/\\b(?:confirm|alert|prompt)\\s*\\(/.test(js))throw Error(name+': native dialog introduced');
+ if(/\b(?:confirm|alert|prompt)\s*\(/.test(js))throw Error(name+': native dialog introduced');
  if(check){
   if(read(target)!==html){console.error(target+': generated output differs');failed=true}
   else console.log(target+': PASS byte-for-byte reproduction');
