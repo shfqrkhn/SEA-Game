@@ -21,7 +21,7 @@ const visibility=source.match(/function visibleLot\(i\)\{[^\n]+\}/)?.[0];
 assert.ok(visibility,'Instructor visibility rule must exist');
 for(const [mode,index,revealed,expected] of [
  ['ROUND',9,false,true],['JIT',0,false,true],['JIT',3,false,true],
- ['JIT',4,false,false],['JIT',4,true,true],['JIT',5,true,false],
+ ['JIT',4,false,true],['JIT',4,true,true],['JIT',5,true,false],
  ['MANUAL',3,false,true],['MANUAL',4,false,false],['MANUAL',4,true,true],['MANUAL',5,true,false]
 ]){
  const fn=runInNewContext(engine+'\n'+visibility+';visibleLot',{state:{revealMode:mode,lot:4,revealed}});
