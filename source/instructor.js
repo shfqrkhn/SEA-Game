@@ -302,14 +302,14 @@ function renderCurrentCard(){const c=currentCard(),vis=visibleLot(state.lot);$("
 
 function acceptTeamBid(id,intended){
  if(!biddingActive())return false;const tm=state.teams.find(x=>x.id===id),amount=nextOffer();
- if(!tm||!validMission(tm.mission)||tm.purchasesByRound[state.round]>=2||state.leader===id||amount===null)return false;
+ if(!tm||!validMission(tm.mission)||!SEA_AUCTION.canWin(tm.purchasesByRound[state.round])||state.leader===id||amount===null)return false;
  if(intended!==amount){seaNotify(t('errors.stale'));return false}
  try{addCents(tm.cost,amount)}catch{seaNotify(t('errors.moneyRange'));return false}
  state.currentBid=amount;state.leader=id;state.resultDraft=null;renderAuction();return true;
 }
 
 function renderBidRoster(){
- const next=nextOffer();$('#bidRoster').innerHTML=state.teams.map(tm=>{const used=tm.purchasesByRound[state.round],left=2-used,leader=state.leader===tm.id,eligible=biddingActive()&&left>0&&!leader&&next!==null;
+ const next=nextOffer();$('#bidRoster').innerHTML=state.teams.map(tm=>{const used=tm.purchasesByRound[state.round],left=2-used,leader=state.leader===tm.id,eligible=biddingActive()&&SEA_AUCTION.canWin(used)&&!leader&&next!==null;
  return `<div class="ledger-row bid-row"><strong>${t('common.team',{n:tm.id})}</strong><span class="bid-team-meta">${esc(MISSIONS[tm.mission][lang])}<small>${t('common.wins',{used,left})}</small></span><button class="btn ${leader?'good':'primary'}" data-bid-team="${tm.id}" data-bid-amount="${next??''}" ${eligible?'':'disabled'}>${leader?t('auction.leading',{amount:money(state.currentBid)}):t('auction.accept',{amount:next===null?'-':money(next)})}</button></div>`}).join('');
  $$('[data-bid-team]').forEach(b=>b.onclick=()=>acceptTeamBid(Number(b.dataset.bidTeam),Number(b.dataset.bidAmount)));
 }
@@ -318,7 +318,7 @@ function renderCommitControls(){
  const vis=visibleLot(state.lot),amount=nextOffer(),entry=effectiveEntry(),draft=state.resultDraft||{team:state.leader,price:state.currentBid===null?'':amountInput(state.currentBid),reason:''};
  $('#leaderSummary').textContent=state.leader?t('common.team',{n:state.leader})+' · '+money(state.currentBid):'-';$('#nextBid').textContent=vis&&amount!==null?money(amount):'-';$('#timerValue').textContent=timerText();
  $('#pauseBtn').textContent=state.pausedRemaining===null?t('auction.pause'):t('auction.resume');$('#pauseBtn').disabled=!state.open||committed();$('#extendBtn').disabled=!state.open||state.timingMode!=='TIMED'||committed();
- $('#winnerSelect').innerHTML=`<option value="">${t('common.selectTeam')}</option>`+state.teams.map(tm=>`<option value="${tm.id}" ${Number(draft.team)===tm.id?'selected':''} ${tm.purchasesByRound[state.round]>=2?'disabled':''}>${t('common.team',{n:tm.id})}</option>`).join('');
+ $('#winnerSelect').innerHTML=`<option value="">${t('common.selectTeam')}</option>`+state.teams.map(tm=>`<option value="${tm.id}" ${Number(draft.team)===tm.id?'selected':''} ${!SEA_AUCTION.canWin(tm.purchasesByRound[state.round])?'disabled':''}>${t('common.team',{n:tm.id})}</option>`).join('');
  $('#finalPrice').value=draft.price;$('#saleCorrectionReason').value=draft.reason;
  const storeDraft=()=>{state.resultDraft={team:$('#winnerSelect').value,price:$('#finalPrice').value,reason:$('#saleCorrectionReason').value};saveState()};['winnerSelect','finalPrice','saleCorrectionReason'].forEach(id=>document.getElementById(id).oninput=storeDraft);
  $('#commitSummary').textContent=state.leader?t('auction.commitReady',{team:state.leader,amount:money(state.currentBid)}):t('auction.noAccepted');
