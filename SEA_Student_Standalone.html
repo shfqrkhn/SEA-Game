@@ -368,8 +368,7 @@ main{max-width:1360px}
 .sea-settings .sea-checkbox{display:flex;gap:10px;align-items:center;margin:12px 0}
 .sea-settings input[type=checkbox]{width:22px;height:22px}
 .sea-settings .sea-hint{color:var(--muted);font-size:14px}
-#seaQaFrame{display:block;background:#fff;width:100%;max-width:100%;height:680px;border:2px solid var(--line-strong);border-radius:6px;margin:12px 0}
-@media(max-width:520px){.sea-settings{padding:12px;margin:8px 12px}#seaQaFrame{height:530px}}
+@media(max-width:520px){.sea-settings{padding:12px;margin:8px 12px}}
 
 /* Dense desktop layout: retain 44px hit targets and responsive breakpoints. */
 @media (min-width:1000px) and (min-height:700px){
@@ -564,7 +563,6 @@ body[data-sea-theme] *,body[data-sea-theme] *::before,body[data-sea-theme] *::af
  <label for="seaArtworkMode">Artwork delivery / Chargement des images</label>
  <select id="seaArtworkMode"><option value="auto">Auto (online, local, SVG fallback)</option><option value="online">Online first (GitHub WebP)</option><option value="local">Local first (extracted ZIP WebP)</option><option value="offline">Fully offline (embedded SVG only)</option></select>
  <p class="sea-hint" id="seaArtworkHelp" role="status">Every mode retains an embedded SVG fallback. No game rules change.</p>
- <p class="sea-hint">QA phase previews are instructor-only to protect fair play. / Les aperçus QA sont réservés à l’instructeur.</p>
  </aside>
 <main id="mainContent">
 <section id="setup" class="section active">

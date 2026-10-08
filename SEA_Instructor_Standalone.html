@@ -368,8 +368,7 @@ main{max-width:1360px}
 .sea-settings .sea-checkbox{display:flex;gap:10px;align-items:center;margin:12px 0}
 .sea-settings input[type=checkbox]{width:22px;height:22px}
 .sea-settings .sea-hint{color:var(--muted);font-size:14px}
-#seaQaFrame{display:block;background:#fff;width:100%;max-width:100%;height:680px;border:2px solid var(--line-strong);border-radius:6px;margin:12px 0}
-@media(max-width:520px){.sea-settings{padding:12px;margin:8px 12px}#seaQaFrame{height:530px}}
+@media(max-width:520px){.sea-settings{padding:12px;margin:8px 12px}}
 
 /* Dense desktop layout: retain 44px hit targets and responsive breakpoints. */
 @media (min-width:1000px) and (min-height:700px){
@@ -564,13 +563,7 @@ body[data-sea-theme] *,body[data-sea-theme] *::before,body[data-sea-theme] *::af
  <label for="seaArtworkMode">Artwork delivery / Chargement des images</label>
  <select id="seaArtworkMode"><option value="auto">Auto (online, local, SVG fallback)</option><option value="online">Online first (GitHub WebP)</option><option value="local">Local first (extracted ZIP WebP)</option><option value="offline">Fully offline (embedded SVG only)</option></select>
  <p class="sea-hint" id="seaArtworkHelp" role="status">Every mode retains an embedded SVG fallback. No game rules change.</p>
- <label class="sea-checkbox"><input type="checkbox" id="seaQaEnabled"> QA preview / Aperçu QA (dummy data / données fictives)</label>
- <div id="seaQaPanel" class="hidden"><p><strong>INSTRUCTOR ONLY — QA / DONNÉES FICTIVES.</strong> Static screen previews, not actual game results. Real session and saves are unaffected.</p>
- <label for="seaQaPhase">Screen / Écran</label><select id="seaQaPhase"></select>
- <label for="seaQaView">Viewport / Affichage</label><select id="seaQaView"><option value="100%">Desktop</option><option value="768px">Tablet</option><option value="390px">Mobile</option><option value="320px">Narrow</option></select>
- <button id="seaQaRefresh" class="btn" type="button">Refresh preview / Actualiser</button>
- <iframe id="seaQaFrame" title="Isolated dummy-data screen preview / Aperçu fictif isolé" sandbox="" referrerpolicy="no-referrer" loading="lazy"></iframe>
- </div>
+
  </aside>
 <main id="mainContent">
 <section id="setup" class="section active">
@@ -1039,31 +1032,11 @@ $("#privateSubmitBtn").onclick=()=>{if(state.phase!=="submit")return;if(confirm(
 $("#closeSubmissionsBtn").onclick=()=>{if(state.phase!=="submit")return;const pending=state.teams.filter(x=>!x.submitted).length;if(pending&&!confirm(t("submit.pendingConfirm",{count:pending})))return;phase("debrief");renderAll()};
 $("#closeRoomBtn").onclick=()=>{if(state.phase!=="debrief")return;phase("closed");renderAll()};
 
-// Isolated read-only QA screen render: no application script or storage in sandboxed iframe.
-const seaPhases=['setup','practice','planning','auction','build','submit','debrief','closed'];
-function seaQaPreview(){
- const phaseId=$('#seaQaPhase').value,source=document.getElementById(phaseId),frame=$('#seaQaFrame');
- if(!source||!frame)return;
- const cloned=source.cloneNode(true);cloned.classList.add('active');
- cloned.querySelectorAll('script,iframe,form').forEach(n=>{if(n.tagName==='FORM'){const d=document.createElement('div');d.innerHTML=n.innerHTML;n.replaceWith(d)}else n.remove()});
- cloned.querySelectorAll('[id]').forEach(n=>n.removeAttribute('id'));
- cloned.querySelectorAll('input').forEach((n,i)=>{if(n.type==='checkbox'||n.type==='radio')n.checked=i%2===0;else if(n.type!=='hidden')n.value=n.type==='number'?'3':n.type==='date'?'2026-10-08':'QA DEMO'});
- cloned.querySelectorAll('textarea').forEach(n=>n.textContent='Sample notes / Notes fictives : review requirements, risks and trade-offs.');
- cloned.querySelectorAll('select').forEach(n=>{if(n.options.length>1)n.selectedIndex=1});
- cloned.querySelectorAll('button').forEach(n=>n.disabled=false);
- const css=[...document.querySelectorAll('style')].map(n=>n.textContent).join('\n');
- const body=cloned.outerHTML.replace(/<\/script/gi,'&lt;/script');
- frame.style.width=$('#seaQaView').value;
- frame.srcdoc='<!doctype html><html lang="'+lang+'"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>'+css+'</style><body><div class="status"><span class="badge">QA / DEMO</span><span class="badge">'+phaseId+'</span></div><main>'+body+'</main></body></html>';
-}
 function seaConfigureSettings(){
  seaPreferenceRead();$('#seaArtworkMode').value=seaArtworkMode;seaApplyTheme();
  $('#seaTheme').onchange=()=>{seaTheme=$('#seaTheme').value;if(!SEA_THEMES.has(seaTheme))return;seaApplyTheme();seaPreferenceSave()};
- for(const p of seaPhases){const o=document.createElement('option');o.value=p;o.textContent=p;$('#seaQaPhase').append(o)}
  $('#settingsBtn').onclick=()=>{const opened=$('#seaSettings').classList.toggle('hidden')===false;$('#settingsBtn').setAttribute('aria-expanded',String(opened))};
- $('#seaArtworkMode').onchange=()=>{seaArtworkMode=$('#seaArtworkMode').value;if(!SEA_ART_MODES.has(seaArtworkMode))seaArtworkMode='auto';seaPreferenceSave();renderAll();if($('#seaQaEnabled').checked)seaQaPreview()};
- $('#seaQaEnabled').onchange=()=>{$('#seaQaPanel').classList.toggle('hidden',!$('#seaQaEnabled').checked);if($('#seaQaEnabled').checked)seaQaPreview()};
- $('#seaQaPhase').onchange=seaQaPreview;$('#seaQaView').onchange=seaQaPreview;$('#seaQaRefresh').onclick=seaQaPreview;
+ $('#seaArtworkMode').onchange=()=>{seaArtworkMode=$('#seaArtworkMode').value;if(!SEA_ART_MODES.has(seaArtworkMode))seaArtworkMode='auto';seaPreferenceSave();renderAll()};
 }
 seaConfigureSettings();
 $("#langBtn").onclick=()=>{lang=lang==="en"?"fr":"en";renderAll();saveState()};
