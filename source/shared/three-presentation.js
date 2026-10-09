@@ -173,7 +173,8 @@ function sea3DStart(role){
   const projected=seaSceneProjection(roots,semanticVisible,keyFor);sceneTargets=projected.targets;
   if(state.phase==='build'&&state.teams?.length){const team=typeof selectedTeam==='string'&&state.teams.some(item=>String(item.id)===selectedTeam)?Number(selectedTeam):state.teams[0].id;projected.rows=projected.rows.filter(row=>!row.buildTeamId||row.buildSummary||row.buildTeamId===team);sceneTargets=new Map(projected.rows.map(row=>[row.key,projected.targets.get(row.key)]));}
   if(context&&!dialog){projected.rows=projected.rows.filter(row=>{const node=projected.targets.get(row.key);return !(node?.id==='phaseBadge'&&row.label===context.phase)&&!(node?.id==='sessionBadge'&&row.label===context.session)&&!(node?.classList?.contains('badge')&&row.label==='v'+context.version);});}
-  const primary=projected.rows.find(row=>row.kind==='button'&&!row.disabled&&row.currentAction&&!row.utility)||projected.rows.find(row=>row.kind==='button'&&!row.disabled&&row.section==='task'&&row.emphasis==='primary'&&!row.utility);
+  const loadFirst=!dialog&&typeof role!=='undefined'&&role==='student'&&state.phase==='auction'&&!state.currentCard?projected.rows.find(row=>row.kind==='button'&&!row.disabled&&projected.targets.get(row.key)?.id==='loadCardBtn'):null;
+  const primary=loadFirst||projected.rows.find(row=>row.kind==='button'&&!row.disabled&&row.currentAction&&!row.utility)||projected.rows.find(row=>row.kind==='button'&&!row.disabled&&row.section==='task'&&row.emphasis==='primary'&&!row.utility);
   if(primary){primary.primary=true;primary.emphasis='primary';primary.priority=Math.min(primary.priority,49);}
   // Stable authored groups retain context and dependencies, never button-first order.
   if(!dialog&&!alerts.length)projected.rows.sort((a,b)=>(a.priority??50)-(b.priority??50));

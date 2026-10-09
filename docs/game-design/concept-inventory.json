@@ -4,7 +4,7 @@
   "date": "2026-10-09",
   "canonicalSource": {
     "path": "source/shared/engine.js",
-    "sha256": "542a538c22058433904c9a936feff84dbe88bea6a0dbcc145bdec848693a537f"
+    "sha256": "b3fe4da69353ef7f8c61648ab9976fa0bdb1d1acf9723baebdde91615bf738c0"
   },
   "status": "Inventory/exploratory direction; canonical/model/UI acceptance open",
   "counts": {

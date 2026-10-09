@@ -43,7 +43,7 @@ The [artwork provenance and acceptance record](docs/ARTWORK_PROVENANCE.md) disti
 
 ## Source and reproducible builds
 
-Game candidate version: **3.4.0**. The [version policy](docs/VERSIONING.md) increments patch/minor/major according to the largest published change. Both HTML badges and backup metadata derive from the single `APP.version`; save schema, rules and deck versions remain separate. The [task-centered interface analysis](docs/game-design/UI_CLEANROOM_REBUILD.md) records the XY approach, original Three.js implementation patterns and licence boundaries.
+Game candidate version: **3.4.1**. The [version policy](docs/VERSIONING.md) increments patch/minor/major according to the largest published change. Both HTML badges and backup metadata derive from the single `APP.version`; save schema, rules and deck versions remain separate. The [task-centered interface analysis](docs/game-design/UI_CLEANROOM_REBUILD.md) records the XY approach, original Three.js implementation patterns and licence boundaries. Version3.4.1 corrects the student auction cue: Load card is prominent until a card is known; it does not load or record anything automatically.
 
 Version 3.4.0 consolidates the student's known-card entry, private note and purchase result in Current; instructor Build selection aligns the task detail and model. Native editing adds Previous/Next field navigation with composition and stale-target guards. Closed keeps its new-session action visible; the compact French overview label is « Aperçu ». These are compatible candidate changes, pending exact-candidate browser and broader acceptance. Historical 3.3.0 source `01204c8` and preview `18dc0db` remain separate identities.
 

@@ -149,3 +149,17 @@ console.log('PASS: native export/import identities exposed directly in Help/save
  vm.runInContext("selectInspectedTeam('1',true)",ctx);ctx.api.sync();assert(latest.rows.some(row=>row.label==='Team 1 exact metric'&&row.section==='task'));assert(!latest.rows.some(row=>row.label==='Team 2 exact metric'));assert.equal(ctx.selectedTeam,'1');
 }
 console.log('PASS: selected instructor Build team drives Current detail while all team summaries/native disclosures remain available');
+
+// Actual projected student auction snapshot: prerequisite loading precedes recording a win.
+{
+ for(const node of Array.from(active.children))if(node.tagName==='BUTTON')node.remove();
+ const load=active.appendChild(element('button'));load.id='loadCardBtn';load.className='btn secondary';load.setAttribute('data-scene-priority','20');
+ const win=active.appendChild(element('button'));win.id='recordWinBtn';win.className='btn good';win.setAttribute('data-scene-priority','40');let loads=0,wins=0;load.onclick=()=>loads++;win.onclick=()=>wins++;
+ ctx.role='student';
+ for(const language of ['en','fr']){
+  vm.runInContext("lang='"+language+"';state.phase='auction';state.currentCard=null;",ctx);load.textContent=language==='fr'?'Charger la carte':'Load card';win.textContent=language==='fr'?'Enregistrer le gain confirmé':'Record confirmed win';
+  const before=vm.runInContext('JSON.stringify(state)',ctx),saves=saveCalls;ctx.api.sync();let primary=latest.rows.filter(row=>row.primary);assert.equal(primary.length,1);assert.equal(primary[0].key,latest.rows.find(row=>row.label===load.textContent).key,'Unknown student card pins prerequisite Load rather than Record');assert.equal(vm.runInContext('JSON.stringify(state)',ctx),before);assert.equal(saveCalls,saves);assert.equal(loads,0);assert.equal(wins,0,'Projection cannot automatically execute either command');
+  vm.runInContext("state.currentCard={id:'CAP-A'}",ctx);ctx.api.sync();primary=latest.rows.filter(row=>row.primary);assert.equal(primary.length,1);assert.equal(primary[0].label,win.textContent,'Loaded card retains original Record win cue');assert.equal(load.disabled,false);assert.equal(win.disabled,false,'Presentation never alters authoritative enabled states');
+ }
+}
+console.log('PASS: EN/FR student auction primary loading prerequisite and loaded-card win cue without commands/state/save mutation');
