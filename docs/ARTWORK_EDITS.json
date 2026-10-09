@@ -1,0 +1,1493 @@
+{
+  "edits": [
+    {
+      "asset": "cards/CAP-F",
+      "date": "2026-10-08",
+      "reason": "Remove confirmed neighboring-image strip; preserve recognizable modular crew compartment",
+      "tool": "OpenAI built-in image_gen",
+      "model": "not reported by tool",
+      "inputSha256": "0ea3e365e6d16bd70a5c4d88002317cf36a4f08d96f83e107660514a0a2498c0",
+      "generatedPngSha256": "974b02c22a257de44f23fdfed36ed32ac5f50425a7717fa2f9b507ea1ddf6cdb",
+      "webpSha256": "9a447925c0d18a435bad08f00d4d81ed3e2aa99f4b233ccc5afb5e277f7c1c4f",
+      "svgSha256": "8fd9ef635685edfa3db9ba81625df506d3fb6fe7272c12fb1127c78900586bcd",
+      "outputDimensions": [
+        2172,
+        724
+      ],
+      "originalDimensions": [
+        1200,
+        360
+      ],
+      "dimensionDecision": "MPES has no fixed asset pixel-size requirement; adopt tool native 3:1 canvas and align vector viewBox; contain rendering preserves full art",
+      "rasterConversion": "PNG to lossless WebP; decoded RGB pixels equal; no computational resizing or painting",
+      "vectorEdit": "Remove six isolated contours with minimum x>=404; preserve remaining paths; center them vertically in 640x213.33333333333334 viewBox",
+      "rightsStatus": "User attested assistant generation; final acceptance OPEN",
+      "visualReview": "single-agent full raster and rendered vector inspection; final classroom/browser acceptance open",
+      "prompt": "Precise object edit of the supplied SEA Game CAP-F artwork. Preserve the entire original 1200 x 360 pixel canvas and aspect ratio, the exact main olive modular crew compartment with its open front ramp, all seats/structural details, original position, lighting, scale, shadows, central rectangular photographic panel, and broad pale beige surrounding background. Remove ONLY the narrow extraneous neighboring-image strip at the right edge of the central panel (approximately x=758..774 in the 1200px-wide reference), including the white divider and small fragments of neighboring equipment. Fill that narrow area seamlessly with the existing surrounding pale beige canvas background. Do not crop, resize, recenter, redraw the main object, add text, add objects, alter the subject or replace the scene. Deliver the corrected image with exactly the original 1200x360 dimensions, opaque background."
+    },
+    {
+      "asset": "cards/ACC-A",
+      "date": "2026-10-08",
+      "tool": "OpenAI built-in image_gen",
+      "model": "not reported by tool",
+      "inputSha256": "77a5c27e1f6ed8e30a4447fa82e2a061d3498d0f2f8b28fbd3e0f29d9184c980",
+      "prompt": "Precise artwork repair of SEA Game cards/ACC-A. Findings: Left-hand winch mechanism intersects the central illustration edge.. Remove unwanted white edge borders, grid dividers and fragments from neighboring panels. Restore any missing focal subject edges, antennas, barrels or equipment through coherent reconstruction. Preserve the original subject identity, recognizable geometry, component count, arrangement, colors, realistic detail and lighting. Show the complete standalone equipment/vehicle with all protrusions and cables visible. Blend the hard portrait-panel backdrop seamlessly into a continuous matching beige studio background. Use one opaque wide 3:1 landscape canvas with generous safe margins around all focal content. No grid sheet, no neighboring assets, no new objects or text. Do not crop tighter. Clean coherent realistic game artwork.",
+      "receipt": "evidence/convergence/art-border-repair-20261008/receipts/cards-ACC-A.json",
+      "reason": [
+        {
+          "kind": "SUBJECT_CLIPPED",
+          "observation": "Left-hand winch mechanism intersects the central illustration edge."
+        }
+      ],
+      "outputDimensions": [
+        2172,
+        724
+      ],
+      "generatedPngSha256": "221230023f4feb45579ae681535cf9cf96e9eb94da41cf85accf51c1920d06a1",
+      "webpSha256": "7a1d8e3b4a88da9bc308b517d7772cf64f89a297b90bcdd2be4584234b904138",
+      "svgSha256": "7d9b1cbcf5bf0bf38b75ada1596cdcbed21cf7746d394ce3f11c88001ed74bd9",
+      "rasterConversion": "lossless WebP; decoded RGBA equals generated PNG; no resize/crop/paint",
+      "vectorConversion": "vtracer 0.6.15 polygon trace; color precision 6, speckle 24, layer difference 16, length threshold 6, path precision 0; visual review required",
+      "visualReview": "Comparison sheets: complete focal subjects and no unintended divider/neighbor strips; simplified native vector appearance retained",
+      "rightsStatus": "User attested assistant generation; final classroom/content acceptance OPEN"
+    },
+    {
+      "asset": "cards/ACC-C",
+      "date": "2026-10-08",
+      "tool": "OpenAI built-in image_gen",
+      "model": "not reported by tool",
+      "inputSha256": "4e149b09cdaade1da94a4606e04e0f58f71890bf25a52a06afbc75d74eea0e4f",
+      "prompt": "Precise artwork repair of SEA Game cards/ACC-C. Findings: Left edge of the attachment is clipped.. Remove unwanted white edge borders, grid dividers and fragments from neighboring panels. Restore any missing focal subject edges, antennas, barrels or equipment through coherent reconstruction. Preserve the original subject identity, recognizable geometry, component count, arrangement, colors, realistic detail and lighting. Show the complete standalone equipment/vehicle with all protrusions and cables visible. Blend the hard portrait-panel backdrop seamlessly into a continuous matching beige studio background. Use one opaque wide 3:1 landscape canvas with generous safe margins around all focal content. No grid sheet, no neighboring assets, no new objects or text. Do not crop tighter. Clean coherent realistic game artwork.",
+      "receipt": "evidence/convergence/art-border-repair-20261008/receipts/cards-ACC-C.json",
+      "reason": [
+        {
+          "kind": "SUBJECT_CLIPPED",
+          "observation": "Left edge of the attachment is clipped."
+        }
+      ],
+      "outputDimensions": [
+        2172,
+        724
+      ],
+      "generatedPngSha256": "abab3aaa6eb96436b3331e770080fe66135047318b16dc480850970fddecece3",
+      "webpSha256": "ba1c746728b88010719c17a96a2223be9474c931fe8715a82b3b0afb02840664",
+      "svgSha256": "9c22b53fdb000aded40856cd179ca5099ae304a72440ef4d9826238381907362",
+      "rasterConversion": "lossless WebP; decoded RGBA equals generated PNG; no resize/crop/paint",
+      "vectorConversion": "vtracer 0.6.15 polygon trace; color precision 6, speckle 24, layer difference 16, length threshold 6, path precision 0; visual review required",
+      "visualReview": "Comparison sheets: complete focal subjects and no unintended divider/neighbor strips; simplified native vector appearance retained",
+      "rightsStatus": "User attested assistant generation; final classroom/content acceptance OPEN"
+    },
+    {
+      "asset": "cards/CAP-E",
+      "date": "2026-10-08",
+      "tool": "OpenAI built-in image_gen",
+      "model": "not reported by tool",
+      "inputSha256": "b3d3e0a8d17a1cc4aed8fa9fa0f4705623d716c667f1d6005669c7a878840dae",
+      "prompt": "Precise artwork repair of SEA Game cards/CAP-E. Findings: Right white divider and adjacent narrow strip.. Remove unwanted white edge borders, grid dividers and fragments from neighboring panels. Restore any missing focal subject edges, antennas, barrels or equipment through coherent reconstruction. Preserve the original subject identity, recognizable geometry, component count, arrangement, colors, realistic detail and lighting. Show the complete standalone equipment/vehicle with all protrusions and cables visible. Blend the hard portrait-panel backdrop seamlessly into a continuous matching beige studio background. Use one opaque wide 3:1 landscape canvas with generous safe margins around all focal content. No grid sheet, no neighboring assets, no new objects or text. Do not crop tighter. Clean coherent realistic game artwork.",
+      "receipt": "evidence/convergence/art-border-repair-20261008/receipts/cards-CAP-E.json",
+      "reason": [
+        {
+          "kind": "RETAINED_DIVIDER_OR_STRIP",
+          "observation": "Right white divider and adjacent narrow strip."
+        }
+      ],
+      "outputDimensions": [
+        2172,
+        724
+      ],
+      "generatedPngSha256": "29a0feff794b751b221bea1278e205773d0aea6479bd020a52f7ddfdf24c2e36",
+      "webpSha256": "f3a9bb9bbf258332e06cb28282e40951aa265ad6bb4d0bfc1027b279f9eda715",
+      "svgSha256": "9eb255627846da8c3e3ca39a936c1e60c5a2eade2f508899a03ba96ffcb7588a",
+      "rasterConversion": "lossless WebP; decoded RGBA equals generated PNG; no resize/crop/paint",
+      "vectorConversion": "vtracer 0.6.15 polygon trace; color precision 6, speckle 24, layer difference 16, length threshold 6, path precision 0; visual review required",
+      "visualReview": "Comparison sheets: complete focal subjects and no unintended divider/neighbor strips; simplified native vector appearance retained",
+      "rightsStatus": "User attested assistant generation; final classroom/content acceptance OPEN"
+    },
+    {
+      "asset": "cards/CAP-G",
+      "date": "2026-10-08",
+      "tool": "OpenAI built-in image_gen",
+      "model": "not reported by tool",
+      "inputSha256": "e9b559834e3769a3bed56a8a46a51c6164e1643489588955926eae02c5c67a1d",
+      "prompt": "Precise artwork repair of SEA Game cards/CAP-G. Findings: Vehicle nose/front assembly clipped on left.; Thin bottom white frame.. Remove unwanted white edge borders, grid dividers and fragments from neighboring panels. Restore any missing focal subject edges, antennas, barrels or equipment through coherent reconstruction. Preserve the original subject identity, recognizable geometry, component count, arrangement, colors, realistic detail and lighting. Show the complete standalone equipment/vehicle with all protrusions and cables visible. Blend the hard portrait-panel backdrop seamlessly into a continuous matching beige studio background. Use one opaque wide 3:1 landscape canvas with generous safe margins around all focal content. No grid sheet, no neighboring assets, no new objects or text. Do not crop tighter. Clean coherent realistic game artwork.",
+      "receipt": "evidence/convergence/art-border-repair-20261008/receipts/cards-CAP-G.json",
+      "reason": [
+        {
+          "kind": "SUBJECT_CLIPPED",
+          "observation": "Vehicle nose/front assembly clipped on left."
+        },
+        {
+          "kind": "THIN_FRAME_REVIEW",
+          "observation": "Thin bottom white frame."
+        }
+      ],
+      "outputDimensions": [
+        2172,
+        724
+      ],
+      "generatedPngSha256": "d243b39cf55714bfcc0a8e59fe43cc1c1bfcf443393f061a158e4e361541b994",
+      "webpSha256": "178d82f88fa957762f516f57be517ed54e697485592094879a95960eeb74c66f",
+      "svgSha256": "86502c9a09af652eeeff7d64379fee03b6db0a33ef680e7bfc90c652ef84397b",
+      "rasterConversion": "lossless WebP; decoded RGBA equals generated PNG; no resize/crop/paint",
+      "vectorConversion": "vtracer 0.6.15 polygon trace; color precision 6, speckle 24, layer difference 16, length threshold 6, path precision 0; visual review required",
+      "visualReview": "Comparison sheets: complete focal subjects and no unintended divider/neighbor strips; simplified native vector appearance retained",
+      "rightsStatus": "User attested assistant generation; final classroom/content acceptance OPEN"
+    },
+    {
+      "asset": "cards/COM-A",
+      "date": "2026-10-08",
+      "tool": "OpenAI built-in image_gen",
+      "model": "not reported by tool",
+      "inputSha256": "78385ed2eb023c43f885a92f4e796cbf66bb2a6a6531f8e572044dd39c23a877",
+      "prompt": "Precise artwork repair of SEA Game cards/COM-A. Findings: Bottom divider with neighboring antenna fragment.. Remove unwanted white edge borders, grid dividers and fragments from neighboring panels. Restore any missing focal subject edges, antennas, barrels or equipment through coherent reconstruction. Preserve the original subject identity, recognizable geometry, component count, arrangement, colors, realistic detail and lighting. Show the complete standalone equipment/vehicle with all protrusions and cables visible. Blend the hard portrait-panel backdrop seamlessly into a continuous matching beige studio background. Use one opaque wide 3:1 landscape canvas with generous safe margins around all focal content. No grid sheet, no neighboring assets, no new objects or text. Do not crop tighter. Clean coherent realistic game artwork.",
+      "receipt": "evidence/convergence/art-border-repair-20261008/receipts/cards-COM-A.json",
+      "reason": [
+        {
+          "kind": "RETAINED_DIVIDER_OR_STRIP",
+          "observation": "Bottom divider with neighboring antenna fragment."
+        }
+      ],
+      "outputDimensions": [
+        2172,
+        724
+      ],
+      "generatedPngSha256": "30b1fcdf11863b728a2030556d3965d8c14149e8ba8aa44e0d1137ae87e0a250",
+      "webpSha256": "57bfefac8afca6750180e2737b517adff3c7c7c4b41f75fc8a3c25d8f5dca0bc",
+      "svgSha256": "69fd9d3844708832feefd30fdf3f8c8eda817a168eff111a24c3bdd98e619df3",
+      "rasterConversion": "lossless WebP; decoded RGBA equals generated PNG; no resize/crop/paint",
+      "vectorConversion": "vtracer 0.6.15 polygon trace; color precision 6, speckle 24, layer difference 16, length threshold 6, path precision 0; visual review required",
+      "visualReview": "Comparison sheets: complete focal subjects and no unintended divider/neighbor strips; simplified native vector appearance retained",
+      "rightsStatus": "User attested assistant generation; final classroom/content acceptance OPEN"
+    },
+    {
+      "asset": "cards/COM-B",
+      "date": "2026-10-08",
+      "tool": "OpenAI built-in image_gen",
+      "model": "not reported by tool",
+      "inputSha256": "922e4e2250548cffd8be3b5fd35be2f3e1774e35d886929542f611036cc635fa",
+      "prompt": "Precise artwork repair of SEA Game cards/COM-B. Findings: Bottom grid divider and neighboring panel fragment.. Remove unwanted white edge borders, grid dividers and fragments from neighboring panels. Restore any missing focal subject edges, antennas, barrels or equipment through coherent reconstruction. Preserve the original subject identity, recognizable geometry, component count, arrangement, colors, realistic detail and lighting. Show the complete standalone equipment/vehicle with all protrusions and cables visible. Blend the hard portrait-panel backdrop seamlessly into a continuous matching beige studio background. Use one opaque wide 3:1 landscape canvas with generous safe margins around all focal content. No grid sheet, no neighboring assets, no new objects or text. Do not crop tighter. Clean coherent realistic game artwork.",
+      "receipt": "evidence/convergence/art-border-repair-20261008/receipts/cards-COM-B.json",
+      "reason": [
+        {
+          "kind": "RETAINED_DIVIDER_OR_STRIP",
+          "observation": "Bottom grid divider and neighboring panel fragment."
+        }
+      ],
+      "outputDimensions": [
+        2172,
+        724
+      ],
+      "generatedPngSha256": "045925be98ae109480b2560dce0178ba3db0d9283bbb380a8bcdd2e2692c72cd",
+      "webpSha256": "703c472f55956dab2e7af719bbac1a5d477b63a388fb1f63ebe1f9c31c41efd6",
+      "svgSha256": "5aa0cb5810e2fa88cea9d3bcd439a24ab11ccbaf54daefa25aa5045cec5287d7",
+      "rasterConversion": "lossless WebP; decoded RGBA equals generated PNG; no resize/crop/paint",
+      "vectorConversion": "vtracer 0.6.15 polygon trace; color precision 6, speckle 24, layer difference 16, length threshold 6, path precision 0; visual review required",
+      "visualReview": "Comparison sheets: complete focal subjects and no unintended divider/neighbor strips; simplified native vector appearance retained",
+      "rightsStatus": "User attested assistant generation; final classroom/content acceptance OPEN"
+    },
+    {
+      "asset": "cards/COM-C",
+      "date": "2026-10-08",
+      "tool": "OpenAI built-in image_gen",
+      "model": "not reported by tool",
+      "inputSha256": "4761fc4915b82ac157a424d7a2e1278489ac1bfb79afc46542116f6c6ff50254",
+      "prompt": "Precise artwork repair of SEA Game cards/COM-C. Findings: Tall antenna cut at top.; Bottom grid divider and adjacent strip.. Remove unwanted white edge borders, grid dividers and fragments from neighboring panels. Restore any missing focal subject edges, antennas, barrels or equipment through coherent reconstruction. Preserve the original subject identity, recognizable geometry, component count, arrangement, colors, realistic detail and lighting. Show the complete standalone equipment/vehicle with all protrusions and cables visible. Blend the hard portrait-panel backdrop seamlessly into a continuous matching beige studio background. Use one opaque wide 3:1 landscape canvas with generous safe margins around all focal content. No grid sheet, no neighboring assets, no new objects or text. Do not crop tighter. Clean coherent realistic game artwork.",
+      "receipt": "evidence/convergence/art-border-repair-20261008/receipts/cards-COM-C.json",
+      "reason": [
+        {
+          "kind": "SUBJECT_CLIPPED",
+          "observation": "Tall antenna cut at top."
+        },
+        {
+          "kind": "RETAINED_DIVIDER_OR_STRIP",
+          "observation": "Bottom grid divider and adjacent strip."
+        }
+      ],
+      "outputDimensions": [
+        2172,
+        724
+      ],
+      "generatedPngSha256": "357113eadc94737d9624a1ac9fdbab1eb9bfb46ef16d4894c2b1bd61a82edb68",
+      "webpSha256": "76aea04b0e4910868d7d9d086787f76bfdf6af0791b52cd9549b689588d384c2",
+      "svgSha256": "5fe51e24171eda5d09ccd339326935b39e26b2e1bc6c7313996c2e1bc86e4579",
+      "rasterConversion": "lossless WebP; decoded RGBA equals generated PNG; no resize/crop/paint",
+      "vectorConversion": "vtracer 0.6.15 polygon trace; color precision 6, speckle 24, layer difference 16, length threshold 6, path precision 0; visual review required",
+      "visualReview": "Comparison sheets: complete focal subjects and no unintended divider/neighbor strips; simplified native vector appearance retained",
+      "rightsStatus": "User attested assistant generation; final classroom/content acceptance OPEN"
+    },
+    {
+      "asset": "cards/COM-D",
+      "date": "2026-10-08",
+      "tool": "OpenAI built-in image_gen",
+      "model": "not reported by tool",
+      "inputSha256": "469bad08884ed7578ebd321f50b95841e06a0bf879bbacc8b80da9f24ed3736e",
+      "prompt": "Precise artwork repair of SEA Game cards/COM-D. Findings: Bottom divider and neighboring antenna tips.. Remove unwanted white edge borders, grid dividers and fragments from neighboring panels. Restore any missing focal subject edges, antennas, barrels or equipment through coherent reconstruction. Preserve the original subject identity, recognizable geometry, component count, arrangement, colors, realistic detail and lighting. Show the complete standalone equipment/vehicle with all protrusions and cables visible. Blend the hard portrait-panel backdrop seamlessly into a continuous matching beige studio background. Use one opaque wide 3:1 landscape canvas with generous safe margins around all focal content. No grid sheet, no neighboring assets, no new objects or text. Do not crop tighter. Clean coherent realistic game artwork.",
+      "receipt": "evidence/convergence/art-border-repair-20261008/receipts/cards-COM-D.json",
+      "reason": [
+        {
+          "kind": "RETAINED_DIVIDER_OR_STRIP",
+          "observation": "Bottom divider and neighboring antenna tips."
+        }
+      ],
+      "outputDimensions": [
+        2172,
+        724
+      ],
+      "generatedPngSha256": "8e8fbb49eef2e418c2e23085a6957d425eb6e2d42d556ccd3a4e24c24478181c",
+      "webpSha256": "ecd7c203b5ab1235bc2783e53ee57bf699346961d53700a1800d5425cc9345af",
+      "svgSha256": "ed30450ce8bbe4cc453b60a7bfd74de314165758f5e29a725de92cb0c7b42a7d",
+      "rasterConversion": "lossless WebP; decoded RGBA equals generated PNG; no resize/crop/paint",
+      "vectorConversion": "vtracer 0.6.15 polygon trace; color precision 6, speckle 24, layer difference 16, length threshold 6, path precision 0; visual review required",
+      "visualReview": "Comparison sheets: complete focal subjects and no unintended divider/neighbor strips; simplified native vector appearance retained",
+      "rightsStatus": "User attested assistant generation; final classroom/content acceptance OPEN"
+    },
+    {
+      "asset": "cards/COM-E",
+      "date": "2026-10-08",
+      "tool": "OpenAI built-in image_gen",
+      "model": "not reported by tool",
+      "inputSha256": "9b5ee56976daf881282b2597ee853c8438dacf89de098982954d1333152bc7d7",
+      "prompt": "Precise artwork repair of SEA Game cards/COM-E. Findings: Mast extends beyond top boundary.; Right white divider/adjacent strip.. Remove unwanted white edge borders, grid dividers and fragments from neighboring panels. Restore any missing focal subject edges, antennas, barrels or equipment through coherent reconstruction. Preserve the original subject identity, recognizable geometry, component count, arrangement, colors, realistic detail and lighting. Show the complete standalone equipment/vehicle with all protrusions and cables visible. Blend the hard portrait-panel backdrop seamlessly into a continuous matching beige studio background. Use one opaque wide 3:1 landscape canvas with generous safe margins around all focal content. No grid sheet, no neighboring assets, no new objects or text. Do not crop tighter. Clean coherent realistic game artwork.",
+      "receipt": "evidence/convergence/art-border-repair-20261008/receipts/cards-COM-E.json",
+      "reason": [
+        {
+          "kind": "SUBJECT_CLIPPED",
+          "observation": "Mast extends beyond top boundary."
+        },
+        {
+          "kind": "RETAINED_DIVIDER_OR_STRIP",
+          "observation": "Right white divider/adjacent strip."
+        }
+      ],
+      "outputDimensions": [
+        2172,
+        724
+      ],
+      "generatedPngSha256": "b337e616f62a89486ae26f0706aadb3e1fc208d3c9d56250f174463b086fa0cf",
+      "webpSha256": "882e2c53c99a1ee6492690c33597e29d619b3f15673cad34ba131d703e88c8dc",
+      "svgSha256": "64855badea1e5080915bed3ec4e16c31e318e0dab9129007cb6d0a1b529d99e6",
+      "rasterConversion": "lossless WebP; decoded RGBA equals generated PNG; no resize/crop/paint",
+      "vectorConversion": "vtracer 0.6.15 polygon trace; color precision 6, speckle 24, layer difference 16, length threshold 6, path precision 0; visual review required",
+      "visualReview": "Comparison sheets: complete focal subjects and no unintended divider/neighbor strips; simplified native vector appearance retained",
+      "rightsStatus": "User attested assistant generation; final classroom/content acceptance OPEN"
+    },
+    {
+      "asset": "cards/COM-F",
+      "date": "2026-10-08",
+      "tool": "OpenAI built-in image_gen",
+      "model": "not reported by tool",
+      "inputSha256": "21cbc76a7248b2c5f5822a0a7a48dc5622f615df759155797733cbd0fd56d207",
+      "prompt": "Precise artwork repair of SEA Game cards/COM-F. Findings: Antenna cropped at top.; Thin right frame.. Remove unwanted white edge borders, grid dividers and fragments from neighboring panels. Restore any missing focal subject edges, antennas, barrels or equipment through coherent reconstruction. Preserve the original subject identity, recognizable geometry, component count, arrangement, colors, realistic detail and lighting. Show the complete standalone equipment/vehicle with all protrusions and cables visible. Blend the hard portrait-panel backdrop seamlessly into a continuous matching beige studio background. Use one opaque wide 3:1 landscape canvas with generous safe margins around all focal content. No grid sheet, no neighboring assets, no new objects or text. Do not crop tighter. Clean coherent realistic game artwork.",
+      "receipt": "evidence/convergence/art-border-repair-20261008/receipts/cards-COM-F.json",
+      "reason": [
+        {
+          "kind": "SUBJECT_CLIPPED",
+          "observation": "Antenna cropped at top."
+        },
+        {
+          "kind": "THIN_FRAME_REVIEW",
+          "observation": "Thin right frame."
+        }
+      ],
+      "outputDimensions": [
+        2172,
+        724
+      ],
+      "generatedPngSha256": "46e63f8d7cdaaa68ffe193e9b112da1bee0934e7473ee7228c98783227e4df7e",
+      "webpSha256": "f81dd3715f2f0a9913f6a8298e42557ec5c95591f7bbfa666b03ad9937a036ed",
+      "svgSha256": "1bb9796f0faf2b99868f0a4759168e31ee76084aa44d1a95c2f6f48190e74afc",
+      "rasterConversion": "lossless WebP; decoded RGBA equals generated PNG; no resize/crop/paint",
+      "vectorConversion": "vtracer 0.6.15 polygon trace; color precision 6, speckle 24, layer difference 16, length threshold 6, path precision 0; visual review required",
+      "visualReview": "Comparison sheets: complete focal subjects and no unintended divider/neighbor strips; simplified native vector appearance retained",
+      "rightsStatus": "User attested assistant generation; final classroom/content acceptance OPEN"
+    },
+    {
+      "asset": "cards/COM-G",
+      "date": "2026-10-08",
+      "tool": "OpenAI built-in image_gen",
+      "model": "not reported by tool",
+      "inputSha256": "786420d2595fe7afa319ee5a18e93b28c0f352acec4d8b042f624d5f34f4b383",
+      "prompt": "Precise artwork repair of SEA Game cards/COM-G. Findings: Tall antennas cropped at top.. Remove unwanted white edge borders, grid dividers and fragments from neighboring panels. Restore any missing focal subject edges, antennas, barrels or equipment through coherent reconstruction. Preserve the original subject identity, recognizable geometry, component count, arrangement, colors, realistic detail and lighting. Show the complete standalone equipment/vehicle with all protrusions and cables visible. Blend the hard portrait-panel backdrop seamlessly into a continuous matching beige studio background. Use one opaque wide 3:1 landscape canvas with generous safe margins around all focal content. No grid sheet, no neighboring assets, no new objects or text. Do not crop tighter. Clean coherent realistic game artwork.",
+      "receipt": "evidence/convergence/art-border-repair-20261008/receipts/cards-COM-G.json",
+      "reason": [
+        {
+          "kind": "SUBJECT_CLIPPED",
+          "observation": "Tall antennas cropped at top."
+        }
+      ],
+      "outputDimensions": [
+        2172,
+        724
+      ],
+      "generatedPngSha256": "95bed94cb4b77e0e3c167132532810161dde69f7114fd81497b3073740fbaf32",
+      "webpSha256": "caa81a4fd183cb2419f37aa9922e0b2efda13f59ed9ba12ef1fe865713a6322d",
+      "svgSha256": "286720087c7e68756616f2482d644703abbf533de632cf23c7b9a8297fcad211",
+      "rasterConversion": "lossless WebP; decoded RGBA equals generated PNG; no resize/crop/paint",
+      "vectorConversion": "vtracer 0.6.15 polygon trace; color precision 6, speckle 24, layer difference 16, length threshold 6, path precision 0; visual review required",
+      "visualReview": "Comparison sheets: complete focal subjects and no unintended divider/neighbor strips; simplified native vector appearance retained",
+      "rightsStatus": "User attested assistant generation; final classroom/content acceptance OPEN"
+    },
+    {
+      "asset": "cards/FP-A",
+      "date": "2026-10-08",
+      "tool": "OpenAI built-in image_gen",
+      "model": "not reported by tool",
+      "inputSha256": "73a2296fc902a9db6204c9e3afe580c65fbbc39939abc5caeab42fd24b0e79b0",
+      "prompt": "Precise artwork repair of SEA Game cards/FP-A. Findings: Right and bottom grid dividers/strip.. Remove unwanted white edge borders, grid dividers and fragments from neighboring panels. Restore any missing focal subject edges, antennas, barrels or equipment through coherent reconstruction. Preserve the original subject identity, recognizable geometry, component count, arrangement, colors, realistic detail and lighting. Show the complete standalone equipment/vehicle with all protrusions and cables visible. Blend the hard portrait-panel backdrop seamlessly into a continuous matching beige studio background. Use one opaque wide 3:1 landscape canvas with generous safe margins around all focal content. No grid sheet, no neighboring assets, no new objects or text. Do not crop tighter. Clean coherent realistic game artwork.",
+      "receipt": "evidence/convergence/art-border-repair-20261008/receipts/cards-FP-A.json",
+      "reason": [
+        {
+          "kind": "RETAINED_DIVIDER_OR_STRIP",
+          "observation": "Right and bottom grid dividers/strip."
+        }
+      ],
+      "outputDimensions": [
+        2172,
+        724
+      ],
+      "generatedPngSha256": "fa55a03beb571dfc07d6cf405b7d68f6e6471c3fdf87972f3c0ed76c385b7c9e",
+      "webpSha256": "adec628292f30c60334d8c0f73c0b90a7b4fbfbda43275cb315880425eed6dc1",
+      "svgSha256": "1647b866b18dbe73270073c4c2d454836e58ee6a25716b06d668849fe141dbc0",
+      "rasterConversion": "lossless WebP; decoded RGBA equals generated PNG; no resize/crop/paint",
+      "vectorConversion": "vtracer 0.6.15 polygon trace; color precision 6, speckle 24, layer difference 16, length threshold 6, path precision 0; visual review required",
+      "visualReview": "Comparison sheets: complete focal subjects and no unintended divider/neighbor strips; simplified native vector appearance retained",
+      "rightsStatus": "User attested assistant generation; final classroom/content acceptance OPEN"
+    },
+    {
+      "asset": "cards/FP-B",
+      "date": "2026-10-08",
+      "tool": "OpenAI built-in image_gen",
+      "model": "not reported by tool",
+      "inputSha256": "e1f77de627d2fa0d5ceac1785f55ec29a49075cf2353f6f4e613c10111246d0c",
+      "prompt": "Precise artwork repair of SEA Game cards/FP-B. Findings: Barrel/muzzle extends beyond left boundary.; Right/bottom grid seams with extra panel strip.. Remove unwanted white edge borders, grid dividers and fragments from neighboring panels. Restore any missing focal subject edges, antennas, barrels or equipment through coherent reconstruction. Preserve the original subject identity, recognizable geometry, component count, arrangement, colors, realistic detail and lighting. Show the complete standalone equipment/vehicle with all protrusions and cables visible. Blend the hard portrait-panel backdrop seamlessly into a continuous matching beige studio background. Use one opaque wide 3:1 landscape canvas with generous safe margins around all focal content. No grid sheet, no neighboring assets, no new objects or text. Do not crop tighter. Clean coherent realistic game artwork.",
+      "receipt": "evidence/convergence/art-border-repair-20261008/receipts/cards-FP-B.json",
+      "reason": [
+        {
+          "kind": "SUBJECT_CLIPPED",
+          "observation": "Barrel/muzzle extends beyond left boundary."
+        },
+        {
+          "kind": "RETAINED_DIVIDER_OR_STRIP",
+          "observation": "Right/bottom grid seams with extra panel strip."
+        }
+      ],
+      "outputDimensions": [
+        2172,
+        724
+      ],
+      "generatedPngSha256": "1df5abcb46bb98e8b543cf79bd92051ad10a790e6ba2cfdd7b41293745f8944d",
+      "webpSha256": "29b3d5a765c9371181d88c4903ad30e36a24f6a6d1cf2496150e5a1a17ac836a",
+      "svgSha256": "98141946fdb2207043c7b307cbecae2ea83b1739f7156a36603ee64bc27d270f",
+      "rasterConversion": "lossless WebP; decoded RGBA equals generated PNG; no resize/crop/paint",
+      "vectorConversion": "vtracer 0.6.15 polygon trace; color precision 6, speckle 24, layer difference 16, length threshold 6, path precision 0; visual review required",
+      "visualReview": "Comparison sheets: complete focal subjects and no unintended divider/neighbor strips; simplified native vector appearance retained",
+      "rightsStatus": "User attested assistant generation; final classroom/content acceptance OPEN"
+    },
+    {
+      "asset": "cards/FP-C",
+      "date": "2026-10-08",
+      "tool": "OpenAI built-in image_gen",
+      "model": "not reported by tool",
+      "inputSha256": "aca7671c6053adef0f642872faff9b776fd9a9f401f56b8f32a71506ef666d7c",
+      "prompt": "Precise artwork repair of SEA Game cards/FP-C. Findings: Barrel cropped on left; right-side housing also intersects edge.; Bottom white grid seam/extra strip.. Remove unwanted white edge borders, grid dividers and fragments from neighboring panels. Restore any missing focal subject edges, antennas, barrels or equipment through coherent reconstruction. Preserve the original subject identity, recognizable geometry, component count, arrangement, colors, realistic detail and lighting. Show the complete standalone equipment/vehicle with all protrusions and cables visible. Blend the hard portrait-panel backdrop seamlessly into a continuous matching beige studio background. Use one opaque wide 3:1 landscape canvas with generous safe margins around all focal content. No grid sheet, no neighboring assets, no new objects or text. Do not crop tighter. Clean coherent realistic game artwork.",
+      "receipt": "evidence/convergence/art-border-repair-20261008/receipts/cards-FP-C.json",
+      "reason": [
+        {
+          "kind": "SUBJECT_CLIPPED",
+          "observation": "Barrel cropped on left; right-side housing also intersects edge."
+        },
+        {
+          "kind": "RETAINED_DIVIDER_OR_STRIP",
+          "observation": "Bottom white grid seam/extra strip."
+        }
+      ],
+      "outputDimensions": [
+        2172,
+        724
+      ],
+      "generatedPngSha256": "36dee7a9a53d3c404866f9ea72ad391c2f67ba14205bca7396cfae94012b22d0",
+      "webpSha256": "428f1d66c7109f43e57ccf90afa1d35897d1ddab917ecd6332e8d1f42f1e0eb2",
+      "svgSha256": "5fa29c45813447e0c34c14fbc6e0ddf58120f6035c261907f6be7695a2d86ac2",
+      "rasterConversion": "lossless WebP; decoded RGBA equals generated PNG; no resize/crop/paint",
+      "vectorConversion": "vtracer 0.6.15 polygon trace; color precision 6, speckle 24, layer difference 16, length threshold 6, path precision 0; visual review required",
+      "visualReview": "Comparison sheets: complete focal subjects and no unintended divider/neighbor strips; simplified native vector appearance retained",
+      "rightsStatus": "User attested assistant generation; final classroom/content acceptance OPEN"
+    },
+    {
+      "asset": "cards/FP-D",
+      "date": "2026-10-08",
+      "tool": "OpenAI built-in image_gen",
+      "model": "not reported by tool",
+      "inputSha256": "fa5ed1be08d055cf5749a6b6c6a77b577833be67fdb277b01c34e0f48b249c94",
+      "prompt": "Precise artwork repair of SEA Game cards/FP-D. Findings: Left and bottom grid seams.. Remove unwanted white edge borders, grid dividers and fragments from neighboring panels. Restore any missing focal subject edges, antennas, barrels or equipment through coherent reconstruction. Preserve the original subject identity, recognizable geometry, component count, arrangement, colors, realistic detail and lighting. Show the complete standalone equipment/vehicle with all protrusions and cables visible. Blend the hard portrait-panel backdrop seamlessly into a continuous matching beige studio background. Use one opaque wide 3:1 landscape canvas with generous safe margins around all focal content. No grid sheet, no neighboring assets, no new objects or text. Do not crop tighter. Clean coherent realistic game artwork.",
+      "receipt": "evidence/convergence/art-border-repair-20261008/receipts/cards-FP-D.json",
+      "reason": [
+        {
+          "kind": "RETAINED_DIVIDER_OR_STRIP",
+          "observation": "Left and bottom grid seams."
+        }
+      ],
+      "outputDimensions": [
+        2172,
+        724
+      ],
+      "generatedPngSha256": "0c69cbba903a8a646a4651005d6d6d74f8b70a138175e5e11580d2a644b3300b",
+      "webpSha256": "dd7f61d41a81f1a5f0cffc0e203b39b76515768b78ccaf025ce4eda91c36f98b",
+      "svgSha256": "1d3f925f18fd8c17c9a95a52c25e299dedefc9c2e0a2c5c23a874297b0b2a2ab",
+      "rasterConversion": "lossless WebP; decoded RGBA equals generated PNG; no resize/crop/paint",
+      "vectorConversion": "vtracer 0.6.15 polygon trace; color precision 6, speckle 24, layer difference 16, length threshold 6, path precision 0; visual review required",
+      "visualReview": "Comparison sheets: complete focal subjects and no unintended divider/neighbor strips; simplified native vector appearance retained",
+      "rightsStatus": "User attested assistant generation; final classroom/content acceptance OPEN"
+    },
+    {
+      "asset": "cards/FP-E",
+      "date": "2026-10-08",
+      "tool": "OpenAI built-in image_gen",
+      "model": "not reported by tool",
+      "inputSha256": "f7c1110484d9d87534258e311b23655f507e257660c5ab32837db47c3cc02fab",
+      "prompt": "Precise artwork repair of SEA Game cards/FP-E. Findings: Right white divider and extra strip.. Remove unwanted white edge borders, grid dividers and fragments from neighboring panels. Restore any missing focal subject edges, antennas, barrels or equipment through coherent reconstruction. Preserve the original subject identity, recognizable geometry, component count, arrangement, colors, realistic detail and lighting. Show the complete standalone equipment/vehicle with all protrusions and cables visible. Blend the hard portrait-panel backdrop seamlessly into a continuous matching beige studio background. Use one opaque wide 3:1 landscape canvas with generous safe margins around all focal content. No grid sheet, no neighboring assets, no new objects or text. Do not crop tighter. Clean coherent realistic game artwork.",
+      "receipt": "evidence/convergence/art-border-repair-20261008/receipts/cards-FP-E.json",
+      "reason": [
+        {
+          "kind": "RETAINED_DIVIDER_OR_STRIP",
+          "observation": "Right white divider and extra strip."
+        }
+      ],
+      "outputDimensions": [
+        2172,
+        724
+      ],
+      "generatedPngSha256": "d60a75fa56faba300919ea5f3868fc2f75fcc3bda474bd760edc1638fce2bc59",
+      "webpSha256": "59aac902e2c1d44b55ed986cb768c681484f3e0b8a50f973299efd55c9fd9e63",
+      "svgSha256": "35ed9442a1d05b2f302f5f75c7a804edd682c85b6834581bb4750cbac9fbd7a1",
+      "rasterConversion": "lossless WebP; decoded RGBA equals generated PNG; no resize/crop/paint",
+      "vectorConversion": "vtracer 0.6.15 polygon trace; color precision 6, speckle 24, layer difference 16, length threshold 6, path precision 0; visual review required",
+      "visualReview": "Comparison sheets: complete focal subjects and no unintended divider/neighbor strips; simplified native vector appearance retained",
+      "rightsStatus": "User attested assistant generation; final classroom/content acceptance OPEN"
+    },
+    {
+      "asset": "cards/FP-F",
+      "date": "2026-10-08",
+      "tool": "OpenAI built-in image_gen",
+      "model": "not reported by tool",
+      "inputSha256": "b762c359eea3264df708910e2826eefdc89850501fe42bdd6b98e8c7f8fef355",
+      "prompt": "Precise artwork repair of SEA Game cards/FP-F. Findings: Right white divider and extra strip.. Remove unwanted white edge borders, grid dividers and fragments from neighboring panels. Restore any missing focal subject edges, antennas, barrels or equipment through coherent reconstruction. Preserve the original subject identity, recognizable geometry, component count, arrangement, colors, realistic detail and lighting. Show the complete standalone equipment/vehicle with all protrusions and cables visible. Blend the hard portrait-panel backdrop seamlessly into a continuous matching beige studio background. Use one opaque wide 3:1 landscape canvas with generous safe margins around all focal content. No grid sheet, no neighboring assets, no new objects or text. Do not crop tighter. Clean coherent realistic game artwork.",
+      "receipt": "evidence/convergence/art-border-repair-20261008/receipts/cards-FP-F.json",
+      "reason": [
+        {
+          "kind": "RETAINED_DIVIDER_OR_STRIP",
+          "observation": "Right white divider and extra strip."
+        }
+      ],
+      "outputDimensions": [
+        2172,
+        724
+      ],
+      "generatedPngSha256": "e7c49a99f9e60bbe2309e6c6ff9ec80f5ed54f4a7b9dcaaf34a89c0c92e07eaf",
+      "webpSha256": "b0307fc4b2dc1b194290381eb6e7d78d0d9dfbd0987fbb87392f2625d37c146e",
+      "svgSha256": "ac2150759fd153b069f32e7529a69a3c5352de1b9364fd7520a267ff5fa23ef7",
+      "rasterConversion": "lossless WebP; decoded RGBA equals generated PNG; no resize/crop/paint",
+      "vectorConversion": "vtracer 0.6.15 polygon trace; color precision 6, speckle 24, layer difference 16, length threshold 6, path precision 0; visual review required",
+      "visualReview": "Comparison sheets: complete focal subjects and no unintended divider/neighbor strips; simplified native vector appearance retained",
+      "rightsStatus": "User attested assistant generation; final classroom/content acceptance OPEN"
+    },
+    {
+      "asset": "cards/FP-G",
+      "date": "2026-10-08",
+      "tool": "OpenAI built-in image_gen",
+      "model": "not reported by tool",
+      "inputSha256": "2e4318c4408f17bd3e7a13eb0877203526a776382ac0ea4c3efe63327e2623c6",
+      "prompt": "Precise artwork repair of SEA Game cards/FP-G. Findings: Left equipment box clipped.. Remove unwanted white edge borders, grid dividers and fragments from neighboring panels. Restore any missing focal subject edges, antennas, barrels or equipment through coherent reconstruction. Preserve the original subject identity, recognizable geometry, component count, arrangement, colors, realistic detail and lighting. Show the complete standalone equipment/vehicle with all protrusions and cables visible. Blend the hard portrait-panel backdrop seamlessly into a continuous matching beige studio background. Use one opaque wide 3:1 landscape canvas with generous safe margins around all focal content. No grid sheet, no neighboring assets, no new objects or text. Do not crop tighter. Clean coherent realistic game artwork.",
+      "receipt": "evidence/convergence/art-border-repair-20261008/receipts/cards-FP-G.json",
+      "reason": [
+        {
+          "kind": "SUBJECT_CLIPPED",
+          "observation": "Left equipment box clipped."
+        }
+      ],
+      "outputDimensions": [
+        2172,
+        724
+      ],
+      "generatedPngSha256": "e51ba9074e6e6832e6c67b0a05462826c69cdddcc150f437c3b83eb829a20fb3",
+      "webpSha256": "f7efe6b807d79eebfb3fd9ce9a6bef6c8c6dd547d0dda86a1d4e870605765583",
+      "svgSha256": "2f6befb679178b4f427896b34c8c5a23c22add2008cefd59acc82aaff164797f",
+      "rasterConversion": "lossless WebP; decoded RGBA equals generated PNG; no resize/crop/paint",
+      "vectorConversion": "vtracer 0.6.15 polygon trace; color precision 6, speckle 24, layer difference 16, length threshold 6, path precision 0; visual review required",
+      "visualReview": "Comparison sheets: complete focal subjects and no unintended divider/neighbor strips; simplified native vector appearance retained",
+      "rightsStatus": "User attested assistant generation; final classroom/content acceptance OPEN"
+    },
+    {
+      "asset": "cards/MOB-A",
+      "date": "2026-10-08",
+      "tool": "OpenAI built-in image_gen",
+      "model": "not reported by tool",
+      "inputSha256": "9665387b7a30d9300b47c71f047c22f12ab7bee74c23d8b0998c781d741bbf4b",
+      "prompt": "Precise artwork repair of SEA Game cards/MOB-A. Findings: Thin left frame.. Remove unwanted white edge borders, grid dividers and fragments from neighboring panels. Restore any missing focal subject edges, antennas, barrels or equipment through coherent reconstruction. Preserve the original subject identity, recognizable geometry, component count, arrangement, colors, realistic detail and lighting. Show the complete standalone equipment/vehicle with all protrusions and cables visible. Blend the hard portrait-panel backdrop seamlessly into a continuous matching beige studio background. Use one opaque wide 3:1 landscape canvas with generous safe margins around all focal content. No grid sheet, no neighboring assets, no new objects or text. Do not crop tighter. Clean coherent realistic game artwork.",
+      "receipt": "evidence/convergence/art-border-repair-20261008/receipts/cards-MOB-A.json",
+      "reason": [
+        {
+          "kind": "THIN_FRAME_REVIEW",
+          "observation": "Thin left frame."
+        }
+      ],
+      "outputDimensions": [
+        2172,
+        724
+      ],
+      "generatedPngSha256": "8e9a09d8eb0d1f8bc0a6ba6aa164a34b5d04a13b04f97eb89485d40fe85bb066",
+      "webpSha256": "ef9fbe639830c116271c0b87a04bf797675b7df2003d06f07e891d61ef238372",
+      "svgSha256": "09f6e32169434606a11b558b5a24e091a8064d4e719cdc76d86e3f341ff65e8e",
+      "rasterConversion": "lossless WebP; decoded RGBA equals generated PNG; no resize/crop/paint",
+      "vectorConversion": "vtracer 0.6.15 polygon trace; color precision 6, speckle 24, layer difference 16, length threshold 6, path precision 0; visual review required",
+      "visualReview": "Comparison sheets: complete focal subjects and no unintended divider/neighbor strips; simplified native vector appearance retained",
+      "rightsStatus": "User attested assistant generation; final classroom/content acceptance OPEN"
+    },
+    {
+      "asset": "cards/MOB-D",
+      "date": "2026-10-08",
+      "tool": "OpenAI built-in image_gen",
+      "model": "not reported by tool",
+      "inputSha256": "7cd2208b770b7782260082be34f887a2499c23ad0ef5b7f3878ddcbb10dd2372",
+      "prompt": "Precise artwork repair of SEA Game cards/MOB-D. Findings: Thin right frame.. Remove unwanted white edge borders, grid dividers and fragments from neighboring panels. Restore any missing focal subject edges, antennas, barrels or equipment through coherent reconstruction. Preserve the original subject identity, recognizable geometry, component count, arrangement, colors, realistic detail and lighting. Show the complete standalone equipment/vehicle with all protrusions and cables visible. Blend the hard portrait-panel backdrop seamlessly into a continuous matching beige studio background. Use one opaque wide 3:1 landscape canvas with generous safe margins around all focal content. No grid sheet, no neighboring assets, no new objects or text. Do not crop tighter. Clean coherent realistic game artwork.",
+      "receipt": "evidence/convergence/art-border-repair-20261008/receipts/cards-MOB-D.json",
+      "reason": [
+        {
+          "kind": "THIN_FRAME_REVIEW",
+          "observation": "Thin right frame."
+        }
+      ],
+      "outputDimensions": [
+        2172,
+        724
+      ],
+      "generatedPngSha256": "a2f52f617383cd812b6ffdebe98f12379ed7bd0441628bae7c5b441b42b1ad81",
+      "webpSha256": "bb8393894b6e6e00de6393b16628e5208353239a5e79a714602d13582ae18754",
+      "svgSha256": "f7ab033f617d03d0a34b6e05139177d25161f1f18c924a3a70abcea5c795210a",
+      "rasterConversion": "lossless WebP; decoded RGBA equals generated PNG; no resize/crop/paint",
+      "vectorConversion": "vtracer 0.6.15 polygon trace; color precision 6, speckle 24, layer difference 16, length threshold 6, path precision 0; visual review required",
+      "visualReview": "Comparison sheets: complete focal subjects and no unintended divider/neighbor strips; simplified native vector appearance retained",
+      "rightsStatus": "User attested assistant generation; final classroom/content acceptance OPEN"
+    },
+    {
+      "asset": "cards/MOB-E",
+      "date": "2026-10-08",
+      "tool": "OpenAI built-in image_gen",
+      "model": "not reported by tool",
+      "inputSha256": "7c599597cae7bd2b8beaeaca37c1fffaca953cbee3875b8d4721afc864674722",
+      "prompt": "Precise artwork repair of SEA Game cards/MOB-E. Findings: Thin left/bottom frame.. Remove unwanted white edge borders, grid dividers and fragments from neighboring panels. Restore any missing focal subject edges, antennas, barrels or equipment through coherent reconstruction. Preserve the original subject identity, recognizable geometry, component count, arrangement, colors, realistic detail and lighting. Show the complete standalone equipment/vehicle with all protrusions and cables visible. Blend the hard portrait-panel backdrop seamlessly into a continuous matching beige studio background. Use one opaque wide 3:1 landscape canvas with generous safe margins around all focal content. No grid sheet, no neighboring assets, no new objects or text. Do not crop tighter. Clean coherent realistic game artwork.",
+      "receipt": "evidence/convergence/art-border-repair-20261008/receipts/cards-MOB-E.json",
+      "reason": [
+        {
+          "kind": "THIN_FRAME_REVIEW",
+          "observation": "Thin left/bottom frame."
+        }
+      ],
+      "outputDimensions": [
+        2172,
+        724
+      ],
+      "generatedPngSha256": "f6be9f48410b9c248e877e2e8e7e7bbfcb9f82da1515206da9a03b3c58d65cb5",
+      "webpSha256": "21222844d6e3bad7a44bbbef0ccf6dbbc871c1853dfaeba1cc3f77a5d6b4b7dd",
+      "svgSha256": "4f6a97bc424c5acb7b4ce38efd2a64e52ac75c99b7e0be11bde41255fa56222f",
+      "rasterConversion": "lossless WebP; decoded RGBA equals generated PNG; no resize/crop/paint",
+      "vectorConversion": "vtracer 0.6.15 polygon trace; color precision 6, speckle 24, layer difference 16, length threshold 6, path precision 0; visual review required",
+      "visualReview": "Comparison sheets: complete focal subjects and no unintended divider/neighbor strips; simplified native vector appearance retained",
+      "rightsStatus": "User attested assistant generation; final classroom/content acceptance OPEN"
+    },
+    {
+      "asset": "cards/MOB-F",
+      "date": "2026-10-08",
+      "tool": "OpenAI built-in image_gen",
+      "model": "not reported by tool",
+      "inputSha256": "2114a22a5d305c387d151cca8e56d727581c4fc46571af5663cd7284ebc485be",
+      "prompt": "Precise artwork repair of SEA Game cards/MOB-F. Findings: Thin left/right/bottom frame.. Remove unwanted white edge borders, grid dividers and fragments from neighboring panels. Restore any missing focal subject edges, antennas, barrels or equipment through coherent reconstruction. Preserve the original subject identity, recognizable geometry, component count, arrangement, colors, realistic detail and lighting. Show the complete standalone equipment/vehicle with all protrusions and cables visible. Blend the hard portrait-panel backdrop seamlessly into a continuous matching beige studio background. Use one opaque wide 3:1 landscape canvas with generous safe margins around all focal content. No grid sheet, no neighboring assets, no new objects or text. Do not crop tighter. Clean coherent realistic game artwork.",
+      "receipt": "evidence/convergence/art-border-repair-20261008/receipts/cards-MOB-F.json",
+      "reason": [
+        {
+          "kind": "THIN_FRAME_REVIEW",
+          "observation": "Thin left/right/bottom frame."
+        }
+      ],
+      "outputDimensions": [
+        2172,
+        724
+      ],
+      "generatedPngSha256": "501b02eea1978819b56a83495b3dbbdc7f28f7a659c94d7fcb1dc75db1402537",
+      "webpSha256": "51fcffd589997d3cc5341362b25b7175ee4e6a2d28ede276bfbe1e9d52af3c26",
+      "svgSha256": "8a1d78dc06afdceb35a2b581058ee347177e278904574dd3cd186171779c8ac6",
+      "rasterConversion": "lossless WebP; decoded RGBA equals generated PNG; no resize/crop/paint",
+      "vectorConversion": "vtracer 0.6.15 polygon trace; color precision 6, speckle 24, layer difference 16, length threshold 6, path precision 0; visual review required",
+      "visualReview": "Comparison sheets: complete focal subjects and no unintended divider/neighbor strips; simplified native vector appearance retained",
+      "rightsStatus": "User attested assistant generation; final classroom/content acceptance OPEN"
+    },
+    {
+      "asset": "cards/MOB-G",
+      "date": "2026-10-08",
+      "tool": "OpenAI built-in image_gen",
+      "model": "not reported by tool",
+      "inputSha256": "4062fe21a1a13d829ecf803412347148ffc27fb41d419e74f8410e07ae732bc4",
+      "prompt": "Precise artwork repair of SEA Game cards/MOB-G. Findings: Thin right/bottom frame.. Remove unwanted white edge borders, grid dividers and fragments from neighboring panels. Restore any missing focal subject edges, antennas, barrels or equipment through coherent reconstruction. Preserve the original subject identity, recognizable geometry, component count, arrangement, colors, realistic detail and lighting. Show the complete standalone equipment/vehicle with all protrusions and cables visible. Blend the hard portrait-panel backdrop seamlessly into a continuous matching beige studio background. Use one opaque wide 3:1 landscape canvas with generous safe margins around all focal content. No grid sheet, no neighboring assets, no new objects or text. Do not crop tighter. Clean coherent realistic game artwork.",
+      "receipt": "evidence/convergence/art-border-repair-20261008/receipts/cards-MOB-G.json",
+      "reason": [
+        {
+          "kind": "THIN_FRAME_REVIEW",
+          "observation": "Thin right/bottom frame."
+        }
+      ],
+      "outputDimensions": [
+        2172,
+        724
+      ],
+      "generatedPngSha256": "c5ee610fd573be94df322fb70d19d4069fe3b95aec51e03c260a60d46bb3bcfe",
+      "webpSha256": "dfa3a0065daec9581a8c14bdaeedfad4307c7053e08cde7a30f86beaabd89c42",
+      "svgSha256": "385358ff738509a117a94f503e77525a810f238dbe748f2bd7ab1de43ebeaaeb",
+      "rasterConversion": "lossless WebP; decoded RGBA equals generated PNG; no resize/crop/paint",
+      "vectorConversion": "vtracer 0.6.15 polygon trace; color precision 6, speckle 24, layer difference 16, length threshold 6, path precision 0; visual review required",
+      "visualReview": "Comparison sheets: complete focal subjects and no unintended divider/neighbor strips; simplified native vector appearance retained",
+      "rightsStatus": "User attested assistant generation; final classroom/content acceptance OPEN"
+    },
+    {
+      "asset": "cards/SA-A",
+      "date": "2026-10-08",
+      "tool": "OpenAI built-in image_gen",
+      "model": "not reported by tool",
+      "inputSha256": "575b48db03775ea463416cdbdeef55b38c3e62c2564664e861de2db94626fee8",
+      "prompt": "Precise artwork repair of SEA Game cards/SA-A. Findings: Thin rectangular white frame.. Remove unwanted white edge borders, grid dividers and fragments from neighboring panels. Restore any missing focal subject edges, antennas, barrels or equipment through coherent reconstruction. Preserve the original subject identity, recognizable geometry, component count, arrangement, colors, realistic detail and lighting. Show the complete standalone equipment/vehicle with all protrusions and cables visible. Blend the hard portrait-panel backdrop seamlessly into a continuous matching beige studio background. Use one opaque wide 3:1 landscape canvas with generous safe margins around all focal content. No grid sheet, no neighboring assets, no new objects or text. Do not crop tighter. Clean coherent realistic game artwork.",
+      "receipt": "evidence/convergence/art-border-repair-20261008/receipts/cards-SA-A.json",
+      "reason": [
+        {
+          "kind": "THIN_FRAME_REVIEW",
+          "observation": "Thin rectangular white frame."
+        }
+      ],
+      "outputDimensions": [
+        2172,
+        724
+      ],
+      "generatedPngSha256": "16da30889cf2ffabe4e76f8686e3f39d6f260665fcc1d52e2ade052245551b0e",
+      "webpSha256": "2925567b58c8f14512ba9d70b2ff14b157f50889a2aa08bae67cd22c55b31bef",
+      "svgSha256": "c52087499d9af0f835409a3849440c05d8d3f0bc0c43b05717d03237ad2051bd",
+      "rasterConversion": "lossless WebP; decoded RGBA equals generated PNG; no resize/crop/paint",
+      "vectorConversion": "vtracer 0.6.15 polygon trace; color precision 6, speckle 24, layer difference 16, length threshold 6, path precision 0; visual review required",
+      "visualReview": "Comparison sheets: complete focal subjects and no unintended divider/neighbor strips; simplified native vector appearance retained",
+      "rightsStatus": "User attested assistant generation; final classroom/content acceptance OPEN"
+    },
+    {
+      "asset": "cards/SA-B",
+      "date": "2026-10-08",
+      "tool": "OpenAI built-in image_gen",
+      "model": "not reported by tool",
+      "inputSha256": "b3bf628f99d4440cf392a054729d6e8e941d71e07b4b20e28f8076105ab4359c",
+      "prompt": "Precise artwork repair of SEA Game cards/SA-B. Findings: Thin top/bottom frame.. Remove unwanted white edge borders, grid dividers and fragments from neighboring panels. Restore any missing focal subject edges, antennas, barrels or equipment through coherent reconstruction. Preserve the original subject identity, recognizable geometry, component count, arrangement, colors, realistic detail and lighting. Show the complete standalone equipment/vehicle with all protrusions and cables visible. Blend the hard portrait-panel backdrop seamlessly into a continuous matching beige studio background. Use one opaque wide 3:1 landscape canvas with generous safe margins around all focal content. No grid sheet, no neighboring assets, no new objects or text. Do not crop tighter. Clean coherent realistic game artwork.",
+      "receipt": "evidence/convergence/art-border-repair-20261008/receipts/cards-SA-B.json",
+      "reason": [
+        {
+          "kind": "THIN_FRAME_REVIEW",
+          "observation": "Thin top/bottom frame."
+        }
+      ],
+      "outputDimensions": [
+        2172,
+        724
+      ],
+      "generatedPngSha256": "d3ef0c24dc7b35003fa0a7a4e8a9b29fed1243e6b9fb6bea0fc108494a007000",
+      "webpSha256": "be3d385ec99b82d10cce09c87c38a1aa7d5aaf69e014543fb97a64860c3fb9a9",
+      "svgSha256": "e8cf8728c6aa53db5090d5c944731637d31c8b3ce9fe7abccf9c665329e81bff",
+      "rasterConversion": "lossless WebP; decoded RGBA equals generated PNG; no resize/crop/paint",
+      "vectorConversion": "vtracer 0.6.15 polygon trace; color precision 6, speckle 24, layer difference 16, length threshold 6, path precision 0; visual review required",
+      "visualReview": "Comparison sheets: complete focal subjects and no unintended divider/neighbor strips; simplified native vector appearance retained",
+      "rightsStatus": "User attested assistant generation; final classroom/content acceptance OPEN"
+    },
+    {
+      "asset": "cards/SA-C",
+      "date": "2026-10-08",
+      "tool": "OpenAI built-in image_gen",
+      "model": "not reported by tool",
+      "inputSha256": "447bae1f1ced4cb781b5c1317bd88570f6085a3cd7e092870fd57b90a3962441",
+      "prompt": "Precise artwork repair of SEA Game cards/SA-C. Findings: Thin top/bottom frame.. Remove unwanted white edge borders, grid dividers and fragments from neighboring panels. Restore any missing focal subject edges, antennas, barrels or equipment through coherent reconstruction. Preserve the original subject identity, recognizable geometry, component count, arrangement, colors, realistic detail and lighting. Show the complete standalone equipment/vehicle with all protrusions and cables visible. Blend the hard portrait-panel backdrop seamlessly into a continuous matching beige studio background. Use one opaque wide 3:1 landscape canvas with generous safe margins around all focal content. No grid sheet, no neighboring assets, no new objects or text. Do not crop tighter. Clean coherent realistic game artwork.",
+      "receipt": "evidence/convergence/art-border-repair-20261008/receipts/cards-SA-C.json",
+      "reason": [
+        {
+          "kind": "THIN_FRAME_REVIEW",
+          "observation": "Thin top/bottom frame."
+        }
+      ],
+      "outputDimensions": [
+        2172,
+        724
+      ],
+      "generatedPngSha256": "039de54b289770b0e0139012d63af66af0c51b4c865a0f5cd5d46fd0d84bb6e4",
+      "webpSha256": "f72326ca27ec85821a7ddde6ca91dc342cce575b5d65b5cbc2de872868163a5f",
+      "svgSha256": "cb79148457195a66200aaf3de9a9bdf8d878b2ccb18a4cde849120fcb4ff1ce6",
+      "rasterConversion": "lossless WebP; decoded RGBA equals generated PNG; no resize/crop/paint",
+      "vectorConversion": "vtracer 0.6.15 polygon trace; color precision 6, speckle 24, layer difference 16, length threshold 6, path precision 0; visual review required",
+      "visualReview": "Comparison sheets: complete focal subjects and no unintended divider/neighbor strips; simplified native vector appearance retained",
+      "rightsStatus": "User attested assistant generation; final classroom/content acceptance OPEN"
+    },
+    {
+      "asset": "cards/SA-D",
+      "date": "2026-10-08",
+      "tool": "OpenAI built-in image_gen",
+      "model": "not reported by tool",
+      "inputSha256": "87e329ba34f67a6a523d541b59215063a3663100203fca746f2db8b8295eeada",
+      "prompt": "Precise artwork repair of SEA Game cards/SA-D. Findings: Thin right/bottom frame.. Remove unwanted white edge borders, grid dividers and fragments from neighboring panels. Restore any missing focal subject edges, antennas, barrels or equipment through coherent reconstruction. Preserve the original subject identity, recognizable geometry, component count, arrangement, colors, realistic detail and lighting. Show the complete standalone equipment/vehicle with all protrusions and cables visible. Blend the hard portrait-panel backdrop seamlessly into a continuous matching beige studio background. Use one opaque wide 3:1 landscape canvas with generous safe margins around all focal content. No grid sheet, no neighboring assets, no new objects or text. Do not crop tighter. Clean coherent realistic game artwork.",
+      "receipt": "evidence/convergence/art-border-repair-20261008/receipts/cards-SA-D.json",
+      "reason": [
+        {
+          "kind": "THIN_FRAME_REVIEW",
+          "observation": "Thin right/bottom frame."
+        }
+      ],
+      "outputDimensions": [
+        2172,
+        724
+      ],
+      "generatedPngSha256": "6a1530aee4861f1ad3455a1b69cb0240541bc20d4a0850fc671f3dce9ac069a4",
+      "webpSha256": "20b29133c814fd3e0365d74b62421aa27b6770a1624472d4096e7a010efa298c",
+      "svgSha256": "87c17a3b211cf77f8a39ced6e49d3fc40516e4367c5dd01ba451b3460f9609e5",
+      "rasterConversion": "lossless WebP; decoded RGBA equals generated PNG; no resize/crop/paint",
+      "vectorConversion": "vtracer 0.6.15 polygon trace; color precision 6, speckle 24, layer difference 16, length threshold 6, path precision 0; visual review required",
+      "visualReview": "Comparison sheets: complete focal subjects and no unintended divider/neighbor strips; simplified native vector appearance retained",
+      "rightsStatus": "User attested assistant generation; final classroom/content acceptance OPEN"
+    },
+    {
+      "asset": "cards/SA-E",
+      "date": "2026-10-08",
+      "tool": "OpenAI built-in image_gen",
+      "model": "not reported by tool",
+      "inputSha256": "98e93bf05747f9d085288f500b87bd961cd9864354916898f6a8d921a1cf47cf",
+      "prompt": "Precise artwork repair of SEA Game cards/SA-E. Findings: Thin left/bottom frame.. Remove unwanted white edge borders, grid dividers and fragments from neighboring panels. Restore any missing focal subject edges, antennas, barrels or equipment through coherent reconstruction. Preserve the original subject identity, recognizable geometry, component count, arrangement, colors, realistic detail and lighting. Show the complete standalone equipment/vehicle with all protrusions and cables visible. Blend the hard portrait-panel backdrop seamlessly into a continuous matching beige studio background. Use one opaque wide 3:1 landscape canvas with generous safe margins around all focal content. No grid sheet, no neighboring assets, no new objects or text. Do not crop tighter. Clean coherent realistic game artwork.",
+      "receipt": "evidence/convergence/art-border-repair-20261008/receipts/cards-SA-E.json",
+      "reason": [
+        {
+          "kind": "THIN_FRAME_REVIEW",
+          "observation": "Thin left/bottom frame."
+        }
+      ],
+      "outputDimensions": [
+        2172,
+        724
+      ],
+      "generatedPngSha256": "31f9c03c050d62239871c29ae2c5aaaec8c30104f8dcb75e204bd419ab4d5bcb",
+      "webpSha256": "da35924fc3a09945f5b7bfaabe1db11f60ccdfb8fc0111126cf8c6179ac80b23",
+      "svgSha256": "c437953dbf2157b33e4e567240d6a447d4a2efc073a47bdecca10fd7d2e9e957",
+      "rasterConversion": "lossless WebP; decoded RGBA equals generated PNG; no resize/crop/paint",
+      "vectorConversion": "vtracer 0.6.15 polygon trace; color precision 6, speckle 24, layer difference 16, length threshold 6, path precision 0; visual review required",
+      "visualReview": "Comparison sheets: complete focal subjects and no unintended divider/neighbor strips; simplified native vector appearance retained",
+      "rightsStatus": "User attested assistant generation; final classroom/content acceptance OPEN"
+    },
+    {
+      "asset": "cards/SA-F",
+      "date": "2026-10-08",
+      "tool": "OpenAI built-in image_gen",
+      "model": "not reported by tool",
+      "inputSha256": "203aa651d5e989c0d8fa697b3dc0a10329cba248c41f6cf07ed0e7335044a2a6",
+      "prompt": "Precise artwork repair of SEA Game cards/SA-F. Findings: Left/right white dividers; right edge includes tiny neighboring fragment.. Remove unwanted white edge borders, grid dividers and fragments from neighboring panels. Restore any missing focal subject edges, antennas, barrels or equipment through coherent reconstruction. Preserve the original subject identity, recognizable geometry, component count, arrangement, colors, realistic detail and lighting. Show the complete standalone equipment/vehicle with all protrusions and cables visible. Blend the hard portrait-panel backdrop seamlessly into a continuous matching beige studio background. Use one opaque wide 3:1 landscape canvas with generous safe margins around all focal content. No grid sheet, no neighboring assets, no new objects or text. Do not crop tighter. Clean coherent realistic game artwork.",
+      "receipt": "evidence/convergence/art-border-repair-20261008/receipts/cards-SA-F.json",
+      "reason": [
+        {
+          "kind": "RETAINED_DIVIDER_OR_STRIP",
+          "observation": "Left/right white dividers; right edge includes tiny neighboring fragment."
+        }
+      ],
+      "outputDimensions": [
+        2172,
+        724
+      ],
+      "generatedPngSha256": "07ad5158ff0556fd1b50e18df61e7f0befb337d3f459856038a786cb9b7f59f1",
+      "webpSha256": "2f9dc0bd3193b0201fad2e8a280ed31009706695b471c900bb2af88fdd04a54c",
+      "svgSha256": "1ac6f1b3cada30e5ee1eb20cd654d9882c3894e7c2d52321c1828b99e8fd1c27",
+      "rasterConversion": "lossless WebP; decoded RGBA equals generated PNG; no resize/crop/paint",
+      "vectorConversion": "vtracer 0.6.15 polygon trace; color precision 6, speckle 24, layer difference 16, length threshold 6, path precision 0; visual review required",
+      "visualReview": "Comparison sheets: complete focal subjects and no unintended divider/neighbor strips; simplified native vector appearance retained",
+      "rightsStatus": "User attested assistant generation; final classroom/content acceptance OPEN"
+    },
+    {
+      "asset": "cards/SA-G",
+      "date": "2026-10-08",
+      "tool": "OpenAI built-in image_gen",
+      "model": "not reported by tool",
+      "inputSha256": "0955e812547e2a970788ab76e203d64cf1ec0be51df0e987ebcc3c248301939e",
+      "prompt": "Precise artwork repair of SEA Game cards/SA-G. Findings: Left sensor/tripod assembly intersects boundary.; Thin bottom frame.. Remove unwanted white edge borders, grid dividers and fragments from neighboring panels. Restore any missing focal subject edges, antennas, barrels or equipment through coherent reconstruction. Preserve the original subject identity, recognizable geometry, component count, arrangement, colors, realistic detail and lighting. Show the complete standalone equipment/vehicle with all protrusions and cables visible. Blend the hard portrait-panel backdrop seamlessly into a continuous matching beige studio background. Use one opaque wide 3:1 landscape canvas with generous safe margins around all focal content. No grid sheet, no neighboring assets, no new objects or text. Do not crop tighter. Clean coherent realistic game artwork.",
+      "receipt": "evidence/convergence/art-border-repair-20261008/receipts/cards-SA-G.json",
+      "reason": [
+        {
+          "kind": "SUBJECT_CLIPPED",
+          "observation": "Left sensor/tripod assembly intersects boundary."
+        },
+        {
+          "kind": "THIN_FRAME_REVIEW",
+          "observation": "Thin bottom frame."
+        }
+      ],
+      "outputDimensions": [
+        2172,
+        724
+      ],
+      "generatedPngSha256": "46d72b2bf5fb9950e4cbccfc715fce0a3c54c11cb0bc88bb8ce8bb4c1c52775a",
+      "webpSha256": "4e270b8961af0096ba2111c01ec2b9ddb8e65845bfc7c89a63f89ed34347a825",
+      "svgSha256": "bdff1b5f02a612388be99a2040234c33fcb2cbd22e85d25d4f149caaa6c19a41",
+      "rasterConversion": "lossless WebP; decoded RGBA equals generated PNG; no resize/crop/paint",
+      "vectorConversion": "vtracer 0.6.15 polygon trace; color precision 6, speckle 24, layer difference 16, length threshold 6, path precision 0; visual review required",
+      "visualReview": "Comparison sheets: complete focal subjects and no unintended divider/neighbor strips; simplified native vector appearance retained",
+      "rightsStatus": "User attested assistant generation; final classroom/content acceptance OPEN"
+    },
+    {
+      "asset": "cards/SE-A",
+      "date": "2026-10-08",
+      "tool": "OpenAI built-in image_gen",
+      "model": "not reported by tool",
+      "inputSha256": "5002bac19da837b64943fca398f97c8264b0e90230c7e8ddbb32443b0cd9733f",
+      "prompt": "Precise artwork repair of SEA Game cards/SE-A. Findings: Bottom divider and retained panel strip.; Folders/papers extend to the scene edge; framing review advisable.. Remove unwanted white edge borders, grid dividers and fragments from neighboring panels. Restore any missing focal subject edges, antennas, barrels or equipment through coherent reconstruction. Preserve the original subject identity, recognizable geometry, component count, arrangement, colors, realistic detail and lighting. Preserve the meaning and relationships of this systems-engineering scene/diagram, its symbols, chart structure and intentional contextual composition. Keep all focal icons and equipment complete. Do not remove intentional diagram lines or add new labels. Use one opaque wide 3:1 landscape canvas with generous safe margins around all focal content. No grid sheet, no neighboring assets, no new objects or text. Do not crop tighter. Clean coherent realistic game artwork.",
+      "receipt": "evidence/convergence/art-border-repair-20261008/receipts/cards-SE-A.json",
+      "reason": [
+        {
+          "kind": "RETAINED_DIVIDER_OR_STRIP",
+          "observation": "Bottom divider and retained panel strip."
+        },
+        {
+          "kind": "COMPOSITION_REVIEW",
+          "observation": "Folders/papers extend to the scene edge; framing review advisable."
+        }
+      ],
+      "outputDimensions": [
+        2172,
+        724
+      ],
+      "generatedPngSha256": "a77dbac9e75d8c9832ac06048939754de0264ec38f51a4a1b4d9c03227cd8a5d",
+      "webpSha256": "1b236957019cd362160a53321d70aa5482e2042cd90a5e7e15dda8a988455eec",
+      "svgSha256": "5650fa69756e2bbfdac696c7644fa86ec25ed804f4d919bdd9607200e9c750de",
+      "rasterConversion": "lossless WebP; decoded RGBA equals generated PNG; no resize/crop/paint",
+      "vectorConversion": "vtracer 0.6.15 polygon trace; color precision 6, speckle 24, layer difference 16, length threshold 6, path precision 0; visual review required",
+      "visualReview": "Comparison sheets: complete focal subjects and no unintended divider/neighbor strips; simplified native vector appearance retained",
+      "rightsStatus": "User attested assistant generation; final classroom/content acceptance OPEN"
+    },
+    {
+      "asset": "cards/SE-B",
+      "date": "2026-10-08",
+      "tool": "OpenAI built-in image_gen",
+      "model": "not reported by tool",
+      "inputSha256": "2d2d256696187e695025780a10bef454479ac1726f7be6961081e1591d050043",
+      "prompt": "Precise artwork repair of SEA Game cards/SE-B. Findings: Bottom grid seam and retained strip.. Remove unwanted white edge borders, grid dividers and fragments from neighboring panels. Restore any missing focal subject edges, antennas, barrels or equipment through coherent reconstruction. Preserve the original subject identity, recognizable geometry, component count, arrangement, colors, realistic detail and lighting. Preserve the meaning and relationships of this systems-engineering scene/diagram, its symbols, chart structure and intentional contextual composition. Keep all focal icons and equipment complete. Do not remove intentional diagram lines or add new labels. Use one opaque wide 3:1 landscape canvas with generous safe margins around all focal content. No grid sheet, no neighboring assets, no new objects or text. Do not crop tighter. Clean coherent realistic game artwork.",
+      "receipt": "evidence/convergence/art-border-repair-20261008/receipts/cards-SE-B.json",
+      "reason": [
+        {
+          "kind": "RETAINED_DIVIDER_OR_STRIP",
+          "observation": "Bottom grid seam and retained strip."
+        }
+      ],
+      "outputDimensions": [
+        2172,
+        724
+      ],
+      "generatedPngSha256": "2123358ea1c4b2400913fefd25664be58cbf1c470a100aacee7686058dd51331",
+      "webpSha256": "23690c56c175806898aa843e63e2b552504da2a378221a9bd2b243ef576ee85e",
+      "svgSha256": "2d632cbfd4c663454f571f72e17947eb70326a749cee0238682e00e63bbf8a27",
+      "rasterConversion": "lossless WebP; decoded RGBA equals generated PNG; no resize/crop/paint",
+      "vectorConversion": "vtracer 0.6.15 polygon trace; color precision 6, speckle 24, layer difference 16, length threshold 6, path precision 0; visual review required",
+      "visualReview": "Comparison sheets: complete focal subjects and no unintended divider/neighbor strips; simplified native vector appearance retained",
+      "rightsStatus": "User attested assistant generation; final classroom/content acceptance OPEN"
+    },
+    {
+      "asset": "cards/SE-C",
+      "date": "2026-10-08",
+      "tool": "OpenAI built-in image_gen",
+      "model": "not reported by tool",
+      "inputSha256": "e5529a1b967896d6b30faf949a653ad6d3e5f1c6216e3e7ebe73d61bd534c548",
+      "prompt": "Precise artwork repair of SEA Game cards/SE-C. Findings: Bottom grid seam and retained strip.. Remove unwanted white edge borders, grid dividers and fragments from neighboring panels. Restore any missing focal subject edges, antennas, barrels or equipment through coherent reconstruction. Preserve the original subject identity, recognizable geometry, component count, arrangement, colors, realistic detail and lighting. Preserve the meaning and relationships of this systems-engineering scene/diagram, its symbols, chart structure and intentional contextual composition. Keep all focal icons and equipment complete. Do not remove intentional diagram lines or add new labels. Use one opaque wide 3:1 landscape canvas with generous safe margins around all focal content. No grid sheet, no neighboring assets, no new objects or text. Do not crop tighter. Clean coherent realistic game artwork.",
+      "receipt": "evidence/convergence/art-border-repair-20261008/receipts/cards-SE-C.json",
+      "reason": [
+        {
+          "kind": "RETAINED_DIVIDER_OR_STRIP",
+          "observation": "Bottom grid seam and retained strip."
+        }
+      ],
+      "outputDimensions": [
+        2172,
+        724
+      ],
+      "generatedPngSha256": "f94c819c0ade516b20b3484a5293967eb377e9aceae021b29c9066df79146db7",
+      "webpSha256": "e496779a2577a9fe2336436c6d1574f2b1ac0a545d570143db5e6a4cc9a2d792",
+      "svgSha256": "778156209cfe5abc2000d8febd30a932a8244db6f6c7d1d7162d7f5e15d4bb55",
+      "rasterConversion": "lossless WebP; decoded RGBA equals generated PNG; no resize/crop/paint",
+      "vectorConversion": "vtracer 0.6.15 polygon trace; color precision 6, speckle 24, layer difference 16, length threshold 6, path precision 0; visual review required",
+      "visualReview": "Comparison sheets: complete focal subjects and no unintended divider/neighbor strips; simplified native vector appearance retained",
+      "rightsStatus": "User attested assistant generation; final classroom/content acceptance OPEN"
+    },
+    {
+      "asset": "cards/SE-D",
+      "date": "2026-10-08",
+      "tool": "OpenAI built-in image_gen",
+      "model": "not reported by tool",
+      "inputSha256": "1a6662cd60e770e10bdb19d6fd7c41fe7a79401b95c0181208e0faa1e1e30a4e",
+      "prompt": "Precise artwork repair of SEA Game cards/SE-D. Findings: Thin bottom frame.; Workbench/environment crops are contextual, not necessarily missing focal asset.. Remove unwanted white edge borders, grid dividers and fragments from neighboring panels. Restore any missing focal subject edges, antennas, barrels or equipment through coherent reconstruction. Preserve the original subject identity, recognizable geometry, component count, arrangement, colors, realistic detail and lighting. Preserve the meaning and relationships of this systems-engineering scene/diagram, its symbols, chart structure and intentional contextual composition. Keep all focal icons and equipment complete. Do not remove intentional diagram lines or add new labels. Use one opaque wide 3:1 landscape canvas with generous safe margins around all focal content. No grid sheet, no neighboring assets, no new objects or text. Do not crop tighter. Clean coherent realistic game artwork.",
+      "receipt": "evidence/convergence/art-border-repair-20261008/receipts/cards-SE-D.json",
+      "reason": [
+        {
+          "kind": "THIN_FRAME_REVIEW",
+          "observation": "Thin bottom frame."
+        },
+        {
+          "kind": "COMPOSITION_REVIEW",
+          "observation": "Workbench/environment crops are contextual, not necessarily missing focal asset."
+        }
+      ],
+      "outputDimensions": [
+        2172,
+        724
+      ],
+      "generatedPngSha256": "37f8f2d6aa1b5ed312c30bc765e06dabce4870a34f57cfd121ca5dd9beecb1ff",
+      "webpSha256": "290f63e01f57ec9a02b06e36de82eecff2990d0fab1251d8f6c7f3a4f3dbb4e7",
+      "svgSha256": "1a99cf10dffd425fc47170e17111309bb81b5a698d2ee7e11f595efc5774c8b9",
+      "rasterConversion": "lossless WebP; decoded RGBA equals generated PNG; no resize/crop/paint",
+      "vectorConversion": "vtracer 0.6.15 polygon trace; color precision 6, speckle 24, layer difference 16, length threshold 6, path precision 0; visual review required",
+      "visualReview": "Comparison sheets: complete focal subjects and no unintended divider/neighbor strips; simplified native vector appearance retained",
+      "rightsStatus": "User attested assistant generation; final classroom/content acceptance OPEN"
+    },
+    {
+      "asset": "cards/SE-E",
+      "date": "2026-10-08",
+      "tool": "OpenAI built-in image_gen",
+      "model": "not reported by tool",
+      "inputSha256": "44416bb23643fadc9294dde5d44e788d0846de3622ad7fcf145de5332493ebe3",
+      "prompt": "Precise artwork repair of SEA Game cards/SE-E. Findings: Right white divider/neighboring fragment.. Remove unwanted white edge borders, grid dividers and fragments from neighboring panels. Restore any missing focal subject edges, antennas, barrels or equipment through coherent reconstruction. Preserve the original subject identity, recognizable geometry, component count, arrangement, colors, realistic detail and lighting. Preserve the meaning and relationships of this systems-engineering scene/diagram, its symbols, chart structure and intentional contextual composition. Keep all focal icons and equipment complete. Do not remove intentional diagram lines or add new labels. Use one opaque wide 3:1 landscape canvas with generous safe margins around all focal content. No grid sheet, no neighboring assets, no new objects or text. Do not crop tighter. Clean coherent realistic game artwork.",
+      "receipt": "evidence/convergence/art-border-repair-20261008/receipts/cards-SE-E.json",
+      "reason": [
+        {
+          "kind": "RETAINED_DIVIDER_OR_STRIP",
+          "observation": "Right white divider/neighboring fragment."
+        }
+      ],
+      "outputDimensions": [
+        2172,
+        724
+      ],
+      "generatedPngSha256": "87dbcb4a99dee8bfda6b4f71dfa4c20b5077b78940e36bcd7422de4444e08946",
+      "webpSha256": "d65984262c4f699e6132df51eb1458889503298ccf0e319b175f241c30a3123a",
+      "svgSha256": "d5499c1d600659f9ba209a8b797aefa815604a4c18dc6e5497591a64776fac36",
+      "rasterConversion": "lossless WebP; decoded RGBA equals generated PNG; no resize/crop/paint",
+      "vectorConversion": "vtracer 0.6.15 polygon trace; color precision 6, speckle 24, layer difference 16, length threshold 6, path precision 0; visual review required",
+      "visualReview": "Comparison sheets: complete focal subjects and no unintended divider/neighbor strips; simplified native vector appearance retained",
+      "rightsStatus": "User attested assistant generation; final classroom/content acceptance OPEN"
+    },
+    {
+      "asset": "cards/SE-F",
+      "date": "2026-10-08",
+      "tool": "OpenAI built-in image_gen",
+      "model": "not reported by tool",
+      "inputSha256": "b10fc2d1feba7200fabddca2b6ad1a06e3e2e81c07e81e510a7cf4431c147e04",
+      "prompt": "Precise artwork repair of SEA Game cards/SE-F. Findings: Left vehicle and metric icons clipped.. Remove unwanted white edge borders, grid dividers and fragments from neighboring panels. Restore any missing focal subject edges, antennas, barrels or equipment through coherent reconstruction. Preserve the original subject identity, recognizable geometry, component count, arrangement, colors, realistic detail and lighting. Preserve the meaning and relationships of this systems-engineering scene/diagram, its symbols, chart structure and intentional contextual composition. Keep all focal icons and equipment complete. Do not remove intentional diagram lines or add new labels. Use one opaque wide 3:1 landscape canvas with generous safe margins around all focal content. No grid sheet, no neighboring assets, no new objects or text. Do not crop tighter. Clean coherent realistic game artwork.",
+      "receipt": "evidence/convergence/art-border-repair-20261008/receipts/cards-SE-F.json",
+      "reason": [
+        {
+          "kind": "SUBJECT_CLIPPED",
+          "observation": "Left vehicle and metric icons clipped."
+        }
+      ],
+      "outputDimensions": [
+        2172,
+        724
+      ],
+      "generatedPngSha256": "417e38e0ee91cc7368d0d07322ab1ac581de35280d07562b52ff7cefb98c2645",
+      "webpSha256": "39062fe025714de3c1a4559f8e16ab50e5c73ca2948c8211468ea0ec07801888",
+      "svgSha256": "ac4efb3d1f63f19f448cbe4bb5756eadcd7097b925c46c3c4cda2763149b3549",
+      "rasterConversion": "lossless WebP; decoded RGBA equals generated PNG; no resize/crop/paint",
+      "vectorConversion": "vtracer 0.6.15 polygon trace; color precision 6, speckle 24, layer difference 16, length threshold 6, path precision 0; visual review required",
+      "visualReview": "Comparison sheets: complete focal subjects and no unintended divider/neighbor strips; simplified native vector appearance retained",
+      "rightsStatus": "User attested assistant generation; final classroom/content acceptance OPEN"
+    },
+    {
+      "asset": "cards/SE-G",
+      "date": "2026-10-08",
+      "tool": "OpenAI built-in image_gen",
+      "model": "not reported by tool",
+      "inputSha256": "ed6e60c4f0f34b561d2d952fd87cfdfeadb11435441645b69337547de0aebae1",
+      "prompt": "Precise artwork repair of SEA Game cards/SE-G. Findings: Thin white scene frame.. Remove unwanted white edge borders, grid dividers and fragments from neighboring panels. Restore any missing focal subject edges, antennas, barrels or equipment through coherent reconstruction. Preserve the original subject identity, recognizable geometry, component count, arrangement, colors, realistic detail and lighting. Preserve the meaning and relationships of this systems-engineering scene/diagram, its symbols, chart structure and intentional contextual composition. Keep all focal icons and equipment complete. Do not remove intentional diagram lines or add new labels. Use one opaque wide 3:1 landscape canvas with generous safe margins around all focal content. No grid sheet, no neighboring assets, no new objects or text. Do not crop tighter. Clean coherent realistic game artwork.",
+      "receipt": "evidence/convergence/art-border-repair-20261008/receipts/cards-SE-G.json",
+      "reason": [
+        {
+          "kind": "THIN_FRAME_REVIEW",
+          "observation": "Thin white scene frame."
+        }
+      ],
+      "outputDimensions": [
+        2172,
+        724
+      ],
+      "generatedPngSha256": "89801b737f556a9281e0012667abc2cd7ff30c120bffc5fdce4d2a61564ef092",
+      "webpSha256": "987ac52ea34178e0f2659bb4adad5f429ef6455ad198f3d17820bbb81b96c954",
+      "svgSha256": "91402d65eb6a6237fd3c3bb66d7c523120fb77d3b50b4adcfcdb01c82cfe1d59",
+      "rasterConversion": "lossless WebP; decoded RGBA equals generated PNG; no resize/crop/paint",
+      "vectorConversion": "vtracer 0.6.15 polygon trace; color precision 6, speckle 24, layer difference 16, length threshold 6, path precision 0; visual review required",
+      "visualReview": "Comparison sheets: complete focal subjects and no unintended divider/neighbor strips; simplified native vector appearance retained",
+      "rightsStatus": "User attested assistant generation; final classroom/content acceptance OPEN"
+    },
+    {
+      "asset": "cards/SE-H",
+      "date": "2026-10-08",
+      "tool": "OpenAI built-in image_gen",
+      "model": "not reported by tool",
+      "inputSha256": "9ed42c6da8908a79bdd33c057de52fbd0f901655a7d58606a1f00a777fc7ade9",
+      "prompt": "Precise artwork repair of SEA Game cards/SE-H. Findings: Bottom frame/band.. Remove unwanted white edge borders, grid dividers and fragments from neighboring panels. Restore any missing focal subject edges, antennas, barrels or equipment through coherent reconstruction. Preserve the original subject identity, recognizable geometry, component count, arrangement, colors, realistic detail and lighting. Preserve the meaning and relationships of this systems-engineering scene/diagram, its symbols, chart structure and intentional contextual composition. Keep all focal icons and equipment complete. Do not remove intentional diagram lines or add new labels. Use one opaque wide 3:1 landscape canvas with generous safe margins around all focal content. No grid sheet, no neighboring assets, no new objects or text. Do not crop tighter. Clean coherent realistic game artwork.",
+      "receipt": "evidence/convergence/art-border-repair-20261008/receipts/cards-SE-H.json",
+      "reason": [
+        {
+          "kind": "THIN_FRAME_REVIEW",
+          "observation": "Bottom frame/band."
+        }
+      ],
+      "outputDimensions": [
+        2172,
+        724
+      ],
+      "generatedPngSha256": "a1cfed2057bd6cc4945a59d19b6bfd9ebe2f9fa611821fa8dbc2259953377537",
+      "webpSha256": "109b7f5d9d7845b9b13d64ee910e6ac7e2fa3421fa616a5223ff6a668a989034",
+      "svgSha256": "205d4c34503064ac2707324793f220bfd70c94bb54bd036161f6a0bda7e8b473",
+      "rasterConversion": "lossless WebP; decoded RGBA equals generated PNG; no resize/crop/paint",
+      "vectorConversion": "vtracer 0.6.15 polygon trace; color precision 6, speckle 24, layer difference 16, length threshold 6, path precision 0; visual review required",
+      "visualReview": "Comparison sheets: complete focal subjects and no unintended divider/neighbor strips; simplified native vector appearance retained",
+      "rightsStatus": "User attested assistant generation; final classroom/content acceptance OPEN"
+    },
+    {
+      "asset": "cards/SE-I",
+      "date": "2026-10-08",
+      "tool": "OpenAI built-in image_gen",
+      "model": "not reported by tool",
+      "inputSha256": "d21368d44d919081f89c55d592bd0acabbc7937cc1f117f42b2f87fa8f303130",
+      "prompt": "Precise artwork repair of SEA Game cards/SE-I. Findings: Thin illustrative outline frame.. Remove unwanted white edge borders, grid dividers and fragments from neighboring panels. Restore any missing focal subject edges, antennas, barrels or equipment through coherent reconstruction. Preserve the original subject identity, recognizable geometry, component count, arrangement, colors, realistic detail and lighting. Preserve the meaning and relationships of this systems-engineering scene/diagram, its symbols, chart structure and intentional contextual composition. Keep all focal icons and equipment complete. Do not remove intentional diagram lines or add new labels. Use one opaque wide 3:1 landscape canvas with generous safe margins around all focal content. No grid sheet, no neighboring assets, no new objects or text. Do not crop tighter. Clean coherent realistic game artwork.",
+      "receipt": "evidence/convergence/art-border-repair-20261008/receipts/cards-SE-I.json",
+      "reason": [
+        {
+          "kind": "THIN_FRAME_REVIEW",
+          "observation": "Thin illustrative outline frame."
+        }
+      ],
+      "outputDimensions": [
+        2172,
+        724
+      ],
+      "generatedPngSha256": "bcf7e6f4e68d0838af252eeabf1dd98d997e7c74cef3866aa317a512a568827e",
+      "webpSha256": "ff13015bc6e09d1197a3d22023ed44a42436db91277260599725da011a605301",
+      "svgSha256": "1d253641b162832ab84300dee74e741ccc444355afdb1dfeb9042fef35bde325",
+      "rasterConversion": "lossless WebP; decoded RGBA equals generated PNG; no resize/crop/paint",
+      "vectorConversion": "vtracer 0.6.15 polygon trace; color precision 6, speckle 24, layer difference 16, length threshold 6, path precision 0; visual review required",
+      "visualReview": "Comparison sheets: complete focal subjects and no unintended divider/neighbor strips; simplified native vector appearance retained",
+      "rightsStatus": "User attested assistant generation; final classroom/content acceptance OPEN"
+    },
+    {
+      "asset": "cards/SE-J",
+      "date": "2026-10-08",
+      "tool": "OpenAI built-in image_gen",
+      "model": "not reported by tool",
+      "inputSha256": "72b45374a92dcbb4f5d7a9aa482488ed1c551d8916284617217d0271dd812c49",
+      "prompt": "Precise artwork repair of SEA Game cards/SE-J. Findings: Thin illustrative outline frame.. Remove unwanted white edge borders, grid dividers and fragments from neighboring panels. Restore any missing focal subject edges, antennas, barrels or equipment through coherent reconstruction. Preserve the original subject identity, recognizable geometry, component count, arrangement, colors, realistic detail and lighting. Preserve the meaning and relationships of this systems-engineering scene/diagram, its symbols, chart structure and intentional contextual composition. Keep all focal icons and equipment complete. Do not remove intentional diagram lines or add new labels. Use one opaque wide 3:1 landscape canvas with generous safe margins around all focal content. No grid sheet, no neighboring assets, no new objects or text. Do not crop tighter. Clean coherent realistic game artwork.",
+      "receipt": "evidence/convergence/art-border-repair-20261008/receipts/cards-SE-J.json",
+      "reason": [
+        {
+          "kind": "THIN_FRAME_REVIEW",
+          "observation": "Thin illustrative outline frame."
+        }
+      ],
+      "outputDimensions": [
+        2172,
+        724
+      ],
+      "generatedPngSha256": "cd1503c9864c3588a42d9ac3297c36a145e4fbe9070758d56371296167b2ff6d",
+      "webpSha256": "532fd5b6eb53f4242641c496e5bb9d826ea087c26a474809ec3d299d90db3c1e",
+      "svgSha256": "f56b0dbeba084b1ec84efb496ed3dd00ffebda721112c84bb28d855cc7b46a88",
+      "rasterConversion": "lossless WebP; decoded RGBA equals generated PNG; no resize/crop/paint",
+      "vectorConversion": "vtracer 0.6.15 polygon trace; color precision 6, speckle 24, layer difference 16, length threshold 6, path precision 0; visual review required",
+      "visualReview": "Comparison sheets: complete focal subjects and no unintended divider/neighbor strips; simplified native vector appearance retained",
+      "rightsStatus": "User attested assistant generation; final classroom/content acceptance OPEN"
+    },
+    {
+      "asset": "cards/SE-K",
+      "date": "2026-10-08",
+      "tool": "OpenAI built-in image_gen",
+      "model": "not reported by tool",
+      "inputSha256": "ddff7a3630c28f9a51b1d3fb869a0eff14a824355eef28c19ecf8c54b488c83d",
+      "prompt": "Precise artwork repair of SEA Game cards/SE-K. Findings: Thin illustrative outline frame.. Remove unwanted white edge borders, grid dividers and fragments from neighboring panels. Restore any missing focal subject edges, antennas, barrels or equipment through coherent reconstruction. Preserve the original subject identity, recognizable geometry, component count, arrangement, colors, realistic detail and lighting. Preserve the meaning and relationships of this systems-engineering scene/diagram, its symbols, chart structure and intentional contextual composition. Keep all focal icons and equipment complete. Do not remove intentional diagram lines or add new labels. Use one opaque wide 3:1 landscape canvas with generous safe margins around all focal content. No grid sheet, no neighboring assets, no new objects or text. Do not crop tighter. Clean coherent realistic game artwork.",
+      "receipt": "evidence/convergence/art-border-repair-20261008/receipts/cards-SE-K.json",
+      "reason": [
+        {
+          "kind": "THIN_FRAME_REVIEW",
+          "observation": "Thin illustrative outline frame."
+        }
+      ],
+      "outputDimensions": [
+        2172,
+        724
+      ],
+      "generatedPngSha256": "cc731d91938f8ec80580dde0fbc568456df013e4a79cbea61cf417dc430d192a",
+      "webpSha256": "70eaab25c95274e8c8f5a1f86024a1765e6b16c3c0cc5a80ae1afe72cc9eebc3",
+      "svgSha256": "a31aa86054e3d37fdeb57ccc21075432701c422ed0fb9795a4d9aa72585b292c",
+      "rasterConversion": "lossless WebP; decoded RGBA equals generated PNG; no resize/crop/paint",
+      "vectorConversion": "vtracer 0.6.15 polygon trace; color precision 6, speckle 24, layer difference 16, length threshold 6, path precision 0; visual review required",
+      "visualReview": "Comparison sheets: complete focal subjects and no unintended divider/neighbor strips; simplified native vector appearance retained",
+      "rightsStatus": "User attested assistant generation; final classroom/content acceptance OPEN"
+    },
+    {
+      "asset": "cards/SE-L",
+      "date": "2026-10-08",
+      "tool": "OpenAI built-in image_gen",
+      "model": "not reported by tool",
+      "inputSha256": "df1bc83a2118fe0a1e04fca5fce7ab8ff0b7d9e298bf065cb70802b8ea6c9420",
+      "prompt": "Precise artwork repair of SEA Game cards/SE-L. Findings: Right double seam/narrow retained strip.. Remove unwanted white edge borders, grid dividers and fragments from neighboring panels. Restore any missing focal subject edges, antennas, barrels or equipment through coherent reconstruction. Preserve the original subject identity, recognizable geometry, component count, arrangement, colors, realistic detail and lighting. Preserve the meaning and relationships of this systems-engineering scene/diagram, its symbols, chart structure and intentional contextual composition. Keep all focal icons and equipment complete. Do not remove intentional diagram lines or add new labels. Use one opaque wide 3:1 landscape canvas with generous safe margins around all focal content. No grid sheet, no neighboring assets, no new objects or text. Do not crop tighter. Clean coherent realistic game artwork.",
+      "receipt": "evidence/convergence/art-border-repair-20261008/receipts/cards-SE-L.json",
+      "reason": [
+        {
+          "kind": "RETAINED_DIVIDER_OR_STRIP",
+          "observation": "Right double seam/narrow retained strip."
+        }
+      ],
+      "outputDimensions": [
+        2172,
+        724
+      ],
+      "generatedPngSha256": "41e6e11abeef48d4b0e85ae58e51cff9933c3ba6edc1537b313815031af64f96",
+      "webpSha256": "7e2d6a273aa1fe0b77d71361cd6dd5fafe2eb9b3c538349f9d444496548b00f7",
+      "svgSha256": "1e786dea3e4d2703c9b6b06088914f53613546e2220f9748aea4dcd095f6c0ef",
+      "rasterConversion": "lossless WebP; decoded RGBA equals generated PNG; no resize/crop/paint",
+      "vectorConversion": "vtracer 0.6.15 polygon trace; color precision 6, speckle 24, layer difference 16, length threshold 6, path precision 0; visual review required",
+      "visualReview": "Comparison sheets: complete focal subjects and no unintended divider/neighbor strips; simplified native vector appearance retained",
+      "rightsStatus": "User attested assistant generation; final classroom/content acceptance OPEN"
+    },
+    {
+      "asset": "cards/SE-M",
+      "date": "2026-10-08",
+      "tool": "OpenAI built-in image_gen",
+      "model": "not reported by tool",
+      "inputSha256": "bda29883a17b3bdeb9b84fbc5d9a0a74e9cd0940ae2ec59408d5ea54e88334ee",
+      "prompt": "Precise artwork repair of SEA Game cards/SE-M. Findings: Outer component/vehicle illustrations intersect left/right boundaries.; Thin bottom frame.. Remove unwanted white edge borders, grid dividers and fragments from neighboring panels. Restore any missing focal subject edges, antennas, barrels or equipment through coherent reconstruction. Preserve the original subject identity, recognizable geometry, component count, arrangement, colors, realistic detail and lighting. Preserve the meaning and relationships of this systems-engineering scene/diagram, its symbols, chart structure and intentional contextual composition. Keep all focal icons and equipment complete. Do not remove intentional diagram lines or add new labels. Use one opaque wide 3:1 landscape canvas with generous safe margins around all focal content. No grid sheet, no neighboring assets, no new objects or text. Do not crop tighter. Clean coherent realistic game artwork.",
+      "receipt": "evidence/convergence/art-border-repair-20261008/receipts/cards-SE-M.json",
+      "reason": [
+        {
+          "kind": "SUBJECT_CLIPPED",
+          "observation": "Outer component/vehicle illustrations intersect left/right boundaries."
+        },
+        {
+          "kind": "THIN_FRAME_REVIEW",
+          "observation": "Thin bottom frame."
+        }
+      ],
+      "outputDimensions": [
+        2172,
+        724
+      ],
+      "generatedPngSha256": "725b5deedf014040801c90ce8916ba74984537c9fd046489bf55da5ef27a3826",
+      "webpSha256": "1ca4a6b641865934672215f0818c4fbdc7a94a175912facff564b495cc3d310f",
+      "svgSha256": "4a130d512f32e29cc49475434ecb4e6d3c7338f149ce2d8ff9a7637f603d9905",
+      "rasterConversion": "lossless WebP; decoded RGBA equals generated PNG; no resize/crop/paint",
+      "vectorConversion": "vtracer 0.6.15 polygon trace; color precision 6, speckle 24, layer difference 16, length threshold 6, path precision 0; visual review required",
+      "visualReview": "Comparison sheets: complete focal subjects and no unintended divider/neighbor strips; simplified native vector appearance retained",
+      "rightsStatus": "User attested assistant generation; final classroom/content acceptance OPEN"
+    },
+    {
+      "asset": "cards/SE-N",
+      "date": "2026-10-08",
+      "tool": "OpenAI built-in image_gen",
+      "model": "not reported by tool",
+      "inputSha256": "6d2355bd7715da30190d027c0391e8b409962208eb4429b476cf5c25fc0106e6",
+      "prompt": "Precise artwork repair of SEA Game cards/SE-N. Findings: Thin left/bottom frame.. Remove unwanted white edge borders, grid dividers and fragments from neighboring panels. Restore any missing focal subject edges, antennas, barrels or equipment through coherent reconstruction. Preserve the original subject identity, recognizable geometry, component count, arrangement, colors, realistic detail and lighting. Preserve the meaning and relationships of this systems-engineering scene/diagram, its symbols, chart structure and intentional contextual composition. Keep all focal icons and equipment complete. Do not remove intentional diagram lines or add new labels. Use one opaque wide 3:1 landscape canvas with generous safe margins around all focal content. No grid sheet, no neighboring assets, no new objects or text. Do not crop tighter. Clean coherent realistic game artwork.",
+      "receipt": "evidence/convergence/art-border-repair-20261008/receipts/cards-SE-N.json",
+      "reason": [
+        {
+          "kind": "THIN_FRAME_REVIEW",
+          "observation": "Thin left/bottom frame."
+        }
+      ],
+      "outputDimensions": [
+        2172,
+        724
+      ],
+      "generatedPngSha256": "1cd70811f757215f514b9d908776de1655796729a2dd27c0b57aa45592aa4a19",
+      "webpSha256": "4a88eca571986b0568fac4efa86d49813209d14a4f046cd32009a6b75f2c1273",
+      "svgSha256": "0dd88e2c552c9c15fbd9b7fe9f2f736c7c66a0b1d8eb9d1169ec079cd24cc284",
+      "rasterConversion": "lossless WebP; decoded RGBA equals generated PNG; no resize/crop/paint",
+      "vectorConversion": "vtracer 0.6.15 polygon trace; color precision 6, speckle 24, layer difference 16, length threshold 6, path precision 0; visual review required",
+      "visualReview": "Comparison sheets: complete focal subjects and no unintended divider/neighbor strips; simplified native vector appearance retained",
+      "rightsStatus": "User attested assistant generation; final classroom/content acceptance OPEN"
+    },
+    {
+      "asset": "cards/SE-O",
+      "date": "2026-10-08",
+      "tool": "OpenAI built-in image_gen",
+      "model": "not reported by tool",
+      "inputSha256": "617b66d36cb7489ed46cd7e46d4732d4f4e8c61582044b22919b5156c2df4bc9",
+      "prompt": "Precise artwork repair of SEA Game cards/SE-O. Findings: Thin bottom frame.; Stacked-paper composition reaches left edge; distinguish intentional overlap from clipped focal material.. Remove unwanted white edge borders, grid dividers and fragments from neighboring panels. Restore any missing focal subject edges, antennas, barrels or equipment through coherent reconstruction. Preserve the original subject identity, recognizable geometry, component count, arrangement, colors, realistic detail and lighting. Preserve the meaning and relationships of this systems-engineering scene/diagram, its symbols, chart structure and intentional contextual composition. Keep all focal icons and equipment complete. Do not remove intentional diagram lines or add new labels. Use one opaque wide 3:1 landscape canvas with generous safe margins around all focal content. No grid sheet, no neighboring assets, no new objects or text. Do not crop tighter. Clean coherent realistic game artwork.",
+      "receipt": "evidence/convergence/art-border-repair-20261008/receipts/cards-SE-O.json",
+      "reason": [
+        {
+          "kind": "THIN_FRAME_REVIEW",
+          "observation": "Thin bottom frame."
+        },
+        {
+          "kind": "COMPOSITION_REVIEW",
+          "observation": "Stacked-paper composition reaches left edge; distinguish intentional overlap from clipped focal material."
+        }
+      ],
+      "outputDimensions": [
+        2172,
+        724
+      ],
+      "generatedPngSha256": "c08f4bb106cb431ec8979f9257f4067bbb13023dec716a98772e1b4385726211",
+      "webpSha256": "306f618bcb760420b6014dc975c1d4766d47f5c81cf37dcb49a03893f1dc1ddc",
+      "svgSha256": "97e80dd23b9263389f909d404bb3e1d5bcd0236b4e3ac9b88002427d13412ca6",
+      "rasterConversion": "lossless WebP; decoded RGBA equals generated PNG; no resize/crop/paint",
+      "vectorConversion": "vtracer 0.6.15 polygon trace; color precision 6, speckle 24, layer difference 16, length threshold 6, path precision 0; visual review required",
+      "visualReview": "Comparison sheets: complete focal subjects and no unintended divider/neighbor strips; simplified native vector appearance retained",
+      "rightsStatus": "User attested assistant generation; final classroom/content acceptance OPEN"
+    },
+    {
+      "asset": "cards/SE-P",
+      "date": "2026-10-08",
+      "tool": "OpenAI built-in image_gen",
+      "model": "not reported by tool",
+      "inputSha256": "007f012ec3ede08be72d1aed546fa5842f59b6d6312b80f80ef9f4e09e37f0af",
+      "prompt": "Precise artwork repair of SEA Game cards/SE-P. Findings: Thin bottom frame.. Remove unwanted white edge borders, grid dividers and fragments from neighboring panels. Restore any missing focal subject edges, antennas, barrels or equipment through coherent reconstruction. Preserve the original subject identity, recognizable geometry, component count, arrangement, colors, realistic detail and lighting. Preserve the meaning and relationships of this systems-engineering scene/diagram, its symbols, chart structure and intentional contextual composition. Keep all focal icons and equipment complete. Do not remove intentional diagram lines or add new labels. Use one opaque wide 3:1 landscape canvas with generous safe margins around all focal content. No grid sheet, no neighboring assets, no new objects or text. Do not crop tighter. Clean coherent realistic game artwork.",
+      "receipt": "evidence/convergence/art-border-repair-20261008/receipts/cards-SE-P.json",
+      "reason": [
+        {
+          "kind": "THIN_FRAME_REVIEW",
+          "observation": "Thin bottom frame."
+        }
+      ],
+      "outputDimensions": [
+        2172,
+        724
+      ],
+      "generatedPngSha256": "4f3c5ba2544dcfb50ca06a835b1d303d1b283a4f9cb420f7a20e8d9076ececeb",
+      "webpSha256": "6daf9adb6a79febe422d45e8b75bf34c87a3c5cb75e5e6f8acbac67ab51c5204",
+      "svgSha256": "0fd5bb82934dc59b0f3628f967dfb84a3650ac31588188bcb907143a4421f138",
+      "rasterConversion": "lossless WebP; decoded RGBA equals generated PNG; no resize/crop/paint",
+      "vectorConversion": "vtracer 0.6.15 polygon trace; color precision 6, speckle 24, layer difference 16, length threshold 6, path precision 0; visual review required",
+      "visualReview": "Comparison sheets: complete focal subjects and no unintended divider/neighbor strips; simplified native vector appearance retained",
+      "rightsStatus": "User attested assistant generation; final classroom/content acceptance OPEN"
+    },
+    {
+      "asset": "cards/SE-Q",
+      "date": "2026-10-08",
+      "tool": "OpenAI built-in image_gen",
+      "model": "not reported by tool",
+      "inputSha256": "262380bf9ddb496dda3675350ab09ee921e45ea999dd5673e8de48bd1491a837",
+      "prompt": "Precise artwork repair of SEA Game cards/SE-Q. Findings: Thin bottom frame.; Interior cockpit scene intentionally crops seats/screens/background.. Remove unwanted white edge borders, grid dividers and fragments from neighboring panels. Restore any missing focal subject edges, antennas, barrels or equipment through coherent reconstruction. Preserve the original subject identity, recognizable geometry, component count, arrangement, colors, realistic detail and lighting. Preserve the meaning and relationships of this systems-engineering scene/diagram, its symbols, chart structure and intentional contextual composition. Keep all focal icons and equipment complete. Do not remove intentional diagram lines or add new labels. Use one opaque wide 3:1 landscape canvas with generous safe margins around all focal content. No grid sheet, no neighboring assets, no new objects or text. Do not crop tighter. Clean coherent realistic game artwork.",
+      "receipt": "evidence/convergence/art-border-repair-20261008/receipts/cards-SE-Q.json",
+      "reason": [
+        {
+          "kind": "THIN_FRAME_REVIEW",
+          "observation": "Thin bottom frame."
+        },
+        {
+          "kind": "COMPOSITION_REVIEW",
+          "observation": "Interior cockpit scene intentionally crops seats/screens/background."
+        }
+      ],
+      "outputDimensions": [
+        2172,
+        724
+      ],
+      "generatedPngSha256": "dbcc2081035cd7dc4374e2c3ef3d25b7af1f03d89e81d9fc9efd1d3ab09368b1",
+      "webpSha256": "57cc9b617521c9dc5b0a46fab1a881b0495f202f8997343fd4ca0d76b9d6ce32",
+      "svgSha256": "99bca9d285a3457b529077f1034cd51faeaf3c6d9ada2aa04593df769eed04e7",
+      "rasterConversion": "lossless WebP; decoded RGBA equals generated PNG; no resize/crop/paint",
+      "vectorConversion": "vtracer 0.6.15 polygon trace; color precision 6, speckle 24, layer difference 16, length threshold 6, path precision 0; visual review required",
+      "visualReview": "Comparison sheets: complete focal subjects and no unintended divider/neighbor strips; simplified native vector appearance retained",
+      "rightsStatus": "User attested assistant generation; final classroom/content acceptance OPEN"
+    },
+    {
+      "asset": "cards/SE-R",
+      "date": "2026-10-08",
+      "tool": "OpenAI built-in image_gen",
+      "model": "not reported by tool",
+      "inputSha256": "4b4575df4342215330d26f34a68ad968927d9b09cb4060f2ca34399636d4cb43",
+      "prompt": "Precise artwork repair of SEA Game cards/SE-R. Findings: Thin bottom frame.; Right tool chest/secondary props intersect frame; review complete-scene requirement.. Remove unwanted white edge borders, grid dividers and fragments from neighboring panels. Restore any missing focal subject edges, antennas, barrels or equipment through coherent reconstruction. Preserve the original subject identity, recognizable geometry, component count, arrangement, colors, realistic detail and lighting. Preserve the meaning and relationships of this systems-engineering scene/diagram, its symbols, chart structure and intentional contextual composition. Keep all focal icons and equipment complete. Do not remove intentional diagram lines or add new labels. Use one opaque wide 3:1 landscape canvas with generous safe margins around all focal content. No grid sheet, no neighboring assets, no new objects or text. Do not crop tighter. Clean coherent realistic game artwork.",
+      "receipt": "evidence/convergence/art-border-repair-20261008/receipts/cards-SE-R.json",
+      "reason": [
+        {
+          "kind": "THIN_FRAME_REVIEW",
+          "observation": "Thin bottom frame."
+        },
+        {
+          "kind": "COMPOSITION_REVIEW",
+          "observation": "Right tool chest/secondary props intersect frame; review complete-scene requirement."
+        }
+      ],
+      "outputDimensions": [
+        2172,
+        724
+      ],
+      "generatedPngSha256": "32e61cf8108ca7213d83bf1a5ab073cbe80947cbf2378600e7cfeb0e951433f1",
+      "webpSha256": "d166b98d62bc23d3bff487e36002515b509cd7794b37ef95037c9e13ab532e77",
+      "svgSha256": "c321dc6527b22bd8e1144e0a161b31d3c24486c26ccf67f67f09a1d4d1e81510",
+      "rasterConversion": "lossless WebP; decoded RGBA equals generated PNG; no resize/crop/paint",
+      "vectorConversion": "vtracer 0.6.15 polygon trace; color precision 6, speckle 24, layer difference 16, length threshold 6, path precision 0; visual review required",
+      "visualReview": "Comparison sheets: complete focal subjects and no unintended divider/neighbor strips; simplified native vector appearance retained",
+      "rightsStatus": "User attested assistant generation; final classroom/content acceptance OPEN"
+    },
+    {
+      "asset": "cards/SE-S",
+      "date": "2026-10-08",
+      "tool": "OpenAI built-in image_gen",
+      "model": "not reported by tool",
+      "inputSha256": "76d864c33078050ae1ae6541e862f8a0a116c2f865088ccede748ac0991f5635",
+      "prompt": "Precise artwork repair of SEA Game cards/SE-S. Findings: Thin left frame.; Landscape/multipanel composition intentionally extends into boundaries.. Remove unwanted white edge borders, grid dividers and fragments from neighboring panels. Restore any missing focal subject edges, antennas, barrels or equipment through coherent reconstruction. Preserve the original subject identity, recognizable geometry, component count, arrangement, colors, realistic detail and lighting. Preserve the meaning and relationships of this systems-engineering scene/diagram, its symbols, chart structure and intentional contextual composition. Keep all focal icons and equipment complete. Do not remove intentional diagram lines or add new labels. Use one opaque wide 3:1 landscape canvas with generous safe margins around all focal content. No grid sheet, no neighboring assets, no new objects or text. Do not crop tighter. Clean coherent realistic game artwork.",
+      "receipt": "evidence/convergence/art-border-repair-20261008/receipts/cards-SE-S.json",
+      "reason": [
+        {
+          "kind": "THIN_FRAME_REVIEW",
+          "observation": "Thin left frame."
+        },
+        {
+          "kind": "COMPOSITION_REVIEW",
+          "observation": "Landscape/multipanel composition intentionally extends into boundaries."
+        }
+      ],
+      "outputDimensions": [
+        2172,
+        724
+      ],
+      "generatedPngSha256": "4596c43d8e7a7b24ba320b77b5c8f400839503cd9761beb5c1d8bc27ffe07303",
+      "webpSha256": "530456085fa439b711153a3a0d0fd37db23c077ce2e7d2062dfd2a27054c470d",
+      "svgSha256": "359c05c717a4488cce288033a5fd7f00874fe81e46cd32ed55cba10c5d8debb7",
+      "rasterConversion": "lossless WebP; decoded RGBA equals generated PNG; no resize/crop/paint",
+      "vectorConversion": "vtracer 0.6.15 polygon trace; color precision 6, speckle 24, layer difference 16, length threshold 6, path precision 0; visual review required",
+      "visualReview": "Comparison sheets: complete focal subjects and no unintended divider/neighbor strips; simplified native vector appearance retained",
+      "rightsStatus": "User attested assistant generation; final classroom/content acceptance OPEN"
+    },
+    {
+      "asset": "cards/SE-T",
+      "date": "2026-10-08",
+      "tool": "OpenAI built-in image_gen",
+      "model": "not reported by tool",
+      "inputSha256": "f2ae915e38a5187a94f6968b27245f2a665a77dd29e154dcae36abcc9a490cf4",
+      "prompt": "Precise artwork repair of SEA Game cards/SE-T. Findings: Left neighboring scene strip separated by white divider.. Remove unwanted white edge borders, grid dividers and fragments from neighboring panels. Restore any missing focal subject edges, antennas, barrels or equipment through coherent reconstruction. Preserve the original subject identity, recognizable geometry, component count, arrangement, colors, realistic detail and lighting. Preserve the meaning and relationships of this systems-engineering scene/diagram, its symbols, chart structure and intentional contextual composition. Keep all focal icons and equipment complete. Do not remove intentional diagram lines or add new labels. Use one opaque wide 3:1 landscape canvas with generous safe margins around all focal content. No grid sheet, no neighboring assets, no new objects or text. Do not crop tighter. Clean coherent realistic game artwork.",
+      "receipt": "evidence/convergence/art-border-repair-20261008/receipts/cards-SE-T.json",
+      "reason": [
+        {
+          "kind": "RETAINED_DIVIDER_OR_STRIP",
+          "observation": "Left neighboring scene strip separated by white divider."
+        }
+      ],
+      "outputDimensions": [
+        2172,
+        724
+      ],
+      "generatedPngSha256": "3a1ffb76c714afd87f13e0be3b838765eb0c52e4afe2e2a27ca836df7b2a42ab",
+      "webpSha256": "7e84eab2a50a8ad762846e3c4de568dfc3face18ba0c8c61609e6ed337099a84",
+      "svgSha256": "e6fbf0470c1c12ede5f86dac95324340ee1b2deaf5067883c565fa911737a7ab",
+      "rasterConversion": "lossless WebP; decoded RGBA equals generated PNG; no resize/crop/paint",
+      "vectorConversion": "vtracer 0.6.15 polygon trace; color precision 6, speckle 24, layer difference 16, length threshold 6, path precision 0; visual review required",
+      "visualReview": "Comparison sheets: complete focal subjects and no unintended divider/neighbor strips; simplified native vector appearance retained",
+      "rightsStatus": "User attested assistant generation; final classroom/content acceptance OPEN"
+    },
+    {
+      "asset": "cards/SE-U",
+      "date": "2026-10-08",
+      "tool": "OpenAI built-in image_gen",
+      "model": "not reported by tool",
+      "inputSha256": "98a88f6f5cb75932d63d94649e463b50e47c487551c14a215c1c8f2c40587dee",
+      "prompt": "Precise artwork repair of SEA Game cards/SE-U. Findings: Left tall antenna intersects top boundary.; Thin right/bottom frame.. Remove unwanted white edge borders, grid dividers and fragments from neighboring panels. Restore any missing focal subject edges, antennas, barrels or equipment through coherent reconstruction. Preserve the original subject identity, recognizable geometry, component count, arrangement, colors, realistic detail and lighting. Preserve the meaning and relationships of this systems-engineering scene/diagram, its symbols, chart structure and intentional contextual composition. Keep all focal icons and equipment complete. Do not remove intentional diagram lines or add new labels. Use one opaque wide 3:1 landscape canvas with generous safe margins around all focal content. No grid sheet, no neighboring assets, no new objects or text. Do not crop tighter. Clean coherent realistic game artwork.",
+      "receipt": "evidence/convergence/art-border-repair-20261008/receipts/cards-SE-U.json",
+      "reason": [
+        {
+          "kind": "SUBJECT_CLIPPED",
+          "observation": "Left tall antenna intersects top boundary."
+        },
+        {
+          "kind": "THIN_FRAME_REVIEW",
+          "observation": "Thin right/bottom frame."
+        }
+      ],
+      "outputDimensions": [
+        2172,
+        724
+      ],
+      "generatedPngSha256": "792f9e01ddff3b95dfcb24c7641e0893715f13bce738c3699af4d9bf87e8480e",
+      "webpSha256": "5eaedf06f6546bb947648efa52823f16e793f53c0827808d439e33dc559e3332",
+      "svgSha256": "9e4817246500eba534f4048220b13b7117e3aeb640a9410d3fecd5277274ab80",
+      "rasterConversion": "lossless WebP; decoded RGBA equals generated PNG; no resize/crop/paint",
+      "vectorConversion": "vtracer 0.6.15 polygon trace; color precision 6, speckle 24, layer difference 16, length threshold 6, path precision 0; visual review required",
+      "visualReview": "Comparison sheets: complete focal subjects and no unintended divider/neighbor strips; simplified native vector appearance retained",
+      "rightsStatus": "User attested assistant generation; final classroom/content acceptance OPEN"
+    },
+    {
+      "asset": "vehicles/combat",
+      "date": "2026-10-08",
+      "tool": "OpenAI built-in image_gen",
+      "model": "not reported by tool",
+      "inputSha256": "5b56daacc4558a45f4cad45f1d8cb38f650a1a70feb663b97a569ce8a130d00b",
+      "prompt": "Precise artwork repair of SEA Game vehicles/combat. Findings: Thin bottom white frame.. Remove unwanted white edge borders, grid dividers and fragments from neighboring panels. Restore any missing focal subject edges, antennas, barrels or equipment through coherent reconstruction. Preserve the original subject identity, recognizable geometry, component count, arrangement, colors, realistic detail and lighting. Show the complete standalone equipment/vehicle with all protrusions and cables visible. Blend the hard portrait-panel backdrop seamlessly into a continuous matching beige studio background. Use one opaque wide 3:1 landscape canvas with generous safe margins around all focal content. No grid sheet, no neighboring assets, no new objects or text. Do not crop tighter. Clean coherent realistic game artwork.",
+      "receipt": "evidence/convergence/art-border-repair-20261008/receipts/vehicles-combat.json",
+      "reason": [
+        {
+          "kind": "THIN_FRAME_REVIEW",
+          "observation": "Thin bottom white frame."
+        }
+      ],
+      "outputDimensions": [
+        2172,
+        724
+      ],
+      "generatedPngSha256": "75d9d75e73588499666e078afd5d45a61ebd605fea083d0b503f4575dbcdb769",
+      "webpSha256": "faed77bf45312ccf27ae2788f26941b440cb8a94eb31c55cb96bdd731f588c88",
+      "svgSha256": "0b51f391c69d7beeb3553a5ae9a155a1d81ce4cc1795ec9e13f9fbc2593662fc",
+      "rasterConversion": "lossless WebP; decoded RGBA equals generated PNG; no resize/crop/paint",
+      "vectorConversion": "vtracer 0.6.15 polygon trace; color precision 6, speckle 24, layer difference 16, length threshold 6, path precision 0; visual review required",
+      "visualReview": "Comparison sheets: complete focal subjects and no unintended divider/neighbor strips; simplified native vector appearance retained",
+      "rightsStatus": "User attested assistant generation; final classroom/content acceptance OPEN"
+    },
+    {
+      "asset": "vehicles/recce",
+      "date": "2026-10-08",
+      "tool": "OpenAI built-in image_gen",
+      "model": "not reported by tool",
+      "inputSha256": "552899708d6580aaa6a7c6f8c56ee7952258af77051ce3738cca2b639114053f",
+      "prompt": "Precise artwork repair of SEA Game vehicles/recce. Findings: Thin bottom white frame.. Remove unwanted white edge borders, grid dividers and fragments from neighboring panels. Restore any missing focal subject edges, antennas, barrels or equipment through coherent reconstruction. Preserve the original subject identity, recognizable geometry, component count, arrangement, colors, realistic detail and lighting. Show the complete standalone equipment/vehicle with all protrusions and cables visible. Blend the hard portrait-panel backdrop seamlessly into a continuous matching beige studio background. Use one opaque wide 3:1 landscape canvas with generous safe margins around all focal content. No grid sheet, no neighboring assets, no new objects or text. Do not crop tighter. Clean coherent realistic game artwork.",
+      "receipt": "evidence/convergence/art-border-repair-20261008/receipts/vehicles-recce.json",
+      "reason": [
+        {
+          "kind": "THIN_FRAME_REVIEW",
+          "observation": "Thin bottom white frame."
+        }
+      ],
+      "outputDimensions": [
+        2172,
+        724
+      ],
+      "generatedPngSha256": "58917cd4c704026905baaca043edd43e0e5fa79d95173933002351e6e8bc5acd",
+      "webpSha256": "e406ce20c56040391979e31a72630e4f8583494174813f201c1311eba7ae56db",
+      "svgSha256": "ae2690df6d600c550db262c569e5e0a4f75d70f1c1332412aa9015550f425dd3",
+      "rasterConversion": "lossless WebP; decoded RGBA equals generated PNG; no resize/crop/paint",
+      "vectorConversion": "vtracer 0.6.15 polygon trace; color precision 6, speckle 24, layer difference 16, length threshold 6, path precision 0; visual review required",
+      "visualReview": "Comparison sheets: complete focal subjects and no unintended divider/neighbor strips; simplified native vector appearance retained",
+      "rightsStatus": "User attested assistant generation; final classroom/content acceptance OPEN"
+    },
+    {
+      "asset": "vehicles/troop-carrier",
+      "date": "2026-10-08",
+      "tool": "OpenAI built-in image_gen",
+      "model": "not reported by tool",
+      "inputSha256": "18129f3489a5ac04fb1a36c03545c5d6a2891db8d823c7830a9a52babae3a970",
+      "prompt": "Precise artwork repair of SEA Game vehicles/troop-carrier. Findings: Thin bottom white frame.. Remove unwanted white edge borders, grid dividers and fragments from neighboring panels. Restore any missing focal subject edges, antennas, barrels or equipment through coherent reconstruction. Preserve the original subject identity, recognizable geometry, component count, arrangement, colors, realistic detail and lighting. Show the complete standalone equipment/vehicle with all protrusions and cables visible. Blend the hard portrait-panel backdrop seamlessly into a continuous matching beige studio background. Use one opaque wide 3:1 landscape canvas with generous safe margins around all focal content. No grid sheet, no neighboring assets, no new objects or text. Do not crop tighter. Clean coherent realistic game artwork.",
+      "receipt": "evidence/convergence/art-border-repair-20261008/receipts/vehicles-troop-carrier.json",
+      "reason": [
+        {
+          "kind": "THIN_FRAME_REVIEW",
+          "observation": "Thin bottom white frame."
+        }
+      ],
+      "outputDimensions": [
+        2172,
+        724
+      ],
+      "generatedPngSha256": "cbf371a2ded80f786cce859bdfe2f098b75bc9bdf4fbf8967a3b4b316a76c9b5",
+      "webpSha256": "7a62eb741c699acc160c5bf0bed8ed2e93f1d0525bf4d23ea2c5dfc71a268241",
+      "svgSha256": "213abae296e034b2397751e7992903ed3ef9492b3042ec43cd97ee4fd3cbf3b5",
+      "rasterConversion": "lossless WebP; decoded RGBA equals generated PNG; no resize/crop/paint",
+      "vectorConversion": "vtracer 0.6.15 polygon trace; color precision 6, speckle 24, layer difference 16, length threshold 6, path precision 0; visual review required",
+      "visualReview": "Comparison sheets: complete focal subjects and no unintended divider/neighbor strips; simplified native vector appearance retained",
+      "rightsStatus": "User attested assistant generation; final classroom/content acceptance OPEN"
+    }
+  ]
+}

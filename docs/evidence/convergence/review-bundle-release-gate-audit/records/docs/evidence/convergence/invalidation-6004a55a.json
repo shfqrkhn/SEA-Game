@@ -1,0 +1,9 @@
+{
+  "priorReceipt": "specification-receipt-6004a55a.json",
+  "priorKey": "6004a55a7debbc343a420468d975a29badb176ec23f04602d03185b47229eaf2",
+  "invalidatedForCurrentCandidate": true,
+  "reason": "PRODUCT_RELEASE D14/W14 changes practice handlers and schema-3 validation, generated outputs, behavioral tests, source-parity CI, README, execution ledger, project analysis and the dated MPES execution-scope note.",
+  "reconciledCurrentKey": "65a48c975f22ef9029acaa2d8882d9b88971a2ec1adb3c527900e0da36d10d01",
+  "currentSameKeyFullReviewCount": 0,
+  "preservedHistoricalClaim": "The prior three sequential self-review passes apply only to the prior exact key, not current product development or PRODUCT_RELEASE acceptance."
+}

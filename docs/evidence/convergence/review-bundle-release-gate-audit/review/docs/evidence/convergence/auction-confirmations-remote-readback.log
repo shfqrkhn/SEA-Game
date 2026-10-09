@@ -1,0 +1,26 @@
+[
+  {
+    "id": 37825410122,
+    "head_sha": "1b80b348ac945987fbe11db77bd7a51f3dd553aa",
+    "status": "completed",
+    "conclusion": "success"
+  },
+  {
+    "id": 37825409633,
+    "head_sha": "1b80b348ac945987fbe11db77bd7a51f3dd553aa",
+    "status": "completed",
+    "conclusion": "success"
+  }
+]
+{
+  "file": "SEA_Instructor_Standalone.html",
+  "http": 200,
+  "remoteSha256": "cc9702e26b109d053a44993cd88e071ca415c29abf182335ac93274637d5b2ea",
+  "candidateSha256": "a6f610060e3ffd05ba3e09701b2a9142b75a0e3068c1798ba3326feb3cc74c7a"
+}
+{
+  "file": "SEA_Student_Standalone.html",
+  "http": 200,
+  "remoteSha256": "592e415c0a0501a983c18eb477dd00188cabe17d097fb173dc203c95db90dd4a",
+  "candidateSha256": "138c5669d8e914096e5eaa9f3ff5658899d117331389ca414ba41aeec4efe82b"
+}

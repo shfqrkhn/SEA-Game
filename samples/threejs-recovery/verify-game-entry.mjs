@@ -1,0 +1,20 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import vm from 'node:vm';
+import * as THREE from 'three';
+import {createPart,createMission,MODEL_IDS,MISSION_IDS,materials} from '../../source/three/game-models.mjs';
+import {fitCamera} from './models.mjs';
+const engine=fs.readFileSync('source/shared/engine.js','utf8');const ids=vm.runInNewContext(engine+'\n[...CARD_INDEX.keys(),"TRAIN-CAP"]');assert.deepEqual([...MODEL_IDS].sort(),Array.from(ids).sort());
+const results=[];for(const [kind,list,factory]of [['part',MODEL_IDS,createPart],['mission',MISSION_IDS,createMission]])for(const id of list){
+ const model=factory(id,materials());model.updateWorldMatrix(true,true);const bounds=new THREE.Box3().setFromObject(model);assert(!bounds.isEmpty(),id);assert([...bounds.min.toArray(),...bounds.max.toArray()].every(Number.isFinite),id);
+ let meshes=0,triangles=0;model.traverse(o=>{if(o.isMesh){meshes++;const pos=o.geometry.attributes.position;assert(pos?.count>0,id);triangles+=(o.geometry.index?.count||pos.count)/3;}});assert(meshes>5,id);
+ for(const aspect of [.5,1,1.6,3])for(const angle of [[7,4.5,7],[-7,4.5,-7],[7,2.7,0]]){
+  const camera=new THREE.OrthographicCamera();fitCamera(camera,model,aspect,angle);
+  model.traverse(o=>{if(!o.isMesh)return;const p=o.geometry.attributes.position;for(let i=0;i<p.count;i++){const point=new THREE.Vector3().fromBufferAttribute(p,i).applyMatrix4(o.matrixWorld).project(camera);assert(Math.abs(point.x)<=.801&&Math.abs(point.y)<=.801&&Math.abs(point.z)<=1.001,id+' cropped');}});
+ }
+ results.push({id,kind,meshes,triangles,bounds:{min:bounds.min.toArray(),max:bounds.max.toArray()},cameraChecks:12});
+ const gs=new Set(),ms=new Set();model.traverse(o=>{if(o.geometry)gs.add(o.geometry);if(o.material)ms.add(o.material);});gs.forEach(x=>x.dispose());ms.forEach(x=>x.dispose());
+}
+assert.throws(()=>createPart('UNKNOWN'));assert.throws(()=>createMission('UNKNOWN'));
+fs.mkdirSync('docs/evidence/convergence/threejs-game-20261008',{recursive:true});fs.writeFileSync('docs/evidence/convergence/threejs-game-20261008/model-verification.json',JSON.stringify({status:'PASS',renderer:'geometry and camera projection; browser rendering separately checked',models:results},null,2)+'\n');
+console.log('71 parts, 6 missions, all vertices in 12 camera configurations per model PASS');

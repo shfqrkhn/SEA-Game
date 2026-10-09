@@ -1,0 +1,15 @@
+{
+  "identity": "cards/SE-B",
+  "generatedPngSha256": "2123358ea1c4b2400913fefd25664be58cbf1c470a100aacee7686058dd51331",
+  "webpSha256": "23690c56c175806898aa843e63e2b552504da2a378221a9bd2b243ef576ee85e",
+  "svgSha256": "2d632cbfd4c663454f571f72e17947eb70326a749cee0238682e00e63bbf8a27",
+  "dimensions": [
+    2172,
+    724
+  ],
+  "encoding": "lossless WebP; decoded RGBA equals generated PNG; no resize/crop/paint",
+  "vector": "vtracer 0.6.15 polygon trace; color precision 6, speckle 24, layer difference 16, length threshold 6, path precision 0; visual review required",
+  "svgBytes": 6725,
+  "canonicalSvgNormalization": true,
+  "canonicalLF": true
+}

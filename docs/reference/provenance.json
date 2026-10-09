@@ -1,0 +1,25 @@
+{
+  "date": "2026-10-08",
+  "files": {
+    "docs/reference/handover-003.md.txt": {
+      "sha256": "02a62a78b5a8fe529e5dd98aa0feb746cd0bf6255a0837fe4c0ef9fb448e8254",
+      "kind": "byte-preserved supplied evidence"
+    },
+    "docs/reference/handover-latest.md.txt": {
+      "sha256": "4c432938f103456b617604b8e46b0dda170960c2a213cfe20236a74d1da1c5cb",
+      "kind": "byte-preserved supplied evidence"
+    },
+    "docs/reference/Omni_5.1.1.md.txt": {
+      "sha256": "88478f1eb2aee5c2d86bc3e7ef65e36d46af5310039e98c9721a93e38a10f6ef",
+      "kind": "byte-preserved supplied evidence"
+    },
+    "docs/reference/original-instructor.html.txt": {
+      "sha256": "e0a6e156f0c9864ba8e7a2f125f0f5f8a1959db779d6c35d092fdb70ab0d1343",
+      "kind": "byte-preserved supplied evidence"
+    },
+    "docs/reference/original-student.html.txt": {
+      "sha256": "d55f1871939eeb0030305a89608567cec3fed2be729d5bc174f11d769ff0cbe3",
+      "kind": "byte-preserved supplied evidence"
+    }
+  }
+}

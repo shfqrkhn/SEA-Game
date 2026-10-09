@@ -432,6 +432,7 @@ header{background:#fff;color:#17272b;border-bottom:2px solid #cbd9d1;box-shadow:
 @media(max-width:600px){.hero h2{font-size:clamp(23px,7vw,31px)}.auction{grid-template-columns:minmax(0,1fr)}}
 
 /* Compact, light, square-edge classroom layout. */
+.vehicle-preview .vehicle-art{height:120px;margin-block:8px}
 :root{color-scheme:light;--canvas:#f8faf8;--surface:#fff;--surface-2:#f2f6f4;--ink:#182a27;--muted:#52625d;--line:#ccd8d2;--shadow:none}
 header{background:#fff;color:var(--ink);box-shadow:none;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:30;min-height:48px;padding:6px 16px}
 main{max-width:1440px;padding:12px 18px 24px}
@@ -445,3 +446,25 @@ main{max-width:1440px;padding:12px 18px 24px}
 .btn{min-height:34px;padding:5px 9px}.field{margin-bottom:7px}.field input,.field select,.field textarea{min-height:36px;padding:6px 8px}
 *,:before,:after{border-radius:0!important}
 @media(max-width:900px){.auction{grid-template-columns:1fr}main{padding:10px 12px}.hero{display:block}.market{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* The primary scene replaces raster illustrations while retaining readable controls. */
+.sea3d-workshop{border:1px solid #cbc9bd;border-radius:12px;background:#f4f2eb;margin-bottom:22px;padding:14px}
+.sea3d-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.sea3d-heading h2{margin:0;font-size:21px}
+.sea3d-toolbar{display:flex;align-items:end;gap:8px;flex-wrap:wrap;margin:10px 0}.sea3d-toolbar label{display:grid;gap:3px;min-width:140px}.sea3d-toolbar select{max-width:min(350px,75vw)}
+.sea3d-mode{display:flex;gap:7px;align-items:center}.sea3d-mode input{width:auto}
+#sea3dViewport{height:clamp(240px,34vw,380px);width:100%;overflow:hidden;border-radius:8px;touch-action:none}#sea3dViewport canvas{display:block;width:100%;height:100%}
+#sea3dStatus,.sea3d-workshop .muted{font-size:13px;margin:7px 0}.sea3d-active .art{display:none}
+@media print{.sea3d-workshop{display:none}.sea3d-active .art{display:block}}
+
+.sea3d-workshop [hidden]{display:none!important}
+
+/* Keep the scene visible beside the current task on desktop. */
+@media(min-width:1100px){
+ main{max-width:1480px;display:grid;grid-template-columns:minmax(0,1.12fr) minmax(380px,.88fr);gap:22px;align-items:start}
+ .sea3d-workshop{grid-column:2;grid-row:1;position:sticky;top:100px;align-self:start;margin:0}
+ main>.section{grid-column:1;grid-row:1;min-width:0}
+ main>.section>.auction{grid-template-columns:1fr}
+ #sea3dViewport{height:clamp(330px,38vw,490px)}
+ main>.foot{grid-column:1/-1}
+}
+@media print{main{display:block}.sea3d-workshop{display:none!important}}

@@ -1,0 +1,42 @@
+{
+  "recordedAtUtc": "2026-10-08T22:39:16.914Z",
+  "target": "PRODUCT_RELEASE",
+  "workItem": "W23",
+  "defects": [
+    "D23 vehicle routing/render integration",
+    "D24 localized SVG description"
+  ],
+  "localSpecificationFingerprint": "dceff8421fa6a440ebcbf9eff3f7e40ea816b8a6cb6f4758d223b8c27384a742",
+  "head": "1b80b348ac945987fbe11db77bd7a51f3dd553aa",
+  "hashes": {
+    "source/shared/engine.js": "929d47610305eb5b090ab31dc495f7c65aa46eb942e5b8fdd1a32f8b9cb4ee3a",
+    "source/shared/presentation.js": "af0f5989403ab8a005c836b6fb09f7003571839cd72b0fcf0217d364780fa9ce",
+    "source/shared/styles.css": "05e6032255b782d85b64be514290745a6699b09343f73cbb42b1336223ab3ea7",
+    "source/instructor.js": "6441599fa33d81542a1d10a62bf5b33b5aa0966bd14558fce59408bf4c165055",
+    "source/student.js": "dfcb2afec3a977d90f60b0f00499536ae2cd96253a7085e5cde3d309fd4bd866",
+    "source/student.template.html": "6fa39f57dd09e3553ef5bf716ac2204b535cc91cd724cdb10a83a4539b50c483",
+    "SEA_Instructor_Standalone.html": "9c42015d55627512fb4dc2fe856d6688a4aee7c89645afe3dd98cadc574584ff",
+    "SEA_Student_Standalone.html": "331830d8f503060f1fc3f36c3f99baf6580687411b05308b9cf8dc73c611fff5",
+    "tools/test.mjs": "a602694a687dff5a576e5a8f3d77c6bdb6f76bcc75492985ee9e694e0d69137b",
+    "docs/ARTWORK_MANIFEST.json": "7da8400768fe7eff8e8e7f5d85c2fe749b83f202fb57726a9b5982bb4f567835",
+    "docs/evidence/convergence/vehicle-art-route-red.log": "f6710021e084a1dd36ac4cc647c15f982959850f662eacfc63060f78578565e3",
+    "docs/evidence/convergence/vehicle-fallback-label-red.log": "0cfa503ba4d546447f8c63f882299ccf45a16722472586071e2173e4d5559646",
+    "docs/evidence/convergence/vehicle-art-before-extraction-green.log": "be91562042a27eea61493fff734b2d665fc859ed9404370dcda178238bda85a2",
+    "docs/evidence/convergence/vehicle-art-final-win.log": "d1d5ccaa5ee1dd5acdb5391f9877c1ad21cf03fe3a7a452f3f8281fc4be8c801",
+    "docs/evidence/convergence/vehicle-art-final-wsl.log": "21a3e0bf125e2e652ecf55f0a05166d91ffb8a9af494816da2fd5c314dcaa5dc",
+    "docs/evidence/convergence/vehicle-art-decode-audit.json": "b35b8a937820688511dd2136554dc706a78372e7f5d89e19dc37725cf05f5094"
+  },
+  "checks": {
+    "windowsNode24": "PASS full suite/build parity",
+    "wslNode22": "PASS full suite/build parity",
+    "assetDecode": "PASS Windows Pillow12.3.0;77 assets/vector fallbacks",
+    "contract": "PASS",
+    "protocol": "PASS29 cases;18 mutants rejected",
+    "diff": "PASS"
+  },
+  "review": "single-agent self-review with simulated presentation/network callbacks",
+  "candidateBrowser": "OPEN",
+  "candidateCI": "NOT_RUN",
+  "productReleasePassStreak": 0,
+  "nextAction": "Repair canonical CAP-F strip and corresponding fallback; actual browser/offline/assistive/rights qualification remains open"
+}

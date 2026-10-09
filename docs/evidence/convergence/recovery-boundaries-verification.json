@@ -1,0 +1,19 @@
+{
+  "protocol": "29 cases; 18 semantic mutants PASS",
+  "key": "876aa143f4cb6110331e72ad8c0b3b31b46a5372183319e14150f01c8f3499e7",
+  "hashes": {
+    "SEA_Instructor_Standalone.html": "0079406c6757394e26d932aa256cd65ac8627058ac6cf6bce82232b7415670c0",
+    "docs/evidence/convergence/recovery-boundaries-win.log": "f7836ad020be4fb308e8cd57560e35cbc8456222ad1236417831f6c1e47d084f",
+    "SEA_Student_Standalone.html": "4c554e617647c6e089242054a38adbcf7ddede24310b7982ce760d45789e4a0f",
+    "tools/test.mjs": "967c5da67c2fa5c1635537d0b34d2869eab1268e56a68f66055d98e4c4513219",
+    "docs/evidence/convergence/recovery-boundaries-wsl.log": "f7836ad020be4fb308e8cd57560e35cbc8456222ad1236417831f6c1e47d084f"
+  },
+  "date": "2026-10-08",
+  "fullMaterialClosure": "OPEN",
+  "scope": "Local SPECIFICATION-basis fingerprint, production recovery characterization only",
+  "head": "1b80b348ac945987fbe11db77bd7a51f3dd553aa",
+  "windows": "Node24.20.0 suite/build PASS",
+  "wsl": "Ubuntu24.04 Node22.23.3 suite/build PASS",
+  "candidateBrowser": "OPEN",
+  "fullSameKeyZeroChangePasses": 0
+}

@@ -1,0 +1,90 @@
+{
+  "outcome": "CONVERGED",
+  "target": "SPECIFICATION",
+  "specificationVersion": "1.1.0",
+  "date": "2026-10-08",
+  "key": "0862ae4da8ea8717506b9952c7b7fb2950547eb51e4685850b060031d28f35ec",
+  "materialFiles": 193,
+  "governance": "Omni 5.1.1-final schema 6; MPES 1.1.0; docs/assurance/REVIEW_CONTRACT.md",
+  "reviewer": "Primary AI agent, three sequential fresh full-closure self-reviews; no independent or multi-agent assurance claimed",
+  "passes": [
+    {
+      "sequence": 1,
+      "result": "PASS",
+      "zeroChange": true,
+      "keyBefore": "0862ae4da8ea8717506b9952c7b7fb2950547eb51e4685850b060031d28f35ec",
+      "keyAfter": "0862ae4da8ea8717506b9952c7b7fb2950547eb51e4685850b060031d28f35ec",
+      "report": "pass-1.md",
+      "checks": "pass-1-checks.json",
+      "reportSha256": "d2a4cecf65beed2b62b53ed75cc6d3d97bf57ba605f35b5ef9937e7f82818e75"
+    },
+    {
+      "sequence": 2,
+      "result": "PASS",
+      "zeroChange": true,
+      "keyBefore": "0862ae4da8ea8717506b9952c7b7fb2950547eb51e4685850b060031d28f35ec",
+      "keyAfter": "0862ae4da8ea8717506b9952c7b7fb2950547eb51e4685850b060031d28f35ec",
+      "report": "pass-2.md",
+      "checks": "pass-2-checks.json",
+      "reportSha256": "40587202fcbc0deb52beec9b86c4756e8b0f48365d370a532b853946ea110e77"
+    },
+    {
+      "sequence": 3,
+      "result": "PASS",
+      "zeroChange": true,
+      "keyBefore": "0862ae4da8ea8717506b9952c7b7fb2950547eb51e4685850b060031d28f35ec",
+      "keyAfter": "0862ae4da8ea8717506b9952c7b7fb2950547eb51e4685850b060031d28f35ec",
+      "report": "pass-3.md",
+      "checks": "pass-3-checks.json",
+      "reportSha256": "9f827030e41cc3e52ed51eb2843df329bdab6899419844944c047e1466e20627"
+    }
+  ],
+  "confirmedConsecutivePasses": 3,
+  "checks": {
+    "contractChecks": 10,
+    "syntheticProtocolCases": 29,
+    "semanticMutantsKilled": 18,
+    "independentFileSetAndHashes": "PASS",
+    "referenceCopies": 5,
+    "assetPairs": 77,
+    "remoteHeadAndDeployedBytes": "unchanged"
+  },
+  "changedPasses": [
+    {
+      "finding": "Resumed SENT effect could be retried without readback in synthetic model",
+      "repro": "changed-pass-sent-effect.json",
+      "red": "sent-red.json",
+      "green": "sent-green.json",
+      "regression": "sent-regression.json",
+      "disposition": "Corrected before final key; previous confirmation discarded"
+    }
+  ],
+  "limitations": [
+    "Specification convergence only; the game retains known defects and outstanding release gates.",
+    "No real browser/device/classroom acceptance performed in this specification review.",
+    "No production autonomous service, scheduler, credentials or external write authority created.",
+    "Trending daily/weekly/monthly retrieval unavailable; no dependent material conclusion used it.",
+    "No independent human/model review or certification claimed."
+  ],
+  "invalidation": [
+    "Material specification/source/generated/assets/policy/evaluator/reference/evidence change",
+    "Changed Git HEAD or working bytes requiring identity reconciliation",
+    "Material environment/capability, currentness or remote/deployment divergence",
+    "New material defect or stronger contrary evidence",
+    "Operational reuse of excluded run records"
+  ],
+  "evidenceSha256": {
+    "candidate-manifest.json": "133a0232a5e94305c30d000aebfeffa4d7b610a3bdca40f2bbb69cd9ba43722e",
+    "pass-1-checks.json": "84119323d95ffbe37d8e7df99af961125a82bca212e1c262bbea8c841789a26b",
+    "pass-1-independent-checks.json": "326b00c88bdea3fd78940ca61b218d6f5c7d171b51dbe7353729b711f6df969b",
+    "pass-2-checks.json": "84119323d95ffbe37d8e7df99af961125a82bca212e1c262bbea8c841789a26b",
+    "pass-2-mutations.json": "b50fd26c52c9bb9714f3577097b3a67491714cdcb4114c96ddd32fcfed67b9e6",
+    "pass-3-checks.json": "84119323d95ffbe37d8e7df99af961125a82bca212e1c262bbea8c841789a26b",
+    "pass-3-independent-checks.json": "69129578d8a0a5fc5970bce8e61dee745c2246c04827e4dc6e5dfe1f94becc48",
+    "pass-3-remote-readback.json": "133dca22ecfb3612432398b31d623d9cca0c9ec824d5faab538a2286ff71625c",
+    "changed-pass-sent-effect.json": "85261a74a937f5973cb862afcab48936115e9f8719444c6c8656b4c5c70c016e",
+    "sent-red.json": "c7aeb6a1788681c7b1ac5ba6ee759b00018514d87fda01f1eb78a71d35c42554",
+    "sent-green.json": "84119323d95ffbe37d8e7df99af961125a82bca212e1c262bbea8c841789a26b",
+    "sent-regression.json": "b50fd26c52c9bb9714f3577097b3a67491714cdcb4114c96ddd32fcfed67b9e6"
+  }
+}

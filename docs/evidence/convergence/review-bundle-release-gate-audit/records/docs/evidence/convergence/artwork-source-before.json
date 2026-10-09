@@ -1,0 +1,12 @@
+{
+  "instructor": {
+    "count": 77,
+    "trimmedDifferences": 0,
+    "sha256": "8a72bf39d7efc699ff476463a1d6f7ef77642f335cff2a020767a96becb7d882"
+  },
+  "student": {
+    "count": 77,
+    "trimmedDifferences": 0,
+    "sha256": "8a72bf39d7efc699ff476463a1d6f7ef77642f335cff2a020767a96becb7d882"
+  }
+}

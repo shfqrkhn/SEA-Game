@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+{{SEA_CSP}}
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#252a27">
 <title>Systems Engineering Awareness</title>
@@ -11,10 +12,20 @@
 <a class="skip-link" href="#mainContent"><span data-i18n="common.skip"></span></a>
 <header>
   <div class="brand"><div class="mark">SE</div><div><h1 data-i18n="app.title">Systems Engineering Awareness</h1><small data-i18n="role"></small></div></div>
-  <div class="top"><button id="langBtn" class="btn ghost" type="button">FR</button></div>
+  <div class="top"><button id="exportBackupBtn" class="btn ghost" type="button" data-i18n="backup.export"></button><button id="importBackupBtn" class="btn ghost" type="button" data-i18n="backup.import"></button><button id="restorePreviousBtn" class="btn ghost" type="button" data-i18n="backup.restorePrevious" disabled></button><input id="backupFile" class="sr-only" type="file" accept="application/json,.json" tabindex="-1" aria-hidden="true"><button id="langBtn" class="btn ghost" type="button">FR</button></div>
 </header>
-<div id="storageNotice" class="notice bad hidden" role="status"></div><div class="status"><span class="badge">v3.0.0-local</span><span id="vehicleBadge" class="badge"></span><span class="badge" data-i18n="role"></span><span id="phaseBadge" class="badge"></span><span id="sessionBadge" class="badge"></span></div>
+<div id="storageNotice" class="notice bad hidden" role="status"></div><div id="backupStatus" class="notice info hidden" role="status" aria-live="polite"></div><div class="status"><span class="badge">v3.0.0-local</span><span id="vehicleBadge" class="badge"></span><span class="badge" data-i18n="role"></span><span id="phaseBadge" class="badge"></span><span id="sessionBadge" class="badge"></span></div>
 <main id="mainContent">
+<section id="sea3dWorkshop" class="sea3d-workshop" aria-labelledby="sea3d-title">
+ <div class="sea3d-heading"><h2 id="sea3d-title">3D vehicle workshop</h2><label class="sea3d-mode"><input id="sea3dToggle" type="checkbox"><span id="sea3d-toggle">Use 2D artwork</span></label></div>
+ <div class="sea3d-toolbar">
+  <label><span id="sea3d-team">Team</span><select id="sea3dTeam"></select></label>
+  <label><span id="sea3d-object">Inspect</span><select id="sea3dObject"></select></label>
+  <button id="sea3d-reset" class="btn ghost" type="button">Reset view</button><button id="sea3d-front" class="btn ghost" type="button">Front</button><button id="sea3d-rear" class="btn ghost" type="button">Rear</button>
+ </div>
+ <div id="sea3dViewport" role="img" aria-label="Interactive 3D vehicle and equipment" aria-describedby="sea3dStatus" hidden></div>
+ <p id="sea3dStatus" role="status" aria-live="polite"></p><p id="sea3d-hint" class="muted"></p>
+</section>
 <section id="setup" class="section active">
   <div class="hero"><div class="kicker" data-i18n="setup.kicker"></div><h2 data-i18n="setup.title"></h2><p data-i18n="setup.desc"></p></div>
   <div class="grid two">
@@ -32,14 +43,14 @@
   <div class="hero"><div class="kicker" data-i18n="practice.kicker"></div><h2 data-i18n="practice.title"></h2><p data-i18n="practice.desc"></p></div>
   <div class="grid two">
     <div class="gamecard"><div class="band"><span data-i18n="category.CAPACITY"></span><span>TRAIN-CAP</span></div><div class="body"><div class="art" id="practiceArt" aria-label="Training capacity illustration"></div><h3 data-i18n="practice.cardTitle"></h3><div class="effects"><div class="effect"><span data-i18n="practice.capacity"></span><strong>+4</strong><small data-i18n="practice.persons"></small></div><div class="effect"><span data-i18n="practice.mobility"></span><strong>-10</strong><small>km/h</small></div></div><div class="price" data-practice-price></div></div></div>
-    <div class="card"><div id="practiceStatus" class="notice info"></div><p class="inline"><button id="practiceRecord" class="btn good" type="button" data-i18n="practice.record"></button><button id="practiceReset" class="btn" type="button" data-i18n="practice.reset"></button></p><p><button id="toPlanning" class="btn primary" type="button" disabled data-i18n="practice.toPlanning"></button></p></div>
+    <div class="card"><div id="practiceStatus" class="notice info" role="status" aria-atomic="true"></div><p class="inline"><button id="practiceRecord" class="btn good" type="button" data-i18n="practice.record"></button><button id="practiceReset" class="btn" type="button" data-i18n="practice.reset"></button></p><p><button id="toPlanning" class="btn primary" type="button" disabled data-i18n="practice.toPlanning"></button></p></div>
   </div>
 </section>
 
 <section id="planning" class="section">
   <div class="hero"><div class="kicker" data-i18n="planning.kicker"></div><h2 id="planningTitle"></h2></div>
   <div class="grid two">
-    <div class="card"><div class="field"><label for="planVehicle" data-i18n="vehicle.label"></label><select id="planVehicle"></select></div><p data-i18n="vehicle.hint"></p><div id="planVehicleNotice" role="status"></div><label class="check-label"><input id="vehicleConfirmed" type="checkbox"><span data-i18n="vehicle.confirm"></span></label><div class="field"><label for="plan" data-i18n="planning.plan"></label><textarea id="plan" maxlength="1200"></textarea><small class="muted" data-i18n="common.warningInfo"></small></div><div class="field"><label for="risks" data-i18n="planning.risks"></label><textarea id="risks" maxlength="1200"></textarea><small class="muted" data-i18n="common.warningInfo"></small></div><div class="field"><label for="maxWtp" data-i18n="planning.maxWtp"></label><input id="maxWtp" inputmode="numeric"></div><p><button id="toAuction" class="btn primary" type="button" data-i18n="planning.toAuction"></button></p></div>
+    <div class="card"><div class="field"><label for="planVehicle" data-i18n="vehicle.label"></label><select id="planVehicle"></select></div><div id="planVehiclePreview"></div><p data-i18n="vehicle.hint"></p><div id="planVehicleNotice" role="status"></div><label class="check-label"><input id="vehicleConfirmed" type="checkbox"><span data-i18n="vehicle.confirm"></span></label><div class="field"><label for="plan" data-i18n="planning.plan"></label><textarea id="plan" maxlength="1200"></textarea><small class="muted" data-i18n="common.warningInfo"></small></div><div class="field"><label for="risks" data-i18n="planning.risks"></label><textarea id="risks" maxlength="1200"></textarea><small class="muted" data-i18n="common.warningInfo"></small></div><div class="field"><label for="maxWtp" data-i18n="planning.maxWtp"></label><input id="maxWtp" inputmode="numeric"></div><p><button id="toAuction" class="btn primary" type="button" data-i18n="planning.toAuction"></button></p></div>
     <div class="card"><h3 data-i18n="planning.requirements"></h3><table id="reqTable" class="req"></table><details><summary><strong data-i18n="planning.rolesTitle"></strong></summary><p data-i18n="planning.roles"></p></details><details><summary><strong data-i18n="planning.guidanceTitle"></strong></summary><ul><li data-i18n="planning.g1"></li><li data-i18n="planning.g2"></li><li data-i18n="planning.g3"></li><li data-i18n="planning.g4"></li><li data-i18n="planning.g5"></li><li data-i18n="planning.g6"></li><li data-i18n="planning.g7"></li></ul></details><details><summary><strong data-i18n="planning.quickRulesTitle"></strong></summary><ol><li data-i18n="planning.r1"></li><li data-i18n="planning.r2"></li><li data-i18n="planning.r3"></li><li data-i18n="planning.r4"></li><li data-i18n="planning.r5"></li><li data-i18n="planning.r6"></li><li data-i18n="planning.r7"></li></ol></details></div>
   </div>
 </section>
@@ -72,7 +83,7 @@
   <div class="notice info" data-i18n="submit.incentive"></div>
   <div class="card">
     <div class="grid two"><div class="field"><label for="profitMode" data-i18n="submit.mode"></label><select id="profitMode"><option value="AMOUNT" data-i18n="submit.amount"></option><option value="PERCENT" data-i18n="submit.percent"></option></select></div><div class="field"><label id="profitLabel" for="profitInput"></label><input id="profitInput" inputmode="decimal"></div></div>
-    <div id="submitMetrics" class="grid three"></div><div id="eligibility" class="notice"></div>
+    <div id="submitMetrics" class="grid three"></div><div id="eligibility" class="notice" role="status" aria-atomic="true"></div>
     <p><button id="toDebrief" class="btn primary" type="button" data-i18n="submit.toDebrief"></button></p>
   </div>
 </section>
@@ -86,6 +97,7 @@
 <section id="closed" class="section">
   <div class="hero"><div class="kicker" data-i18n="closed.kicker"></div><h2 data-i18n="closed.title"></h2><p data-i18n="closed.note"></p></div>
   <div id="closedSummary" class="card"></div>
+  <p><button id="startNewSessionBtn" class="btn" type="button" data-i18n="closed.newSession"></button></p>
 </section>
 
 <p class="footer"><span data-i18n="common.noBackend"></span> <span data-i18n="common.syntheticDeck"></span></p>

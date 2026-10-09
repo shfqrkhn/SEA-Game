@@ -1,0 +1,23 @@
+[
+  {
+    "name": "vehicle",
+    "width": 1200,
+    "height": 750,
+    "elapsedMs": 10925,
+    "method": "Three.js geometry/camera/material parameters + BVH CPU ray tracing, GGX direct lighting and sixteen area-light shadow rays; not WebGL execution"
+  },
+  {
+    "name": "winch",
+    "width": 1200,
+    "height": 750,
+    "elapsedMs": 10601,
+    "method": "Three.js geometry/camera/material parameters + BVH CPU ray tracing, GGX direct lighting and sixteen area-light shadow rays; not WebGL execution"
+  },
+  {
+    "name": "vehicle-rear",
+    "width": 1200,
+    "height": 750,
+    "elapsedMs": 21121,
+    "method": "Three.js geometry/camera/material parameters + BVH CPU ray tracing, GGX direct lighting and sixteen area-light shadow rays; not WebGL execution"
+  }
+]

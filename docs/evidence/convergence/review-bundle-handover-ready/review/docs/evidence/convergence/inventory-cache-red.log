@@ -1,0 +1,126 @@
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: docs/CI_PROVENANCE.md -> evidence/convergence/product-progress-dual-role-journey.md
+    at file:///C:/Users/user/AppData/Local/Temp/sea-material-inventory-2rjjcq/tools/check-mpes.mjs:71:4
+    at check (file:///C:/Users/user/AppData/Local/Temp/sea-material-inventory-2rjjcq/tools/check-mpes.mjs:17:25)
+    at file:///C:/Users/user/AppData/Local/Temp/sea-material-inventory-2rjjcq/tools/check-mpes.mjs:65:1
+    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)
+    at async node:internal/modules/esm/loader:647:26
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5) {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: false,
+  expected: true,
+  operator: '==',
+  diff: 'simple'
+}
+
+Node.js v24.20.0
+node:internal/errors:986
+  const err = new Error(message);
+              ^
+
+Error: Command failed: C:\Program Files\nodejs\node.exe C:\Users\user\AppData\Local\Temp\sea-material-inventory-2rjjcq\tools\check-mpes.mjs --key
+node:internal/modules/run_main:107
+
+    triggerUncaughtException(
+
+    ^
+
+
+
+AssertionError [ERR_ASSERTION]: docs/CI_PROVENANCE.md -> evidence/convergence/product-progress-dual-role-journey.md
+
+    at file:///C:/Users/user/AppData/Local/Temp/sea-material-inventory-2rjjcq/tools/check-mpes.mjs:71:4
+
+    at check (file:///C:/Users/user/AppData/Local/Temp/sea-material-inventory-2rjjcq/tools/check-mpes.mjs:17:25)
+
+    at file:///C:/Users/user/AppData/Local/Temp/sea-material-inventory-2rjjcq/tools/check-mpes.mjs:65:1
+
+    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)
+
+    at async node:internal/modules/esm/loader:647:26
+
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5) {
+
+  generatedMessage: false,
+
+  code: 'ERR_ASSERTION',
+
+  actual: false,
+
+  expected: true,
+
+  operator: '==',
+
+  diff: 'simple'
+
+}
+
+
+
+Node.js v24.20.0
+
+
+    at genericNodeError (node:internal/errors:986:15)
+    at wrappedFn (node:internal/errors:540:14)
+    at checkExecSyncError (node:child_process:942:11)
+    at execFileSync (node:child_process:978:15)
+    at inspect (file:///D:/VSCode/SEA-Game/current/tools/test-mpes.mjs:58:31)
+    at file:///D:/VSCode/SEA-Game/current/tools/test-mpes.mjs:59:15
+    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)
+    at async node:internal/modules/esm/loader:647:26
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5) {
+  status: 1,
+  signal: null,
+  output: [
+    null,
+    '',
+    'node:internal/modules/run_main:107\r\n' +
+      '    triggerUncaughtException(\r\n' +
+      '    ^\r\n' +
+      '\r\n' +
+      'AssertionError [ERR_ASSERTION]: docs/CI_PROVENANCE.md -> evidence/convergence/product-progress-dual-role-journey.md\r\n' +
+      '    at file:///C:/Users/user/AppData/Local/Temp/sea-material-inventory-2rjjcq/tools/check-mpes.mjs:71:4\r\n' +
+      '    at check (file:///C:/Users/user/AppData/Local/Temp/sea-material-inventory-2rjjcq/tools/check-mpes.mjs:17:25)\r\n' +
+      '    at file:///C:/Users/user/AppData/Local/Temp/sea-material-inventory-2rjjcq/tools/check-mpes.mjs:65:1\r\n' +
+      '    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)\r\n' +
+      '    at async node:internal/modules/esm/loader:647:26\r\n' +
+      '    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5) {\r\n' +
+      '  generatedMessage: false,\r\n' +
+      "  code: 'ERR_ASSERTION',\r\n" +
+      '  actual: false,\r\n' +
+      '  expected: true,\r\n' +
+      "  operator: '==',\r\n" +
+      "  diff: 'simple'\r\n" +
+      '}\r\n' +
+      '\r\n' +
+      'Node.js v24.20.0\r\n'
+  ],
+  pid: 50144,
+  stdout: '',
+  stderr: 'node:internal/modules/run_main:107\r\n' +
+    '    triggerUncaughtException(\r\n' +
+    '    ^\r\n' +
+    '\r\n' +
+    'AssertionError [ERR_ASSERTION]: docs/CI_PROVENANCE.md -> evidence/convergence/product-progress-dual-role-journey.md\r\n' +
+    '    at file:///C:/Users/user/AppData/Local/Temp/sea-material-inventory-2rjjcq/tools/check-mpes.mjs:71:4\r\n' +
+    '    at check (file:///C:/Users/user/AppData/Local/Temp/sea-material-inventory-2rjjcq/tools/check-mpes.mjs:17:25)\r\n' +
+    '    at file:///C:/Users/user/AppData/Local/Temp/sea-material-inventory-2rjjcq/tools/check-mpes.mjs:65:1\r\n' +
+    '    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)\r\n' +
+    '    at async node:internal/modules/esm/loader:647:26\r\n' +
+    '    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5) {\r\n' +
+    '  generatedMessage: false,\r\n' +
+    "  code: 'ERR_ASSERTION',\r\n" +
+    '  actual: false,\r\n' +
+    '  expected: true,\r\n' +
+    "  operator: '==',\r\n" +
+    "  diff: 'simple'\r\n" +
+    '}\r\n' +
+    '\r\n' +
+    'Node.js v24.20.0\r\n'
+}
+
+Node.js v24.20.0

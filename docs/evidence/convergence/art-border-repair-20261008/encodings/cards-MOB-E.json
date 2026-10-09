@@ -1,0 +1,15 @@
+{
+  "identity": "cards/MOB-E",
+  "generatedPngSha256": "f6be9f48410b9c248e877e2e8e7e7bbfcb9f82da1515206da9a03b3c58d65cb5",
+  "webpSha256": "21222844d6e3bad7a44bbbef0ccf6dbbc871c1853dfaeba1cc3f77a5d6b4b7dd",
+  "svgSha256": "4f6a97bc424c5acb7b4ce38efd2a64e52ac75c99b7e0be11bde41255fa56222f",
+  "dimensions": [
+    2172,
+    724
+  ],
+  "encoding": "lossless WebP; decoded RGBA equals generated PNG; no resize/crop/paint",
+  "vector": "vtracer 0.6.15 polygon trace; color precision 6, speckle 24, layer difference 16, length threshold 6, path precision 0; visual review required",
+  "svgBytes": 125566,
+  "canonicalSvgNormalization": true,
+  "canonicalLF": true
+}

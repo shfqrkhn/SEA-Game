@@ -1,0 +1,40 @@
+instructor: syntax and basic UI contract PASS
+student: syntax and basic UI contract PASS
+Versioned, bounded, role-specific backup envelope examples PASS
+Instructor visibility and lifecycle structural tests PASS
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: Missing and ambiguous confirmation targets both fail closed
++ actual - expected
+
+  [
+    'errors.stale',
+    'errors.stale',
++   'errors.stale',
++   'errors.stale',
++   'errors.stale',
++   'errors.stale'
+  ]
+
+    at file:///D:/VSCode/SEA-Game/current/tools/test.mjs:148:8
+    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)
+    at async node:internal/modules/esm/loader:647:26
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5) {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: [
+    'errors.stale',
+    'errors.stale',
+    'errors.stale',
+    'errors.stale',
+    'errors.stale',
+    'errors.stale'
+  ],
+  expected: [ 'errors.stale', 'errors.stale' ],
+  operator: 'deepStrictEqual',
+  diff: 'simple'
+}
+
+Node.js v24.20.0

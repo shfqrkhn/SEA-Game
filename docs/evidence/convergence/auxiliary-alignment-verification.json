@@ -1,0 +1,22 @@
+{
+  "date": "2026-10-08",
+  "scope": "Launcher/QA copy, language markup, square-edge alignment and local static integrity; single-agent self-review",
+  "baselineHeadAndRemoteMain": "1b80b348ac945987fbe11db77bd7a51f3dd553aa",
+  "specificationKey": "8b3841b5857c355a60e69fa9ce6f88bfd009dc89fbb6bc9329ec8ed0769a37cb",
+  "packetKey": "4fd063aceeb8187d88604cfd432c20758d3b10363121de8496d9d580743820d9",
+  "supersededSpecificationCheckpoint": "d33362b1e8cbd427e6450d4ec67c08652cad19beb2ecd64a97653b08957e8d1e",
+  "supersededPacketKey": "730bced1cadfbb79e670be4bef495a5d757feea0e45873921dd0f7478814bce7",
+  "changes": "Auxiliary pages align with square-edge, advisory-WTP, $50000 increment and forward-phase contracts; launcher French markup/role descriptions/skip link and qualified offline wording",
+  "static": "Existing QA script syntax, local destinations, UTF-8, changed copy/style inspection and git diff --check PASS; no new low-impact mirror tests",
+  "standalones": "Exact game hashes unchanged from W38, verified against its retained readback; Windows byte reproduction PASS",
+  "localProductEvidence": "W38 Windows/WSL journey/product results remain scoped evidence for identical game bytes; not rerun as new browser or release passes",
+  "packet": "209 files; external expected key verification, copied byte reproduction and copied QA script syntax PASS",
+  "specificationContracts": "Current contracts PASS; not PRODUCT_RELEASE acceptance",
+  "candidateCI": "NOT_RUN; most recent successful runs 37825410122/37825409633 attest baseline only",
+  "deployment": "Launcher, QA and both games HTTP 200; live bytes differ from candidate",
+  "actualBrowser": "NOT_RUN; candidate preview unavailable; layout/keyboard/reflow/French/assistive/offline/clipboard/frame qualification OPEN",
+  "commitPushPublication": "NOT_PERFORMED",
+  "fullMaterialClosure": "OPEN",
+  "fullSameKeyZeroChangePasses": 0,
+  "next": "Actual candidate browser/device/classroom and auxiliary-page qualification; owner educational/content/rights acceptance; candidate CI and authorized release/operator handover"
+}

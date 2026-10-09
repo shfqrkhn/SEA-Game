@@ -1,0 +1,15 @@
+{
+  "identity": "cards/SE-Q",
+  "generatedPngSha256": "dbcc2081035cd7dc4374e2c3ef3d25b7af1f03d89e81d9fc9efd1d3ab09368b1",
+  "webpSha256": "57cc9b617521c9dc5b0a46fab1a881b0495f202f8997343fd4ca0d76b9d6ce32",
+  "svgSha256": "99bca9d285a3457b529077f1034cd51faeaf3c6d9ada2aa04593df769eed04e7",
+  "dimensions": [
+    2172,
+    724
+  ],
+  "encoding": "lossless WebP; decoded RGBA equals generated PNG; no resize/crop/paint",
+  "vector": "vtracer 0.6.15 polygon trace; color precision 6, speckle 24, layer difference 16, length threshold 6, path precision 0; visual review required",
+  "svgBytes": 140286,
+  "canonicalSvgNormalization": true,
+  "canonicalLF": true
+}

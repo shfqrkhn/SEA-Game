@@ -1,0 +1,7 @@
+{
+  "identity": "cards/MOB-A",
+  "inputSha256": "9665387b7a30d9300b47c71f047c22f12ab7bee74c23d8b0998c781d741bbf4b",
+  "path": "C:\\Users\\user\\.codex\\generated_images\\01a11d09-97df-7000-a3e7-a4b9bfcb4add\\exec-4c00ce71-1117-4e4c-bee3-9dc628100a96.png",
+  "prompt": "Precise artwork repair of SEA Game cards/MOB-A. Findings: Thin left frame.. Remove unwanted white edge borders, grid dividers and fragments from neighboring panels. Restore any missing focal subject edges, antennas, barrels or equipment through coherent reconstruction. Preserve the original subject identity, recognizable geometry, component count, arrangement, colors, realistic detail and lighting. Show the complete standalone equipment/vehicle with all protrusions and cables visible. Blend the hard portrait-panel backdrop seamlessly into a continuous matching beige studio background. Use one opaque wide 3:1 landscape canvas with generous safe margins around all focal content. No grid sheet, no neighboring assets, no new objects or text. Do not crop tighter. Clean coherent realistic game artwork.",
+  "tool": "built-in image_gen"
+}

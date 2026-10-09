@@ -1,0 +1,28 @@
+{
+  "removedIsolatedContours": 6,
+  "originalCanvas": [
+    640,
+    192
+  ],
+  "candidateCanvas": [
+    640,
+    213.33333333333334
+  ],
+  "subjectGeometry": "All non-strip path contours preserved; translated vertically to center in 3:1 canvas",
+  "changes": [
+    {
+      "role": "instructor",
+      "changedIds": [
+        "CAP-F"
+      ],
+      "unchangedCount": 76
+    },
+    {
+      "role": "student",
+      "changedIds": [
+        "CAP-F"
+      ],
+      "unchangedCount": 76
+    }
+  ]
+}

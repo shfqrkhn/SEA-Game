@@ -1,0 +1,59 @@
+{
+  "result": "PASS",
+  "method": "fresh Python standard-library hash and inventory audit",
+  "key": "6004a55a7debbc343a420468d975a29badb176ec23f04602d03185b47229eaf2",
+  "fileCount": 195,
+  "snapshotReproductions": {
+    "windows": {
+      "fileCount": 195,
+      "result": "PASS"
+    },
+    "wsl": {
+      "fileCount": 195,
+      "result": "PASS"
+    }
+  },
+  "controlledFileCounts": {
+    "source": 6,
+    "assets": 156,
+    ".github": 2,
+    "docs": 20,
+    "tools": 4
+  },
+  "unlistedMaterialFiles": 0,
+  "extraManifestFiles": 0,
+  "symlinks": [],
+  "referenceFilesVerified": 5,
+  "rulePoolCounts": {
+    "CAPACITY": 7,
+    "MOBILITY": 7,
+    "FIREPOWER": 7,
+    "PROTECTION": 7,
+    "COMMS": 7,
+    "SA": 7,
+    "ACCESSORIES": 7,
+    "SE_PROCESS": 21
+  },
+  "requirementCount": 26,
+  "testCount": 27,
+  "milestoneWeights": [
+    8,
+    12,
+    15,
+    15,
+    15,
+    10,
+    10,
+    10,
+    5
+  ],
+  "gitHead": "1b80b348ac945987fbe11db77bd7a51f3dd553aa",
+  "environment": {
+    "node": "v24.20.0",
+    "platform": "win32",
+    "arch": "x64",
+    "osRelease": "10.0.26300",
+    "git": "git version 2.55.0.windows.5",
+    "reviewMode": "single-agent-self-review; no browser or classroom acceptance"
+  }
+}

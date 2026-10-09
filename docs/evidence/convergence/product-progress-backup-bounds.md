@@ -1,0 +1,13 @@
+# Valid-text backup bounds — partial
+
+2026-10-08. W36 / D29, R10/R11/R21/R24, M4/M6, T08/T11/T22/T25. Single-agent self-review; no actual browser, independent, classroom or resource-performance acceptance.
+
+Outcome: every accepted bounded private text field must survive export/import and reload. File bytes and JavaScript UTF-16 units must have distinct resource checks. Increasing capacity must preserve old valid saves and must not weaken schema, role or field validation.
+
+RED: a student fixture accepted by the actual role validator fills all 70 scratch notes (600 units each), plans/baseline/risks (1,200 each), and WTP text fields. Escaped control characters expand JSON to 277,654 units/UTF-8 bytes. The actual reader refused its own export at the old 250,000-byte limit and staged zero imports. See `backup-bounds-red.log`. The earlier async-extraction syntax error is retained in `backup-bounds-harness-diagnostic.log`, not counted as product RED.
+
+Change: both roles reuse `MAX_BACKUP_CHARS=500000` for stored JSON and backup parsing. `MAX_BACKUP_BYTES=1500000` bounds file reads separately, since a UTF-16 code unit needs at most three UTF-8 bytes. The shared parse function continues checking length before JSON parsing; schemas, bounded field values, role validation and rejected/rescue bytes remain unchanged. This extends the student resource ceiling without a data migration or truncation. It bounds each read to 1.5 MB and decoded text to 500,000 units; actual low-end-device peak memory and latency must still be measured at M0/M7. These are limits, not achieved performance claims.
+
+Examples: actual maximum escaped student export is staged and reloads from storage with private note text intact. Both production readers accept valid JSON padded to exactly 500,000 units; the instructor fixture is 500,092 UTF-8 bytes and multilingual student fixture 588,800 bytes. One additional unit is rejected before staging. Both readers refuse a 1,500,001-byte file before calling `text()`. Existing malformed/wrong-role/oversize/new-schema/stale-read/rescue tests remain green. Tests execute production functions in VM models; generated-byte reproduction and copied packet tests bind the candidate source, without substituting for browser acceptance.
+
+Evidence files use the `backup-bounds-` prefix: Windows/WSL suites, contract/protocol/artwork results, packet verification/reconstruction and final verification JSON. Historical packets and receipts are superseded by this material change. Candidate remains uncommitted and undeployed; actual candidate CI, file/offline/browser/assistive/classroom/rights/operator acceptance remains OPEN, full PRODUCT_RELEASE streak 0/3.

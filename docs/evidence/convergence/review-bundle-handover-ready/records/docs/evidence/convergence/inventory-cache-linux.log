@@ -1,0 +1,124 @@
+{
+  "result": "PASS",
+  "scope": "Synthetic protocol and actual material-inventory CLI only; no product release acceptance",
+  "baselineCases": 29,
+  "semanticMutantsKilled": 18,
+  "mutants": [
+    {
+      "name": "authority bypass",
+      "killedBy": [
+        "A07",
+        "A08",
+        "A09"
+      ]
+    },
+    {
+      "name": "budget ignored",
+      "killedBy": [
+        "A11"
+      ]
+    },
+    {
+      "name": "unknown effect replay",
+      "killedBy": [
+        "A12",
+        "A29"
+      ]
+    },
+    {
+      "name": "sent effect replay",
+      "killedBy": [
+        "A29"
+      ]
+    },
+    {
+      "name": "unverified effect accepted",
+      "killedBy": [
+        "A27"
+      ]
+    },
+    {
+      "name": "concurrent head ignored",
+      "killedBy": [
+        "A14"
+      ]
+    },
+    {
+      "name": "specification change ignored",
+      "killedBy": [
+        "A16"
+      ]
+    },
+    {
+      "name": "stale evidence accepted",
+      "killedBy": [
+        "A15"
+      ]
+    },
+    {
+      "name": "empty gates accepted",
+      "killedBy": [
+        "A26"
+      ]
+    },
+    {
+      "name": "failed gate ignored",
+      "killedBy": [
+        "A17"
+      ]
+    },
+    {
+      "name": "mock evidence accepted",
+      "killedBy": [
+        "A19"
+      ]
+    },
+    {
+      "name": "retention unresolved",
+      "killedBy": [
+        "A22"
+      ]
+    },
+    {
+      "name": "runtime invented",
+      "killedBy": [
+        "A21"
+      ]
+    },
+    {
+      "name": "harness failure counts as red",
+      "killedBy": [
+        "A02"
+      ]
+    },
+    {
+      "name": "red bypassed",
+      "killedBy": [
+        "A03"
+      ]
+    },
+    {
+      "name": "stop ignored",
+      "killedBy": [
+        "A24"
+      ]
+    },
+    {
+      "name": "refactor baseline fabricated",
+      "killedBy": [
+        "A28"
+      ]
+    },
+    {
+      "name": "untrusted directive executed",
+      "killedBy": [
+        "A20"
+      ]
+    }
+  ],
+  "inventoryCases": [
+    "generated Python bytecode creation/change leaves key unchanged",
+    "ignored source creation/change still invalidates key",
+    "non-bytecode source in cache directory remains material"
+  ]
+}

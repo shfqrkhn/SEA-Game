@@ -1,0 +1,15 @@
+{
+  "identity": "cards/FP-E",
+  "generatedPngSha256": "d60a75fa56faba300919ea5f3868fc2f75fcc3bda474bd760edc1638fce2bc59",
+  "webpSha256": "59aac902e2c1d44b55ed986cb768c681484f3e0b8a50f973299efd55c9fd9e63",
+  "svgSha256": "35ed9442a1d05b2f302f5f75c7a804edd682c85b6834581bb4750cbac9fbd7a1",
+  "dimensions": [
+    2172,
+    724
+  ],
+  "encoding": "lossless WebP; decoded RGBA equals generated PNG; no resize/crop/paint",
+  "vector": "vtracer 0.6.15 polygon trace; color precision 6, speckle 24, layer difference 16, length threshold 6, path precision 0; visual review required",
+  "svgBytes": 62254,
+  "canonicalSvgNormalization": true,
+  "canonicalLF": true
+}

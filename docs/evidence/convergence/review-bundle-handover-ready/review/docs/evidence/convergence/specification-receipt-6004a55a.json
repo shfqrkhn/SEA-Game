@@ -1,0 +1,69 @@
+{
+  "receiptVersion": 1,
+  "status": "SPECIFICATION CONVERGED",
+  "target": "SPECIFICATION",
+  "specificationVersion": "1.1.1",
+  "candidateKey": "6004a55a7debbc343a420468d975a29badb176ec23f04602d03185b47229eaf2",
+  "gitHead": "1b80b348ac945987fbe11db77bd7a51f3dd553aa",
+  "manifest": "candidate-manifest-6004a55a.json",
+  "reviewer": {
+    "mode": "single-agent sequential self-review",
+    "crossModel": false,
+    "independent": false
+  },
+  "consecutiveFreshSameKeyZeroChangePasses": 3,
+  "reviews": [
+    {
+      "number": 1,
+      "framing": "forward requirements, outcome and authority",
+      "record": "specification-pass-1-2026-10-08-6004a55a.md",
+      "keyBefore": "6004a55a7debbc343a420468d975a29badb176ec23f04602d03185b47229eaf2",
+      "keyAfter": "6004a55a7debbc343a420468d975a29badb176ec23f04602d03185b47229eaf2",
+      "result": "PASS",
+      "materialChanges": 0
+    },
+    {
+      "number": 2,
+      "framing": "failure-first, authority and recovery",
+      "record": "specification-pass-2-2026-10-08-6004a55a.md",
+      "keyBefore": "6004a55a7debbc343a420468d975a29badb176ec23f04602d03185b47229eaf2",
+      "keyAfter": "6004a55a7debbc343a420468d975a29badb176ec23f04602d03185b47229eaf2",
+      "result": "PASS",
+      "materialChanges": 0
+    },
+    {
+      "number": 3,
+      "framing": "fresh resume, release and retirement",
+      "record": "specification-pass-3-2026-10-08-6004a55a.md",
+      "keyBefore": "6004a55a7debbc343a420468d975a29badb176ec23f04602d03185b47229eaf2",
+      "keyAfter": "6004a55a7debbc343a420468d975a29badb176ec23f04602d03185b47229eaf2",
+      "result": "PASS",
+      "materialChanges": 0
+    }
+  ],
+  "verification": {
+    "gitDiffCheck": "PASS",
+    "syntheticProtocol": "PASS",
+    "structuralContract": "PASS",
+    "manifestFiles": 195,
+    "protocolCases": 29,
+    "snapshotIdentity": "Both 195-file snapshots match the keyed manifest byte-for-byte",
+    "freshPythonInventory": "PASS; 195 files, zero missing/extra/unlisted, no symlinks, 5 references, R01-R26, T01-T27, milestone weights sum to 100",
+    "productTests": "PASS on Windows Node 24.20.0 and WSL Ubuntu 24.04 Node 22.23.3 snapshots",
+    "standaloneParity": "PASS on both snapshots",
+    "structuralChecks": 10,
+    "semanticMutantsRejected": 18
+  },
+  "currentness": "origin/main and deployed Pages bytes match committed HEAD; candidate output remains local and distinct",
+  "priorReceipt": "specification-receipt-1eee0307.json is invalid for this changed key; see invalidation-1eee0307.json",
+  "limitations": [
+    "No candidate browser acceptance: user supplied no HTTPS preview and directed that the browser test remain open.",
+    "No PRODUCT_RELEASE or R01-R26/M0-M8 completion claim.",
+    "No independent reviewer, classroom, rights-holder, language or accessibility acceptance is claimed.",
+    "No installed autonomous runner, scheduler, release or retirement effect is claimed."
+  ],
+  "reopenOn": [
+    "Any material candidate/policy/evaluator/environment/currentness change",
+    "New product defect, accepted rule change or relevant evidence that reopens affected scope"
+  ]
+}

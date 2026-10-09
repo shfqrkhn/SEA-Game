@@ -1,0 +1,3 @@
+# Disposable audit execution outputs and LF reconstructions; never product inputs.
+docs/evidence/audit-runs/
+__pycache__/

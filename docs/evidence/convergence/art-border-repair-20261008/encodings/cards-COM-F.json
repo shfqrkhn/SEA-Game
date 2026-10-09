@@ -1,0 +1,15 @@
+{
+  "identity": "cards/COM-F",
+  "generatedPngSha256": "46e63f8d7cdaaa68ffe193e9b112da1bee0934e7473ee7228c98783227e4df7e",
+  "webpSha256": "f81dd3715f2f0a9913f6a8298e42557ec5c95591f7bbfa666b03ad9937a036ed",
+  "svgSha256": "1bb9796f0faf2b99868f0a4759168e31ee76084aa44d1a95c2f6f48190e74afc",
+  "dimensions": [
+    2172,
+    724
+  ],
+  "encoding": "lossless WebP; decoded RGBA equals generated PNG; no resize/crop/paint",
+  "vector": "vtracer 0.6.15 polygon trace; color precision 6, speckle 24, layer difference 16, length threshold 6, path precision 0; visual review required",
+  "svgBytes": 82258,
+  "canonicalSvgNormalization": true,
+  "canonicalLF": true
+}

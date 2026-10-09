@@ -1,0 +1,33 @@
+instructor: syntax and basic UI contract PASS
+student: syntax and basic UI contract PASS
+Versioned, bounded, role-specific backup envelope examples PASS
+Instructor visibility and lifecycle structural tests PASS
+Student purchase removal click/cancel/confirm/stale-state regression PASS
+Shared mission requirements, compliance and independent scoring examples PASS
+Shared canonical mission, category and 70-card data contract PASS
+Shared card index, slot identity and transactional acquisition examples PASS
+Student sale-price default renders whole dollars and commits exact canonical cents for all 70 cards PASS
+Shared session parsing, lifecycle phases and save-derived recovery validation PASS
+Shared deterministic market generation, 70-slot mapping and seed variation PASS
+Shared monetary parsing, rounding, safe-range and overflow examples PASS
+Shared exact-ratio ordering, tie and award eligibility examples PASS
+Instructor/student practice command prerequisites, wrong-phase rejection and scored-state isolation PASS
+Student editing phase, lock and save-boundary examples PASS
+Instructor submission confirmation stale-state and repeat boundaries PASS
+evalmachine.<anonymous>:96
+ $('#submissionRows').innerHTML=state.teams.map(tm=>`<div class="inv"><div class="space"><strong>${t('common.team',{n:tm.id})} - ${esc(MISSIONS[tm.mission][lang])}</strong><span>${tm.submitted?t('submit.submitted'):t('debrief.notSubmitted')}</span></div>${privateOn?`<div class="grid three"><div class="field"><label for="profit-${tm.id}">${t('submit.profitAmount')}</label><input id="profit-${tm.id}" data-profit-team="${tm.id}" inputmode="decimal" maxlength="20" value="${amountInput(tm.profit)}"></div><label class="check-label"><input type="checkbox" data-submitted-team="${tm.id}" ${tm.submitted?'checked':''}>${t('submit.submitted')}</label><div class="metric"><div class="label">${t('common.bid')}</div><div class="value">${money(addCents(tm.cost,tm.profit))}</div></div></div>`:''}</div>`).join('');
+                                                                                                                                                                                                                                                                                                                                                                                                                                         ^
+
+ReferenceError: amountInput is not defined
+    at evalmachine.<anonymous>:96:426
+    at Array.map (<anonymous>)
+    at renderSubmit (evalmachine.<anonymous>:96:45)
+    at evalmachine.<anonymous>:100:1
+    at Script.runInContext (node:vm:149:12)
+    at Script.runInNewContext (node:vm:154:17)
+    at runInNewContext (node:vm:310:38)
+    at instructorSubmissionEditHarness (file:///D:/VSCode/SEA-Game/current/tools/test.mjs:391:2)
+    at file:///D:/VSCode/SEA-Game/current/tools/test.mjs:395:13
+    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)
+
+Node.js v24.20.0

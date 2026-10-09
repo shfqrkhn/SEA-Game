@@ -1,0 +1,23 @@
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: Generated Python bytecode must not change material identity
++ actual - expected
+
++ 'f091d9aa204611a52bc07930955d64bd5620a5f00fa5da5298b6ae71c2e14c49'
+- '2e878934848c19a4a141fa03e525b4c11b694ef2b1cb6551aa2091367d308bc0'
+
+    at file:///D:/VSCode/SEA-Game/current/tools/test-mpes.mjs:67:32
+    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)
+    at async node:internal/modules/esm/loader:647:26
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5) {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 'f091d9aa204611a52bc07930955d64bd5620a5f00fa5da5298b6ae71c2e14c49',
+  expected: '2e878934848c19a4a141fa03e525b4c11b694ef2b1cb6551aa2091367d308bc0',
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v24.20.0

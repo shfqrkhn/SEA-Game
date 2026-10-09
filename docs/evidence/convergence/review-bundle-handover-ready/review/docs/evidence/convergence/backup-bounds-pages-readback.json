@@ -1,0 +1,14 @@
+[
+  {
+    "file": "SEA_Instructor_Standalone.html",
+    "http": 200,
+    "remoteSha256": "cc9702e26b109d053a44993cd88e071ca415c29abf182335ac93274637d5b2ea",
+    "candidateSha256": "e80c3153c1a4567aa22c046e1cfefbd139f0b8171e6815eb091ce45091477c50"
+  },
+  {
+    "file": "SEA_Student_Standalone.html",
+    "http": 200,
+    "remoteSha256": "592e415c0a0501a983c18eb477dd00188cabe17d097fb173dc203c95db90dd4a",
+    "candidateSha256": "bf2ac0a3c8c4dc107ef45147d3792ddace5dcbe056be4087bd977960c7a5bf30"
+  }
+]

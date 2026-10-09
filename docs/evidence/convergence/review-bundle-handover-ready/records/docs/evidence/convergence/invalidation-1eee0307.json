@@ -1,0 +1,10 @@
+{
+  "priorReceipt": "specification-receipt-1eee0307.json",
+  "priorKey": "1eee0307e164e6b3ab78238feeee92bc28ef6527221414bc550e03150bbe1aba",
+  "invalidatedForCurrentCandidate": true,
+  "reason": "The closed-session reset product slice changed role source, templates, generated standalone outputs, product tests, README, recovery guide, project analysis and execution ledger.",
+  "reconciledCurrentKey": "65a48c975f22ef9029acaa2d8882d9b88971a2ec1adb3c527900e0da36d10d01",
+  "reopenedTarget": "SPECIFICATION",
+  "currentSameKeyFullReviewCount": 0,
+  "preservedHistoricalClaim": "The three sequential self-review passes passed for the prior exact key only; they are not independent assurance and do not claim product release."
+}

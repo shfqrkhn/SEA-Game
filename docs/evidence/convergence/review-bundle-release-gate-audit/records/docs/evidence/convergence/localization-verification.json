@@ -1,0 +1,51 @@
+{
+  "recordedAtUtc": "2026-10-08T22:28:58.727Z",
+  "target": "PRODUCT_RELEASE",
+  "workItem": "W21",
+  "defect": "D21",
+  "localSpecificationFingerprint": "ed106195c7fd9e0b39a449fa70e8ccbd247ded723c38f5281c8d9d46f41adb25",
+  "head": "1b80b348ac945987fbe11db77bd7a51f3dd553aa",
+  "hashes": {
+    "source/student.js": "e6cb0d31426ab3c46e60700dc0cc8b7a6c206016172e11d378bea183a7663ed0",
+    "SEA_Student_Standalone.html": "ea3347f9ebdd805b4e9780bcd564556bf415c5bbd3665b9683caa422624a55b3",
+    "tools/build.mjs": "cea8e49eb089bdbe2986e4854b6c4baff57abaef5e739f6fe1de793817a4316b",
+    "tools/localization.mjs": "97cc001805bbb4114ffc6eff4d43a8bc47be23e0a06d14e75575e67b1eac1788",
+    "tools/test.mjs": "7a2a8a562f16ce1a7b204bb2879e15d5022eddf2763ae0dde89d0e12c24f72ce",
+    "docs/evidence/convergence/localization-feedback-red.log": "73cb7b4f2efc6be3ba78c80769a36f9e9a28f7fe85a637ae0bb665f15d6e8cfa",
+    "docs/evidence/convergence/localization-final-win.log": "be91562042a27eea61493fff734b2d665fc859ed9404370dcda178238bda85a2",
+    "docs/evidence/convergence/localization-final-wsl.log": "06036f6d4f4023e1741e4bd42fc45929e903840ade90e772b7537afd85c8e00a"
+  },
+  "checks": {
+    "windowsNode24": "PASS full suite/build parity",
+    "wslNode22": "PASS full suite/build parity",
+    "contract": "PASS",
+    "protocol": "PASS 29 cases;18 mutants rejected",
+    "diff": "PASS"
+  },
+  "readbacks": [
+    {
+      "path": "index.html",
+      "status": 200,
+      "sha256": "6f47190a5f5e469ca65aa49c5e0d21b121e61225f05c4759672a500ab8ebe5f4",
+      "matchesHead": true
+    },
+    {
+      "path": "SEA_Instructor_Standalone.html",
+      "status": 200,
+      "sha256": "cc9702e26b109d053a44993cd88e071ca415c29abf182335ac93274637d5b2ea",
+      "matchesHead": true
+    },
+    {
+      "path": "SEA_Student_Standalone.html",
+      "status": 200,
+      "sha256": "592e415c0a0501a983c18eb477dd00188cabe17d097fb173dc203c95db90dd4a",
+      "matchesHead": true
+    }
+  ],
+  "review": "single-agent self-review",
+  "candidateBrowser": "OPEN",
+  "candidateCI": "NOT_RUN",
+  "productReleasePassStreak": 0,
+  "reason": "Material repair and unresolved product acceptance gates",
+  "nextAction": "W07/W08 dynamic strings, art provenance/security, responsive semantics; keep external gates open without asking questions"
+}

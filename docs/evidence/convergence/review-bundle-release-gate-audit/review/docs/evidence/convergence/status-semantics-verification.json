@@ -1,0 +1,13 @@
+{
+  "fullMaterialClosure": "OPEN",
+  "wsl": "Ubuntu24.04 Node22.23.3 suite/build PASS",
+  "packetKey": "184a9c67c29f0724d8132d1c2cae87382502cf90a10fa5c4667a14e769fc55f0",
+  "actualAssistiveBrowser": "NOT_RUN",
+  "windows": "Node24.20.0 suite/build PASS",
+  "date": "2026-10-08",
+  "scope": "Structural status semantics and local candidate tests only",
+  "protocol": "29 cases;18 mutants PASS",
+  "fullSameKeyZeroChangePasses": 0,
+  "specificationKey": "2d522181bae381f25bc4076d3775fbb2db3f9ba22b437d8810725651ca709827",
+  "package": "Exact byte verification PASS"
+}

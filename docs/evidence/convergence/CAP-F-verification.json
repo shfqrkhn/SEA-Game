@@ -1,0 +1,40 @@
+{
+  "recordedAtUtc": "2026-10-08T22:45:04.243Z",
+  "target": "PRODUCT_RELEASE",
+  "workItem": "W24",
+  "defect": "D22",
+  "localSpecificationFingerprint": "a4859cddca1ad4926bf70fcae62e7afa8112cc1094c64b9dd05b82de16bc26ec",
+  "head": "1b80b348ac945987fbe11db77bd7a51f3dd553aa",
+  "hashes": {
+    "assets/v1/cards/CAP-F.webp": "9a447925c0d18a435bad08f00d4d81ed3e2aa99f4b233ccc5afb5e277f7c1c4f",
+    "assets/v1/cards/CAP-F.svg": "8fd9ef635685edfa3db9ba81625df506d3fb6fe7272c12fb1127c78900586bcd",
+    "source/instructor.js": "30d19f64267638a222722b1536995c3b2d0a3beb163498e8f3d47c3a8a95f350",
+    "source/student.js": "70c0c8ff07ca0f07298695f5b092436c98c99a431c0639968bee46fb37998800",
+    "SEA_Instructor_Standalone.html": "4c21294e7e49176d482e2343f4ae0732e8cade071511ad6d86d77b68476a4a20",
+    "SEA_Student_Standalone.html": "da6936732cb88bb4bfe8da65073fbac4f65c6f6c3bc4a8986bce106750264f9b",
+    "tools/test.mjs": "16197aeb9762ceb91ab79ad79be546f7dfabeaa52371f95748688792a8e1fbf5",
+    "tools/audit-artwork.py": "4e3ac7e19bfbc664aed3bfa92b4c453d28aa29fe2ecea9df1b6ce6a38fce2dd2",
+    "docs/ARTWORK_MANIFEST.json": "fce9746b78fbb6ffafbb5fce3a1b5c5fa0bea431e348113465e5121dd3052287",
+    "docs/ARTWORK_EDITS.json": "d3886c94ac6be7e86f979af90dfadcc0a2e2a793afca62c7b4d5ee9302135407",
+    "docs/evidence/convergence/CAP-F-imagegen-edit.png": "974b02c22a257de44f23fdfed36ed32ac5f50425a7717fa2f9b507ea1ddf6cdb",
+    "docs/evidence/convergence/CAP-F-vector-preview.png": "8532e5b102e6bd0ed0315b9d296b4e7160a2daefdfb20ab988bf117351a5ab0f",
+    "docs/evidence/convergence/CAP-F-decode-audit.json": "057dbda2181e82d11445a646c7399595d144d245fc7693bf1aa841add5d90992",
+    "docs/evidence/convergence/CAP-F-final-win.log": "d1d5ccaa5ee1dd5acdb5391f9877c1ad21cf03fe3a7a452f3f8281fc4be8c801",
+    "docs/evidence/convergence/CAP-F-final-wsl.log": "21a3e0bf125e2e652ecf55f0a05166d91ffb8a9af494816da2fd5c314dcaa5dc"
+  },
+  "checks": {
+    "windowsNode24": "PASS full suite/build parity",
+    "wslNode22": "PASS full suite/build parity",
+    "assetDecode": "PASS Windows Pillow12.3.0;77 assets/exact vector tables",
+    "rasterEncoding": "PASS decoded RGB equals generated PNG",
+    "visual": "Self-inspected raster and rendered native vector; strip absent",
+    "contract": "PASS",
+    "protocol": "PASS29 cases;18 mutants rejected",
+    "diff": "PASS"
+  },
+  "review": "single-agent self-review; no candidate browser/classroom/rights acceptance",
+  "candidateBrowser": "OPEN",
+  "candidateCI": "NOT_RUN",
+  "productReleasePassStreak": 0,
+  "nextAction": "Full-size art review and W07/W08 hardening; actual external acceptance gates remain open"
+}
