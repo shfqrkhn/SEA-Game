@@ -33,6 +33,12 @@ for(const [id,count]of [['RECOVERY',8],['COMBAT',8],['RECCE',4],['TROOP',6],['CO
    assert(ray.intersectObjects(named('carrier headlamp clear cover'),false).length>0,'Cover is physically in the bezel aperture');
    const reflectorRay=new THREE.Raycaster(center.clone().add(new THREE.Vector3(.15,0,.020)),new THREE.Vector3(-1,0,0),0,.3);
    assert(reflectorRay.intersectObjects(named('carrier headlamp reflector bowl'),false).length>0,'Reflector is physically behind the cover');
+   for(const radial of [.020,.035]){
+    const opaque=[];root.traverse(o=>{if(o.isMesh&&!o.material.transparent)opaque.push(o);});
+    const surface=new THREE.Raycaster(center.clone().add(new THREE.Vector3(.15,0,radial)),new THREE.Vector3(-1,0,0),0,.3).intersectObjects(opaque,false)[0];
+    assert.equal(surface?.object.name,'carrier headlamp reflector bowl','Actual front optical aperture reaches reflector instead of opaque gasket/housing');
+   }
+
   }
   assert.equal(named('carrier headlamp retaining ring').length,2);
   assert.equal(named('carrier mirror sealed backing').length,2);

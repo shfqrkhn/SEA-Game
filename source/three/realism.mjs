@@ -178,7 +178,10 @@ export function missionBase(id,m){
   for(let i=0;i<10;i++)box(g,m.darkSteel,[.02,.22,.02],[front-1.6+i*.06,2.38,s*.57],'vent grille');
   const lampY=1.385,lampX=frontX(lampY),lampZ=s*half*.65;
   box(g,m.edge,[.16,.21,.205],[lampX+.035,lampY,lampZ],'carrier front lamp housing');
-  box(g,m.rubber,[.020,.175,.174],[lampX+.121,lampY,lampZ],'carrier lamp seated gasket');
+  const lampOpening=new THREE.Path(),indicatorOpening=new THREE.Path();
+  lampOpening.absarc(lampZ,1.355,.059,0,Math.PI*2,true);indicatorOpening.absarc(lampZ,1.445,.023,0,Math.PI*2,true);
+  const gasketOutline=roundedOpening(lampZ-.087,lampY-.095,lampZ+.087,lampY+.095,.008).getPoints(12).map(p=>[p.x,p.y]);
+  carrierSheet(g,m.rubber,gasketOutline,[lampOpening,indicatorOpening],(z,y,t)=>[lampX+.111+t,y,z],.020,'carrier lamp seated gasket');
   carrierHeadlamp(g,m,lampX,1.355,lampZ);
   cylinder(g,m.amber,.022,.023,[lampX+.137,1.445,lampZ],'x',.022,24).name='carrier indicator lens';
   box(g,m.red,[.03,.07,.13],[rear-.02,1.32,s*half*.65]);
