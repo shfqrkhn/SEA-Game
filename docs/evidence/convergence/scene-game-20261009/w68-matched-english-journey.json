@@ -1,0 +1,1538 @@
+{
+  "date": "2026-10-09",
+  "scope": "Fresh matched English dual-role eight-phase/70-position built-in-browser journey; bounded environment, not full product acceptance",
+  "appVersion": "3.5.0",
+  "sourceCommit": "bb6fe53e7c7cea69ad0e693faa5c6367b52296ac",
+  "previewCommit": "996101c091243ab78a5e93dbef4f0382e5f28d59",
+  "byteReceipt": "hosted-996101c.json",
+  "sessionCode": "SEA3-T2-85F9EE87E2DEE0DB",
+  "language": "EN throughout this journey",
+  "phases": [
+    "setup",
+    "practice",
+    "planning",
+    "auction",
+    "build",
+    "submit",
+    "debrief",
+    "closed"
+  ],
+  "expected": {
+    "team1": {
+      "mission": "COMMAND",
+      "purchases": 8,
+      "cost": 3900000,
+      "totals": {
+        "CAP": 10,
+        "MOB": 70,
+        "FP": 6,
+        "PRO": 4,
+        "COM": 150,
+        "SA": 5
+      },
+      "score": 120,
+      "profit": 100.01,
+      "bid": 3900100.01,
+      "costPerPointDisplayed": "32500.83",
+      "compliant": true
+    },
+    "team2": {
+      "mission": "TROOP",
+      "purchases": 2,
+      "cost": 1150000,
+      "totals": {
+        "CAP": 2,
+        "MOB": 65,
+        "FP": 0,
+        "PRO": 4,
+        "COM": 0,
+        "SA": 0
+      },
+      "score": 0,
+      "profit": 0,
+      "compliant": false
+    },
+    "award": 1,
+    "finalOutcomes": 70,
+    "sales": 10,
+    "unsold": 60
+  },
+  "publicResult": "Award: Team 11. Team 1$3,900,100.01 · 120 pts · $32,500.83All team outcomesTeam 1 - Command PostCompliantScore 120 · Cost $3,900,000 · Profit $100.01 · Bid $3,900,100.01 · Cost / point $32,500.83Major purchases: FP-C $700,000 · COM-E $600,000 · PRO-G $550,000Team 2 - Troop CarrierNoncompliantScore 0 · Cost $1,150,000 · Profit $0 · Bid $1,150,000 · Cost / point No rated valueMajor purchases: PRO-D $700,000 · MOB-G $450,000",
+  "publicLedger": [
+    [
+      "1",
+      "1",
+      "CAP-G",
+      "T1",
+      "$400,000"
+    ],
+    [
+      "1",
+      "2",
+      "MOB-G",
+      "T2",
+      "$450,000"
+    ],
+    [
+      "1",
+      "3",
+      "FP-E",
+      "Unsold",
+      "-"
+    ],
+    [
+      "1",
+      "4",
+      "PRO-D",
+      "T2",
+      "$700,000"
+    ],
+    [
+      "1",
+      "5",
+      "COM-E",
+      "T1",
+      "$600,000"
+    ],
+    [
+      "1",
+      "6",
+      "SA-C",
+      "Unsold",
+      "-"
+    ],
+    [
+      "1",
+      "7",
+      "ACC-G",
+      "Unsold",
+      "-"
+    ],
+    [
+      "1",
+      "8",
+      "SE-L",
+      "Unsold",
+      "-"
+    ],
+    [
+      "1",
+      "9",
+      "SE-U",
+      "Unsold",
+      "-"
+    ],
+    [
+      "1",
+      "10",
+      "SE-E",
+      "Unsold",
+      "-"
+    ],
+    [
+      "2",
+      "1",
+      "CAP-C",
+      "Unsold",
+      "-"
+    ],
+    [
+      "2",
+      "2",
+      "MOB-D",
+      "Unsold",
+      "-"
+    ],
+    [
+      "2",
+      "3",
+      "FP-G",
+      "Unsold",
+      "-"
+    ],
+    [
+      "2",
+      "4",
+      "PRO-A",
+      "Unsold",
+      "-"
+    ],
+    [
+      "2",
+      "5",
+      "COM-C",
+      "Unsold",
+      "-"
+    ],
+    [
+      "2",
+      "6",
+      "SA-B",
+      "Unsold",
+      "-"
+    ],
+    [
+      "2",
+      "7",
+      "ACC-C",
+      "Unsold",
+      "-"
+    ],
+    [
+      "2",
+      "8",
+      "SE-K",
+      "Unsold",
+      "-"
+    ],
+    [
+      "2",
+      "9",
+      "SE-P",
+      "Unsold",
+      "-"
+    ],
+    [
+      "2",
+      "10",
+      "SE-D",
+      "Unsold",
+      "-"
+    ],
+    [
+      "3",
+      "1",
+      "CAP-F",
+      "Unsold",
+      "-"
+    ],
+    [
+      "3",
+      "2",
+      "MOB-B",
+      "Unsold",
+      "-"
+    ],
+    [
+      "3",
+      "3",
+      "FP-C",
+      "T1",
+      "$700,000"
+    ],
+    [
+      "3",
+      "4",
+      "PRO-G",
+      "T1",
+      "$550,000"
+    ],
+    [
+      "3",
+      "5",
+      "COM-D",
+      "Unsold",
+      "-"
+    ],
+    [
+      "3",
+      "6",
+      "SA-D",
+      "Unsold",
+      "-"
+    ],
+    [
+      "3",
+      "7",
+      "ACC-A",
+      "Unsold",
+      "-"
+    ],
+    [
+      "3",
+      "8",
+      "SE-F",
+      "Unsold",
+      "-"
+    ],
+    [
+      "3",
+      "9",
+      "SE-I",
+      "Unsold",
+      "-"
+    ],
+    [
+      "3",
+      "10",
+      "SE-N",
+      "Unsold",
+      "-"
+    ],
+    [
+      "4",
+      "1",
+      "CAP-B",
+      "T1",
+      "$450,000"
+    ],
+    [
+      "4",
+      "2",
+      "MOB-A",
+      "T1",
+      "$400,000"
+    ],
+    [
+      "4",
+      "3",
+      "FP-F",
+      "Unsold",
+      "-"
+    ],
+    [
+      "4",
+      "4",
+      "PRO-E",
+      "Unsold",
+      "-"
+    ],
+    [
+      "4",
+      "5",
+      "COM-F",
+      "Unsold",
+      "-"
+    ],
+    [
+      "4",
+      "6",
+      "SA-F",
+      "Unsold",
+      "-"
+    ],
+    [
+      "4",
+      "7",
+      "ACC-D",
+      "Unsold",
+      "-"
+    ],
+    [
+      "4",
+      "8",
+      "SE-R",
+      "Unsold",
+      "-"
+    ],
+    [
+      "4",
+      "9",
+      "SE-B",
+      "Unsold",
+      "-"
+    ],
+    [
+      "4",
+      "10",
+      "SE-S",
+      "Unsold",
+      "-"
+    ],
+    [
+      "5",
+      "1",
+      "CAP-E",
+      "Unsold",
+      "-"
+    ],
+    [
+      "5",
+      "2",
+      "MOB-F",
+      "Unsold",
+      "-"
+    ],
+    [
+      "5",
+      "3",
+      "FP-B",
+      "Unsold",
+      "-"
+    ],
+    [
+      "5",
+      "4",
+      "PRO-B",
+      "Unsold",
+      "-"
+    ],
+    [
+      "5",
+      "5",
+      "COM-G",
+      "Unsold",
+      "-"
+    ],
+    [
+      "5",
+      "6",
+      "SA-A",
+      "T1",
+      "$300,000"
+    ],
+    [
+      "5",
+      "7",
+      "ACC-E",
+      "Unsold",
+      "-"
+    ],
+    [
+      "5",
+      "8",
+      "SE-A",
+      "Unsold",
+      "-"
+    ],
+    [
+      "5",
+      "9",
+      "SE-J",
+      "Unsold",
+      "-"
+    ],
+    [
+      "5",
+      "10",
+      "SE-O",
+      "Unsold",
+      "-"
+    ],
+    [
+      "6",
+      "1",
+      "CAP-D",
+      "Unsold",
+      "-"
+    ],
+    [
+      "6",
+      "2",
+      "MOB-E",
+      "Unsold",
+      "-"
+    ],
+    [
+      "6",
+      "3",
+      "FP-D",
+      "Unsold",
+      "-"
+    ],
+    [
+      "6",
+      "4",
+      "PRO-F",
+      "Unsold",
+      "-"
+    ],
+    [
+      "6",
+      "5",
+      "COM-B",
+      "Unsold",
+      "-"
+    ],
+    [
+      "6",
+      "6",
+      "SA-G",
+      "T1",
+      "$500,000"
+    ],
+    [
+      "6",
+      "7",
+      "ACC-B",
+      "Unsold",
+      "-"
+    ],
+    [
+      "6",
+      "8",
+      "SE-G",
+      "Unsold",
+      "-"
+    ],
+    [
+      "6",
+      "9",
+      "SE-M",
+      "Unsold",
+      "-"
+    ],
+    [
+      "6",
+      "10",
+      "SE-T",
+      "Unsold",
+      "-"
+    ],
+    [
+      "7",
+      "1",
+      "CAP-A",
+      "Unsold",
+      "-"
+    ],
+    [
+      "7",
+      "2",
+      "MOB-C",
+      "Unsold",
+      "-"
+    ],
+    [
+      "7",
+      "3",
+      "FP-A",
+      "Unsold",
+      "-"
+    ],
+    [
+      "7",
+      "4",
+      "PRO-C",
+      "Unsold",
+      "-"
+    ],
+    [
+      "7",
+      "5",
+      "COM-A",
+      "Unsold",
+      "-"
+    ],
+    [
+      "7",
+      "6",
+      "SA-E",
+      "Unsold",
+      "-"
+    ],
+    [
+      "7",
+      "7",
+      "ACC-F",
+      "Unsold",
+      "-"
+    ],
+    [
+      "7",
+      "8",
+      "SE-H",
+      "Unsold",
+      "-"
+    ],
+    [
+      "7",
+      "9",
+      "SE-C",
+      "Unsold",
+      "-"
+    ],
+    [
+      "7",
+      "10",
+      "SE-Q",
+      "Unsold",
+      "-"
+    ]
+  ],
+  "round2Through7StepReceipts": [
+    {
+      "round": 2,
+      "lot": 1,
+      "card": "CAP-C",
+      "winner": null,
+      "student": {
+        "l": 2,
+        "phase": "Auction",
+        "r": 2
+      },
+      "instructor": {
+        "heading": "Round 2/7 · Lot 2/10",
+        "phase": "Auction"
+      }
+    },
+    {
+      "round": 2,
+      "lot": 2,
+      "card": "MOB-D",
+      "winner": null,
+      "student": {
+        "l": 3,
+        "phase": "Auction",
+        "r": 2
+      },
+      "instructor": {
+        "heading": "Round 2/7 · Lot 3/10",
+        "phase": "Auction"
+      }
+    },
+    {
+      "round": 2,
+      "lot": 3,
+      "card": "FP-G",
+      "winner": null,
+      "student": {
+        "l": 4,
+        "phase": "Auction",
+        "r": 2
+      },
+      "instructor": {
+        "heading": "Round 2/7 · Lot 4/10",
+        "phase": "Auction"
+      }
+    },
+    {
+      "round": 2,
+      "lot": 4,
+      "card": "PRO-A",
+      "winner": null,
+      "student": {
+        "l": 5,
+        "phase": "Auction",
+        "r": 2
+      },
+      "instructor": {
+        "heading": "Round 2/7 · Lot 5/10",
+        "phase": "Auction"
+      }
+    },
+    {
+      "round": 2,
+      "lot": 5,
+      "card": "COM-C",
+      "winner": null,
+      "student": {
+        "l": 6,
+        "phase": "Auction",
+        "r": 2
+      },
+      "instructor": {
+        "heading": "Round 2/7 · Lot 6/10",
+        "phase": "Auction"
+      }
+    },
+    {
+      "round": 2,
+      "lot": 6,
+      "card": "SA-B",
+      "winner": null,
+      "student": {
+        "l": 7,
+        "phase": "Auction",
+        "r": 2
+      },
+      "instructor": {
+        "heading": "Round 2/7 · Lot 7/10",
+        "phase": "Auction"
+      }
+    },
+    {
+      "round": 2,
+      "lot": 7,
+      "card": "ACC-C",
+      "winner": null,
+      "student": {
+        "l": 8,
+        "phase": "Auction",
+        "r": 2
+      },
+      "instructor": {
+        "heading": "Round 2/7 · Lot 8/10",
+        "phase": "Auction"
+      }
+    },
+    {
+      "round": 2,
+      "lot": 8,
+      "card": "SE-K",
+      "winner": null,
+      "student": {
+        "l": 9,
+        "phase": "Auction",
+        "r": 2
+      },
+      "instructor": {
+        "heading": "Round 2/7 · Lot 9/10",
+        "phase": "Auction"
+      }
+    },
+    {
+      "round": 2,
+      "lot": 9,
+      "card": "SE-P",
+      "winner": null,
+      "student": {
+        "l": 10,
+        "phase": "Auction",
+        "r": 2
+      },
+      "instructor": {
+        "heading": "Round 2/7 · Lot 10/10",
+        "phase": "Auction"
+      }
+    },
+    {
+      "round": 2,
+      "lot": 10,
+      "card": "SE-D",
+      "winner": null,
+      "student": {
+        "l": 1,
+        "phase": "Auction",
+        "r": 3
+      },
+      "instructor": {
+        "heading": "Round 3/7 · Lot 1/10",
+        "phase": "Auction"
+      }
+    },
+    {
+      "round": 3,
+      "lot": 1,
+      "card": "CAP-F",
+      "winner": null,
+      "student": {
+        "l": 2,
+        "phase": "Auction",
+        "r": 3
+      },
+      "instructor": {
+        "heading": "Round 3/7 · Lot 2/10",
+        "phase": "Auction"
+      }
+    },
+    {
+      "round": 3,
+      "lot": 2,
+      "card": "MOB-B",
+      "winner": null,
+      "student": {
+        "l": 3,
+        "phase": "Auction",
+        "r": 3
+      },
+      "instructor": {
+        "heading": "Round 3/7 · Lot 3/10",
+        "phase": "Auction"
+      }
+    },
+    {
+      "round": 3,
+      "lot": 3,
+      "card": "FP-C",
+      "winner": 1,
+      "price": 700000,
+      "student": {
+        "l": 4,
+        "phase": "Auction",
+        "r": 3
+      },
+      "instructor": {
+        "heading": "Round 3/7 · Lot 4/10",
+        "phase": "Auction"
+      }
+    },
+    {
+      "round": 3,
+      "lot": 4,
+      "card": "PRO-G",
+      "winner": 1,
+      "price": 550000,
+      "student": {
+        "l": 5,
+        "phase": "Auction",
+        "r": 3
+      },
+      "instructor": {
+        "heading": "Round 3/7 · Lot 5/10",
+        "phase": "Auction"
+      }
+    },
+    {
+      "round": 3,
+      "lot": 5,
+      "card": "COM-D",
+      "winner": null,
+      "price": null,
+      "student": {
+        "l": 6,
+        "phase": "Auction",
+        "r": 3
+      },
+      "instructor": {
+        "heading": "Round 3/7 · Lot 6/10",
+        "phase": "Auction"
+      }
+    },
+    {
+      "round": 3,
+      "lot": 6,
+      "card": "SA-D",
+      "winner": null,
+      "price": null,
+      "student": {
+        "l": 7,
+        "phase": "Auction",
+        "r": 3
+      },
+      "instructor": {
+        "heading": "Round 3/7 · Lot 7/10",
+        "phase": "Auction"
+      }
+    },
+    {
+      "round": 3,
+      "lot": 7,
+      "card": "ACC-A",
+      "winner": null,
+      "price": null,
+      "student": {
+        "l": 8,
+        "phase": "Auction",
+        "r": 3
+      },
+      "instructor": {
+        "heading": "Round 3/7 · Lot 8/10",
+        "phase": "Auction"
+      }
+    },
+    {
+      "round": 3,
+      "lot": 8,
+      "card": "SE-F",
+      "winner": null,
+      "price": null,
+      "student": {
+        "l": 9,
+        "phase": "Auction",
+        "r": 3
+      },
+      "instructor": {
+        "heading": "Round 3/7 · Lot 9/10",
+        "phase": "Auction"
+      }
+    },
+    {
+      "round": 3,
+      "lot": 9,
+      "card": "SE-I",
+      "winner": null,
+      "price": null,
+      "student": {
+        "l": 10,
+        "phase": "Auction",
+        "r": 3
+      },
+      "instructor": {
+        "heading": "Round 3/7 · Lot 10/10",
+        "phase": "Auction"
+      }
+    },
+    {
+      "round": 3,
+      "lot": 10,
+      "card": "SE-N",
+      "winner": null,
+      "price": null,
+      "student": {
+        "l": 1,
+        "phase": "Auction",
+        "r": 4
+      },
+      "instructor": {
+        "heading": "Round 4/7 · Lot 1/10",
+        "phase": "Auction"
+      }
+    },
+    {
+      "round": 4,
+      "lot": 1,
+      "card": "CAP-B",
+      "winner": 1,
+      "price": 450000,
+      "student": {
+        "l": 2,
+        "phase": "Auction",
+        "r": 4
+      },
+      "instructor": {
+        "heading": "Round 4/7 · Lot 2/10",
+        "phase": "Auction"
+      }
+    },
+    {
+      "round": 4,
+      "lot": 2,
+      "card": "MOB-A",
+      "winner": 1,
+      "price": 400000,
+      "student": {
+        "l": 3,
+        "phase": "Auction",
+        "r": 4
+      },
+      "instructor": {
+        "heading": "Round 4/7 · Lot 3/10",
+        "phase": "Auction"
+      }
+    },
+    {
+      "round": 4,
+      "lot": 3,
+      "card": "FP-F",
+      "winner": null,
+      "price": null,
+      "student": {
+        "l": 4,
+        "phase": "Auction",
+        "r": 4
+      },
+      "instructor": {
+        "heading": "Round 4/7 · Lot 4/10",
+        "phase": "Auction"
+      }
+    },
+    {
+      "round": 4,
+      "lot": 4,
+      "card": "PRO-E",
+      "winner": null,
+      "price": null,
+      "student": {
+        "l": 5,
+        "phase": "Auction",
+        "r": 4
+      },
+      "instructor": {
+        "heading": "Round 4/7 · Lot 5/10",
+        "phase": "Auction"
+      }
+    },
+    {
+      "round": 4,
+      "lot": 5,
+      "card": "COM-F",
+      "winner": null,
+      "price": null,
+      "student": {
+        "l": 6,
+        "phase": "Auction",
+        "r": 4
+      },
+      "instructor": {
+        "heading": "Round 4/7 · Lot 6/10",
+        "phase": "Auction"
+      }
+    },
+    {
+      "round": 4,
+      "lot": 6,
+      "card": "SA-F",
+      "winner": null,
+      "price": null,
+      "student": {
+        "l": 7,
+        "phase": "Auction",
+        "r": 4
+      },
+      "instructor": {
+        "heading": "Round 4/7 · Lot 7/10",
+        "phase": "Auction"
+      }
+    },
+    {
+      "round": 4,
+      "lot": 7,
+      "card": "ACC-D",
+      "winner": null,
+      "price": null,
+      "student": {
+        "l": 8,
+        "phase": "Auction",
+        "r": 4
+      },
+      "instructor": {
+        "heading": "Round 4/7 · Lot 8/10",
+        "phase": "Auction"
+      }
+    },
+    {
+      "round": 4,
+      "lot": 8,
+      "card": "SE-R",
+      "winner": null,
+      "price": null,
+      "student": {
+        "l": 9,
+        "phase": "Auction",
+        "r": 4
+      },
+      "instructor": {
+        "heading": "Round 4/7 · Lot 9/10",
+        "phase": "Auction"
+      }
+    },
+    {
+      "round": 4,
+      "lot": 9,
+      "card": "SE-B",
+      "winner": null,
+      "price": null,
+      "student": {
+        "l": 10,
+        "phase": "Auction",
+        "r": 4
+      },
+      "instructor": {
+        "heading": "Round 4/7 · Lot 10/10",
+        "phase": "Auction"
+      }
+    },
+    {
+      "round": 4,
+      "lot": 10,
+      "card": "SE-S",
+      "winner": null,
+      "price": null,
+      "student": {
+        "l": 1,
+        "phase": "Auction",
+        "r": 5
+      },
+      "instructor": {
+        "heading": "Round 5/7 · Lot 1/10",
+        "phase": "Auction"
+      }
+    },
+    {
+      "round": 5,
+      "lot": 1,
+      "card": "CAP-E",
+      "winner": null,
+      "price": null,
+      "student": {
+        "l": 2,
+        "phase": "Auction",
+        "r": 5
+      },
+      "instructor": {
+        "heading": "Round 5/7 · Lot 2/10",
+        "phase": "Auction"
+      }
+    },
+    {
+      "round": 5,
+      "lot": 2,
+      "card": "MOB-F",
+      "winner": null,
+      "price": null,
+      "student": {
+        "l": 3,
+        "phase": "Auction",
+        "r": 5
+      },
+      "instructor": {
+        "heading": "Round 5/7 · Lot 3/10",
+        "phase": "Auction"
+      }
+    },
+    {
+      "round": 5,
+      "lot": 3,
+      "card": "FP-B",
+      "winner": null,
+      "price": null,
+      "student": {
+        "l": 4,
+        "phase": "Auction",
+        "r": 5
+      },
+      "instructor": {
+        "heading": "Round 5/7 · Lot 4/10",
+        "phase": "Auction"
+      }
+    },
+    {
+      "round": 5,
+      "lot": 4,
+      "card": "PRO-B",
+      "winner": null,
+      "price": null,
+      "student": {
+        "l": 5,
+        "phase": "Auction",
+        "r": 5
+      },
+      "instructor": {
+        "heading": "Round 5/7 · Lot 5/10",
+        "phase": "Auction"
+      }
+    },
+    {
+      "round": 5,
+      "lot": 5,
+      "card": "COM-G",
+      "winner": null,
+      "price": null,
+      "student": {
+        "l": 6,
+        "phase": "Auction",
+        "r": 5
+      },
+      "instructor": {
+        "heading": "Round 5/7 · Lot 6/10",
+        "phase": "Auction"
+      }
+    },
+    {
+      "round": 5,
+      "lot": 6,
+      "card": "SA-A",
+      "winner": 1,
+      "price": 300000,
+      "student": {
+        "l": 7,
+        "phase": "Auction",
+        "r": 5
+      },
+      "instructor": {
+        "heading": "Round 5/7 · Lot 7/10",
+        "phase": "Auction"
+      }
+    },
+    {
+      "round": 5,
+      "lot": 7,
+      "card": "ACC-E",
+      "winner": null,
+      "price": null,
+      "student": {
+        "l": 8,
+        "phase": "Auction",
+        "r": 5
+      },
+      "instructor": {
+        "heading": "Round 5/7 · Lot 8/10",
+        "phase": "Auction"
+      }
+    },
+    {
+      "round": 5,
+      "lot": 8,
+      "card": "SE-A",
+      "winner": null,
+      "price": null,
+      "student": {
+        "l": 9,
+        "phase": "Auction",
+        "r": 5
+      },
+      "instructor": {
+        "heading": "Round 5/7 · Lot 9/10",
+        "phase": "Auction"
+      }
+    },
+    {
+      "round": 5,
+      "lot": 9,
+      "card": "SE-J",
+      "winner": null,
+      "price": null,
+      "student": {
+        "l": 10,
+        "phase": "Auction",
+        "r": 5
+      },
+      "instructor": {
+        "heading": "Round 5/7 · Lot 10/10",
+        "phase": "Auction"
+      }
+    },
+    {
+      "round": 5,
+      "lot": 10,
+      "card": "SE-O",
+      "winner": null,
+      "price": null,
+      "student": {
+        "l": 1,
+        "phase": "Auction",
+        "r": 6
+      },
+      "instructor": {
+        "heading": "Round 6/7 · Lot 1/10",
+        "phase": "Auction"
+      }
+    },
+    {
+      "round": 6,
+      "lot": 1,
+      "card": "CAP-D",
+      "winner": null,
+      "price": null,
+      "student": {
+        "l": 2,
+        "phase": "Auction",
+        "r": 6
+      },
+      "instructor": {
+        "heading": "Round 6/7 · Lot 2/10",
+        "phase": "Auction"
+      }
+    },
+    {
+      "round": 6,
+      "lot": 2,
+      "card": "MOB-E",
+      "winner": null,
+      "price": null,
+      "student": {
+        "l": 3,
+        "phase": "Auction",
+        "r": 6
+      },
+      "instructor": {
+        "heading": "Round 6/7 · Lot 3/10",
+        "phase": "Auction"
+      }
+    },
+    {
+      "round": 6,
+      "lot": 3,
+      "card": "FP-D",
+      "winner": null,
+      "price": null,
+      "student": {
+        "l": 4,
+        "phase": "Auction",
+        "r": 6
+      },
+      "instructor": {
+        "heading": "Round 6/7 · Lot 4/10",
+        "phase": "Auction"
+      }
+    },
+    {
+      "round": 6,
+      "lot": 4,
+      "card": "PRO-F",
+      "winner": null,
+      "price": null,
+      "student": {
+        "l": 5,
+        "phase": "Auction",
+        "r": 6
+      },
+      "instructor": {
+        "heading": "Round 6/7 · Lot 5/10",
+        "phase": "Auction"
+      }
+    },
+    {
+      "round": 6,
+      "lot": 5,
+      "card": "COM-B",
+      "winner": null,
+      "price": null,
+      "student": {
+        "l": 6,
+        "phase": "Auction",
+        "r": 6
+      },
+      "instructor": {
+        "heading": "Round 6/7 · Lot 6/10",
+        "phase": "Auction"
+      }
+    },
+    {
+      "round": 6,
+      "lot": 6,
+      "card": "SA-G",
+      "winner": 1,
+      "price": 500000,
+      "student": {
+        "l": 7,
+        "phase": "Auction",
+        "r": 6
+      },
+      "instructor": {
+        "heading": "Round 6/7 · Lot 7/10",
+        "phase": "Auction"
+      }
+    },
+    {
+      "round": 6,
+      "lot": 7,
+      "card": "ACC-B",
+      "winner": null,
+      "price": null,
+      "student": {
+        "l": 8,
+        "phase": "Auction",
+        "r": 6
+      },
+      "instructor": {
+        "heading": "Round 6/7 · Lot 8/10",
+        "phase": "Auction"
+      }
+    },
+    {
+      "round": 6,
+      "lot": 8,
+      "card": "SE-G",
+      "winner": null,
+      "price": null,
+      "student": {
+        "l": 9,
+        "phase": "Auction",
+        "r": 6
+      },
+      "instructor": {
+        "heading": "Round 6/7 · Lot 9/10",
+        "phase": "Auction"
+      }
+    },
+    {
+      "round": 6,
+      "lot": 9,
+      "card": "SE-M",
+      "winner": null,
+      "price": null,
+      "student": {
+        "l": 10,
+        "phase": "Auction",
+        "r": 6
+      },
+      "instructor": {
+        "heading": "Round 6/7 · Lot 10/10",
+        "phase": "Auction"
+      }
+    },
+    {
+      "round": 6,
+      "lot": 10,
+      "card": "SE-T",
+      "winner": null,
+      "price": null,
+      "student": {
+        "l": 1,
+        "phase": "Auction",
+        "r": 7
+      },
+      "instructor": {
+        "heading": "Round 7/7 · Lot 1/10",
+        "phase": "Auction"
+      }
+    },
+    {
+      "round": 7,
+      "lot": 1,
+      "card": "CAP-A",
+      "winner": null,
+      "price": null,
+      "student": {
+        "l": 2,
+        "phase": "Auction",
+        "r": 7
+      },
+      "instructor": {
+        "heading": "Round 7/7 · Lot 2/10",
+        "phase": "Auction"
+      }
+    },
+    {
+      "round": 7,
+      "lot": 2,
+      "card": "MOB-C",
+      "winner": null,
+      "price": null,
+      "student": {
+        "l": 3,
+        "phase": "Auction",
+        "r": 7
+      },
+      "instructor": {
+        "heading": "Round 7/7 · Lot 3/10",
+        "phase": "Auction"
+      }
+    },
+    {
+      "round": 7,
+      "lot": 3,
+      "card": "FP-A",
+      "winner": null,
+      "price": null,
+      "student": {
+        "l": 4,
+        "phase": "Auction",
+        "r": 7
+      },
+      "instructor": {
+        "heading": "Round 7/7 · Lot 4/10",
+        "phase": "Auction"
+      }
+    },
+    {
+      "round": 7,
+      "lot": 4,
+      "card": "PRO-C",
+      "winner": null,
+      "price": null,
+      "student": {
+        "l": 5,
+        "phase": "Auction",
+        "r": 7
+      },
+      "instructor": {
+        "heading": "Round 7/7 · Lot 5/10",
+        "phase": "Auction"
+      }
+    },
+    {
+      "round": 7,
+      "lot": 5,
+      "card": "COM-A",
+      "winner": null,
+      "price": null,
+      "student": {
+        "l": 6,
+        "phase": "Auction",
+        "r": 7
+      },
+      "instructor": {
+        "heading": "Round 7/7 · Lot 6/10",
+        "phase": "Auction"
+      }
+    },
+    {
+      "round": 7,
+      "lot": 6,
+      "card": "SA-E",
+      "winner": null,
+      "price": null,
+      "student": {
+        "l": 7,
+        "phase": "Auction",
+        "r": 7
+      },
+      "instructor": {
+        "heading": "Round 7/7 · Lot 7/10",
+        "phase": "Auction"
+      }
+    },
+    {
+      "round": 7,
+      "lot": 7,
+      "card": "ACC-F",
+      "winner": null,
+      "price": null,
+      "student": {
+        "l": 8,
+        "phase": "Auction",
+        "r": 7
+      },
+      "instructor": {
+        "heading": "Round 7/7 · Lot 8/10",
+        "phase": "Auction"
+      }
+    },
+    {
+      "round": 7,
+      "lot": 8,
+      "card": "SE-H",
+      "winner": null,
+      "price": null,
+      "student": {
+        "l": 9,
+        "phase": "Auction",
+        "r": 7
+      },
+      "instructor": {
+        "heading": "Round 7/7 · Lot 9/10",
+        "phase": "Auction"
+      }
+    },
+    {
+      "round": 7,
+      "lot": 9,
+      "card": "SE-C",
+      "winner": null,
+      "price": null,
+      "student": {
+        "l": 10,
+        "phase": "Auction",
+        "r": 7
+      },
+      "instructor": {
+        "heading": "Round 7/7 · Lot 10/10",
+        "phase": "Auction"
+      }
+    },
+    {
+      "round": 7,
+      "lot": 10,
+      "card": "SE-Q",
+      "winner": null,
+      "price": null,
+      "student": {
+        "l": 10,
+        "phase": "Build",
+        "r": 7
+      },
+      "instructor": {
+        "heading": "Round 7/7 · Lot 10/10",
+        "phase": "Build"
+      }
+    }
+  ],
+  "checks": [
+    "Practice purchase/reset leaves scored inventory zero",
+    "Vehicle confirmation through native keyboard; locked choices match instructor roster",
+    "All public card titles loaded and compared; role positions checked before native advancement",
+    "Two-win round limits respected; all outcomes committed through original commands",
+    "Actual Team2 then Team1 Build disclosures select corresponding purchase options and detail/model",
+    "Actual scene profit editor Done commits100.01; submitted state survives reload while private fields disappear",
+    "Visible official Award Team1 matches independent cost/totals/score/ratio calculation",
+    "Both roles reach Closed and export private synthetic backups",
+    "Final captured warn/error logs empty"
+  ],
+  "harnessLimits": [
+    "Round1 batch exceeded60s and reset kernel after last student advance. Actual committed instructorR1L10 and studentR2L1 were reread, instructor advanced once; final70-row ledger recovers public history. No app-state injection.",
+    "Exact text targeted a nonfocusable strong child; native summary Enter succeeds.",
+    "Clipped native checkbox locator click did not activate; native Space succeeds.",
+    "Direct fill of original onchange profit input was not committed by subsequent harness focus; actual Three.js field/native editor Done commits and survives reload. No product defect inferred."
+  ],
+  "findings": [
+    "MOB purchase ghosts assembled hull; PRO-D appears as separate aft cab. This is a material installed-model coherence defect; G2 remains open.",
+    "CAP/purchased-family adapter containment, wheel topology, multiple-card representation and full fidelity require next consolidated batch."
+  ],
+  "screenshots": [
+    "w68-command-assembled.png",
+    "w68-command-cutaway.png",
+    "w68-selected-team2-build.png",
+    "w68-selected-team1-build.png",
+    "w68-student-debrief.png",
+    "w68-instructor-closed.png"
+  ],
+  "limitations": [
+    "Separate full French journey, ten-team/tie/timed/reveal challenges remain open",
+    "Responsive override did not change actual1280x720 viewport; no mobile GPU proof",
+    "Offline/device/assistive/performance/rights/classroom/handover and full visual acceptance remain open"
+  ],
+  "closure": "PRODUCT_RELEASE OPEN0/3"
+}
