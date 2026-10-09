@@ -1,0 +1,33 @@
+{
+  "result": "PASS",
+  "sharedWinchGeometry": "identical",
+  "samples": [
+    {
+      "name": "vehicle",
+      "vertexFramingPoses": 20,
+      "aspects": [
+        0.5,
+        1,
+        1.6,
+        3
+      ],
+      "glbBytes": 2674596,
+      "glbSha256": "60fdffcb203df51dc3346e4e2b90dbe78a667f9020f8de278c92a3e2bfafc009",
+      "roundTripBounds": "PASS"
+    },
+    {
+      "name": "winch",
+      "vertexFramingPoses": 20,
+      "aspects": [
+        0.5,
+        1,
+        1.6,
+        3
+      ],
+      "glbBytes": 535228,
+      "glbSha256": "305fbafe9b68aa8fdc6f769ef1399508f348161fc2d3ed9ecd61e3fb297b28c8",
+      "roundTripBounds": "PASS"
+    }
+  ],
+  "scope": "geometry, materials, projected vertices and GLB round trip; not interactive browser acceptance"
+}
