@@ -6,7 +6,7 @@
     "source/three/game-scene.mjs": "dfc42990827e8de8cb2608d08ba2c2a061eb1941626f060595c09054dbcc12e3",
     "source/three/interface.mjs": "92c781beccda6c0e186273048625702e87cce051f5a3dd5e8cadac0b0079980b",
     "source/three/game-models.mjs": "d5612b81fecb2dacc9383fee686bcac4529b3dde9f94883d95ead634e4154b01",
-    "source/three/realism.mjs": "fe989e0b564363c41380c71593cc3c0814e6f06d6ef19e4396aba2d12e767f29",
+    "source/three/realism.mjs": "b612e00f92cfaac50b35f697c0afbf0366fc4750f5958e46fce0b4379cc8e31e",
     "source/three/materials.mjs": "84b8216754efbbefa66e600fb7bcc5ad7a8e4bcd478a7bfb51c9b5ac7c480dcb",
     "source/three/inspection.mjs": "9a704660c2fde42d74ebb7ffe3de7315b8067162071028eaaf1ed6f9b84c1637",
     "samples/threejs-recovery/models.mjs": "90ec4cf8056e470d9a4acac97457a1a54a28407071e58c450f7cacbb83d0645e",

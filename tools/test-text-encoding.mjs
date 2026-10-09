@@ -9,11 +9,12 @@ function checkAuthored(directory){
   const target=new URL(item.name+(item.isDirectory()?'/':''),directory);
   if(item.isDirectory()){checkAuthored(target);continue;}
   if(!/\.(?:mjs|js|ts|html|css|json|md)$/.test(item.name))continue;
-  assert.doesNotThrow(()=>decoder.decode(fs.readFileSync(target)),target.pathname+' contains invalid UTF-8 bytes');checked++;
+  let text;assert.doesNotThrow(()=>{text=decoder.decode(fs.readFileSync(target));},target.pathname+' contains invalid UTF-8 bytes');
+  assert(!text.includes('\r'),target.pathname+' must retain repository LF bytes so clean-checkout provenance matches');checked++;
  }
 }
 for(const directory of ['source/','tools/','samples/'])checkAuthored(new URL('../'+directory,import.meta.url));
-console.log(checked+' authored source/test/sample text files contain valid UTF-8 bytes PASS');
+console.log(checked+' authored source/test/sample text files contain valid UTF-8 and repository LF bytes PASS');
 for(const role of ['instructor','student']){
  const source=fs.readFileSync(new URL('../source/'+role+'.js',import.meta.url),'utf8');
  const dict=JSON.parse(source.match(/const I18N=(.*?);\n/)[1]);
