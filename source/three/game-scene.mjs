@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {createMission,createPart,createConfiguration,materials} from './game-models.mjs';
-import {prepareInspection,fitPerspective} from './inspection.mjs';
+import {prepareInspection,prepareCutaway,fitPerspective} from './inspection.mjs';
 import {createInterface} from './interface.mjs';
 
 // Presentation only. This module receives a public, copied snapshot, never game state.
@@ -27,7 +27,7 @@ export function mount(host,onFailure,onInspect){
   controls.maxPolarAngle=Math.PI*.49;
   const ground=new THREE.Mesh(new THREE.PlaneGeometry(100,100),new THREE.ShadowMaterial({opacity:.17}));ground.rotation.x=-Math.PI/2;ground.receiveShadow=true;scene.add(ground);
   let dragging=null,dragged=false;
-  let model=null,pending=0,active=true,last=null,angle=[7,4.5,7],inspection=null,mode='assembled',amount=.7,leaders=null,highlight=null;
+  let model=null,pending=0,active=true,last=null,angle=[7,4.5,7],inspection=null,cutaway=null,mode='assembled',amount=.7,leaders=null,highlight=null;
   function draw(){pending=0;if(!active)return;const w=Math.max(host.clientWidth,1),h=Math.max(host.clientHeight,1);renderer.setViewport(0,0,w,h);renderer.setScissorTest(false);renderer.clear();if(model){const v=uiEnabled?ui.layout.model:{x:0,y:0,w,h};renderer.setViewport(v.x,h-v.y-v.h,v.w,v.h);renderer.setScissor(v.x,h-v.y-v.h,v.w,v.h);renderer.setScissorTest(true);renderer.render(scene,camera);}if(uiEnabled){renderer.setScissorTest(false);renderer.setViewport(0,0,w,h);renderer.autoClear=false;renderer.clearDepth();renderer.render(ui.scene,ui.camera);renderer.autoClear=true;}}
   function request(){if(active&&!pending)pending=requestAnimationFrame(draw);}
   controls.addEventListener('change',request);
@@ -37,12 +37,13 @@ export function mount(host,onFailure,onInspect){
     if(selection.startsWith('part:')){const id=selection.slice(5);if(![view.current?.id,...view.owned.map(p=>p.id)].includes(id))throw Error('Part is not visible');model.add(createPart(id,m));}
     else model.add(selection==='configuration'?createConfiguration(view.mission,view.owned,m):createMission(view.mission,m));
     const actual=model.children[0],pivot=new THREE.Box3().setFromObject(actual).getCenter(new THREE.Vector3());actual.position.sub(pivot);model.position.copy(pivot);inspection=prepareInspection(actual);for(const p of inspection.parts)p.anchorLocal=model.worldToLocal(p.center.clone());model.traverse(o=>{if(o.isMesh){const optical=(Array.isArray(o.material)?o.material:[o.material]).some(mat=>mat.name==='optical glass');o.castShadow=!optical;o.receiveShadow=true;}});scene.add(model);const b=new THREE.Box3().setFromObject(model);ground.position.y=b.min.y-.025;camera.zoom=1;angle=[7,4.5,7];fit();
+    cutaway=prepareCutaway(actual);
     // Materials unused by a particular factory still need disposal.
     const used=new Set();model.traverse(o=>{if(o.material)used.add(o.material);});Object.values(m).forEach(mat=>{if(!used.has(mat))mat.dispose();});
   }
-  function clearInspection(){if(leaders){leaders.removeFromParent();leaders.geometry.dispose();leaders.material.dispose();leaders=null;}if(highlight){scene.remove(highlight);highlight.geometry.dispose();highlight.material.dispose();highlight=null;}inspection=null;}
+  function clearInspection(){cutaway?.dispose();cutaway=null;if(leaders){leaders.removeFromParent();leaders.geometry.dispose();leaders.material.dispose();leaders=null;}if(highlight){scene.remove(highlight);highlight.geometry.dispose();highlight.material.dispose();highlight=null;}inspection=null;}
   function inspect(next,value){if(!inspection)return;if(!['assembled','exploded','cutaway'].includes(next)||!Number.isFinite(value)||value<0||value>1)throw Error('Invalid inspection view');const changed=mode!==next;mode=next;amount=value;inspection.apply(mode==='exploded'?amount:0);
-    model.traverse(o=>{if(o.isMesh&&o.name==='hull shell'){o.material.transparent=mode==='cutaway';o.material.opacity=mode==='cutaway'?.13:1;o.material.depthWrite=mode!=='cutaway';}});
+    cutaway?.apply(mode==='cutaway');
     if(leaders){leaders.removeFromParent();leaders.geometry.dispose();leaders.material.dispose();leaders=null;}
     if(mode==='exploded'){const points=[];for(const p of inspection.parts)points.push(p.anchorLocal.clone(),model.worldToLocal(new THREE.Box3().setFromObject(p.object).getCenter(new THREE.Vector3())));leaders=new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(points),new THREE.LineBasicMaterial({color:'#748879',transparent:true,opacity:.5}));model.add(leaders);}
     highlight?.update();if(changed)fit();else request();

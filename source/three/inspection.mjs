@@ -1,4 +1,24 @@
 import * as THREE from 'three';
+// Cutaway owns temporary materials. Original shared paints and configuration
+// translucency survive repeated mode changes, model replacement and disposal.
+export function prepareCutaway(root){
+ const shells=[];root.traverse(mesh=>{if(mesh.isMesh&&mesh.name==='hull shell')shells.push({mesh,material:mesh.material,castShadow:mesh.castShadow,temporary:null});});
+ let enabled=false;
+ function apply(next){
+  if(enabled===!!next)return;enabled=!!next;
+  for(const item of shells){
+   if(enabled){
+    const copy=material=>{const m=material.clone();m.transparent=true;m.opacity=.13;m.depthWrite=false;m.needsUpdate=true;return m;};
+    item.temporary=Array.isArray(item.material)?item.material.map(copy):copy(item.material);
+    item.mesh.material=item.temporary;item.mesh.castShadow=false;
+   }else{
+    item.mesh.material=item.material;item.mesh.castShadow=item.castShadow;
+    for(const material of Array.isArray(item.temporary)?item.temporary:[item.temporary])material?.dispose();item.temporary=null;
+   }
+  }
+ }
+ return {apply,dispose(){apply(false);}};
+}
 // Reversible, semantic assembly separation. Never changes game purchases or ratings.
 export function prepareInspection(root){
  const original=[...root.children],buckets=new Map(),vehicle=!!root.userData.mission;
