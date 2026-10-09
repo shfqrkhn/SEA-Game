@@ -4,3 +4,7 @@ export * from './capabilities';
 export * from './missions';
 export * from './awards';
 export * from './catalog';
+export * from './teams';
+export * from './transactions';
+export * from './session';
+export * from './recovery';

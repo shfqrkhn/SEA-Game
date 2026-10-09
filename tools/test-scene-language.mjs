@@ -163,3 +163,57 @@ console.log('PASS: selected instructor Build team drives Current detail while al
  }
 }
 console.log('PASS: EN/FR student auction primary loading prerequisite and loaded-card win cue without commands/state/save mutation');
+
+// Production model captions use public selection state, not a default model's
+// identity. Test both languages through the same labels used by actual sync.
+{
+ const captions=vm.createContext({});
+ vm.runInContext(fs.readFileSync(new URL('../source/shared/engine.js',import.meta.url),'utf8')+'\n'+bridge+'\nthis.project=sea3DView;this.captions=seaSceneModelLabels;',captions);
+ for(const locale of ['en','fr']){
+  const labels=locale==='fr'?{title:'Votre véhicule',vehicle:'Véhicule de mission',configuration:'Votre configuration',waiting:'Choisissez votre mission.',context:{setup:'Choisissez un véhicule pour votre mission.',build:'Équipements achetés installés.'}}:{title:'Your vehicle',vehicle:'Mission vehicle',configuration:'Your build',waiting:'Choose your mission.',context:{setup:'Choose a vehicle for your mission.',build:'Purchased equipment fitted.'}};
+  const pending=captions.project({phase:'setup',team:null},'student','',locale,'');
+  const visible=captions.captions(pending,'vehicle',labels);
+  assert.equal(visible.title,locale==='fr'?'Exemple : Dépannage':'Example: Recovery');
+  assert.equal(visible.vehicle,locale==='fr'?'Véhicule exemple':'Example vehicle');
+  assert.equal(visible.mission,visible.title,'GPU mission caption and semantic model title share honest example state');
+  assert.match(visible.status,locale==='fr'?/Aucune mission choisie/:/No mission selected/);
+  assert.notEqual(visible.status,labels.context.setup,'Waiting guidance must distinguish exploration from selection');
+  const preview=captions.project({phase:'setup',team:null},'student','',locale,'TROOP');
+  const displayed=captions.captions(preview,'vehicle',labels);
+  assert.match(displayed.title,locale==='fr'?/^Aperçu : /:/^Preview: /);
+  assert.equal(displayed.vehicle,locale==='fr'?'Aperçu du véhicule':'Vehicle preview');
+  assert.match(displayed.status,locale==='fr'?/Rejoignez votre équipe/:/Join your team/);
+  const assigned=captions.project({phase:'build',team:{id:1,mission:'MINE',purchases:[]}},'student','',locale,'TROOP');
+  const committed=captions.captions(assigned,'configuration',labels);
+  assert.equal(committed.title,labels.configuration);assert.equal(committed.status,labels.context.build);
+  assert.equal(committed.vehicle,labels.vehicle);assert(!/Example|Exemple|Preview|Aperçu/.test(committed.mission));
+  const part=captions.captions(pending,'part:CAP-A',labels,'Known public card');
+  assert.equal(part.title,'Known public card');assert.equal(part.mission,visible.mission,'Inspecting a known card cannot imply a committed mission');assert.equal(part.status,visible.status);
+  assert.equal(captions.captions(pending,'configuration',labels).title,locale==='fr'?'Assemblage exemple':'Example assembly','Unexpected pending configuration cannot claim to be your build');
+ }
+ // Execute the complete production startup/sync as well: a renderer stub only
+ // replaces GPU work. This independently observes DOM captions and model DTOs.
+ for(const locale of ['en','fr'])for(const initialMission of ['', 'TROOP']){
+  const nodes=new Map(),frames=[];let updates=0,model;
+  const make=id=>({id,value:'',children:[],hidden:false,checked:false,attrs:{},textContent:'',events:{},
+   appendChild(child){this.children.push(child)},replaceChildren(){this.children=[]},addEventListener(type,fn){this.events[type]=fn},setAttribute(key,value){this.attrs[key]=value},
+   closest(){return this.parent||(this.parent={hidden:false,setAttribute(){}})}});
+  const get=id=>{if(!nodes.has(id))nodes.set(id,make(id));return nodes.get(id)};
+  get('vehicleSelect').value=initialMission;
+  const currentState={phase:'setup',team:null},before=JSON.stringify(currentState),classes=new Set();
+  const browser=vm.createContext({state:currentState,lang:locale,t:key=>key,APP:{version:'TEST'},requestAnimationFrame:fn=>frames.push(fn),
+   document:{getElementById:get,createElement:()=>make(''),addEventListener(){},body:{classList:{add:name=>classes.add(name),contains:name=>classes.has(name),remove:name=>classes.delete(name)}}},
+   window:{addEventListener(){}},SEAThree:{mount(){return {update(view){model=view;updates++},inspect(){},shadows(){},parts(){return []},view(){},dispose(){}}}}});
+  vm.runInContext(fs.readFileSync(new URL('../source/shared/engine.js',import.meta.url),'utf8')+'\n'+bridge+'\nsea3DStart("student");',browser);
+  while(frames.length)frames.shift()();
+  assert(classes.has('sea3d-active'),'Pending choice keeps the real scene alive');assert.equal(updates,1);
+  assert.equal(model.selectedMission,null);assert.equal(model.missionState,initialMission?'preview':'pending');
+  assert.match(get('sea3d-title').textContent,locale==='fr'?(initialMission?/^Aperçu : /:/^Exemple : /):(initialMission?/^Preview: /:/^Example: /));
+  assert.equal(get('sea3dViewport').attrs['aria-label'],get('sea3d-title').textContent,'Actual canvas accessible name preserves honest model state');
+  assert.match(get('sea3dStatus').textContent,locale==='fr'?(initialMission?/Aperçu seulement/:/Aucune mission choisie/):(initialMission?/Preview only/:/No mission selected/));
+  assert.equal(JSON.stringify(currentState),before,'Actual startup/scene sync cannot select or save a mission');
+  assert.equal(get('sea3dObject').children.length,1);assert.equal(get('sea3dObject').children[0].value,'vehicle');
+  get('sea3dViewport').events.sea3drestored();while(frames.length)frames.shift()();assert.equal(model.selectedMission,null);assert.equal(updates,2,'Context restoration retains the honest pending/preview model');
+ }
+}
+console.log('PASS: EN/FR example/preview/committed vehicle, configuration, card and GPU mission captions; no implicit default mission selection');

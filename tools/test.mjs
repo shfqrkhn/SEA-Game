@@ -106,16 +106,22 @@ const reconcileEnd=studentSource.indexOf('\nfunction addMissingPurchase()',recon
 assert.ok(reconcileStart>=0&&reconcileEnd>reconcileStart,'Student reconciliation behavior is available for direct testing');
 const reconcileSource=studentSource.slice(reconcileStart,reconcileEnd);
 const ui={container:{innerHTML:''},buttons:[],pending:null,approved:null,notices:[],saves:0,renders:0};
-const purchase=(id,instance,round,lot,paid,e)=>({id,instance,round,lot,paid,e,title:{en:id,fr:id}});
+// Independent approved fixture data; invented effects/prices cannot enter strict live commands.
+const reconciliationDefinitions={
+ 'CAP-A':{title:{en:'Modular Crew Hull',fr:'Coque modulaire pour équipage'},start:30000000,cat:'CAPACITY'},
+ 'MOB-A':{title:{en:'Efficient Power Pack',fr:'Groupe motopropulseur efficace'},start:40000000,cat:'MOBILITY'}
+};
+// Deliberately vary schema-3 property order; equivalent imported JSON must retain identity.
+const purchase=(id,instance,round,lot,paid,e)=>({id,instance,round,lot,paid,e,...reconciliationDefinitions[id]});
 const makeTeam=purchases=>{
- const totals={CAP:0,MOB:0};const purchasesByRound=Array(7).fill(0);let cost=0;
+ const totals={CAP:0,MOB:0,FP:0,PRO:0,COM:0,SA:0,REC:0,MC:0};const purchasesByRound=Array(7).fill(0);let cost=0;
  for(const p of purchases){for(const[k,v]of Object.entries(p.e))totals[k]=(totals[k]||0)+v;purchasesByRound[p.round-1]++;cost+=p.paid}
- return {purchases:[...purchases],purchasesByRound,totals,cost};
+ return {id:1,mission:'COMBAT',lockedMission:'COMBAT',profit:0,submitted:false,purchases:[...purchases],purchasesByRound,totals,cost};
 };
 const sandbox={
  state:{phase:'build',team:makeTeam([
-  purchase('CAP-A','R1-L1-CAP-A',1,1,1000,{CAP:2}),
-  purchase('MOB-A','R1-L2-MOB-A',1,2,2000,{MOB:5})
+  purchase('CAP-A','R1-L1-CAP-A',1,1,30000000,{CAP:6,MOB:-10}),
+  purchase('MOB-A','R1-L2-MOB-A',1,2,40000000,{MOB:70})
  ])},lang:'en',ui,
  $:selector=>{assert.equal(selector,'#reconcileInventory');return ui.container},
  $$:selector=>{
@@ -128,7 +134,8 @@ const sandbox={
  seaConfirmGate(key,message,retry){if(ui.approved===key){ui.approved=null;return true}ui.pending={key,message,retry};return false},
  seaNotify:message=>ui.notices.push(message),saveState:()=>{ui.saves++},renderBuild:()=>{ui.renders++}
 };
-runInNewContext(reconcileSource,sandbox,{filename:'student reconciliation'});
+runInNewContext(engine+'\n'+reconcileSource,sandbox,{filename:'student reconciliation'});
+assert.notDeepEqual(Object.keys(sandbox.state.team.purchases[1]),Object.keys(runInNewContext('cleanTeam(state.team)',sandbox).purchases[1]),'The independently authored fixture exercises equivalent schema-3 purchase key-order variation');
 const renderButtons=()=>runInNewContext('renderReconcileInventory()',sandbox);
 const cancelPending=()=>{ui.pending=null};
 const acceptPending=()=>{const pending=ui.pending;assert.ok(pending,'Confirmation is pending');ui.pending=null;ui.approved=pending.key;pending.retry();ui.approved=null};
@@ -137,19 +144,21 @@ ui.buttons[0].onclick();
 assert.equal(ui.pending?.key,'remove-purchase-R1-L1-CAP-A','Click requests confirmation for the selected stable purchase identity');
 cancelPending();
 assert.equal(sandbox.state.team.purchases.length,2,'Cancel preserves both purchases');
-assert.equal(sandbox.state.team.cost,3000,'Cancel preserves cost');
+assert.equal(sandbox.state.team.cost,70000000,'Cancel preserves canonical cost');
 renderButtons();
 ui.buttons[1].onclick();
 assert.equal(ui.pending?.key,'remove-purchase-R1-L2-MOB-A','Second row targets its own stable identity');
+const pendingPurchase=sandbox.state.team.purchases[1];
 runInNewContext('removePurchase(state.team,0)',sandbox);
+assert.equal(sandbox.state.team.purchases[0],pendingPurchase,'Canonical unchanged purchase retains identity despite imported key-order variation');
 acceptPending();
 assert.deepEqual(Array.from(sandbox.state.team.purchases, p=>p.instance),[],'Confirm removes the intended purchase after an earlier row shifts');
 assert.equal(sandbox.state.team.cost,0,'Confirmed removal updates cost');
 assert.deepEqual(Array.from(sandbox.state.team.purchasesByRound),Array(7).fill(0),'Confirmed removal updates round counts');
-assert.deepEqual({...sandbox.state.team.totals},{CAP:0,MOB:0},'Confirmed removal updates capability totals');
+assert.deepEqual({...sandbox.state.team.totals},{CAP:0,MOB:0,FP:0,PRO:0,COM:0,SA:0,REC:0,MC:0},'Confirmed removal updates capability totals');
 assert.equal(ui.saves,1,'Successful removal is persisted');
 assert.equal(ui.renders,1,'Successful removal refreshes the build view');
-sandbox.state.team=makeTeam([purchase('CAP-A','R1-L1-CAP-A',1,1,1000,{CAP:2})]);
+sandbox.state.team=makeTeam([purchase('CAP-A','R1-L1-CAP-A',1,1,30000000,{CAP:6,MOB:-10})]);
 renderButtons();
 ui.buttons[0].onclick();
 runInNewContext('removePurchase(state.team,0)',sandbox);
@@ -158,25 +167,25 @@ assert.deepEqual(ui.notices,['errors.stale'],'A stale confirmation reports the m
 assert.equal(ui.saves,1,'Stale confirmation does not persist another mutation');
 assert.equal(ui.renders,1,'Stale confirmation does not refresh as though it succeeded');
 sandbox.state.team=makeTeam([
- purchase('CAP-A','R1-L1-CAP-A',1,1,1000,{CAP:2}),
- purchase('CAP-A','R1-L1-CAP-A',1,1,1000,{CAP:2})
+ purchase('CAP-A','R1-L1-CAP-A',1,1,30000000,{CAP:6,MOB:-10}),
+ purchase('CAP-A','R1-L1-CAP-A',1,1,30000000,{CAP:6,MOB:-10})
 ]);
 renderButtons();
 ui.buttons[0].onclick();
 acceptPending();
 assert.equal(sandbox.state.team.purchases.length,2,'An ambiguous duplicate identity is not partially removed');
-assert.equal(sandbox.state.team.cost,2000,'An ambiguous target leaves cost unchanged');
+assert.equal(sandbox.state.team.cost,60000000,'An ambiguous target leaves canonical cost unchanged');
 assert.deepEqual(ui.notices,['errors.stale','errors.stale'],'Missing and ambiguous confirmation targets both fail closed');
 assert.equal(ui.saves,1,'Ambiguous confirmation does not persist a mutation');
 
 // R08/R09/R10, T10/T11: pending removal must not retarget restored or replaced work.
 for(const change of ['team','session','purchase','missing-team','phase']){
  sandbox.state.phase='build';sandbox.state.sessionCode='SEA3-T2-0123456789ABCDEF';
- sandbox.state.team=makeTeam([purchase('CAP-A','R1-L1-CAP-A',1,1,1000,{CAP:2})]);
+ sandbox.state.team=makeTeam([purchase('CAP-A','R1-L1-CAP-A',1,1,30000000,{CAP:6,MOB:-10})]);
  renderButtons();ui.buttons[0].onclick();
- if(change==='team')sandbox.state.team=makeTeam([purchase('CAP-A','R1-L1-CAP-A',1,1,1000,{CAP:2})]);
+ if(change==='team')sandbox.state.team=makeTeam([purchase('CAP-A','R1-L1-CAP-A',1,1,30000000,{CAP:6,MOB:-10})]);
  if(change==='session')sandbox.state.sessionCode='SEA3-T2-FEDCBA9876543210';
- if(change==='purchase')sandbox.state.team.purchases[0]=purchase('CAP-A','R1-L1-CAP-A',1,1,1000,{CAP:2});
+ if(change==='purchase')sandbox.state.team.purchases[0]=purchase('CAP-A','R1-L1-CAP-A',1,1,30000000,{CAP:6,MOB:-10});
  if(change==='missing-team')sandbox.state.team=null;
  if(change==='phase')sandbox.state.phase='submit';
  const before=JSON.stringify(sandbox.state),saves=ui.saves;
@@ -189,11 +198,11 @@ console.log('Student purchase removal click/cancel/confirm/stale-state regressio
 
 for(const change of ['team','session','purchase','detached']){
  sandbox.state.phase='build';sandbox.state.sessionCode='SEA3-T2-0123456789ABCDEF';
- sandbox.state.team=makeTeam([purchase('CAP-A','R1-L1-CAP-A',1,1,1000,{CAP:2})]);
+ sandbox.state.team=makeTeam([purchase('CAP-A','R1-L1-CAP-A',1,1,30000000,{CAP:6,MOB:-10})]);
  renderButtons();const button=ui.buttons[0];ui.pending=null;
- if(change==='team')sandbox.state.team=makeTeam([purchase('CAP-A','R1-L1-CAP-A',1,1,1000,{CAP:2})]);
+ if(change==='team')sandbox.state.team=makeTeam([purchase('CAP-A','R1-L1-CAP-A',1,1,30000000,{CAP:6,MOB:-10})]);
  if(change==='session')sandbox.state.sessionCode='SEA3-T2-FEDCBA9876543210';
- if(change==='purchase')sandbox.state.team.purchases[0]=purchase('CAP-A','R1-L1-CAP-A',1,1,1000,{CAP:2});
+ if(change==='purchase')sandbox.state.team.purchases[0]=purchase('CAP-A','R1-L1-CAP-A',1,1,30000000,{CAP:6,MOB:-10});
  if(change==='detached')button.isConnected=false;
  const before=JSON.stringify(sandbox.state),saves=ui.saves;button.onclick();
  assert.equal(ui.pending,null,'Old rendered removal control cannot retarget '+change);
@@ -252,9 +261,9 @@ for(const role of ['instructor','student']){
  assert.doesNotMatch(roleSource,/^function (validMission|must|cardAt|acquire|cardIndex)\(/m,role+' delegates card acquisition invariants to the shared engine');
  assert.doesNotMatch(roleSource,/^const CARD_INDEX=/m,role+' uses the shared canonical card index');
 }
-const acquisitionRules=runInNewContext(sharedEngineSource+'\n({CARD_INDEX,validMission,cardAt,acquire})',{});
+const acquisitionRules=runInNewContext(sharedEngineSource+'\n({CARD_INDEX,validMission,cardAt,acquire,createTeams})',{});
 assert.equal(acquisitionRules.CARD_INDEX.size,70);
-const acquisitionTeam={mission:'COMBAT',totals:{CAP:0,MOB:0,FP:0,PRO:0,COM:0,SA:0,REC:0,MC:0},purchases:[],purchasesByRound:Array(7).fill(0),cost:0,profit:0};
+const acquisitionTeam=acquisitionRules.createTeams({teamCount:2})[0];acquisitionTeam.mission='COMBAT';
 const capacity=acquisitionRules.cardAt('CAP-A',1,1);
 assert.equal(capacity.instance,'R1-L1-CAP-A');
 acquisitionRules.acquire(acquisitionTeam,capacity,capacity.start);
@@ -262,8 +271,11 @@ assert.equal(acquisitionTeam.cost,capacity.start);assert.equal(acquisitionTeam.t
 const afterPurchase=JSON.stringify(acquisitionTeam);
 assert.throws(()=>acquisitionRules.acquire(acquisitionTeam,acquisitionRules.cardAt('CAP-A',2,1),capacity.start),/duplicate/);
 assert.throws(()=>acquisitionRules.acquire(acquisitionTeam,acquisitionRules.cardAt('MOB-A',1,2),40000001),/money/);
-const limitedTeam={...acquisitionTeam,purchases:[],purchasesByRound:[2,0,0,0,0,0,0],cost:0,totals:{CAP:0,MOB:0,FP:0,PRO:0,COM:0,SA:0,REC:0,MC:0}};
+const limitedTeam=JSON.parse(JSON.stringify(acquisitionTeam));
+acquisitionRules.acquire(limitedTeam,acquisitionRules.cardAt('FP-A',1,3),35000000);
+const beforeLimitedPurchase=JSON.stringify(limitedTeam);
 assert.throws(()=>acquisitionRules.acquire(limitedTeam,acquisitionRules.cardAt('MOB-A',1,2),40000000),/limit/);
+assert.equal(JSON.stringify(limitedTeam),beforeLimitedPurchase,'A rejected third canonical purchase preserves inventory');
 assert.equal(JSON.stringify(acquisitionTeam),afterPurchase,'Rejected duplicate and invalid-price purchases do not mutate inventory');
 console.log('Shared card index, slot identity and transactional acquisition examples PASS');
 const amountInputSource=studentSource.match(/function amountInput\(c\)\{[^\n]+\}/)?.[0];
@@ -282,7 +294,7 @@ for(let round=1;round<=7;round++)for(let lot=1;lot<=10;lot++){
  const [id,,startDollars]=canonicalRules.POOLS[category][cardIndex],card=acquisitionRules.cardAt(id,round,lot),display=amountInputForTest(card.start);
  assert.equal(display,String(startDollars),id+' whole-dollar starting-price display');
  const paid=parseWholeDollarsForDisplay(display);assert.equal(paid,card.start,id+' displayed starting price parses to canonical cents');
- const team={mission:'COMBAT',totals:{CAP:0,MOB:0,FP:0,PRO:0,COM:0,SA:0,REC:0,MC:0},purchases:[],purchasesByRound:Array(7).fill(0),cost:0,profit:0};
+ const team=acquisitionRules.createTeams({teamCount:2})[0];team.mission='COMBAT';
  acquisitionRules.acquire(team,card,paid);assert.equal(team.cost,card.start,id+' unchanged displayed starting price commits exact cost');
 }
 console.log('Student sale-price default renders whole dollars and commits exact canonical cents for all 70 cards PASS');
@@ -785,7 +797,11 @@ const transactionMarketSeed='0123456789ABCDEF0123456789ABCDEF';
 const transactionMarket=JSON.parse(JSON.stringify(marketFromSeed(transactionMarketSeed)));
 const transactionCard=transactionMarket[0][0];
 function transactionHarness({leader=1,currentBid=transactionCard.start,wins=0}={}){
- const team=id=>({id,mission:'COMBAT',lockedMission:'COMBAT',totals:{CAP:0,MOB:0,FP:0,PRO:0,COM:0,SA:0,REC:0,MC:0},cost:0,purchases:[],purchasesByRound:[wins,0,0,0,0,0,0],profit:0,submitted:false});
+ const team=id=>{
+  const result=acquisitionRules.createTeams({teamCount:2})[id-1];result.mission=result.lockedMission='COMBAT';
+  for(const [card,lot,price]of [['MOB-A',2,40000000],['FP-A',3,35000000]].slice(0,wins))acquisitionRules.acquire(result,acquisitionRules.cardAt(card,1,lot),price);
+  return result;
+ };
  const calls={notices:[],saves:0,renders:0,stops:0};
  const state={phase:'auction',open:true,pausedRemaining:null,ledger:[],seq:0,teams:[team(1),team(2)],market:transactionMarket,round:0,lot:0,leader,currentBid,correctionReason:'',approved:null};
  const fns=runInNewContext(transactionSource,{state,calls,t:key=>key,seaNotify:key=>calls.notices.push(key),seaConfirmGate:key=>state.approved===key,saveState:()=>calls.saves++,stopTimer:()=>calls.stops++,renderAuction:()=>calls.renders++,$:()=>({value:state.correctionReason})});
@@ -1229,27 +1245,28 @@ console.log('Real role import/renderer escaping, canonical purchase metadata and
 // This is characterization in a VM, not browser storage/download qualification.
 function recoveryBoundaryHarness(role,saved,{getDenied=false,setDenied=false}={}){
  const roleSource=role==='INSTRUCTOR'?instructorSource:studentSource;
- const stored=new Map(saved===undefined?[]:[['role-store',saved]]),calls={writes:[],notices:[],statuses:[],downloads:[]};
- const initial={phase:'setup',sessionCode:null,lang:'en',marker:'initial'},context={state:initial,lang:'en',STORE_KEY:'role-store',recoveryBlocked:false,storageFailed:false,
+ const storeKey=role==='INSTRUCTOR'?'SEA_INSTRUCTOR_V300':'SEA_STUDENT_V300';
+ const stored=new Map(saved===undefined?[]:[[storeKey,saved]]),calls={writes:[],notices:[],statuses:[],downloads:[]};
+ const initial={phase:'setup',sessionCode:null,lang:'en',marker:'initial'},context={state:initial,lang:'en',STORE_KEY:storeKey,recoveryBlocked:false,storageFailed:false,
   validateInstructorSave:instructorValidator,validateStudentSave:studentValidator,
   Date:{now:()=>10000},storageNotice:key=>calls.notices.push(key),backupStatus:key=>calls.statuses.push(key),makeBackup:backupApi.makeBackup,
   sessionStorage:{getItem(key){if(getDenied)throw Error('denied');return stored.get(key)||null},setItem(key,value){if(setDenied)throw Error('quota');calls.writes.push({key,value});stored.set(key,value)}},
   saveBackupDownload(raw,suffix){calls.downloads.push({raw,suffix})}};
  const api=runInNewContext(sharedEngineSource+'\n'+['saveState','restoreState','exportBackup'].map(name=>extractFunction(roleSource,name)).join('\n')+'\n;({saveState,restoreState,exportBackup})',context);
- return {api,context,initial,stored,calls};
+ return {api,context,initial,stored,calls,storeKey};
 }
 for(const [role,snapshot,limit]of [['INSTRUCTOR',instructorRoundTrip,500000],['STUDENT',studentRoundTrip,500000]]){
  const raw=JSON.stringify(snapshot),valid=recoveryBoundaryHarness(role,raw);
  assert.equal(valid.api.restoreState(),true,role+' startup restores a valid schema-3 save');
  assert.notEqual(valid.context.state,valid.initial);assert.equal(valid.context.lang,snapshot.lang);
  assert.equal(valid.calls.writes.length,0,'Reading recovery never overwrites the source bytes');
- assert.equal(valid.stored.get('role-store'),raw);assert.equal(valid.context.recoveryBlocked,false);
+ assert.equal(valid.stored.get(valid.storeKey),raw);assert.equal(valid.context.recoveryBlocked,false);
  valid.context.lang='fr';assert.equal(valid.api.saveState(),true);
- const persisted=JSON.parse(valid.stored.get('role-store'));assert.equal(persisted.lang,'fr');
+ const persisted=JSON.parse(valid.stored.get(valid.storeKey));assert.equal(persisted.lang,'fr');
  const stableWrites=valid.calls.writes.length;
  for(let repeat=0;repeat<20;repeat++)assert.equal(valid.api.saveState(),true);
  assert.equal(valid.calls.writes.length,stableWrites,'Unchanged rerenders must not rewrite session storage');
- if(role==='INSTRUCTOR'){valid.context.state.privateEntry=true;valid.api.saveState();assert.equal(JSON.parse(valid.stored.get('role-store')).privateEntry,false,'Private entry never persists as projected state')}
+ if(role==='INSTRUCTOR'){valid.context.state.privateEntry=true;valid.api.saveState();assert.equal(JSON.parse(valid.stored.get(valid.storeKey)).privateEntry,false,'Private entry never persists as projected state')}
  valid.api.exportBackup();const exported=JSON.parse(valid.calls.downloads.at(-1).raw);
  assert.equal(exported.role,role);assert.equal(exported.state.lang,'fr');assert.equal(valid.calls.statuses.at(-1),'backup.exported');
  if(role==='INSTRUCTOR')assert.equal(exported.state.privateEntry,false,'Portable instructor backup disables private entry');
@@ -1257,12 +1274,12 @@ for(const [role,snapshot,limit]of [['INSTRUCTOR',instructorRoundTrip,500000],['S
  for(const badRaw of ['{',raw.slice(0,-1),'x'.repeat(limit+1),JSON.stringify({...snapshot,schema:4}),JSON.stringify({...snapshot,unreviewedDirective:'<script>hostile</script>'})]){
   const bad=recoveryBoundaryHarness(role,badRaw);assert.equal(bad.api.restoreState(),false);assert.equal(bad.context.state,bad.initial,'Rejected startup bytes leave live state intact');
   assert.equal(bad.context.recoveryBlocked,true);assert.deepEqual(bad.calls.notices,['common.badRecovery']);
-  bad.context.state.sessionCode='attempted-replacement';assert.equal(bad.api.saveState(),false);assert.equal(bad.calls.writes.length,0,'Blocked recovery cannot overwrite corrupt bytes');assert.equal(bad.stored.get('role-store'),badRaw);
+  bad.context.state.sessionCode='attempted-replacement';assert.equal(bad.api.saveState(),false);assert.equal(bad.calls.writes.length,0,'Blocked recovery cannot overwrite corrupt bytes');assert.equal(bad.stored.get(bad.storeKey),badRaw);
   bad.api.exportBackup();const rescue=JSON.parse(bad.calls.downloads[0].raw);assert.equal(rescue.format,'SEA-GAME-RECOVERY-RESCUE');assert.equal(rescue.role,role);assert.equal(rescue.raw,badRaw,'Rescue preserves exact unvalidated bytes');assert.equal(bad.calls.statuses.at(-1),'backup.rawExported');
  }
  const missing=recoveryBoundaryHarness(role);assert.equal(missing.api.restoreState(),false);assert.equal(missing.context.recoveryBlocked,false);assert.equal(missing.api.saveState(),true);assert.equal(missing.calls.writes.length,0);missing.api.exportBackup();assert.deepEqual(missing.calls.statuses,['backup.noSession']);
- const denied=recoveryBoundaryHarness(role,raw,{getDenied:true});assert.equal(denied.api.restoreState(),false);assert.equal(denied.context.storageFailed,true);assert.equal(denied.context.recoveryBlocked,false);assert.equal(denied.context.state,denied.initial);assert.equal(denied.stored.get('role-store'),raw);
- const quota=recoveryBoundaryHarness(role,raw,{setDenied:true});assert.equal(quota.api.restoreState(),true);const active=quota.context.state;quota.context.lang=quota.context.lang==='en'?'fr':'en';assert.equal(quota.api.saveState(),false);assert.equal(quota.context.state,active);assert.equal(quota.context.storageFailed,true);assert.deepEqual(quota.calls.notices,['common.refresh']);assert.equal(quota.stored.get('role-store'),raw);quota.api.exportBackup();assert.equal(quota.calls.downloads.length,1,'Denied persistence still permits a portable backup request');
+ const denied=recoveryBoundaryHarness(role,raw,{getDenied:true});assert.equal(denied.api.restoreState(),false);assert.equal(denied.context.storageFailed,true);assert.equal(denied.context.recoveryBlocked,false);assert.equal(denied.context.state,denied.initial);assert.equal(denied.stored.get(denied.storeKey),raw);
+ const quota=recoveryBoundaryHarness(role,raw,{setDenied:true});assert.equal(quota.api.restoreState(),true);const active=quota.context.state;quota.context.lang=quota.context.lang==='en'?'fr':'en';assert.equal(quota.api.saveState(),false);assert.equal(quota.context.state,active);assert.equal(quota.context.storageFailed,true);assert.deepEqual(quota.calls.notices,['common.refresh']);assert.equal(quota.stored.get(quota.storeKey),raw);quota.api.exportBackup();assert.equal(quota.calls.downloads.length,1,'Denied persistence still permits a portable backup request');
 }
 for(const [mode,deadline,remaining,expected]of [['TIMED',15000,null,5000],['TIMED',5000,null,0],['TIMED',15000,1234,1234],['UNTIMED',null,null,0]]){
  const snapshot={...currentAuctionSave(null,1,transactionCard.start),open:true,timingMode:mode,deadline,pausedRemaining:remaining,privateEntry:true};

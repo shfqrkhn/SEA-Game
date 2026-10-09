@@ -2,6 +2,12 @@
 
 Status 2026-10-09: development candidate, full acceptance OPEN, 0/3. Exact delivery/checkpoint: [handover](HANDOVER.md). APP.version is separate from rulesSTANDARD/decksynthetic-v1/schema3/backup-envelope1; version labels do not identify exact bytes or establish acceptance.
 
+## Local staged rebuild 4.0.0-dev.3
+
+Production now consumes fresh typed immutable team transactions, canonical schema3 purchase replay, session/phase/reveal policies and bounded role-specific backup/storage contracts. Unsafe live capability state and object-coercion code inputs are rejected before mutation; mislabeled role transport cannot expose instructor-only data. Changed-only snapshots and cached availability checks avoid repeated probe writes. Canonical remaining purchase references survive differing JSON key order, preserving valid correction confirmations while stale targets remain rejected.
+
+The Three.js scene distinguishes a clearly labelled EN/FR example, an uncommitted vehicle preview and an assigned mission; configuration requires assignment. Independent regressions, strict types, actual rules/recovery tests and six70-outcome VM journeys pass. New source CI and actual hosted/browser qualification are pending. Whole-role command/ledger validators, realistic full-model review and end-to-end acceptance remain open.
+
 ## Current published staged rebuild 4.0.0-dev.2
 
 Empty student setup status now follows the native EN/FR language action. The actual-controller regression reproduced the observed English-in-French defect before the fix; fresh hosted student setup confirms the French message. PR6/source079d8b8 mergedac56974; all four source/main Windows/Ubuntu Node22/24 jobs pass, Pages succeeds and HTTPS bytes match8,189,502bytes/SHA256feca594d51202c090b06bba3c44e378f7ee48de4a7e0ec5735c46bb4951dcade. [Current bounded verification](verification/current.json) separates this recheck from prior-candidate model/role observations. Full acceptance stays OPEN0/3.

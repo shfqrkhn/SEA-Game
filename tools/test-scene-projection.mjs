@@ -113,3 +113,25 @@ contextual.disabled=true;assert.equal(ctx.project([contextual],visible,keyFor).r
 console.log('Named public scene sections, consolidated card context and dynamic native-action routing PASS');
 
 const navigation=node('nav','',[node('button','Current'),node('button','Inspect')],{id:'sea3dNavigation'});assert.equal(ctx.project([navigation],visible,keyFor).rows.length,0,'Synchronized native navigation cannot duplicate task rows or feed back into sections');
+
+// Regression from the real hosted setup: an empty choice looked like a
+// committed Recovery mission. Rendering an example cannot assign game state.
+const missionContext=vm.createContext({});
+vm.runInContext(fs.readFileSync(new URL('../source/shared/engine.js',import.meta.url),'utf8')+'\n'+code+'\nthis.view=sea3DView;',missionContext);
+const unchosen={phase:'setup',team:null,teams:[{id:2,mission:'COMBAT',plan:secret}],market:secret,seed:secret};
+const untouched=JSON.stringify(unchosen);
+for(const locale of ['en','fr']){
+ const pending=missionContext.view(unchosen,'student','2',locale,'');
+ assert.equal(pending.selectedMission,null,'An illustrative model cannot be projected as the selected mission');
+ assert.equal(pending.missionState,'pending');assert.equal(pending.teamId,null);assert.equal(pending.teams.length,0,'Unjoined students cannot see another roster');
+ assert(!JSON.stringify(pending).includes(secret));
+ const preview=missionContext.view(unchosen,'student','2',locale,'TROOP');
+ assert.equal(preview.selectedMission,null,'Changing the setup field previews; joining commits the mission');assert.equal(preview.missionState,'preview');assert.equal(preview.mission,'TROOP');
+ const joined=missionContext.view({...unchosen,team:{id:1,mission:'MINE',purchases:[],plan:secret}},'student','2',locale,'TROOP');
+ assert.equal(joined.selectedMission,'MINE');assert.equal(joined.missionState,'assigned');assert.equal(joined.mission,'MINE','Authoritative joined mission takes precedence over a stale setup field');
+ const instructor=missionContext.view({phase:'planning',teams:[{id:1,mission:null},{id:2,mission:'COMBAT'}]},'instructor','1',locale);
+ assert.equal(instructor.selectedMission,null);assert.equal(instructor.missionState,'pending','Unassigned instructor team remains pending even if another team has chosen');
+ assert.equal(missionContext.view(unchosen,'student','2',locale,'INVALID').missionState,'pending');
+}
+assert.equal(JSON.stringify(unchosen),untouched,'Preview projection never commits a mission or mutates the game');
+console.log('PASS: unchosen/preview/assigned mission identity, authoritative precedence and unjoined role privacy');
