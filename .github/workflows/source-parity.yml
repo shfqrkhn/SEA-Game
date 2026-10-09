@@ -32,6 +32,12 @@ jobs:
       - run: node tools/test-balance.mjs
       - run: node tools/test-text-encoding.mjs
       - run: npm ci --prefix samples/threejs-recovery
+      - run: node samples/threejs-recovery/node_modules/typescript/bin/tsc -p tsconfig.json
+      - run: node tools/build-domain.mjs --check
+      - run: node tools/test-domain-rebuild.mjs
+      - run: node tools/test-runtime-domain.mjs
+      - run: node tools/test-interface-rebuild.mjs
+      - run: node tools/test-realism-rebuild.mjs
       - run: node tools/test-single-html.mjs
       - run: node tools/test-student-task-layout.mjs
       - run: node samples/threejs-recovery/verify-game.mjs

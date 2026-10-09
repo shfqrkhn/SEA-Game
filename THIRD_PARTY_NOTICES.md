@@ -71,3 +71,5 @@ OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 PERFORMANCE OF THIS SOFTWARE.
 
 Development-only transitive packages are pinned with licence metadata in samples/threejs-recovery/package-lock.json. They are installed for testing/building and are not bundled into the runtime. The unused three-mesh-bvh dependency has been removed.
+
+Development-only type checker: TypeScript 5.9.3, Microsoft Corporation, Apache-2.0. The pinned package retains its LICENSE.txt and ThirdPartyNoticeText.txt when installed; its compiler and standard library are not redistributed in the HTML runtime. Installation scripts are disabled for the bounded local install. The dependency-free JS compiler is selected for the Node 22/24 toolchain; latest-version marketing does not determine project suitability.

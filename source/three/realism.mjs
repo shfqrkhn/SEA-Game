@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import {RoundedBoxGeometry} from 'three/addons/geometries/RoundedBoxGeometry.js';
+import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 import {box,cylinder,rod,tube,bolts,createWheel,createVehicle,createWinch} from '../../samples/threejs-recovery/models.mjs';
 import {materials} from './materials.mjs';
 export {materials};
@@ -445,6 +446,19 @@ function detailVehicle(g,m,length,width){
  for(let i=0;i<4;i++){rod(g,m.steel,[rear+.1,1.15+i*.18,-.3],[rear+.1,1.15+i*.18,.3],.014);}
 }
 
+// Repeated detail is merged only within its physical assembly. No global GPU
+// cache can outlive a disposed vehicle or invalidate another live model.
+function detailBatch(parent,material,geometry,placements,name){
+ const copies=placements.map(({position=[0,0,0],rotation=[0,0,0]})=>geometry.clone().applyMatrix4(new THREE.Matrix4().compose(new THREE.Vector3(...position),new THREE.Quaternion().setFromEuler(new THREE.Euler(...rotation)),new THREE.Vector3(1,1,1))));
+ const merged=mergeGeometries(copies,false);copies.forEach(g=>g.dispose());geometry.dispose();
+ if(!merged)throw new Error('Incompatible repeated wheel detail');
+ const mesh=new THREE.Mesh(merged,material);mesh.name=name;mesh.castShadow=mesh.receiveShadow=true;parent.add(mesh);return mesh;
+}
+function annularPlate(inner,outer,depth,segments=24){
+ const shape=new THREE.Shape();shape.absarc(0,0,outer,0,Math.PI*2,false);
+ const bore=new THREE.Path();bore.absarc(0,0,inner,0,Math.PI*2,true);shape.holes.push(bore);
+ return new THREE.ExtrudeGeometry(shape,{depth,steps:1,curveSegments:segments,bevelEnabled:false});
+}
 function refineWheels(g,m){
  const wheels=[];g.traverse(o=>{if(o.name==='run-flat wheel')wheels.push(o);});for(const w of wheels){if(w.userData.detailed)continue;w.userData.detailed=true;
   const tire=w.children[0];for(const old of [...w.children].slice(1)){old.removeFromParent();old.geometry?.dispose();}
@@ -452,17 +466,34 @@ function refineWheels(g,m){
   // Directional interlocking lugs overlap the shoulder and share their geometry.
   const lugShape=new THREE.Shape();lugShape.moveTo(-.055,-.071);lugShape.lineTo(.018,-.071);lugShape.lineTo(.059,-.035);lugShape.lineTo(.043,.071);lugShape.lineTo(-.027,.071);lugShape.lineTo(-.063,.025);lugShape.closePath();
   const lugGeometry=new THREE.ExtrudeGeometry(lugShape,{depth:.030,steps:1,bevelEnabled:true,bevelSize:.006,bevelThickness:.006,bevelSegments:1});lugGeometry.rotateX(Math.PI/2);
-  for(let i=0;i<32;i++)for(const s of [-1,1]){const a=i*Math.PI/16+s*.028,lug=new THREE.Mesh(lugGeometry,m.rubber);lug.position.set(Math.sin(a)*.607,Math.cos(a)*.607,s*.091);lug.rotation.z=-a;lug.rotation.y=s*.24;lug.name='directional tread lug';lug.castShadow=true;lug.receiveShadow=true;w.add(lug);}
+  const lugs=[];for(let i=0;i<32;i++)for(const s of [-1,1]){const a=i*Math.PI/16+s*.028;lugs.push({position:[Math.sin(a)*.607,Math.cos(a)*.607,s*.091],rotation:[0,s*.24,-a]});}
+  detailBatch(w,m.rubber,lugGeometry,lugs,'directional tread lug').userData.physicalLugCount=64;
   for(const s of [-1,1]){
    // A dished rim has a deep centre; the hub stands proud of its recessed web.
-   const rimProfile=[[.11,.08],[.15,.095],[.23,.13],[.31,.173],[.325,.19],[.334,.184],[.331,.164],[.307,.15],[.236,.109],[.15,.071],[.11,.068]].map(([r,z])=>new THREE.Vector2(r,z));
+   const rimProfile=[[.11,.08],[.15,.095],[.23,.13],[.31,.173],[.325,.19],[.334,.184],[.331,.164],[.307,.15],[.236,.109],[.15,.071],[.11,.068]].reverse().map(([r,z])=>new THREE.Vector2(r,z));
    const rim=new THREE.Mesh(new THREE.LatheGeometry(rimProfile,48),m.paint);rim.rotation.x=s*Math.PI/2;rim.name='dished wheel rim';w.add(rim);
    const lip=new THREE.Mesh(new THREE.TorusGeometry(.322,.012,8,48),m.darkSteel);lip.position.z=s*.184;lip.name='rim bead retaining lip';w.add(lip);
    cylinder(w,m.darkSteel,.11,.08,[0,0,s*.112],'z',.11,40).name='wheel hub shoulder';cylinder(w,m.paint,.085,.07,[0,0,s*.16],'z',.085,40).name='hub cap';
-   for(let i=0;i<10;i++){const a=i*Math.PI/5;cylinder(w,m.steel,.015,.021,[Math.sin(a)*.15,Math.cos(a)*.15,s*.12],'z',.015,6).name='hub fastener';}
-   const inner=s===-Math.sign(w.position.z),rotor=cylinder(w,m.steel,.265,.015,[0,0,s*.066],'z',.265,48);rotor.name=inner?'ventilated brake rotor':'rim inner web';
-   if(inner)box(w,m.darkSteel,[.12,.21,.08],[.23,0,s*.065],'brake caliper');
-   cylinder(w,m.steel,.012,.025,[.12,.28,s*.18],'z',.012,8).name='tyre valve';
+   // A planar seating land intersects the conical web and the hub shoulder.
+   // Washers seat at 111 mm; their outer faces support each hex head at 123 mm.
+   detailBatch(w,m.paint,annularPlate(.11,.183,.040,16),[{position:[0,0,s*.071],rotation:[s===1?0:Math.PI,0,0]}],'machined rim fastener seating flange');
+   const washers=[],heads=[];for(let i=0;i<10;i++){const a=i*Math.PI/5,x=Math.sin(a)*.15,y=Math.cos(a)*.15;washers.push({position:[x,y,s*.111],rotation:[s===1?0:Math.PI,0,0]});heads.push({position:[x,y,s*.134],rotation:[Math.PI/2,0,0]});}
+   detailBatch(w,m.steel,annularPlate(.009,.026,.012,8),washers,'seated hub fastener washer').userData.physicalWasherCount=10;
+   detailBatch(w,m.steel,new THREE.CylinderGeometry(.015,.015,.022,6),heads,'hub fastener').userData.physicalFastenerCount=10;
+   const inner=s===-Math.sign(w.position.z);
+   if(inner){
+    // Two annular friction faces and real open channels between radial vanes.
+    // This is illustrative construction, not a claimed production brake spec.
+    detailBatch(w,m.steel,annularPlate(.115,.265,.005,32),[{position:[0,0,s*.054],rotation:[s===1?0:Math.PI,0,0]},{position:[0,0,s*.073],rotation:[s===1?0:Math.PI,0,0]}],'ventilated brake rotor');
+    const vane=new THREE.Shape();[[.125,-.03],[.255,-.03],[.255,.03],[.125,.03]].forEach(([radius,angle],i)=>{const x=Math.cos(angle)*radius,y=Math.sin(angle)*radius;i?vane.lineTo(x,y):vane.moveTo(x,y);});vane.closePath();
+    const channels=[];for(let i=0;i<24;i++)channels.push({position:[0,0,s*.059],rotation:[s===1?0:Math.PI,0,i*Math.PI/12]});
+    detailBatch(w,m.darkSteel,new THREE.ExtrudeGeometry(vane,{depth:.014,steps:1,bevelEnabled:false}),channels,'brake rotor radial cooling vane').userData.physicalVaneCount=24;
+    cylinder(w,m.darkSteel,.121,.030,[0,0,s*.066],'z',.121,32).name='rotor seated hub neck';
+    box(w,m.darkSteel,[.12,.21,.08],[.23,0,s*.065],'brake caliper');
+   }else cylinder(w,m.steel,.265,.015,[0,0,s*.066],'z',.265,48).name='rim inner web';
+   cylinder(w,m.rubber,.014,.012,[.12,.28,s*.174],'z',.014,16).name='valve seated rubber grommet';
+   cylinder(w,m.steel,.006,.020,[.12,.28,s*.190],'z',.006,12).name='tyre valve';
+   cylinder(w,m.darkSteel,.008,.008,[.12,.28,s*.204],'z',.008,12).name='valve threaded dust cap';
    const sidewallRing=new THREE.Mesh(new THREE.TorusGeometry(.47,.0035,6,48),m.rubber);sidewallRing.position.z=s*.214;sidewallRing.name='moulded sidewall seam';w.add(sidewallRing);
   }
  }

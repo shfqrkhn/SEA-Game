@@ -4,7 +4,7 @@
 
 Both EN/FR roles, eight classroom phases, a 70-card auction and six mission vehicles run from one embedded Three.js HTML. Classroom handoffs remain manual; no backend, synchronization or account. Export important work as role-specific JSON. Do not enter sensitive or operational information.
 
-Current candidate: **3.6.0**. Full offline/device/accessibility/rights/classroom acceptance and three-pass release closure remain open. Start maintenance with [current handover](docs/HANDOVER.md).
+Published candidate: **3.6.0**; local clean rebuild: **4.0.0-dev.1**. Full offline/device/accessibility/rights/classroom acceptance and three-pass release closure remain open. Start maintenance with [current handover](docs/HANDOVER.md).
 
 ## Operate and maintain
 
@@ -22,6 +22,8 @@ Node 22/24 are covered by CI; local integration uses Node 24.20.0. Dependencies 
 
 ```sh
 npm ci --prefix samples/threejs-recovery
+node samples/threejs-recovery/node_modules/typescript/bin/tsc -p tsconfig.json
+node tools/build-domain.mjs
 node samples/threejs-recovery/build-game.mjs
 node tools/build.mjs
 node tools/build.mjs --check
@@ -33,6 +35,8 @@ node tools/test-single-html.mjs
 The full check list is .github/workflows/source-parity.yml. Generators skip unchanged outputs; no project server/watcher or continuously writing job is needed. CLI emits only dist/index.html. Isolated role compositions are in-memory regression fixtures, not extra distribution files. Do not edit generated HTML.
 
 Use modular source/ for rules, controllers, presentation and geometry. Canonical assets/v1/ SVGs are embedded. Preserve rules/prices/schema-3 saves. One renderer owner and native/semantic equivalents support accessibility and editing.
+
+The clean rebuild is developed on codex/sea-clean-rebuild-4 as a 4.0.0 development candidate; published 3.6.0 remains the rollback baseline. Fresh strict TypeScript domain source is in source/domain; tools/build-domain.mjs updates only the marked generated payload in the actual role engine. Remaining role/state/persistence rewrites and release qualification stay open. All new work remains within D:\VSCode\SEA-Game; local preserved references and scratch outputs share ignored current/.artifacts rather than additional folders.
 
 Finite optional source/evidence packets use ignored .artifacts/: node tools/package.mjs --output .artifacts/NEW_NAME. Retain the printed integrity key; a packet is not accepted release evidence. Actual browser/file/offline/egress/device checks differ from Node/VM fixtures.
 

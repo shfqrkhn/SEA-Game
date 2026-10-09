@@ -1,6 +1,18 @@
 # SEA Game MPES
 
-Version: **1.4.0**. Revised 2026-10-09. Canonical specification for maintaining and completing Systems Engineering Awareness. SDD = specification-driven development; TDD = test-driven development. Product acceptance **OPEN, 0/3**. Current delivery and unfinished edits belong in [handover](HANDOVER.md), durable outcomes/work queue in [ledger](EXECUTION_LEDGER.md).
+Version: **1.5.0**. Revised 2026-10-09. Canonical specification for maintaining and completing Systems Engineering Awareness. SDD = specification-driven development; TDD = test-driven development. Product acceptance **OPEN, 0/3**. Current delivery and unfinished edits belong in [handover](HANDOVER.md), durable outcomes/work queue in [ledger](EXECUTION_LEDGER.md).
+
+## Clean rebuild contract
+
+The user activated a from-scratch rebuild using Universal Single HTML App Generator v4.1.4. The exact reference is preserved locally at .artifacts/preserved-references/Universal_Single_HTML_App_Generator_Prompt_V4.1.4.md; do not upload it or remove it as scratch output. Apply its relevant engineered STRICT_OFFLINE principles through this native specification, not competing wholesale policy documents. Prior code supplies behavior/compatibility evidence; rejected visuals and layout do not constrain the successor. Published 3.6.0 remains the rollback candidate, not an accepted release.
+
+XY outcome: teach mission requirements, capability/cost tradeoffs, integration, verification and bid reasoning through a facilitator-led exercise. A 3D interface is FIT for inspecting assemblies and PARTIAL for teaching/auctioning: it must also expose the next valid task, clear authoritative/private state and accessible synchronized actions. More meshes, concepts, panels or tests alone cannot establish learning value or realism. Preserve the explicit whole-Three.js interface, one offline HTML, manual handoffs and approved mechanics while rebuilding task layout, pure typed domain boundaries and physical construction.
+
+Rebuild qualification: source/domain is the fresh typed successor foundation; source/three owns actual scene/interface/geometry. Do not claim a completed rewrite while old role controllers/state/persistence remain. Qualify a packaged representative slice, then all eight phases, both roles, recovery/private state and actual rendered assemblies before promotion. Regression oracles stay independent; known failures and new discoveries become regressions, reserved holdouts remain untuned. All existing R/T/M/G obligations continue without reduced acceptance scope.
+
+All new work stays under D:\VSCode\SEA-Game, reusing current and ignored current/.artifacts; no additional checkouts/archives/exploration folders. Preserve local reference documents. Keep only justified production source, assets, tests, build/lock/config and compact maintenance evidence on GitHub. Use event-based writes and no persistent project processes.
+
+Current primary-source decisions: use bounded on-demand rendering and resize only on changed drawing-buffer dimensions ([Three.js rendering](https://threejs.org/manual/pages/rendering-on-demand.html), [responsive rendering](https://threejs.org/manual/pages/responsive.html)); derive layout/drawing/hit targets from one measured plan; retain semantic action equivalents and test focus/reflow/targets against [WCAG 2.2](https://www.w3.org/TR/WCAG22/); require actual [strict type checking](https://www.typescriptlang.org/tsconfig/strict.html) rather than treating esbuild stripping as verification. Research refresh 2026-10-09, applied checks scoped in handover. Tool version choice is qualified by project fit, not newest-version branding.
 
 ## Outcome, scope and completion
 
