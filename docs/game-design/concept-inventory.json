@@ -2833,8 +2833,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/accessories-family-v1.png",
+            "sha256": "8bd7736d510e408b9388aa049410608007f4ff9dc2aa77a6bb1339e9c9970862",
+            "receiptId": "GEN-accessories-family-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -2890,8 +2899,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/accessories-family-v1.png",
+            "sha256": "8bd7736d510e408b9388aa049410608007f4ff9dc2aa77a6bb1339e9c9970862",
+            "receiptId": "GEN-accessories-family-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -2948,8 +2966,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/accessories-family-v1.png",
+            "sha256": "8bd7736d510e408b9388aa049410608007f4ff9dc2aa77a6bb1339e9c9970862",
+            "receiptId": "GEN-accessories-family-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -3005,8 +3032,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/accessories-family-v1.png",
+            "sha256": "8bd7736d510e408b9388aa049410608007f4ff9dc2aa77a6bb1339e9c9970862",
+            "receiptId": "GEN-accessories-family-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -3063,8 +3099,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/accessories-family-v1.png",
+            "sha256": "8bd7736d510e408b9388aa049410608007f4ff9dc2aa77a6bb1339e9c9970862",
+            "receiptId": "GEN-accessories-family-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -3121,8 +3166,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/accessories-family-v1.png",
+            "sha256": "8bd7736d510e408b9388aa049410608007f4ff9dc2aa77a6bb1339e9c9970862",
+            "receiptId": "GEN-accessories-family-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -3178,8 +3232,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/accessories-family-v1.png",
+            "sha256": "8bd7736d510e408b9388aa049410608007f4ff9dc2aa77a6bb1339e9c9970862",
+            "receiptId": "GEN-accessories-family-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",

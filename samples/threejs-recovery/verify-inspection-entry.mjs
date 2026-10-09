@@ -62,6 +62,20 @@ const cylinderAxis=name=>new THREE.Vector3(0,1,0).applyQuaternion(recoveryProbe.
 assert(Math.abs(cylinderAxis('lift cylinder barrel').dot(cylinderAxis('lift piston rod')))>.999999,'Hydraulic barrel and piston must share one working axis');
 console.log('Recovery hollow boom wall/bore and collinear hydraulic barrel/piston PASS');
 
+// The live cabin render exposed painted shell/shoulder occlusion and mirrored
+// cassette faces. Shoot through the actual whole assembly, not just its gasket.
+for(const id of ['PRO-D','PRO-G']){
+ const model=createPart(id);model.updateMatrixWorld(true);
+ const length=id==='PRO-D'?1.7:2.3,height=id==='PRO-D'?1.38:1.30,a=-length/2+.20,c=length/2-.48,b=.85,d=height-.13;
+ const points=[[(a+c)/2,b+.009],[(a+c)/2,d-.009],[a+.009,(b+d)/2],[c-.009,(b+d)/2]];
+ for(const [cx,cy,sx,sy] of [[a+.045,b+.045,-1,-1],[c-.045,b+.045,1,-1],[a+.045,d-.045,-1,1],[c-.045,d-.045,1,1]])points.push([cx+sx*.036/Math.sqrt(2),cy+sy*.036/Math.sqrt(2)]);
+ for(const side of [-1,1])for(const [x,y] of points){
+  const hit=new THREE.Raycaster(new THREE.Vector3(x,y,side*3),new THREE.Vector3(0,0,-side)).intersectObject(model,true)[0];
+  assert.equal(hit?.object.name,'window compression gasket',id+' gasket hidden at '+[side,x,y]+' by '+hit?.object.name);
+ }
+}
+console.log('PRO-D/G exterior window gasket visibility: straight/corner lands on both sides PASS');
+
 // Maximum separation alone is not a containing envelope: some groups translate
 // inward across an assembled extremum. Replay the actual runtime endpoint union.
 for(const [ids,factory]of [[MISSION_IDS,createMission],[MODEL_IDS,createPart]])for(const id of ids){

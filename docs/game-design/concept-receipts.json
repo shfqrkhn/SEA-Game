@@ -614,6 +614,80 @@
         ]
       },
       "acceptanceStatus": "open"
+    },
+    {
+      "id": "GEN-accessories-family-v1",
+      "inventoryIds": [
+        "ACC-A",
+        "ACC-B",
+        "ACC-C",
+        "ACC-D",
+        "ACC-E",
+        "ACC-F",
+        "ACC-G"
+      ],
+      "status": "generated-exploratory",
+      "tool": "imagegen",
+      "date": "2026-10-09",
+      "artifact": "docs/game-design/concepts/accessories-family-v1.png",
+      "sha256": "8bd7736d510e408b9388aa049410608007f4ff9dc2aa77a6bb1339e9c9970862",
+      "nativeOutputPath": "C:/Users/user/.codex/generated_images/01a120d7-32af-7163-bf11-372d619a967f/exec-80ec99f5-fd7f-4131-ac3f-0af66f4bf747.png",
+      "promptFile": "docs/game-design/ACCESSORIES_PROMPT.md",
+      "panels": [
+        {
+          "panel": 1,
+          "inventoryId": "ACC-A"
+        },
+        {
+          "panel": 2,
+          "inventoryId": "ACC-B"
+        },
+        {
+          "panel": 3,
+          "inventoryId": "ACC-C"
+        },
+        {
+          "panel": 4,
+          "inventoryId": "ACC-D"
+        },
+        {
+          "panel": 5,
+          "inventoryId": "ACC-E"
+        },
+        {
+          "panel": 6,
+          "inventoryId": "ACC-F"
+        },
+        {
+          "panel": 7,
+          "inventoryId": "ACC-G"
+        }
+      ],
+      "visualReview": {
+        "status": "exploratory-only; construction/reference/runtime acceptance open",
+        "usefulDirection": [
+          "Seven exact canonical captions and distinct accessory families",
+          "Assembled/exploded/detail construction direction",
+          "Selected overall margins visually clear and uncropped",
+          "Shared ivory/sage/ink material direction"
+        ],
+        "knownMismatches": [
+          "ACC-A retained cylinder reads partly as powered ram rather than towbar",
+          "ACC-B spring/axle/service routing and clearances unqualified",
+          "ACC-C/E roller bearing and mounting alignment synthetic",
+          "ACC-D work-surface deployment not demonstrated",
+          "ACC-F rope/fairlead clearances and hydraulic ports unverified",
+          "ACC-G assembled/exploded shelf correspondence ambiguous",
+          "Margin edits changed details; not exact rescaling",
+          "No matched Three.js acceptance"
+        ],
+        "doesNotProve": [
+          "Runtime fidelity or physical capabilities",
+          "Generic component/assembly/UI concept coverage",
+          "Rights, classroom or product acceptance"
+        ]
+      },
+      "acceptanceStatus": "open"
     }
   ]
 }

@@ -132,12 +132,15 @@ function protection(m,v){
    const shape=new THREE.Shape();outline.forEach(([a,b],i)=>i?shape.lineTo(a,b):shape.moveTo(a,b));shape.closePath();shape.holes.push(...holes);
    const geometry=new THREE.ExtrudeGeometry(shape,{depth,steps:1,curveSegments:12,bevelEnabled:true,bevelSize:.0025,bevelThickness:.002,bevelSegments:3});
    const p=geometry.attributes.position;for(let i=0;i<p.count;i++)p.setXYZ(i,...place(p.getX(i),p.getY(i),p.getZ(i)));geometry.computeVertexNormals();
-   const mesh=new THREE.Mesh(geometry,material.clone());mesh.name=name;mesh.castShadow=true;mesh.receiveShadow=true;parent.add(mesh);return mesh;
+   const finish=material.clone();finish.side=THREE.DoubleSide;const mesh=new THREE.Mesh(geometry,finish);mesh.name=name;mesh.castShadow=true;mesh.receiveShadow=true;parent.add(mesh);return mesh;
   };
   const windowCassette=(bounds,place,paneName)=>{
    const [a,b,c,d]=bounds,contour=roundedOpening(a,b,c,d,.045),outline=contour.getPoints(12).map(p=>[p.x,p.y]);
    enclosure(cellPanel(g,m.paint,roundedOpening(a-.052,b-.052,c+.052,d+.052,.075).getPoints(12).map(p=>[p.x,p.y]),[contour.clone()],(u,y,t)=>place(u,y,.015+t),'window outer retaining bezel'),'window outer retaining bezel');
-   cellPanel(g,m.rubber,roundedOpening(a-.012,b-.012,c+.012,d+.012,.057).getPoints(12).map(p=>[p.x,p.y]),[roundedOpening(a+.008,b+.008,c-.008,d-.008,.037)],(u,y,t)=>place(u,y,-.007+t*.35),'window compression gasket',.014);
+   // Concentric rounded corners keep a continuous 18 mm visible gasket land
+   // inside the bezel. Its front lip clears the shell bevel; the full return
+   // reaches back around the recessed pane instead of floating above it.
+   cellPanel(g,m.rubber,roundedOpening(a-.012,b-.012,c+.012,d+.012,.057).getPoints(12).map(p=>[p.x,p.y]),[roundedOpening(a+.018,b+.018,c-.018,d-.018,.027)],(u,y,t)=>place(u,y,-.020+t),'window compression gasket',.056);
    const pane=cellPanel(g,optical,outline,[],(u,y,t)=>place(u,y,-.014-t*.20),paneName,.012);pane.castShadow=false;
    enclosure(cellPanel(g,frame,roundedOpening(a-.042,b-.042,c+.042,d+.042,.070).getPoints(12).map(p=>[p.x,p.y]),[contour.clone()],(u,y,t)=>place(u,y,-.057-t),'window interior retaining frame'),'window interior retaining frame');
   };
