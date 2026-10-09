@@ -40,28 +40,27 @@ const I18N={"en":{"backup.menu":"Save & restore","app.title":"Systems Engineerin
 function choicesEditable(){return !state.vehiclesLocked&&["setup","planning"].includes(state.phase)&&state.teams.every(tm=>tm.purchases.length===0)}
 function setTeamVehicle(id,mission){
  if(!choicesEditable()||!validMission(mission))return false;
- const tm=state.teams.find(t=>t.id===id);if(!tm)return false;
- tm.mission=mission;saveState();renderAll();return true;
+ return runInstructorCommand(()=>SEADomain.instructorSelectMission(state,id,mission));
 }
 function allChosen(){return state.teams.length===state.teamCount&&state.teams.every(tm=>validMission(tm.mission))}
 function startScoredAuction(){
  if(state.phase!=="planning"||state.vehiclesLocked)return false;
  if(!allChosen()){seaNotify(t("vehicle.needAll"));return false}
 
- state.vehiclesLocked=true;state.teams.forEach(tm=>tm.lockedMission=tm.mission);
- state.round=0;state.lot=0;state.revealed=state.revealMode!=="MANUAL";state.resultDraft=null;
- phase("auction");renderAll();return true;
+ return runInstructorCommand(()=>SEADomain.instructorStartAuction(state));
 }
 function openAuction(){
  if(state.phase!=="auction"||!state.vehiclesLocked||!allChosen()||state.open||committed())return false;
- state.revealed=true;state.open=true;state.pausedRemaining=null;state.finalCallAnnounced=false;
- if(state.timingMode==="TIMED")startTimer(state.bidSeconds*1000);renderAuction();return true;
+ const now=Date.now();return runInstructorCommand(()=>SEADomain.instructorOpenAuction(state,now),renderAuction,()=>{if(state.timingMode==='TIMED')startTimer(state.deadline-now)});
 }
-function extendAuction(){
+function extendAuction(intent=null){
  if(state.phase!=="auction"||!state.open||state.timingMode!=="TIMED"||committed())return;
- if(state.pausedRemaining!==null)state.pausedRemaining+=30000;
- else startTimer(Math.max(0,(state.deadline||Date.now())-Date.now())+30000);
- state.finalCallAnnounced=false;renderAuction();
+ if(intent&&(state!==intent.state||state.sessionCode!==intent.session||state.round!==intent.round||state.lot!==intent.lot||state.deadline!==intent.deadline||state.pausedRemaining!==intent.pausedRemaining))return false;
+ const now=Date.now();return runInstructorCommand(()=>SEADomain.instructorExtendAuction(state,now),renderAuction,()=>{if(state.pausedRemaining===null)startTimer(state.deadline-now)});
+}
+function runInstructorCommand(command,render=renderAll,after=null){
+ let next;try{next=command();applyRolePatch(state,next)}catch(e){seaNotify(t(e.message==='stale'?'errors.stale':e.message==='money'?'errors.moneyRange':'errors.state'));return false}
+ if(after)after();if(Object.hasOwn(next,'phase'))phase(state.phase);saveState();render();return true;
 }
 function nextOffer(){try{return state.leader?addCents(state.currentBid,APP.bidIncrementCents):currentCard().start}catch{return null}}
 function liveClosing(){return state.phase==="auction"&&state.open&&!committed()&&state.pausedRemaining===null}
@@ -168,14 +167,14 @@ function biddingActive(){return state.phase==='auction'&&state.vehiclesLocked&&s
 function timerText(){if(state.timingMode!=="TIMED"||!state.open)return "-";if(state.pausedRemaining!==null)return t("auction.paused",{seconds:Math.ceil(state.pausedRemaining/1000)});const ms=Math.max(0,(state.deadline||Date.now())-Date.now());return ms<=0?t("auction.timeExpired"):`${Math.ceil(ms/1000)}s`}
 
 function startTimer(ms){
- stopTimer();if(state.timingMode!=='TIMED')return;state.deadline=Date.now()+Math.max(0,ms);state.pausedRemaining=null;
+ stopTimer();if(state.timingMode!=='TIMED'||!state.open||state.pausedRemaining!==null)return;
  timerHandle=setInterval(()=>{if(!state.open||state.phase!=='auction'){stopTimer();return}const rem=state.deadline-Date.now();if(rem<=0){stopTimer();$('#timerAnnouncement').textContent=t('auction.windowEnded');renderAuction();return}if(rem<=5000&&!state.finalCallAnnounced){state.finalCallAnnounced=true;$('#timerAnnouncement').textContent=t('auction.finalCall')}$('#timerValue').textContent=timerText()},250);
 }
 
-function togglePause(){
+function togglePause(action=state.pausedRemaining===null?'pause':'resume',intent=null){
  if(state.phase!=='auction'||!state.open||committed())return;
- if(state.pausedRemaining===null){state.pausedRemaining=state.timingMode==='TIMED'?Math.max(0,state.deadline-Date.now()):0;stopTimer()}
- else{const ms=state.pausedRemaining;state.pausedRemaining=null;if(state.timingMode==='TIMED')startTimer(ms)}renderAuction();
+ if(intent&&(state!==intent.state||state.sessionCode!==intent.session||state.round!==intent.round||state.lot!==intent.lot))return false;
+ const now=Date.now();return runInstructorCommand(()=>action==='pause'?SEADomain.instructorPauseAuction(state,now):SEADomain.instructorResumeAuction(state,now),renderAuction,()=>{if(action==='pause')stopTimer();else if(state.timingMode==='TIMED')startTimer(state.deadline-now)});
 }
 function renderAssignments(target){
  const editing=choicesEditable(),prefix=target.id,session=state.sessionCode;
@@ -191,10 +190,7 @@ function generateSession(){
  if(!Number.isInteger(n)||n<2||n>10||!Number.isInteger(seconds)||seconds<10||seconds>120||!['ROUND','JIT','MANUAL'].includes(reveal)||!['TIMED','UNTIMED'].includes(timing)){seaNotify(t('errors.state'));return false}
  const apply=()=>{
   if(state!==original||JSON.stringify(state)!==before||recoveryBlocked||controls.some((id,i)=>$(id).value!==choices[i])){seaNotify(t('errors.changed'));return false}
-  stopTimer();state.teamCount=n;state.revealMode=reveal;state.timingMode=timing;state.bidSeconds=seconds;
-  state.sessionCode=sessionCode(n);state.marketSeed=randomHex(16);state.market=marketFromSeed(state.marketSeed);state.teams=createTeams(state.sessionCode);
-  state.vehiclesLocked=false;state.round=0;state.lot=0;state.revealed=state.revealMode!=='MANUAL';state.open=false;state.pausedRemaining=null;state.deadline=null;state.leader=null;state.currentBid=null;state.ledger=[];state.seq=0;state.resultDraft=null;
-  $('#setupStatus').textContent=t('setup.ready');saveState();renderAll();return true;
+  return runInstructorCommand(()=>SEADomain.instructorGenerateSession(state,{teamCount:n,bidSeconds:seconds,revealMode:reveal,timingMode:timing,sessionToken:randomHex(8),marketSeed:randomHex(16)}),renderAll,()=>{stopTimer();$('#setupStatus').textContent=t('setup.ready')});
  };
  if(state.sessionCode&&state.teams.some(tm=>tm.mission)&&!seaConfirmGate('session-reset',t('common.confirmCorrection'),apply))return false;
  return apply();
@@ -206,7 +202,7 @@ function renderPractice(){
  $('#practiceReveal').disabled=p.revealed;$('#practiceOpen').disabled=!p.revealed||p.open||p.closed;$('#practiceAccept').disabled=!p.open||p.leader||p.closed;$('#practiceClose').disabled=!p.open||!p.leader||p.closed;
  $('#practice .gamecard').classList.toggle('hidden',!p.revealed);if(p.revealed){const artEl=$('#practiceArt');if(artEl&&!artEl.firstChild)artEl.innerHTML=art({id:'TRAIN-CAP',title:{en:'Training capacity',fr:'Capacité de formation'}})}saveState();
 }
-function resetPractice(){if(!['setup','practice'].includes(state.phase))return false;state.practice={revealed:false,open:false,leader:false,closed:false};renderPractice();return true}
+function resetPractice(){if(!['setup','practice'].includes(state.phase))return false;return runInstructorCommand(()=>SEADomain.instructorPracticeCommand(state,'reset'),renderPractice)}
 
 function renderPlanning(){
  renderAssignments($('#planningTeams'));$('#startAuctionBtn').disabled=!allChosen()||state.vehiclesLocked;
@@ -232,12 +228,12 @@ function renderMarket(){const row=state.market[state.round];$("#market").innerHT
 }
 function renderCurrentCard(){const c=currentCard(),vis=visibleLot(state.lot);$("#cardCat").textContent=vis?categoryName(c.cat):"-";$("#cardId").textContent=vis?c.id:"-";$("#cardTitle").textContent=vis?c.title[lang]:t("common.hidden");$("#cardEffects").innerHTML=vis?effectsHtml(c):"";$("#cardArt").innerHTML=vis?art(c):`<div style="height:100%;display:grid;place-items:center">${t("common.hidden")}</div>`;$("#startPrice").textContent=vis?t("common.starting",{amount:money(c.start)}):"";$("#leaderText").textContent=state.leader?t("common.team",{n:state.leader})+" · "+money(state.currentBid):t("common.noLeader")}
 
-function acceptTeamBid(id,intended){
+function acceptTeamBid(id,intended,intent=null){
  if(!biddingActive())return false;const tm=state.teams.find(x=>x.id===id),amount=nextOffer();
  if(!tm||!validMission(tm.mission)||!SEA_AUCTION.canWin(tm.purchasesByRound[state.round])||state.leader===id||amount===null)return false;
  if(intended!==amount){seaNotify(t('errors.stale'));return false}
- try{addCents(tm.cost,amount)}catch{seaNotify(t('errors.moneyRange'));return false}
- state.currentBid=amount;state.leader=id;state.resultDraft=null;renderAuction();return true;
+ if(intent&&(state!==intent.state||state.sessionCode!==intent.session||state.round!==intent.round||state.lot!==intent.lot))return false;
+ return runInstructorCommand(()=>SEADomain.instructorAcceptBid(state,id,intended,Date.now()),renderAuction);
 }
 
 function renderBidRoster(){
@@ -246,10 +242,13 @@ function renderBidRoster(){
  $('#bidRoster').innerHTML=state.teams.map(tm=>{const used=tm.purchasesByRound[state.round],left=2-used,leader=state.leader===tm.id,eligible=active&&SEA_AUCTION.canWin(used)&&!leader&&next!==null;
  const label=active&&next!==null?(leader?t('auction.leading',{amount:money(state.currentBid)}):t('auction.accept',{amount:money(next)})):status+(!entry&&leader?' · '+t('auction.leading',{amount:money(state.currentBid)}):'');
  return `<div class="ledger-row bid-row"><strong>${t('common.team',{n:tm.id})}</strong><span class="bid-team-meta">${esc(MISSIONS[tm.mission][lang])}<small>${t('common.wins',{used,left})}</small></span><button class="btn ${leader?'good':'primary'}" data-bid-team="${tm.id}" data-bid-amount="${next??''}" ${eligible?'':'disabled'}>${label}</button></div>`}).join('');
- $$('[data-bid-team]').forEach(b=>b.onclick=()=>acceptTeamBid(Number(b.dataset.bidTeam),Number(b.dataset.bidAmount)));
+ const intent={state,session:state.sessionCode,round:state.round,lot:state.lot};
+ $$('[data-bid-team]').forEach(b=>b.onclick=()=>{if(!b.isConnected)return false;return acceptTeamBid(Number(b.dataset.bidTeam),Number(b.dataset.bidAmount),intent)});
 }
 
 function renderCommitControls(){
+ const pauseAction=state.pausedRemaining===null?'pause':'resume',pauseIntent={state,session:state.sessionCode,round:state.round,lot:state.lot};$('#pauseBtn').onclick=()=>togglePause(pauseAction,pauseIntent);
+ const extensionIntent={...pauseIntent,deadline:state.deadline,pausedRemaining:state.pausedRemaining};$('#extendBtn').onclick=e=>{if(e?.detail>1||e?.repeat)return false;return extendAuction(extensionIntent)};
  const vis=visibleLot(state.lot),amount=nextOffer(),entry=effectiveEntry(),closing=liveClosing(),bidding=biddingActive(),draft=state.resultDraft||{team:state.leader,price:state.currentBid===null?'':amountInput(state.currentBid),reason:''};
  $('#leaderSummary').textContent=state.leader?t('common.team',{n:state.leader})+' · '+money(state.currentBid):'-';$('#nextBid').textContent=vis&&bidding&&amount!==null?money(amount):'-';$('#nextBidMetric').hidden=!vis||!bidding;$('#timerValue').textContent=timerText();
  $('#pauseBtn').textContent=state.pausedRemaining===null?t('auction.pause'):t('auction.resume');$('#pauseBtn').disabled=!state.open||committed();$('#extendBtn').disabled=!state.open||state.timingMode!=='TIMED'||committed();
@@ -312,8 +311,7 @@ function voidCurrent(){
 
 function advance(){
  if(state.phase!=='auction'||!committed())return false;
- if(state.lot===9&&state.round===6){phase('build');renderAll();return true}
- if(state.lot<9)state.lot++;else{state.round++;state.lot=0}state.revealed=state.revealMode!=='MANUAL';state.open=false;state.leader=null;state.currentBid=null;state.resultDraft=null;renderAuction();return true;
+ return runInstructorCommand(()=>SEADomain.instructorAdvanceAuction(state),()=>state.phase==='build'?renderAll():renderAuction(),stopTimer);
 }
 function renderBuild(){
  const host=$("#authoritativeBuild"),expanded=host._buildSession===state.sessionCode?new Set([...host.querySelectorAll('details[data-build-team][open]')].map(node=>node.dataset.buildTeam)):new Set();
@@ -322,37 +320,39 @@ function renderBuild(){
 
 function openPrivateSubmissions(){
  if(state.phase!=='submit'||state.privateEntry)return false;
- const before=JSON.stringify(state);
- const apply=()=>{if(state.phase!=='submit'||JSON.stringify(state)!==before){seaNotify(t('errors.changed'));return false}state.privateEntry=true;renderSubmit();return true};
+ try{SEADomain.instructorAuthorizePrivateEntry(state)}catch{seaNotify(t('errors.state'));return false}
+ const original=state,before=JSON.stringify(state);
+ const apply=()=>{if(state!==original||state.phase!=='submit'||JSON.stringify(state)!==before){seaNotify(t('errors.changed'));return false}return runInstructorCommand(()=>SEADomain.instructorAuthorizePrivateEntry(state),renderSubmit)};
  if(!seaConfirmGate('private-submissions',t('submit.privateConfirm'),apply))return false;
  return apply();
 }
 function closeSubmissions(){
  if(state.phase!=='submit')return false;
- const before=JSON.stringify(state),pending=state.teams.filter(team=>!team.submitted).length;
- const apply=()=>{if(state.phase!=='submit'||JSON.stringify(state)!==before){seaNotify(t('errors.changed'));return false}if(!phase('debrief'))return false;renderAll();return true};
+ try{SEADomain.instructorCloseSubmissions(state)}catch{seaNotify(t('errors.state'));return false}
+ const original=state,before=JSON.stringify(state),pending=state.teams.filter(team=>!team.submitted).length;
+ const apply=()=>{if(state!==original||state.phase!=='submit'||JSON.stringify(state)!==before){seaNotify(t('errors.changed'));return false}return runInstructorCommand(()=>SEADomain.instructorCloseSubmissions(state))};
  if(pending&&!seaConfirmGate('close-submissions',t('submit.pendingConfirm',{count:pending}),apply))return false;
  return apply();
 }
 function renderSubmit(){
  const privateOn=state.phase==='submit'&&state.privateEntry===true,session=state.sessionCode;$('#privateSubmitGuard').classList.toggle('hidden',privateOn);
  $('#submissionRows').innerHTML=state.teams.map(tm=>`<div class="inv"><div class="space"><strong>${t('common.team',{n:tm.id})} - ${esc(MISSIONS[tm.mission][lang])}</strong><span>${tm.submitted?t('submit.submitted'):t('debrief.notSubmitted')}</span></div>${privateOn?`<div class="grid three"><div class="field"><label for="profit-${tm.id}">${t('submit.profitAmount')}</label><input id="profit-${tm.id}" data-profit-team="${tm.id}" inputmode="decimal" maxlength="20" value="${amountInput(tm.profit)}"></div><label class="check-label"><input type="checkbox" data-submitted-team="${tm.id}" ${tm.submitted?'checked':''}>${t('submit.submitted')}</label><div class="metric"><div class="label">${t('common.bid')}</div><div class="value">${money(addCents(tm.cost,tm.profit))}</div></div></div>`:''}</div>`).join('');
- $$('[data-profit-team]').forEach(e=>{const tm=state.teams.find(x=>x.id===Number(e.dataset.profitTeam));e.onchange=()=>{if(state.phase!=='submit'||!state.privateEntry||state.sessionCode!==session||!e.isConnected||!tm||!state.teams.includes(tm))return;try{const profit=parseAmount(e.value);addCents(tm.cost,profit);tm.profit=profit;saveState();renderSubmit()}catch{seaNotify(t('errors.moneyRange'));e.value=amountInput(tm.profit)}}});
- $$('[data-submitted-team]').forEach(e=>{const tm=state.teams.find(x=>x.id===Number(e.dataset.submittedTeam));e.onchange=()=>{if(state.phase!=='submit'||!state.privateEntry||state.sessionCode!==session||!e.isConnected||!tm||!state.teams.includes(tm))return;tm.submitted=e.checked;saveState();renderSubmit()}});
+ $$('[data-profit-team]').forEach(e=>{const tm=state.teams.find(x=>x.id===Number(e.dataset.profitTeam));e.onchange=()=>{if(state.phase!=='submit'||!state.privateEntry||state.sessionCode!==session||!e.isConnected||!tm||!state.teams.includes(tm))return;if(!runInstructorCommand(()=>SEADomain.instructorSetProfit(state,tm.id,e.value),renderSubmit))e.value=amountInput(tm.profit)}});
+ $$('[data-submitted-team]').forEach(e=>{const tm=state.teams.find(x=>x.id===Number(e.dataset.submittedTeam));e.onchange=()=>{if(state.phase!=='submit'||!state.privateEntry||state.sessionCode!==session||!e.isConnected||!tm||!state.teams.includes(tm))return;if(!runInstructorCommand(()=>SEADomain.instructorSetSubmitted(state,tm.id,e.checked),renderSubmit))e.checked=tm.submitted}});
 }
 function renderDebrief(){const eligible=state.teams.filter(awardEligible).sort(awardComparator);let head;if(!eligible.length)head=`<h3>${t("debrief.noAward")}</h3>`;else{const top=eligible[0],ties=eligible.filter(x=>exactTopTie(x,top));head=`<h3>${ties.length>1?t("debrief.shared",{teams:ties.map(x=>t("common.team",{n:x.id})).join(", ")}):t("debrief.award",{team:top.id})}</h3>`}const ranked=eligible.map((tm,i)=>{const bid=addCents(tm.cost,tm.profit),sc=score(tm);return`<div class="inv"><strong>${i+1}. ${t("common.team",{n:tm.id})}</strong><div>${money(bid)} · ${sc} ${t("common.points")} · ${ratioDisplay(bid,sc)}</div></div>`}).join("");const summaries=state.teams.map(tm=>{const sc=score(tm),bid=addCents(tm.cost,tm.profit),status=!tm.submitted?t("debrief.notSubmitted"):!compliant(tm)?t("common.noncompliant"):sc<=0?t("debrief.noRated"):t("common.compliant"),major=tm.purchases.slice().sort((a,b)=>b.paid-a.paid).slice(0,3).map(p=>`${esc(p.id)} ${money(p.paid)}`).join(" · ")||"-";return`<div class="inv"><div class="space"><strong>${t("common.team",{n:tm.id})} - ${esc(MISSIONS[tm.mission][lang])}</strong><span>${status}</span></div><div>${t("common.score")} ${sc} · ${t("common.cost")} ${money(tm.cost)} · ${t("common.profit")} ${money(tm.profit)} · ${t("common.bid")} ${money(bid)} · ${t("common.cpp")} ${ratioDisplay(bid,sc)}</div><small>${t("debrief.majorPurchases")}: ${major}</small></div>`}).join("");$("#ranking").innerHTML=head+ranked+`<h3 style="margin-top:16px">${t("debrief.teamSummaries")}</h3>`+summaries;saveState()}
 function renderAll(){if(typeof sea3DQueue==='function')sea3DQueue();state.lang=lang;applyI18n();renderBackupControls();$("#phaseBadge").textContent=t("phase."+state.phase);$("#sessionBadge").textContent=state.sessionCode||"-";if(state.phase==="setup"&&!state.sessionCode)$("#setupStatus").textContent=t("setup.empty");if(state.phase==="setup"&&state.sessionCode){$("#setupStatus").textContent=t("setup.ready");$("#sessionCode .value").textContent=state.sessionCode;renderAssignments($("#assignmentList"));$("#startTutorialBtn").disabled=false}if(state.phase==="practice")renderPractice();if(state.phase==="planning")renderPlanning();if(state.phase==="auction")renderAuction();if(state.phase==="build")renderBuild();if(state.phase==="submit")renderSubmit();if(state.phase==="debrief")renderDebrief();if(state.phase==="closed")renderLedger($("#closedLedger"));if(recoveryBlocked)storageNotice("common.badRecovery");else if(storageFailed)storageNotice("common.refresh")}
 $("#teamCount").innerHTML=Array.from({length:9},(_,i)=>`<option value="${i+2}" ${i===8?"selected":""}>${i+2}</option>`).join("");
 $("#generateBtn").onclick=generateSession;
-$("#startTutorialBtn").onclick=()=>{if(state.phase!=="setup"||!state.sessionCode)return;resetPractice();phase("practice");renderAll()};
-$("#practiceReveal").onclick=()=>{if(state.phase!=="practice"||state.practice.revealed||state.practice.closed)return;state.practice.revealed=true;renderPractice()};
-$("#practiceOpen").onclick=()=>{if(state.phase!=="practice"||!state.practice.revealed||state.practice.open||state.practice.closed)return;state.practice.open=true;renderPractice()};
-$("#practiceAccept").onclick=()=>{if(state.phase!=="practice"||!state.practice.revealed||!state.practice.open||state.practice.leader||state.practice.closed)return;state.practice.leader=true;renderPractice()};
-$("#practiceClose").onclick=()=>{if(state.phase!=="practice"||!state.practice.revealed||!state.practice.open||!state.practice.leader||state.practice.closed)return;state.practice.closed=true;state.practice.open=false;renderPractice()};
+$("#startTutorialBtn").onclick=()=>{if(state.phase!=="setup"||!state.sessionCode)return;return runInstructorCommand(()=>SEADomain.instructorPracticeCommand(state,'start'))};
+$("#practiceReveal").onclick=()=>runInstructorCommand(()=>SEADomain.instructorPracticeCommand(state,'reveal'),renderPractice);
+$("#practiceOpen").onclick=()=>runInstructorCommand(()=>SEADomain.instructorPracticeCommand(state,'open'),renderPractice);
+$("#practiceAccept").onclick=()=>runInstructorCommand(()=>SEADomain.instructorPracticeCommand(state,'accept'),renderPractice);
+$("#practiceClose").onclick=()=>runInstructorCommand(()=>SEADomain.instructorPracticeCommand(state,'close'),renderPractice);
 $("#practiceReset").onclick=()=>{if(state.phase!=="practice")return;resetPractice()};
-$("#toPlanning").onclick=()=>{if(state.phase!=="practice"||!state.practice.closed)return;resetPractice();phase("planning");renderAll()};
+$("#toPlanning").onclick=()=>runInstructorCommand(()=>SEADomain.instructorPracticeCommand(state,'planning'));
 $("#startAuctionBtn").onclick=startScoredAuction;
-$("#revealBtn").onclick=()=>{if(state.phase!=="auction"||committed())return;state.revealed=true;renderAuction()};
+$("#revealBtn").onclick=()=>{if(state.phase!=="auction"||committed())return;return runInstructorCommand(()=>SEADomain.instructorRevealAuction(state),renderAuction)};
 $("#openBtn").onclick=openAuction;
 $("#pauseBtn").onclick=togglePause;
 $("#extendBtn").onclick=extendAuction;
@@ -361,10 +361,10 @@ $("#commitUnsoldBtn").onclick=commitUnsold;
 $("#commitCorrectedBtn").onclick=commitCorrected;
 $("#voidCurrentBtn").onclick=voidCurrent;
 $("#advanceBtn").onclick=advance;
-$("#openSubmissionsBtn").onclick=()=>{if(state.phase!=="build")return;phase("submit");renderAll()};
+$("#openSubmissionsBtn").onclick=()=>{if(state.phase!=="build")return;return runInstructorCommand(()=>SEADomain.instructorOpenSubmissions(state))};
 $("#privateSubmitBtn").onclick=openPrivateSubmissions;
 $("#closeSubmissionsBtn").onclick=closeSubmissions;
-$("#closeRoomBtn").onclick=()=>{if(state.phase!=="debrief")return;phase("closed");renderAll()};
+$("#closeRoomBtn").onclick=()=>{if(state.phase!=="debrief")return;return runInstructorCommand(()=>SEADomain.instructorCloseRoom(state))};
 
 
 $('#exportBackupBtn').onclick=exportBackup;

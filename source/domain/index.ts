@@ -11,3 +11,8 @@ export * from './recovery';
 export * from './market';
 export * from './role-saves';
 export * from './commands';
+export * from './live-state';
+export * from './setup-commands';
+export * from './auction-controls';
+export * from './student-controls';
+export * from './edit-commands';

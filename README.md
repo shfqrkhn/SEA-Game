@@ -4,7 +4,7 @@
 
 Both EN/FR roles, eight classroom phases, a 70-card auction and six mission vehicles run from one embedded Three.js HTML. Classroom handoffs remain manual; no backend, synchronization or account. Export important work as role-specific JSON. Do not enter sensitive or operational information.
 
-Published staged rebuild: **4.0.0-dev.5**; rollback: **3.6.0**. Full offline/device/accessibility/rights/classroom acceptance and three-pass release closure remain open. Start maintenance with [current handover](docs/HANDOVER.md).
+Published staged rebuild: **4.0.0-dev.5**; local candidate: **4.0.0-dev.6**; rollback: **3.6.0**. Full offline/device/accessibility/rights/classroom acceptance and three-pass release closure remain open. Start maintenance with [current handover](docs/HANDOVER.md).
 
 ## Operate and maintain
 

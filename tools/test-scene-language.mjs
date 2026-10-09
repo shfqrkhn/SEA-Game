@@ -33,7 +33,7 @@ doc={body,activeElement:canvas,createElement:element,getElementById:id=>findId(b
 let latest,saveCalls=0,renderCalls=0,destructiveEffects=0;
 const ctx=vm.createContext({document:doc,Event:class{},host:stage,semanticVisible:n=>n.isConnected&&!n.hidden,get:id=>doc.getElementById(id),t:key=>key,queue(){},
  runtime:{interface(snapshot){latest=snapshot;return {page:snapshot.page}}},renderAll(){renderCalls++;language.textContent=ctx.api.lang==='en'?'FR':'EN'},saveState(){saveCalls++}});
-vm.runInContext(`let lang='en', state={phase:'auction'}, scenePhase='auction', sceneSection='task', sceneSectionEpoch=0, sceneSectionLanguage='', sceneSections=new Set(), scenePage=0, sceneAlert='', sceneDialog=null, sceneTargets=new Map(), editor=null, serial=0;
+vm.runInContext(`let lang='en', state={phase:'auction'}, scenePhase='auction', sceneSection='task', sceneSectionEpoch=0, sceneSectionLanguage='', sceneSections=new Set(), scenePage=0, sceneAlert='', sceneDialog=null, sceneTargets=new Map(), editor=null, serial=0, actionState=null, actionBefore=null;
  const keys=new WeakMap();function keyFor(n){if(!keys.has(n))keys.set(n,'control-'+(++serial));return keys.get(n)}\n`+projection+presentation.slice(0,presentation.indexOf('function seaNotify('))+bridge.slice(bridge.indexOf(' function selectInspectedTeam('),actionEnd)+`
  this.api={sync(){syncSceneInterface(stage,active,{context:{auction:'Live lot'}})},act:sceneAction,confirm(){seaConfirmGate('finish','Finish the auction?',()=>{if(seaConfirmGate('finish','Finish the auction?',()=>{}))destructive()})},get lang(){return lang},get section(){return sceneSection}};`,Object.assign(ctx,{stage,active,destructive(){destructiveEffects++}}));
 language.onclick=()=>vm.runInContext("setLang(lang==='en'?'fr':'en')",ctx);
@@ -217,3 +217,52 @@ console.log('PASS: EN/FR student auction primary loading prerequisite and loaded
  }
 }
 console.log('PASS: EN/FR example/preview/committed vehicle, configuration, card and GPU mission captions; no implicit default mission selection');
+
+// Full production startup captures projection intent inside its real closure.
+// Only GPU rendering is replaced; original sceneAction receives the renderer's dispatch.
+for(const locale of ['en','fr']){
+ const nodes=new Map(),frames=[];let snapshot,dispatch,calls=0;
+ const make=(tag='div',id='')=>{
+  const node={id,tagName:tag.toUpperCase(),nodeType:1,children:[],parentElement:null,attrs:{},hidden:false,disabled:false,checked:false,value:'',labels:[],className:'',style:{},events:{},_text:'',
+   appendChild(child){child.parentElement=this;this.children.push(child);return child},append(...children){children.forEach(child=>this.appendChild(child))},
+   replaceChildren(...children){this.children.forEach(child=>{child.parentElement=null});this.children=[];this._text='';this.append(...children)},
+   setAttribute(key,value){this.attrs[key]=String(value)},getAttribute(key){return this.attrs[key]??null},
+   addEventListener(type,fn){(this.events[type]??=[]).push(fn)},click(){this.onclick?.();for(const fn of this.events.click??[])fn({target:this})},
+   closest(selector){for(let current=this;current;current=current.parentElement)if(current.tagName===selector.toUpperCase()||selector.startsWith('[')&&current.getAttribute(selector.slice(1,-1))!==null)return current;return null},
+   querySelectorAll(selector){const tags=selector.split(',').map(tag=>tag.toUpperCase());return this.children.flatMap(child=>[...(tags.includes(child.tagName)?[child]:[]),...child.querySelectorAll(selector)])},querySelector(selector){return this.querySelectorAll(selector)[0]??null},
+   remove(){if(this.parentElement){this.parentElement.children=this.parentElement.children.filter(child=>child!==this);this.parentElement=null}},focus(){}
+  };
+  Object.defineProperties(node,{isConnected:{get(){return this===pageBody||!!this.parentElement?.isConnected}},textContent:{get(){return [this._text,...this.children.map(child=>child.textContent)].filter(Boolean).join(' ')},set(value){this._text=String(value);this.children.forEach(child=>{child.parentElement=null});this.children=[]}},childNodes:{get(){return [...(this._text?[{nodeType:3,textContent:this._text}]:[]),...this.children]}}});
+  node.classList={contains:name=>node.className.split(/\s+/).includes(name),add(...names){node.className=Array.from(new Set([...node.className.split(/\s+/),...names])).join(' ')},remove(...names){node.className=node.className.split(/\s+/).filter(name=>!names.includes(name)).join(' ')}};
+  if(id)nodes.set(id,node);return node;
+ };
+ const pageBody=make('body'),pageHeader=pageBody.appendChild(make('header')),pageActive=pageBody.appendChild(make('section'));
+ const pageStage=pageActive.appendChild(make('div','sea3dScene')),pageHost=pageStage.appendChild(make('div','sea3dViewport'));
+ pageHost.appendChild(make('canvas'));
+ const command=pageActive.appendChild(make('button','projectionProbe'));command.textContent=locale==='fr'?'Avancer localement':'Advance locally';command.onclick=()=>calls++;
+ const get=id=>{
+  if(nodes.has(id))return nodes.get(id);
+  const tag=['sea3dObject','sea3dTeam','sea3dMode'].includes(id)?'select':['sea3dAmount','sea3dShadows'].includes(id)?'input':'span';
+  const node=make(tag,id),wrapper=make(id==='sea3d-views'?'details':'label');pageStage.appendChild(wrapper);wrapper.appendChild(node);return node;
+ };
+ for(const id of ['sea3dObject','sea3dTeam','sea3dMode','sea3dAmount','sea3dShadows','sea3d-views'])get(id);
+ // Optional absent controls stay absent, matching the production getElementById contract.
+ const optional=new Set(['seaInlineConfirm','seaNotice','storageNotice','joinStatus','authoritativeBuild','langBtn']);
+ const currentState={schema:3,phase:'auction',sessionCode:'SEA3-T2-0123456789ABCDEF',round:0,lot:0,currentCard:null,team:{id:1,mission:'COMBAT',purchases:[]}};
+ const browser=vm.createContext({state:currentState,lang:locale,t:key=>key,APP:{version:'TEST'},requestAnimationFrame:fn=>frames.push(fn),
+  document:{body:pageBody,getElementById:id=>optional.has(id)?nodes.get(id)??null:get(id),createElement:tag=>make(tag),querySelector:selector=>selector==='.section.active'?pageActive:selector==='header'?pageHeader:null,querySelectorAll:()=>[],addEventListener(){}},
+  window:{addEventListener(){},getComputedStyle:()=>({display:'block',visibility:'visible'})},
+  SEAThree:{mount(){return {update(){},inspect(){},shadows(){},parts(){return []},view(){},dispose(){},interface(value,act){snapshot=value;dispatch=act;return {page:value.page}}}}}
+ });
+ const refresh=()=>{let count=0;while(frames.length){assert(++count<20,'Projection refresh must remain bounded');frames.shift()()}};
+ const key=()=>{const row=snapshot?.rows.find(row=>row.label===command.textContent);assert(row,'Full startup must project the original semantic command');return row.key};
+ vm.runInContext(fs.readFileSync(new URL('../source/shared/engine.js',import.meta.url),'utf8')+'\n'+bridge+'\nsea3DStart("student");',browser);refresh();
+ assert(pageBody.classList.contains('sea3d-active'),'Real scene startup remains active');
+ const rendered=key();dispatch(rendered);dispatch(rendered);assert.equal(calls,1,'A button projection is consumed even when the original action leaves business state unchanged');
+ assert(frames.length>0,'The production action requests a fresh projection');refresh();dispatch(key());assert.equal(calls,2,'A deliberately fresh projection permits a new activation');refresh();
+ browser.state.lot=1;dispatch(key());assert.equal(calls,2,'A business-state change invalidates its still-rendered action');refresh();dispatch(key());assert.equal(calls,3,'Refreshed intent reflects the changed state');refresh();
+ const bytes=JSON.stringify(browser.state),identity=browser.state;browser.state=JSON.parse(bytes);assert.notEqual(browser.state,identity);assert.equal(JSON.stringify(browser.state),bytes);
+ dispatch(key());assert.equal(calls,3,'An equal-byte state replacement invalidates the original projected identity');refresh();dispatch(key());assert.equal(calls,4,'A fresh projection can deliberately act on the replacement state');
+ dispatch(key());assert.equal(calls,4,'The refreshed replacement-state projection is also consumed exactly once');
+}
+console.log('PASS: full EN/FR sea3DStart and production sceneAction consume one button intent per projection, reject changed/equal-byte replacement state, and permit deliberately refreshed actions; actual browser/GPU qualification remains open');

@@ -42,6 +42,10 @@ jobs:
       - run: node tools/test-market-rebuild.mjs
       - run: node tools/test-role-saves-rebuild.mjs
       - run: node tools/test-commands-rebuild.mjs
+      - run: node tools/test-setup-commands-rebuild.mjs
+      - run: node tools/test-auction-controls-rebuild.mjs
+      - run: node tools/test-student-controls-rebuild.mjs
+      - run: node tools/test-edit-commands-rebuild.mjs
       - run: node tools/test-interface-rebuild.mjs
       - run: node tools/test-realism-rebuild.mjs
       - run: node tools/test-single-html.mjs

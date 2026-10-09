@@ -6,8 +6,13 @@ import {validateLocalization} from './localization.mjs';
 import {createHash} from 'node:crypto';
 import {embeddedArtworkSource} from './artwork-source.mjs';
 import {generateArtifacts} from './build.mjs';
-const generated=generateArtifacts();
-const read=p=>generated.has(p)?generated.get(p):readFileSync(new URL('../'+p,import.meta.url),'utf8');
+import {execFileSync} from 'node:child_process';
+const actualLegacy=process.argv.includes('--actual-legacy');
+// Read the named historical controllers directly into memory; never replace workspace sources.
+const actualLegacyCommit='5bb85ecdc2190f3f800ef6357a144d0103223e72';
+const sourceRead=p=>(actualLegacy&&['source/instructor.js','source/student.js'].includes(p)?execFileSync('git',['show',actualLegacyCommit+':'+p],{cwd:new URL('../',import.meta.url),encoding:'utf8'}):readFileSync(new URL('../'+p,import.meta.url),'utf8')).replace(/\r\n?/g,'\n');
+const generated=generateArtifacts(actualLegacy?{readSource:sourceRead}:{});
+const read=p=>generated.has(p)?generated.get(p):sourceRead(p);
 const presentation=read('source/shared/presentation.js');
 new Script(presentation,{filename:'source/shared/presentation.js'});
 for(const name of ['instructor','student']){
@@ -119,7 +124,8 @@ const makeTeam=purchases=>{
  return {id:1,mission:'COMBAT',lockedMission:'COMBAT',profit:0,submitted:false,purchases:[...purchases],purchasesByRound,totals,cost};
 };
 const sandbox={
- state:{phase:'build',team:makeTeam([
+ state:{schema:3,phase:'build',lang:'en',sessionCode:'SEA3-T2-0123456789ABCDEF',teamCount:2,teamId:1,vehicleConfirmed:true,lockedMission:'COMBAT',round:0,lot:0,currentCard:null,
+  plan:'fixture plan',planBaseline:'fixture plan',risks:'fixture risks',maxWtpCents:85000000,scratch:{},profitMode:'AMOUNT',profitInput:'0',profitCents:0,practiceWon:false,vehicleChangeNotice:false,team:makeTeam([
   purchase('CAP-A','R1-L1-CAP-A',1,1,30000000,{CAP:6,MOB:-10}),
   purchase('MOB-A','R1-L2-MOB-A',1,2,40000000,{MOB:70})
  ])},lang:'en',ui,
@@ -134,7 +140,7 @@ const sandbox={
  seaConfirmGate(key,message,retry){if(ui.approved===key){ui.approved=null;return true}ui.pending={key,message,retry};return false},
  seaNotify:message=>ui.notices.push(message),saveState:()=>{ui.saves++},renderBuild:()=>{ui.renders++}
 };
-runInNewContext(engine+'\n'+reconcileSource,sandbox,{filename:'student reconciliation'});
+runInNewContext(engine+'\n'+(studentSource.includes('function runStudentCommand(')?extractFunction(studentSource,'runStudentCommand'):'')+'\n'+reconcileSource,sandbox,{filename:'student reconciliation'});
 assert.notDeepEqual(Object.keys(sandbox.state.team.purchases[1]),Object.keys(runInNewContext('cleanTeam(state.team)',sandbox).purchases[1]),'The independently authored fixture exercises equivalent schema-3 purchase key-order variation');
 const renderButtons=()=>runInNewContext('renderReconcileInventory()',sandbox);
 const cancelPending=()=>{ui.pending=null};
@@ -234,7 +240,10 @@ for(const mission of ['COMBAT','RECCE','TROOP','COMMAND','RECOVERY','MINE']){
 }
 console.log('Shared mission requirements, compliance and independent scoring examples PASS');
 
-const sharedEngineSource=read('source/shared/engine.js');
+const controllerHarnessHelpers=[['source/instructor.js',['runInstructorCommand']],['source/student.js',['runStudentCommand']]].flatMap(([path,names])=>{
+ const controller=read(path);return names.filter(name=>controller.includes('function '+name+'(')).map(name=>extractFunction(controller,name));
+}).join('\n');
+const sharedEngineSource=read('source/shared/engine.js')+'\n'+controllerHarnessHelpers;
 for(const role of ['instructor','student']){
  const roleSource=read('source/'+role+'.js');
  assert.doesNotMatch(roleSource,/^const (SLOT_ORDER|LABELS|MISSIONS|POOLS|MISSION_IDS)=/m,role+' consumes canonical rule and card data from the shared engine');
@@ -316,6 +325,27 @@ assert.throws(()=>sessionRules.cleanTeam({...rawTeam,purchases:[{...rawTeam.purc
 console.log('Shared session parsing, lifecycle phases and save-derived recovery validation PASS');
 for(const role of ['instructor','student'])assert.doesNotMatch(read('source/'+role+'.js'),/^function (xmur3|rng|shuffle|marketFromSeed)\(/m,role+' uses canonical seeded-market functions');
 const marketFromSeed=runInNewContext(sharedEngineSource+'\nmarketFromSeed',{});
+// Full schema3 live fixtures: production validation deliberately refuses underspecified role state.
+// Expected rules, prices and effects above remain independently pinned to rules-baseline.json.
+const liveFixtureCode='SEA3-T2-0123456789ABCDEF',liveFixtureSeed='0123456789ABCDEF0123456789ABCDEF';
+const liveFixtureMarket=JSON.parse(JSON.stringify(marketFromSeed(liveFixtureSeed)));
+const liveFixtureTeam=(id,mission='COMBAT',locked=true)=>({id,mission,lockedMission:locked?mission:null,totals:{CAP:0,MOB:0,FP:0,PRO:0,COM:0,SA:0,REC:0,MC:0},cost:0,purchases:[],purchasesByRound:[0,0,0,0,0,0,0],profit:0,submitted:false});
+const liveFixtureOutcomes=count=>Array.from({length:count},(_,i)=>({seq:i+1,kind:'UNSOLD',round:Math.floor(i/10)+1,lot:i%10+1,card:liveFixtureMarket[Math.floor(i/10)][i%10].id,team:null,price:null}));
+function liveInstructorFixture(overrides={}){
+ const phase=overrides.phase||'auction',locked=['auction','build','submit','debrief','closed'].includes(phase),completed=['build','submit','debrief','closed'].includes(phase);
+ const round=overrides.round??(completed?6:0),lot=overrides.lot??(completed?9:0),ledger=liveFixtureOutcomes(completed?70:locked?round*10+lot:0);
+ return {schema:3,phase,lang:'en',vehiclesLocked:locked,sessionCode:liveFixtureCode,teamCount:2,marketSeed:liveFixtureSeed,market:structuredClone(liveFixtureMarket),
+  teams:[liveFixtureTeam(1,'COMBAT',locked),liveFixtureTeam(2,'RECCE',locked)],revealMode:'MANUAL',timingMode:'UNTIMED',bidSeconds:30,round,lot,
+  revealed:false,open:false,pausedRemaining:null,deadline:null,leader:null,currentBid:null,ledger,seq:ledger.length,
+  practice:{revealed:false,open:false,leader:false,closed:false},privateEntry:false,resultDraft:null,finalCallAnnounced:false,...overrides};
+}
+function liveStudentFixture(overrides={}){
+ const phase=overrides.phase||'auction',locked=['auction','build','submit','debrief','closed'].includes(phase);
+ return {schema:3,phase,lang:'en',vehicleConfirmed:true,lockedMission:locked?'COMBAT':null,sessionCode:liveFixtureCode,teamCount:2,teamId:1,
+  team:liveFixtureTeam(1,'COMBAT',locked),round:0,lot:0,currentCard:null,plan:'independent plan',planBaseline:locked?'independent plan':null,risks:'original risks',maxWtpCents:85000000,scratch:{},
+  profitMode:'AMOUNT',profitInput:'250000',profitCents:25000000,practiceWon:false,vehicleChangeNotice:false,...overrides};
+}
+const actualControlProbe=name=>!process.argv.some(arg=>arg.startsWith('--actual-red-'))||process.argv.includes('--actual-red-'+name);
 const seedMarket=marketFromSeed('SEA-TDD-SEED-001'),repeatMarket=marketFromSeed('SEA-TDD-SEED-001'),changedSeedMarket=marketFromSeed('SEA-TDD-SEED-002');
 assert.equal(seedMarket.length,7);assert.ok(seedMarket.every(round=>round.length===10));
 assert.equal(JSON.stringify(seedMarket),JSON.stringify(repeatMarket),'The same private seed reproduces the exact 70-lot market');
@@ -409,7 +439,7 @@ console.log('All 77 embedded artwork identities and bilingual mission-preview in
 // R02/R09/R10, T03/T10/T11: instructor setup generation is transactional.
 function setupGenerationHarness(){
  const elements={'#teamCount':{value:'2'},'#bidSeconds':{value:'30'},'#revealMode':{value:'ROUND'},'#timingMode':{value:'TIMED'},'#setupStatus':{textContent:''}},calls={saves:0,renders:0,stops:0,notices:[],pending:null,approved:null};
- const context={state:runInNewContext('('+instructorSource.match(/let state=(.*);\n/)[1]+')'),recoveryBlocked:false,$:key=>elements[key],t:key=>key,seaNotify:key=>calls.notices.push(key),saveState:()=>calls.saves++,renderAll:()=>calls.renders++,stopTimer:()=>calls.stops++,sessionCode:n=>'SEA3-T'+n+'-FEDCBA9876543210',randomHex:()=> 'FEDCBA9876543210FEDCBA9876543210',seaConfirmGate(key,message,retry){if(calls.approved===key)return true;calls.pending={key,retry};return false}};
+ const context={state:runInNewContext('('+instructorSource.match(/let state=(.*);\n/)[1]+')'),recoveryBlocked:false,$:key=>elements[key],t:key=>key,seaNotify:key=>calls.notices.push(key),saveState:()=>calls.saves++,renderAll:()=>calls.renders++,stopTimer:()=>calls.stops++,sessionCode:n=>'SEA3-T'+n+'-FEDCBA9876543210',randomHex:bytes=>'FEDCBA9876543210'.repeat(bytes/8),seaConfirmGate(key,message,retry){if(calls.approved===key)return true;calls.pending={key,retry};return false}};
  const api=runInNewContext(sharedEngineSource+'\n'+extractFunction(instructorSource,'generateSession')+'\n;({generateSession})',context);
  return {api,context,elements,calls,approve(){const p=calls.pending;calls.pending=null;calls.approved=p.key;try{return p.retry()}finally{calls.approved=null}}};
 }
@@ -503,7 +533,7 @@ function studentAuctionCommandHarness(){
  const binding=studentSource.split('\n').find(line=>line.startsWith('$("#finishAuctionBtn").onclick='));
  const api=runInNewContext(sharedEngineSource+'\n'+names.map(name=>extractFunction(studentSource,name)).join('\n')+'\n'+binding+'\n;({createTeams,cardAt,loadCurrentCard,setPosition,recordWin,advancePosition,addMissingPurchase})',context);
  const team=api.createTeams('SEA3-T2-0123456789ABCDEF')[0];team.mission=team.lockedMission='COMBAT';
- context.state={phase:'auction',sessionCode:'SEA3-T2-0123456789ABCDEF',team,lockedMission:'COMBAT',round:0,lot:0,currentCard:null,scratch:{}};
+ context.state=liveStudentFixture({team});
  return {...api,get state(){return context.state},replaceState:value=>context.state=value,calls,elements,$,finish:()=>$('#finishAuctionBtn').click(),cancel:()=>calls.pending=null,approve(){const pending=calls.pending;assert.ok(pending);calls.pending=null;calls.approved=pending.key;try{return pending.retry()}finally{calls.approved=null}}};
 }
 {
@@ -536,6 +566,11 @@ for(const [round,lot]of [[0,1],[8,1],[1,0],[1,11],[1.5,2],[2,1.5],['bad',1]]){
  const app=studentAuctionCommandHarness();app.$('#roundSelect').value=String(round);app.$('#lotSelect').value=String(lot);const before=JSON.stringify(app.state);app.setPosition();assert.equal(JSON.stringify(app.state),before,'Invalid position does not mutate');assert.equal(app.calls.auction,0);
 }
 const positions=studentAuctionCommandHarness();for(let i=0;i<70;i++){assert.equal(positions.state.round,Math.floor(i/10));assert.equal(positions.state.lot,i%10);assert.equal(positions.advancePosition(),true)}assert.equal(positions.state.phase,'build');assert.equal(positions.advancePosition(),false);
+if(actualControlProbe('advance')){
+ const malformed=studentAuctionCommandHarness();malformed.state.team.cost=1;const before=JSON.stringify(malformed.state);
+ assert.equal(malformed.advancePosition(),false,'Actual student advance rejects inconsistent live team cost');
+ assert.equal(JSON.stringify(malformed.state),before,'Malformed advance preserves every field');assert.equal(malformed.calls.saves+malformed.calls.auction+malformed.calls.all,0,'Malformed advance has no storage or rendering effect');
+}
 for(const[category,defs]of Object.entries(canonicalRules.POOLS))for(const[id]of defs){
  const lot=canonicalRules.SLOT_ORDER.indexOf(category)+1,app=studentAuctionCommandHarness();
  app.$('#roundSelect').value='7';app.$('#lotSelect').value=String(lot);app.setPosition();assert.equal(app.state.currentCard,null);
@@ -566,13 +601,12 @@ console.log('Student auction finish identity, 70-position advance and all-card w
 function practiceHarness(role,currentPhase='practice'){
  const source=role==='instructor'?instructorSource:studentSource;
  const selectors=role==='instructor'?['startTutorialBtn','practiceReveal','practiceOpen','practiceAccept','practiceClose','practiceReset','toPlanning']:['practiceRecord','practiceReset','toPlanning'];
- const state={phase:currentPhase,sessionCode:'SEA3-T2-0123456789ABCDEF',privateEntry:false,vehiclesLocked:false,practice:{revealed:false,open:false,leader:false,closed:false},practiceWon:false,
-  market:[['private-market-marker']],ledger:[{seq:1,kind:'SALE'}],teams:[{cost:30000000,purchases:[{id:'CAP-A',paid:30000000}]}],team:{cost:30000000,purchases:[{id:'CAP-A',paid:30000000}]},plan:'private plan',round:2,lot:3};
+ const state=role==='instructor'?liveInstructorFixture({phase:currentPhase,round:2,lot:3}):liveStudentFixture({phase:currentPhase,plan:'private plan',round:2,lot:3});
  const elements={},calls={practice:0,all:0,saves:0};
  const $=selector=>elements[selector]||(elements[selector]={textContent:'',classList:{toggle(){}}});
  const bindings=selectors.map(id=>{const line=source.split('\n').find(value=>value.startsWith('$("#'+id+'").onclick='));assert.ok(line,'Practice harness finds wired '+role+' '+id);return line}).join('\n');
  const functions=extractFunction(source,'phase')+(role==='instructor'?'\n'+extractFunction(source,'resetPractice'):'');
- runInNewContext(sharedEngineSource+'\n'+functions+'\n'+bindings,{state,$,$$:()=>[],t:key=>key,renderPractice:()=>calls.practice++,renderAll:()=>calls.all++,saveState:()=>calls.saves++,window:{scrollTo(){}},document:{querySelector:()=>null}});
+ runInNewContext(sharedEngineSource+'\n'+functions+'\n'+bindings,{state,$,$$:()=>[],t:key=>key,seaNotify(){},renderPractice:()=>calls.practice++,renderAll:()=>calls.all++,saveState:()=>calls.saves++,window:{scrollTo(){}},document:{querySelector:()=>null}});
  const scored=()=>JSON.stringify({market:state.market,ledger:state.ledger,teams:state.teams,team:state.team,plan:state.plan,round:state.round,lot:state.lot});
  return {state,calls,click:id=>elements['#'+id].onclick(),scored};
 }
@@ -622,7 +656,7 @@ studentPractice.click('practiceRecord');studentPractice.click('toPlanning');asse
 console.log('Instructor/student practice command prerequisites, wrong-phase rejection and scored-state isolation PASS');
 // R02/R09/R10, T03/T10/T11: actual field callbacks obey editing scope and loader bounds.
 function studentEditHarness(phase='planning'){
- const state={phase,lockedMission:null,plan:'original plan',risks:'original risks',maxWtpCents:85000000,profitMode:'AMOUNT',profitInput:'250000',profitCents:25000000};
+ const state=liveStudentFixture({phase,plan:'original plan'});
  const elements={},calls={saved:0,rendered:0,notices:[]};
  const $=key=>elements[key]||(elements[key]={value:''});
  const bindings=['plan','risks','maxWtp','profitInput'].map(id=>studentSource.split('\n').find(line=>line.startsWith('$("#'+id+'").on'))).join('\n');
@@ -644,7 +678,7 @@ const wtpEdit=studentEditHarness();wtpEdit.edit('maxWtp','900000');assert.equal(
 const profitEdit=studentEditHarness('submit');profitEdit.edit('profitInput','-');assert.equal(profitEdit.state.profitInput,'-','Incomplete profit draft survives typing for validation feedback');const profitBefore=JSON.stringify(profitEdit.state);profitEdit.edit('profitInput','1'.repeat(21));assert.equal(JSON.stringify(profitEdit.state),profitBefore,'Profit text cannot exceed schema-3 bounds');
 console.log('Student editing phase, lock and save-boundary examples PASS');
 function submissionConfirmationHarness(){
- const state={phase:'submit',sessionCode:'SEA3-T2-0123456789ABCDEF',privateEntry:false,teams:[{id:1,submitted:true,profit:0},{id:2,submitted:false,profit:0}]};
+ const state=liveInstructorFixture({phase:'submit',teams:[{...liveFixtureTeam(1),submitted:true},liveFixtureTeam(2,'RECCE')]});
  const elements={},calls={renders:0,saves:0,notices:[],pending:null,approved:null};
  const $=key=>elements[key]||(elements[key]={textContent:'',click(){return this.onclick()}});
  const bindings=['privateSubmitBtn','closeSubmissionsBtn'].map(id=>instructorSource.split('\n').find(line=>line.startsWith('$("#'+id+'").onclick='))).join('\n');
@@ -663,9 +697,14 @@ for(const id of ['privateSubmitBtn','closeSubmissionsBtn']){
  for(const phase of ['setup','practice','planning','auction','build','debrief','closed']){const wrong=submissionConfirmationHarness();wrong.state.phase=phase;const before=JSON.stringify(wrong.state);wrong.click(id);assert.equal(JSON.stringify(wrong.state),before);assert.equal(wrong.calls.pending,null,'Wrong-phase submission action cannot open confirmation')}
 }
 const allSubmitted=submissionConfirmationHarness();allSubmitted.state.teams.forEach(team=>team.submitted=true);allSubmitted.click('closeSubmissionsBtn');assert.equal(allSubmitted.state.phase,'debrief');assert.equal(allSubmitted.calls.pending,null,'All submitted teams require no redundant warning');
+if(actualControlProbe('submission'))for(const id of ['privateSubmitBtn','closeSubmissionsBtn']){
+ const malformed=submissionConfirmationHarness();malformed.state.teams[0].cost=1;const before=JSON.stringify(malformed.state);
+ assert.equal(malformed.click(id),false,'Actual teacher '+id+' rejects inconsistent live team cost before confirmation');
+ assert.equal(JSON.stringify(malformed.state),before);assert.equal(malformed.calls.pending,null,'Malformed submission cannot queue a confirmation');assert.equal(malformed.calls.saves+malformed.calls.renders,0,'Malformed submission has no persistence or projection effect');
+}
 console.log('Instructor submission confirmation stale-state and repeat boundaries PASS');
 function instructorSubmissionEditHarness(){
- const state={phase:'submit',sessionCode:'SEA3-T2-0123456789ABCDEF',privateEntry:true,teams:[{id:1,mission:'COMBAT',cost:30000000,profit:10000000,submitted:false}]};
+ const state=liveInstructorFixture({phase:'submit',privateEntry:true,teams:[{...liveFixtureTeam(1),profit:10000000},liveFixtureTeam(2,'RECCE')]});
  const profit={dataset:{profitTeam:'1'},value:'150000',isConnected:true},submitted={dataset:{submittedTeam:'1'},checked:true,isConnected:true},elements={},calls={saves:0,notices:[]};
  const $=key=>elements[key]||(elements[key]={classList:{toggle(){}},innerHTML:''});
  const $$=key=>key==='[data-profit-team]'?[profit]:key==='[data-submitted-team]'?[submitted]:[];
@@ -710,13 +749,15 @@ console.log('Instructor bilingual ten-team Build summaries retain complete detai
 
 // R02/R10/R11, T03/T10/T11: private notes retain lot/session identity and recovery bounds.
 function scratchEditHarness(phase='auction'){
- const state={phase,sessionCode:'SEA3-T2-0123456789ABCDEF',team:{id:1},round:0,lot:0,scratch:{}};
- const elements={'#wtp':{value:'',isConnected:true},'#decision':{value:'',isConnected:true},'#roundSelect':{value:''},'#lotSelect':{value:''}},calls={saves:0,notices:[]};
- const functions=['scratchKey','scratch','bindScratchInputs','renderAuction'].filter(name=>studentSource.includes('function '+name+'(')).map(name=>extractFunction(studentSource,name)).join('\n');
+ const state=liveStudentFixture({phase});
+ const elements={'#wtp':{value:'',isConnected:true},'#decision':{value:'',isConnected:true},'#roundSelect':{value:''},'#lotSelect':{value:''},'#advanceLocalBtn':{},'#cardInput':{value:''},'#wonPrice':{value:'',dataset:{}},'#phaseBadge':{textContent:''}},calls={saves:0,notices:[]};
+ const functions=['phase','advancePosition','scratchKey','scratch','bindScratchInputs','renderAuction'].filter(name=>studentSource.includes('function '+name+'(')).map(name=>extractFunction(studentSource,name)).join('\n');
  const binding=studentSource.includes('function bindScratchInputs(')?'bindScratchInputs()':studentSource.split('\n').filter(line=>line.startsWith('$("#wtp").onchange=')||line.startsWith('$("#decision").oninput=')).join('\n');
- const api=runInNewContext(sharedEngineSource+'\n'+functions+'\n'+binding+';\n({renderAuction})',{state,$:key=>elements[key],renderCard(){},renderGaps(){},renderSnapshot(){},saveState:()=>calls.saves++,seaNotify:key=>calls.notices.push(key),t:key=>key});
+ const context={state,$:key=>elements[key],$$:()=>[],renderAll(){},renderCard(){},renderGaps(){},renderSnapshot(){},saveState:()=>calls.saves++,seaNotify:key=>calls.notices.push(key),t:key=>key,window:{scrollTo(){}},document:{querySelector:()=>null}};
+ const api=runInNewContext(sharedEngineSource+'\n'+functions+'\n'+binding+';\n({renderAuction,advancePosition})',context);
+ elements['#advanceLocalBtn'].onclick=api.advancePosition;
  const handlers={wtp:elements['#wtp'].onchange,note:elements['#decision'].oninput};
- return {state,calls,elements,render:()=>api.renderAuction(),edit:(kind,value)=>{const target=elements[kind==='wtp'?'#wtp':'#decision'];target.value=value;handlers[kind]({target})}};
+ return {get state(){return context.state},replaceState:value=>context.state=value,calls,elements,render:()=>api.renderAuction(),edit:(kind,value)=>{const target=elements[kind==='wtp'?'#wtp':'#decision'];target.value=value;handlers[kind]({target})}};
 }
 for(const kind of ['wtp','note']){
  for(const phase of ['setup','practice','planning','build','submit','debrief','closed']){const app=scratchEditHarness(phase),before=JSON.stringify(app.state);app.edit(kind,kind==='wtp'?'350000':'private note');assert.equal(JSON.stringify(app.state),before,'Private '+kind+' cannot edit during '+phase);assert.equal(app.calls.saves,0)}
@@ -725,9 +766,22 @@ for(const kind of ['wtp','note']){
 const scratchMoney=scratchEditHarness();const emptyScratch=JSON.stringify(scratchMoney.state);scratchMoney.edit('wtp','-1');assert.equal(JSON.stringify(scratchMoney.state),emptyScratch,'Rejected WTP never creates scratch state');scratchMoney.edit('wtp','350000');assert.equal(scratchMoney.state.scratch['1-1'].wtp,'350000','WTP remains advisory whole dollars');
 const scratchNote=scratchEditHarness();scratchNote.edit('note','n'.repeat(600));assert.equal(scratchNote.state.scratch['1-1'].note.length,600);const fullNote=JSON.stringify(scratchNote.state);scratchNote.edit('note','x'.repeat(601));assert.equal(JSON.stringify(scratchNote.state),fullNote,'Note overflow cannot make the next reload fail');assert.equal(scratchNote.elements['#decision'].value,'n'.repeat(600));
 const scratchView=scratchEditHarness();const beforeScratchView=JSON.stringify(scratchView.state);scratchView.render();assert.equal(JSON.stringify(scratchView.state),beforeScratchView,'Rendering an untouched lot cannot create a private scratch record');
+if(actualControlProbe('native')){
+ for(const change of ['session','position','replacement']){
+  const app=scratchEditHarness();app.render();const callback=app.elements['#advanceLocalBtn'].onclick;
+  if(change==='session')app.state.sessionCode='SEA3-T2-FFFFFFFFFFFFFFFF';
+  if(change==='position')app.state.lot=1;
+  if(change==='replacement')app.replaceState(structuredClone(app.state));
+  const before=JSON.stringify(app.state),saves=app.calls.saves;assert.equal(callback(),false,'Old native student advance rejects '+change);assert.equal(JSON.stringify(app.state),before);assert.equal(app.calls.saves,saves);
+ }
+ const app=scratchEditHarness();app.render();const callback=app.elements['#advanceLocalBtn'].onclick;
+ const before=JSON.stringify(app.state),saves=app.calls.saves;assert.equal(callback({detail:2}),false,'Student native doubleclick cannot advance');assert.equal(callback({repeat:true}),false,'Student native key repeat cannot advance');assert.equal(JSON.stringify(app.state),before);assert.equal(app.calls.saves,saves);
+ assert.equal(callback(),true);assert.equal(app.state.lot,1);const after=JSON.stringify(app.state),saved=app.calls.saves;assert.equal(callback(),false,'Consumed student advance callback cannot advance another lot');assert.equal(JSON.stringify(app.state),after);assert.equal(app.calls.saves,saved);
+ assert.equal(app.elements['#advanceLocalBtn'].onclick(),true,'Freshly projected student advance remains deliberate');assert.equal(app.state.lot,2);
+}
 console.log('Student scratch editing phase, lot/session identity and bounds PASS');
 function vehicleTransitionHarness(role){
- const state={phase:'planning',sessionCode:'SEA3-T2-0123456789ABCDEF',teamCount:2,vehiclesLocked:false,revealMode:'MANUAL',round:0,lot:0,teams:[{id:1,mission:'COMBAT',lockedMission:null,purchases:[]},{id:2,mission:'RECCE',lockedMission:null,purchases:[]}],team:{id:1,mission:'COMBAT',lockedMission:null,purchases:[]},lockedMission:null,vehicleConfirmed:true,plan:'independent plan',planBaseline:null};
+ const state=role==='instructor'?liveInstructorFixture({phase:'planning'}):liveStudentFixture({phase:'planning'});
  const calls={saves:0,renders:0,notices:[]},source=role==='instructor'?instructorSource:studentSource;
  const names=role==='instructor'?['phase','choicesEditable','setTeamVehicle','allChosen','startScoredAuction']:['phase','setStudentVehicle','startStudentAuction'];
  const api=runInNewContext(sharedEngineSource+'\n'+names.map(name=>extractFunction(source,name)).join('\n')+'\n({start:'+(role==='instructor'?'startScoredAuction':'startStudentAuction')+',choose:'+(role==='instructor'?'setTeamVehicle':'setStudentVehicle')+'})',{state,$:()=>({textContent:''}),$$:()=>[],saveState:()=>calls.saves++,renderAll:()=>calls.renders++,seaNotify:key=>calls.notices.push(key),t:key=>key,window:{scrollTo(){}},document:{querySelector:()=>null}});
@@ -741,9 +795,19 @@ for(const role of ['instructor','student']){
  const incomplete=vehicleTransitionHarness(role);if(role==='instructor')incomplete.state.teams[1].mission=null;else incomplete.state.vehicleConfirmed=false;const unchanged=JSON.stringify(incomplete.state);assert.equal(incomplete.api.start(),false);assert.equal(JSON.stringify(incomplete.state),unchanged,'Missing choice/confirmation cannot enter auction');
 }
 const missingStudentTeam=vehicleTransitionHarness('student');missingStudentTeam.state.team=null;assert.equal(missingStudentTeam.api.choose('RECCE'),false,'Missing team is rejected without throwing');
+if(actualControlProbe('frozen'))for(const [role,target]of [['instructor','sibling'],['instructor','lock-field'],['student','team'],['student','baseline-field']]){
+ const app=vehicleTransitionHarness(role);
+ if(target==='sibling')Object.freeze(app.state.teams[1]);
+ if(target==='team')Object.freeze(app.state.team);
+ if(target==='lock-field')Object.defineProperty(app.state,'vehiclesLocked',{value:false,writable:false,enumerable:true,configurable:true});
+ if(target==='baseline-field')Object.defineProperty(app.state,'planBaseline',{value:null,writable:false,enumerable:true,configurable:true});
+ const before=JSON.stringify(app.state);
+ assert.equal(app.api.start(),false,'Actual '+role+' auction start rejects non-writable '+target+' before any mutation');
+ assert.equal(JSON.stringify(app.state),before,'Auction-start preflight preserves locks, phase and planning baseline');assert.equal(app.calls.saves+app.calls.renders,0,'Rejected auction start never saves or renders');
+}
 console.log('Both-role vehicle prerequisites, locking and repeated auction entry PASS');
 function assignmentInputHarness(){
- const state={phase:'planning',sessionCode:'SEA3-T2-0123456789ABCDEF',teamCount:2,vehiclesLocked:false,teams:[{id:1,mission:'COMBAT',purchases:[]},{id:2,mission:'RECCE',purchases:[]}]},calls={saves:0,renders:0};
+ const state=liveInstructorFixture({phase:'planning'}),calls={saves:0,renders:0};
  const input={dataset:{vehicleTeam:'1'},value:'RECCE',isConnected:true},target={id:'planningTeams',innerHTML:'',querySelectorAll:()=>[input]};
  runInNewContext(sharedEngineSource+'\n'+['choicesEditable','setTeamVehicle','renderAssignments'].map(name=>extractFunction(instructorSource,name)).join('\n')+'\nrenderAssignments(target)',{state,target,lang:'en',t:key=>key,esc:String,vehicleOptions:String,vehiclePreview:String,saveState:()=>calls.saves++,renderAll:()=>calls.renders++,document:{getElementById:()=>null}});
  return {state,calls,input};
@@ -812,16 +876,17 @@ function transactionHarness({leader=1,currentBid=transactionCard.start,wins=0}={
   return result;
  };
  const calls={notices:[],saves:0,renders:0,stops:0};
- const state={phase:'auction',open:true,pausedRemaining:null,ledger:[],seq:0,teams:[team(1),team(2)],market:transactionMarket,round:0,lot:0,leader,currentBid,correctionReason:'',approved:null};
+ const state=liveInstructorFixture({open:true,revealed:true,teams:[team(1),team(2)],leader,currentBid});
+ Object.defineProperties(state,{correctionReason:{value:'',writable:true,enumerable:false},approved:{value:null,writable:true,enumerable:false}});
  const fns=runInNewContext(transactionSource,{state,calls,t:key=>key,seaNotify:key=>calls.notices.push(key),seaConfirmGate:key=>state.approved===key,saveState:()=>calls.saves++,stopTimer:()=>calls.stops++,renderAuction:()=>calls.renders++,$:()=>({value:state.correctionReason})});
  return {state,calls,fns};
 }
 const timerNames=['effectiveEntry','committed','liveClosing','timedOut','togglePause','extendAuction'];
 const timerSource=sharedEngineSource+'\n'+timerNames.map(name=>extractFunction(instructorSource,name)).join('\n')+'\n({liveClosing,timedOut,togglePause,extendAuction})';
 let timerNow=5000;
-const timerState={phase:'auction',open:true,timingMode:'TIMED',deadline:15000,pausedRemaining:null,finalCallAnnounced:true,ledger:[],round:0,lot:0};
-const timerCalls={stops:0,starts:[],renders:0};
-const timers=runInNewContext(timerSource,{state:timerState,Date:{now:()=>timerNow},stopTimer:()=>timerCalls.stops++,startTimer:ms=>{timerCalls.starts.push(ms);timerState.deadline=timerNow+ms;timerState.pausedRemaining=null},renderAuction:()=>timerCalls.renders++});
+const timerState=liveInstructorFixture({open:true,revealed:true,timingMode:'TIMED',deadline:15000,finalCallAnnounced:true});
+const timerCalls={stops:0,starts:[],renders:0,saves:0,notices:[]};
+const timers=runInNewContext(timerSource,{state:timerState,Date:{now:()=>timerNow},stopTimer:()=>timerCalls.stops++,startTimer:ms=>{timerCalls.starts.push(ms);if(actualLegacy){timerState.deadline=timerNow+ms;timerState.pausedRemaining=null}},renderAuction:()=>timerCalls.renders++,saveState:()=>timerCalls.saves++,t:key=>key,seaNotify:key=>timerCalls.notices.push(key)});
 assert.equal(timers.liveClosing(),true,'An open, uncommitted lot is live for closing');
 timers.togglePause();assert.equal(timerState.pausedRemaining,10000,'Pause captures the exact remaining timed window');assert.equal(timerCalls.stops,1);
 assert.equal(timers.timedOut(),false,'A paused lot is not treated as expired');
@@ -838,11 +903,35 @@ timerState.timingMode='TIMED';timerState.pausedRemaining=null;timerState.open=fa
 timerState.open=true;timerState.deadline=timerNow+10000;timerState.pausedRemaining=null;timerState.ledger=[{kind:'UNSOLD',round:1,lot:1}];const beforeCommitted=JSON.stringify(timerState),startsBeforeCommit=timerCalls.starts.length;
 assert.equal(timers.liveClosing(),false,'A committed lot is no longer live');timers.togglePause();timers.extendAuction();assert.equal(JSON.stringify(timerState),beforeCommitted,'Committed results cannot be paused or extended');assert.equal(timerCalls.starts.length,startsBeforeCommit);
 console.log('Instructor timer pause/resume/extension and exact-expiry boundary examples PASS');
+if(actualControlProbe('native')){
+ const names=['effectiveEntry','committed','liveClosing','timedOut','biddingActive','currentCard','nextOffer','visibleLot','timerText','amountInput','togglePause','extendAuction','renderCommitControls'];
+ function nativeExtensionHarness(){
+  const state=liveInstructorFixture({open:true,revealed:true,timingMode:'TIMED',deadline:31000}),nodes={},calls={saves:0,renders:0,starts:0,stops:0,notices:[]};
+  const node=id=>nodes[id]||(nodes[id]={textContent:'',value:'',dataset:{},innerHTML:'',disabled:false});
+  const context={state,$:key=>node(key.slice(1)),document:{getElementById:node},Date:{now:()=>1000},t:key=>key,money:String,saveState:()=>calls.saves++,renderAuction:()=>calls.renders++,startTimer:()=>calls.starts++,stopTimer:()=>calls.stops++,seaNotify:key=>calls.notices.push(key)};
+  const api=runInNewContext(sharedEngineSource+'\n'+names.map(name=>extractFunction(instructorSource,name)).join('\n')+'\n;({renderCommitControls,extendAuction})',context);
+  node('extendBtn').onclick=api.extendAuction;api.renderCommitControls();
+  return {get state(){return context.state},replaceState:value=>context.state=value,node,calls,render:api.renderCommitControls};
+ }
+ for(const change of ['session','position','replacement','deadline','pause']){
+  const app=nativeExtensionHarness(),callback=app.node('extendBtn').onclick;
+  if(change==='session')app.state.sessionCode='SEA3-T2-FFFFFFFFFFFFFFFF';
+  if(change==='position')app.state.lot=1;
+  if(change==='replacement')app.replaceState(structuredClone(app.state));
+  if(change==='deadline')app.state.deadline+=1;
+  if(change==='pause')app.state.pausedRemaining=1000;
+  const before=JSON.stringify(app.state),effects=app.calls.saves+app.calls.renders+app.calls.starts+app.calls.stops;assert.equal(callback(),false,'Old native teacher extension rejects '+change);assert.equal(JSON.stringify(app.state),before);assert.equal(app.calls.saves+app.calls.renders+app.calls.starts+app.calls.stops,effects);
+ }
+ const app=nativeExtensionHarness(),callback=app.node('extendBtn').onclick,before=JSON.stringify(app.state);
+ assert.equal(callback({detail:2}),false,'Teacher native doubleclick cannot extend');assert.equal(callback({repeat:true}),false,'Teacher native key repeat cannot extend');assert.equal(JSON.stringify(app.state),before);assert.equal(app.calls.saves+app.calls.renders+app.calls.starts+app.calls.stops,0);
+ assert.equal(callback(),true);assert.equal(app.state.deadline,61000);const after=JSON.stringify(app.state),effects=app.calls.saves+app.calls.renders+app.calls.starts+app.calls.stops;assert.equal(callback(),false,'Consumed extension callback cannot add another thirty seconds');assert.equal(JSON.stringify(app.state),after);assert.equal(app.calls.saves+app.calls.renders+app.calls.starts+app.calls.stops,effects);
+ app.render();assert.equal(app.node('extendBtn').onclick(),true,'Freshly projected extension remains deliberate');assert.equal(app.state.deadline,91000);
+}
 const intervalNames=['stopTimer','timedOut','timerText','startTimer'];
 const intervalSource=sharedEngineSource+'\n'+intervalNames.map(name=>extractFunction(instructorSource,name)).join('\n')+'\n({stopTimer,startTimer})';
 let intervalNow=10000,intervalId=0;
 const intervals=new Map(),intervalCalls={cleared:[],announcements:[],renders:0,timerValues:[]};
-const intervalState={phase:'auction',open:true,timingMode:'TIMED',deadline:null,pausedRemaining:null,finalCallAnnounced:false};
+const intervalState=liveInstructorFixture({open:true,revealed:true,timingMode:'TIMED',deadline:20000});
 const intervalElements={'#timerAnnouncement':{set textContent(value){intervalCalls.announcements.push(value)}},'#timerValue':{set textContent(value){intervalCalls.timerValues.push(value)}}};
 const intervalFns=runInNewContext(intervalSource,{state:intervalState,Date:{now:()=>intervalNow},timerHandle:null,setInterval:(fn,ms)=>{const id=++intervalId;intervals.set(id,{fn,ms});return id},clearInterval:id=>{intervalCalls.cleared.push(id);intervals.delete(id)},$:selector=>intervalElements[selector],t:key=>key,renderAuction:()=>intervalCalls.renders++});
 intervalFns.startTimer(10000);assert.equal(intervalState.deadline,20000);assert.equal(intervals.size,1);assert.equal([...intervals.values()][0].ms,250,'Timer callback is scheduled at the expected UI cadence');
@@ -850,9 +939,14 @@ const tick=[...intervals.values()][0].fn;intervalNow=14999;tick();assert.equal(i
 intervalNow=15000;tick();assert.equal(intervalState.finalCallAnnounced,true,'Final call is announced at the five-second boundary');assert.deepEqual(intervalCalls.announcements,['auction.finalCall']);
 intervalNow=19999;tick();assert.deepEqual(intervalCalls.announcements,['auction.finalCall'],'Final call is announced only once');
 intervalNow=20000;tick();assert.deepEqual(intervalCalls.cleared,[1],'Expiry clears the active interval');assert.equal(intervals.size,0);assert.equal(intervalCalls.announcements[1],'auction.windowEnded');assert.equal(intervalCalls.renders,1,'Expiry renders the instructor-controlled close state');
-intervalState.open=true;intervalState.phase='auction';intervalNow=30000;intervalFns.startTimer(5000);const staleTick=[...intervals.values()][0].fn;intervalState.open=false;staleTick();assert.equal(intervals.size,0,'A callback after lot closure clears itself');assert.deepEqual(intervalCalls.cleared,[1,2]);
+intervalState.open=true;intervalState.phase='auction';intervalNow=30000;intervalState.deadline=35000;intervalFns.startTimer(5000);const staleTick=[...intervals.values()][0].fn;intervalState.open=false;staleTick();assert.equal(intervals.size,0,'A callback after lot closure clears itself');assert.deepEqual(intervalCalls.cleared,[1,2]);
 intervalState.open=true;intervalState.timingMode='TIMED';intervalFns.startTimer(4000);assert.equal(intervals.size,1);intervalState.timingMode='UNTIMED';intervalFns.startTimer(9000);assert.equal(intervals.size,0,'Untimed mode creates no timer interval');assert.equal(intervalCalls.cleared.at(-1),3,'Switching away from timed mode clears a prior handle');
 console.log('Instructor timer callback cadence, final-call, expiry and cleanup examples PASS');
+if(!actualLegacy){
+ const state=liveInstructorFixture({open:true,revealed:true,timingMode:'TIMED',deadline:21000}),before=JSON.stringify(state),context={state,Date:{now:()=>1000},timerHandle:null,setInterval:()=>1,clearInterval(){}};
+ const start=runInNewContext(intervalSource+'\n;startTimer',context);start(999999);
+ assert.equal(JSON.stringify(state),before,'The actual display-only timer adapter cannot recompute a prepared deadline from its legacy ms argument');
+}
 
 // A real hosted commit left the expired-window instruction and ready-to-commit
 // message visible after the ledger result. Exercise the actual renderer.
@@ -918,10 +1012,10 @@ const bidNames=['effectiveEntry','committed','timedOut','biddingActive','current
 const bidSource=sharedEngineSource+'\n'+bidNames.map(name=>extractFunction(instructorSource,name)).join('\n')+'\n({biddingActive,currentCard,nextOffer,acceptTeamBid})';
 let bidNow=1000;
 function bidHarness({phase='auction',vehiclesLocked=true,open=true,pausedRemaining=null,timingMode='UNTIMED',deadline=null,leader=null,currentBid=null,wins1=0,wins2=0,mission1='COMBAT',mission2='COMBAT',ledger=[]}={}){
- const team=(id,mission,wins)=>({id,mission,cost:0,purchasesByRound:[wins,0,0,0,0,0,0]});
- const state={phase,vehiclesLocked,open,pausedRemaining,timingMode,deadline,leader,currentBid,ledger,round:0,lot:0,market:transactionMarket,teams:[team(1,mission1,wins1),team(2,mission2,wins2)]};
- const calls={notices:[],renders:0};
- const fns=runInNewContext(bidSource,{state,Date:{now:()=>bidNow},calls,APP:{bidIncrementCents:5000000},t:key=>key,seaNotify:key=>calls.notices.push(key),renderAuction:()=>calls.renders++});
+ const team=(id,mission,wins)=>({...liveFixtureTeam(id,mission),purchasesByRound:[wins,0,0,0,0,0,0]});
+ const state=liveInstructorFixture({phase,vehiclesLocked,open,revealed:true,pausedRemaining,timingMode,deadline,leader,currentBid,ledger,seq:ledger.length,teams:[team(1,mission1,wins1),team(2,mission2,wins2)]});
+ const calls={notices:[],renders:0,saves:0};
+ const fns=runInNewContext(bidSource,{state,Date:{now:()=>bidNow},calls,APP:{bidIncrementCents:5000000},t:key=>key,seaNotify:key=>calls.notices.push(key),renderAuction:()=>calls.renders++,saveState:()=>calls.saves++});
  return {state,calls,fns};
 }
 const validBid=bidHarness(),openingOffer=transactionCard.start;
@@ -948,13 +1042,18 @@ for(const [label,options] of [
 }
 const badIntended=bidHarness();assert.equal(badIntended.fns.acceptTeamBid(1,Number.NaN),false,'A nonnumeric/stale button payload is rejected');assert.deepEqual(badIntended.calls.notices,['errors.stale']);
 const exhaustedOffer=bidHarness({leader:1,currentBid:Number.MAX_SAFE_INTEGER});assert.equal(exhaustedOffer.fns.nextOffer(),null,'An increment beyond exact-money range has no legal offer');assert.equal(exhaustedOffer.fns.acceptTeamBid(2,null),false,'An exhausted offer cannot be accepted');
+if(actualControlProbe('bid')){
+ const overflow=bidHarness();overflow.state.teams[0].profit=Number.MAX_SAFE_INTEGER-openingOffer+1;const before=JSON.stringify(overflow.state);
+ assert.equal(overflow.fns.acceptTeamBid(1,openingOffer),false,'Actual instructor accept reserves safe eventual cost plus profit');
+ assert.equal(JSON.stringify(overflow.state),before,'Profit overflow leaves leader and bid untouched');assert.equal(overflow.calls.renders+overflow.calls.saves,0,'Profit overflow never saves or renders an accepted bid');
+}
 console.log('Instructor bid acceptance, stale caller, eligibility, timing and purchase-cap boundary examples PASS');
 const openNames=['effectiveEntry','committed','allChosen','openAuction'];
 const openSource=sharedEngineSource+'\n'+openNames.map(name=>extractFunction(instructorSource,name)).join('\n')+'\n({openAuction})';
 function openHarness({phase='auction',vehiclesLocked=true,open=false,revealMode='MANUAL',revealed=false,mission1='COMBAT',mission2='RECCE',ledger=[],timingMode='UNTIMED'}={}){
- const state={phase,vehiclesLocked,open,revealMode,revealed,timingMode,bidSeconds:30,pausedRemaining:5000,ledger,round:0,lot:0,teamCount:2,teams:[{id:1,mission:mission1},{id:2,mission:mission2}]};
- const calls={starts:[],renders:0};
- const fns=runInNewContext(openSource,{state,calls,APP:{bidIncrementCents:5000000},startTimer:ms=>calls.starts.push(ms),renderAuction:()=>calls.renders++,Date:{now:()=>bidNow}});
+ const state=liveInstructorFixture({phase,vehiclesLocked,open,revealMode,revealed,timingMode,pausedRemaining:5000,ledger,seq:ledger.length,teams:[liveFixtureTeam(1,mission1),liveFixtureTeam(2,mission2)]});
+ const calls={starts:[],renders:0,saves:0,notices:[]};
+ const fns=runInNewContext(openSource,{state,calls,APP:{bidIncrementCents:5000000},startTimer:ms=>calls.starts.push(ms),renderAuction:()=>calls.renders++,saveState:()=>calls.saves++,Date:{now:()=>bidNow},t:key=>key,seaNotify:key=>calls.notices.push(key)});
  return {state,calls,fns};
 }
 for(const [label,options] of [
@@ -966,12 +1065,17 @@ for(const mode of ['ROUND','JIT','MANUAL']){
  assert.equal(opened.state.open,true);assert.equal(opened.state.revealed,true,mode+' opening reveals active lot');assert.equal(opened.state.pausedRemaining,null);assert.equal(opened.calls.renders,1);
 }
 const timedOpen=openHarness({timingMode:'TIMED'});assert.equal(timedOpen.fns.openAuction(),true);assert.deepEqual(timedOpen.calls.starts,[30000],'Timed lot opening starts configured bid window');
+if(actualControlProbe('clock')){
+ const invalidClock=openHarness({timingMode:'TIMED'}),before=JSON.stringify(invalidClock.state),prior=bidNow;bidNow=NaN;
+ try{assert.equal(invalidClock.fns.openAuction(),false,'Actual instructor timed opening rejects NaN clock before effects');assert.equal(JSON.stringify(invalidClock.state),before);assert.equal(invalidClock.calls.starts.length+invalidClock.calls.renders+invalidClock.calls.saves,0,'Invalid clock never starts timer, saves or renders open');}finally{bidNow=prior}
+}
 console.log('Instructor auction-open guards and reveal-mode transitions PASS');
 const flowNames=['phase','effectiveEntry','committed','liveClosing','ledgerCapacity','currentCard','stopTimer','allChosen','openAuction','commitSale','commitUnsold','voidCurrent','advance'];
 const flowSource=sharedEngineSource+'\n'+flowNames.map(name=>extractFunction(instructorSource,name)).join('\n')+'\n({commitSale,commitUnsold,voidCurrent,advance,openAuction,committed,effectiveEntry})';
 function auctionFlowHarness({phase='auction',round=0,lot=0,open=true,pausedRemaining=null,leader=null,currentBid=null,revealMode='MANUAL',timingMode='UNTIMED',ledger=[],teams=null,reason='',approved=null,confirmCallbacks=false}={}){
  const makeTeam=id=>({id,mission:'COMBAT',lockedMission:'COMBAT',totals:{CAP:0,MOB:0,FP:0,PRO:0,COM:0,SA:0,REC:0,MC:0},cost:0,purchases:[],purchasesByRound:[0,0,0,0,0,0,0],profit:0,submitted:false});
- const state={phase,vehiclesLocked:true,open,pausedRemaining,leader,currentBid,revealMode,revealed:revealMode!=='MANUAL',timingMode,bidSeconds:30,deadline:null,resultDraft:{team:'1',price:'300000',reason:''},ledger:structuredClone(ledger),seq:ledger.length,round,lot,teamCount:2,teams:teams||[makeTeam(1),makeTeam(2)],market:transactionMarket,correctionReason:reason,approved};
+ const state=liveInstructorFixture({phase,open,pausedRemaining,leader,currentBid,revealMode,revealed:open||revealMode!=='MANUAL',timingMode,resultDraft:{team:'1',price:'300000',reason:''},ledger:structuredClone(ledger),seq:ledger.length,round,lot,teams:teams||[makeTeam(1),makeTeam(2)]});
+ Object.defineProperties(state,{correctionReason:{value:reason,writable:true,enumerable:false},approved:{value:approved,writable:true,enumerable:false}});
  const calls={notices:[],saves:0,renders:0,stops:0,starts:[],phases:[],allRenders:0};
  let reasonValue=reason;
  const elements={'#correctionReason':{get value(){return confirmCallbacks?reasonValue:state.correctionReason},set value(v){if(confirmCallbacks)reasonValue=v;else state.correctionReason=v}},'#phaseBadge':{textContent:''}};
@@ -1036,10 +1140,10 @@ assert.equal(saleWithoutPurchase.fns.voidCurrent(),false,'A sale without its mat
 const waitingAdvance=auctionFlowHarness({open:false}),waitingAdvanceBefore=JSON.stringify(waitingAdvance.state);
 assert.equal(waitingAdvance.fns.advance(),false,'Uncommitted lots cannot advance');assert.equal(JSON.stringify(waitingAdvance.state),waitingAdvanceBefore);
 for(const mode of ['ROUND','JIT','MANUAL']){
- const nextLot=auctionFlowHarness({lot:0,revealMode:mode,ledger:[{seq:1,kind:'UNSOLD',round:1,lot:1,card:transactionMarket[0][0].id,team:null,price:null}]});
+ const nextLot=auctionFlowHarness({lot:0,revealMode:mode,open:false,ledger:[{seq:1,kind:'UNSOLD',round:1,lot:1,card:transactionMarket[0][0].id,team:null,price:null}]});
  assert.equal(nextLot.fns.advance(),true,mode+' committed lot advances');assert.equal(nextLot.state.lot,1);assert.equal(nextLot.state.open,false);assert.equal(nextLot.state.leader,null);assert.equal(nextLot.state.currentBid,null);assert.equal(nextLot.state.resultDraft,null);assert.equal(nextLot.state.revealed,mode!=='MANUAL');
 }
-const roundBoundary=auctionFlowHarness({lot:9,revealMode:'JIT',ledger:[{seq:1,kind:'UNSOLD',round:1,lot:10,card:transactionMarket[0][9].id,team:null,price:null}]});
+const roundBoundary=auctionFlowHarness({lot:9,revealMode:'JIT',open:false,ledger:liveFixtureOutcomes(10)});
 assert.equal(roundBoundary.fns.advance(),true,'The tenth lot advances to the next round');assert.equal(roundBoundary.state.round,1);assert.equal(roundBoundary.state.lot,0);assert.equal(roundBoundary.state.revealed,true);
 const allOutcomes=Array.from({length:70},(_,i)=>({seq:i+1,kind:'UNSOLD',round:Math.floor(i/10)+1,lot:i%10+1,card:transactionMarket[Math.floor(i/10)][i%10].id,team:null,price:null}));
 const completedAuction=auctionFlowHarness({phase:'auction',round:6,lot:9,open:false,ledger:allOutcomes});
