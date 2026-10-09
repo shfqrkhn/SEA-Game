@@ -1,42 +1,78 @@
 {
-  "date": "2026-10-09T20:55:34Z",
-  "scope": "Exact HTTPS bytes, actual candidate/main CI and bounded hosted instructor correction/reload and student planning recovery; not full release acceptance",
-  "version": "4.0.0-dev.5",
-  "sourceCommit": "66a784fae62943ddda0161a50557fee08eb64e26",
-  "mainMerge": "96cb25fdab291c165131fae2392d60165571b53e",
-  "pagesRun": 37989340179,
-  "sourcePRRun": 37988939552,
-  "url": "https://shfqrkhn.github.io/SEA-Game/dist/index.html?v=96cb25f",
-  "bytes": 8205812,
-  "sourceSHA256": "bdae9be6a8b692e9926325cc6ad693dc1c2735c8ed74c1256b1921e7476eec29",
-  "hostedSHA256": "bdae9be6a8b692e9926325cc6ad693dc1c2735c8ed74c1256b1921e7476eec29",
+  "date": "2026-10-09T21:28:18.374Z",
+  "scope": "Exact HTTPS bytes, actual candidate/main CI, English two-team timed STANDARD instructor70-lot eight-phase journey and retained French planning; not full release acceptance",
+  "version": "4.0.0-dev.6",
+  "sourceCommit": "528ec4a1fdcb088eea039dea0491fbe96c9f105d",
+  "mainMerge": "7751f952c21a65c74d27621238a8a9896101fb71",
+  "pagesRun": 37992518901,
+  "sourcePRRun": 37992169110,
+  "url": "https://shfqrkhn.github.io/SEA-Game/dist/index.html?v=7751f95",
+  "bytes": 8221492,
+  "sourceSHA256": "23f8ef7e41a869a13de6a50f20d77b03529ab1434d53d9b873c147657726bc50",
+  "hostedSHA256": "23f8ef7e41a869a13de6a50f20d77b03529ab1434d53d9b873c147657726bc50",
   "equal": true,
   "sourceMainRun": {
-    "id": 37989341014,
+    "id": 37992519194,
     "status": "success",
     "matrix": "Windows/Ubuntu; Node22/24; all four jobs"
   },
   "browser": {
     "tool": "Codex built-in browser",
-    "scope": "Fresh dev.5 instructor practice, sale, confirmed VOID, replacement sale and reloads; dev.4 student French planning restored in dev.5",
+    "scope": "Fresh actual built-in-browser dev.6 English two-team STANDARD timed30 session: setup, isolated practice/reset/planning, mission locks, pause30/extend-to60/resume, CAP-C Team2 sale/reload, confirmed VOID/reload and replacement Team1 sale/reload; all70lots finish with14Team1 purchases and56unsold. Independent rules-baseline oracle agrees: CAP18/MOB180/FP4/PRO13/COM50/SA5, cost$6,350,000, compliant Troop, score340. Confirmed private entry, native exact-cent profit$100,000.25, submittedTeam1, pendingTeam2 closure confirmation, AwardTeam1/bid$6,450,000.25/cost-per-point$18,970.59 and closed-room reload retaining72ledger entries (initialSALE/VOID/replacement plus69lots). Retained French student bilingual planning/session/mission restores in exactdev.6. Instructor warning/error console empty.",
     "checks": [
-      "Exact candidate role URLs show version4.0.0-dev.5",
-      "Fresh instructor synthetic two-team untimed session and isolated practice/reset/open planning",
-      "Round1 lot1 CAP-B Team1 sale at450000 dollars survives actual reload; Team1 one win, Team2 zero",
-      "Visible Three.js Manage/pagination/disclosure reaches correction; synthetic reason and actual confirmation append VOID",
-      "VOID survives reload with no leader, neither team owning the lot and advance disabled",
-      "Replacement Team2 sale at450000 dollars survives reload; Team1 zero wins and Team2 one",
-      "Rendered append-only log retains Team1 SOLD, VOID and Team2 SOLD",
-      "French student Troop planning restores prior synthetic bilingual plan/risk notes/session in dev.5",
-      "Captured instructor warning/error console empty"
+      "Exact candidate roles show version4.0.0-dev.6",
+      "Synthetic two-team setup/practice/reset/planning/mission locks",
+      "Timed30 pause/extend-to60/resume",
+      "CAP-C Team2 sale/reload, confirmed VOID/reload, replacement Team1 sale/reload",
+      "All70lots:14purchases,56unsold, two purchases per round",
+      "Independent baseline cost6350000/score340/compliance/totals agree",
+      "Confirmed private entry, native exact-cent profit100000.25 and submittedTeam1",
+      "PendingTeam2 close confirmation; AwardTeam1, bid6450000.25, cost/point18970.59",
+      "Closed-room reload retains complete72-entry append-only ledger",
+      "Retained French bilingual planning/session/mission restored in dev.6",
+      "Instructor warning/error console empty"
     ],
-    "localScreenshot": ".artifacts/rebuild-4-dev5-correction.png",
+    "localScreenshot": ".artifacts/rebuild-4-dev6-journey.png",
     "limits": [
-      "No fresh complete70-lot auction, student purchase, ten-team, timed/reveal or file download/import browser qualification",
-      "Automation observed delayed canvas redraws and clipped native disclosure targets; full keyboard/assistive qualification remains open",
-      "No file:// offline, OS egress, device, assistive, model/reference or classroom acceptance",
-      "Screenshot is ignored local evidence; not a repository/runtime dependency"
-    ]
+      "One EN2team timedSTANDARD instructor journey; complete student/ten-team/tie/reveal/download/import coverage open",
+      "Delayed canvas redraws/clipped native correction disclosure; focused native profit typing needed; no app failure inferred from locator fill attempt",
+      "No file://offline, OS egress, device/assistive, reference-fidelity/rights/classroom acceptance",
+      "Ignored local screenshot; no runtime/repository dependency"
+    ],
+    "oracle": {
+      "mission": "TROOP",
+      "purchases": [
+        "CAP-C",
+        "MOB-G",
+        "CAP-A",
+        "MOB-D",
+        "CAP-F",
+        "PRO-E",
+        "MOB-B",
+        "PRO-B",
+        "FP-G",
+        "PRO-D",
+        "COM-A",
+        "SA-C",
+        "SA-F",
+        "SE-N"
+      ],
+      "totals": {
+        "CAP": 18,
+        "MOB": 180,
+        "FP": 4,
+        "PRO": 13,
+        "COM": 50,
+        "SA": 5,
+        "REC": 0,
+        "MC": 0
+      },
+      "costCents": 635000000,
+      "profitCents": 10000025,
+      "bidCents": 645000025,
+      "score": 340,
+      "compliant": true
+    }
   },
   "priorCandidateBrowser": {
     "version": "4.0.0-dev.2",
@@ -58,8 +94,8 @@
     "status": "success"
   },
   "open": [
-    "Remaining typed setup/practice/phase/bid/timer/submission/editor coordination and coherent whole-GUI rewrite",
-    "Full current-candidate browser EN/FR/tie/ten-team/timed/reveal/recovery/private-state journeys",
+    "Retained reset/import/presentation/editor/dialog coordination and coherent whole-GUI rewrite",
+    "Complete current-candidate student/EN-FR/tie/ten-team/reveal/recovery/import/privacy browser journeys",
     "Actual file:// offline and separately observed OS egress",
     "Devices, performance, accessibility and complete reference-matched visual quality",
     "Rights, content, classroom and release/operator lifecycle acceptance",
@@ -73,6 +109,14 @@
       "Student currentCard normalization mutated its input",
       "Crafted live toJSON could bypass the export role-field check"
     ],
-    "corrections": "Passive bounded descriptor copy; no accessor/serializer/cycle execution; canonical envelope/payload identity; fresh role normalization; actual mixed-case bilingual note/purchase/privacy regressions PASS"
+    "corrections": "Passive bounded descriptor copy; no accessor/serializer/cycle execution; canonical envelope/payload identity; fresh role normalization; actual mixed-case bilingual note/purchase/privacy regressions PASS",
+    "normalPlayFirstFailures": [
+      "Historical malformed studentadvance/private submissions",
+      "Partial readonly mission locks",
+      "Invalid timer clock",
+      "Bid cost-plus-profit headroom",
+      "Stale native advance intents",
+      "Bootstrap extra role-field retention"
+    ]
   }
 }
