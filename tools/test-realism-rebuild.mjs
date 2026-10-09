@@ -6,13 +6,59 @@ const result=await build({stdin:{contents:`
 import assert from 'node:assert/strict';
 import * as THREE from 'three';
 import {missionBase,detailPart,materials} from './source/three/realism.mjs';
-import {prepareInspection} from './source/three/inspection.mjs';
+import {prepareInspection,prepareCutaway} from './source/three/inspection.mjs';
 const reports=[];
 for(const [id,count]of [['RECOVERY',8],['COMBAT',8],['RECCE',4],['TROOP',6],['COMMAND',6],['MINE',8]]){
  const paint=materials(),root=missionBase(id,paint);root.userData.mission=id;root.updateMatrixWorld(true);
  if(id!=='RECOVERY'){
   const named=name=>{const result=[];root.traverse(o=>{if(o.name===name)result.push(o);});return result;};
   assert.equal(named('carrier windshield wiper assembly').length,2,id+' has pivot/arm/blade systems instead of floating rods');
+  const formedGuards=named('carrier formed wheel guard');
+  assert.equal(formedGuards.length,count,id+' has thin formed guards instead of polygonal solid blocks');
+  for(const guard of formedGuards){
+   const p=guard.geometry.attributes.position,radial=[];
+   for(let i=0;i<p.count;i++)radial.push(Math.hypot(p.getX(i),p.getY(i)));
+   assert(Math.min(...radial)>.642&&Math.max(...radial)<.712,'Pressed guard keeps actual tyre envelope clear');
+   const edges=new Map(),indices=guard.geometry.index.array;
+   for(let i=0;i<indices.length;i+=3)for(const [a,b]of [[indices[i],indices[i+1]],[indices[i+1],indices[i+2]],[indices[i+2],indices[i]]]){const key=Math.min(a,b)+':'+Math.max(a,b);edges.set(key,(edges.get(key)||0)+1);}
+   assert([...edges.values()].every(n=>n===2),'Actual swept guard is a closed manifold sheet with capped ends and no open topology');
+   const localRay=new THREE.Raycaster(new THREE.Vector3(0,1,.23),new THREE.Vector3(0,-1,0),0,.5);
+   localRay.ray.applyMatrix4(guard.matrixWorld);
+   const hits=localRay.intersectObject(guard,false),unique=[...new Set(hits.map(h=>h.distance.toFixed(5)))].map(Number).sort((a,b)=>a-b);
+   assert(unique.length>=2&&unique[1]-unique[0]<.008,'Guard crown is actual thin closed sheet, not 60 mm solid slab');
+  }
+  const roof=root.getObjectByName('hull shell roof service assembly');assert(roof,'Sealed service deck replaces floating upright vent bars');
+  assert.equal(named('vent grille').length,0,'Obsolete vertical decorative bars are absent');
+  const roofFrame=roof.getObjectByName('carrier roof intake frame'),blades=named('carrier roof intake blade');
+  assert.equal(blades.length,20,'Two framed cooling banks retain actual formed blades');
+  for(const blade of blades){
+   const b=new THREE.Box3().setFromObject(blade),frame=new THREE.Box3().setFromObject(roofFrame);
+   assert(b.intersectsBox(frame),'Every intake blade physically meets its supporting perimeter');
+  }
+  for(const sign of [-1,1]){
+   const x=root.userData.length/2-1.30-.248+.0275,origin=new THREE.Vector3(x,2.46,sign*.56),ray=new THREE.Raycaster(origin,new THREE.Vector3(0,-1,0),0,.12);
+   assert.equal(ray.intersectObject(roofFrame,false).length,0,'Intake aperture is a geometric opening, not dark paint on a solid cover');
+   assert.equal(ray.intersectObjects(blades,false).length,0,'Real inter-blade air gap stays open');
+   assert(ray.intersectObjects(named('carrier roof intake dark duct'),false).length>0,'Open intake reaches a seated dark duct under the grille');
+  }
+  for(const cover of named('carrier formed service cover')){
+   const center=new THREE.Box3().setFromObject(cover).getCenter(new THREE.Vector3()),direction=new THREE.Vector3(0,0,-Math.sign(center.z));
+   const hit=new THREE.Raycaster(center,direction,0,.065).intersectObjects(named('hull shell'),false)[0];
+   assert(hit&&hit.distance<.045,'Access cover follows real sloping armour surface rather than floating on the old fixed-width bank');
+  }
+  for(const flap of named('carrier flexible rear mudflap')){
+   const b=new THREE.Box3().setFromObject(flap),rails=named('carrier rear mudflap mounting rail').map(o=>new THREE.Box3().setFromObject(o));
+   assert(rails.some(rail=>rail.intersectsBox(b)),'Flexible flap is clamped to a physical upper mounting rail');
+   assert(b.min.y>.04,'Rear flexible flap retains ground clearance');
+  }
+  for(const seam of named('carrier hull welded joint')){
+   const p=seam.geometry.attributes.position;assert(p.count>0);
+   const center=seam.getWorldPosition(new THREE.Vector3()),inward=new THREE.Vector3(0,-1,0);
+   if(seam.userData.surface==='side')inward.set(0,0,-Math.sign(center.z));
+   if(seam.userData.surface==='nose')inward.set(-1,0,0);
+   assert(new THREE.Raycaster(center,inward,0,.023).intersectObjects(named('hull shell'),false).length>0,'Weld center sits on actual parent hull surface '+id+' '+seam.userData.surface+' '+JSON.stringify(center.toArray()));
+  }
+  assert(named('carrier hull welded joint').length>=8,'Hull plane intersections have coherent structural joints');
   const k=.75/1.16,normal=new THREE.Vector3(1,k,0).normalize(),front=root.userData.length/2;
   for(const lip of named('carrier wiper rubber contact lip')){
    const half=lip.geometry.parameters.height/2;
@@ -92,14 +138,25 @@ for(const [id,count]of [['RECOVERY',8],['COMBAT',8],['RECCE',4],['TROOP',6],['CO
   let wheelMeshes=0,wheelTriangles=0;wheel.traverse(o=>{if(!o.isMesh)return;wheelMeshes++;wheelTriangles+=(o.geometry.index?.count??o.geometry.attributes.position.count)/3;for(const v of o.geometry.attributes.position.array)assert(Number.isFinite(v),'Finite vertex');});
   assert(wheelMeshes<=30,'Bounded wheel draw meshes');assert(wheelTriangles<=17000,'Bounded wheel triangles');meshes+=wheelMeshes;triangles+=wheelTriangles;
  }
- const fitted=[];root.traverse(o=>{if(/carrier (?:wiper|mirror|headlamp|front tow)/.test(o.name))fitted.push([o,o.getWorldPosition(new THREE.Vector3()),o.getWorldQuaternion(new THREE.Quaternion())]);});
+ const fitted=[];root.traverse(o=>{if(/carrier|hull shell.*assembly/.test(o.name))fitted.push([o,o.getWorldPosition(new THREE.Vector3()),o.getWorldQuaternion(new THREE.Quaternion())]);});
  const original=wheels.map(w=>w.getWorldPosition(new THREE.Vector3())),inspection=prepareInspection(root);inspection.apply(1);inspection.restore();wheels.forEach((w,i)=>assert(w.getWorldPosition(new THREE.Vector3()).distanceTo(original[i])<1e-9,'Exploded view restores wheel placement'));
  for(const [part,position,quaternion]of fitted){assert(part.getWorldPosition(new THREE.Vector3()).distanceTo(position)<1e-9,'Exterior fit survives exploded/restored placement');assert(part.getWorldQuaternion(new THREE.Quaternion()).angleTo(quaternion)<1e-7,'Exterior slope alignment survives inspection');}
+ if(id!=='RECOVERY')assert.equal(root.getObjectByName('hull shell roof service assembly').parent.name,'body','Sealed roof service system separates with its actual parent hull during inspection');
+ if(id!=='RECOVERY'){
+  const shells=[];root.traverse(o=>{if(o.isMesh&&o.userData.cutawayShell)shells.push([o,o.material]);});
+  const cutaway=prepareCutaway(root);let disposed=0;
+  for(let pass=0;pass<2;pass++){
+   cutaway.apply(true);for(const [mesh,paint]of shells){assert.notEqual(mesh.material,paint);assert.equal(mesh.material.opacity,.13);mesh.material.addEventListener('dispose',()=>disposed++);}
+   cutaway.apply(false);for(const [mesh,paint]of shells)assert.equal(mesh.material,paint,'Formed service fittings restore original finish after cutaway');
+  }
+  cutaway.dispose();assert.equal(disposed,shells.length*2,'Every temporary fitting finish is disposed exactly once');
+ }
 
- reports.push({mission:id,wheels:count,wheelMeshes:meshes,wheelTriangles:triangles});
+ let totalMeshes=0,totalTriangles=0;root.traverse(o=>{if(o.isMesh){totalMeshes++;totalTriangles+=(o.geometry.index?.count??o.geometry.attributes.position.count)/3;}});
+ reports.push({mission:id,wheels:count,wheelMeshes:meshes,wheelTriangles:triangles,totalMeshes,totalTriangles});
  const geometries=new Set(),paints=new Set(Object.values(paint));root.traverse(o=>{if(o.geometry)geometries.add(o.geometry);for(const m of Array.isArray(o.material)?o.material:[o.material])if(m)paints.add(m);});geometries.forEach(g=>g.dispose());paints.forEach(m=>m.dispose());
 }
-console.log('Rebuild geometry: carrier fitted wipers/mirrors/open tow eyes/layered optics; wheel contacts/cooling/budgets and inspection restoration PASS');
+console.log('Rebuild geometry: thin formed guards, actual roof intake apertures/blade supports, sloped service covers, welded-joint contact, connected mudflaps, fitted exterior optics; wheel contacts/cooling/budgets and inspection restoration PASS');
 console.log(JSON.stringify(reports));
 `,resolveDir:fileURLToPath(new URL('../',import.meta.url)),sourcefile:'realism-rebuild-test.mjs'},bundle:true,write:false,platform:'node',format:'esm',nodePaths:[fileURLToPath(new URL('../samples/threejs-recovery/node_modules',import.meta.url))]});
 try{await import('data:text/javascript;base64,'+Buffer.from(result.outputFiles[0].text).toString('base64'));}catch(error){console.error(error.name+': '+error.message);process.exitCode=1;}

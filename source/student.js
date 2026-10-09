@@ -76,7 +76,7 @@ function saveState(){if(recoveryBlocked)return false;if(!state.sessionCode)retur
 
 function restoreState(){
  const stored=SEA_STORE.read(STORE_KEY);if(!stored.ok){storageFailed=true;return false}const raw=stored.raw;if(!raw)return false;
- try{must(raw.length<=MAX_BACKUP_CHARS);const x=validateStudentSave(JSON.parse(raw));state=x;lang=x.lang;return true}catch{recoveryBlocked=true;storageNotice('common.badRecovery');return false}
+ try{must(raw.length<=MAX_BACKUP_CHARS);const x=SEADomain.studentPrepareRestore(state,JSON.parse(raw)).next;state=x;lang=x.lang;return true}catch{recoveryBlocked=true;storageNotice('common.badRecovery');return false}
 }
 let pendingBackupImport=null,backupImportGeneration=0,backupStatusKey=null;
 function backupStatus(key){backupStatusKey=key;const el=$('#backupStatus');if(el){el.textContent=t(key);el.classList.remove('hidden')}}
@@ -93,27 +93,28 @@ function exportBackup(){
  }catch{backupStatus('backup.failed')}
 }
 function commitBackupImport(token){
- const pending=pendingBackupImport;if(!pending||pending.token!==token)return false;
+ const pending=pendingBackupImport;if(!pending||pending.token!==token||token!==backupImportGeneration)return false;
+ let prepared;try{prepared=SEADomain.studentPrepareRestore(state,pending.candidate)}catch{pendingBackupImport=null;backupStatus('backup.invalid');return false}
  if(!seaConfirmGate('backup-import-'+token,t('backup.confirmStudent'),()=>commitBackupImport(token)))return false;
- if(state!==pending.original||JSON.stringify(state)!==pending.before){pendingBackupImport=null;backupStatus('backup.changed');return false}
- if(state.sessionCode){
-  const previous=makeBackup('STUDENT',state);
+ try{if(state!==pending.original||SEADomain.studentRestoreFingerprint(state)!==pending.before){pendingBackupImport=null;backupStatus('backup.changed');return false}}catch{pendingBackupImport=null;backupStatus('backup.changed');return false}
+ if(prepared.previous){
+  let previous;try{previous=makeBackup('STUDENT',prepared.previous)}catch{pendingBackupImport=null;backupStatus('backup.failed');return false}
   try{sessionStorage.setItem(STORE_KEY+'_PRE_IMPORT',previous)}catch{}
   try{saveBackupDownload(previous,'pre-import')}catch{pendingBackupImport=null;backupStatus('backup.failed');return false}
  }else if(recoveryBlocked){
   try{const raw=sessionStorage.getItem(STORE_KEY);if(raw){const rescue=JSON.stringify({format:'SEA-GAME-RECOVERY-RESCUE',version:1,role:'STUDENT',raw});try{sessionStorage.setItem(STORE_KEY+'_PRE_IMPORT_RAW',rescue)}catch{}saveBackupDownload(rescue,'recovery-pre-import')}}catch{pendingBackupImport=null;backupStatus('backup.failed');return false}
  }
- state=pending.candidate;pendingBackupImport=null;lang=state.lang;recoveryBlocked=false;storageFailed=false;
+ state=prepared.next;pendingBackupImport=null;lang=state.lang;recoveryBlocked=false;storageFailed=false;
  const saved=saveState();$('#sessionInput').value=state.sessionCode;populateTeamSelect(state.sessionCode);$('#teamSelect').value=String(state.teamId);
  phase(state.phase);renderAll();backupStatus(saved?'backup.imported':'backup.storageFailed');return true;
 }
 async function readBackupFile(file){
  const token=++backupImportGeneration;pendingBackupImport=null;if(!file)return;
  if(file.size>MAX_BACKUP_BYTES)return backupStatus('backup.tooLarge');
- const original=state,before=JSON.stringify(state);
+ const original=state;let before;try{before=SEADomain.studentRestoreFingerprint(state)}catch{return backupStatus('backup.invalid')}
  try{
   const raw=await file.text();if(token!==backupImportGeneration)return;
-  if(state!==original||JSON.stringify(state)!==before)return backupStatus('backup.changed');
+  if(state!==original||SEADomain.studentRestoreFingerprint(state)!==before)return backupStatus('backup.changed');
   const candidate=parseBackup(raw,'STUDENT',validateStudentSave,MAX_BACKUP_CHARS);
   pendingBackupImport={token,candidate,before,original};
   commitBackupImport(token);
@@ -121,21 +122,20 @@ async function readBackupFile(file){
 }
 function restorePreviousBackup(){
  const token=++backupImportGeneration;pendingBackupImport=null;
- try{const raw=sessionStorage.getItem(STORE_KEY+'_PRE_IMPORT');if(!raw){backupStatus('backup.noPrevious');return false}const candidate=parseBackup(raw,'STUDENT',validateStudentSave,MAX_BACKUP_CHARS);pendingBackupImport={token,candidate,before:JSON.stringify(state),original:state};return commitBackupImport(token)}
+ try{const before=SEADomain.studentRestoreFingerprint(state),raw=sessionStorage.getItem(STORE_KEY+'_PRE_IMPORT');if(!raw){backupStatus('backup.noPrevious');return false}const candidate=parseBackup(raw,'STUDENT',validateStudentSave,MAX_BACKUP_CHARS);pendingBackupImport={token,candidate,before,original:state};return commitBackupImport(token)}
  catch{backupStatus('backup.invalid');return false}
 }
 function resetClosedSession(before,original){
- if(state!==original||state.phase!=='closed'||JSON.stringify(state)!==before){backupStatus('backup.changed');return false}
- let previous;try{previous=makeBackup('STUDENT',state)}catch{backupStatus('backup.failed');return false}
+ try{if(state!==original||SEADomain.studentRestoreFingerprint(state)!==before){backupStatus('backup.changed');return false}}catch{backupStatus('backup.changed');return false}
+ let prepared,previous;try{prepared=SEADomain.studentPrepareClosedReset(state);previous=makeBackup('STUDENT',prepared.previous)}catch{backupStatus('backup.failed');return false}
  let storageIssue=false;try{sessionStorage.setItem(STORE_KEY+'_PRE_IMPORT',previous)}catch{storageIssue=true}
  try{saveBackupDownload(previous,'pre-reset')}catch{backupStatus('backup.failed');return false}
  try{sessionStorage.removeItem(STORE_KEY)}catch{storageIssue=true}
- const language=state.lang;state={phase:'setup',schema:3,lang:language,vehicleConfirmed:false,lockedMission:null,sessionCode:null,teamCount:0,teamId:null,team:null,round:0,lot:0,currentCard:null,plan:'',planBaseline:null,risks:'',maxWtpCents:85000000,scratch:{},profitMode:'AMOUNT',profitInput:'250000',profitCents:25000000,practiceWon:false};
- lang=language;recoveryBlocked=false;storageFailed=storageIssue;$('#sessionInput').value='';$('#teamSelect').innerHTML='<option value="">-</option>';$('#joinStatus').className='notice info';$('#joinStatus').textContent=t('setup.waiting');phase('setup');renderAll();backupStatus('backup.exported');return true;
+ state=prepared.next;lang=state.lang;recoveryBlocked=false;storageFailed=storageIssue;$('#sessionInput').value='';$('#teamSelect').innerHTML='<option value="">-</option>';$('#joinStatus').className='notice info';$('#joinStatus').textContent=t('setup.waiting');phase('setup');renderAll();backupStatus('backup.exported');return true;
 }
 function startNewSession(){
- if(state.phase!=='closed'||!state.sessionCode)return false;
- const original=state,before=JSON.stringify(state);
+ try{SEADomain.studentPrepareClosedReset(state)}catch{backupStatus('backup.failed');return false}
+ const original=state,before=SEADomain.studentRestoreFingerprint(state);
  if(!seaConfirmGate('new-session',t('closed.newConfirm'),()=>resetClosedSession(before,original)))return false;
  return resetClosedSession(before,original);
 }

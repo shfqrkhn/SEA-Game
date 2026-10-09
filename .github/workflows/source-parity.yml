@@ -46,6 +46,7 @@ jobs:
       - run: node tools/test-auction-controls-rebuild.mjs
       - run: node tools/test-student-controls-rebuild.mjs
       - run: node tools/test-edit-commands-rebuild.mjs
+      - run: node tools/test-restore-commands-rebuild.mjs
       - run: node tools/test-interface-rebuild.mjs
       - run: node tools/test-realism-rebuild.mjs
       - run: node tools/test-single-html.mjs

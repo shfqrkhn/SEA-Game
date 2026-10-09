@@ -16,3 +16,4 @@ export * from './setup-commands';
 export * from './auction-controls';
 export * from './student-controls';
 export * from './edit-commands';
+export * from './restore-commands';
