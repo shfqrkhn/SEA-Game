@@ -16,6 +16,8 @@ Current primary-source decisions: use bounded on-demand rendering and resize onl
 
 Recovery decisions: follow the [HTML storage contract](https://html.spec.whatwg.org/multipage/webstorage.html#the-sessionstorage-attribute) through an injected storage port; storage access/set failures cannot stop in-memory play. Cache a bounded availability probe, preserve its prior reserved value, skip unchanged snapshots and perform no background writes. [TypeScript narrowing](https://www.typescriptlang.org/docs/handbook/2/narrowing.html) informs explicit unknown-input validation. Imports remain inert bounded JSON with role/schema/session binding before reconstruction. Runtime tests must preserve stable purchase references independent of JSON key order and never execute metadata serializer/accessor hooks to compare identity.
 
+Export a bounded passive JSON snapshot without serialization/accessor hooks or input mutation; reject cycles and excessive structure rather than truncating. Normalize equivalent accepted session-code casing consistently in envelope, copied payload and role reconstruction. Preserve bilingual notes, canonical purchases and privacy through migration/round trips; genuine session/role/rules/deck/schema mismatches still reject.
+
 ## Outcome, scope and completion
 
 The game supports a facilitator-led systems-engineering classroom exercise: plan for a mission, compare capabilities/costs, participate in a manual auction, reconcile a build, submit a profitable bid and explain the engineering tradeoffs. The instructor owns authoritative sales/results; students retain private plans/local records. There is no automatic synchronization, backend, account, telemetry or operational equipment certification.

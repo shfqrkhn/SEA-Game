@@ -65,8 +65,8 @@ function validateStudentSave(x){
  must(validCents(x.maxWtpCents)&&validCents(x.profitCents)&&['AMOUNT','PERCENT'].includes(x.profitMode)&&typeof x.profitInput==='string'&&x.profitInput.length<=20);addCents(tm.cost,x.profitCents);
  must(x.scratch&&typeof x.scratch==='object'&&!Array.isArray(x.scratch)&&Object.keys(x.scratch).length<=70);
  for(const[key,v]of Object.entries(x.scratch))must(/^[1-7]-(10|[1-9])$/.test(key)&&hasOnlyKeys(v,['wtp','note'])&&Object.keys(v).length===2&&typeof v.wtp==='string'&&v.wtp.length<=20&&typeof v.note==='string'&&v.note.length<=600);
- if(x.currentCard){const c=cardAt(x.currentCard.id,x.round+1,x.lot+1);must(x.currentCard.instance===c.instance);x.currentCard=c}
- return {...x,team:tm,vehicleChangeNotice:x.vehicleChangeNotice===true};
+ let currentCard=x.currentCard;if(currentCard){const c=cardAt(currentCard.id,x.round+1,x.lot+1);must(currentCard.instance===c.instance);currentCard=c}
+ return {...x,sessionCode:cfg.code,team:tm,currentCard,vehicleChangeNotice:x.vehicleChangeNotice===true};
 }
 function calculateDraftProfit(mode,input){
  const p=mode==='AMOUNT'?parseAmount(input):profitFromBps(state.team.cost,parsePercentBps(input));addCents(state.team.cost,p);return p;

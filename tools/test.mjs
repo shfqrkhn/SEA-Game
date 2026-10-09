@@ -1146,6 +1146,38 @@ assert.throws(()=>instructorValidator(unknownLedgerField),/invalid-state/,'Unkno
 const studentValidator=runInNewContext(sharedEngineSource+'\n'+extractFunction(studentSource,'validateStudentSave')+'\nvalidateStudentSave');
 const studentTeam={id:1,mission:'COMBAT',lockedMission:null,totals:{CAP:0,MOB:0,FP:0,PRO:0,COM:0,SA:0,REC:0,MC:0},cost:0,purchases:[],purchasesByRound:Array(7).fill(0),profit:0,submitted:false};
 const studentSave={schema:3,phase:'practice',lang:'fr',vehicleConfirmed:false,lockedMission:null,sessionCode:'SEA3-T2-0123456789ABCDEF',teamCount:2,teamId:1,team:studentTeam,round:0,lot:0,currentCard:null,plan:'fixture plan',planBaseline:null,risks:'fixture risk',maxWtpCents:85000000,scratch:{},profitMode:'AMOUNT',profitInput:'250000',profitCents:25000000,practiceWon:true};
+// Valid import normalization must return canonical presentation data without editing source bytes.
+const canonicalCurrentCard=JSON.parse(JSON.stringify(acquisitionRules.cardAt('CAP-A',1,1)));
+const currentCardInput=structuredClone({...studentSave,phase:'auction',practiceWon:false,lockedMission:'COMBAT',team:{...studentTeam,lockedMission:'COMBAT'},currentCard:{...canonicalCurrentCard,title:{en:'altered display',fr:'affichage modifié'},e:{CAP:999},start:1}});
+const currentCardInputBefore=JSON.stringify(currentCardInput),canonicalCardImport=studentValidator(currentCardInput);
+assert.deepEqual(JSON.parse(JSON.stringify(canonicalCardImport.currentCard)),canonicalCurrentCard,'Actual student validator rebuilds active card display metadata from approved catalog');
+assert.equal(JSON.stringify(currentCardInput),currentCardInputBefore,'Valid current-card normalization cannot mutate the imported snapshot');
+const lowerCaseStudent=structuredClone({...studentSave,phase:'build',practiceWon:false,lockedMission:'COMBAT',team:{...studentTeam,lockedMission:'COMBAT'},plan:'bilingual plan / plan bilingue',planBaseline:'approved baseline / référence approuvée',risks:'private risk / risque privé',scratch:{'1-1':{wtp:'350000',note:'private decision / décision privée'}}});
+acquisitionRules.acquire(lowerCaseStudent.team,acquisitionRules.cardAt('CAP-A',1,1),35000000);
+const lowerCaseInstructor=currentAuctionSave({...currentSaleEntry,reason:'verified correction / correction vérifiée'},1,transactionCard.start);
+for(const [role,snapshot,validator]of [['INSTRUCTOR',lowerCaseInstructor,instructorValidator],['STUDENT',lowerCaseStudent,studentValidator]]){
+ const canonicalCode='SEA3-T2-0123456789ABCDEF',candidate=structuredClone({...snapshot,sessionCode:'sea3-t2-0123456789abcdef'}),before=JSON.stringify(candidate);
+ const normalized=validator(candidate);
+ assert.equal(normalized.sessionCode,canonicalCode,role+' actual validator canonicalizes legitimate lowercase session identity');
+ assert.equal(JSON.stringify(candidate),before,role+' lowercase save normalization leaves imported bytes untouched');
+ const file=backupApi.makeBackup(role,candidate),envelope=JSON.parse(file);
+ assert.equal(JSON.stringify(candidate),before,role+' backup export does not mutate lowercase input');
+ assert.equal(envelope.sessionCode,canonicalCode);assert.equal(envelope.state.sessionCode,canonicalCode,role+' backup binds copied payload and header to identical canonical code');
+ for(const [header,payload]of [[canonicalCode,canonicalCode],[canonicalCode.toLowerCase(),canonicalCode],[canonicalCode,canonicalCode.toLowerCase()],[canonicalCode.toLowerCase(),canonicalCode.toLowerCase()]]){
+  const compatible=structuredClone(envelope);compatible.sessionCode=header;compatible.state.sessionCode=payload;
+  const restored=backupApi.parseBackup(JSON.stringify(compatible),role,validator);
+  assert.equal(restored.sessionCode,canonicalCode,role+' compatible header/payload casing preserves session identity');
+  if(role==='INSTRUCTOR'){
+   assert.equal(restored.ledger[0].reason,'verified correction / correction vérifiée','Instructor correction note survives canonical-code backup round trip');
+   assert.deepEqual(JSON.parse(JSON.stringify(restored.teams.map(team=>team.purchases))),JSON.parse(JSON.stringify(snapshot.teams.map(team=>team.purchases))),'Instructor purchases survive case-normalized round trip');
+  }else{
+   for(const key of ['plan','planBaseline','risks','scratch'])assert.deepEqual(JSON.parse(JSON.stringify(restored[key])),snapshot[key],'Student '+key+' survives canonical-code backup round trip');
+   assert.equal(restored.team.cost,35000000);assert.equal(restored.team.purchases[0].id,'CAP-A');assert.equal(restored.team.purchases[0].paid,35000000);assert.equal(restored.team.totals.CAP,6);assert.equal(restored.team.totals.MOB,-10);
+   assert.deepEqual(JSON.parse(JSON.stringify(restored.team.purchases)),JSON.parse(JSON.stringify(snapshot.team.purchases)),'Student complete purchases survive case-normalized round trip');
+   for(const field of ['market','marketSeed','teams','ledger'])assert.equal(Object.hasOwn(restored,field),false,'Canonical-code round trip preserves student privacy');
+  }
+ }
+}
 // R02/R10, T03/T11: all 16 tutorial flag combinations have an independent allowed-state oracle.
 const practiceRecoveryBase={...currentAuctionSave(),phase:'practice',vehiclesLocked:false,teams:[{...studentTeam},{...studentTeam,id:2,mission:'RECCE'}]};
 for(let mask=0;mask<16;mask++){

@@ -8,6 +8,24 @@ const state={schema:3,sessionCode:'SEA3-T2-0123456789ABCDEF',phase:'planning',la
 const student=d.makeBackup('STUDENT',state,'3.0.0');
 assert.deepEqual(JSON.parse(student),{format:'SEA-GAME-BACKUP',version:1,appVersion:'3.0.0',ruleset:'STANDARD',deck:'synthetic-v1',schema:3,sessionCode:state.sessionCode,role:'STUDENT',state});
 assert.deepEqual(d.parseBackup(student,'STUDENT',x=>({...x,rebuilt:true})),{...state,rebuilt:true});
+const lower={...state,sessionCode:state.sessionCode.toLowerCase()};
+const lowerBefore=JSON.stringify(lower),lowerBackup=d.makeBackup('STUDENT',lower,'3.0.0');
+assert.equal(JSON.parse(lowerBackup).state.sessionCode,state.sessionCode,'Accepted lowercase session identity normalizes in both envelope and payload');
+assert.equal(d.parseBackup(lowerBackup,'STUDENT',x=>x).sessionCode,state.sessionCode);
+assert.equal(JSON.stringify(lower),lowerBefore,'Export never changes the supplied state');
+const legacyLower={...JSON.parse(student),sessionCode:lower.sessionCode,state:lower};
+assert.equal(d.parseBackup(JSON.stringify(legacyLower),'STUDENT',x=>x).sessionCode,state.sessionCode,'Existing consistent lowercase schema3 envelopes remain recoverable');
+let hooks=0;
+for(const hostile of [
+ {...state,toJSON(){hooks++;return {...state,marketSeed:'leak'}}},
+ {...state,nested:{get private(){hooks++;return 'secret'}}},
+ {...state,nested:Object.create({toJSON(){hooks++;return 'secret'}})},
+ Object.defineProperty({...state},'schema',{get(){hooks++;return 3},enumerable:true})
+])assert.throws(()=>d.makeBackup('STUDENT',hostile,'4.0.0'),/invalid-state/);
+assert.equal(hooks,0,'Neither export validation nor serialization invokes input hooks');
+const circular={...state};circular.loop=circular;assert.throws(()=>d.makeBackup('STUDENT',circular,'4.0.0'),/invalid-state/);
+assert.throws(()=>d.makeBackup('STUDENT',{...state,note:'\u0001'.repeat(90000)},'4.0.0'),/invalid-state/,'Escaped export cannot exceed its import bound');
+const optional={...state,optional:undefined};assert.equal(Object.hasOwn(JSON.parse(d.makeBackup('STUDENT',optional,'4.0.0')).state,'optional'),false,'Optional undefined data follows compatible JSON omission');
 for(const key of ['market','marketSeed','teams','ledger','privateEntry','resultDraft','leader','currentBid']){
  assert.throws(()=>d.makeBackup('STUDENT',{...state,[key]:null},'4.0.0'),/invalid-state/);
  const mislabeled={...JSON.parse(student),state:{...state,[key]:null}};
