@@ -1,0 +1,55 @@
+{
+  "date": "2026-10-09T18:34:00.971Z",
+  "scope": "Exact HTTPS byte readback; not browser/offline/classroom acceptance",
+  "version": "3.6.0",
+  "sourceCommit": "472987924379b11f579d227e6da87aab1579a3bd",
+  "mainMerge": "a31cb50ffed26647972cc0ceda7df9409ebb751e",
+  "pagesRun": 37973942285,
+  "sourcePRRun": 37973619552,
+  "url": "https://shfqrkhn.github.io/SEA-Game/dist/index.html?verify=a31cb50",
+  "bytes": 8176765,
+  "sourceSHA256": "0aca2e9d8d1d5d4df31a080afb3932a84206b312f33c365a0efeac679e22aceb",
+  "hostedSHA256": "0aca2e9d8d1d5d4df31a080afb3932a84206b312f33c365a0efeac679e22aceb",
+  "equal": true,
+  "sourceMainRun": {
+    "id": 37973945413,
+    "status": "success",
+    "matrix": "Windows/Ubuntu; Node22/24"
+  },
+  "browser": {
+    "tool": "Codex built-in browser",
+    "viewport": "1280x720",
+    "scope": "Bounded launcher, notices, role startup/reselection, retained schema3 sessions and selected fitted Troop modes; not a fresh full-game journey",
+    "checks": [
+      "Launcher has zero canvases before role selection",
+      "Embedded owned MIT and Three.js full notice are readable",
+      "Instructor selection starts one canvas and only instructor DOM",
+      "Choose role command performs same-file reload and removes role query",
+      "Student selection starts one canvas with student session input and no instructor team-count control",
+      "Native Enter switches student to French",
+      "Existing instructor session SEA3-T2-85F9EE87E2DEE0DB remains Closed with 70 ledger rows",
+      "Instructor Team2 retains MOB-G/PRO-D; opaque assembled hull and no detached aft cab observed",
+      "Assembled/cutaway/exploded/restored modes exercise same selected Troop build",
+      "Existing student same-session Closed summary preserves8 purchases,cost3900000,score120,profit100.01,bid3900100.01",
+      "Captured warn/error logs empty for retained instructor/student"
+    ],
+    "limits": [
+      "Direct locator click on clipped native language control did not activate; native Enter succeeds. Actual canvas pointer language path not qualified in this slice.",
+      "Initial table-row count selector was inappropriate for DIV ledger rows; DOM-grounded .ledger-row confirms70.",
+      "Screenshots kept in ignored local .artifacts and external archive, not runtime/source distribution."
+    ]
+  },
+  "modelRegression": {
+    "status": "PASS",
+    "scope": "Actual source geometry/game/inspection/interface wrappers; framing, wheel topology, fitted provenance, 42builds/77identities and cab contacts. Not certified dimensional compatibility or full visual acceptance."
+  },
+  "open": [
+    "Actual file:// offline/OS-egress",
+    "Full current-candidate EN/FR/tie/ten-team/timed/reveal journeys",
+    "Device/performance/accessibility",
+    "Complete visual/reference/rights/classroom acceptance",
+    "Release/lifecycle/handover acceptance",
+    "Three same-key full product passes"
+  ],
+  "closure": "PRODUCT_RELEASE OPEN0/3"
+}

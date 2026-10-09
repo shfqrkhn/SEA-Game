@@ -14,7 +14,7 @@ Checkpoint 2026-10-09. Canonical requirements: [MPES 1.4.0](MPES.md); exact cont
 
 ## Delivered baseline
 
-3.5.0 source bb6fe53e7c7cea69ad0e693faa5c6367b52296ac; preview996101c091243ab78a5e93dbef4f0382e5f28d59. [Hosted equality](verification/hosted-996101c.json), [actual EN journey](verification/w68-matched-english-journey.json), [fitment fault](verification/w68-selected-team2-build.png), [geometry regression record](verification/model-verification.json). Source CI 37966084371/preview CI 37966100355/Pages 37966099730 succeeded. PR2 externally merged75f818f. These do not qualify3.6.0 or full release.
+3.5.0 source bb6fe53e7c7cea69ad0e693faa5c6367b52296ac; preview996101c091243ab78a5e93dbef4f0382e5f28d59. [Hosted equality](verification/hosted-996101c.json), [actual EN journey](verification/w68-matched-english-journey.json), archived fitted-model fault, [current verification](verification/current.json). Source CI 37966084371/preview CI 37966100355/Pages 37966099730 succeeded. PR2 externally merged75f818f. These do not qualify3.6.0 or full release.
 
 ## Maintenance discipline
 
@@ -25,3 +25,7 @@ Latest integration lead report:3.6.0 bundle/sole HTML regenerated; gameplay-comm
 ## Cleanup integration checkpoint
 
 Cleanup integration: sole-output parity, gameplay/regression and six 70-lot EN/FR/reveal-mode VM journeys, balance, embedded art, single-HTML isolation/CSP/licence fixtures, scene/editor/language/layout, encoding, packet integrity, all model/interface wrappers, repository guard, links/contracts and material-inventory mutations PASS. Expected extra-runtime-file rejection is a negative test. Original tree: 6,988 files / 396,358,560 bytes; maintained tree about 165 files / 17.5 MB including single HTML. Verified local archive precedes removals. Historical Git commits are preserved; working trees exclude explorations. New GitHub CI/hosted/GPU checks pending; file/offline/device/classroom/full acceptance remains OPEN, 0/3.
+
+## Published3.6 maintenance tree
+
+PR3/source4729879/maina31cb50 merged; both four-job CI runs37973619552/37973945413 PASS, Pages37973942285 PASS, exact HTTPS HTML matches. Bounded built-in browser: launcher/isolated roles/notices/reselection/French native Enter/old schema3 sessions/70ledgerrows/exact student totals and fitted Troop modes work; captured warn/error logs empty. Current receipt verification/current.json preserves limits. Historical screenshots/model dumps moved out of maintained GitHub; only compact baseline/current JSON retained. Full product OPEN0/3.

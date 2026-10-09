@@ -2,13 +2,13 @@
 
 Status 2026-10-09: development candidate, full acceptance OPEN, 0/3. Exact delivery/checkpoint: [handover](HANDOVER.md). APP.version is separate from rulesSTANDARD/decksynthetic-v1/schema3/backup-envelope1; version labels do not identify exact bytes or establish acceptance.
 
-## Current delivered 3.5.0
+## Previous baseline 3.5.0
 
 Distinct supported Troop/Command/Reconnaissance rear interiors, Command raised roof, Troop side apertures and Reconnaissance mast/floor supports; installed furniture replaces equivalent baseline items. Student auction puts unknown-card loading before revealed context/private decision/purchase recording. Existing validated commands, prices/effects, manual auction authority, privacy and compatible saves remain intact. Native editor stale state/lot/replacement guards remain from3.4.2.
 
 Fresh actual EN eight-phase/70-position journey and correct eligible COMMAND award are [recorded](verification/w68-matched-english-journey.json), with [exact hosted bytes](verification/hosted-996101c.json). Actual assembled Team2 reveals ghosted hull and an aft upright cab; model/reference fidelity remains rejected. Prior evidence does not qualify changed next-candidate bytes or full FR/devices/rights/classroom acceptance.
 
-## Built compatible candidate 3.6.0
+## Current published candidate 3.6.0
 
 One primary dist/index.html selecting either isolated EN/FR role, fully embedded shared engine/Three/art and accessible licences; deliberate reload returns to role choice. Fitted-component adapters replace insertion of whole showroom cards: opaque assembled skins, CAP furniture within retained carrier, PRO integrated cab/conforming protection, MOB retained axles/enclosed engine. All purchased effects/IDs stay authoritative even when one physical representative per family is displayed.
 
@@ -31,3 +31,5 @@ Conservez des sauvegardes privées par rôle, vérifiez les téléchargements av
 ## Accepted release record
 
 Before activation bind exact source/dist/preview/packet hashes, rules/deck/schema, actual CI/environment/acceptance and deployed download/reopen evidence, release date, responsible maintainer/support and verified recovery/rollback. Never fill these facts from a historical receipt. [MPES](MPES.md) and [release operations](RELEASE_OPERATIONS.md) govern full release.
+
+PR3 merged3.6.0 at a31cb50. Four-job source/main CI, Pages and exact hosted bytes pass; bounded native-browser roles/reselection/notices/compatible-session/Troop modes recorded in [current verification](verification/current.json). Full file/offline/device/rights/classroom and whole closure remain open.

@@ -1,5 +1,5 @@
-# Current delivered-candidate verification
+# Current maintenance verification
 
-Compact actual maintenance evidence for delivered 3.5.0; not experiments or full acceptance. hosted-996101c.json binds exact hosted/source bytes; w68-matched-english-journey.json records fresh EN eight-phase/70-position UI outcomes and its six screenshots; model-verification.json records bounded source geometry checks. The Team2 screenshot preserves a known material fitted-model failure.
+current.json records exact3.6.0 hosted bytes, successful PR/main four-job CI, bounded built-in-browser role/notice/reselection/compatible-session/model checks and limits. It does not certify file/offline/OS-egress, full device/classroom/rights acceptance or whole closure.
 
-These identities precede pending3.6.0 source integration. Do not reuse them as qualification for changed bytes. Replace/retain only useful current verification at delivery milestones; detailed run logs and candidate packets remain local under ignored .artifacts/. Product closure OPEN, 0/3.
+hosted-996101c.json and w68-matched-english-journey.json retain the compact3.5.0 rollback/independent English outcome baseline. Their screenshots and old detailed model dumps are archived locally/in historical Git commits; screenshot filenames inside the historical journey receipt identify captures, not current repository dependencies. Future local run output belongs in ignored .artifacts, not this directory.
