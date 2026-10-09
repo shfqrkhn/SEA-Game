@@ -1,40 +1,42 @@
 {
-  "date": "2026-10-09T21:52:53.786Z",
-  "scope": "Exact HTTPS bytes, actual candidate/main four-job CI, EN/FR closed72-entry ledger recovery and bounded Troop GPU inspection plus retained French student planning; not full release acceptance",
-  "version": "4.0.0-dev.7",
-  "sourceCommit": "f6de55556eedfc3454504b91ffe71de8998e058b",
-  "mainMerge": "d0e7d44d4f97f035f8a51fbb7f72fc6018683d95",
-  "pagesRun": 37995641177,
-  "sourcePRRun": 37995261048,
-  "url": "https://shfqrkhn.github.io/SEA-Game/dist/index.html?v=d0e7d44",
-  "bytes": 8224484,
-  "sourceSHA256": "11c7ea742b50974860499391547d1cafb2c5a4d9eda93ce66b1cc2de0b5669e8",
-  "hostedSHA256": "11c7ea742b50974860499391547d1cafb2c5a4d9eda93ce66b1cc2de0b5669e8",
+  "date": "2026-10-09T22:19:07.728Z",
+  "scope": "Exact HTTPS bytes, candidate/main four-job CI, Three.js French planning editing/navigation, synthetic file import/cancel/reload and bounded instructor72-entry recovery/Troop GPU inspection; not full release acceptance",
+  "version": "4.1.0-dev.1",
+  "sourceCommit": "ad3335fc0cb50e92290547d404f5973396482ed1",
+  "mainMerge": "e3ab763d3142783e9dc68a6fdb83fe988ef37228",
+  "pagesRun": 37997737244,
+  "sourcePRRun": 37997335294,
+  "url": "https://shfqrkhn.github.io/SEA-Game/dist/index.html?v=e3ab763",
+  "bytes": 8243885,
+  "sourceSHA256": "7326714037db1a5ce268f994b9ca2bb663e678ca2813a987c01e0e42e94117f2",
+  "hostedSHA256": "7326714037db1a5ce268f994b9ca2bb663e678ca2813a987c01e0e42e94117f2",
   "equal": true,
   "sourceMainRun": {
-    "id": 37995641504,
+    "id": 37997737838,
     "status": "success",
     "matrix": "Windows/Ubuntu; Node22/24; all four jobs"
   },
   "browser": {
     "tool": "Codex built-in browser",
-    "scope": "Fresh actual Codex built-in-browser dev.7 recovery of the closed two-team instructor session retains all72ledger entries. At1280x720 the grouped Current ledger spans7pages instead of dev.6 40; final page reached through actual game controls, EN/FR round/lot/card/result/price context remains intact. Front hardware, actual drag rotation with changed shadow, exploded/cutaway and assembled restoration/reload observed on the retained Troop build. French student session/mission/bilingual notes/maxWtp850000 and unconfirmed vehicle restore. Both warning/error consoles empty. Ignored local screenshots .artifacts/rebuild-4-dev7-ledger.png, rebuild-4-dev7-front.png and rebuild-4-dev7-exploded.png. This is bounded recovery/GPU smoke, not a fresh dev.7 full70-lot journey, all77model/device/fidelity/classroom acceptance or file/offline/OS-egress proof.",
+    "scope": "Fresh actual built-in-browser checks on exact4.1.0-dev.1 at1280x720: Three.js French planning modal, click-to-caret(native offset7), multiline French/emoji/two-space draft, Next/Previous field navigation, whole-dollar850000-to900000 commit and reload; one-click RECCE/TROOP selection keeps notes and clears confirmation. A separate verified empty student tab imports the local synthetic schema3 backup through the real file chooser: Cancel preserves setup; Confirm restores French planning/mission/session/private notes/maxWtp850000; reload retains it. No predecessor download was needed for the empty tab. Current instructor startup retains all72closed ledger entries, including SALE/VOID/replacement; actual Troop rotation changes its shadow, exploded/cutaway/assembled restoration observed. All three warning/error consoles empty. Captures/912byte synthetic fixture stay ignored in current/.artifacts. Delayed immediate observations settle on a later screenshot; no application state or test-hook injection. These are bounded cases, not a fresh full70-lot4.1 journey, all77model visual acceptance, mobile/IME/assistive or file/offline/OS-egress proof.",
     "checks": [
-      "Exact candidate version4.0.0-dev.7 in both retained roles",
-      "Closed instructor72-entry ledger recovery and reload",
-      "Actual grouped ledger7pages at1280x720; final page reachable",
-      "EN/FR labelled event context and append order retained",
-      "Troop front hardware/actual rotation and changed shadow/exploded/cutaway/assembled restoration",
-      "French student private bilingual notes/session/mission/maxWtp retained",
-      "Both warning/error consoles empty"
+      "Exact4.1.0-dev.1 both retained roles and separate import tab",
+      "French Three.js modal/click-to-caret/Unicode/newlines/whitespace",
+      "Actual Next/Previous, whole-dollar commit900000 and reload",
+      "One-click mission selection retains private notes/unconfirmed state",
+      "Real local file chooser, Cancel/Confirm into empty setup, French import reload",
+      "Current startup recovers complete72-entry instructor ledger",
+      "Troop actual rotation/changed shadow/exploded/cutaway/assembled restoration",
+      "All three warning/error consoles empty"
     ],
-    "localScreenshot": ".artifacts/rebuild-4-dev7-ledger.png",
+    "localScreenshot": ".artifacts/rebuild-4-1-editor.png",
     "limits": [
-      "Prior dev.6 full70-lot instructor journey remains historical, not inherited dev.7 proof",
-      "Bounded Troop inspection; all77model GPU/reference fidelity remains open",
-      "No file/offline/OS egress, device/assistive, rights/classroom acceptance",
-      "Delayed canvas observations require settled screenshot; no hidden state/test-hook injection",
-      "Ignored local captures; no runtime/repository dependency"
+      "Bounded cases only; no fresh current70-lot journey",
+      "Old dev.6 journey/dev.7 GPU checks remain historical",
+      "No populated-session export/replacement/download qualification",
+      "All77model fidelity/device/IME/assistive/performance/rights/classroom acceptance open",
+      "No file:// offline or OS-egress proof",
+      "Ignored local captures/fixture, no runtime dependency"
     ]
   },
   "priorCandidateBrowser": {
@@ -57,8 +59,9 @@
     "status": "success"
   },
   "open": [
-    "Retained reset/import/presentation/editor/dialog coordination and coherent whole-GUI rewrite",
-    "Complete current-candidate student/EN-FR/tie/ten-team/reveal/recovery/import/privacy browser journeys",
+    "Launcher/remaining dialog/presentation navigation and coherent whole-GUI qualification",
+    "Complete current-candidate student/instructor EN-FR/tie/ten-team/reveal/recovery/privacy browser journeys",
+    "Populated-session backup download/replacement/migration/corruption qualification",
     "Actual file:// offline and separately observed OS egress",
     "Devices, performance, accessibility and complete reference-matched visual quality",
     "Rights, content, classroom and release/operator lifecycle acceptance",
@@ -155,5 +158,40 @@
     "interimRun": 37994798288,
     "interimStatus": "success all4",
     "followup": "Full-assembly opaque-ray RED found solid gasket hid reflector; formed actual openings corrected all5 carriers, final f6de555 fresh CI37995261048 all4PASS"
-  }
+  },
+  "historicalDev7": {
+    "version": "4.0.0-dev.7",
+    "sourceCommit": "f6de55556eedfc3454504b91ffe71de8998e058b",
+    "mainMerge": "d0e7d44d4f97f035f8a51fbb7f72fc6018683d95",
+    "sha256": "11c7ea742b50974860499391547d1cafb2c5a4d9eda93ce66b1cc2de0b5669e8",
+    "browser": {
+      "tool": "Codex built-in browser",
+      "scope": "Fresh actual Codex built-in-browser dev.7 recovery of the closed two-team instructor session retains all72ledger entries. At1280x720 the grouped Current ledger spans7pages instead of dev.6 40; final page reached through actual game controls, EN/FR round/lot/card/result/price context remains intact. Front hardware, actual drag rotation with changed shadow, exploded/cutaway and assembled restoration/reload observed on the retained Troop build. French student session/mission/bilingual notes/maxWtp850000 and unconfirmed vehicle restore. Both warning/error consoles empty. Ignored local screenshots .artifacts/rebuild-4-dev7-ledger.png, rebuild-4-dev7-front.png and rebuild-4-dev7-exploded.png. This is bounded recovery/GPU smoke, not a fresh dev.7 full70-lot journey, all77model/device/fidelity/classroom acceptance or file/offline/OS-egress proof.",
+      "checks": [
+        "Exact candidate version4.0.0-dev.7 in both retained roles",
+        "Closed instructor72-entry ledger recovery and reload",
+        "Actual grouped ledger7pages at1280x720; final page reachable",
+        "EN/FR labelled event context and append order retained",
+        "Troop front hardware/actual rotation and changed shadow/exploded/cutaway/assembled restoration",
+        "French student private bilingual notes/session/mission/maxWtp retained",
+        "Both warning/error consoles empty"
+      ],
+      "localScreenshot": ".artifacts/rebuild-4-dev7-ledger.png",
+      "limits": [
+        "Prior dev.6 full70-lot instructor journey remains historical, not inherited dev.7 proof",
+        "Bounded Troop inspection; all77model GPU/reference fidelity remains open",
+        "No file/offline/OS egress, device/assistive, rights/classroom acceptance",
+        "Delayed canvas observations require settled screenshot; no hidden state/test-hook injection",
+        "Ignored local captures; no runtime/repository dependency"
+      ]
+    }
+  },
+  "dev41FirstFailures": [
+    "Missing Three.js editor viewport/click-to-caret helper; meaningful RED then GREEN",
+    "320x180 option pager overlapped; layout corrected without weakening bounds",
+    "Malformed live cost queued reset confirmation; pure validated preparations reject before effects",
+    "Old import reader invoked toJSON twice; passive validated fingerprint invokes zero hooks",
+    "Command seam crossed raised roof; contact oracle drove corrected routing",
+    "Integration fixture parsed trusted authored JavaScript initializer as JSON; corrected fixture VM preserves startup/maximum-save oracles"
+  ]
 }

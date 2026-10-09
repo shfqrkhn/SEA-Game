@@ -4,7 +4,7 @@
 
 Both EN/FR roles, eight classroom phases, a 70-card auction and six mission vehicles run from one embedded Three.js HTML. Classroom handoffs remain manual; no backend, synchronization or account. Export important work as role-specific JSON. Do not enter sensitive or operational information.
 
-Published staged rebuild: **4.0.0-dev.7**; local candidate: **4.1.0-dev.1**; rollback: **3.6.0**. Full offline/device/accessibility/rights/classroom acceptance and three-pass release closure remain open. Start maintenance with [current handover](docs/HANDOVER.md).
+Published staged rebuild: **4.1.0-dev.1**; rollback: **3.6.0**. Full offline/device/accessibility/rights/classroom acceptance and three-pass release closure remain open. Start maintenance with [current handover](docs/HANDOVER.md).
 
 ## Operate and maintain
 
@@ -36,7 +36,7 @@ The full check list is .github/workflows/source-parity.yml. Generators skip unch
 
 Use modular source/ for rules, controllers, presentation and geometry. Canonical assets/v1/ SVGs are embedded. Preserve rules/prices/schema-3 saves. One renderer owner and native/semantic equivalents support accessibility and editing.
 
-The clean rebuild is a 4.0.0 development candidate; 3.6.0 remains the rollback baseline. Fresh strict TypeScript domain source in source/domain drives canonical rules, immutable team transactions, session/phase policies and bounded backup/storage contracts; tools/build-domain.mjs updates only the marked payload in the actual role engine. Whole-role command/ledger/save validators and release qualification remain open. All new work remains within D:\VSCode\SEA-Game; local preserved references and scratch outputs share ignored current/.artifacts rather than additional folders.
+The clean rebuild is a 4.1.0 development candidate; 3.6.0 remains the rollback baseline. Fresh strict TypeScript domain source in source/domain drives canonical rules, immutable team transactions, session/phase policies and bounded backup/storage contracts; tools/build-domain.mjs updates only the marked payload in the actual role engine. Whole-role command/ledger/save validators and release qualification remain open. All new work remains within D:\VSCode\SEA-Game; local preserved references and scratch outputs share ignored current/.artifacts rather than additional folders.
 
 Finite optional source/evidence packets use ignored .artifacts/: node tools/package.mjs --output .artifacts/NEW_NAME. Retain the printed integrity key; a packet is not accepted release evidence. Actual browser/file/offline/egress/device checks differ from Node/VM fixtures.
 
