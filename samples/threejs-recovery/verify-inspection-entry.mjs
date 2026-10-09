@@ -4,6 +4,50 @@ import {prepareInspection,prepareCutaway,fitPerspective,fitDirectionalShadow} fr
 import {createMission,createPart,createConfiguration,MISSION_IDS,MODEL_IDS} from '../../source/three/game-models.mjs';
 import {materials,FinishMaterial,SURFACE_PROFILES} from '../../source/three/materials.mjs';
 const finishes=materials();
+// Empty carrier shells used to expose the bare lower-hull slab. Probe the actual
+// assembled rear floor surface rather than merely requiring a furniture name.
+for(const id of ['TROOP','COMMAND','RECCE']){
+ const root=createMission(id);root.updateMatrixWorld(true);const p=new THREE.Vector3(-root.userData.length/2+.65,1.50,0),hit=new THREE.Raycaster(p,new THREE.Vector3(0,-1,0),0,.15).intersectObject(root,true)[0];
+ assert(hit&&Math.abs(hit.point.y-1.439)<1e-6,id+' rear mission floor has an actual supported nonslip surface');
+ const meshes=[];root.traverse(o=>{if(o.isMesh)meshes.push(o);});const named=n=>meshes.filter(o=>o.name===n),floor=named('mission nonslip rear floor insert')[0],carrier=named('mission supported rear floor')[0],hull=root.getObjectByName('lower hull');
+ for(const shoe of named('mission floor hull bearing shoe')){const b=new THREE.Box3().setFromObject(shoe,true),c=b.getCenter(new THREE.Vector3()),ray=new THREE.Raycaster(new THREE.Vector3(c.x,1.50,c.z),new THREE.Vector3(0,-1,0),0,.20);const hullFace=ray.intersectObject(hull,false)[0];assert(hullFace&&b.containsPoint(hullFace.point),id+' rear floor shoe spans actual lower hull bearing face');const bottom=new THREE.Raycaster(new THREE.Vector3(c.x,1.35,c.z),new THREE.Vector3(0,1,0),0,.10).intersectObject(carrier,false)[0];assert(bottom&&b.containsPoint(bottom.point),id+' shoe meets actual rear-floor lower face');}
+ for(const name of ['crew seat bolted floor rail','mission workstation floor foot','mission equipment rack floor rail'])for(const item of named(name)){const b=new THREE.Box3().setFromObject(item,true),c=b.getCenter(new THREE.Vector3()),face=new THREE.Raycaster(new THREE.Vector3(c.x,b.min.y+.006,c.z),new THREE.Vector3(0,-1,0),0,.02).intersectObject(floor,false)[0];assert(face&&Math.abs(face.point.y-b.min.y)<1e-6,id+' '+name+' sits on actual floor insert');}
+ for(const unit of named('mission rack isolated equipment enclosure')){const b=new THREE.Box3().setFromObject(unit,true),c=b.getCenter(new THREE.Vector3()),hit=new THREE.Raycaster(new THREE.Vector3(c.x,b.min.y+.005,c.z),new THREE.Vector3(0,-1,0),0,.025).intersectObjects(named('mission rack supported shelf'),false)[0];assert(hit&&Math.abs(hit.point.y-b.min.y)<1e-6,id+' equipment case sits on real shelf');}
+ for(const foot of named('mission monitor seated foot')){const b=new THREE.Box3().setFromObject(foot,true),c=b.getCenter(new THREE.Vector3()),hit=new THREE.Raycaster(new THREE.Vector3(c.x,b.min.y+.005,c.z),new THREE.Vector3(0,-1,0),0,.025).intersectObjects(named('mission supported workstation top'),false)[0];assert(hit&&Math.abs(hit.point.y-b.min.y)<1e-6,id+' monitor foot sits on actual desk');}
+ if(id==='COMMAND'){
+  const shells=named('hull shell');assert.equal(new THREE.Raycaster(new THREE.Vector3(0,2.60,0),new THREE.Vector3(0,-1,0),0,.27).intersectObjects(shells,false).length,0,'Command rear cabin has no obsolete low-roof backing');
+  const roofFace=new THREE.Raycaster(new THREE.Vector3(0,3,0),new THREE.Vector3(0,-1,0),0,.4).intersectObjects(shells,false)[0];assert(roofFace&&roofFace.point.y>2.73&&roofFace.point.y<2.76,'Command high roof is real connected shell geometry');
+  assert.equal(new THREE.Raycaster(new THREE.Vector3(-root.userData.length/2-.20,2.1,0),new THREE.Vector3(1,0,0),0,.50).intersectObjects(shells,false).length,0,'Command fitted rear door has actual carrier access aperture');
+ }
+ if(id==='TROOP'){
+  const sideZ=1.3*(.75+(2.08-1.2)*.1/1.16);
+  for(const s of [-1,1])for(let i=0;i<4;i++){const x=-3.45+.765+i*.94,hit=new THREE.Raycaster(new THREE.Vector3(x,2.08,s*2),new THREE.Vector3(0,0,-s),0,2-sideZ+.10).intersectObject(root,true)[0];assert.equal(hit?.object.name,'cab glazing','Troop side windows remain open through outer shell, service panels and inner liner');}
+  const objects=meshes.filter(o=>/troop mission restrained seat|underseat stowage/.test(o.parent.name)||o.name==='troop floor supported underseat stowage');
+  for(const y of [1.55,1.80,2.02])assert.equal(new THREE.Raycaster(new THREE.Vector3(-3.1,y,0),new THREE.Vector3(1,0,0),0,3.7).intersectObjects(objects,false).length,0,'Troop center boarding aisle has no seat or stowage obstruction');
+ }
+ if(id==='RECCE'){
+  const shells=named('hull shell'),axis=new THREE.Raycaster(new THREE.Vector3(-1,2.55,-.48),new THREE.Vector3(0,-1,0),0,.30);assert.equal(axis.intersectObjects(shells,false).length,0,'Recce mast passes through an actual roof aperture');
+  const pole=root.getObjectByName('recce continuous internal mast support'),foot=root.getObjectByName('recce mast floor bearing flange'),b=new THREE.Box3().setFromObject(pole,true),center=foot.getWorldPosition(new THREE.Vector3());const face=new THREE.Raycaster(new THREE.Vector3(center.x,1.55,center.z),new THREE.Vector3(0,-1,0),0,.12).intersectObject(foot,false)[0];assert(face&&b.containsPoint(face.point),'Recce internal mast actually seats into floor flange');
+ }
+}
+// Test actual transformed triangles against the rear floor volume: purchased
+// front power packs cannot be qualified merely by their whole-model bounds.
+const touchesBox=(root,b)=>{let contact=false;root.updateMatrixWorld(true);root.traverse(o=>{if(contact||!o.isMesh)return;const bound=new THREE.Box3().setFromObject(o,true);if(!b.intersectsBox(bound))return;const a=o.geometry.attributes.position,index=o.geometry.index,n=index?index.count:a.count,t=new THREE.Triangle();for(let i=0;i<n;i+=3){for(const[key,j]of [['a',i],['b',i+1],['c',i+2]])t[key].fromBufferAttribute(a,index?index.getX(j):j).applyMatrix4(o.matrixWorld);if(b.intersectsTriangle(t)){contact=true;break;}}});return contact;};
+for(const id of ['TROOP','COMMAND','RECCE'])for(const variant of 'ABCDEFG'){
+ const root=createConfiguration(id,[{id:'MOB-'+variant}]);root.updateMatrixWorld(true);const equipment=root.getObjectByName('MOB-'+variant),floor=root.getObjectByName('mission supported rear floor');assert(equipment&&floor);assert.equal(touchesBox(equipment,new THREE.Box3().setFromObject(floor,true)),false,id+' MOB-'+variant+' must not intersect authored rear-floor volume');
+}
+for(const id of ['TROOP','COMMAND','RECCE']){
+ const cap=createConfiguration(id,[{id:'CAP-A'}]);assert.equal(cap.getObjectByName(id.toLowerCase()+' mission interior'),undefined,'Purchased CAP replaces whole original rear cassette');assert(cap.getObjectByName('CAP-A'));if(id==='COMMAND')assert(cap.getObjectByName('command fitted rear service door'),'Crew module replacement retains carrier access closure');
+ const com=createConfiguration(id,[{id:'COM-A'}]);assert.equal(com.getObjectByName('mission role electronic installation'),undefined,'Purchased COM replaces original electronics');assert(com.getObjectByName('COM-A'));
+ if(id==='TROOP'){const seat=[];com.traverse(o=>{if(o.userData.reservedOriginalRadioZone)seat.push(o);});assert.equal(seat.length,0,'Purchased radio clears the original forward-left Troop seat/stowage zone');}
+}
+for(const id of ['TROOP','COMMAND','RECCE'])for(const variant of 'ABCDEFG'){
+ const root=createConfiguration(id,[{id:'COM-'+variant}]);root.updateMatrixWorld(true);const radio=root.getObjectByName('COM-'+variant),shelf=root.getObjectByName('purchased radio supported carrier shelf'),chairs=[];root.traverse(o=>{if(o.name===id.toLowerCase()+' mission restrained seat')chairs.push(o);});
+ for(const chair of chairs)assert.equal(touchesBox(radio,new THREE.Box3().setFromObject(chair,true)),false,id+' COM-'+variant+' actual radio triangles stay clear of retained baseline seats');
+ const slab=new THREE.Box3().setFromObject(shelf,true),cast=[];radio.traverse(o=>{if(o.isMesh&&o.material.name==='powder coated metal'&&o.geometry.type==='RoundedBoxGeometry')cast.push(o);});assert(cast.length>0);for(const item of cast){const b=new THREE.Box3().setFromObject(item,true),c=b.getCenter(new THREE.Vector3());if(Math.abs(b.min.y-1.51)>.001)continue;const face=new THREE.Raycaster(new THREE.Vector3(c.x,b.min.y+.005,c.z),new THREE.Vector3(0,-1,0),0,.02).intersectObject(shelf,false)[0];assert(face&&Math.abs(face.point.y-b.min.y)<1e-6,id+' purchased radio case sits on actual carrier shelf');}
+ const floor=root.getObjectByName('mission nonslip rear floor insert'),support=new THREE.Raycaster(new THREE.Vector3(slab.min.x+.05,1.55,-.65),new THREE.Vector3(0,-1,0),0,.15).intersectObject(floor,false)[0];assert(support&&slab.containsPoint(support.point),'Radio shelf bears on an actual rear-floor face');assert(slab.max.y>=1.51-1e-6,'Radio shelf reaches the seated case plane');
+}
+console.log('Three distinct mission interiors: actual floor/hull/furniture/shelf/monitor contacts, clear Troop aisle/windows, raised Command access/headspace, Recce mast bore and 21 installed power-pack triangle clearance checks PASS');
 // The Combat station must sit over an actual roof opening; opaque roof backing
 // defeats both the illustrated crew basket and the station's hollow mounting ring.
 {

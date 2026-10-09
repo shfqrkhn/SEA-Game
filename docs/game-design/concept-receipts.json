@@ -1286,6 +1286,456 @@
         ]
       },
       "acceptanceStatus": "open"
+    },
+    {
+      "id": "GEN-components-mission-interiors-v1",
+      "inventoryIds": [
+        "COMP-cockpit",
+        "COMP-glazing",
+        "COMP-radio",
+        "COMP-antenna",
+        "COMP-rack",
+        "COMP-service",
+        "ASM-TROOP-COMMS",
+        "ASM-COMMAND-COMMS",
+        "ASM-RECCE-SA"
+      ],
+      "status": "generated-exploratory",
+      "tool": "imagegen",
+      "date": "2026-10-09",
+      "artifact": "docs/game-design/concepts/components-mission-interiors-v1.png",
+      "sha256": "a041de9c39e6c72eb5ef0404471457bc3928e73bda5afc00be7a119ee40681a6",
+      "nativeOutputPath": "C:/Users/user/.codex/generated_images/01a11d09-97df-7000-a3e7-a4b9bfcb4add/exec-76eacc0f-c384-48c6-b4dd-38390651cbb9.png",
+      "exactPromptSource": "docs/game-design/COMPONENT_MISSION_INTERIORS_PROMPT.md",
+      "panelMappings": [
+        {
+          "panel": "1",
+          "inventoryIds": [
+            "COMP-cockpit"
+          ]
+        },
+        {
+          "panel": "2",
+          "inventoryIds": [
+            "COMP-glazing"
+          ]
+        },
+        {
+          "panel": "3",
+          "inventoryIds": [
+            "COMP-radio"
+          ]
+        },
+        {
+          "panel": "4",
+          "inventoryIds": [
+            "COMP-antenna"
+          ]
+        },
+        {
+          "panel": "5",
+          "inventoryIds": [
+            "COMP-rack"
+          ]
+        },
+        {
+          "panel": "6",
+          "inventoryIds": [
+            "COMP-service"
+          ]
+        },
+        {
+          "panel": "7",
+          "inventoryIds": [
+            "ASM-TROOP-COMMS"
+          ]
+        },
+        {
+          "panel": "8",
+          "inventoryIds": [
+            "ASM-COMMAND-COMMS"
+          ]
+        },
+        {
+          "panel": "9",
+          "inventoryIds": [
+            "ASM-RECCE-SA"
+          ]
+        }
+      ],
+      "visualReview": {
+        "status": "lead pixel inspected; exploratory only",
+        "usefulDirection": [
+          "All exact ID labels and panel subjects visibly present",
+          "Distinct connected construction and material families",
+          "Original detailed sheet retained as generation history"
+        ],
+        "knownMismatches": [
+          "Outer margins below required safe-margin target; superseded by v2 framing",
+          "Contextual hull cutaway boundaries are intentional; full mechanical dimensions/ergonomics/load/service interfaces unqualified",
+          "Exploded mechanism/connectors and precise wiring remain illustrative inferences",
+          "Actual matched runtime fidelity and independent visual acceptance remain open"
+        ],
+        "doesNotProve": [
+          "Mechanical certification, real-world ratings or manufacturer asset rights",
+          "Classroom/device/language/full-release acceptance"
+        ]
+      },
+      "acceptanceStatus": "open"
+    },
+    {
+      "id": "GEN-components-mission-interiors-v2",
+      "inventoryIds": [
+        "COMP-cockpit",
+        "COMP-glazing",
+        "COMP-radio",
+        "COMP-antenna",
+        "COMP-rack",
+        "COMP-service",
+        "ASM-TROOP-COMMS",
+        "ASM-COMMAND-COMMS",
+        "ASM-RECCE-SA"
+      ],
+      "status": "generated-exploratory",
+      "tool": "imagegen",
+      "date": "2026-10-09",
+      "artifact": "docs/game-design/concepts/components-mission-interiors-v2.png",
+      "sha256": "e943fe40366d485c4ebe547bc8b1370cb4e7401af666fe3360e3224d1a7bab64",
+      "nativeOutputPath": "C:/Users/user/.codex/generated_images/01a11d09-97df-7000-a3e7-a4b9bfcb4add/exec-af4a3b7b-3a6f-471e-af99-91bae31116e1.png",
+      "exactPromptSource": "docs/game-design/W68_MARGIN_CORRECTION_PROMPT.md",
+      "panelMappings": [
+        {
+          "panel": "1",
+          "inventoryIds": [
+            "COMP-cockpit"
+          ]
+        },
+        {
+          "panel": "2",
+          "inventoryIds": [
+            "COMP-glazing"
+          ]
+        },
+        {
+          "panel": "3",
+          "inventoryIds": [
+            "COMP-radio"
+          ]
+        },
+        {
+          "panel": "4",
+          "inventoryIds": [
+            "COMP-antenna"
+          ]
+        },
+        {
+          "panel": "5",
+          "inventoryIds": [
+            "COMP-rack"
+          ]
+        },
+        {
+          "panel": "6",
+          "inventoryIds": [
+            "COMP-service"
+          ]
+        },
+        {
+          "panel": "7",
+          "inventoryIds": [
+            "ASM-TROOP-COMMS"
+          ]
+        },
+        {
+          "panel": "8",
+          "inventoryIds": [
+            "ASM-COMMAND-COMMS"
+          ]
+        },
+        {
+          "panel": "9",
+          "inventoryIds": [
+            "ASM-RECCE-SA"
+          ]
+        }
+      ],
+      "visualReview": {
+        "status": "lead pixel inspected; exploratory only",
+        "usefulDirection": [
+          "All exact ID labels and panel subjects visibly present",
+          "Distinct connected construction and material families",
+          "Whole board has broad intact outer margins after generative correction"
+        ],
+        "knownMismatches": [
+          "Generative margin correction is not a byte-preserving resize; minor shape/detail differences remain",
+          "Contextual hull cutaway boundaries are intentional; full mechanical dimensions/ergonomics/load/service interfaces unqualified",
+          "Exploded mechanism/connectors and precise wiring remain illustrative inferences",
+          "Actual matched runtime fidelity and independent visual acceptance remain open",
+          "Interior host cutaway fragments do not prove full enclosure/ingress clearance or cockpit seat/dial count",
+          "RECCE sensor separate pitch trunnion/yoke and two-axis cable travel are not established",
+          "Antenna stowed/deployed take-up and locking interfaces remain unverified",
+          "Rack exploded supports do not prove full equipment/cable correspondence, roof/floor fit or maintenance aisle clearance"
+        ],
+        "doesNotProve": [
+          "Mechanical certification, real-world ratings or manufacturer asset rights",
+          "Classroom/device/language/full-release acceptance"
+        ],
+        "peerReview": "Bounded shared-context read-only pixel review; not independent acceptance"
+      },
+      "acceptanceStatus": "open",
+      "preferredDirection": true,
+      "supersedesDirection": "GEN-components-mission-interiors-v1",
+      "referenceInputs": [
+        {
+          "path": "docs/game-design/concepts/components-mission-interiors-v1.png",
+          "sha256": "a041de9c39e6c72eb5ef0404471457bc3928e73bda5afc00be7a119ee40681a6"
+        }
+      ]
+    },
+    {
+      "id": "GEN-materials-family-v1",
+      "inventoryIds": [
+        "MAT-paint",
+        "MAT-edge",
+        "MAT-steel",
+        "MAT-darkSteel",
+        "MAT-rubber",
+        "MAT-glass",
+        "MAT-amber",
+        "MAT-lamp",
+        "MAT-red",
+        "MAT-pressedSteel",
+        "MAT-castSteel",
+        "MAT-upholstery"
+      ],
+      "status": "generated-exploratory",
+      "tool": "imagegen",
+      "date": "2026-10-09",
+      "artifact": "docs/game-design/concepts/materials-family-v1.png",
+      "sha256": "6a6732fb333ae590026060033d008b5d12d7b961192a9b25fbfa2586879360de",
+      "nativeOutputPath": "C:/Users/user/.codex/generated_images/01a11d09-97df-7000-a3e7-a4b9bfcb4add/exec-09611665-50a5-4089-a1d1-1162d458e712.png",
+      "exactPromptSource": "docs/game-design/MATERIALS_PROMPT.md",
+      "panelMappings": [
+        {
+          "panel": "1",
+          "inventoryIds": [
+            "MAT-paint"
+          ]
+        },
+        {
+          "panel": "2",
+          "inventoryIds": [
+            "MAT-edge"
+          ]
+        },
+        {
+          "panel": "3",
+          "inventoryIds": [
+            "MAT-steel"
+          ]
+        },
+        {
+          "panel": "4",
+          "inventoryIds": [
+            "MAT-darkSteel"
+          ]
+        },
+        {
+          "panel": "5",
+          "inventoryIds": [
+            "MAT-rubber"
+          ]
+        },
+        {
+          "panel": "6",
+          "inventoryIds": [
+            "MAT-glass"
+          ]
+        },
+        {
+          "panel": "7",
+          "inventoryIds": [
+            "MAT-amber"
+          ]
+        },
+        {
+          "panel": "8",
+          "inventoryIds": [
+            "MAT-lamp"
+          ]
+        },
+        {
+          "panel": "9",
+          "inventoryIds": [
+            "MAT-red"
+          ]
+        },
+        {
+          "panel": "10",
+          "inventoryIds": [
+            "MAT-pressedSteel"
+          ]
+        },
+        {
+          "panel": "11",
+          "inventoryIds": [
+            "MAT-castSteel"
+          ]
+        },
+        {
+          "panel": "12",
+          "inventoryIds": [
+            "MAT-upholstery"
+          ]
+        }
+      ],
+      "visualReview": {
+        "status": "lead pixel inspected; exploratory only",
+        "usefulDirection": [
+          "All exact ID labels and panel subjects visibly present",
+          "Distinct connected construction and material families",
+          "Original detailed sheet retained as generation history"
+        ],
+        "knownMismatches": [
+          "Outer margins below required safe-margin target; superseded by v2 framing",
+          "Concept optical transmission/lens structure exceeds current shared reflection-only material",
+          "Cast texture appears coarser than authored runtime finish; not calibrated physical properties",
+          "Actual matched runtime fidelity and independent visual acceptance remain open"
+        ],
+        "doesNotProve": [
+          "Mechanical certification, real-world ratings or manufacturer asset rights",
+          "Classroom/device/language/full-release acceptance"
+        ]
+      },
+      "acceptanceStatus": "open"
+    },
+    {
+      "id": "GEN-materials-family-v2",
+      "inventoryIds": [
+        "MAT-paint",
+        "MAT-edge",
+        "MAT-steel",
+        "MAT-darkSteel",
+        "MAT-rubber",
+        "MAT-glass",
+        "MAT-amber",
+        "MAT-lamp",
+        "MAT-red",
+        "MAT-pressedSteel",
+        "MAT-castSteel",
+        "MAT-upholstery"
+      ],
+      "status": "generated-exploratory",
+      "tool": "imagegen",
+      "date": "2026-10-09",
+      "artifact": "docs/game-design/concepts/materials-family-v2.png",
+      "sha256": "42296b42c792065664b251ad823e701be9331deefbd35a7418812094e196db96",
+      "nativeOutputPath": "C:/Users/user/.codex/generated_images/01a11d09-97df-7000-a3e7-a4b9bfcb4add/exec-b066bc5c-ec93-433b-a030-628d59130dc9.png",
+      "exactPromptSource": "docs/game-design/W68_MARGIN_CORRECTION_PROMPT.md",
+      "panelMappings": [
+        {
+          "panel": "1",
+          "inventoryIds": [
+            "MAT-paint"
+          ]
+        },
+        {
+          "panel": "2",
+          "inventoryIds": [
+            "MAT-edge"
+          ]
+        },
+        {
+          "panel": "3",
+          "inventoryIds": [
+            "MAT-steel"
+          ]
+        },
+        {
+          "panel": "4",
+          "inventoryIds": [
+            "MAT-darkSteel"
+          ]
+        },
+        {
+          "panel": "5",
+          "inventoryIds": [
+            "MAT-rubber"
+          ]
+        },
+        {
+          "panel": "6",
+          "inventoryIds": [
+            "MAT-glass"
+          ]
+        },
+        {
+          "panel": "7",
+          "inventoryIds": [
+            "MAT-amber"
+          ]
+        },
+        {
+          "panel": "8",
+          "inventoryIds": [
+            "MAT-lamp"
+          ]
+        },
+        {
+          "panel": "9",
+          "inventoryIds": [
+            "MAT-red"
+          ]
+        },
+        {
+          "panel": "10",
+          "inventoryIds": [
+            "MAT-pressedSteel"
+          ]
+        },
+        {
+          "panel": "11",
+          "inventoryIds": [
+            "MAT-castSteel"
+          ]
+        },
+        {
+          "panel": "12",
+          "inventoryIds": [
+            "MAT-upholstery"
+          ]
+        }
+      ],
+      "visualReview": {
+        "status": "lead pixel inspected; exploratory only",
+        "usefulDirection": [
+          "All exact ID labels and panel subjects visibly present",
+          "Distinct connected construction and material families",
+          "Whole board has broad intact outer margins after generative correction"
+        ],
+        "knownMismatches": [
+          "Generative margin correction is not a byte-preserving resize; minor shape/detail differences remain",
+          "Concept optical transmission/lens structure exceeds current shared reflection-only material",
+          "Cast texture appears coarser than authored runtime finish; not calibrated physical properties",
+          "Actual matched runtime fidelity and independent visual acceptance remain open",
+          "Dark and ordinary cast steel housings have similar grain; distinction is subtle",
+          "Casting grain and upholstery weave lack physical scale calibration"
+        ],
+        "doesNotProve": [
+          "Mechanical certification, real-world ratings or manufacturer asset rights",
+          "Classroom/device/language/full-release acceptance"
+        ],
+        "peerReview": "Bounded shared-context read-only pixel review; not independent acceptance"
+      },
+      "acceptanceStatus": "open",
+      "preferredDirection": true,
+      "supersedesDirection": "GEN-materials-family-v1",
+      "referenceInputs": [
+        {
+          "path": "docs/game-design/concepts/materials-family-v1.png",
+          "sha256": "6a6732fb333ae590026060033d008b5d12d7b961192a9b25fbfa2586879360de"
+        }
+      ]
     }
   ]
 }

@@ -89,3 +89,9 @@ for(const change of ['state','editor']){
  while(frames.length)frames.shift()();assert.equal(app.editor,newer,'Deferred navigation rejects intervening '+change+' replacement');assert.deepEqual(app.events,['change'],'Deferred callback cannot repeat previous canonical change');
 }
 console.log('PASS: removed-editor isolation and deferred navigation rejects new state or editor');
+
+for(const unavailable of ['removed','hidden','disabled','unmapped']){
+ const app=harness(),frames=[];app.ctx.requestAnimationFrame=fn=>frames.push(fn);app.ctx.state={phase:'planning',sessionCode:'same',round:0,lot:0};const target={...app.node,id:'next',isConnected:true};target.dispatchEvent=()=>{throw Error('Unavailable next field must not receive an event')};app.ctx.sceneTargets.set('next',target);app.ctx.sceneFieldKeys=['profit','next'];app.ctx.document.getElementById=()=>target;
+ app.ctx.act('profit');app.editor.children[3].listeners.click();if(unavailable==='removed')target.isConnected=false;if(unavailable==='hidden')target.hidden=true;if(unavailable==='disabled')target.disabled=true;if(unavailable==='unmapped')app.ctx.sceneTargets.delete('next');while(frames.length)frames.shift()();assert.equal(app.editor,null,'Deferred navigation does not reopen unavailable '+unavailable+' target');assert.deepEqual(app.events,['change'],'Only original accepted field dispatch occurs');
+}
+console.log('PASS: deferred field navigation rejects removed/hidden/disabled/unmapped next target');

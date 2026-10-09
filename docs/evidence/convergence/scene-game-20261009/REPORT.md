@@ -1,5 +1,13 @@
 # Whole-game scene integration checkpoint
 
+## W68 integrated3.5.0 candidate
+
+One bounded parallel batch adds supported TROOP seating/stowage and glazing, raised COMMAND rear roof/service door/workstations, RECCE workstation and a mast through an actual supported roof bore. Purchased CAP/COM/SA installations substitute equivalent baseline structures rather than stack furniture, retain intended doors and blank a replaced mast port. Static role furniture is illustrative and changes no capacity, price, axle or scoring rule. Actual contact/aperture tests, 21 MOB-floor clearance cases, 21 COM-seat/support cases and existing77-model/42-build restoration pass. Canonical, six EN/FR reveal-mode VM journeys, editor/language/task-layout, exact bundle/HTML projection, embedding, package, encoding and synthetic MPES checks pass. These do not certify mechanical motion, full fitment, browser journey or visual acceptance.
+
+Student Auction now prioritizes unknown card entry/Load, or loaded complete public context/WTP/private decision, before reload and optional won price. Original controls, instructions and validated actions remain. Actual-template predecessor ordering RED/GREEN and deferred editor stale/disabled/removed target rejection pass. A speculative renderer continuation test reproduced no fault and was removed; no renderer repair or fabricated RED is claimed.
+
+Two original concept boards add nine interior/component/assembly IDs and twelve materials. Original v1 and generatively margin-corrected v2 images, exact prompts/input hashes and receipts remain. Shared-context pixel review confirms all21 IDs readable with clear v2 outer borders, while recording sensor pitch, mast cable/lock, exploded fit, glass/light and material calibration gaps. Generative correction changes minor geometry; it is not a byte-preserving resize. Inventory totals455 subjects including242 UI elements; all visual acceptance remains open. A requested320x640 browser override left actual scene bounds1280x720 even after reload; no mobile GPU proof is claimed. Source work is complete for this batch; exact publication and browser evidence follow. PRODUCT_RELEASE remains OPEN0/3.
+
 ## W67 exact published evidence and final safeguard
 
 Version 3.4.0 source1091d2b and previewc7475c5 pass source CI37959973367 and Pages37959973209. Version 3.4.1 sourced4a6708 and preview3d5c6a2 pass source CI37960936863, main CI37960937262 and Pages37960935870. hosted-c7475c5.json and hosted-3d5c6a2.json bind byte-identical role artifacts.

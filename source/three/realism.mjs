@@ -83,19 +83,30 @@ function carrierWindow(g,m,bounds,place){
 export function missionBase(id,m){
  if(id==='RECOVERY'){const g=createVehicle(m);g.traverse(o=>{if(o.isMesh&&o.geometry.type==='BufferGeometry'&&o.material.name!=='optical glass')o.name='hull shell';});recoveryConstruction(g,m);const old=g.getObjectByName('mounted WR-12'),winch=detailPart(createWinch(m),m,'ACC',5);winch.name='mounted WR-12';winch.position.copy(old.position);winch.quaternion.copy(old.quaternion);old.removeFromParent();old.traverse(o=>o.geometry?.dispose());g.add(winch);detailVehicle(g,m,6.25,2.3);return soften(g);}
  const spec={COMBAT:[6.8,2.65,4],RECCE:[5.5,2.3,2],TROOP:[6.9,2.6,3],COMMAND:[6.7,2.6,3],MINE:[6.8,2.65,4]}[id], [length,width,axles]=spec;
- const g=new THREE.Group();g.name=id;g.userData={units:'metres',concept:true,axles,roof:2.37,length,width};
+ const g=new THREE.Group();g.name=id;g.userData={units:'metres',concept:true,axles,roof:id==='COMMAND'?2.75:2.37,length,width};
  const front=length/2,rear=-front,half=width/2;
  box(g,m.darkSteel,[length-.45,.2,width*.58],[0,.82,0],'chassis');
  box(g,m.edge,[length-.25,.48,width*.8],[0,1.16,0],'lower hull');
  for(const s of [-1,1]){
   const sideZ=y=>s*half*(.75+(y-1.2)*.1/1.16),bounds=[front-1.86,1.87,front-1.02,2.16];
-  formedCabPanel(g,m.paint,[[rear,1.2],[front,1.2],[front-.75,2.36],[rear+.17,2.36]],[roundedOpening(...bounds)],(x,y,t)=>[x,y,sideZ(y)-s*t]);
+  const sideOpenings=[roundedOpening(...bounds)];
+  if(id==='TROOP')for(let i=0;i<4;i++)sideOpenings.push(roundedOpening(rear+.48+i*.94,1.97,rear+1.05+i*.94,2.20,.035));
+  formedCabPanel(g,m.paint,[[rear,1.2],[front,1.2],[front-.75,2.36],[rear+.17,2.36]],sideOpenings,(x,y,t)=>[x,y,sideZ(y)-s*t]);
+  if(id==='TROOP')for(let i=0;i<4;i++)carrierWindow(g,m,[rear+.48+i*.94,1.97,rear+1.05+i*.94,2.20],(x,y,t)=>[x,y,sideZ(y)+s*t]);
+  if(id==='COMMAND')formedCabPanel(g,m.paint,[[rear+.17,2.36],[1.14,2.36],[.95,2.74],[rear+.17,2.74]],[],(x,y,t)=>[x,y,s*(half*.85-t)]).userData.component='command raised rear side';
   carrierSheet(g,m.paint,[[front-2.01,1.48],[front-.97,1.48],[front-.86,2.28],[front-1.02,2.31],[front-2.01,2.31]],[roundedOpening(...bounds)],(x,y,t)=>[x,y,sideZ(y)+s*(.012+t)],.015,'hull shell').userData.component='carrier formed cab door';
   carrierWindow(g,m,bounds,(x,y,t)=>[x,y,sideZ(y)+s*t]);
  }
  if(id==='COMBAT'){
   const ring=new THREE.Path();ring.absarc(-.35,0,.405,0,Math.PI*2,true);
   formedCabPanel(g,m.paint,[[rear+.17,-half*.85],[front-.75,-half*.85],[front-.75,half*.85],[rear+.17,half*.85]],[ring],(x,z,t)=>[x,2.36-t,z]);
+ }else if(id==='RECCE'){
+  const mast=new THREE.Path();mast.absarc(-1,-.48,.092,0,Math.PI*2,true);
+  formedCabPanel(g,m.paint,[[rear+.17,-half*.85],[front-.75,-half*.85],[front-.75,half*.85],[rear+.17,half*.85]],[mast],(x,z,t)=>[x,2.36-t,z]);
+ }else if(id==='COMMAND'){
+  face(g,m.paint,[[1.14,2.36,-half*.85],[front-.75,2.36,-half*.85],[front-.75,2.36,half*.85],[1.14,2.36,half*.85]]);
+  formedCabPanel(g,m.paint,[[rear+.17,-half*.85],[.95,-half*.85],[.95,half*.85],[rear+.17,half*.85]],[],(x,z,t)=>[x,2.74-t,z]).userData.component='command raised rear roof';
+  formedCabPanel(g,m.paint,[[.95,-half*.85],[1.14,-half*.85],[1.14,half*.85],[.95,half*.85]],[],(x,z,t)=>[x,2.74-(x-.95)*.38/.19-t,z]).userData.component='command roof transition';
  }else face(g,m.paint,[[rear+.17,2.36,-half*.85],[front-.75,2.36,-half*.85],[front-.75,2.36,half*.85],[rear+.17,2.36,half*.85]]);
  const frontX=y=>front-(y-1.2)*.75/1.16;
  formedCabPanel(g,m.paint,[[-half*.75,1.2],[half*.75,1.2],[half*.85,2.36],[-half*.85,2.36]],[roundedOpening(-half*.67,1.80,-.09,2.13),roundedOpening(.09,1.80,half*.67,2.13)],(z,y,t)=>[frontX(y)-t,y,z]);
@@ -104,6 +115,7 @@ export function missionBase(id,m){
   rod(g,m.rubber,[frontX(1.83)+.020,1.83,(range[0]+range[1])*.5],[frontX(2.03)+.020,2.03,range[1]-.08],.009).name='carrier seated windshield wiper';
  }
  if(id==='TROOP')formedCabPanel(g,m.edge,[[-half*.75,1.2],[half*.75,1.2],[half*.85,2.36],[-half*.85,2.36]],[roundedOpening(-.74,1.34,.74,2.23,.045)],(z,y,t)=>[rear+(y-1.2)*.17/1.16+t,y,z]);
+ else if(id==='COMMAND')formedCabPanel(g,m.edge,[[-half*.75,1.2],[half*.75,1.2],[half*.85,2.36],[half*.85,2.74],[-half*.85,2.74],[-half*.85,2.36]],[roundedOpening(-.47,1.47,.47,2.50,.045)],(z,y,t)=>[rear+(Math.min(y,2.36)-1.2)*.17/1.16+t,y,z]);
  else face(g,m.edge,[[rear,1.2,-half*.75],[rear+.17,2.36,-half*.85],[rear+.17,2.36,half*.85],[rear,1.2,half*.75]]);
  const wheelXs=axles===2?[-1.67,1.67]:axles===3?[-2.25,-.75,1.9]:[-2.55,-1.05,1.0,2.4];
  for(const x of wheelXs){cylinder(g,m.darkSteel,.06,width*.81,[x,.67,0],'z');cylinder(g,m.edge,.13,.31,[x,.67,0],'z');for(const s of [-1,1]){const wheel=createWheel(m);wheel.position.set(x,.62,s*half*.88);g.add(wheel);rod(g,m.steel,[x-.15,.75,s*half*.62],[x+.1,1.2,s*half*.68],.045);box(g,m.paint,[1.22,.075,.48],[x,1.30,s*half*.91],'wheel guard');}}
@@ -115,7 +127,7 @@ export function missionBase(id,m){
   box(g,m.edge,[.68,.05,.32],[front-1.61,1.36,s*(half*.87+.14)],'entry step');
   for(const x of [front-1.83,front-1.39]){const inner=Math.abs(sideZ(1.36))-.010,outer=half*.87+.14;box(g,m.edge,[.05,.10,outer-inner+.05],[x,1.33,s*(inner+outer)/2],'carrier entry step hull bracket');}
   rod(g,m.darkSteel,[front-.98,1.86,z],[front-.9,2.07,s*(half+.1)],.02);box(g,m.glass,[.055,.20,.15],[front-.9,2.07,s*(half+.1)],'mirror');
-  for(let i=0;i<4;i++){const x=rear+.6+i*.64;panel(g,m,[.51,.49,.04],[x,1.95,s*half*.85]);}
+  if(id!=='TROOP')for(let i=0;i<4;i++){const x=rear+.6+i*.64;panel(g,m,[.51,.49,.04],[x,1.95,s*half*.85]);}
   for(let i=0;i<10;i++)box(g,m.darkSteel,[.02,.22,.02],[front-1.6+i*.06,2.38,s*.57],'vent grille');
   const lampY=1.385,lampX=frontX(lampY),lampZ=s*half*.65;
   box(g,m.edge,[.16,.21,.205],[lampX+.035,lampY,lampZ],'carrier front lamp housing');
@@ -126,7 +138,7 @@ export function missionBase(id,m){
  }
  box(g,m.darkSteel,[.15,.17,width*.85],[front,1.12,0],'front bumper');
  for(const s of [-1,1]){cylinder(g,m.steel,.055,.08,[front+.1,1.14,s*.73],'x');rod(g,m.steel,[rear+.25,1.44,s*.5],[rear+.25,2.05,s*.5],.016);}
- cylinder(g,m.edge,.32,.04,[.4,2.39,.5],'roof hatch');
+ cylinder(g,m.edge,.32,.04,[.4,id==='COMMAND'?2.77:2.39,.5],'roof hatch');
  detailVehicle(g,m,length,width);return soften(g);
 }
 function recoveryConstruction(g,m){
@@ -424,7 +436,7 @@ function detailVehicle(g,m,length,width){
  // floating cooling louvres on the locker doors.
  if(g.userData.sharedPart==='WR-12')return;
  const guards=[];g.traverse(o=>{if(o.name==='wheel guard')guards.push(o);});for(const guard of guards){const shape=new THREE.Shape();for(let i=0;i<=12;i++){const a=i*Math.PI/12,x=Math.cos(a)*.70,y=Math.sin(a)*.70;(i?shape.lineTo(x,y):shape.moveTo(x,y));}for(let i=12;i>=0;i--){const a=i*Math.PI/12;shape.lineTo(Math.cos(a)*.64,Math.sin(a)*.64);}shape.closePath();guard.geometry.dispose();guard.geometry=new THREE.ExtrudeGeometry(shape,{depth:.46,bevelEnabled:true,bevelSegments:1,steps:1,bevelSize:.009,bevelThickness:.009});guard.position.y=.62;guard.position.z-=.23;}
- for(const side of [-1,1]){const z=side*width*.45;for(const x of [-length*.38,-length*.22]){box(g,m.edge,[.028,.12,.028],[x,1.75,z],'panel hinge');cylinder(g,m.steel,.011,.07,[x,1.75,z+side*.024],'y',.011,12);}for(let i=0;i<6;i++)box(g,m.darkSteel,[.3,.02,.03],[-length*.27,2.08+i*.035,z+side*.018],'louvred cooling intake');rod(g,m.darkSteel,[length*.36,1.38,z],[length*.36,1.95,z],.016);}
+ if(!['TROOP','COMMAND','RECCE'].includes(g.name))for(const side of [-1,1]){const z=side*width*.45;for(const x of [-length*.38,-length*.22]){box(g,m.edge,[.028,.12,.028],[x,1.75,z],'panel hinge');cylinder(g,m.steel,.011,.07,[x,1.75,z+side*.024],'y',.011,12);}for(let i=0;i<6;i++)box(g,m.darkSteel,[.3,.02,.03],[-length*.27,2.08+i*.035,z+side*.018],'louvred cooling intake');rod(g,m.darkSteel,[length*.36,1.38,z],[length*.36,1.95,z],.016);}
  // Connected drive shaft, armoured belly plate, exhaust and fuel-tank plumbing.
  rod(g,m.darkSteel,[-length*.34,.80,0],[length*.31,.80,0],.06);box(g,m.edge,[length*.56,.065,width*.48],[0,.90,0],'belly protection');
  cylinder(g,m.darkSteel,.11,.85,[-length*.22,1.18,-width*.28],'x');tube(g,m.darkSteel,[[-length*.22,1.18,-width*.28],[-length*.38,1.18,-width*.28],[-length*.42,1.37,-width*.37]],.034);

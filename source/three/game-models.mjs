@@ -615,9 +615,110 @@ export function createMission(id,m=materials()){
   if(id==='COMBAT')combatCrewBasket(vehicle,m,roof);
   if(id==='RECCE'){const sensor=createSensor(m,3);sensor.name='mission sensor';sensor.position.set(-1.0,roof,-.48);vehicle.add(sensor);}
   if(id==='COMMAND'){const comm=radio(m,4);comm.name='mission radio';comm.position.set(-1.5,roof,-.4);vehicle.add(comm);}
+  if(['TROOP','COMMAND','RECCE'].includes(id))missionInterior(vehicle,m,id);
   if(id==='TROOP')troopRamp(vehicle,m);
   if(id==='MINE'){const roller=clearance(m);roller.name='mission roller';roller.scale.setScalar(1.9);roller.rotation.y=Math.PI/2;roller.position.set(4.45,.1,0);vehicle.add(roller);mineRollerMount(vehicle,m,roller);}
   return soften(vehicle);
+}
+
+function missionInterior(vehicle,m,id){
+ // Original role furniture within the existing canonical carrier. Manufacturer
+ // references establish roles/high-roof architecture, never these inferred
+ // dimensions, physical protection, occupancy ratings or equipment performance.
+ const rear=-vehicle.userData.length/2,half=vehicle.userData.width/2,end=vehicle.userData.length/2-2.65,ceiling=id==='COMMAND'?2.63:2.31;
+ const cabin=group(id.toLowerCase()+' mission interior');cabin.position.y=1.410;vehicle.add(cabin);
+ const lo=rear+.18,length=end-lo,center=(lo+end)/2,innerHalf=half*.75-.035;
+ box(cabin,m.edge,[length,.050,innerHalf*2],[center,0,0],'mission supported rear floor');
+ box(cabin,m.rubber,[length-.06,.004,innerHalf*2-.04],[center,.027,0],'mission nonslip rear floor insert');
+ for(const x of [lo+.16,center,end-.16])for(const s of [-1,1])box(cabin,m.castSteel,[.18,.065,.18],[x,-.025,s*half*.53],'mission floor hull bearing shoe');
+ const liner=m.paint.clone();liner.color.set('#a3a78f');liner.metalness=0;liner.roughness=.87;liner.name='mission cabin interior lining';
+ const bodyEnd=id==='COMMAND'?Math.min(.80,end-.03):end-.03,roofZ=half*.85-.075;
+ const wallZ=y=>half*(.75+(Math.min(y,2.36)-1.2)*.1/1.16)-.075;
+ for(const s of [-1,1]){
+  const holes=[];if(id==='TROOP')for(let i=0;i<4;i++)holes.push(roundedOpening(rear+.46+i*.94,1.95,rear+1.07+i*.94,2.22,.04));
+  const skin=formedCabPanel(cabin,liner,[[lo,1.435],[bodyEnd,1.435],[bodyEnd,ceiling],[lo,ceiling]],holes,(x,y,t)=>[x,y-1.410,s*(wallZ(y)-t*.40)]);skin.name='mission interior removable liner';skin.userData.cutawayShell=true;
+  for(let x=lo+.15;x<bodyEnd-.05;x+=.92){
+   box(cabin,m.edge,[.10,.050,.12],[x,.050,s*wallZ(1.46)],'mission rib floor attachment');
+   tube(cabin,m.pressedSteel,[[x,.05,s*wallZ(1.46)],[x,.80,s*wallZ(2.21)],[x,ceiling-1.410,s*roofZ]],.024,16).name='mission floor connected cabin rib';
+   if(s===1)rod(cabin,m.pressedSteel,[x,ceiling-1.410,-roofZ],[x,ceiling-1.410,roofZ],.025).name='mission connected roof bow';
+  }
+ }
+ const roofLiner=box(cabin,liner,[bodyEnd-lo,.018,roofZ*2],[(lo+bodyEnd)/2,ceiling-1.410+.028,0],'mission removable ceiling liner');roofLiner.userData.cutawayShell=true;
+ for(const x of [lo+.35,bodyEnd-.35])box(cabin,m.lamp,[.30,.025,.13],[x,ceiling-1.410+.012,0],'mission supported overhead luminaire');
+ const chair=(x,z,angle,scale=.73)=>{const s=seat(cabin,m,x,z,true);s.name=id.toLowerCase()+' mission restrained seat';s.rotation.y=angle;s.scale.setScalar(scale);s.position.y=.029+.2895*scale;return s;};
+ const round=(mat,size,pos,name,r=.02)=>{const o=new THREE.Mesh(new RoundedBoxGeometry(...size,3,r),mat);o.position.set(...pos);o.name=name;o.castShadow=o.receiveShadow=true;cabin.add(o);return o;};
+ const screenFinish=m.glass.clone();screenFinish.color.set('#183037');screenFinish.roughness=.24;
+ const monitor=(x,y,z,w=.62)=>{
+  // A seated upright screen, a real rear support and a restrained inert chart.
+  round(m.edge,[w+.06,.34,.080],[x,y,z],'mission supported monitor enclosure',.025);
+  box(cabin,m.darkSteel,[w+.01,.295,.020],[x,y,z-.041],'mission monitor seated bezel');
+  box(cabin,screenFinish,[w-.03,.245,.006],[x,y,z-.054],'mission inert monitor display');
+  rod(cabin,m.castSteel,[x,y-.252,z+.025],[x,y-.075,z+.025],.023).name='mission monitor connected stand';
+  box(cabin,m.edge,[.20,.026,.16],[x,y-.2545,z+.015],'mission monitor seated foot');
+  for(const line of [-.08,0,.08])rod(cabin,m.edge,[x-w*.38,y+line,z-.058],[x+w*.38,y+line,z-.058],.002).name='mission display inert chart grid';
+  tube(cabin,m.lamp,[[x-w*.35,y-.065,z-.059],[x-w*.14,y+.025,z-.059],[x+w*.05,y-.02,z-.059],[x+w*.32,y+.070,z-.059]],.003,12).name='mission display illustrative trace';
+ };
+ const desk=(x,z,width=.91)=>{
+  round(m.edge,[width,.045,.50],[x,.53,z],'mission supported workstation top',.015);
+  for(const dx of [-width*.38,width*.38])for(const dz of [-.18,.18]){
+   box(cabin,m.castSteel,[.070,.040,.085],[x+dx,.049,z+dz],'mission workstation floor foot');
+   rod(cabin,m.edge,[x+dx,.068,z+dz],[x+dx,.516,z+dz],.023).name='mission floor connected workstation leg';
+  }
+  box(cabin,m.darkSteel,[width-.12,.023,.20],[x,.564,z-.08],'mission seated keyboard enclosure');
+  for(let row=0;row<3;row++)for(let key=0;key<9;key++)box(cabin,m.edge,[.041,.004,.027],[x+(key-4)*.056,.577,z-.14+row*.039],'mission keyboard key');
+  monitor(x,.82,z+.13,width-.15);
+ };
+ const rack=(x,z,width=.53,height=1.05)=>{
+  for(const dx of [-width*.42,width*.42]){
+   box(cabin,m.edge,[.070,.035,.44],[x+dx,.0465,z],'mission equipment rack floor rail');
+   for(const dz of [-.17,.17])rod(cabin,m.edge,[x+dx,.06,z+dz],[x+dx,height,z+dz],.019).name='mission equipment rack continuous post';
+  }
+  for(let shelf=0;shelf<3;shelf++){
+   const y=.10+shelf*.29;
+   box(cabin,m.pressedSteel,[width,.023,.43],[x,y,z],'mission rack supported shelf');
+   round(m.paint,[width-.06,.24,.37],[x,y+.1315,z],'mission rack isolated equipment enclosure',.021);
+   box(cabin,m.darkSteel,[width-.10,.185,.015],[x,y+.133,z+.192],'mission rack equipment front panel');
+   for(const side of [-1,1]){rod(cabin,m.edge,[x+side*(width/2-.065),y+.075,z+.205],[x+side*(width/2-.065),y+.19,z+.205],.009).name='mission rack supported extraction handle';}
+   for(let i=0;i<5;i++)box(cabin,m.edge,[.055,.007,.009],[x-.05,y+.09+i*.021,z+.204],'mission equipment ventilation slot');
+   cylinder(cabin,m.amber,.008,.009,[x+.09,y+.18,z+.203],'z',.008,16).name='mission equipment inert status lens';
+  }
+  const lid=box(cabin,m.paint,[width,.024,.43],[x,height,z],'mission equipment rack lid');lid.userData.cutawayShell=true;
+ };
+ const electronics=group('mission role electronic installation');cabin.add(electronics);
+ const electronicInstallation=build=>{const before=new Set(cabin.children);build();for(const o of [...cabin.children])if(!before.has(o))electronics.add(o);};
+ if(id==='TROOP'){
+  for(const s of [-1,1])for(let i=0;i<4;i++){
+   const x=rear+.77+i*.94,seating=chair(x,s*.70,s*Math.PI/2),stowage=round(m.paint,[.39,.276,.16],[x,.167,s*.88],'troop floor supported underseat stowage',.019),latch=box(cabin,m.darkSteel,[.23,.05,.008],[x,.23,s*.963],'troop stowage retained latch');
+   if(s===-1&&i===3)for(const o of [seating,stowage,latch])o.userData.reservedOriginalRadioZone=true;
+  }
+  for(const s of [-1,1]){
+   rod(cabin,m.darkSteel,[lo+.17,.87,s*.45],[bodyEnd-.10,.87,s*.45],.016).name='troop supported aisle grab rail';
+   for(let x=lo+.15;x<bodyEnd-.05;x+=.92)rod(cabin,m.edge,[x,ceiling-1.410,s*.45],[x,.87,s*.45],.010).name='troop grab rail roof bow hanger';
+  }
+  box(cabin,m.edge,[.18,.044,1.39],[lo-.02,.012,0],'troop continuous boarding threshold');
+ }else if(id==='COMMAND'){
+  for(const x of [rear+1.03,rear+2.40]){chair(x,-.10,-Math.PI/2,.80);electronicInstallation(()=>desk(x,.64,1.02));}
+  electronicInstallation(()=>{rack(rear+3.58,-.76,.58,1.07);tube(cabin,m.rubber,[[rear+3.58,.99,-.56],[rear+3.58,1.14,-.91],[-1.5,1.14,-.91],[-1.5,1.14,-.4],[-1.5,1.35,-.4]],.018,24).name='command supported roof radio feed conduit';});
+  box(vehicle,m.edge,[.36,.10,.28],[-1.5,2.78,-.4],'command roof radio bearing pedestal').userData.originalRoleElectronics=true;
+  box(vehicle,m.edge,[.16,.12,.16],[-1.08,2.80,-.68],'command roof mast bearing pedestal').userData.originalRoleElectronics=true;
+  for(const s of [-1,1])box(vehicle,m.edge,[.15,.06,.15],[-1.08+s*.55,2.77,-.68+s*.45],'command radio guy roof anchor pad').userData.originalRoleElectronics=true;
+  const access=group('command rear access assembly');access.userData.retainWithCrewModule=true;cabin.add(access);const beforeAccess=new Set(cabin.children);
+  const rearX=y=>rear+(Math.min(y,2.36)-1.2)*.17/1.16;
+  const door=formedCabPanel(cabin,m.paint,roundedOpening(-.45,1.48,.45,2.48,.04).getPoints(12).map(p=>[p.x,p.y]),[],(z,y,t)=>[rearX(y)-.010-t,y-1.410,z]);door.name='command fitted rear service door';door.userData.cutawayShell=true;
+  for(const y of [1.73,2.26]){box(cabin,m.edge,[.065,.095,.090],[rearX(y)-.013,y-1.410,-.49],'command rear door seated hinge leaf');cylinder(cabin,m.steel,.019,.10,[rearX(y)-.035,y-1.410,-.49],'z',.019,24).name='command rear door retained hinge pin';}
+  for(const y of [1.79,1.96])rod(cabin,m.edge,[rearX(y)-.057,y-1.410,.29],[rearX(y)-.093,y-1.410,.29],.012).name='command rear door handle seated post';
+  rod(cabin,m.steel,[rearX(1.79)-.093,1.79-1.410,.29],[rearX(1.96)-.093,1.96-1.410,.29],.012).name='command rear access pull';
+  for(const o of [...cabin.children])if(!beforeAccess.has(o))access.add(o);
+ }else{
+  chair(rear+1.44,-.17,-Math.PI/2,.74);electronicInstallation(()=>desk(rear+1.44,.53,.90));
+  chair(rear+.48,.52,0,.70);electronicInstallation(()=>rack(rear+.40,-.64,.34,.82));
+  const mastX=-1,mastZ=-.48;
+  const foot=cylinder(cabin,m.edge,.14,.055,[mastX,.0565,mastZ],'y',.14,40);foot.name='recce mast floor bearing flange';foot.userData.originalRoleSensor=true;
+  const mast=cylinder(cabin,m.castSteel,.065,.94,[mastX,.55,mastZ],'y',.065,40);mast.name='recce continuous internal mast support';mast.userData.originalRoleSensor=true;
+  const bearing=cylinder(vehicle,m.edge,.21,.050,[mastX,2.375,mastZ],'y',.21,48);bearing.name='recce mast seated roof bearing';bearing.userData.originalRoleSensor=true;
+  for(const s of [-1,1])box(vehicle,m.edge,[.12,.035,.12],[mastX+s*.35,2.375,mastZ+.25],'recce sensor brace roof bearing pad').userData.originalRoleSensor=true;
+  electronicInstallation(()=>{const harness=tube(cabin,m.rubber,[[rear+1.44,.835,.69],[rear+1.44,.35,.83],[mastX,.10,.83],[mastX,.10,mastZ],[mastX,.99,mastZ]],.013,24);harness.name='recce supported sensor console harness';harness.userData.originalRoleSensor=true;});
+ }
 }
 
 function combatCrewBasket(vehicle,m,roof){
@@ -681,6 +782,14 @@ function mineRollerMount(vehicle,m,roller){
 export function createConfiguration(mission,owned,m=materials()){
  const vehicle=createMission(mission,m),latest=new Map();owned.forEach(p=>{const id=typeof p==='string'?p:p.id;if(!MODEL_IDS.includes(id))throw new Error('Unknown 3D asset: '+id);if(!id.startsWith('SE-'))latest.set(id.split('-')[0],id);});
  const length=vehicle.userData.length||6.25,width=vehicle.userData.width||2.3,roof=vehicle.userData.roof||2.75;
+ // Role furniture is a baseline illustration, never an extra purchased capacity.
+ // Replace its complete rear cassette with CAP, and its electronics with COM.
+ // Keep the carrier's access closure; avoid stacked floors/seats/console racks.
+ const discard=o=>{o.removeFromParent();const liveGeometry=new Set(),liveMaterials=new Set(Object.values(m));vehicle.traverse(n=>{if(n.geometry)liveGeometry.add(n.geometry);for(const mat of Array.isArray(n.material)?n.material:[n.material])if(mat)liveMaterials.add(mat);});const geometry=new Set(),paint=new Set();o.traverse(n=>{if(n.geometry)geometry.add(n.geometry);for(const mat of Array.isArray(n.material)?n.material:[n.material])if(mat)paint.add(mat);});for(const item of geometry)if(!liveGeometry.has(item))item.dispose();for(const item of paint)if(!liveMaterials.has(item))item.dispose();};
+ const interior=vehicle.getObjectByName(mission.toLowerCase()+' mission interior');
+ if(latest.has('CAP')&&interior){const retained=interior.getObjectByName('command rear access assembly');if(retained){vehicle.updateWorldMatrix(true,true);vehicle.attach(retained);}discard(interior);}
+ if(latest.has('COM')){const electronics=vehicle.getObjectByName('mission role electronic installation');if(electronics)discard(electronics);const obsolete=[];vehicle.traverse(o=>{if(o.userData.reservedOriginalRadioZone||o.userData.originalRoleElectronics)obsolete.push(o);});for(const o of obsolete)discard(o);}
+ if(latest.has('SA')&&mission==='RECCE'){const obsolete=[];vehicle.traverse(o=>{if(o.userData.originalRoleSensor)obsolete.push(o);});for(const o of obsolete)discard(o);const cover=cylinder(vehicle,m.paint,.12,.035,[-1,2.37,-.48],'y',.12,40);cover.name='recce replaced mast port blanking cover';cover.userData.cutawayShell=true;}
  if(latest.has('CAP')||latest.has('MOB')){
   const shells=[];vehicle.traverse(o=>{if(o.isMesh&&o.name==='hull shell')shells.push(o);});
   for(const o of shells){o.material=o.material.clone();o.material.transparent=true;o.material.opacity=.16;o.material.depthWrite=false;}
@@ -690,7 +799,7 @@ export function createConfiguration(mission,owned,m=materials()){
   if(prefix==='CAP'){part.position.set(-1.45,mission==='RECOVERY'?1.75:1.4,0);if(mission==='RECOVERY'){vehicle.getObjectByName('recovery stowage')?.removeFromParent();const crane=vehicle.getObjectByName('recovery crane');if(crane)crane.position.z=-.95;}const lid=part.getObjectByName('crew roof');if(lid){lid.visible=false;}}
   if(prefix==='MOB'){part.position.set(length/2-1.35,1.18,0);if(['MOB-B','MOB-C','MOB-D','MOB-G'].includes(id))part.position.set(0,.20,0);}
   if(prefix==='FP'){vehicle.getObjectByName('mission weapon')?.removeFromParent();part.position.set(-.35,roof,0);}
-  if(prefix==='COM'){vehicle.getObjectByName('mission radio')?.removeFromParent();part.position.set(.1,1.45,-.65);}
+  if(prefix==='COM'){vehicle.getObjectByName('mission radio')?.removeFromParent();part.position.set(.1,1.45,-.65);if(interior&&!latest.has('CAP')){const count=id==='COM-B'?3:id==='COM-G'?2:1;box(vehicle,m.edge,[count*.40-.03,.080,.29],[.1,1.47,-.65],'purchased radio supported carrier shelf');}}
   if(prefix==='SA'){vehicle.getObjectByName('mission sensor')?.removeFromParent();part.position.set(-2.3,roof,.5);}
   if(prefix==='PRO'){
    if(id==='PRO-D'){

@@ -4,7 +4,7 @@
   "date": "2026-10-09",
   "canonicalSource": {
     "path": "source/shared/engine.js",
-    "sha256": "b3fe4da69353ef7f8c61648ab9976fa0bdb1d1acf9723baebdde91615bf738c0"
+    "sha256": "de0c54dc05e179c83aa147c32cb856819995a63f051c29346cd4ddc6ee71b030"
   },
   "status": "Inventory/exploratory direction; canonical/model/UI acceptance open",
   "counts": {
@@ -5331,8 +5331,28 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/components-mission-interiors-v1.png",
+            "sha256": "a041de9c39e6c72eb5ef0404471457bc3928e73bda5afc00be7a119ee40681a6",
+            "receiptId": "GEN-components-mission-interiors-v1"
+          },
+          {
+            "path": "docs/game-design/concepts/components-mission-interiors-v2.png",
+            "sha256": "e943fe40366d485c4ebe547bc8b1370cb4e7401af666fe3360e3224d1a7bab64",
+            "receiptId": "GEN-components-mission-interiors-v2"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ],
+        "preferredDirection": {
+          "path": "docs/game-design/concepts/components-mission-interiors-v2.png",
+          "receiptId": "GEN-components-mission-interiors-v2",
+          "supersedes": "GEN-components-mission-interiors-v1",
+          "acceptance": "open"
+        }
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -5376,8 +5396,28 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/components-mission-interiors-v1.png",
+            "sha256": "a041de9c39e6c72eb5ef0404471457bc3928e73bda5afc00be7a119ee40681a6",
+            "receiptId": "GEN-components-mission-interiors-v1"
+          },
+          {
+            "path": "docs/game-design/concepts/components-mission-interiors-v2.png",
+            "sha256": "e943fe40366d485c4ebe547bc8b1370cb4e7401af666fe3360e3224d1a7bab64",
+            "receiptId": "GEN-components-mission-interiors-v2"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ],
+        "preferredDirection": {
+          "path": "docs/game-design/concepts/components-mission-interiors-v2.png",
+          "receiptId": "GEN-components-mission-interiors-v2",
+          "supersedes": "GEN-components-mission-interiors-v1",
+          "acceptance": "open"
+        }
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -6150,8 +6190,28 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/components-mission-interiors-v1.png",
+            "sha256": "a041de9c39e6c72eb5ef0404471457bc3928e73bda5afc00be7a119ee40681a6",
+            "receiptId": "GEN-components-mission-interiors-v1"
+          },
+          {
+            "path": "docs/game-design/concepts/components-mission-interiors-v2.png",
+            "sha256": "e943fe40366d485c4ebe547bc8b1370cb4e7401af666fe3360e3224d1a7bab64",
+            "receiptId": "GEN-components-mission-interiors-v2"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ],
+        "preferredDirection": {
+          "path": "docs/game-design/concepts/components-mission-interiors-v2.png",
+          "receiptId": "GEN-components-mission-interiors-v2",
+          "supersedes": "GEN-components-mission-interiors-v1",
+          "acceptance": "open"
+        }
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -6195,8 +6255,28 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/components-mission-interiors-v1.png",
+            "sha256": "a041de9c39e6c72eb5ef0404471457bc3928e73bda5afc00be7a119ee40681a6",
+            "receiptId": "GEN-components-mission-interiors-v1"
+          },
+          {
+            "path": "docs/game-design/concepts/components-mission-interiors-v2.png",
+            "sha256": "e943fe40366d485c4ebe547bc8b1370cb4e7401af666fe3360e3224d1a7bab64",
+            "receiptId": "GEN-components-mission-interiors-v2"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ],
+        "preferredDirection": {
+          "path": "docs/game-design/concepts/components-mission-interiors-v2.png",
+          "receiptId": "GEN-components-mission-interiors-v2",
+          "supersedes": "GEN-components-mission-interiors-v1",
+          "acceptance": "open"
+        }
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -6474,8 +6554,28 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/components-mission-interiors-v1.png",
+            "sha256": "a041de9c39e6c72eb5ef0404471457bc3928e73bda5afc00be7a119ee40681a6",
+            "receiptId": "GEN-components-mission-interiors-v1"
+          },
+          {
+            "path": "docs/game-design/concepts/components-mission-interiors-v2.png",
+            "sha256": "e943fe40366d485c4ebe547bc8b1370cb4e7401af666fe3360e3224d1a7bab64",
+            "receiptId": "GEN-components-mission-interiors-v2"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ],
+        "preferredDirection": {
+          "path": "docs/game-design/concepts/components-mission-interiors-v2.png",
+          "receiptId": "GEN-components-mission-interiors-v2",
+          "supersedes": "GEN-components-mission-interiors-v1",
+          "acceptance": "open"
+        }
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -6564,8 +6664,28 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/components-mission-interiors-v1.png",
+            "sha256": "a041de9c39e6c72eb5ef0404471457bc3928e73bda5afc00be7a119ee40681a6",
+            "receiptId": "GEN-components-mission-interiors-v1"
+          },
+          {
+            "path": "docs/game-design/concepts/components-mission-interiors-v2.png",
+            "sha256": "e943fe40366d485c4ebe547bc8b1370cb4e7401af666fe3360e3224d1a7bab64",
+            "receiptId": "GEN-components-mission-interiors-v2"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ],
+        "preferredDirection": {
+          "path": "docs/game-design/concepts/components-mission-interiors-v2.png",
+          "receiptId": "GEN-components-mission-interiors-v2",
+          "supersedes": "GEN-components-mission-interiors-v1",
+          "acceptance": "open"
+        }
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -7305,8 +7425,28 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/components-mission-interiors-v1.png",
+            "sha256": "a041de9c39e6c72eb5ef0404471457bc3928e73bda5afc00be7a119ee40681a6",
+            "receiptId": "GEN-components-mission-interiors-v1"
+          },
+          {
+            "path": "docs/game-design/concepts/components-mission-interiors-v2.png",
+            "sha256": "e943fe40366d485c4ebe547bc8b1370cb4e7401af666fe3360e3224d1a7bab64",
+            "receiptId": "GEN-components-mission-interiors-v2"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ],
+        "preferredDirection": {
+          "path": "docs/game-design/concepts/components-mission-interiors-v2.png",
+          "receiptId": "GEN-components-mission-interiors-v2",
+          "supersedes": "GEN-components-mission-interiors-v1",
+          "acceptance": "open"
+        }
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -7615,8 +7755,28 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/components-mission-interiors-v1.png",
+            "sha256": "a041de9c39e6c72eb5ef0404471457bc3928e73bda5afc00be7a119ee40681a6",
+            "receiptId": "GEN-components-mission-interiors-v1"
+          },
+          {
+            "path": "docs/game-design/concepts/components-mission-interiors-v2.png",
+            "sha256": "e943fe40366d485c4ebe547bc8b1370cb4e7401af666fe3360e3224d1a7bab64",
+            "receiptId": "GEN-components-mission-interiors-v2"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ],
+        "preferredDirection": {
+          "path": "docs/game-design/concepts/components-mission-interiors-v2.png",
+          "receiptId": "GEN-components-mission-interiors-v2",
+          "supersedes": "GEN-components-mission-interiors-v1",
+          "acceptance": "open"
+        }
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -7968,8 +8128,28 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/components-mission-interiors-v1.png",
+            "sha256": "a041de9c39e6c72eb5ef0404471457bc3928e73bda5afc00be7a119ee40681a6",
+            "receiptId": "GEN-components-mission-interiors-v1"
+          },
+          {
+            "path": "docs/game-design/concepts/components-mission-interiors-v2.png",
+            "sha256": "e943fe40366d485c4ebe547bc8b1370cb4e7401af666fe3360e3224d1a7bab64",
+            "receiptId": "GEN-components-mission-interiors-v2"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ],
+        "preferredDirection": {
+          "path": "docs/game-design/concepts/components-mission-interiors-v2.png",
+          "receiptId": "GEN-components-mission-interiors-v2",
+          "supersedes": "GEN-components-mission-interiors-v1",
+          "acceptance": "open"
+        }
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -19547,8 +19727,28 @@
         "evidence": []
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/materials-family-v1.png",
+            "sha256": "6a6732fb333ae590026060033d008b5d12d7b961192a9b25fbfa2586879360de",
+            "receiptId": "GEN-materials-family-v1"
+          },
+          {
+            "path": "docs/game-design/concepts/materials-family-v2.png",
+            "sha256": "42296b42c792065664b251ad823e701be9331deefbd35a7418812094e196db96",
+            "receiptId": "GEN-materials-family-v2"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ],
+        "preferredDirection": {
+          "path": "docs/game-design/concepts/materials-family-v2.png",
+          "receiptId": "GEN-materials-family-v2",
+          "supersedes": "GEN-materials-family-v1",
+          "acceptance": "open"
+        }
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -19584,8 +19784,28 @@
         "evidence": []
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/materials-family-v1.png",
+            "sha256": "6a6732fb333ae590026060033d008b5d12d7b961192a9b25fbfa2586879360de",
+            "receiptId": "GEN-materials-family-v1"
+          },
+          {
+            "path": "docs/game-design/concepts/materials-family-v2.png",
+            "sha256": "42296b42c792065664b251ad823e701be9331deefbd35a7418812094e196db96",
+            "receiptId": "GEN-materials-family-v2"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ],
+        "preferredDirection": {
+          "path": "docs/game-design/concepts/materials-family-v2.png",
+          "receiptId": "GEN-materials-family-v2",
+          "supersedes": "GEN-materials-family-v1",
+          "acceptance": "open"
+        }
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -19621,8 +19841,28 @@
         "evidence": []
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/materials-family-v1.png",
+            "sha256": "6a6732fb333ae590026060033d008b5d12d7b961192a9b25fbfa2586879360de",
+            "receiptId": "GEN-materials-family-v1"
+          },
+          {
+            "path": "docs/game-design/concepts/materials-family-v2.png",
+            "sha256": "42296b42c792065664b251ad823e701be9331deefbd35a7418812094e196db96",
+            "receiptId": "GEN-materials-family-v2"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ],
+        "preferredDirection": {
+          "path": "docs/game-design/concepts/materials-family-v2.png",
+          "receiptId": "GEN-materials-family-v2",
+          "supersedes": "GEN-materials-family-v1",
+          "acceptance": "open"
+        }
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -19658,8 +19898,28 @@
         "evidence": []
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/materials-family-v1.png",
+            "sha256": "6a6732fb333ae590026060033d008b5d12d7b961192a9b25fbfa2586879360de",
+            "receiptId": "GEN-materials-family-v1"
+          },
+          {
+            "path": "docs/game-design/concepts/materials-family-v2.png",
+            "sha256": "42296b42c792065664b251ad823e701be9331deefbd35a7418812094e196db96",
+            "receiptId": "GEN-materials-family-v2"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ],
+        "preferredDirection": {
+          "path": "docs/game-design/concepts/materials-family-v2.png",
+          "receiptId": "GEN-materials-family-v2",
+          "supersedes": "GEN-materials-family-v1",
+          "acceptance": "open"
+        }
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -19695,8 +19955,28 @@
         "evidence": []
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/materials-family-v1.png",
+            "sha256": "6a6732fb333ae590026060033d008b5d12d7b961192a9b25fbfa2586879360de",
+            "receiptId": "GEN-materials-family-v1"
+          },
+          {
+            "path": "docs/game-design/concepts/materials-family-v2.png",
+            "sha256": "42296b42c792065664b251ad823e701be9331deefbd35a7418812094e196db96",
+            "receiptId": "GEN-materials-family-v2"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ],
+        "preferredDirection": {
+          "path": "docs/game-design/concepts/materials-family-v2.png",
+          "receiptId": "GEN-materials-family-v2",
+          "supersedes": "GEN-materials-family-v1",
+          "acceptance": "open"
+        }
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -19732,8 +20012,28 @@
         "evidence": []
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/materials-family-v1.png",
+            "sha256": "6a6732fb333ae590026060033d008b5d12d7b961192a9b25fbfa2586879360de",
+            "receiptId": "GEN-materials-family-v1"
+          },
+          {
+            "path": "docs/game-design/concepts/materials-family-v2.png",
+            "sha256": "42296b42c792065664b251ad823e701be9331deefbd35a7418812094e196db96",
+            "receiptId": "GEN-materials-family-v2"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ],
+        "preferredDirection": {
+          "path": "docs/game-design/concepts/materials-family-v2.png",
+          "receiptId": "GEN-materials-family-v2",
+          "supersedes": "GEN-materials-family-v1",
+          "acceptance": "open"
+        }
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -19769,8 +20069,28 @@
         "evidence": []
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/materials-family-v1.png",
+            "sha256": "6a6732fb333ae590026060033d008b5d12d7b961192a9b25fbfa2586879360de",
+            "receiptId": "GEN-materials-family-v1"
+          },
+          {
+            "path": "docs/game-design/concepts/materials-family-v2.png",
+            "sha256": "42296b42c792065664b251ad823e701be9331deefbd35a7418812094e196db96",
+            "receiptId": "GEN-materials-family-v2"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ],
+        "preferredDirection": {
+          "path": "docs/game-design/concepts/materials-family-v2.png",
+          "receiptId": "GEN-materials-family-v2",
+          "supersedes": "GEN-materials-family-v1",
+          "acceptance": "open"
+        }
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -19806,8 +20126,28 @@
         "evidence": []
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/materials-family-v1.png",
+            "sha256": "6a6732fb333ae590026060033d008b5d12d7b961192a9b25fbfa2586879360de",
+            "receiptId": "GEN-materials-family-v1"
+          },
+          {
+            "path": "docs/game-design/concepts/materials-family-v2.png",
+            "sha256": "42296b42c792065664b251ad823e701be9331deefbd35a7418812094e196db96",
+            "receiptId": "GEN-materials-family-v2"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ],
+        "preferredDirection": {
+          "path": "docs/game-design/concepts/materials-family-v2.png",
+          "receiptId": "GEN-materials-family-v2",
+          "supersedes": "GEN-materials-family-v1",
+          "acceptance": "open"
+        }
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -19843,8 +20183,28 @@
         "evidence": []
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/materials-family-v1.png",
+            "sha256": "6a6732fb333ae590026060033d008b5d12d7b961192a9b25fbfa2586879360de",
+            "receiptId": "GEN-materials-family-v1"
+          },
+          {
+            "path": "docs/game-design/concepts/materials-family-v2.png",
+            "sha256": "42296b42c792065664b251ad823e701be9331deefbd35a7418812094e196db96",
+            "receiptId": "GEN-materials-family-v2"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ],
+        "preferredDirection": {
+          "path": "docs/game-design/concepts/materials-family-v2.png",
+          "receiptId": "GEN-materials-family-v2",
+          "supersedes": "GEN-materials-family-v1",
+          "acceptance": "open"
+        }
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -19880,8 +20240,28 @@
         "evidence": []
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/materials-family-v1.png",
+            "sha256": "6a6732fb333ae590026060033d008b5d12d7b961192a9b25fbfa2586879360de",
+            "receiptId": "GEN-materials-family-v1"
+          },
+          {
+            "path": "docs/game-design/concepts/materials-family-v2.png",
+            "sha256": "42296b42c792065664b251ad823e701be9331deefbd35a7418812094e196db96",
+            "receiptId": "GEN-materials-family-v2"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ],
+        "preferredDirection": {
+          "path": "docs/game-design/concepts/materials-family-v2.png",
+          "receiptId": "GEN-materials-family-v2",
+          "supersedes": "GEN-materials-family-v1",
+          "acceptance": "open"
+        }
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -19917,8 +20297,28 @@
         "evidence": []
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/materials-family-v1.png",
+            "sha256": "6a6732fb333ae590026060033d008b5d12d7b961192a9b25fbfa2586879360de",
+            "receiptId": "GEN-materials-family-v1"
+          },
+          {
+            "path": "docs/game-design/concepts/materials-family-v2.png",
+            "sha256": "42296b42c792065664b251ad823e701be9331deefbd35a7418812094e196db96",
+            "receiptId": "GEN-materials-family-v2"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ],
+        "preferredDirection": {
+          "path": "docs/game-design/concepts/materials-family-v2.png",
+          "receiptId": "GEN-materials-family-v2",
+          "supersedes": "GEN-materials-family-v1",
+          "acceptance": "open"
+        }
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -19954,8 +20354,28 @@
         "evidence": []
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/materials-family-v1.png",
+            "sha256": "6a6732fb333ae590026060033d008b5d12d7b961192a9b25fbfa2586879360de",
+            "receiptId": "GEN-materials-family-v1"
+          },
+          {
+            "path": "docs/game-design/concepts/materials-family-v2.png",
+            "sha256": "42296b42c792065664b251ad823e701be9331deefbd35a7418812094e196db96",
+            "receiptId": "GEN-materials-family-v2"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ],
+        "preferredDirection": {
+          "path": "docs/game-design/concepts/materials-family-v2.png",
+          "receiptId": "GEN-materials-family-v2",
+          "supersedes": "GEN-materials-family-v1",
+          "acceptance": "open"
+        }
       },
       "implementation": {
         "status": "existing-unqualified",

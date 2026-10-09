@@ -1,12 +1,14 @@
 # SEA Game candidate release notes EN and FR
 
-Status: unaccepted development candidate, revised 2026-10-09. Current source app identity is `3.4.2`, ruleset `STANDARD`, deck `synthetic-v1`, save schema 3 and backup envelope version 1. The version label does not identify exact bytes or establish release acceptance. Use the source/preview identities and role hashes in the [current qualification report](evidence/convergence/scene-game-20261009/REPORT.md), plus the externally retained packet key at accepted release. Root deployment, rights/content/classroom acceptance and operator handover remain open.
+Status: unaccepted development candidate, revised 2026-10-09. Current source app identity is `3.5.0`, ruleset `STANDARD`, deck `synthetic-v1`, save schema 3 and backup envelope version 1. The version label does not identify exact bytes or establish release acceptance. Use the source/preview identities and role hashes in the [current qualification report](evidence/convergence/scene-game-20261009/REPORT.md), plus the externally retained packet key at accepted release. Root deployment, rights/content/classroom acceptance and operator handover remain open.
 
 Historical version 3.3.0 binds source `01204c8` and preview `18dc0db`; it does not qualify new 3.4.0 bytes. / La version historique 3.3.0 correspond à la source `01204c8` et à l’aperçu `18dc0db`; ses preuves ne valident pas les nouveaux fichiers 3.4.0.
 
 ## English
 
 ### Changes in the candidate
+
+- Version 3.5.0 adds distinct rear mission interiors: Troop seating/aisle and glazing, Command operator stations/rack and raised roof, Reconnaissance observer station and supported mast. Installed cards replace equivalent role furniture rather than stacking it. Student auction shows unknown-card entry first, then revealed context and private decisions before purchase results; every original field and instruction remains reachable. New component/assembly and material sheets are exploratory design targets with corrected outer margins, not certified construction or runtime acceptance.
 
 - Version 3.4.2 rejects callbacks from replaced editors, changed state identities and advanced rounds/lots, including deferred field navigation. Compatible saves and canonical rules remain unchanged.
 
@@ -42,6 +44,8 @@ Local command, rules, persistence, build, artwork and integrity evidence does no
 ## Français
 
 ### Changements de la version candidate
+
+- La version 3.5.0 différencie les intérieurs arrière : sièges/allée et vitrages du transporteur, postes/rack et toit surélevé du commandement, poste d’observation et appuis du mât de reconnaissance. Les cartes installées remplacent le mobilier équivalent. La saisie de carte inconnue précède le contexte révélé et les décisions privées; les résultats d’achat suivent. Tous les champs et renseignements restent accessibles. Les nouvelles planches de composants/assemblages et de matériaux sont exploratoires; les marges sont corrigées et l’acceptation reste ouverte.
 
 - La version 3.4.2 rejette les rappels des éditeurs remplacés et les changements de séance, de ronde ou de lot, y compris la navigation différée entre champs. Les règles et les sauvegardes restent compatibles.
 

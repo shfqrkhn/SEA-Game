@@ -13,7 +13,7 @@ const dictionary=student.split(/\r?\n/).find(line=>line.startsWith('const I18N='
 assert(dictionary,'Canonical student translations are available');
 const context=vm.createContext({});
 vm.runInContext(dictionary+'\nthis.strings=I18N;',context);
-vm.runInContext(read('source/shared/engine.js')+'\n'+read('source/shared/three-presentation.js')+'\nthis.project=seaSceneProjection;this.view=sea3DView;',context);
+vm.runInContext(read('source/shared/engine.js')+'\n'+read('source/shared/three-presentation.js')+'\nthis.project=seaSceneProjection;this.view=sea3DView;this.prioritize=seaSceneTaskPriorities;',context);
 for(const language of ['en','fr']){
  const {document}=parseHTML(read('source/student.template.html'));
  const active=document.getElementById('auction');
@@ -38,6 +38,13 @@ for(const language of ['en','fr']){
  assert.equal(rowFor('decision').value,values.decision,'Own private note remains editable in own task');
  assert.equal(rowFor('cardInput').value,values.cardInput,'Manual known card input is preserved');
  for(const [id,value] of Object.entries(values))assert.equal(document.getElementById(id).value,value,'Projection cannot alter entered data');
+ const originalRows=projection.rows.map(row=>({key:row.key,label:row.label,value:row.value}));
+ for(const loaded of [false,true]){
+  const snapshot={phase:'auction',currentCard:loaded?{id:'MOB-A'}:null,round:0,lot:0},before=JSON.stringify(snapshot);
+  context.prioritize(projection,snapshot,'student');const ordered=projection.rows.filter(row=>row.section==='task').slice().sort((a,b)=>a.priority-b.priority);
+  const first=loaded?'wtp':'cardInput';const fields=ordered.filter(row=>['input','select'].includes(row.kind));assert.equal(projection.targets.get(fields[0].key),document.getElementById(first),language+' first meaningful task field follows prerequisite/decision order');if(loaded){assert.equal(ordered[0].kind,'text','Known public card context remains first');assert.equal(ordered[0].priority,9);assert(rowFor('decision').priority<rowFor('wonPrice').priority,'Private decision precedes purchase result');}else assert.equal(ordered[0].key,rowFor('cardInput').key,'Unknown-card first field precedes long continuation');
+  assert.equal(rowFor(first).priority,loaded?10:5);assert(rowFor('loadCardBtn').priority<50);assert.deepEqual(projection.rows.map(row=>({key:row.key,label:row.label,value:row.value})),originalRows,'All text/value/key continuations retained exactly');assert.equal(JSON.stringify(snapshot),before,'Task prioritization cannot mutate authoritative state');
+ }
  const own={id:1,mission:'RECOVERY',purchases:[]};
  const instructorState={phase:'auction',revealMode:'MANUAL',revealed:false,round:0,lot:0,teams:[own],market:[[{id:'MOB-A'}]],decision:values.decision,plan:values.decision};
  const publicView=context.view(instructorState,'instructor',1,language);

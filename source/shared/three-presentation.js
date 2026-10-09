@@ -59,6 +59,12 @@ function seaSceneProjection(roots,visible,keyFor){
 }
 // Reuse native navigation buttons across refreshes so focused controls survive
 // timer updates. This is presentation state; it never carries game commands.
+// Presentation ordering only: prerequisite, decision, then recorded outcome.
+function seaSceneTaskPriorities(projected,s,role){
+ if(role!=='student'||s.phase!=='auction')return;
+ const priorities=s.currentCard?{wtp:10,decision:20,cardInput:25,loadCardBtn:26,wonPrice:30}:{cardInput:5,loadCardBtn:6};
+ for(const row of projected.rows){const node=projected.targets.get(row.key);if(row.section!=='task')continue;if(Object.prototype.hasOwnProperty.call(priorities,node?.id))row.priority=priorities[node.id];if(s.currentCard&&node?.getAttribute?.('data-scene-summary')==='true')row.priority=9;}
+}
 function seaSceneNavigation(stage,sections,selected,language,epoch,onSelect,currentEpoch,blocked=false){
  if(!stage?.appendChild)return;
  let nav=Array.from(stage.children||[]).find(node=>node.id==='sea3dNavigation');
@@ -173,6 +179,7 @@ function sea3DStart(role){
   const projected=seaSceneProjection(roots,semanticVisible,keyFor);sceneTargets=projected.targets;
   if(state.phase==='build'&&state.teams?.length){const team=typeof selectedTeam==='string'&&state.teams.some(item=>String(item.id)===selectedTeam)?Number(selectedTeam):state.teams[0].id;projected.rows=projected.rows.filter(row=>!row.buildTeamId||row.buildSummary||row.buildTeamId===team);sceneTargets=new Map(projected.rows.map(row=>[row.key,projected.targets.get(row.key)]));}
   if(context&&!dialog){projected.rows=projected.rows.filter(row=>{const node=projected.targets.get(row.key);return !(node?.id==='phaseBadge'&&row.label===context.phase)&&!(node?.id==='sessionBadge'&&row.label===context.session)&&!(node?.classList?.contains('badge')&&row.label==='v'+context.version);});}
+  if(!dialog&&!alerts.length&&typeof role!=='undefined')seaSceneTaskPriorities(projected,state,role);
   const loadFirst=!dialog&&typeof role!=='undefined'&&role==='student'&&state.phase==='auction'&&!state.currentCard?projected.rows.find(row=>row.kind==='button'&&!row.disabled&&projected.targets.get(row.key)?.id==='loadCardBtn'):null;
   const primary=loadFirst||projected.rows.find(row=>row.kind==='button'&&!row.disabled&&row.currentAction&&!row.utility)||projected.rows.find(row=>row.kind==='button'&&!row.disabled&&row.section==='task'&&row.emphasis==='primary'&&!row.utility);
   if(primary){primary.primary=true;primary.emphasis='primary';primary.priority=Math.min(primary.priority,49);}
