@@ -14,7 +14,7 @@ Canonical SVG files now supply the build-time embedded table through tools/artwo
 
 Required closure: qualify repaired CAP-F and repair any further full-size defects while preserving asset identity; qualify all six integrated mission illustrations and all 77 mappings, localized alternative descriptions, contain/reflow/no-cropping behavior and offline failures in the exact candidate. Obtain actual source/asset provenance and distribution permission, or use a properly authorized replacement with recorded generation/edit/input provenance and requalification. CAP-F's new edit does not establish rights to its inherited input. Synthetic origin alone is insufficient.
 
-Reproduce technical inspection with `python tools/audit-artwork.py --source SEA_Instructor_Standalone.html SEA_Student_Standalone.html` from repository root. Local evidence uses the bundled Windows Python and Pillow 12.3.0; Pillow is QA-only. WSL has no Pillow installed and no WSL decode pass is claimed. Current CI performs structural checks; actual candidate CI/image-decode/browser acceptance remains open.
+Historical raster inspection used `tools/audit-artwork.py` and Pillow 12.3.0 before external WebPs were retired. Current embedded resources are verified with `node tools/test-artwork-host.mjs`; original repair evidence and historical Git versions remain available.
 
 ## Repair pack and 3D scope amendment, 2026-10-08
 

@@ -23,7 +23,9 @@
   <label><span id="sea3d-object">Inspect</span><select id="sea3dObject"></select></label>
 
  </div>
+ <div class="sea3d-inspection"><label><span id="sea3d-mode">View</span><select id="sea3dMode"><option value="assembled">Assembled</option><option value="exploded">Exploded</option><option value="cutaway">Cutaway</option></select></label><label class="sea3d-shadow"><input id="sea3dShadows" type="checkbox" checked><span id="sea3d-shadows">Shadows</span></label><label id="sea3dSeparation" hidden><span id="sea3d-separation">Separation</span><input id="sea3dAmount" type="range" min="0" max="100" value="70" step="1"><output id="sea3dPercent" for="sea3dAmount">70%</output></label></div>
  <div id="sea3dViewport" role="img" aria-label="Vehicle and equipment" aria-describedby="sea3dStatus" hidden></div>
+ <details id="sea3dMap"><summary id="sea3d-map">Assembly map</summary><div id="sea3dParts" class="sea3d-parts"></div></details>
  <p id="sea3dStatus" role="status" aria-live="polite"></p><p id="sea3d-hint" class="muted"></p>
 </section>
 <section id="setup" class="section active">

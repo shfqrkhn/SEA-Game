@@ -8,7 +8,8 @@ export function materials(){
  for(let i=0;i<data.length;i+=4){seed=(Math.imul(seed,1664525)+1013904223)>>>0;const n=205+(seed>>>27);data.set([n,n,n,255],i);}
  const grain=new THREE.DataTexture(data,64,64);grain.wrapS=grain.wrapT=THREE.RepeatWrapping;grain.repeat.set(4,4);grain.needsUpdate=true;
  const mat=(color,roughness,metalness=0,extra={})=>new THREE.MeshStandardMaterial({color,roughness,metalness,...extra});
- return {paint:mat('#64705b',.64,.18,{roughnessMap:grain}),edge:mat('#3e493d',.72,.24,{roughnessMap:grain}),steel:mat('#969e9c',.27,.88),darkSteel:mat('#42494a',.44,.8),rubber:mat('#202421',.93),glass:mat('#263e43',.12,.42,{envMapIntensity:1.3}),amber:mat('#e1a33c',.29,.2),lamp:mat('#e2e9db',.24,.1),red:mat('#b34736',.42)};
+ const result={paint:new THREE.MeshPhysicalMaterial({color:'#596548',roughness:.72,metalness:.12,roughnessMap:grain,bumpMap:grain,bumpScale:.006,clearcoat:.12,clearcoatRoughness:.6}),edge:mat('#343d32',.72,.24,{roughnessMap:grain}),steel:mat('#969e9c',.27,.88),darkSteel:mat('#42494a',.44,.8),rubber:mat('#191c19',.93,0,{bumpMap:grain,bumpScale:.012}),glass:new THREE.MeshPhysicalMaterial({color:'#173137',roughness:.08,metalness:.18,clearcoat:1,envMapIntensity:1.5}),amber:mat('#e1a33c',.29,.2),lamp:mat('#e2e9db',.24,.1),red:mat('#b34736',.42)};
+ for(const [key,name]of Object.entries({paint:'powder coated metal',steel:'machined steel',rubber:'moulded rubber',glass:'optical glass'}))result[key].name=name;return result;
 }
 export function soften(model){
  model.traverse(o=>{if(o.isMesh&&o.geometry.type==='BoxGeometry'){const {width:w,height:h,depth:d}=o.geometry.parameters;if(Math.min(w,h,d)>.045){o.geometry.dispose();o.geometry=new RoundedBoxGeometry(w,h,d,1,Math.min(.024,Math.min(w,h,d)*.12));}}});return model;
@@ -57,12 +58,12 @@ export function detailPart(g,m,prefix,v){
   box(g,m.rubber,[.09,.003,.045],[.25,.766,.23],'trackpad');box(g,m.paint,[.28,.019,.22],[-.38,.758,.15],'review binder');
   for(let i=0;i<4;i++)box(g,m.lamp,[.25,.003,.19],[-.38+i*.003,.772+i*.003,.15]);rod(g,m.darkSteel,[-.54,.78,.26],[-.32,.78,.26],.005);
  }
- return soften(g);
+ highDetail(g,m,prefix,v);refineWheels(g,m);return soften(g);
 }
 
-function face(g,m,vertices){const a=[];for(let i=1;i<vertices.length-1;i++)a.push(...vertices[0],...vertices[i],...vertices[i+1]);const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.Float32BufferAttribute(a,3));geometry.computeVertexNormals();const mat=m.clone();mat.side=THREE.DoubleSide;const mesh=new THREE.Mesh(geometry,mat);mesh.name=m.metalness===.42?'cab glazing':'hull shell';g.add(mesh);return mesh;}
+function face(g,m,vertices){const a=[];for(let i=1;i<vertices.length-1;i++)a.push(...vertices[0],...vertices[i],...vertices[i+1]);const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.Float32BufferAttribute(a,3));geometry.computeVertexNormals();const mat=m.clone();mat.side=THREE.DoubleSide;const mesh=new THREE.Mesh(geometry,mat);mesh.name=m.name==='optical glass'?'cab glazing':'hull shell';g.add(mesh);return mesh;}
 export function missionBase(id,m){
- if(id==='RECOVERY'){const g=createVehicle(m);g.traverse(o=>{if(o.isMesh&&o.geometry.type==='BufferGeometry'&&o.material.metalness!==.42)o.name='hull shell';});detailVehicle(g,m,6.25,2.3);return soften(g);}
+ if(id==='RECOVERY'){const g=createVehicle(m);g.traverse(o=>{if(o.isMesh&&o.geometry.type==='BufferGeometry'&&o.material.name!=='optical glass')o.name='hull shell';});detailVehicle(g,m,6.25,2.3);return soften(g);}
  const spec={COMBAT:[6.8,2.65,4],RECCE:[5.5,2.3,2],TROOP:[6.9,2.6,3],COMMAND:[6.7,2.6,3],MINE:[6.8,2.65,4]}[id], [length,width,axles]=spec;
  const g=new THREE.Group();g.name=id;g.userData={units:'metres',concept:true,axles,roof:2.37,length,width};
  const front=length/2,rear=-front,half=width/2;
@@ -96,7 +97,47 @@ export function missionBase(id,m){
  detailVehicle(g,m,length,width);return soften(g);
 }
 function detailVehicle(g,m,length,width){
+ const cockpit=new THREE.Group();cockpit.name='driver controls';g.add(cockpit);const x=length/2-1.4,y=g.userData.roof?1.53:1.86;
+ box(cockpit,m.edge,[.22,.26,1.42],[x+.17,y+.14,0],'dashboard');
+ for(const s of [-1,1]){box(cockpit,m.rubber,[.48,.14,.47],[x-.45,y,s*.48],'driver seat');box(cockpit,m.rubber,[.12,.58,.47],[x-.68,y+.27,s*.48],'seat back');rod(cockpit,m.steel,[x-.45,y-.30,s*.48],[x-.45,y-.07,s*.48],.026);}
+ const steering=new THREE.Mesh(new THREE.TorusGeometry(.18,.017,8,40),m.rubber);steering.rotation.y=Math.PI/2;steering.position.set(x-.15,y+.41,-.48);cockpit.add(steering);for(let i=0;i<3;i++){const a=i*Math.PI*2/3;rod(cockpit,m.darkSteel,[x-.15,y+.41,-.48],[x-.15,y+.41+Math.cos(a)*.16,-.48+Math.sin(a)*.16],.009);}
+ for(let i=0;i<4;i++)cylinder(cockpit,m.glass,.034,.012,[x+.045,y+.21,-.57+i*.09],'x');
+ refineWheels(g,m);
+ const guards=[];g.traverse(o=>{if(o.name==='wheel guard')guards.push(o);});for(const guard of guards){const shape=new THREE.Shape();for(let i=0;i<=12;i++){const a=i*Math.PI/12,x=Math.cos(a)*.70,y=Math.sin(a)*.70;(i?shape.lineTo(x,y):shape.moveTo(x,y));}for(let i=12;i>=0;i--){const a=i*Math.PI/12;shape.lineTo(Math.cos(a)*.64,Math.sin(a)*.64);}shape.closePath();guard.geometry.dispose();guard.geometry=new THREE.ExtrudeGeometry(shape,{depth:.46,bevelEnabled:true,bevelSegments:1,steps:1,bevelSize:.009,bevelThickness:.009});guard.position.y=.62;guard.position.z-=.23;}
+ for(const side of [-1,1]){const z=side*width*.45;for(const x of [-length*.38,-length*.22]){box(g,m.edge,[.028,.12,.028],[x,1.75,z],'panel hinge');cylinder(g,m.steel,.011,.07,[x,1.75,z+side*.024],'y',.011,12);}for(let i=0;i<6;i++)box(g,m.darkSteel,[.3,.02,.03],[-length*.27,2.08+i*.035,z+side*.018],'louvred cooling intake');rod(g,m.darkSteel,[length*.36,1.38,z],[length*.36,1.95,z],.016);}
+ // Connected drive shaft, armoured belly plate, exhaust and fuel-tank plumbing.
+ rod(g,m.darkSteel,[-length*.34,.80,0],[length*.31,.80,0],.06);box(g,m.edge,[length*.56,.065,width*.48],[0,.90,0],'belly protection');
+ cylinder(g,m.darkSteel,.11,.85,[-length*.22,1.18,-width*.28],'x');tube(g,m.darkSteel,[[-length*.22,1.18,-width*.28],[-length*.38,1.18,-width*.28],[-length*.42,1.37,-width*.37]],.034);
  const rear=-length/2;
  for(const s of [-1,1]){tube(g,m.darkSteel,[[rear+.7,1.4,s*width*.43],[rear+.7,2.1,s*width*.46],[rear+1.3,2.13,s*width*.46]],.024);box(g,m.edge,[.4,.20,.42],[rear+.55,1.07,s*width*.39],'mud flap');}
  for(let i=0;i<4;i++){rod(g,m.steel,[rear+.1,1.15+i*.18,-.3],[rear+.1,1.15+i*.18,.3],.014);}
+}
+
+function refineWheels(g,m){
+ const wheels=[];g.traverse(o=>{if(o.name==='run-flat wheel')wheels.push(o);});for(const w of wheels){if(w.userData.detailed)continue;w.userData.detailed=true;
+  const tire=w.children[0];tire.geometry.dispose();const profile=[[0,-.185],[.37,-.185],[.51,-.18],[.565,-.145],[.585,-.08],[.585,.08],[.565,.145],[.51,.18],[.37,.185],[0,.185]].map(([r,z])=>new THREE.Vector2(r,z));tire.geometry=new THREE.LatheGeometry(profile,48);tire.rotation.x=Math.PI/2;
+  for(const s of [-1,1]){const rotor=cylinder(w,m.steel,.275,.015,[0,0,s*.18],'z',.275,48);rotor.name=s===-Math.sign(w.position.z)?'ventilated brake rotor':'rim retaining ring';for(let i=0;i<16;i++){const a=i*Math.PI/8;cylinder(w,m.darkSteel,.012,.018,[Math.sin(a)*.23,Math.cos(a)*.23,s*.191],'z',.012,8);}if(s===-Math.sign(w.position.z))box(w,m.darkSteel,[.12,.21,.09],[.23,0,s*.17],'brake caliper');for(let i=0;i<8;i++){const a=i*Math.PI/4;cylinder(w,m.darkSteel,.025,.012,[Math.sin(a)*.286,Math.cos(a)*.286,s*.228],'z',.025,10);}cylinder(w,m.steel,.012,.025,[.12,.3,s*.23],'z',.012,8);}
+ }
+}
+
+function highDetail(g,m,prefix,v){
+ if(prefix==='MOB'&&[0,4,5].includes(v)){
+  for(const side of [-1,1]){for(let i=0;i<4;i++){const x=-.29+i*.18;tube(g,m.steel,[[x,.76,side*.24],[x,.61,side*.35],[x+.07,.42,side*.4]],.021,20);cylinder(g,m.steel,.012,.026,[x,.85,side*.2],'y',.012,6);}tube(g,m.darkSteel,[[-.39,.36,side*.38],[.3,.36,side*.38],[.4,.49,side*.4]],.037,30);}
+  const turbo=new THREE.Mesh(new THREE.TorusGeometry(.08,.031,12,32),m.steel);turbo.position.set(-.43,.71,-.4);g.add(turbo);tube(g,m.rubber,[[-.43,.72,-.42],[-.38,.93,-.42],[.28,.94,-.39],[.44,.65,-.28]],.042,36);
+  for(const [x,y,r]of [[-.40,.35,.075],[-.40,.62,.05],[-.20,.46,.042]]){cylinder(g,m.darkSteel,r,.025,[x,y,.36],'z',r,32);cylinder(g,m.steel,r*.52,.029,[x,y,.38],'z');}tube(g,m.rubber,[[-.46,.35,.385],[-.46,.60,.385],[-.39,.67,.385],[-.18,.51,.385],[-.17,.43,.385],[-.40,.28,.385],[-.46,.35,.385]],.010,48);
+  cylinder(g,m.paint,.060,.22,[-.23,.55,.37],'x',.06,28);for(let i=0;i<9;i++)box(g,m.steel,[.009,.09,.055],[-.32+i*.02,.55,.38],'alternator fin');
+  for(const side of [-1,1])tube(g,m.rubber,[[-.36,.85,side*.2],[-.26,.92,side*.22],[.19,.92,side*.22],[.38,.67,side*.32]],.008,30);
+ }else if(prefix==='CAP'){
+  const seats=[];g.traverse(o=>{if(o.name==='crew seat cushion')seats.push(o);});for(const seat of seats){const {x,z}=seat.position;box(g,m.rubber,[.12,.15,.28],[x-.19,1.06,z],'head restraint');for(const side of [-1,1]){rod(g,m.darkSteel,[x-.16,.73,z+side*.25],[x+.18,.73,z+side*.25],.021);cylinder(g,m.steel,.023,.025,[x-.18,.28,z+side*.17],'z');}box(g,m.amber,[.035,.045,.028],[x+.13,.51,z+.22],'belt buckle');for(let i=0;i<3;i++)box(g,m.edge,[.31,.005,.009],[x,.56,z+(i-1)*.08],'seat seam');}
+ }else if(prefix==='FP'){
+  box(g,m.darkSteel,[.39,.12,.14],[.12,.73,0],'breech cover');for(let i=0;i<7;i++)box(g,m.edge,[.018,.04,.13],[-.06+i*.045,.81,0],'receiver cooling fin');for(const side of [-1,1]){box(g,m.paint,[.055,.27,.30],[-.1,.55,side*.31],'mount cheek');cylinder(g,m.steel,.045,.038,[-.1,.57,side*.35],'z',.045,32);}
+  for(let i=0;i<8;i++)cylinder(g,m.amber,.018,.08,[-.24+i*.034,.58,-.4],'y',.013,12);tube(g,m.rubber,[[-.23,.38,-.37],[-.36,.48,-.3],[-.35,.64,-.17],[-.1,.72,-.11]],.018,24);
+  for(let i=0;i<6;i++)box(g,m.steel,[.033,.007,.017],[.18+i*.038,.80,0],'accessory rail');
+ }else if(prefix==='COM'){
+  const count=v===1?3:v===6?2:1;for(let i=0;i<count;i++){const x=(i-(count-1)/2)*.4;for(const dx of [-.13,.13])for(const y of [.12,.47])cylinder(g,m.steel,.008,.012,[x+dx,y,.127],'z',.008,6);for(let j=0;j<4;j++){cylinder(g,m.steel,.013,.012,[x-.10+j*.063,.10,.13],'z');cylinder(g,m.darkSteel,.009,.016,[x-.10+j*.063,.10,.14],'z');}box(g,m.darkSteel,[.04,.18,.023],[x+.145,.30,.126],'grip');}
+ }else if(prefix==='SA'){
+  const y=v===3?1.75:.43;for(const x of [-.105,.105]){const ring=new THREE.Mesh(new THREE.TorusGeometry(.068,.008,8,40),m.darkSteel);ring.position.set(x,y,.198);g.add(ring);box(g,m.edge,[.19,.025,.18],[x,y+.14,.065],'lens sunshade');for(const dx of [-.09,.09])cylinder(g,m.steel,.006,.012,[x+dx,y+.09,.123],'z',.006,6);}
+ }else if(prefix==='ACC'&&[0,5].includes(v)){
+  for(const x of [-.42,.42]){box(g,m.edge,[.09,.08,.46],[x,.14,0],'gusseted pedestal');for(const z of [-.19,.19])cylinder(g,m.steel,.011,.020,[x,.19,z],'y',.011,6);}tube(g,m.rubber,[[-.6,.38,.06],[-.63,.61,.1],[-.40,.65,.15],[-.20,.62,.13]],.013,40);box(g,m.paint,[.21,.07,.13],[-.22,.6,.13],'hydraulic valve block');for(const x of [-.29,-.16])cylinder(g,m.steel,.017,.045,[x,.64,.13]);
+ }
 }

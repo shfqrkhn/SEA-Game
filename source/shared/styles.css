@@ -479,3 +479,10 @@ main{display:block;max-width:1420px;padding:18px 22px 30px}
 @media(max-width:520px){header{position:static;flex-direction:column;align-items:stretch;gap:10px;padding:10px 12px}.brand{width:100%}.top{width:100%;gap:6px}.top .btn{font-size:12px;padding:8px}.brand h1{overflow-wrap:anywhere}.sea3d-stage{padding:12px}#sea3dViewport{height:270px}.hero h2{font-size:24px}}
 @media screen{.art{display:none!important}}
 @media print{.sea3d-stage,.save-menu{display:none!important}.section.active{display:block}.art{display:block}}
+
+/* The mission model is the shared game stage; native controls remain accessible. */
+.sea3d-inspection{display:flex;align-items:end;gap:18px;flex-wrap:wrap;margin-top:14px}.sea3d-inspection label{display:flex;align-items:center;gap:8px;font-size:12px}.sea3d-inspection select{padding:7px;background:#fff;border:1px solid #c8d2ca}.sea3d-inspection input{width:140px;accent-color:#3e624c}.sea3d-inspection output{font-variant-numeric:tabular-nums;min-width:32px}.sea3d-parts{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}.sea3d-parts button{font:inherit;font-size:12px;background:#fff;border:1px solid #c8d2ca;padding:7px 10px;cursor:pointer}.sea3d-parts button:hover,.sea3d-parts button:focus-visible{border-color:#496b55;background:#e5ede6}#sea3dMap{font-size:12px;margin-top:8px}
+@media(min-width:1000px){.section.active>.sea3d-stage{grid-column:1/-1;grid-row:auto;position:relative;top:auto}.section.active>:not(.hero):not(.sea3d-stage){grid-column:1/-1}#sea3dViewport{height:clamp(360px,52dvh,520px)}.sea3d-toolbar{position:absolute;right:18px;top:58px;max-width:38%;margin:0}.sea3d-inspection{padding-right:40%}}
+@media(max-width:520px){.sea3d-inspection{gap:10px}.sea3d-inspection input{width:115px}}
+
+.sea3d-inspection .sea3d-shadow input{width:auto;accent-color:#3e624c}

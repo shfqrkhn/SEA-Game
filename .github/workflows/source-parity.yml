@@ -28,6 +28,7 @@ jobs:
       - run: node tools/test-text-encoding.mjs
       - run: npm ci --prefix samples/threejs-recovery
       - run: node samples/threejs-recovery/verify-game.mjs
+      - run: node samples/threejs-recovery/verify-inspection.mjs
       - run: node tools/test-package.mjs
       - run: node tools/test-mpes.mjs
       - run: node tools/check-mpes.mjs

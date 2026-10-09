@@ -32,14 +32,14 @@ Card rules, labels, descriptions, prices, calculations, instructor ledger and st
 
 ## Art inventory
 
-- `assets/v1/cards/` - 70 WebP images plus 70 corresponding editable conceptual SVGs, keyed by card ID
-- `assets/v1/vehicles/` - six WebP mission illustrations and their SVG references
-- `assets/v1/practice/` - one WebP training image and SVG reference
-- `.github/workflows/publish-artwork.yml` - read-only integrity checks for all 77 SVG/WebP asset pairs, standalone JavaScript syntax, and retired interface controls
+- `assets/v1/cards/` - 70 editable SVG print-source illustrations
+- `assets/v1/vehicles/` - six editable SVG mission print sources
+- `assets/v1/practice/` - one SVG training print source
+- `.github/workflows/source-parity.yml` - current embedded-resource, source, gameplay and model verification
 
 The content is **synthetic instructional artwork**, not an approved depiction of actual equipment. The reconstructed game deck still needs balance/content approval.
 
-The [artwork provenance and acceptance record](docs/ARTWORK_PROVENANCE.md) distinguishes technical validation from visual and rights approval. QA can decode all 77 images and inspect SVG references with `python tools/audit-artwork.py --source SEA_Instructor_Standalone.html SEA_Student_Standalone.html` using Pillow; the recorded local run uses Pillow 12.3.0. This is a development-only dependency.
+The [artwork provenance and acceptance record](docs/ARTWORK_PROVENANCE.md) distinguishes technical validation from visual and rights approval. The obsolete external WebP collection and duplicate preview assets have been removed. Current runtime and print resources are embedded; `node tools/test-artwork-host.mjs` verifies this contract. Historical repair evidence and Git versions preserve provenance.
 
 ## Source and reproducible builds
 
@@ -65,6 +65,6 @@ Do not enter personal, Protected, Classified, real-project, or operational infor
 
 ## Three.js game candidate
 
-[Play the game](https://shfqrkhn.github.io/SEA-Game/previews/threejs-game-20261008/) in either role. All eight phases integrate the mission/equipment scene directly into the current task; six vehicles and 71 part/process/practice models share scale and materials. Inspect revealed lots and owned cards. The vehicle build fits the latest hardware from each category, with sectioned interiors where needed; all purchases remain in the ledger and inspection menu. Rules and schema-3 saves are preserved. Three.js, geometry and print illustrations are embedded; no alternate rendering or external artwork loading is used.
+[Play the game](https://shfqrkhn.github.io/SEA-Game/previews/threejs-game-20261008/) in either role. All eight phases integrate the mission/equipment scene directly into the current task; six vehicles and 71 part/process/practice models share scale and materials. Inspect revealed lots and owned cards. The vehicle build fits the latest hardware from each category, with assembled, cutaway and labelled exploded inspection views; all purchases remain in the ledger and inspection menu. Rules and schema-3 saves are preserved. Three.js, geometry and print illustrations are embedded; no alternate rendering or external artwork loading is used.
 
 Geometry: `source/three/game-models.mjs`; renderer: `source/three/game-scene.mjs`; public role adapter: `source/shared/three-presentation.js`. Three.js 0.186.1 is locally bundled under MIT. Regenerate with `npm ci --prefix samples/threejs-recovery`, `node samples/threejs-recovery/build-game.mjs`, then `node tools/build.mjs`. Run `node tools/test-three-presentation.mjs` and `node samples/threejs-recovery/verify-game.mjs` alongside existing tests. See [qualification and limits](docs/THREE_JS_GAME.md).
