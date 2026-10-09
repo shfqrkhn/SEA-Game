@@ -99,7 +99,7 @@ function validateInstructorSave(x){
  if(practice.leader)must(practice.revealed&&(practice.open||practice.closed));
  if(practice.closed)must(practice.revealed&&practice.leader&&!practice.open);
  if(x.phase!=="practice")must(!practice.revealed&&!practice.open&&!practice.leader&&!practice.closed);
- return {...x,teams:rebuilt,market:expected,privateEntry:false,resultDraft:x.resultDraft??null};
+ return {...x,sessionCode:cfg.code,teams:rebuilt,market:expected,privateEntry:false,resultDraft:x.resultDraft??null};
 }
 
 const STORE_KEY="SEA_INSTRUCTOR_V300";

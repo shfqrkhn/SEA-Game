@@ -18,6 +18,9 @@ const mislabeled={format:'SEA-GAME-BACKUP',version:1,appVersion:'3.0.0',ruleset:
 let validatorCalled=false;
 assert.throws(()=>rules.parseBackup(JSON.stringify(mislabeled),'STUDENT',x=>{validatorCalled=true;return x}),/invalid-state/,'Mislabeled role data is rejected before invoking the role validator');
 assert.equal(validatorCalled,false);
+let serializerCalls=0;
+assert.throws(()=>rules.makeBackup('STUDENT',{...base,toJSON(){serializerCalls++;return {...base,marketSeed:'LEAK'}}}),/invalid-state/,'Export rejects a crafted serializer instead of bypassing the role boundary');
+assert.equal(serializerCalls,0);
 const live=rules.createTeams({teamCount:2})[0];live.mission='COMBAT';
 rules.acquire(live,rules.cardAt('CAP-A',1,1),30000000);
 let hooks=0;
