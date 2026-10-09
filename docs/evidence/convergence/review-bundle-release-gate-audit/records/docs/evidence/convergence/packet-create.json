@@ -1,0 +1,6 @@
+{
+  "result": "PASS",
+  "key": "24f93b10e4e006248d98f641603fe5ffa34cc1edeaa9e7eab16d270f326b7537",
+  "fileCount": 206,
+  "scope": "Exact candidate packet bytes only; no release acceptance"
+}

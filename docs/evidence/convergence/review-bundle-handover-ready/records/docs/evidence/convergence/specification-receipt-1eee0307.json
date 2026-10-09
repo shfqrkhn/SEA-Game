@@ -1,0 +1,46 @@
+{
+  "target": "SPECIFICATION",
+  "status": "CONVERGED",
+  "specificationVersion": "1.1.1",
+  "key": "1eee0307e164e6b3ab78238feeee92bc28ef6527221414bc550e03150bbe1aba",
+  "gitHead": "1b80b348ac945987fbe11db77bd7a51f3dd553aa",
+  "manifest": "candidate-manifest-1eee0307.json",
+  "checks": "specification-checks-1eee0307.json",
+  "reviewMode": "single-agent sequential self-review; no independent or cross-model assurance",
+  "consecutiveFreshSameKeyZeroChangePasses": 3,
+  "passes": [
+    {
+      "file": "specification-pass-1-2026-10-08-1eee0307.md",
+      "framing": "forward requirements",
+      "result": "PASS",
+      "keyBefore": "1eee0307e164e6b3ab78238feeee92bc28ef6527221414bc550e03150bbe1aba",
+      "keyAfter": "1eee0307e164e6b3ab78238feeee92bc28ef6527221414bc550e03150bbe1aba",
+      "candidateChanges": 0
+    },
+    {
+      "file": "specification-pass-2-2026-10-08-1eee0307.md",
+      "framing": "failure-first",
+      "result": "PASS",
+      "keyBefore": "1eee0307e164e6b3ab78238feeee92bc28ef6527221414bc550e03150bbe1aba",
+      "keyAfter": "1eee0307e164e6b3ab78238feeee92bc28ef6527221414bc550e03150bbe1aba",
+      "candidateChanges": 0
+    },
+    {
+      "file": "specification-pass-3-2026-10-08-1eee0307.md",
+      "framing": "fresh resume, release and retirement",
+      "result": "PASS",
+      "keyBefore": "1eee0307e164e6b3ab78238feeee92bc28ef6527221414bc550e03150bbe1aba",
+      "keyAfter": "1eee0307e164e6b3ab78238feeee92bc28ef6527221414bc550e03150bbe1aba",
+      "candidateChanges": 0
+    }
+  ],
+  "structuralEvaluator": "PASS; 29 synthetic scenarios",
+  "semanticMutationEvaluator": "PASS; 18 mutants rejected",
+  "independentInventory": "PASS; 195 files matched, no unlisted or extra material files, five retained source references verified",
+  "productRelease": "NOT_CONVERGED",
+  "limitations": [
+    "The reviews were performed sequentially by one agent and are not independent or cross-model assurance.",
+    "No candidate browser, classroom, French language, accessibility, human rights/content, clean candidate Git checkout or candidate CI acceptance is claimed.",
+    "The candidate remains uncommitted and differs from the committed/deployed baseline."
+  ]
+}

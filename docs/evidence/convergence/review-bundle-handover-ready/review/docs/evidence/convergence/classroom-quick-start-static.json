@@ -1,0 +1,17 @@
+{
+  "timestamp": "2026-10-08T23:57:33.588620+00:00",
+  "scope": "Documentation UTF-8/readback/relative-link validation and source inspection only",
+  "missingLocalTargets": [],
+  "files": {
+    "docs/CLASSROOM_QUICK_START.md": "390782690d004f56be6d7ba29bf99591e35c5f74cf220ea9a05c2042acfe4334",
+    "README.md": "cca934eaa6203b74932eddf3de3dc52c80560010d0f02ca736ecc579d6698e71",
+    "docs/RELEASE_OPERATIONS.md": "90c434571e78aef78a62815dc05041a7cf5edaff9585be3a1857e075f9e7faf8",
+    "docs/EXECUTION_LEDGER.md": "2fa94229bc803bb7c8a659d8562b0b145c2b54c5acb0f267d578574ff8be73d7"
+  },
+  "productionChanged": false,
+  "firstFailure": "Ledger referenced progress record before creation; retained in progress document",
+  "languageReview": "NOT_ACCEPTED",
+  "classroomReview": "NOT_RUN",
+  "closure": "OPEN",
+  "fullClosurePasses": 0
+}

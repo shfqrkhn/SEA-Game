@@ -1,0 +1,100 @@
+{
+  "recordedAtUtc": "2026-10-08T22:08:25.6610276Z",
+  "workItem": "D15/W15",
+  "target": "PRODUCT_RELEASE",
+  "workingContentKey": "0331a567611fe3b152b3f5f83dd2ede1abf5465f67bf4f5827c640dde005c205",
+  "keyBasis": "Local SPECIFICATION fingerprint only; no qualified PRODUCT_RELEASE key",
+  "head": "1b80b348ac945987fbe11db77bd7a51f3dd553aa",
+  "candidateCommitted": false,
+  "candidateDeployed": false,
+  "requirements": [
+    "R02",
+    "R09",
+    "R10",
+    "R11",
+    "R21",
+    "R24"
+  ],
+  "tests": [
+    "T03",
+    "T10",
+    "T11",
+    "T22",
+    "T25"
+  ],
+  "windows": {
+    "result": "PASS",
+    "commands": [
+      "node tools/test.mjs",
+      "node tools/build.mjs --check"
+    ],
+    "node": "v24.20.0"
+  },
+  "wsl": {
+    "os": "Ubuntu 24.04",
+    "result": "PASS",
+    "commands": [
+      "node tools/test.mjs",
+      "node tools/build.mjs --check"
+    ],
+    "node": "v22.23.3"
+  },
+  "contractCheck": {
+    "materialFiles": 195,
+    "structuralChecks": 10,
+    "result": "PASS",
+    "cases": 29
+  },
+  "protocolMutationCheck": {
+    "mutantsRejected": 18,
+    "result": "PASS",
+    "cases": 29
+  },
+  "diffCheck": "PASS",
+  "artifactHashes": {
+    "source/instructor.js": "a4e9d868be3c23358d51b3daf3886a2f06f9d350be97d69547a655dc0c6a0339",
+    "source/student.js": "0267b16ade4584d7fe490817ffb861f981119c6b3c26d90ed8d90f7f3c198122",
+    "SEA_Instructor_Standalone.html": "ac57efafcff9a81ad59b5de6a36ea08d52ac2e3798d0dc071002749287668095",
+    "SEA_Student_Standalone.html": "7cb62038736c839cc9418bec938b7b781ccefc9b983c4ba3c482ace7d8ee0102",
+    "tools/test.mjs": "cb5a30a72df0de972b468dded13a8b7b59b74cc0f96efd6792105fbdabba7d1d",
+    "docs/EXECUTION_LEDGER.md": "b5958ba49a7d30524ce681f90de8faae445af3ad241fbb0a3b914cdafc483262",
+    "docs/PROJECT_ANALYSIS.md": "d952977fcd64203519530a87820b10fba504b801838c7a0924fe5ff57b9abb21"
+  },
+  "logHashes": {
+    "editing-submissions-red.log": "ca509a13012b0750483de9c3001f1837f6b27416c64e29fdc00eeeeaf329e6ff",
+    "submission-confirmations-red.log": "9609e549a965be3b92dc9bc75b6c9d716a90af007bd0109c7b19f7013ec55535",
+    "submission-inputs-red.log": "8537199f1444fe60fd04bddebf36fe84f006b25659368ae3ecbe455a5c0e07ec",
+    "submission-inputs-harness-failure.log": "3e440342eff20c021207b191705d4175693b690c1e014556e068023dd0b632a9",
+    "editing-submissions-final-win.log": "214965e1cd3067a805b7219e79a47fff99e251f33cb825899cbd8d579dc8c1b0",
+    "editing-submissions-final-wsl.log": "2fa19fb8288fe9687f1b0c03a13d6b1b272c324d978e9e75046db49c2c2cee1b"
+  },
+  "remoteMain": "1b80b348ac945987fbe11db77bd7a51f3dd553aa",
+  "baselineCI": {
+    "candidateCI": "NOT_RUN",
+    "pages": "success",
+    "sourceParity": "success"
+  },
+  "pagesReadback": [
+    {
+      "path": "index.html",
+      "status": 200,
+      "sha256": "6f47190a5f5e469ca65aa49c5e0d21b121e61225f05c4759672a500ab8ebe5f4",
+      "matchesHead": true
+    },
+    {
+      "path": "SEA_Instructor_Standalone.html",
+      "status": 200,
+      "sha256": "cc9702e26b109d053a44993cd88e071ca415c29abf182335ac93274637d5b2ea",
+      "matchesHead": true
+    },
+    {
+      "path": "SEA_Student_Standalone.html",
+      "status": 200,
+      "sha256": "592e415c0a0501a983c18eb477dd00188cabe17d097fb173dc203c95db90dd4a",
+      "matchesHead": true
+    }
+  ],
+  "browserAcceptance": "OPEN; user supplied no exact-candidate HTTPS preview; browser tab not operated",
+  "reviewMode": "single-agent implementation and self-review",
+  "nextAction": "W05 vehicle choice/lock and scored-auction transition journeys, student scratch editing boundaries; then exact-candidate browser keyboard/confirmation/recovery tests when a permitted route is supplied"
+}

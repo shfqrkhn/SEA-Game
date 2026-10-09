@@ -1,0 +1,70 @@
+{
+  "date": "2026-10-08",
+  "head": "1b80b348ac945987fbe11db77bd7a51f3dd553aa",
+  "node": "v24.20.0",
+  "platform": "win32",
+  "checks": {
+    "workingTreeParity": {
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "SEA_Instructor_Standalone.html: generated output differs\nSEA_Student_Standalone.html: generated output differs"
+    },
+    "existingTests": {
+      "exitCode": 0,
+      "stdout": "instructor: syntax and basic UI contract PASS\nstudent: syntax and basic UI contract PASS\nInstructor visibility and lifecycle structural tests PASS",
+      "stderr": ""
+    },
+    "committedLFParity": {
+      "exitCode": 0,
+      "stdout": "SEA_Instructor_Standalone.html: PASS byte-for-byte reproduction\nSEA_Student_Standalone.html: PASS byte-for-byte reproduction",
+      "stderr": ""
+    },
+    "committedLFTests": {
+      "exitCode": 0,
+      "stdout": "instructor: syntax and basic UI contract PASS\nstudent: syntax and basic UI contract PASS\nInstructor visibility and lifecycle structural tests PASS",
+      "stderr": ""
+    },
+    "ruleData": {
+      "rolesEqual": true,
+      "originalInstructorEqual": true,
+      "originalStudentEqual": true,
+      "cardCount": 70
+    },
+    "removePurchaseHandler": {
+      "error": "ReferenceError: i is not defined",
+      "method": "Isolated actual function with minimal DOM stubs, not a browser test"
+    },
+    "assets": {
+      "svgCount": 77,
+      "webpCount": 77,
+      "matchingPairs": true,
+      "webpHeadersAndLengths": true
+    }
+  },
+  "limitations": [
+    "No real-browser gameplay, image decoding, accessibility or classroom acceptance performed by this script."
+  ],
+  "lineEndings": "i/lf    w/crlf  attr/                 \tSEA_Instructor_Standalone.html\ni/lf    w/crlf  attr/                 \tSEA_Student_Standalone.html\ni/lf    w/crlf  attr/                 \tsource/instructor.js\ni/lf    w/crlf  attr/                 \tsource/instructor.template.html\ni/lf    w/crlf  attr/                 \tsource/shared/engine.js\ni/lf    w/crlf  attr/                 \tsource/shared/styles.css\ni/lf    w/crlf  attr/                 \tsource/student.js\ni/lf    w/crlf  attr/                 \tsource/student.template.html\ni/lf    w/crlf  attr/                 \ttools/build.mjs\ni/lf    w/crlf  attr/                 \ttools/test.mjs",
+  "files": {
+    "source/instructor.js": {
+      "workingBytes": 800009,
+      "committedSha256": "f5adda29f73f596c6b0bcfba5edfae0e6f8cfc3102da4cee9ae31e287a2e3922"
+    },
+    "source/student.js": {
+      "workingBytes": 787414,
+      "committedSha256": "c9a1c9dca4dc237a262f563daac5173e2c749254fcc5eac1a6c87e6144cfd812"
+    },
+    "source/shared/engine.js": {
+      "workingBytes": 536,
+      "committedSha256": "e69da903df6767a9a8c244875acbfb22bf1fe621279e138adb16551c5947165c"
+    },
+    "tools/test.mjs": {
+      "workingBytes": 2387,
+      "committedSha256": "2a9890a9e54df2b3f712e8657a4b6ff6a59f933b87d2565f7b76436d4af21589"
+    },
+    "tools/build.mjs": {
+      "workingBytes": 1522,
+      "committedSha256": "647a6b5fdb8f8ff9cb2e4832f9f3c19d76941234ae229b0e8e726581d01055cd"
+    }
+  }
+}

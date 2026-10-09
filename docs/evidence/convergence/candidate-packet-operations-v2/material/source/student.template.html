@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+{{SEA_CSP}}
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#252a27">
+<title>Systems Engineering Awareness</title>
+{{SEA_STYLES}}
+</head>
+<body>
+<a class="skip-link" href="#mainContent"><span data-i18n="common.skip"></span></a>
+<header>
+  <div class="brand"><div class="mark">SE</div><div><h1 data-i18n="app.title">Systems Engineering Awareness</h1><small data-i18n="role"></small></div></div>
+  <div class="top"><button id="exportBackupBtn" class="btn ghost" type="button" data-i18n="backup.export"></button><button id="importBackupBtn" class="btn ghost" type="button" data-i18n="backup.import"></button><button id="restorePreviousBtn" class="btn ghost" type="button" data-i18n="backup.restorePrevious" disabled></button><input id="backupFile" class="sr-only" type="file" accept="application/json,.json" tabindex="-1" aria-hidden="true"><button id="langBtn" class="btn ghost" type="button">FR</button></div>
+</header>
+<div id="storageNotice" class="notice bad hidden" role="status"></div><div id="backupStatus" class="notice info hidden" role="status" aria-live="polite"></div><div class="status"><span class="badge">v3.0.0-local</span><span id="vehicleBadge" class="badge"></span><span class="badge" data-i18n="role"></span><span id="phaseBadge" class="badge"></span><span id="sessionBadge" class="badge"></span></div>
+<main id="mainContent">
+<section id="setup" class="section active">
+  <div class="hero"><div class="kicker" data-i18n="setup.kicker"></div><h2 data-i18n="setup.title"></h2><p data-i18n="setup.desc"></p></div>
+  <div class="grid two">
+    <div class="card">
+      <div class="field"><label for="sessionInput" data-i18n="setup.code"></label><input id="sessionInput" class="code-box" autocomplete="off" maxlength="32"></div>
+      <div class="field"><label for="teamSelect" data-i18n="setup.team"></label><select id="teamSelect"></select></div>
+      <div class="field"><label for="vehicleSelect" data-i18n="vehicle.label"></label><select id="vehicleSelect" required></select></div><div id="setupVehiclePreview"></div><p data-i18n="vehicle.hint"></p><p><button id="joinBtn" class="btn primary" type="button" data-i18n="setup.start"></button></p>
+      <div id="joinStatus" class="notice info" role="status" aria-live="polite"></div>
+    </div>
+    <div class="card subtle"><div class="notice info" data-i18n="common.authoritative"></div><p data-i18n="common.warningInfo"></p><p data-i18n="common.private"></p></div>
+  </div>
+</section>
+
+<section id="practice" class="section">
+  <div class="hero"><div class="kicker" data-i18n="practice.kicker"></div><h2 data-i18n="practice.title"></h2><p data-i18n="practice.desc"></p></div>
+  <div class="grid two">
+    <div class="gamecard"><div class="band"><span data-i18n="category.CAPACITY"></span><span>TRAIN-CAP</span></div><div class="body"><div class="art" id="practiceArt" aria-label="Training capacity illustration"></div><h3 data-i18n="practice.cardTitle"></h3><div class="effects"><div class="effect"><span data-i18n="practice.capacity"></span><strong>+4</strong><small data-i18n="practice.persons"></small></div><div class="effect"><span data-i18n="practice.mobility"></span><strong>-10</strong><small>km/h</small></div></div><div class="price" data-practice-price></div></div></div>
+    <div class="card"><div id="practiceStatus" class="notice info"></div><p class="inline"><button id="practiceRecord" class="btn good" type="button" data-i18n="practice.record"></button><button id="practiceReset" class="btn" type="button" data-i18n="practice.reset"></button></p><p><button id="toPlanning" class="btn primary" type="button" disabled data-i18n="practice.toPlanning"></button></p></div>
+  </div>
+</section>
+
+<section id="planning" class="section">
+  <div class="hero"><div class="kicker" data-i18n="planning.kicker"></div><h2 id="planningTitle"></h2></div>
+  <div class="grid two">
+    <div class="card"><div class="field"><label for="planVehicle" data-i18n="vehicle.label"></label><select id="planVehicle"></select></div><div id="planVehiclePreview"></div><p data-i18n="vehicle.hint"></p><div id="planVehicleNotice" role="status"></div><label class="check-label"><input id="vehicleConfirmed" type="checkbox"><span data-i18n="vehicle.confirm"></span></label><div class="field"><label for="plan" data-i18n="planning.plan"></label><textarea id="plan" maxlength="1200"></textarea><small class="muted" data-i18n="common.warningInfo"></small></div><div class="field"><label for="risks" data-i18n="planning.risks"></label><textarea id="risks" maxlength="1200"></textarea><small class="muted" data-i18n="common.warningInfo"></small></div><div class="field"><label for="maxWtp" data-i18n="planning.maxWtp"></label><input id="maxWtp" inputmode="numeric"></div><p><button id="toAuction" class="btn primary" type="button" data-i18n="planning.toAuction"></button></p></div>
+    <div class="card"><h3 data-i18n="planning.requirements"></h3><table id="reqTable" class="req"></table><details><summary><strong data-i18n="planning.rolesTitle"></strong></summary><p data-i18n="planning.roles"></p></details><details><summary><strong data-i18n="planning.guidanceTitle"></strong></summary><ul><li data-i18n="planning.g1"></li><li data-i18n="planning.g2"></li><li data-i18n="planning.g3"></li><li data-i18n="planning.g4"></li><li data-i18n="planning.g5"></li><li data-i18n="planning.g6"></li><li data-i18n="planning.g7"></li></ul></details><details><summary><strong data-i18n="planning.quickRulesTitle"></strong></summary><ol><li data-i18n="planning.r1"></li><li data-i18n="planning.r2"></li><li data-i18n="planning.r3"></li><li data-i18n="planning.r4"></li><li data-i18n="planning.r5"></li><li data-i18n="planning.r6"></li><li data-i18n="planning.r7"></li></ol></details></div>
+  </div>
+</section>
+
+<section id="auction" class="section">
+  <div class="hero"><div class="kicker" data-i18n="auction.kicker"></div><h2 data-i18n="auction.title"></h2><p data-i18n="auction.desc"></p></div>
+  <p><button id="finishAuctionBtn" class="btn" type="button" data-i18n="auction.finish"></button></p><div class="card"><h3 data-i18n="auction.position"></h3><div class="grid two"><div class="field"><label for="roundSelect" data-i18n="auction.round"></label><select id="roundSelect"></select></div><div class="field"><label for="lotSelect" data-i18n="auction.lot"></label><select id="lotSelect"></select></div></div></div>
+  <div class="auction">
+    <div class="gamecard"><div class="band"><span id="cardCat">-</span><span id="cardId">-</span></div><div class="body"><div id="cardArt" class="art"></div><h3 id="cardTitle"></h3><div id="cardEffects" class="effects"></div><strong id="startPrice"></strong></div></div>
+    <div class="grid">
+      <div class="card"><h3 data-i18n="auction.currentCard"></h3><div class="field"><label for="cardInput" data-i18n="auction.cardInput"></label><input id="cardInput" autocomplete="off" maxlength="24"></div><p><button id="loadCardBtn" class="btn secondary" type="button" data-i18n="auction.load"></button></p><div class="field"><label for="wtp" data-i18n="auction.wtp"></label><input id="wtp" inputmode="numeric"></div><div class="field"><label for="decision" data-i18n="auction.note"></label><textarea id="decision" maxlength="600" data-i18n-placeholder="auction.notePlaceholder"></textarea><small class="muted" data-i18n="common.warningInfo"></small></div><div id="gapNotice" class="notice info"></div></div>
+      <div class="card"><h3 data-i18n="auction.afterClose"></h3><div class="field"><label for="wonPrice" data-i18n="auction.winPrice"></label><input id="wonPrice" inputmode="numeric" autocomplete="off" min="0" type="number" step="1"></div><p class="inline"><button id="recordWinBtn" class="btn good" type="button" data-i18n="auction.won"></button><button id="advanceLocalBtn" class="btn" type="button" data-i18n="auction.notOurs"></button></p></div>
+      <div class="card"><h3 data-i18n="auction.inventory"></h3><div id="snapshotMetrics" class="grid two"></div><div id="auctionInventory" class="purchase-list"></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="build" class="section">
+  <div class="hero"><div class="kicker" data-i18n="build.kicker"></div><h2 data-i18n="build.title"></h2><p data-i18n="build.desc"></p></div>
+  <div class="grid two">
+    <div class="card"><h3 data-i18n="build.localPurchases"></h3><p data-i18n="common.correctOnly"></p><div id="reconcileInventory" class="purchase-list"></div></div>
+    <div class="card"><h3 data-i18n="build.addMissing"></h3><div class="reconcile-actions"><div class="field"><label for="addRound" data-i18n="build.round"></label><select id="addRound"></select></div><div class="field"><label for="addLot" data-i18n="build.lot"></label><select id="addLot"></select></div><div class="field"><label for="addCard" data-i18n="build.card"></label><input id="addCard" maxlength="24"></div><div class="field"><label for="addPrice" data-i18n="build.price"></label><input id="addPrice" inputmode="numeric"></div></div><p><button id="addPurchaseBtn" class="btn secondary" type="button" data-i18n="build.add"></button></p></div>
+  </div>
+  <div class="grid two"><div class="card"><div id="capMetrics" class="grid three"></div></div><div class="card"><table id="complianceTable" class="req"></table><div id="overall" class="notice"></div></div></div>
+  <p><button id="toSubmit" class="btn primary" type="button" data-i18n="build.reconciled"></button></p>
+</section>
+
+<section id="submit" class="section">
+  <div class="hero"><div class="kicker" data-i18n="submit.kicker"></div><h2 data-i18n="submit.title"></h2><p data-i18n="submit.desc"></p></div>
+  <div class="notice info" data-i18n="submit.incentive"></div>
+  <div class="card">
+    <div class="grid two"><div class="field"><label for="profitMode" data-i18n="submit.mode"></label><select id="profitMode"><option value="AMOUNT" data-i18n="submit.amount"></option><option value="PERCENT" data-i18n="submit.percent"></option></select></div><div class="field"><label id="profitLabel" for="profitInput"></label><input id="profitInput" inputmode="decimal"></div></div>
+    <div id="submitMetrics" class="grid three"></div><div id="eligibility" class="notice"></div>
+    <p><button id="toDebrief" class="btn primary" type="button" data-i18n="submit.toDebrief"></button></p>
+  </div>
+</section>
+
+<section id="debrief" class="section">
+  <div class="hero"><div class="kicker" data-i18n="debrief.kicker"></div><h2 data-i18n="debrief.title"></h2><p data-i18n="debrief.official"></p></div>
+  <div id="debriefCard" class="card"></div>
+  <p><button id="toClosed" class="btn primary" type="button" data-i18n="debrief.close"></button></p>
+</section>
+
+<section id="closed" class="section">
+  <div class="hero"><div class="kicker" data-i18n="closed.kicker"></div><h2 data-i18n="closed.title"></h2><p data-i18n="closed.note"></p></div>
+  <div id="closedSummary" class="card"></div>
+  <p><button id="startNewSessionBtn" class="btn" type="button" data-i18n="closed.newSession"></button></p>
+</section>
+
+<p class="footer"><span data-i18n="common.noBackend"></span> <span data-i18n="common.syntheticDeck"></span></p>
+</main>
+{{SEA_SCRIPT}}
+</body></html>

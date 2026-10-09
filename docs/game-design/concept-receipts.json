@@ -1,0 +1,156 @@
+{
+  "schema": 1,
+  "policy": "External receipts are projected deterministically into inventory. Generation never implies acceptance.",
+  "receipts": [{
+    "id": "GEN-interface-direction-v1",
+    "inventoryIds": ["DIRECTION-SCENE-UI"],
+    "status": "generated-exploratory",
+    "tool": "imagegen",
+    "date": "2026-10-09",
+    "artifact": "docs/game-design/concepts/interface-direction-v1.png",
+    "sha256": "553d903dbfe8da7448628eba47175fb3b646e72383ae515065eac3d4b5d25a96",
+    "nativeOutputPath": "C:/Users/user/.codex/generated_images/01a11d09-97df-7000-a3e7-a4b9bfcb4add/exec-1b6e53fb-20d8-4b95-bd61-ed0bb8ad9f79.png",
+    "promptConstraintsBrief": "Explore integrated SEA scene interface with realistic recovery vehicle hero, equipment auction, engine exploded inspection and narrow-device layout; sage/ink/brass/limestone visual language. This is a constraints brief, not the exact original tool prompt.",
+    "visualReview": {
+      "status": "exploratory-only;canonical acceptance open",
+      "usefulDirection": ["Vehicle-led hierarchy", "Quiet material palette", "Detailed formed cab and equipment packaging", "Engine inspection panel"],
+      "knownMismatches": ["Invented phase sequence differs from canonical eight phases", "Invented card titles, coins and prices differ from deck", "Six-wheel recovery hero differs from current eight-wheel model", "Inset vehicle variant differs from hero", "Labels and mechanical paths need independent reference review"],
+      "doesNotProve": ["Any of 77 identities fully concepted", "Any primary phase/role screen accepted", "Functioning UI or Three.js model", "Reference-quality or project completion"]
+    },
+    "acceptanceStatus": "open"
+  }, {
+    "id": "GEN-recovery-assemblies-v1",
+    "inventoryIds": ["RECOVERY"],
+    "status": "generated-exploratory",
+    "tool": "imagegen",
+    "date": "2026-10-09",
+    "artifact": "docs/game-design/concepts/recovery-assemblies-v1.png",
+    "sha256": "56ec064032f9738d5dbd9ddec1589f687dbb2fef29b9cd3a8db837e7e365d909",
+    "nativeOutputPath": "C:/Users/user/.codex/generated_images/01a11d09-97df-7000-a3e7-a4b9bfcb4add/exec-7c7cd5cd-e829-4367-a016-bb32fe6f45f4.png",
+    "promptConstraintsBrief": "Original eight-wheel/four-axle recovery vehicle matching current axle metadata; neutral olive/ivory/steel/rubber palette; three-quarter, side and exploded assembly views plus crane/winch/engine/brake close-ups. Headings RECOVERY/Side/Assemblies/Details; no invented prices, phases or logos. This is a constraints brief, not the exact original tool prompt.",
+    "visualReview": {
+      "status": "exploratory-only; reference and implementation acceptance open",
+      "usefulDirection": ["Four axle positions are visible in hero and side views", "Formed cab/glazing and wheel guards", "Separated major chassis/powertrain/crane assemblies", "Mechanical close-up targets for engine, brake, crane cylinder and winch"],
+      "knownMismatches": ["Generated dimensions and mechanical paths are not independently verified against primary dimensional references", "Current Three.js implementation does not yet match this concept's geometric/material fidelity", "Detailed assembly views do not prove purchased-card variant interfaces or compatibility", "Full-frame margin and close-up framing need V08 qualification"],
+      "doesNotProve": ["Any component identity separately completed", "Every recovery category assembly concept complete", "A functioning exploded Three.js assembly", "Manufacturer-certified dimensions or construction", "Visual or product acceptance"]
+    },
+    "acceptanceStatus": "open"
+  }, {
+    "id": "GEN-mobility-family-v1",
+    "inventoryIds": ["MOB-A", "MOB-B", "MOB-C", "MOB-D", "MOB-E", "MOB-F", "MOB-G"],
+    "status": "generated-exploratory",
+    "tool": "imagegen",
+    "date": "2026-10-09",
+    "artifact": "docs/game-design/concepts/mobility-family-v1.png",
+    "sha256": "66615f24cfd621c2ea3863df65a75c3a680896cd833d118a641cbe6f07b20cc5",
+    "nativeOutputPath": "C:/Users/user/.codex/generated_images/01a11d09-97df-7000-a3e7-a4b9bfcb4add/exec-edab1e86-8f22-4f8a-9537-65703c6bdb1b.png",
+    "promptConstraintsBrief": "Seven distinct mobility variants, each with assembled and exploded views: A efficient inline power pack; B all-terrain axle; C high-output V-engine; D heavy axle/suspension; E long-range fuel/engine; F compact engine; G traction differential/electronics. Neutral shared material palette. Only exact MOB-A through MOB-G labels; no prices/effects text. This is a constraints brief, not the exact original tool prompt. Requested C subject conflicts with canonical Lightweight Running Gear and must be corrected before acceptance.",
+    "panelMap": [
+      {"panel": 1, "inventoryId": "MOB-A", "position": "top row, first", "views": ["assembled-upper", "exploded-lower"]},
+      {"panel": 2, "inventoryId": "MOB-B", "position": "top row, second", "views": ["assembled-upper", "exploded-lower"]},
+      {"panel": 3, "inventoryId": "MOB-C", "position": "top row, third", "views": ["assembled-upper", "exploded-lower"], "canonicalMismatch": "V-engine instead of Lightweight Running Gear"},
+      {"panel": 4, "inventoryId": "MOB-D", "position": "top row, fourth", "views": ["assembled-upper", "exploded-lower"]},
+      {"panel": 5, "inventoryId": "MOB-E", "position": "bottom row, first", "views": ["assembled-upper", "exploded-lower"]},
+      {"panel": 6, "inventoryId": "MOB-F", "position": "bottom row, second", "views": ["assembled-upper", "exploded-lower"]},
+      {"panel": 7, "inventoryId": "MOB-G", "position": "bottom row, third", "views": ["assembled-upper", "exploded-lower"]}
+    ],
+    "visualReview": {
+      "status": "exploratory-only; canonical and implementation acceptance open",
+      "usefulDirection": ["All seven ID headings present", "Each panel contains assembled/exploded forms", "Distinct power-pack, axle, suspension, fuel and traction packaging", "Shared paint/metal/rubber palette"],
+      "knownMismatches": ["MOB-C is canonically Lightweight Running Gear; V-engine concept conflicts with its identity", "Dimensions and hydraulic/electrical paths are generated, not verified primary references", "Three.js renders have not been matched against the sheet", "Panel safe margins, tiny parts and exploded clearances require qualification"],
+      "doesNotProve": ["Canonical MOB-C concept acceptance", "All mobility component concepts completed", "Mechanically certified hardware", "Functional exploded Three.js models", "Visual or product acceptance"]
+    },
+    "acceptanceStatus": "open"
+  }, {
+    "id": "GEN-mob-c-running-gear-v2",
+    "inventoryIds": ["MOB-C"],
+    "status": "generated-exploratory",
+    "preferredDirection": true,
+    "supersedesDirection": "GEN-mobility-family-v1#panel-3",
+    "tool": "imagegen",
+    "date": "2026-10-09",
+    "artifact": "docs/game-design/concepts/mob-c-running-gear-v2.png",
+    "sha256": "58d42d56cd384098eb567ab1664c1ad07bb9eb1891ed13a08a62ed05dc532b20",
+    "nativeOutputPath": "C:/Users/user/.codex/generated_images/01a11d09-97df-7000-a3e7-a4b9bfcb4add/exec-42a8e295-9043-401a-b8d3-bbdfe5b4fb64.png",
+    "promptConstraintsBrief": "Correct MOB-C to canonical Lightweight Running Gear, not an engine. Two lighter wheels with connected axle/differential/half-shafts/cradle/steering/springs; assembled and matched exploded views, exact identity label, no effects or prices. This is a constraints brief, not the exact original tool prompt.",
+    "panelMap": [{"panel": 1, "inventoryId": "MOB-C", "position": "upper", "view": "assembled"}, {"panel": 2, "inventoryId": "MOB-C", "position": "lower", "view": "exploded"}],
+    "visualReview": {
+      "status": "corrected category direction only; physical plausibility and matched implementation acceptance open",
+      "usefulDirection": ["Correct identity/title and running-gear category", "Two wheels, differential, half-shafts, cradle, springs and steering packaging", "Assembled/exploded comparative layout"],
+      "knownMismatches": ["Generated joints, clearances and connections cannot establish actual mechanical correctness", "Real dimensional and primary-source qualification pending", "Exploded wheel proximity to image edges requires V08 review", "No matching Three.js render or implementation acceptance"],
+      "doesNotProve": ["Any generic component concept separately complete", "Certified lightweight construction", "Mechanically compatible running gear", "Visual or product acceptance"]
+    },
+    "acceptanceStatus": "open"
+  }, {
+    "id": "GEN-capacity-family-v1",
+    "inventoryIds": ["CAP-A", "CAP-B", "CAP-C", "CAP-D", "CAP-E", "CAP-F", "CAP-G", "TRAIN-CAP"],
+    "status": "generated-exploratory",
+    "tool": "imagegen",
+    "date": "2026-10-09",
+    "artifact": "docs/game-design/concepts/capacity-family-v1.png",
+    "sha256": "20773043127a378916d49b66c3e020dad0927f67fffbd3e06abd6f470708c828",
+    "nativeOutputPath": "C:/Users/user/.codex/generated_images/01a11d09-97df-7000-a3e7-a4b9bfcb4add/exec-44140f9d-4094-47fa-bd6d-a1b3df4c2f77.png",
+    "promptConstraintsBrief": "Eight panels with exact CAP-A through CAP-G and TRAIN-CAP IDs, requested seat counts 6/6/4/8/5/5/4/4. Coherent formed hull cutaways, restrained seats and connected mounts; protected F, light-frame G, removable E; shared sage/ink/brass material language. This is a constraints brief, not the exact original tool prompt. Requested counts are not visually certified by the generated image.",
+    "panelMap": [
+      {"panel": 1, "inventoryId": "CAP-A", "position": "top row, first", "requestedSeats": 6, "countReview": "open; occlusion/count ambiguity"},
+      {"panel": 2, "inventoryId": "CAP-B", "position": "top row, second", "requestedSeats": 6, "countReview": "open; six-seat direction appears legible, not qualified"},
+      {"panel": 3, "inventoryId": "CAP-C", "position": "top row, third", "requestedSeats": 4, "countReview": "open; occlusion/count ambiguity"},
+      {"panel": 4, "inventoryId": "CAP-D", "position": "top row, fourth", "requestedSeats": 8, "countReview": "open; occlusion/count ambiguity"},
+      {"panel": 5, "inventoryId": "CAP-E", "position": "bottom row, first", "requestedSeats": 5, "countReview": "open; five-seat direction appears legible, not qualified"},
+      {"panel": 6, "inventoryId": "CAP-F", "position": "bottom row, second", "requestedSeats": 5, "countReview": "open; occlusion/count ambiguity"},
+      {"panel": 7, "inventoryId": "CAP-G", "position": "bottom row, third", "requestedSeats": 4, "countReview": "open; four-seat direction appears legible, not qualified"},
+      {"panel": 8, "inventoryId": "TRAIN-CAP", "position": "bottom row, fourth", "requestedSeats": 4, "countReview": "open; occlusion/count ambiguity"}
+    ],
+    "visualReview": {
+      "status": "exploratory-only; exact capacities and runtime match acceptance open",
+      "usefulDirection": ["All eight ID headings visible", "Formed hull/enclosure panels and restrained seats", "Removable E, protective F and open light G are distinct", "Shared framing and material palette"],
+      "knownMismatches": ["Exact requested seat counts are not proved by single oblique views, especially A/C/D/F/TRAIN", "Actual mounts, wall thickness, clearances and dimensional references unverified", "No matched Three.js render acceptance", "No side, rear, exploded or service-interface qualification for each identity"],
+      "doesNotProve": ["Canonical capacity acceptance", "Generic seats/hull component coverage complete", "Installed assembly compatibility", "Visual or product acceptance"]
+    },
+    "acceptanceStatus": "open"
+  }, {
+    "id": "GEN-protection-family-v1",
+    "inventoryIds": ["PRO-A", "PRO-B", "PRO-C", "PRO-D", "PRO-E", "PRO-F", "PRO-G"],
+    "status": "generated-exploratory",
+    "tool": "imagegen",
+    "date": "2026-10-09",
+    "artifact": "docs/game-design/concepts/protection-family-v1.png",
+    "sha256": "4fe49eb178da9240849deb3c87205ebbdec420236599e9420b57d199b4e27c05",
+    "nativeOutputPath": "C:/Users/user/.codex/generated_images/01a11d09-97df-7000-a3e7-a4b9bfcb4add/exec-62b0149b-dd5a-4a1b-b615-7bf638cae88b.png",
+    "promptFile": "docs/game-design/PROTECTION_PROMPT.md",
+    "panels": [
+      {"panel": 1, "inventoryId": "PRO-A"},
+      {"panel": 2, "inventoryId": "PRO-B"},
+      {"panel": 3, "inventoryId": "PRO-C"},
+      {"panel": 4, "inventoryId": "PRO-D"},
+      {"panel": 5, "inventoryId": "PRO-E"},
+      {"panel": 6, "inventoryId": "PRO-F"},
+      {"panel": 7, "inventoryId": "PRO-G"}
+    ],
+    "visualReview": {
+      "status": "exploratory-only; margins and reference/runtime acceptance open",
+      "usefulDirection": ["Seven legible identity headings", "Formed panel edges and fastener interfaces", "Two visible supported crew seats in D", "Sectioned layered/composite/V-underbody/shell construction"],
+      "knownMismatches": ["Main contextual vehicle crops touch panel borders in A/C/E/F; safe-margin criterion not passed", "Composite material and joints are illustrative, not dimensioned or verified", "B and C assembled silhouettes remain similar", "No matched Three.js render or physical clearance qualification"],
+      "doesNotProve": ["Visual acceptance", "Engineering performance", "Generic component or assembly coverage", "Product completion"]
+    },
+    "acceptanceStatus": "open"
+  }, {
+    "id": "GEN-firepower-family-v1",
+    "inventoryIds": ["FP-A","FP-B","FP-C","FP-D","FP-E","FP-F","FP-G"],
+    "status": "generated-exploratory",
+    "tool": "imagegen",
+    "date": "2026-10-09",
+    "artifact": "docs/game-design/concepts/firepower-family-v1.png",
+    "sha256": "119f0cb8f50315e33d6743cd5a68a85853a387c75e0a837d7079fc4305b273be",
+    "nativeOutputPath": "C:/Users/user/.codex/generated_images/01a11d09-97df-7000-a3e7-a4b9bfcb4add/exec-422252ba-f5d5-4d3b-8a62-76d39cbe9f39.png",
+    "promptFile": "docs/game-design/FIREPOWER_PROMPT.md",
+    "panels": [{"panel":1,"inventoryId":"FP-A"},{"panel":2,"inventoryId":"FP-B"},{"panel":3,"inventoryId":"FP-C"},{"panel":4,"inventoryId":"FP-D"},{"panel":5,"inventoryId":"FP-E"},{"panel":6,"inventoryId":"FP-F"},{"panel":7,"inventoryId":"FP-G"}],
+    "visualReview": {
+      "status": "exploratory-only; construction, margins and runtime acceptance open",
+      "usefulDirection": ["All seven canonical titles/IDs visible", "D/E/F have distinct remote/open-cradle/gimbal silhouettes", "Mount/control/housing external-interface insets", "Formed housing surfaces and restrained materials"],
+      "knownMismatches": ["Decorative dark serif frames and brown background differ from shared minimalist UI typography/palette", "A/B/C remain closely related turret silhouettes", "Eight-percent per-panel safe margin not established", "No dimensional, attachment-clearance or matched Three.js qualification"],
+      "doesNotProve": ["Visual acceptance", "Operational or mechanical specifications", "Generic component coverage", "Product release acceptance"]
+    },
+    "acceptanceStatus": "open"
+  }]
+}

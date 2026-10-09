@@ -1,0 +1,19 @@
+{
+  "timestamp": "2026-10-08T23:57:49.755908+00:00",
+  "candidateKey": "ce4ef41690deb215518e6437b344aa64ea9f8249d7d97d2a67fedcfe99e0492c",
+  "candidateFiles": 210,
+  "specificationCheckpoint": "df0c678336956ba4ef546b94f056c76f18de83454d57489d1833fda244783571",
+  "environment": "Windows Node v24.20.0; bundled Python standard library",
+  "results": {
+    "build": "PASS byte-for-byte reproduction of both games",
+    "contracts": "PASS after completing missing progress record; first failure retained",
+    "relativeLinks": "PASS zero missing targets",
+    "gitDiffCheck": "PASS with CRLF normalization warnings",
+    "packageCreate": "PASS",
+    "packageExternalKeyVerify": "PASS"
+  },
+  "scope": "Docs-only candidate quick start and local integrity; not real browser/French/classroom acceptance",
+  "supersededPacket": "9e89ef107baa3a42daa97c294bc23901543cce43e7d33b23ff45177eaee97692",
+  "productReleaseClosure": "OPEN",
+  "fullClosurePasses": 0
+}

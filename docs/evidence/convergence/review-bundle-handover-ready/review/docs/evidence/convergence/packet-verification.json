@@ -1,0 +1,13 @@
+{
+  "specificationKey": "352e4fdbe07060bd885978b15dc090a5c86b54d9328c0e2e191ca5084d3fd441",
+  "wsl": "Ubuntu24.04 Node22.23.3 copied build/product/packet checks PASS",
+  "protocol": "29 cases;18 semantic mutants PASS",
+  "date": "2026-10-08",
+  "fullSameKeyZeroChangePasses": 0,
+  "scope": "Unqualified candidate byte reconstruction only",
+  "packet": "candidate-packet-operations-v2",
+  "windows": "Node24.20.0 copied build/product/packet checks PASS",
+  "packetFiles": 206,
+  "packetKey": "1d517f3f6ab195891a85be54efefe7ef4e7f4e2185032a408997a20803a627bf",
+  "fullMaterialClosure": "OPEN"
+}

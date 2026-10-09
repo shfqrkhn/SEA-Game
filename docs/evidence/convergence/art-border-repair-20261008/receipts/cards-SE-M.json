@@ -1,0 +1,7 @@
+{
+  "identity": "cards/SE-M",
+  "inputSha256": "bda29883a17b3bdeb9b84fbc5d9a0a74e9cd0940ae2ec59408d5ea54e88334ee",
+  "path": "C:\\Users\\user\\.codex\\generated_images\\01a11d09-97df-7000-a3e7-a4b9bfcb4add\\exec-15dc902f-b9e7-4bd9-bb8b-25954099cabc.png",
+  "prompt": "Precise artwork repair of SEA Game cards/SE-M. Findings: Outer component/vehicle illustrations intersect left/right boundaries.; Thin bottom frame.. Remove unwanted white edge borders, grid dividers and fragments from neighboring panels. Restore any missing focal subject edges, antennas, barrels or equipment through coherent reconstruction. Preserve the original subject identity, recognizable geometry, component count, arrangement, colors, realistic detail and lighting. Preserve the meaning and relationships of this systems-engineering scene/diagram, its symbols, chart structure and intentional contextual composition. Keep all focal icons and equipment complete. Do not remove intentional diagram lines or add new labels. Use one opaque wide 3:1 landscape canvas with generous safe margins around all focal content. No grid sheet, no neighboring assets, no new objects or text. Do not crop tighter. Clean coherent realistic game artwork.",
+  "tool": "built-in image_gen"
+}

@@ -1,0 +1,27 @@
+instructor: syntax and basic UI contract PASS
+student: syntax and basic UI contract PASS
+Versioned, bounded, role-specific backup envelope examples PASS
+Instructor visibility and lifecycle structural tests PASS
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: Pending removal cannot mutate changed team
++ actual - expected
+
++ '{"phase":"build","team":{"purchases":[],"purchasesByRound":[0,0,0,0,0,0,0],"totals":{"CAP":0,"MOB":0},"cost":0},"sessionCode":"SEA3-T2-0123456789ABCDEF"}'
+- '{"phase":"build","team":{"purchases":[{"id":"CAP-A","instance":"R1-L1-CAP-A","round":1,"lot":1,"paid":1000,"e":{"CAP":2},"title":{"en":"CAP-A","fr":"CAP-A"}}],"purchasesByRound":[1,0,0,0,0,0,0],"totals":{"CAP":2,"MOB":0},"cost":1000},"sessionCode":"SEA3-T2-0123456789ABCDEF"}'
+
+    at file:///D:/VSCode/SEA-Game/current/tools/test.mjs:144:9
+    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)
+    at async node:internal/modules/esm/loader:647:26
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5) {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: '{"phase":"build","team":{"purchases":[],"purchasesByRound":[0,0,0,0,0,0,0],"totals":{"CAP":0,"MOB":0},"cost":0},"sessionCode":"SEA3-T2-0123456789ABCDEF"}',
+  expected: '{"phase":"build","team":{"purchases":[{"id":"CAP-A","instance":"R1-L1-CAP-A","round":1,"lot":1,"paid":1000,"e":{"CAP":2},"title":{"en":"CAP-A","fr":"CAP-A"}}],"purchasesByRound":[1,0,0,0,0,0,0],"totals":{"CAP":2,"MOB":0},"cost":1000},"sessionCode":"SEA3-T2-0123456789ABCDEF"}',
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v24.20.0

@@ -1,0 +1,23 @@
+{
+  "result": "PASS",
+  "scope": "Specification contracts and synthetic protocol examples only",
+  "checks": [
+    "Unique R01-R26 and T01-T27 definitions and complete test linkage",
+    "Nine milestone weights sum to 100 and lifecycle is separately defined",
+    "Portable local Markdown links, heading anchors and valid representation",
+    "Every current document requirement/test reference resolves",
+    "Reference copies match provenance hashes",
+    "All operational JSON documents parse",
+    "Synthetic protocol challenge cases match independent expected dispositions",
+    "Invalid protocol inputs do not authorize an effect",
+    "Frozen baseline remains dated evidence, not a product completion assertion",
+    "One-byte identity mutation changes convergence key"
+  ],
+  "scenarioCount": 29,
+  "key": "65a48c975f22ef9029acaa2d8882d9b88971a2ec1adb3c527900e0da36d10d01",
+  "excludedRunRecords": [
+    "docs/evidence/convergence/**",
+    "docs/evidence/audit-runs/**",
+    "docs/evidence/document-receipt.json"
+  ]
+}

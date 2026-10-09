@@ -1,0 +1,24 @@
+{
+  "browser": "Codex built-in browser",
+  "finalPreview": "8cf4f3f9b9107701fb3c64782a0ec5c3e2100ac5",
+  "scope": "Synthetic desktop interaction; no full device/classroom closure claim",
+  "finalChecks": [
+    "Recovery exploded view at 100% separation",
+    "Assembly map labels",
+    "Detailed MOB-A assembled and exploded model reached through practice, planning and auction",
+    "Shadow-enabled rendering",
+    "Exact hosted bytes recorded separately"
+  ],
+  "priorSameFeatureChecks": {
+    "preview": "f68970cb7c4c882c2cd3a5f1f66fc82776cf4d99",
+    "checks": [
+      "Actual turntable rotation changed model and cast-shadow silhouette",
+      "Shadow switch removed cast shadow",
+      "Cutaway exposed steering and seats",
+      "Assembly highlighting",
+      "French labels Assemblé / Éclaté / En coupe"
+    ]
+  },
+  "consoleDiagnostics": [],
+  "fullMaterialClosurePasses": 0
+}

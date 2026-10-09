@@ -1,0 +1,7 @@
+{
+  "identity": "cards/SE-L",
+  "inputSha256": "df1bc83a2118fe0a1e04fca5fce7ab8ff0b7d9e298bf065cb70802b8ea6c9420",
+  "path": "C:\\Users\\user\\.codex\\generated_images\\01a11d09-97df-7000-a3e7-a4b9bfcb4add\\exec-c224e05c-9238-4252-9d5f-c2cabffe99a3.png",
+  "prompt": "Precise artwork repair of SEA Game cards/SE-L. Findings: Right double seam/narrow retained strip.. Remove unwanted white edge borders, grid dividers and fragments from neighboring panels. Restore any missing focal subject edges, antennas, barrels or equipment through coherent reconstruction. Preserve the original subject identity, recognizable geometry, component count, arrangement, colors, realistic detail and lighting. Preserve the meaning and relationships of this systems-engineering scene/diagram, its symbols, chart structure and intentional contextual composition. Keep all focal icons and equipment complete. Do not remove intentional diagram lines or add new labels. Use one opaque wide 3:1 landscape canvas with generous safe margins around all focal content. No grid sheet, no neighboring assets, no new objects or text. Do not crop tighter. Clean coherent realistic game artwork.",
+  "tool": "built-in image_gen"
+}

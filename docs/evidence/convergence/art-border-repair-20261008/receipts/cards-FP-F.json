@@ -1,0 +1,7 @@
+{
+  "identity": "cards/FP-F",
+  "inputSha256": "b762c359eea3264df708910e2826eefdc89850501fe42bdd6b98e8c7f8fef355",
+  "path": "C:\\Users\\user\\.codex\\generated_images\\01a11d09-97df-7000-a3e7-a4b9bfcb4add\\exec-10a0f073-8649-48be-97c7-c4a911515782.png",
+  "prompt": "Precise artwork repair of SEA Game cards/FP-F. Findings: Right white divider and extra strip.. Remove unwanted white edge borders, grid dividers and fragments from neighboring panels. Restore any missing focal subject edges, antennas, barrels or equipment through coherent reconstruction. Preserve the original subject identity, recognizable geometry, component count, arrangement, colors, realistic detail and lighting. Show the complete standalone equipment/vehicle with all protrusions and cables visible. Blend the hard portrait-panel backdrop seamlessly into a continuous matching beige studio background. Use one opaque wide 3:1 landscape canvas with generous safe margins around all focal content. No grid sheet, no neighboring assets, no new objects or text. Do not crop tighter. Clean coherent realistic game artwork.",
+  "tool": "built-in image_gen"
+}

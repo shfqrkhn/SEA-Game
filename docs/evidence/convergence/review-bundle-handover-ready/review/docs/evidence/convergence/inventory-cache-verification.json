@@ -1,0 +1,26 @@
+{
+  "timestamp": "2026-10-09T00:02:01.308675+00:00",
+  "candidateKey": "67ee8c716061c8b44c290fba9614efed06375e06e73a1e62416a0c72b033210a",
+  "specificationCheckpoint": "ac7cf1c7c07a1b5336c8522685e1734c2f11329fa38381143cb435a4b567c135",
+  "fileCount": 209,
+  "generatedCacheInPacket": false,
+  "results": {
+    "WindowsNode24ProtocolInventory": "PASS",
+    "WSLLinuxNode22ProtocolInventory": "PASS",
+    "packetTampering": "PASS",
+    "currentPacketExternalKey": "PASS",
+    "buildReproduction": "PASS",
+    "syntaxAndWhitespace": "PASS"
+  },
+  "logs": {
+    "inventory-cache-red.log": "72e0f007c0753b7242152bff98acc25062e2566f6eec5fbd232d033d7971dd08",
+    "inventory-cache-observed-red.log": "fc0d62f5e73a34ed6b28fb3e96527f31f799b081992be4ee27415613a60662b3",
+    "inventory-cache-green.log": "d90abd80b40dc01f0a0e3c559d8154105e235f103e73170cb3a0d2df85084b88",
+    "inventory-cache-linux.log": "d90abd80b40dc01f0a0e3c559d8154105e235f103e73170cb3a0d2df85084b88",
+    "inventory-cache-contracts.log": "04bfa4d450ac4e3c60fbc0b9a4889c290e119f2db86cc2f7b1002061640efed2"
+  },
+  "firstFailure": "inventory-cache-red.log is missing-receipt harness failure; observed-red is relevant identity failure",
+  "scope": "Actual local CLI inventory regression and packet integrity; single-agent review, no actual candidate CI/browser/classroom acceptance",
+  "closure": "OPEN",
+  "fullClosurePasses": 0
+}

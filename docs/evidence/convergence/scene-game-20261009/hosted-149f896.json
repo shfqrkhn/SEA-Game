@@ -1,0 +1,24 @@
+{
+  "time": "2026-10-09T12:09:54.914Z",
+  "sourceCommit": "8cd381cf7ce9aed2495d8f63d5263086dd904f97",
+  "previewCommit": "149f896d18cc90e425f991b17594dbeff91b9242",
+  "scope": "HTTPS byte readback only; not browser or release acceptance",
+  "records": [
+    {
+      "file": "SEA_Instructor_Standalone.html",
+      "url": "https://shfqrkhn.github.io/SEA-Game/previews/threejs-game-20261008/SEA_Instructor_Standalone.html?verify=149f896",
+      "bytes": 7950301,
+      "sourceSHA256": "a9985f949788596d805d1757b02039da9f6576cd1475d25cf3730063f76cbb0d",
+      "hostedSHA256": "a9985f949788596d805d1757b02039da9f6576cd1475d25cf3730063f76cbb0d",
+      "equal": true
+    },
+    {
+      "file": "SEA_Student_Standalone.html",
+      "url": "https://shfqrkhn.github.io/SEA-Game/previews/threejs-game-20261008/SEA_Student_Standalone.html?verify=149f896",
+      "bytes": 7935658,
+      "sourceSHA256": "e53a1407bdd01cfa50f3c7d6e852c180bdee318ffc57beff6c1b4bb466e721cb",
+      "hostedSHA256": "e53a1407bdd01cfa50f3c7d6e852c180bdee318ffc57beff6c1b4bb466e721cb",
+      "equal": true
+    }
+  ]
+}

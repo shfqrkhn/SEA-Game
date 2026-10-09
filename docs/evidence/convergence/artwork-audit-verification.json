@@ -1,0 +1,35 @@
+{
+  "recordedAtUtc": "2026-10-08T22:34:38.440Z",
+  "target": "PRODUCT_RELEASE",
+  "workItem": "W22",
+  "findings": [
+    "D22 CAP-F strip OPEN",
+    "D23 vehicle display OPEN; documentation corrected",
+    "77 inherited distribution rights UNRESOLVED"
+  ],
+  "localSpecificationFingerprint": "d320189fa6a1487df28cfdc15a4e0e3134f48fb43f8a789516d33579e57972cf",
+  "head": "1b80b348ac945987fbe11db77bd7a51f3dd553aa",
+  "hashes": {
+    "tools/audit-artwork.py": "04bc91b27e7ccddc89a1aa05a86138db5903c98cb5633d481200280bfdcea12e",
+    "docs/ARTWORK_MANIFEST.json": "80c6165d0fb4a80ab9b80a04778ef67b61481a3ee6ed64c7b32dc17b1db21c29",
+    "docs/ARTWORK_PROVENANCE.md": "3c9d9ae560ae8d04ae1cabcbfa83c2c852cdebd3cf9d5342e8b821f3adb8938a",
+    "assets/v1/cards/CAP-F.webp": "0ea3e365e6d16bd70a5c4d88002317cf36a4f08d96f83e107660514a0a2498c0",
+    "assets/v1/cards/CAP-F.svg": "e26c4285a9cf53ceb76ef8574d3c52c82d6a0eeb4ca522aa4147564f96176050",
+    "docs/evidence/convergence/artwork-decode-audit.json": "37e99d45804d77c52b2bbff0c12bca592192efdef0c3a1ef255306577d809aa9",
+    "docs/evidence/convergence/artwork-contact-sheet.png": "9c6b6d58351a2d724cd446d447a0b4cfeedda23049a2b75f75052503a27d17e1",
+    "docs/evidence/convergence/artwork-audit-negative-cases.log": "27583fffc80c2373d8b02eb0c7f0d1f221438e1487605cd316efe6a2a43abdc9",
+    "docs/evidence/convergence/artwork-build-check.log": "7303847ce98aaf1af89eb3233e7f3b653cfb6f5f4c3d7afa23e4918daaf92385"
+  },
+  "checks": {
+    "assetDecode": "PASS bundled Windows Python/Pillow12.3.0;77 assets",
+    "svgNegatives": "PASS8 cases",
+    "buildParity": "PASS",
+    "contract": "PASS",
+    "diff": "PASS"
+  },
+  "limitations": "Contact sheet plus full-size CAP-F inspection; no all-image full-size or browser approval. WSL Pillow unavailable.",
+  "candidateBrowser": "OPEN",
+  "candidateCI": "NOT_RUN",
+  "productReleasePassStreak": 0,
+  "nextAction": "Repair canonical CAP-F and matching fallback; integrate mission artwork; continue visual/security/rights qualification without asking questions"
+}

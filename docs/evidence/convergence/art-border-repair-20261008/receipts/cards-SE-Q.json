@@ -1,0 +1,7 @@
+{
+  "identity": "cards/SE-Q",
+  "inputSha256": "262380bf9ddb496dda3675350ab09ee921e45ea999dd5673e8de48bd1491a837",
+  "path": "C:\\Users\\user\\.codex\\generated_images\\01a11d09-97df-7000-a3e7-a4b9bfcb4add\\exec-d12aa4e9-c8ed-4ec5-adc4-d43be6d448de.png",
+  "prompt": "Precise artwork repair of SEA Game cards/SE-Q. Findings: Thin bottom frame.; Interior cockpit scene intentionally crops seats/screens/background.. Remove unwanted white edge borders, grid dividers and fragments from neighboring panels. Restore any missing focal subject edges, antennas, barrels or equipment through coherent reconstruction. Preserve the original subject identity, recognizable geometry, component count, arrangement, colors, realistic detail and lighting. Preserve the meaning and relationships of this systems-engineering scene/diagram, its symbols, chart structure and intentional contextual composition. Keep all focal icons and equipment complete. Do not remove intentional diagram lines or add new labels. Use one opaque wide 3:1 landscape canvas with generous safe margins around all focal content. No grid sheet, no neighboring assets, no new objects or text. Do not crop tighter. Clean coherent realistic game artwork.",
+  "tool": "built-in image_gen"
+}

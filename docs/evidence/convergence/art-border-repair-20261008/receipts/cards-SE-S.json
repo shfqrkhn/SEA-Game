@@ -1,0 +1,7 @@
+{
+  "identity": "cards/SE-S",
+  "inputSha256": "76d864c33078050ae1ae6541e862f8a0a116c2f865088ccede748ac0991f5635",
+  "path": "C:\\Users\\user\\.codex\\generated_images\\01a11d09-97df-7000-a3e7-a4b9bfcb4add\\exec-e91a90d6-c981-43f9-b316-01742441e7d5.png",
+  "prompt": "Precise artwork repair of SEA Game cards/SE-S. Findings: Thin left frame.; Landscape/multipanel composition intentionally extends into boundaries.. Remove unwanted white edge borders, grid dividers and fragments from neighboring panels. Restore any missing focal subject edges, antennas, barrels or equipment through coherent reconstruction. Preserve the original subject identity, recognizable geometry, component count, arrangement, colors, realistic detail and lighting. Preserve the meaning and relationships of this systems-engineering scene/diagram, its symbols, chart structure and intentional contextual composition. Keep all focal icons and equipment complete. Do not remove intentional diagram lines or add new labels. Use one opaque wide 3:1 landscape canvas with generous safe margins around all focal content. No grid sheet, no neighboring assets, no new objects or text. Do not crop tighter. Clean coherent realistic game artwork.",
+  "tool": "built-in image_gen"
+}

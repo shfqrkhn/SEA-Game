@@ -1,0 +1,15 @@
+{
+  "identity": "cards/FP-C",
+  "generatedPngSha256": "36dee7a9a53d3c404866f9ea72ad391c2f67ba14205bca7396cfae94012b22d0",
+  "webpSha256": "428f1d66c7109f43e57ccf90afa1d35897d1ddab917ecd6332e8d1f42f1e0eb2",
+  "svgSha256": "5fa29c45813447e0c34c14fbc6e0ddf58120f6035c261907f6be7695a2d86ac2",
+  "dimensions": [
+    2172,
+    724
+  ],
+  "encoding": "lossless WebP; decoded RGBA equals generated PNG; no resize/crop/paint",
+  "vector": "vtracer 0.6.15 polygon trace; color precision 6, speckle 24, layer difference 16, length threshold 6, path precision 0; visual review required",
+  "svgBytes": 57458,
+  "canonicalSvgNormalization": true,
+  "canonicalLF": true
+}

@@ -1,0 +1,7 @@
+{
+  "identity": "cards/SE-K",
+  "inputSha256": "ddff7a3630c28f9a51b1d3fb869a0eff14a824355eef28c19ecf8c54b488c83d",
+  "path": "C:\\Users\\user\\.codex\\generated_images\\01a11d09-97df-7000-a3e7-a4b9bfcb4add\\exec-792c120d-684f-4e3d-a5ed-83cd689b2edc.png",
+  "prompt": "Precise artwork repair of SEA Game cards/SE-K. Findings: Thin illustrative outline frame.. Remove unwanted white edge borders, grid dividers and fragments from neighboring panels. Restore any missing focal subject edges, antennas, barrels or equipment through coherent reconstruction. Preserve the original subject identity, recognizable geometry, component count, arrangement, colors, realistic detail and lighting. Preserve the meaning and relationships of this systems-engineering scene/diagram, its symbols, chart structure and intentional contextual composition. Keep all focal icons and equipment complete. Do not remove intentional diagram lines or add new labels. Use one opaque wide 3:1 landscape canvas with generous safe margins around all focal content. No grid sheet, no neighboring assets, no new objects or text. Do not crop tighter. Clean coherent realistic game artwork.",
+  "tool": "built-in image_gen"
+}

@@ -1,0 +1,37 @@
+{
+  "timestamp": "2026-10-09T00:03:33.341074+00:00",
+  "specificationCheckpoint": "fc916061d94b1890bd8f908aa81125ff5cbc6d49a4277d89802c2d63f228bc1d",
+  "previousPacket": "67ee8c716061c8b44c290fba9614efed06375e06e73a1e62416a0c72b033210a",
+  "changedExistingMaterial": [
+    "README.md",
+    "docs/EXECUTION_LEDGER.md",
+    "docs/RELEASE_OPERATIONS.md"
+  ],
+  "newMaterial": [
+    "docs/RELEASE_NOTES.md"
+  ],
+  "unchangedPreviousMaterialFiles": 206,
+  "sha256": {
+    "docs/RELEASE_NOTES.md": "2145d4671098eb9085bf0102d2762d8e0ac9fb3576c054cd08c94a7980985e1b",
+    "README.md": "d528d63650e11ea435b076c3de75d95d48395fcf318cbe43656669c14d5606ea",
+    "docs/EXECUTION_LEDGER.md": "8b2438b2df2491b0ee481310750b65905c310e8d9aeaee9498a956edef51901f",
+    "docs/RELEASE_OPERATIONS.md": "5dfcfb7cb6f8e2eebd9caac4c7aa71cdb4141465bf87739897a403c01748e021"
+  },
+  "results": {
+    "specificationContractsAndLinks": "PASS",
+    "buildByteReproduction": "PASS",
+    "diffWhitespace": "PASS with CRLF normalization warnings"
+  },
+  "scope": "Unreleased bilingual notes, source/ledger self-review and local static/build validation only",
+  "openGateGroups": [
+    "Actual candidate browser/device/offline/storage/download/CSP/network/assistive/performance",
+    "Owner content/French/rules/support envelope and all asset/code rights acceptance",
+    "Independent review and representative classroom pilot",
+    "Actual candidate CI and authorized publication/deployment byte readback",
+    "Accepted operator recovery/rollback/support/retention/retirement rehearsals and handover",
+    "Complete product key and three fresh same-key zero-change full-closure passes"
+  ],
+  "previousGoalTurn": "Progress: D32 inventory regression and fix verified on Windows/Linux",
+  "releaseClosure": "OPEN",
+  "fullClosurePasses": 0
+}

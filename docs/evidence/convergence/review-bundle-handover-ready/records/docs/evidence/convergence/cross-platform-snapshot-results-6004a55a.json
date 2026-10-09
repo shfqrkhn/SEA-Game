@@ -1,0 +1,52 @@
+{
+  "targetKey": "6004a55a7debbc343a420468d975a29badb176ec23f04602d03185b47229eaf2",
+  "copiedFrom": "D:\\VSCode\\SEA-Game\\current",
+  "exclusions": [
+    ".git",
+    "node_modules"
+  ],
+  "runs": [
+    {
+      "snapshot": "C:\\Users\\user\\AppData\\Local\\Temp\\SEA-Game-candidate-reset-final-win-cf906dbe34624c79beeb0898560ec46a",
+      "environment": "Windows 10 build 26300 x64; Node v24.20.0",
+      "commands": [
+        "node tools/test.mjs",
+        "node tools/build.mjs --check",
+        "node tools/test-mpes.mjs"
+      ],
+      "statuses": {
+        "tests": "PASS",
+        "mpes": "PASS",
+        "build": "PASS"
+      },
+      "exitCodes": {
+        "tests": 0,
+        "mpes": 0,
+        "build": 0
+      },
+      "baselineCases": 29,
+      "semanticMutantsRejected": 18
+    },
+    {
+      "snapshot": "C:\\Users\\user\\AppData\\Local\\Temp\\SEA-Game-candidate-reset-final-wsl-6c2cb575254f43349265b16446554980",
+      "environment": "Ubuntu 24.04 under WSL x64; Node v22.23.3",
+      "commands": [
+        "/home/user/node-v22.23.3-linux-x64/bin/node tools/test.mjs",
+        "/home/user/node-v22.23.3-linux-x64/bin/node tools/build.mjs --check",
+        "/home/user/node-v22.23.3-linux-x64/bin/node tools/test-mpes.mjs"
+      ],
+      "statuses": {
+        "tests": "PASS",
+        "mpes": "PASS",
+        "build": "PASS"
+      },
+      "exitCodes": {
+        "tests": 0,
+        "mpes": 0,
+        "build": 0
+      },
+      "baselineCases": 29,
+      "semanticMutantsRejected": 18
+    }
+  ]
+}

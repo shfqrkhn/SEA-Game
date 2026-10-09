@@ -1,0 +1,15 @@
+{
+  "identity": "cards/SA-D",
+  "generatedPngSha256": "6a1530aee4861f1ad3455a1b69cb0240541bc20d4a0850fc671f3dce9ac069a4",
+  "webpSha256": "20b29133c814fd3e0365d74b62421aa27b6770a1624472d4096e7a010efa298c",
+  "svgSha256": "87c17a3b211cf77f8a39ced6e49d3fc40516e4367c5dd01ba451b3460f9609e5",
+  "dimensions": [
+    2172,
+    724
+  ],
+  "encoding": "lossless WebP; decoded RGBA equals generated PNG; no resize/crop/paint",
+  "vector": "vtracer 0.6.15 polygon trace; color precision 6, speckle 24, layer difference 16, length threshold 6, path precision 0; visual review required",
+  "svgBytes": 27399,
+  "canonicalSvgNormalization": true,
+  "canonicalLF": true
+}

@@ -1,0 +1,75 @@
+{
+  "method": "Actual Three.js factory geometry, SVGRenderer projection and simplified Lambert lighting; no WebGL/PBR acceptance claim",
+  "models": [
+    {
+      "group": "CAP",
+      "id": "CAP-A",
+      "title": "Modular Crew Hull"
+    },
+    {
+      "group": "CAP",
+      "id": "CAP-B",
+      "title": "Extended Carrier Module"
+    },
+    {
+      "group": "CAP",
+      "id": "CAP-C",
+      "title": "Compact Passenger Bay"
+    },
+    {
+      "group": "CAP",
+      "id": "CAP-D",
+      "title": "High-Capacity Hull"
+    },
+    {
+      "group": "CAP",
+      "id": "CAP-E",
+      "title": "Crew Compartment Insert"
+    },
+    {
+      "group": "CAP",
+      "id": "CAP-F",
+      "title": "Protected Personnel Module"
+    },
+    {
+      "group": "CAP",
+      "id": "CAP-G",
+      "title": "Light Utility Hull"
+    },
+    {
+      "group": "MOB",
+      "id": "MOB-A",
+      "title": "Efficient Power Pack"
+    },
+    {
+      "group": "MOB",
+      "id": "MOB-B",
+      "title": "High-Torque Drivetrain"
+    },
+    {
+      "group": "MOB",
+      "id": "MOB-C",
+      "title": "Lightweight Running Gear"
+    },
+    {
+      "group": "MOB",
+      "id": "MOB-D",
+      "title": "Heavy-Duty Suspension"
+    },
+    {
+      "group": "MOB",
+      "id": "MOB-E",
+      "title": "Long-Range Propulsion"
+    },
+    {
+      "group": "MOB",
+      "id": "MOB-F",
+      "title": "Compact Engine Set"
+    },
+    {
+      "group": "MOB",
+      "id": "MOB-G",
+      "title": "Adaptive Traction Package"
+    }
+  ]
+}

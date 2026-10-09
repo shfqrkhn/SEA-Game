@@ -1,0 +1,1183 @@
+{
+  "pack": "assets/v1",
+  "inheritedBaseline": "1b80b348ac945987fbe11db77bd7a51f3dd553aa",
+  "rightsStatus": "USER_ATTESTED_AI_GENERATION; final content/distribution acceptance OPEN",
+  "visualAcceptance": "54 repaired raster/native-vector pairs visually reviewed on comparison sheets; classroom/device acceptance OPEN",
+  "assets": [
+    {
+      "identity": "cards/ACC-A",
+      "width": 2172,
+      "height": 724,
+      "webpSha256": "7a1d8e3b4a88da9bc308b517d7772cf64f89a297b90bcdd2be4584234b904138",
+      "svgSha256": "7d9b1cbcf5bf0bf38b75ada1596cdcbed21cf7746d394ce3f11c88001ed74bd9",
+      "viewBox": [
+        0.0,
+        0.0,
+        2172.0,
+        724.0
+      ],
+      "kind": "vector",
+      "rasterHashes": []
+    },
+    {
+      "identity": "cards/ACC-B",
+      "width": 1200,
+      "height": 360,
+      "webpSha256": "dd62bb1062009c3463d49ca88a7b66b8a6a119c797aba7eed68cb25fc4368544",
+      "svgSha256": "91292a053ac8fad54f04d06332d44359d6cc7760e4164819e1ee23be263f343c",
+      "viewBox": [
+        0.0,
+        0.0,
+        640.0,
+        192.0
+      ],
+      "kind": "vector",
+      "rasterHashes": []
+    },
+    {
+      "identity": "cards/ACC-C",
+      "width": 2172,
+      "height": 724,
+      "webpSha256": "ba1c746728b88010719c17a96a2223be9474c931fe8715a82b3b0afb02840664",
+      "svgSha256": "9c22b53fdb000aded40856cd179ca5099ae304a72440ef4d9826238381907362",
+      "viewBox": [
+        0.0,
+        0.0,
+        2172.0,
+        724.0
+      ],
+      "kind": "vector",
+      "rasterHashes": []
+    },
+    {
+      "identity": "cards/ACC-D",
+      "width": 1200,
+      "height": 360,
+      "webpSha256": "5e9a8fdbe932c460cd66c31fae45e5a276dcd8327e3c98e0bc191da32568b92e",
+      "svgSha256": "d893dc95d4d1a0139a1d10c71c55b352a94f3ddf13acd511062ae31ea3b68293",
+      "viewBox": [
+        0.0,
+        0.0,
+        640.0,
+        192.0
+      ],
+      "kind": "vector",
+      "rasterHashes": []
+    },
+    {
+      "identity": "cards/ACC-E",
+      "width": 1200,
+      "height": 360,
+      "webpSha256": "31d8b79d14bc9311359beff9339bce9ba95c727236a0309c6005f6c013bc231d",
+      "svgSha256": "8462e813ea39d190bd37ad7260d4e039f6025e4a4091358748bef07adbb129cc",
+      "viewBox": [
+        0.0,
+        0.0,
+        640.0,
+        192.0
+      ],
+      "kind": "vector",
+      "rasterHashes": []
+    },
+    {
+      "identity": "cards/ACC-F",
+      "width": 1200,
+      "height": 360,
+      "webpSha256": "eff431db8e7dab5989e163911d9c12e647b2e9b7d297c86f47ec2388b614141a",
+      "svgSha256": "85bdb0e03167ae0343ef92eb2e36e316668c1a4099246f24eebb1b3b571ef478",
+      "viewBox": [
+        0.0,
+        0.0,
+        640.0,
+        192.0
+      ],
+      "kind": "vector",
+      "rasterHashes": []
+    },
+    {
+      "identity": "cards/ACC-G",
+      "width": 1200,
+      "height": 360,
+      "webpSha256": "3215f950097aacc607347ae9d1cacc92aebffabc2f449e3c8aa2083599e7dcab",
+      "svgSha256": "af21846ab022e1ff6c05f08ea8d245973ee506e6e0b0de14fc05d205d4941d6c",
+      "viewBox": [
+        0.0,
+        0.0,
+        640.0,
+        192.0
+      ],
+      "kind": "vector",
+      "rasterHashes": []
+    },
+    {
+      "identity": "cards/CAP-A",
+      "width": 1200,
+      "height": 360,
+      "webpSha256": "08ed9df1cbbe1eb5a799fe3281a0d3b566f93d3dcfa86369b1f583fa4fe30ce6",
+      "svgSha256": "0518c25b7ba7a325118cf1f1163860726d01aee25353f2e5d2731ce829cd96f5",
+      "viewBox": [
+        0.0,
+        0.0,
+        640.0,
+        192.0
+      ],
+      "kind": "vector",
+      "rasterHashes": []
+    },
+    {
+      "identity": "cards/CAP-B",
+      "width": 1200,
+      "height": 360,
+      "webpSha256": "6b1494b4e7ffb2b0f0fb6dac2dd0e4c82d402368579247740d3a4495b1400d56",
+      "svgSha256": "c5d90d9e7d9e595f443434ec5439121a568862744bf5ccb5a1412b782188c53d",
+      "viewBox": [
+        0.0,
+        0.0,
+        640.0,
+        192.0
+      ],
+      "kind": "vector",
+      "rasterHashes": []
+    },
+    {
+      "identity": "cards/CAP-C",
+      "width": 1200,
+      "height": 360,
+      "webpSha256": "f15af75eb35e82167f215ceb7d8f312002356d0ffc81a71ff65d94e046f7c1ec",
+      "svgSha256": "fd8b6913e8393e0891cd0cb8b550a1eb53069c31e5fc15fb0e9244482c978f99",
+      "viewBox": [
+        0.0,
+        0.0,
+        640.0,
+        192.0
+      ],
+      "kind": "vector",
+      "rasterHashes": []
+    },
+    {
+      "identity": "cards/CAP-D",
+      "width": 1200,
+      "height": 360,
+      "webpSha256": "6bd0c460e77f51df1e1800894196db077c6378605b55824e8fb5ed953fb81ccf",
+      "svgSha256": "949272a253d2e084c05925b84b2684b743a2a0f474762cebd23b299f9649a7f1",
+      "viewBox": [
+        0.0,
+        0.0,
+        640.0,
+        192.0
+      ],
+      "kind": "vector",
+      "rasterHashes": []
+    },
+    {
+      "identity": "cards/CAP-E",
+      "width": 2172,
+      "height": 724,
+      "webpSha256": "f3a9bb9bbf258332e06cb28282e40951aa265ad6bb4d0bfc1027b279f9eda715",
+      "svgSha256": "9eb255627846da8c3e3ca39a936c1e60c5a2eade2f508899a03ba96ffcb7588a",
+      "viewBox": [
+        0.0,
+        0.0,
+        2172.0,
+        724.0
+      ],
+      "kind": "vector",
+      "rasterHashes": []
+    },
+    {
+      "identity": "cards/CAP-F",
+      "width": 2172,
+      "height": 724,
+      "webpSha256": "9a447925c0d18a435bad08f00d4d81ed3e2aa99f4b233ccc5afb5e277f7c1c4f",
+      "svgSha256": "8fd9ef635685edfa3db9ba81625df506d3fb6fe7272c12fb1127c78900586bcd",
+      "viewBox": [
+        0.0,
+        0.0,
+        640.0,
+        213.33333333333334
+      ],
+      "kind": "vector",
+      "rasterHashes": []
+    },
+    {
+      "identity": "cards/CAP-G",
+      "width": 2172,
+      "height": 724,
+      "webpSha256": "178d82f88fa957762f516f57be517ed54e697485592094879a95960eeb74c66f",
+      "svgSha256": "86502c9a09af652eeeff7d64379fee03b6db0a33ef680e7bfc90c652ef84397b",
+      "viewBox": [
+        0.0,
+        0.0,
+        2172.0,
+        724.0
+      ],
+      "kind": "vector",
+      "rasterHashes": []
+    },
+    {
+      "identity": "cards/COM-A",
+      "width": 2172,
+      "height": 724,
+      "webpSha256": "57bfefac8afca6750180e2737b517adff3c7c7c4b41f75fc8a3c25d8f5dca0bc",
+      "svgSha256": "69fd9d3844708832feefd30fdf3f8c8eda817a168eff111a24c3bdd98e619df3",
+      "viewBox": [
+        0.0,
+        0.0,
+        2172.0,
+        724.0
+      ],
+      "kind": "vector",
+      "rasterHashes": []
+    },
+    {
+      "identity": "cards/COM-B",
+      "width": 2172,
+      "height": 724,
+      "webpSha256": "703c472f55956dab2e7af719bbac1a5d477b63a388fb1f63ebe1f9c31c41efd6",
+      "svgSha256": "5aa0cb5810e2fa88cea9d3bcd439a24ab11ccbaf54daefa25aa5045cec5287d7",
+      "viewBox": [
+        0.0,
+        0.0,
+        2172.0,
+        724.0
+      ],
+      "kind": "vector",
+      "rasterHashes": []
+    },
+    {
+      "identity": "cards/COM-C",
+      "width": 2172,
+      "height": 724,
+      "webpSha256": "76aea04b0e4910868d7d9d086787f76bfdf6af0791b52cd9549b689588d384c2",
+      "svgSha256": "5fe51e24171eda5d09ccd339326935b39e26b2e1bc6c7313996c2e1bc86e4579",
+      "viewBox": [
+        0.0,
+        0.0,
+        2172.0,
+        724.0
+      ],
+      "kind": "vector",
+      "rasterHashes": []
+    },
+    {
+      "identity": "cards/COM-D",
+      "width": 2172,
+      "height": 724,
+      "webpSha256": "ecd7c203b5ab1235bc2783e53ee57bf699346961d53700a1800d5425cc9345af",
+      "svgSha256": "ed30450ce8bbe4cc453b60a7bfd74de314165758f5e29a725de92cb0c7b42a7d",
+      "viewBox": [
+        0.0,
+        0.0,
+        2172.0,
+        724.0
+      ],
+      "kind": "vector",
+      "rasterHashes": []
+    },
+    {
+      "identity": "cards/COM-E",
+      "width": 2172,
+      "height": 724,
+      "webpSha256": "882e2c53c99a1ee6492690c33597e29d619b3f15673cad34ba131d703e88c8dc",
+      "svgSha256": "64855badea1e5080915bed3ec4e16c31e318e0dab9129007cb6d0a1b529d99e6",
+      "viewBox": [
+        0.0,
+        0.0,
+        2172.0,
+        724.0
+      ],
+      "kind": "vector",
+      "rasterHashes": []
+    },
+    {
+      "identity": "cards/COM-F",
+      "width": 2172,
+      "height": 724,
+      "webpSha256": "f81dd3715f2f0a9913f6a8298e42557ec5c95591f7bbfa666b03ad9937a036ed",
+      "svgSha256": "1bb9796f0faf2b99868f0a4759168e31ee76084aa44d1a95c2f6f48190e74afc",
+      "viewBox": [
+        0.0,
+        0.0,
+        2172.0,
+        724.0
+      ],
+      "kind": "vector",
+      "rasterHashes": []
+    },
+    {
+      "identity": "cards/COM-G",
+      "width": 2172,
+      "height": 724,
+      "webpSha256": "caa81a4fd183cb2419f37aa9922e0b2efda13f59ed9ba12ef1fe865713a6322d",
+      "svgSha256": "286720087c7e68756616f2482d644703abbf533de632cf23c7b9a8297fcad211",
+      "viewBox": [
+        0.0,
+        0.0,
+        2172.0,
+        724.0
+      ],
+      "kind": "vector",
+      "rasterHashes": []
+    },
+    {
+      "identity": "cards/FP-A",
+      "width": 2172,
+      "height": 724,
+      "webpSha256": "adec628292f30c60334d8c0f73c0b90a7b4fbfbda43275cb315880425eed6dc1",
+      "svgSha256": "1647b866b18dbe73270073c4c2d454836e58ee6a25716b06d668849fe141dbc0",
+      "viewBox": [
+        0.0,
+        0.0,
+        2172.0,
+        724.0
+      ],
+      "kind": "vector",
+      "rasterHashes": []
+    },
+    {
+      "identity": "cards/FP-B",
+      "width": 2172,
+      "height": 724,
+      "webpSha256": "29b3d5a765c9371181d88c4903ad30e36a24f6a6d1cf2496150e5a1a17ac836a",
+      "svgSha256": "98141946fdb2207043c7b307cbecae2ea83b1739f7156a36603ee64bc27d270f",
+      "viewBox": [
+        0.0,
+        0.0,
+        2172.0,
+        724.0
+      ],
+      "kind": "vector",
+      "rasterHashes": []
+    },
+    {
+      "identity": "cards/FP-C",
+      "width": 2172,
+      "height": 724,
+      "webpSha256": "428f1d66c7109f43e57ccf90afa1d35897d1ddab917ecd6332e8d1f42f1e0eb2",
+      "svgSha256": "5fa29c45813447e0c34c14fbc6e0ddf58120f6035c261907f6be7695a2d86ac2",
+      "viewBox": [
+        0.0,
+        0.0,
+        2172.0,
+        724.0
+      ],
+      "kind": "vector",
+      "rasterHashes": []
+    },
+    {
+      "identity": "cards/FP-D",
+      "width": 2172,
+      "height": 724,
+      "webpSha256": "dd7f61d41a81f1a5f0cffc0e203b39b76515768b78ccaf025ce4eda91c36f98b",
+      "svgSha256": "1d3f925f18fd8c17c9a95a52c25e299dedefc9c2e0a2c5c23a874297b0b2a2ab",
+      "viewBox": [
+        0.0,
+        0.0,
+        2172.0,
+        724.0
+      ],
+      "kind": "vector",
+      "rasterHashes": []
+    },
+    {
+      "identity": "cards/FP-E",
+      "width": 2172,
+      "height": 724,
+      "webpSha256": "59aac902e2c1d44b55ed986cb768c681484f3e0b8a50f973299efd55c9fd9e63",
+      "svgSha256": "35ed9442a1d05b2f302f5f75c7a804edd682c85b6834581bb4750cbac9fbd7a1",
+      "viewBox": [
+        0.0,
+        0.0,
+        2172.0,
+        724.0
+      ],
+      "kind": "vector",
+      "rasterHashes": []
+    },
+    {
+      "identity": "cards/FP-F",
+      "width": 2172,
+      "height": 724,
+      "webpSha256": "b0307fc4b2dc1b194290381eb6e7d78d0d9dfbd0987fbb87392f2625d37c146e",
+      "svgSha256": "ac2150759fd153b069f32e7529a69a3c5352de1b9364fd7520a267ff5fa23ef7",
+      "viewBox": [
+        0.0,
+        0.0,
+        2172.0,
+        724.0
+      ],
+      "kind": "vector",
+      "rasterHashes": []
+    },
+    {
+      "identity": "cards/FP-G",
+      "width": 2172,
+      "height": 724,
+      "webpSha256": "f7efe6b807d79eebfb3fd9ce9a6bef6c8c6dd547d0dda86a1d4e870605765583",
+      "svgSha256": "2f6befb679178b4f427896b34c8c5a23c22add2008cefd59acc82aaff164797f",
+      "viewBox": [
+        0.0,
+        0.0,
+        2172.0,
+        724.0
+      ],
+      "kind": "vector",
+      "rasterHashes": []
+    },
+    {
+      "identity": "cards/MOB-A",
+      "width": 2172,
+      "height": 724,
+      "webpSha256": "ef9fbe639830c116271c0b87a04bf797675b7df2003d06f07e891d61ef238372",
+      "svgSha256": "09f6e32169434606a11b558b5a24e091a8064d4e719cdc76d86e3f341ff65e8e",
+      "viewBox": [
+        0.0,
+        0.0,
+        2172.0,
+        724.0
+      ],
+      "kind": "vector",
+      "rasterHashes": []
+    },
+    {
+      "identity": "cards/MOB-B",
+      "width": 1200,
+      "height": 360,
+      "webpSha256": "6147db2406a383633cdf50f8b8d34fc528b77dfe0fc7ab7251de371102ab2f96",
+      "svgSha256": "2af74e4da3e5ce4eb15b5e97ad873f6c376ff578b81a3e5573a76c7d4d23dbba",
+      "viewBox": [
+        0.0,
+        0.0,
+        640.0,
+        192.0
+      ],
+      "kind": "vector",
+      "rasterHashes": []
+    },
+    {
+      "identity": "cards/MOB-C",
+      "width": 1200,
+      "height": 360,
+      "webpSha256": "794748c699d526138814a0abc30f61ad84b12e2f91ec98dd8d91762900de2834",
+      "svgSha256": "edffc3b40abd2e9b1d6ce1256df5e40ca105a9a7c3482e070cabe751f6a16b89",
+      "viewBox": [
+        0.0,
+        0.0,
+        640.0,
+        192.0
+      ],
+      "kind": "vector",
+      "rasterHashes": []
+    },
+    {
+      "identity": "cards/MOB-D",
+      "width": 2172,
+      "height": 724,
+      "webpSha256": "bb8393894b6e6e00de6393b16628e5208353239a5e79a714602d13582ae18754",
+      "svgSha256": "f7ab033f617d03d0a34b6e05139177d25161f1f18c924a3a70abcea5c795210a",
+      "viewBox": [
+        0.0,
+        0.0,
+        2172.0,
+        724.0
+      ],
+      "kind": "vector",
+      "rasterHashes": []
+    },
+    {
+      "identity": "cards/MOB-E",
+      "width": 2172,
+      "height": 724,
+      "webpSha256": "21222844d6e3bad7a44bbbef0ccf6dbbc871c1853dfaeba1cc3f77a5d6b4b7dd",
+      "svgSha256": "4f6a97bc424c5acb7b4ce38efd2a64e52ac75c99b7e0be11bde41255fa56222f",
+      "viewBox": [
+        0.0,
+        0.0,
+        2172.0,
+        724.0
+      ],
+      "kind": "vector",
+      "rasterHashes": []
+    },
+    {
+      "identity": "cards/MOB-F",
+      "width": 2172,
+      "height": 724,
+      "webpSha256": "51fcffd589997d3cc5341362b25b7175ee4e6a2d28ede276bfbe1e9d52af3c26",
+      "svgSha256": "8a1d78dc06afdceb35a2b581058ee347177e278904574dd3cd186171779c8ac6",
+      "viewBox": [
+        0.0,
+        0.0,
+        2172.0,
+        724.0
+      ],
+      "kind": "vector",
+      "rasterHashes": []
+    },
+    {
+      "identity": "cards/MOB-G",
+      "width": 2172,
+      "height": 724,
+      "webpSha256": "dfa3a0065daec9581a8c14bdaeedfad4307c7053e08cde7a30f86beaabd89c42",
+      "svgSha256": "385358ff738509a117a94f503e77525a810f238dbe748f2bd7ab1de43ebeaaeb",
+      "viewBox": [
+        0.0,
+        0.0,
+        2172.0,
+        724.0
+      ],
+      "kind": "vector",
+      "rasterHashes": []
+    },
+    {
+      "identity": "cards/PRO-A",
+      "width": 1200,
+      "height": 360,
+      "webpSha256": "11be36d0e9fab71afb9c577154f8ca96a68a36734c1d23a9397b86c5889a1f1d",
+      "svgSha256": "93f74a801c67384cfd3ce4e8b264af2f7fc85c03483824f3d298d7d5aeebbf8f",
+      "viewBox": [
+        0.0,
+        0.0,
+        640.0,
+        192.0
+      ],
+      "kind": "vector",
+      "rasterHashes": []
+    },
+    {
+      "identity": "cards/PRO-B",
+      "width": 1200,
+      "height": 360,
+      "webpSha256": "fa04cdc2f0dafc5a9869563d4cb04975e01e42bb8e8f75b9007c438784e137a3",
+      "svgSha256": "a82c80017fd3a0a71f51f94d4b1e6243b7654646489a4eb3023bafbe2f2a84fa",
+      "viewBox": [
+        0.0,
+        0.0,
+        640.0,
+        192.0
+      ],
+      "kind": "vector",
+      "rasterHashes": []
+    },
+    {
+      "identity": "cards/PRO-C",
+      "width": 1200,
+      "height": 360,
+      "webpSha256": "5a6c3299146d754843e90bf57415309ce0130724e08bbdca7c24081498da287d",
+      "svgSha256": "b29bbe8b45bf794ffe8da8405a48ff404966f2b1d568c48f459d41dd23964306",
+      "viewBox": [
+        0.0,
+        0.0,
+        640.0,
+        192.0
+      ],
+      "kind": "vector",
+      "rasterHashes": []
+    },
+    {
+      "identity": "cards/PRO-D",
+      "width": 1200,
+      "height": 360,
+      "webpSha256": "5618e88a689c838c81bb03ee281dacf16627a7c04d4ffd88bc379779977e4258",
+      "svgSha256": "85cd315782a5a14b316d2f60adb60f885d3100a074afcf972070082c0b3d14b8",
+      "viewBox": [
+        0.0,
+        0.0,
+        640.0,
+        192.0
+      ],
+      "kind": "vector",
+      "rasterHashes": []
+    },
+    {
+      "identity": "cards/PRO-E",
+      "width": 1200,
+      "height": 360,
+      "webpSha256": "a9c91207ad53e6771085ccc6b88e8836f1538e97089006ec25f6975fb81602ae",
+      "svgSha256": "401b4ca33fbd4a92beeadde433fadac5fe58908a00c6fe11dea113fb6275efad",
+      "viewBox": [
+        0.0,
+        0.0,
+        640.0,
+        192.0
+      ],
+      "kind": "vector",
+      "rasterHashes": []
+    },
+    {
+      "identity": "cards/PRO-F",
+      "width": 1200,
+      "height": 360,
+      "webpSha256": "2b2572eb35b0aaf5011ed4bf4f5122625280896e31fb595fd6ab9e4c9dacf93e",
+      "svgSha256": "f83b42f5a993b7143d0e28e20c2860d028575378e32c6a1a40cdcf311ec0667d",
+      "viewBox": [
+        0.0,
+        0.0,
+        640.0,
+        192.0
+      ],
+      "kind": "vector",
+      "rasterHashes": []
+    },
+    {
+      "identity": "cards/PRO-G",
+      "width": 1200,
+      "height": 360,
+      "webpSha256": "89267188ad4019d3e99ea1cb8abb28a97ee133396f186b5f82a685e343a54b46",
+      "svgSha256": "9ae5524ca72c57aeb176e7ab5c957d6df6a65c514d9c6000bd12f57203c3a664",
+      "viewBox": [
+        0.0,
+        0.0,
+        640.0,
+        192.0
+      ],
+      "kind": "vector",
+      "rasterHashes": []
+    },
+    {
+      "identity": "cards/SA-A",
+      "width": 2172,
+      "height": 724,
+      "webpSha256": "2925567b58c8f14512ba9d70b2ff14b157f50889a2aa08bae67cd22c55b31bef",
+      "svgSha256": "c52087499d9af0f835409a3849440c05d8d3f0bc0c43b05717d03237ad2051bd",
+      "viewBox": [
+        0.0,
+        0.0,
+        2172.0,
+        724.0
+      ],
+      "kind": "vector",
+      "rasterHashes": []
+    },
+    {
+      "identity": "cards/SA-B",
+      "width": 2172,
+      "height": 724,
+      "webpSha256": "be3d385ec99b82d10cce09c87c38a1aa7d5aaf69e014543fb97a64860c3fb9a9",
+      "svgSha256": "e8cf8728c6aa53db5090d5c944731637d31c8b3ce9fe7abccf9c665329e81bff",
+      "viewBox": [
+        0.0,
+        0.0,
+        2172.0,
+        724.0
+      ],
+      "kind": "vector",
+      "rasterHashes": []
+    },
+    {
+      "identity": "cards/SA-C",
+      "width": 2172,
+      "height": 724,
+      "webpSha256": "f72326ca27ec85821a7ddde6ca91dc342cce575b5d65b5cbc2de872868163a5f",
+      "svgSha256": "cb79148457195a66200aaf3de9a9bdf8d878b2ccb18a4cde849120fcb4ff1ce6",
+      "viewBox": [
+        0.0,
+        0.0,
+        2172.0,
+        724.0
+      ],
+      "kind": "vector",
+      "rasterHashes": []
+    },
+    {
+      "identity": "cards/SA-D",
+      "width": 2172,
+      "height": 724,
+      "webpSha256": "20b29133c814fd3e0365d74b62421aa27b6770a1624472d4096e7a010efa298c",
+      "svgSha256": "87c17a3b211cf77f8a39ced6e49d3fc40516e4367c5dd01ba451b3460f9609e5",
+      "viewBox": [
+        0.0,
+        0.0,
+        2172.0,
+        724.0
+      ],
+      "kind": "vector",
+      "rasterHashes": []
+    },
+    {
+      "identity": "cards/SA-E",
+      "width": 2172,
+      "height": 724,
+      "webpSha256": "da35924fc3a09945f5b7bfaabe1db11f60ccdfb8fc0111126cf8c6179ac80b23",
+      "svgSha256": "c437953dbf2157b33e4e567240d6a447d4a2efc073a47bdecca10fd7d2e9e957",
+      "viewBox": [
+        0.0,
+        0.0,
+        2172.0,
+        724.0
+      ],
+      "kind": "vector",
+      "rasterHashes": []
+    },
+    {
+      "identity": "cards/SA-F",
+      "width": 2172,
+      "height": 724,
+      "webpSha256": "2f9dc0bd3193b0201fad2e8a280ed31009706695b471c900bb2af88fdd04a54c",
+      "svgSha256": "1ac6f1b3cada30e5ee1eb20cd654d9882c3894e7c2d52321c1828b99e8fd1c27",
+      "viewBox": [
+        0.0,
+        0.0,
+        2172.0,
+        724.0
+      ],
+      "kind": "vector",
+      "rasterHashes": []
+    },
+    {
+      "identity": "cards/SA-G",
+      "width": 2172,
+      "height": 724,
+      "webpSha256": "4e270b8961af0096ba2111c01ec2b9ddb8e65845bfc7c89a63f89ed34347a825",
+      "svgSha256": "bdff1b5f02a612388be99a2040234c33fcb2cbd22e85d25d4f149caaa6c19a41",
+      "viewBox": [
+        0.0,
+        0.0,
+        2172.0,
+        724.0
+      ],
+      "kind": "vector",
+      "rasterHashes": []
+    },
+    {
+      "identity": "cards/SE-A",
+      "width": 2172,
+      "height": 724,
+      "webpSha256": "1b236957019cd362160a53321d70aa5482e2042cd90a5e7e15dda8a988455eec",
+      "svgSha256": "5650fa69756e2bbfdac696c7644fa86ec25ed804f4d919bdd9607200e9c750de",
+      "viewBox": [
+        0.0,
+        0.0,
+        2172.0,
+        724.0
+      ],
+      "kind": "vector",
+      "rasterHashes": []
+    },
+    {
+      "identity": "cards/SE-B",
+      "width": 2172,
+      "height": 724,
+      "webpSha256": "23690c56c175806898aa843e63e2b552504da2a378221a9bd2b243ef576ee85e",
+      "svgSha256": "2d632cbfd4c663454f571f72e17947eb70326a749cee0238682e00e63bbf8a27",
+      "viewBox": [
+        0.0,
+        0.0,
+        2172.0,
+        724.0
+      ],
+      "kind": "vector",
+      "rasterHashes": []
+    },
+    {
+      "identity": "cards/SE-C",
+      "width": 2172,
+      "height": 724,
+      "webpSha256": "e496779a2577a9fe2336436c6d1574f2b1ac0a545d570143db5e6a4cc9a2d792",
+      "svgSha256": "778156209cfe5abc2000d8febd30a932a8244db6f6c7d1d7162d7f5e15d4bb55",
+      "viewBox": [
+        0.0,
+        0.0,
+        2172.0,
+        724.0
+      ],
+      "kind": "vector",
+      "rasterHashes": []
+    },
+    {
+      "identity": "cards/SE-D",
+      "width": 2172,
+      "height": 724,
+      "webpSha256": "290f63e01f57ec9a02b06e36de82eecff2990d0fab1251d8f6c7f3a4f3dbb4e7",
+      "svgSha256": "1a99cf10dffd425fc47170e17111309bb81b5a698d2ee7e11f595efc5774c8b9",
+      "viewBox": [
+        0.0,
+        0.0,
+        2172.0,
+        724.0
+      ],
+      "kind": "vector",
+      "rasterHashes": []
+    },
+    {
+      "identity": "cards/SE-E",
+      "width": 2172,
+      "height": 724,
+      "webpSha256": "d65984262c4f699e6132df51eb1458889503298ccf0e319b175f241c30a3123a",
+      "svgSha256": "d5499c1d600659f9ba209a8b797aefa815604a4c18dc6e5497591a64776fac36",
+      "viewBox": [
+        0.0,
+        0.0,
+        2172.0,
+        724.0
+      ],
+      "kind": "vector",
+      "rasterHashes": []
+    },
+    {
+      "identity": "cards/SE-F",
+      "width": 2172,
+      "height": 724,
+      "webpSha256": "39062fe025714de3c1a4559f8e16ab50e5c73ca2948c8211468ea0ec07801888",
+      "svgSha256": "ac4efb3d1f63f19f448cbe4bb5756eadcd7097b925c46c3c4cda2763149b3549",
+      "viewBox": [
+        0.0,
+        0.0,
+        2172.0,
+        724.0
+      ],
+      "kind": "vector",
+      "rasterHashes": []
+    },
+    {
+      "identity": "cards/SE-G",
+      "width": 2172,
+      "height": 724,
+      "webpSha256": "987ac52ea34178e0f2659bb4adad5f429ef6455ad198f3d17820bbb81b96c954",
+      "svgSha256": "91402d65eb6a6237fd3c3bb66d7c523120fb77d3b50b4adcfcdb01c82cfe1d59",
+      "viewBox": [
+        0.0,
+        0.0,
+        2172.0,
+        724.0
+      ],
+      "kind": "vector",
+      "rasterHashes": []
+    },
+    {
+      "identity": "cards/SE-H",
+      "width": 2172,
+      "height": 724,
+      "webpSha256": "109b7f5d9d7845b9b13d64ee910e6ac7e2fa3421fa616a5223ff6a668a989034",
+      "svgSha256": "205d4c34503064ac2707324793f220bfd70c94bb54bd036161f6a0bda7e8b473",
+      "viewBox": [
+        0.0,
+        0.0,
+        2172.0,
+        724.0
+      ],
+      "kind": "vector",
+      "rasterHashes": []
+    },
+    {
+      "identity": "cards/SE-I",
+      "width": 2172,
+      "height": 724,
+      "webpSha256": "ff13015bc6e09d1197a3d22023ed44a42436db91277260599725da011a605301",
+      "svgSha256": "1d253641b162832ab84300dee74e741ccc444355afdb1dfeb9042fef35bde325",
+      "viewBox": [
+        0.0,
+        0.0,
+        2172.0,
+        724.0
+      ],
+      "kind": "vector",
+      "rasterHashes": []
+    },
+    {
+      "identity": "cards/SE-J",
+      "width": 2172,
+      "height": 724,
+      "webpSha256": "532fd5b6eb53f4242641c496e5bb9d826ea087c26a474809ec3d299d90db3c1e",
+      "svgSha256": "f56b0dbeba084b1ec84efb496ed3dd00ffebda721112c84bb28d855cc7b46a88",
+      "viewBox": [
+        0.0,
+        0.0,
+        2172.0,
+        724.0
+      ],
+      "kind": "vector",
+      "rasterHashes": []
+    },
+    {
+      "identity": "cards/SE-K",
+      "width": 2172,
+      "height": 724,
+      "webpSha256": "70eaab25c95274e8c8f5a1f86024a1765e6b16c3c0cc5a80ae1afe72cc9eebc3",
+      "svgSha256": "a31aa86054e3d37fdeb57ccc21075432701c422ed0fb9795a4d9aa72585b292c",
+      "viewBox": [
+        0.0,
+        0.0,
+        2172.0,
+        724.0
+      ],
+      "kind": "vector",
+      "rasterHashes": []
+    },
+    {
+      "identity": "cards/SE-L",
+      "width": 2172,
+      "height": 724,
+      "webpSha256": "7e2d6a273aa1fe0b77d71361cd6dd5fafe2eb9b3c538349f9d444496548b00f7",
+      "svgSha256": "1e786dea3e4d2703c9b6b06088914f53613546e2220f9748aea4dcd095f6c0ef",
+      "viewBox": [
+        0.0,
+        0.0,
+        2172.0,
+        724.0
+      ],
+      "kind": "vector",
+      "rasterHashes": []
+    },
+    {
+      "identity": "cards/SE-M",
+      "width": 2172,
+      "height": 724,
+      "webpSha256": "1ca4a6b641865934672215f0818c4fbdc7a94a175912facff564b495cc3d310f",
+      "svgSha256": "4a130d512f32e29cc49475434ecb4e6d3c7338f149ce2d8ff9a7637f603d9905",
+      "viewBox": [
+        0.0,
+        0.0,
+        2172.0,
+        724.0
+      ],
+      "kind": "vector",
+      "rasterHashes": []
+    },
+    {
+      "identity": "cards/SE-N",
+      "width": 2172,
+      "height": 724,
+      "webpSha256": "4a88eca571986b0568fac4efa86d49813209d14a4f046cd32009a6b75f2c1273",
+      "svgSha256": "0dd88e2c552c9c15fbd9b7fe9f2f736c7c66a0b1d8eb9d1169ec079cd24cc284",
+      "viewBox": [
+        0.0,
+        0.0,
+        2172.0,
+        724.0
+      ],
+      "kind": "vector",
+      "rasterHashes": []
+    },
+    {
+      "identity": "cards/SE-O",
+      "width": 2172,
+      "height": 724,
+      "webpSha256": "306f618bcb760420b6014dc975c1d4766d47f5c81cf37dcb49a03893f1dc1ddc",
+      "svgSha256": "97e80dd23b9263389f909d404bb3e1d5bcd0236b4e3ac9b88002427d13412ca6",
+      "viewBox": [
+        0.0,
+        0.0,
+        2172.0,
+        724.0
+      ],
+      "kind": "vector",
+      "rasterHashes": []
+    },
+    {
+      "identity": "cards/SE-P",
+      "width": 2172,
+      "height": 724,
+      "webpSha256": "6daf9adb6a79febe422d45e8b75bf34c87a3c5cb75e5e6f8acbac67ab51c5204",
+      "svgSha256": "0fd5bb82934dc59b0f3628f967dfb84a3650ac31588188bcb907143a4421f138",
+      "viewBox": [
+        0.0,
+        0.0,
+        2172.0,
+        724.0
+      ],
+      "kind": "vector",
+      "rasterHashes": []
+    },
+    {
+      "identity": "cards/SE-Q",
+      "width": 2172,
+      "height": 724,
+      "webpSha256": "57cc9b617521c9dc5b0a46fab1a881b0495f202f8997343fd4ca0d76b9d6ce32",
+      "svgSha256": "99bca9d285a3457b529077f1034cd51faeaf3c6d9ada2aa04593df769eed04e7",
+      "viewBox": [
+        0.0,
+        0.0,
+        2172.0,
+        724.0
+      ],
+      "kind": "vector",
+      "rasterHashes": []
+    },
+    {
+      "identity": "cards/SE-R",
+      "width": 2172,
+      "height": 724,
+      "webpSha256": "d166b98d62bc23d3bff487e36002515b509cd7794b37ef95037c9e13ab532e77",
+      "svgSha256": "c321dc6527b22bd8e1144e0a161b31d3c24486c26ccf67f67f09a1d4d1e81510",
+      "viewBox": [
+        0.0,
+        0.0,
+        2172.0,
+        724.0
+      ],
+      "kind": "vector",
+      "rasterHashes": []
+    },
+    {
+      "identity": "cards/SE-S",
+      "width": 2172,
+      "height": 724,
+      "webpSha256": "530456085fa439b711153a3a0d0fd37db23c077ce2e7d2062dfd2a27054c470d",
+      "svgSha256": "359c05c717a4488cce288033a5fd7f00874fe81e46cd32ed55cba10c5d8debb7",
+      "viewBox": [
+        0.0,
+        0.0,
+        2172.0,
+        724.0
+      ],
+      "kind": "vector",
+      "rasterHashes": []
+    },
+    {
+      "identity": "cards/SE-T",
+      "width": 2172,
+      "height": 724,
+      "webpSha256": "7e84eab2a50a8ad762846e3c4de568dfc3face18ba0c8c61609e6ed337099a84",
+      "svgSha256": "e6fbf0470c1c12ede5f86dac95324340ee1b2deaf5067883c565fa911737a7ab",
+      "viewBox": [
+        0.0,
+        0.0,
+        2172.0,
+        724.0
+      ],
+      "kind": "vector",
+      "rasterHashes": []
+    },
+    {
+      "identity": "cards/SE-U",
+      "width": 2172,
+      "height": 724,
+      "webpSha256": "5eaedf06f6546bb947648efa52823f16e793f53c0827808d439e33dc559e3332",
+      "svgSha256": "9e4817246500eba534f4048220b13b7117e3aeb640a9410d3fecd5277274ab80",
+      "viewBox": [
+        0.0,
+        0.0,
+        2172.0,
+        724.0
+      ],
+      "kind": "vector",
+      "rasterHashes": []
+    },
+    {
+      "identity": "practice/TRAIN-CAP",
+      "width": 1200,
+      "height": 360,
+      "webpSha256": "36084413f60d1af09946a5a0352cde107f6eb99337293496c328381b6a5b6a04",
+      "svgSha256": "dfbb87e9539d65c8415073c9ced2523c5bbccc569a927055f99c8976b0dec77c",
+      "viewBox": [
+        0.0,
+        0.0,
+        640.0,
+        192.0
+      ],
+      "kind": "vector",
+      "rasterHashes": []
+    },
+    {
+      "identity": "vehicles/combat",
+      "width": 2172,
+      "height": 724,
+      "webpSha256": "faed77bf45312ccf27ae2788f26941b440cb8a94eb31c55cb96bdd731f588c88",
+      "svgSha256": "0b51f391c69d7beeb3553a5ae9a155a1d81ce4cc1795ec9e13f9fbc2593662fc",
+      "viewBox": [
+        0.0,
+        0.0,
+        2172.0,
+        724.0
+      ],
+      "kind": "vector",
+      "rasterHashes": []
+    },
+    {
+      "identity": "vehicles/command-post",
+      "width": 1200,
+      "height": 360,
+      "webpSha256": "17845dd6e00f19efbec58b363b1dddcd8f479dc39e7c2c3e44d4dcc753bb3987",
+      "svgSha256": "b311fd27550ca89f1144ab4559cdbdecff9958db3e1d673ad5db5f86d108f3fb",
+      "viewBox": [
+        0.0,
+        0.0,
+        640.0,
+        192.0
+      ],
+      "kind": "vector",
+      "rasterHashes": []
+    },
+    {
+      "identity": "vehicles/mine-clearing",
+      "width": 1200,
+      "height": 360,
+      "webpSha256": "68b65c4885f3be1395742541e8e2ff885d244b02c9b3aff865ca4b9bbefc7624",
+      "svgSha256": "f7253af55376543f36b5d733f3f992381593d4a1fe38c01c2c1c5067e7656f4a",
+      "viewBox": [
+        0.0,
+        0.0,
+        640.0,
+        192.0
+      ],
+      "kind": "vector",
+      "rasterHashes": []
+    },
+    {
+      "identity": "vehicles/recce",
+      "width": 2172,
+      "height": 724,
+      "webpSha256": "e406ce20c56040391979e31a72630e4f8583494174813f201c1311eba7ae56db",
+      "svgSha256": "ae2690df6d600c550db262c569e5e0a4f75d70f1c1332412aa9015550f425dd3",
+      "viewBox": [
+        0.0,
+        0.0,
+        2172.0,
+        724.0
+      ],
+      "kind": "vector",
+      "rasterHashes": []
+    },
+    {
+      "identity": "vehicles/recovery",
+      "width": 1200,
+      "height": 360,
+      "webpSha256": "f791eb81ba9e602b13c5e7d6754cb43b73eb913f64e048d6e52bf5de73edce64",
+      "svgSha256": "4955791b871b91bda993d0ea878c4ebc770d3a739823906eb7dee022fde33640",
+      "viewBox": [
+        0.0,
+        0.0,
+        640.0,
+        192.0
+      ],
+      "kind": "vector",
+      "rasterHashes": []
+    },
+    {
+      "identity": "vehicles/troop-carrier",
+      "width": 2172,
+      "height": 724,
+      "webpSha256": "7a62eb741c699acc160c5bf0bed8ed2e93f1d0525bf4d23ea2c5dfc71a268241",
+      "svgSha256": "213abae296e034b2397751e7992903ed3ef9492b3042ec43cd97ee4fd3cbf3b5",
+      "viewBox": [
+        0.0,
+        0.0,
+        2172.0,
+        724.0
+      ],
+      "kind": "vector",
+      "rasterHashes": []
+    }
+  ],
+  "embeddedTables": [
+    {
+      "tableSha256": "8a72bf39d7efc699ff476463a1d6f7ef77642f335cff2a020767a96becb7d882",
+      "types": {
+        "vector": 77
+      },
+      "count": 77,
+      "input": "SEA_Instructor_Standalone.html"
+    },
+    {
+      "tableSha256": "8a72bf39d7efc699ff476463a1d6f7ef77642f335cff2a020767a96becb7d882",
+      "types": {
+        "vector": 77
+      },
+      "count": 77,
+      "input": "SEA_Student_Standalone.html"
+    }
+  ],
+  "generationProvenance": "User attested assistant generation, 2026-10-08; 54 further built-in image edits recorded",
+  "vectorPackSha256": "839afca0e16a59b7bf598a35a07c4d388a70919547ccac6df3fbb6cc5efd1a2f"
+}

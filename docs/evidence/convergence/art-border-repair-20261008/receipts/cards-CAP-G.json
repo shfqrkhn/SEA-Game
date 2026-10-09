@@ -1,0 +1,7 @@
+{
+  "identity": "cards/CAP-G",
+  "inputSha256": "e9b559834e3769a3bed56a8a46a51c6164e1643489588955926eae02c5c67a1d",
+  "path": "C:\\Users\\user\\.codex\\generated_images\\01a11d09-97df-7000-a3e7-a4b9bfcb4add\\exec-be7d36e6-bb5a-479b-b4e9-e992d6c0e01b.png",
+  "prompt": "Precise artwork repair of SEA Game cards/CAP-G. Findings: Vehicle nose/front assembly clipped on left.; Thin bottom white frame.. Remove unwanted white edge borders, grid dividers and fragments from neighboring panels. Restore any missing focal subject edges, antennas, barrels or equipment through coherent reconstruction. Preserve the original subject identity, recognizable geometry, component count, arrangement, colors, realistic detail and lighting. Show the complete standalone equipment/vehicle with all protrusions and cables visible. Blend the hard portrait-panel backdrop seamlessly into a continuous matching beige studio background. Use one opaque wide 3:1 landscape canvas with generous safe margins around all focal content. No grid sheet, no neighboring assets, no new objects or text. Do not crop tighter. Clean coherent realistic game artwork.",
+  "tool": "built-in image_gen"
+}

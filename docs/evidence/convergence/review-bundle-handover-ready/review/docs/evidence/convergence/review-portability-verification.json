@@ -1,0 +1,61 @@
+{
+  "timestamp": "2026-10-08T23:55:04.513848+00:00",
+  "candidateKey": "9e89ef107baa3a42daa97c294bc23901543cce43e7d33b23ff45177eaee97692",
+  "externalReviewManifestSha256": "39f7a26834a4023ad188fb5f2eec878fe540df95ebf3130f1f36caa6508ef0f4",
+  "verifiedFiles": 1122,
+  "exactInventory": true,
+  "symlinksOrJunctions": false,
+  "missingLocalMarkdownTargets": [],
+  "reviewStatus": "UNQUALIFIED_REVIEW_ONLY",
+  "productReleaseClosure": "OPEN",
+  "fullClosurePasses": 0,
+  "scope": "Local review byte integrity and relative Markdown target existence only; no acceptance, browser or publication proof",
+  "commands": [
+    {
+      "command": "node tools/package.mjs --verify docs/evidence/convergence/review-bundle-release-gate-audit/candidate 9e89ef107baa3a42daa97c294bc23901543cce43e7d33b23ff45177eaee97692",
+      "exitCode": 0,
+      "result": "PASS: 209 exact material files; package bytes only"
+    },
+    {
+      "command": "node tools/build.mjs --check",
+      "cwd": "docs/evidence/convergence/review-bundle-release-gate-audit/review",
+      "exitCode": 0,
+      "result": "Both standalone files PASS byte-for-byte reproduction"
+    }
+  ],
+  "environment": {
+    "platform": "Windows",
+    "verification": "Bundled Python standard library; Node local build/package tools"
+  },
+  "remote": {
+    "head": "1b80b348ac945987fbe11db77bd7a51f3dd553aa",
+    "originMain": "1b80b348ac945987fbe11db77bd7a51f3dd553aa",
+    "ci": [
+      {
+        "id": 37825410122,
+        "status": "completed",
+        "conclusion": "success",
+        "sha": "1b80b348ac945987fbe11db77bd7a51f3dd553aa"
+      },
+      {
+        "id": 37825409633,
+        "status": "completed",
+        "conclusion": "success",
+        "sha": "1b80b348ac945987fbe11db77bd7a51f3dd553aa"
+      }
+    ],
+    "pagesReceipt": "review-portability-pages-readback.json",
+    "candidateCI": "NOT_RUN",
+    "candidatePublication": "NOT_PERFORMED"
+  },
+  "browser": "Fresh built-in browser inventory contains GitHub profile only; no candidate preview. No alternate browser used.",
+  "previousGoalTurn": "No progress: revised plan supplied without executing remaining work; this turn completes pending independent portability verification.",
+  "remainingGates": [
+    "Actual candidate browser/device/assistive/offline/performance qualification",
+    "Educational/French/content and all asset/code rights acceptance",
+    "Representative classroom pilot and independent review",
+    "Actual candidate CI and authorized publication/readback",
+    "Accepted operator/rollback/recovery/support/retirement rehearsal and handover",
+    "Full PRODUCT_RELEASE key and three fresh same-key complete zero-change reviews"
+  ]
+}

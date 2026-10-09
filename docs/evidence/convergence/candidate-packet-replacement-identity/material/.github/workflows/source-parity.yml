@@ -1,0 +1,27 @@
+name: Source parity
+on:
+  push:
+    branches: [main]
+  pull_request:
+jobs:
+  verify:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        node: ['22', '24']
+    runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4, official repository
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4, official repository
+        with:
+          node-version: ${{ matrix.node }}
+      - run: node tools/build.mjs --check
+      - run: node tools/test.mjs
+      - run: node tools/test-package.mjs
+      - run: node tools/test-mpes.mjs
+      - run: node tools/check-mpes.mjs

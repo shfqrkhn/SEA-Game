@@ -1,0 +1,21 @@
+{
+  "candidateBrowser": "OPEN: local access unavailable and no HTTPS preview",
+  "fullSameKeyZeroChangePasses": 0,
+  "protocol": "29 cases and 18 semantic mutants PASS",
+  "key": "51f21ea07fc7dfbee50c8d4ec8cd1534b54fa4b1f6bfcf13d4616c49494ec3a3",
+  "fullMaterialClosure": "OPEN",
+  "date": "2026-10-08",
+  "scope": "Local SPECIFICATION-basis checkpoint; not PRODUCT_RELEASE acceptance",
+  "wsl": "Ubuntu24.04 Node22.23.3 product suite and raw output reproduction PASS",
+  "windows": "Node24.20.0 product suite and raw output reproduction PASS",
+  "hashes": {
+    "SEA_Instructor_Standalone.html": "0079406c6757394e26d932aa256cd65ac8627058ac6cf6bce82232b7415670c0",
+    "source/shared/presentation.js": "771064be477a927f5d986711e4b0cbf464c919d2adcc38bd0a090fdae4b4ad14",
+    "SEA_Student_Standalone.html": "4c554e617647c6e089242054a38adbcf7ddede24310b7982ce760d45789e4a0f",
+    "docs/evidence/convergence/csp-final-win.log": "6db0708dd2251a9a53f130dc29dba5b05fdbb0f010f9f69a06061f42eb504c3e",
+    "tools/test.mjs": "51e13adfd84acae075233c2bb047fef603b765d363d4e462c8193bebee509bb3",
+    "docs/evidence/convergence/csp-final-wsl.log": "6db0708dd2251a9a53f130dc29dba5b05fdbb0f010f9f69a06061f42eb504c3e",
+    "tools/build.mjs": "8be5db45e563af6a6519551a8926c13234b9fcef46401b1b4241c53fab76e7db"
+  },
+  "head": "1b80b348ac945987fbe11db77bd7a51f3dd553aa"
+}

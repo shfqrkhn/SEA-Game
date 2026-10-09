@@ -432,6 +432,7 @@ header{background:#fff;color:#17272b;border-bottom:2px solid #cbd9d1;box-shadow:
 @media(max-width:600px){.hero h2{font-size:clamp(23px,7vw,31px)}.auction{grid-template-columns:minmax(0,1fr)}}
 
 /* Compact, light, square-edge classroom layout. */
+.vehicle-preview .vehicle-art{height:120px;margin-block:8px}
 :root{color-scheme:light;--canvas:#f8faf8;--surface:#fff;--surface-2:#f2f6f4;--ink:#182a27;--muted:#52625d;--line:#ccd8d2;--shadow:none}
 header{background:#fff;color:var(--ink);box-shadow:none;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:30;min-height:48px;padding:6px 16px}
 main{max-width:1440px;padding:12px 18px 24px}
@@ -445,3 +446,58 @@ main{max-width:1440px;padding:12px 18px 24px}
 .btn{min-height:34px;padding:5px 9px}.field{margin-bottom:7px}.field input,.field select,.field textarea{min-height:36px;padding:6px 8px}
 *,:before,:after{border-radius:0!important}
 @media(max-width:900px){.auction{grid-template-columns:1fr}main{padding:10px 12px}.hero{display:block}.market{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* One game surface: the scene travels with the active phase. */
+.sea3d-stage{background:#f0f3f0;border:1px solid #d7dfd8;padding:16px;min-width:0;margin:0}
+.sea3d-heading{display:flex;justify-content:space-between;align-items:start;gap:12px}.sea3d-heading h2{margin:0;font-size:22px;line-height:1.25;font-weight:600;letter-spacing:-.02em}
+.sea3d-toolbar{display:flex;align-items:end;gap:10px;flex-wrap:wrap;margin:12px 0 0}
+.sea3d-toolbar label{display:grid;gap:4px;font-size:12px;flex:1;min-width:110px}
+.sea3d-toolbar select{width:100%;min-height:36px;background:#fff;border:1px solid #c8d2ca;padding:6px}
+#sea3dViewport{height:clamp(250px,35vw,440px);width:100%;overflow:hidden;touch-action:none;margin-top:8px}
+#sea3dViewport canvas{display:block;width:100%;height:100%}
+#sea3dStatus{font-size:13px;line-height:1.5;color:#41554b;margin:8px 0 0}
+#sea3d-hint{font-size:11px;color:#617067;margin:6px 0 0}
+.sea3d-stage [hidden]{display:none!important}
+.view-controls,.save-menu{position:relative;margin:0}
+.view-controls summary,.save-menu summary{cursor:pointer;font-size:12px;list-style:none;padding:8px 10px;border:1px solid var(--line);background:#fff}
+.view-controls summary::after,.save-menu summary::after{content:' ▾'}
+.view-controls[open]>.inline,.save-menu[open]>div{position:absolute;right:0;top:100%;background:#fff;border:1px solid var(--line);padding:8px;z-index:40;min-width:220px;box-shadow:0 8px 24px #182a2715}
+.save-menu[open]>div{display:grid;gap:5px;min-width:250px}.save-menu .btn{text-align:left}
+.section.active>.grid.two,.section.active>.auction{grid-template-columns:1fr}
+.hero .kicker{font-size:10px;color:#52675c;letter-spacing:.1em}.hero{gap:5px;margin-bottom:8px}.hero h2{font-weight:600;font-size:26px;letter-spacing:-.025em}.hero p{font-size:13px;line-height:1.6}
+.card,.gamecard{background:#fff;border:1px solid #e0e6e1;padding:14px}.card.subtle{background:transparent;border:0;padding:8px 0}
+.section.active .btn.primary,.section.active .btn.good{background:#285f4c;color:#fff;border-color:#285f4c}.section.active .btn.primary:hover:not(:disabled),.section.active .btn.good:hover:not(:disabled){background:#1c4b3b}
+main{display:block;max-width:1420px;padding:18px 22px 30px}
+@media(min-width:1000px){
+ .section.active{display:grid;grid-template-columns:minmax(0,1fr) minmax(410px,1.06fr);gap:14px 24px;align-items:start}
+ .section.active>.hero{grid-column:1/-1;max-width:900px;margin:0}
+ .section.active>.sea3d-stage{grid-column:2;grid-row:2/span 16;position:sticky;top:88px;align-self:start}
+ .section.active>:not(.hero):not(.sea3d-stage){grid-column:1;margin-top:0;min-width:0}
+ #sea3dViewport{height:clamp(280px,calc(100dvh - 430px),430px)}
+}
+@media(max-width:999px){.sea3d-stage{margin:12px 0}.section.active>.grid.two{grid-template-columns:1fr}main{padding:14px 12px}#sea3dViewport{height:320px}}
+@media(max-width:520px){header{position:static;flex-direction:column;align-items:stretch;gap:10px;padding:10px 12px}.brand{width:100%}.top{width:100%;gap:6px}.top .btn{font-size:12px;padding:8px}.brand h1{overflow-wrap:anywhere}.sea3d-stage{padding:12px}#sea3dViewport{height:270px}.hero h2{font-size:24px}}
+@media screen{.art{display:none!important}}
+@media print{.sea3d-stage,.save-menu{display:none!important}.section.active{display:block}.art{display:block}}
+
+/* The mission model is the shared game stage; native controls remain accessible. */
+.sea3d-inspection{display:flex;align-items:end;gap:18px;flex-wrap:wrap;margin-top:14px}.sea3d-inspection label{display:flex;align-items:center;gap:8px;font-size:12px}.sea3d-inspection select{padding:7px;background:#fff;border:1px solid #c8d2ca}.sea3d-inspection input{width:140px;accent-color:#3e624c}.sea3d-inspection output{font-variant-numeric:tabular-nums;min-width:32px}.sea3d-parts{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}.sea3d-parts button{font:inherit;font-size:12px;background:#fff;border:1px solid #c8d2ca;padding:7px 10px;cursor:pointer}.sea3d-parts button:hover,.sea3d-parts button:focus-visible{border-color:#496b55;background:#e5ede6}#sea3dMap{font-size:12px;margin-top:8px}
+@media(min-width:1000px){.section.active>.sea3d-stage{grid-column:1/-1;grid-row:auto;position:relative;top:auto}.section.active>:not(.hero):not(.sea3d-stage){grid-column:1/-1}#sea3dViewport{height:clamp(360px,52dvh,520px)}.sea3d-toolbar{position:absolute;right:18px;top:58px;max-width:38%;margin:0}.sea3d-inspection{padding-right:40%}}
+@media(max-width:520px){.sea3d-inspection{gap:10px}.sea3d-inspection input{width:115px}}
+
+.sea3d-inspection .sea3d-shadow input{width:auto;accent-color:#3e624c}
+
+/* One Three.js game surface; authoritative semantic controls stay in the tree. */
+@media screen{
+ body.scene-game{overflow:hidden;background:#eef2ed}
+ .scene-game main{padding:0;max-width:none}
+ .scene-game .section.active{display:block;margin:0}
+ .scene-game .sea3d-stage,.scene-game .section.active>.sea3d-stage{position:fixed;inset:0;margin:0;padding:0;border:0;z-index:35;background:#eef2ed}
+ .scene-game #sea3dViewport{position:absolute;inset:0;width:100%;height:100dvh;margin:0}
+ .scene-game header,.scene-game body>.status,.scene-game>.status,.scene-game>.notice,.scene-game #seaInlineConfirm,.scene-game #seaNotice,
+ .scene-game .section.active>:not(.sea3d-stage),.scene-game .sea3d-stage>:not(#sea3dViewport){position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:0!important;overflow:hidden!important;clip-path:inset(50%);white-space:nowrap}
+ .scene-game.scene-keyboard header:focus-within,.scene-game.scene-keyboard #seaInlineConfirm:focus-within,
+ .scene-game.scene-keyboard .section.active>:not(.sea3d-stage):focus-within,.scene-game.scene-keyboard .sea3d-stage>:not(#sea3dViewport):focus-within{position:fixed!important;inset:12px 12px auto auto!important;width:min(520px,calc(100vw - 24px))!important;height:auto!important;max-height:calc(100dvh - 24px);overflow:auto!important;clip-path:none;white-space:normal;padding:18px!important;background:#f8faf7;z-index:100;border:2px solid #355e49}
+ .scene-editor{position:fixed;inset:auto 16px 16px auto;width:min(390px,calc(100vw - 32px));padding:20px;background:#f5f7f1;border:2px solid #355e49;z-index:120;box-shadow:0 12px 48px #12251a33}
+ .scene-editor label{display:grid;gap:10px;font-size:14px}.scene-editor input,.scene-editor select,.scene-editor textarea{box-sizing:border-box;width:100%;font:inherit;padding:12px;min-height:44px;border:1px solid #6a826f;background:#fff;color:#192a22}.scene-editor textarea{min-height:110px}.scene-editor button{margin-top:12px}
+}

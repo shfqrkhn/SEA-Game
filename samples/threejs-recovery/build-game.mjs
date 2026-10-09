@@ -1,0 +1,13 @@
+import {build} from 'esbuild';
+import fs from 'node:fs/promises';
+import {fileURLToPath} from 'node:url';
+import {createHash} from 'node:crypto';
+const root=new URL('../../',import.meta.url);
+const result=await build({entryPoints:[fileURLToPath(new URL('source/three/game-scene.mjs',root))],bundle:true,write:false,format:'iife',globalName:'SEAThree',minify:true,target:'es2022',legalComments:'inline',nodePaths:[fileURLToPath(new URL('node_modules',import.meta.url))]});
+const script=result.outputFiles[0].text.replace(/<\/script/gi,'<\\/script').replace(/[ \t]+$/gm,'').replace(/^[ \t]+/gm,s=>s.replaceAll('\t','  '));
+await fs.mkdir(new URL('source/vendor/',root),{recursive:true});
+await fs.writeFile(new URL('source/vendor/sea-three.bundle.js',root),script);
+const inputs=['source/three/game-scene.mjs','source/three/interface.mjs','source/three/game-models.mjs','source/three/realism.mjs','source/three/inspection.mjs','samples/threejs-recovery/models.mjs','samples/threejs-recovery/package-lock.json'];
+const hashes={};for(const p of inputs)hashes[p]=createHash('sha256').update(await fs.readFile(new URL(p,root))).digest('hex');
+await fs.writeFile(new URL('source/vendor/sea-three.bundle.json',root),JSON.stringify({three:'0.186.1',recipe:'node samples/threejs-recovery/build-game.mjs',sha256:createHash('sha256').update(script).digest('hex'),inputs:hashes},null,2)+'\n');
+console.log('Built local Three.js game bundle');

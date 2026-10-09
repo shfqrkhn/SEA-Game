@@ -1,0 +1,15 @@
+{
+  "identity": "cards/CAP-E",
+  "generatedPngSha256": "29a0feff794b751b221bea1278e205773d0aea6479bd020a52f7ddfdf24c2e36",
+  "webpSha256": "f3a9bb9bbf258332e06cb28282e40951aa265ad6bb4d0bfc1027b279f9eda715",
+  "svgSha256": "9eb255627846da8c3e3ca39a936c1e60c5a2eade2f508899a03ba96ffcb7588a",
+  "dimensions": [
+    2172,
+    724
+  ],
+  "encoding": "lossless WebP; decoded RGBA equals generated PNG; no resize/crop/paint",
+  "vector": "vtracer 0.6.15 polygon trace; color precision 6, speckle 24, layer difference 16, length threshold 6, path precision 0; visual review required",
+  "svgBytes": 146483,
+  "canonicalSvgNormalization": true,
+  "canonicalLF": true
+}

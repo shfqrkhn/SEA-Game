@@ -1,0 +1,5 @@
+# Artwork repair review
+
+All 54 flagged assets received individual built-in image edits; 23 unflagged assets, including the earlier CAP-F repair, were retained. Per-asset original hashes and prompts are in queue.json; tool receipts and final conversions are in receipts/ and encodings/. All nine comparison sheets show the preserved original, repaired raster and rendered canonical native vector. Review found no remaining unintended neighbor strip/divider or clipped focal tip in these repaired compositions. Native vector traces intentionally simplify photographic detail. Intentional diagram boxes and scene boundaries are preserved. Final classroom/content/device acceptance remains open.
+
+The lossless WebPs decode pixel-for-pixel to their generated PNGs, without resizing, cropping or painting. SVG text uses LF and contains native paths; audit.json verifies all 77 raster/vector pairs and both embedded tables. Current vector digest: 839afca0e16a59b7bf598a35a07c4d388a70919547ccac6df3fbb6cc5efd1a2f.

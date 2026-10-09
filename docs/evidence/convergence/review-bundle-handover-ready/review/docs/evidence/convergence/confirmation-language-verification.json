@@ -1,0 +1,13 @@
+{
+  "windows": "Node24.20.0 suite/build PASS",
+  "actualBrowser": "NOT_RUN",
+  "packetKey": "625e2efe90226f10c008d645fcc6ae77f2a6a0503425b65c379024f5d5087933",
+  "protocol": "29 cases;18 mutants PASS",
+  "specificationKey": "fbf19884e981a8501275a884523b6d6dac39ac0e07ffc4e047010cbf6f9ff865",
+  "fullMaterialClosure": "OPEN",
+  "date": "2026-10-08",
+  "wsl": "Ubuntu24.04 Node22.23.3 suite/build PASS",
+  "package": "Exact byte verification PASS",
+  "scope": "Shared confirmation/locale DOM-focus model and local tests only",
+  "fullSameKeyZeroChangePasses": 0
+}
