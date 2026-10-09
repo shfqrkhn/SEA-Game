@@ -4,6 +4,31 @@ import {prepareInspection,prepareCutaway,fitPerspective,fitDirectionalShadow} fr
 import {createMission,createPart,createConfiguration,MISSION_IDS,MODEL_IDS} from '../../source/three/game-models.mjs';
 import {materials,FinishMaterial,SURFACE_PROFILES} from '../../source/three/materials.mjs';
 const finishes=materials();
+// Mission access/load paths must meet real carrier structure in world space.
+{
+ const root=createMission('TROOP');root.updateMatrixWorld(true);const meshes=[];root.traverse(o=>{if(o.isMesh)meshes.push(o);});const rear=-root.userData.length/2;
+ const opaque=meshes.filter(o=>o.name==='hull shell');
+ const openRay=new THREE.Raycaster(new THREE.Vector3(rear-1,1.75,0),new THREE.Vector3(1,0,0),0,1.5);
+ assert.equal(openRay.intersectObjects(opaque,false).length,0,'Troop boarding aperture has no opaque rear-skin backing');
+ const ramp=root.getObjectByName('rear ramp'),hinges=meshes.filter(o=>o.name==='troop ramp seated hinge barrel');assert(ramp&&hinges.length===2);
+ for(const hinge of hinges){
+  const h=new THREE.Box3().setFromObject(hinge),p=hinge.getWorldPosition(new THREE.Vector3()),hit=new THREE.Raycaster(new THREE.Vector3(rear-1,p.y,p.z),new THREE.Vector3(1,0,0),0,2).intersectObject(ramp,false)[0];assert(hit&&h.containsPoint(hit.point),'Actual sloped ramp face seats in hinge barrel envelope');
+  const bracket=meshes.find(o=>o.name==='troop ramp chassis hinge bracket'&&Math.sign(o.position.z)===Math.sign(p.z));assert(bracket);const b=new THREE.Box3().setFromObject(bracket),hull=root.getObjectByName('lower hull');
+  const hullHit=new THREE.Raycaster(new THREE.Vector3(rear-1,bracket.position.y,p.z),new THREE.Vector3(1,0,0),0,2).intersectObject(hull,false)[0];assert(hullHit&&b.containsPoint(hullHit.point),'Actual chassis hinge bracket spans lower hull bearing face');assert(h.intersectsBox(b),'Retained hinge barrel meets bearing bracket');
+ }
+}
+{
+ const root=createMission('MINE');root.updateMatrixWorld(true);const roller=root.getObjectByName('mission roller'),chassis=root.getObjectByName('chassis');assert(roller&&chassis);
+ const bearings=[];root.traverse(o=>{if(o.name==='mine roller chassis bearing')bearings.push(o);});assert.equal(bearings.length,2);
+ const meshes=[];root.traverse(o=>{if(o.isMesh)meshes.push(o);});
+ for(const bearing of bearings){const b=new THREE.Box3().setFromObject(bearing),p=bearing.getWorldPosition(new THREE.Vector3()),hit=new THREE.Raycaster(new THREE.Vector3(root.userData.length/2+1,.85,p.z),new THREE.Vector3(-1,0,0),0,2).intersectObject(chassis,false)[0];assert(hit&&b.containsPoint(hit.point),'Roller bearing spans actual chassis face');}
+ for(const pin of meshes.filter(o=>o.name==='mine roller implement clevis pin')){
+  const p=pin.getWorldPosition(new THREE.Vector3()),arm=meshes.find(o=>o.name==='mine roller continuous draw arm'&&Math.sign(new THREE.Box3().setFromObject(o).getCenter(new THREE.Vector3()).z)===Math.sign(p.z));assert(arm);
+  const hit=new THREE.Raycaster(p.clone().add(new THREE.Vector3(0,0,.20)),new THREE.Vector3(0,0,-1),0,.4).intersectObject(arm,false)[0];assert(hit&&new THREE.Box3().setFromObject(pin).containsPoint(hit.point),'Clevis seats against actual draw arm face');
+  const trailing=meshes.filter(o=>o.name==='clearance roller trailing arm');const contacts=new THREE.Raycaster(p.clone().add(new THREE.Vector3(-.15,0,0)),new THREE.Vector3(1,0,0),0,.3).intersectObjects(trailing,false);assert(contacts.some(c=>new THREE.Box3().setFromObject(pin).containsPoint(c.point)),'Clevis pin meets actual rotated/scaled implement trailing arm');
+ }
+}
+console.log('Troop actual rear aperture/ramp hinge-to-hull contacts and mine actual chassis/draw-arm/implement clevis contacts PASS');
 // Carrier windows are actual holes in the opaque shell, not glass decals.
 for(const [id,wheelCount]of [['COMBAT',8],['RECCE',4],['TROOP',6],['COMMAND',6],['MINE',8]]){
  const root=createMission(id);root.updateMatrixWorld(true);const meshes=[];root.traverse(o=>{if(o.isMesh)meshes.push(o);});

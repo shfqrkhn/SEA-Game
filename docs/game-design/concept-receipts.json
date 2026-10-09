@@ -1199,6 +1199,93 @@
         ]
       },
       "acceptanceStatus": "open"
+    },
+    {
+      "id": "GEN-components-boarding-v1",
+      "inventoryIds": [
+        "COMP-ramp",
+        "COMP-seat",
+        "COMP-crew-bay",
+        "COMP-chassis",
+        "COMP-roller",
+        "ASM-TROOP-CAPACITY",
+        "ASM-COMMAND-CAPACITY",
+        "ASM-MINE-ACCESSORIES"
+      ],
+      "status": "generated-exploratory",
+      "tool": "imagegen",
+      "date": "2026-10-09",
+      "artifact": "docs/game-design/concepts/components-boarding-v1.png",
+      "sha256": "d984cb987dda3e8d70b980baa25b8fc7c0c9e226146f1414d96c2d0b428a2245",
+      "nativeOutputPath": "C:/Users/user/.codex/generated_images/01a12050-c7b3-75a0-bd82-c4c1a405dc44/exec-8b89b640-e700-4465-96f3-7889ceae8708.png",
+      "exactPromptSource": "docs/game-design/COMPONENT_BOARDING_PROMPT.md",
+      "panelMappings": [
+        {
+          "panel": "1",
+          "inventoryIds": [
+            "COMP-ramp"
+          ]
+        },
+        {
+          "panel": "2",
+          "inventoryIds": [
+            "COMP-seat"
+          ]
+        },
+        {
+          "panel": "3",
+          "inventoryIds": [
+            "COMP-crew-bay"
+          ]
+        },
+        {
+          "panel": "4",
+          "inventoryIds": [
+            "COMP-chassis"
+          ]
+        },
+        {
+          "panel": "5",
+          "inventoryIds": [
+            "COMP-roller"
+          ]
+        },
+        {
+          "panel": "6",
+          "inventoryIds": [
+            "ASM-TROOP-CAPACITY"
+          ]
+        },
+        {
+          "panel": "7",
+          "inventoryIds": [
+            "ASM-COMMAND-CAPACITY"
+          ]
+        },
+        {
+          "panel": "8",
+          "inventoryIds": [
+            "ASM-MINE-ACCESSORIES"
+          ]
+        }
+      ],
+      "visualReview": {
+        "status": "lead pixel inspected; exploratory only",
+        "usefulDirection": [
+          "Eight complete correctly labelled panels and intact outer borders",
+          "Connected boarding/seating/chassis/roller and differentiated troop/command assemblies"
+        ],
+        "knownMismatches": [
+          "Dimensions, hinge mechanisms and service routing not qualified",
+          "Synthetic capacities and exact vehicle fitment remain open",
+          "Matched Three.js renders remain below reference/concept fidelity"
+        ],
+        "doesNotProve": [
+          "Mechanical certification",
+          "Rights/classroom/device/full-release acceptance"
+        ]
+      },
+      "acceptanceStatus": "open"
     }
   ]
 }

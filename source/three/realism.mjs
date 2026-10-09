@@ -100,7 +100,8 @@ export function missionBase(id,m){
   carrierWindow(g,m,[range[0],1.80,range[1],2.13],(z,y,t)=>[frontX(y)+t,y,z]);
   rod(g,m.rubber,[frontX(1.83)+.020,1.83,(range[0]+range[1])*.5],[frontX(2.03)+.020,2.03,range[1]-.08],.009).name='carrier seated windshield wiper';
  }
- face(g,m.edge,[[rear,1.2,-half*.75],[rear+.17,2.36,-half*.85],[rear+.17,2.36,half*.85],[rear,1.2,half*.75]]);
+ if(id==='TROOP')formedCabPanel(g,m.edge,[[-half*.75,1.2],[half*.75,1.2],[half*.85,2.36],[-half*.85,2.36]],[roundedOpening(-.74,1.34,.74,2.23,.045)],(z,y,t)=>[rear+(y-1.2)*.17/1.16+t,y,z]);
+ else face(g,m.edge,[[rear,1.2,-half*.75],[rear+.17,2.36,-half*.85],[rear+.17,2.36,half*.85],[rear,1.2,half*.75]]);
  const wheelXs=axles===2?[-1.67,1.67]:axles===3?[-2.25,-.75,1.9]:[-2.55,-1.05,1.0,2.4];
  for(const x of wheelXs){cylinder(g,m.darkSteel,.06,width*.81,[x,.67,0],'z');cylinder(g,m.edge,.13,.31,[x,.67,0],'z');for(const s of [-1,1]){const wheel=createWheel(m);wheel.position.set(x,.62,s*half*.88);g.add(wheel);rod(g,m.steel,[x-.15,.75,s*half*.62],[x+.1,1.2,s*half*.68],.045);box(g,m.paint,[1.22,.075,.48],[x,1.30,s*half*.91],'wheel guard');}}
  for(const s of [-1,1]){const z=s*half*.855,sideZ=y=>s*half*(.75+(y-1.2)*.1/1.16)+s*.01;

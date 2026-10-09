@@ -526,7 +526,7 @@ function protection(m,v){
 }
 function radio(m,v){const g=group('radio suite');const count=v===1?3:v===6?2:1;for(let i=0;i<count;i++){const x=(i-(count-1)/2)*.40;box(g,m.paint,[.35,.46,.23],[x,.29,0]);box(g,m.glass,[.20,.09,.014],[x,.40,.125]);for(let k=0;k<4;k++)cylinder(g,m.darkSteel,.026,.027,[x-.09+k*.06,.26,.135],'z');rod(g,m.darkSteel,[x+.1,.50,0],[x+.1,1.10+(v===4?.60:0)+i*.13,0],.009);tube(g,m.rubber,[[x-.08,.2,.12],[x-.20,.09,.22],[x-.15,.06,.35],[x+.17,.1,.3]],.012);}if([3,4].includes(v)){const mast=1.65+v*.12;rod(g,m.paint,[.42,.1,-.28],[.42,mast,-.28],.028);for(const s of [-1,1])rod(g,m.darkSteel,[.42,mast*.8,-.28],[.42+s*.55,.02,-.28+s*.45],.006);if(v===3){const dish=new THREE.Mesh(new THREE.SphereGeometry(.30,20,12,0,Math.PI*2,0,Math.PI/2),m.paint);dish.rotation.x=Math.PI/2;dish.position.set(.42,mast,-.28);g.add(dish);}}return g;}
 function createSensor(m,v){const g=group('sensor suite');cylinder(g,m.edge,.17,.1,[0,.05,0]);rod(g,m.paint,[0,.1,0],[0,v===3?1.65:.35,0],.05);const y=v===3?1.75:.43;box(g,m.paint,[.40,.24,.22],[0,y,0]);for(const x of [-.105,.105]){cylinder(g,m.darkSteel,.078,.05,[x,y,.14],'z');cylinder(g,m.glass,.058,.012,[x,y,.172],'z');}if(v===1||v===5){box(g,m.paint,[.26,.22,.22],[.26,y-.05,0]);cylinder(g,m.glass,.075,.025,[.26,y-.05,.13],'z');}if(v===3||v===6)for(const s of [-1,1])rod(g,m.darkSteel,[0,.37,0],[s*.35,0,.25],.017);if(v===4){const helmet=new THREE.Mesh(new THREE.SphereGeometry(.28,24,12,0,Math.PI*2,0,Math.PI*.64),m.paint);helmet.position.set(0,.40,-.20);g.add(helmet);}if(v===6){for(const x of [-.5,.5]){const s=createSensor(m,3);s.scale.setScalar(.54);s.position.set(x,0,-.25);g.add(s);}}return g;}
-function clearance(m){const g=group('clearance roller');box(g,m.paint,[1.1,.12,.35],[0,.48,-.1]);for(const x of [-.45,.45]){rod(g,m.edge,[x,.48,-.3],[x,.16,.32],.032);cylinder(g,m.darkSteel,.17,.13,[x,.17,.34],'x');}for(let i=0;i<7;i++){const x=-.45+i*.15;cylinder(g,m.paint,.14,.095,[x,.17,.34],'x');bolts(g,m.steel,[x+.05,.17,.34],.10,8,'x',.013);}return g;}
+function clearance(m){const g=group('clearance roller');box(g,m.paint,[1.1,.12,.35],[0,.48,-.1]);for(const x of [-.45,.45]){rod(g,m.edge,[x,.48,-.3],[x,.16,.32],.032).name='clearance roller trailing arm';cylinder(g,m.darkSteel,.17,.13,[x,.17,.34],'x');}for(let i=0;i<7;i++){const x=-.45+i*.15;cylinder(g,m.paint,.14,.095,[x,.17,.34],'x');bolts(g,m.steel,[x+.05,.17,.34],.10,8,'x',.013);}return g;}
 function accessories(m,v){if([0,5].includes(v))return createWinch(m);if([2,4].includes(v))return clearance(m);const g=group('field equipment');if(v===1){box(g,m.paint,[1.4,.14,.85],[0,.39,0]);for(const s of [-1,1]){const w=createWheel(m);w.scale.setScalar(.5);w.position.set(-.15,.30,s*.43);g.add(w);}rod(g,m.edge,[.7,.38,-.25],[1.28,.38,0],.036);rod(g,m.edge,[.7,.38,.25],[1.28,.38,0],.036);box(g,m.paint,[1.33,.40,.80],[0,.64,0]);}else{box(g,m.edge,[1.15,.06,.65],[0,.03,0]);for(let i=0;i<3;i++){box(g,m.paint,[.29,.35,.47],[-.37+i*.37,.24,0]);box(g,m.steel,[.14,.025,.018],[-.37+i*.37,.34,.25]);}if(v===6)for(const x of [-.55,.55])rod(g,m.darkSteel,[x,0,0],[x,.65,0],.025);}return g;}
 function process(m,v){const g=group('engineering review');box(g,m.edge,[1.3,.065,.78],[0,.70,0]);for(const x of [-.54,.54])for(const z of [-.30,.30])rod(g,m.darkSteel,[x,0,z],[x,.69,z],.023);box(g,m.darkSteel,[.95,.68,.055],[0,1.14,-.24]);box(g,m.lamp,[.88,.61,.02],[0,1.14,-.205]);const accent=[m.paint,m.amber,m.glass][v%3];for(let i=0;i<4;i++){box(g,accent,[.11+(i+v)%4*.035,.032,.013],[-.22+(v%2)*.08,.95+i*.115,-.188]);box(g,m.edge,[.16,.016,.013],[.18,.95+i*.115,-.187]);}box(g,m.lamp,[.35,.017,.27],[-.34,.75,.18]);box(g,m.glass,[.27,.018,.19],[.36,.75,.18]);cylinder(g,m.steel,.046,.11,[.54,.80,-.09]);if([2,7,10,12,15].includes(v)){for(let i=0;i<3;i++){box(g,accent,[.09,.09,.08],[-.27+i*.27,1.50,-.19]);if(i<2)rod(g,m.darkSteel,[-.22+i*.27,1.50,-.19],[-.08+i*.27,1.50,-.19],.008);}}if([3,11,16,17,20].includes(v)){const part=engine(m,0);part.scale.setScalar(.22);part.position.set(0,.74,.08);g.add(part);}return g;}
 export function createPart(id,m=materials()){
@@ -542,9 +542,41 @@ export function createMission(id,m=materials()){
   if(id==='COMBAT'||id==='MINE'){const turret=weapon(m,id==='COMBAT'?2:1);turret.name='mission weapon';turret.position.set(-.35,roof,0);vehicle.add(turret);}
   if(id==='RECCE'){const sensor=createSensor(m,3);sensor.name='mission sensor';sensor.position.set(-1.0,roof,-.48);vehicle.add(sensor);}
   if(id==='COMMAND'){const comm=radio(m,4);comm.name='mission radio';comm.position.set(-1.5,roof,-.4);vehicle.add(comm);}
-  if(id==='TROOP'){box(vehicle,m.edge,[.055,.85,1.5],[-3.46,1.75,0],'rear ramp');for(const s of [-1,1])rod(vehicle,m.steel,[-3.5,1.45,s*.52],[-3.5,2.05,s*.52],.018);}
-  if(id==='MINE'){const roller=clearance(m);roller.name='mission roller';roller.scale.setScalar(1.9);roller.rotation.y=Math.PI/2;roller.position.set(4.45,.1,0);vehicle.add(roller);}
+  if(id==='TROOP')troopRamp(vehicle,m);
+  if(id==='MINE'){const roller=clearance(m);roller.name='mission roller';roller.scale.setScalar(1.9);roller.rotation.y=Math.PI/2;roller.position.set(4.45,.1,0);vehicle.add(roller);mineRollerMount(vehicle,m,roller);}
   return soften(vehicle);
+}
+
+function troopRamp(vehicle,m){
+ const rear=-vehicle.userData.length/2,rearX=y=>rear+(y-1.2)*.17/1.16,ramp=group('troop boarding ramp');ramp.userData.inspectionKey='body';vehicle.add(ramp);
+ const aperture=roundedOpening(-.74,1.34,.74,2.23,.045),outer=roundedOpening(-.80,1.28,.80,2.29,.070).getPoints(12).map(p=>[p.x,p.y]);
+ formedCabPanel(vehicle,m.edge,outer,[aperture.clone()],(z,y,t)=>[rearX(y)-.004-t,y,z]).userData.component='troop ramp aperture retaining frame';
+ formedCabPanel(vehicle,m.rubber,roundedOpening(-.756,1.316,.756,2.246,.060).getPoints(12).map(p=>[p.x,p.y]),[roundedOpening(-.695,1.346,.695,2.196,.025)],(z,y,t)=>[rearX(y)-.004-t*.75,y,z]).name='troop ramp continuous compression seal';
+ const panel=formedCabPanel(ramp,m.paint,roundedOpening(-.72,1.330,.72,2.215,.035).getPoints(12).map(p=>[p.x,p.y]),[],(z,y,t)=>[rearX(y)-.016-t,y,z]);panel.name='rear ramp';panel.userData.cutawayShell=true;
+ for(const s of [-1,1]){
+  box(vehicle,m.darkSteel,[.22,.105,.16],[rear+.085,1.300,s*.54],'troop ramp chassis hinge bracket');
+  cylinder(ramp,m.steel,.035,.17,[rearX(1.338)-.042,1.338,s*.54],'z',.035,24).name='troop ramp seated hinge barrel';
+  cylinder(vehicle,m.darkSteel,.014,.23,[rearX(1.338)-.042,1.338,s*.54],'z',.014,24).name='troop ramp retained hinge pin';
+  rod(ramp,m.edge,[rearX(1.41)-.064,1.41,s*.58],[rearX(2.16)-.064,2.16,s*.58],.018).name='troop ramp supported outer stiffener';
+  cylinder(ramp,m.darkSteel,.020,.020,[rearX(2.16)-.063,2.16,s*.59],'x',.020,6).name='troop ramp seated latch';
+ }
+ for(const y of [1.47,1.62,1.77,1.92,2.07])rod(ramp,m.edge,[rearX(y)-.012,y,-.61],[rearX(y)-.012,y,.61],.010).name='troop ramp interior tread return';
+}
+function mineRollerMount(vehicle,m,roller){
+ // Original illustrative vehicle integration kit. Loads reach the chassis;
+ // contact geometry does not imply mine-clearance or strength qualification.
+ const front=vehicle.userData.length/2,frame=group('mine roller carrier integration frame');frame.userData.inspectionKey='chassis';vehicle.add(frame);roller.updateMatrix();
+ for(const s of [-1,1]){
+  const target=new THREE.Vector3(-s*.45,.48,-.3).applyMatrix4(roller.matrix);
+  box(frame,m.darkSteel,[.24,.20,.28],[front-.26,.89,s*.64],'mine roller chassis bearing');
+  box(frame,m.edge,[.25,.10,.36],[front-.26,.94,s*.78],'mine roller pivot bearing cross shoe');
+  for(const z of [s*.74,s*.90])box(frame,m.edge,[.16,.22,.035],[front-.22,.99,z],'mine roller seated pivot cheek');
+  cylinder(frame,m.steel,.026,.30,[front-.22,1.00,s*.79],'z',.026,24).name='mine roller retained chassis pivot';
+  const linkage=group('mine roller chassis-connected linkage');linkage.userData.inspectionKey='front';vehicle.add(linkage);
+  formedCabPanel(linkage,m.paint,[[front-.30,.930],[target.x+.04,target.y-.070],[target.x+.04,target.y+.062],[front-.28,1.085]],[],(x,y,t)=>[x,y,target.z-.020+t]).name='mine roller continuous draw arm';
+  cylinder(linkage,m.darkSteel,.049,.10,[front-.22,1.00,s*.855],'z',.049,24).name='mine roller draw arm pivot bushing';
+  cylinder(linkage,m.steel,.034,.12,target.toArray(),'z',.034,24).name='mine roller implement clevis pin';
+ }
 }
 
 // Purchases occupy meaningful mounting zones; processes remain decisions, not bolted-on hardware.

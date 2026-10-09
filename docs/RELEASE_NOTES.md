@@ -1,10 +1,12 @@
 # SEA Game candidate release notes EN and FR
 
-Status: unaccepted development candidate, revised 2026-10-09. Current source app identity is `3.2.0`, ruleset `STANDARD`, deck `synthetic-v1`, save schema 3 and backup envelope version 1. The version label does not identify exact bytes or establish release acceptance. Use the source/preview identities and role hashes in the [current qualification report](evidence/convergence/scene-game-20261009/REPORT.md), plus the externally retained packet key at accepted release. Root deployment, rights/content/classroom acceptance and operator handover remain open.
+Status: unaccepted development candidate, revised 2026-10-09. Current source app identity is `3.2.1`, ruleset `STANDARD`, deck `synthetic-v1`, save schema 3 and backup envelope version 1. The version label does not identify exact bytes or establish release acceptance. Use the source/preview identities and role hashes in the [current qualification report](evidence/convergence/scene-game-20261009/REPORT.md), plus the externally retained packet key at accepted release. Root deployment, rights/content/classroom acceptance and operator handover remain open.
 
 ## English
 
 ### Changes in the candidate
+
+- Version 3.2.1 connects the mine roller to chassis bearings and continuous draw arms; the troop carrier gains an actual rear opening, sloped ramp, seals and bearing hinges. Static illustrative construction remains subject to browser/reference qualification.
 
 - Three.js is the primary game interface across both roles and all eight phases, with synchronized semantic controls/native input, bilingual task sections, assembled/exploded/cutaway inspection and rotating fixed-light shadows. Runtime, rules, models and materials are embedded in each HTML; there is no external image-loading chain. Model construction and complete device/accessibility acceptance remain open.
 - Version 3.2.0 adds compact expandable instructor Build summaries, immediately synchronized Submitted status and a direct Closed-phase new-session action. Five generic carriers now have actual glazing apertures, connected lamp/step hardware and contoured supported cockpit construction. This is illustrative original geometry, not manufacturer-certified equipment.

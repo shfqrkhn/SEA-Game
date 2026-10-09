@@ -4,7 +4,7 @@
   "date": "2026-10-09",
   "canonicalSource": {
     "path": "source/shared/engine.js",
-    "sha256": "b7bee555070be7a5a50201a381edd42bd02147dfe5d83b8eed897cd097a6feef"
+    "sha256": "11302d36fca01ff66f7f2b8bf34ea219128ec0ccb2a73ec61819ef3d06c378e9"
   },
   "status": "Inventory/exploratory direction; canonical/model/UI acceptance open",
   "counts": {
@@ -5097,8 +5097,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/components-boarding-v1.png",
+            "sha256": "d984cb987dda3e8d70b980baa25b8fc7c0c9e226146f1414d96c2d0b428a2245",
+            "receiptId": "GEN-components-boarding-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -5412,8 +5421,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/components-boarding-v1.png",
+            "sha256": "d984cb987dda3e8d70b980baa25b8fc7c0c9e226146f1414d96c2d0b428a2245",
+            "receiptId": "GEN-components-boarding-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -5457,8 +5475,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/components-boarding-v1.png",
+            "sha256": "d984cb987dda3e8d70b980baa25b8fc7c0c9e226146f1414d96c2d0b428a2245",
+            "receiptId": "GEN-components-boarding-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -5502,8 +5529,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/components-boarding-v1.png",
+            "sha256": "d984cb987dda3e8d70b980baa25b8fc7c0c9e226146f1414d96c2d0b428a2245",
+            "receiptId": "GEN-components-boarding-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -6339,8 +6375,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/components-boarding-v1.png",
+            "sha256": "d984cb987dda3e8d70b980baa25b8fc7c0c9e226146f1414d96c2d0b428a2245",
+            "receiptId": "GEN-components-boarding-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -7389,8 +7434,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/components-boarding-v1.png",
+            "sha256": "d984cb987dda3e8d70b980baa25b8fc7c0c9e226146f1414d96c2d0b428a2245",
+            "receiptId": "GEN-components-boarding-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -7733,8 +7787,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/components-boarding-v1.png",
+            "sha256": "d984cb987dda3e8d70b980baa25b8fc7c0c9e226146f1414d96c2d0b428a2245",
+            "receiptId": "GEN-components-boarding-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -8679,8 +8742,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/components-boarding-v1.png",
+            "sha256": "d984cb987dda3e8d70b980baa25b8fc7c0c9e226146f1414d96c2d0b428a2245",
+            "receiptId": "GEN-components-boarding-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
