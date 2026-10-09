@@ -821,7 +821,7 @@ for(const role of ['instructor','student']){
 }
 function closedResetHarness(role,{downloadFails=false,storageSetFails=false}={}){
  const source=role==='instructor'?instructorSource:studentSource,storeKey=role==='instructor'?'SEA_INSTRUCTOR_V300':'SEA_STUDENT_V300';
- const state={phase:'closed',schema:3,lang:'fr',sessionCode:'SEA3-T2-0123456789ABCDEF',teamCount:2,note:'preserve this private state'};
+ const state=role==='instructor'?liveInstructorFixture({phase:'closed',lang:'fr'}):liveStudentFixture({phase:'closed',lang:'fr'});
  const stored=new Map([[storeKey,'active-session-bytes']]),calls={order:[],downloads:[],statuses:[],pending:null,confirmKey:null,confirmMessage:null,renders:0,saves:0};
  const elements=Object.fromEntries(['#phaseBadge','#teamCount','#bidSeconds','#revealMode','#timingMode','#sessionInput','#teamSelect','#joinStatus'].map(key=>[key,{value:key==='#teamCount'?'4':key==='#bidSeconds'?'45':key==='#revealMode'?'MANUAL':key==='#timingMode'?'UNTIMED':'',innerHTML:'',textContent:'',className:'',dataset:{}}]));
  const progression=role==='instructor'?'generateSession':'joinCompanion';
@@ -858,7 +858,7 @@ for(const role of ['instructor','student']){
   assert.equal(app.app.progress(),true,'Student can join a new companion session after reset');
   assert.equal(app.app.getState().phase,'practice');assert.equal(app.app.getState().teamId,2);assert.equal(app.app.getState().team.mission,'COMMAND');
  }
- const stale=closedResetHarness(role);assert.equal(stale.app.startNewSession(),false);stale.state.note='changed during confirmation';assert.equal(stale.calls.pending(),false,role+' stale confirmation is rejected');assert.equal(stale.app.getState().note,'changed during confirmation');assert.deepEqual(stale.calls.downloads,[]);
+ const stale=closedResetHarness(role);assert.equal(stale.app.startNewSession(),false);stale.state.lang='en';assert.equal(stale.calls.pending(),false,role+' stale confirmation is rejected');assert.equal(stale.app.getState().lang,'en');assert.deepEqual(stale.calls.downloads,[]);
  const replaced=closedResetHarness(role);assert.equal(replaced.app.startNewSession(),false);const restored=structuredClone(replaced.state);replaced.context.state=restored;assert.equal(replaced.calls.pending(),false,role+' reset cannot clear an equal-byte replacement session');assert.equal(replaced.app.getState(),restored);assert.deepEqual(replaced.calls.order,[]);assert.deepEqual(replaced.calls.downloads,[]);assert.deepEqual(replaced.calls.statuses,['backup.changed']);
  const failed=closedResetHarness(role,{downloadFails:true});assert.equal(failed.app.startNewSession(),false);assert.equal(failed.calls.pending(),false,role+' download failure blocks reset');assert.equal(failed.app.getState().phase,'closed');assert.ok(failed.stored.has(role==='instructor'?'SEA_INSTRUCTOR_V300':'SEA_STUDENT_V300'));
  const denied=closedResetHarness(role,{storageSetFails:true});assert.equal(denied.app.startNewSession(),false);assert.equal(denied.calls.pending(),true,role+' can continue in memory when previous-session storage is denied');assert.equal(denied.app.getState().phase,'setup');assert.equal(denied.context.storageFailed,true);
@@ -1416,7 +1416,7 @@ function recoveryBoundaryHarness(role,saved,{getDenied=false,setDenied=false}={}
  const roleSource=role==='INSTRUCTOR'?instructorSource:studentSource;
  const storeKey=role==='INSTRUCTOR'?'SEA_INSTRUCTOR_V300':'SEA_STUDENT_V300';
  const stored=new Map(saved===undefined?[]:[[storeKey,saved]]),calls={writes:[],notices:[],statuses:[],downloads:[]};
- const initial={phase:'setup',sessionCode:null,lang:'en',marker:'initial'},context={state:initial,lang:'en',STORE_KEY:storeKey,recoveryBlocked:false,storageFailed:false,
+ const initialSource=roleSource.match(/let state=(\{[^\n]+\});/)?.[1];assert.ok(initialSource,'Actual authored setup initializer exists');const initial=runInNewContext('('+initialSource+')'),context={state:initial,lang:'en',STORE_KEY:storeKey,recoveryBlocked:false,storageFailed:false,
   validateInstructorSave:instructorValidator,validateStudentSave:studentValidator,
   Date:{now:()=>10000},storageNotice:key=>calls.notices.push(key),backupStatus:key=>calls.statuses.push(key),makeBackup:backupApi.makeBackup,
   sessionStorage:{getItem(key){if(getDenied)throw Error('denied');return stored.get(key)||null},setItem(key,value){if(setDenied)throw Error('quota');calls.writes.push({key,value});stored.set(key,value)}},
@@ -1469,11 +1469,11 @@ for(const [role,sourceFile,candidate] of [
  assert.equal(readCalls.status,'backup.tooLarge',role+' rejects oversized files with localized recovery status');
  assert.equal(readCalls.textRead,false,role+' checks file bytes before reading or parsing');
  assert.equal(fileSandbox.pendingBackupImport,null,role+' invalidates a prior staged import when another file is selected');
- const current=role==='INSTRUCTOR'?{schema:3,phase:'setup',lang:'en',sessionCode:'SEA3-T2-AAAAAAAAAAAAAAAA',marker:'old'}:{schema:3,phase:'planning',lang:'en',sessionCode:'SEA3-T2-AAAAAAAAAAAAAAAA',marker:'old'};
+ const current=role==='INSTRUCTOR'?liveInstructorFixture({phase:'planning'}):liveStudentFixture({phase:'planning'});
  const restoreSource=extractFunction(sourceFile,'restorePreviousBackup'),previousRaw=backupApi.makeBackup(role,candidate),restoreCalls={committed:null,status:null};
  const restoreSandbox={MAX_BACKUP_CHARS:500000,STORE_KEY:'SEA_'+role+'_V300',state:JSON.parse(JSON.stringify(current)),pendingBackupImport:null,backupImportGeneration:0,backupStatus:key=>{restoreCalls.status=key},
   sessionStorage:{getItem:key=>{assert.equal(key,'SEA_'+role+'_V300_PRE_IMPORT');return previousRaw}},
-  parseBackup:backupApi.parseBackup,validateInstructorSave:instructorValidator,validateStudentSave:studentValidator,
+  parseBackup:backupApi.parseBackup,validateInstructorSave:instructorValidator,validateStudentSave:studentValidator,SEADomain:runInNewContext(sharedEngineSource+'\nSEADomain'),
   commitBackupImport(token){restoreCalls.committed=token;return false}};
  const restorePrevious=runInNewContext(restoreSource+'\nrestorePreviousBackup',restoreSandbox);
  assert.equal(restorePrevious(),false,role+' previous-session restore waits at the shared confirmation gate');
@@ -1484,7 +1484,7 @@ for(const [role,sourceFile,candidate] of [
  function importHarness({stale=false,equalReplacement=false,downloadFails=false,storageFails=false}={}){
   const calls={downloads:[],events:[],statuses:[],confirm:null,approved:null};
   const elements=new Map(['#teamCount','#revealMode','#timingMode','#bidSeconds','#sessionInput','#teamSelect'].map(id=>[id,{value:''}]));
-  const sandbox={state:JSON.parse(JSON.stringify(current)),pendingBackupImport:{token:7,candidate:JSON.parse(JSON.stringify(candidate)),before:JSON.stringify(current)},lang:'en',recoveryBlocked:false,storageFailed:false,backupStatusKey:null,
+  const sandbox={state:JSON.parse(JSON.stringify(current)),backupImportGeneration:7,pendingBackupImport:{token:7,candidate:JSON.parse(JSON.stringify(candidate)),before:JSON.stringify(current)},lang:'en',recoveryBlocked:false,storageFailed:false,backupStatusKey:null,
    makeBackup:(role,state)=>JSON.stringify({format:'SEA-GAME-BACKUP',version:1,appVersion:'3.0.0-local',ruleset:'STANDARD',deck:'synthetic-v1',schema:state.schema,sessionCode:state.sessionCode,role,state}), t:key=>key, seaConfirmGate(key,message,retry){if(calls.approved===key){calls.approved=null;return true}calls.confirm={key,message,retry};return false},
    JSON, sessionStorage:{setItem(key,value){calls.events.push('stored-prior');if(storageFails)throw new Error('quota');calls.prior={key,value}}},
    saveBackupDownload(raw,suffix){if(downloadFails)throw new Error('download');calls.events.push('downloaded-prior');calls.downloads.push({raw,suffix,active:sandbox.state})},
@@ -1495,13 +1495,13 @@ for(const [role,sourceFile,candidate] of [
   sandbox.pendingBackupImport.original=sandbox.state;
   const fn=runInNewContext(sharedEngineSource+'\n'+commitSource+'\ncommitBackupImport',sandbox);
   if(equalReplacement){assert.equal(fn(7),false);const restored=structuredClone(sandbox.state);sandbox.state=restored;calls.approved='backup-import-7';assert.equal(calls.confirm.retry(),false,role+' import cannot replace an equal-byte new active session');assert.equal(sandbox.state,restored);assert.equal(sandbox.pendingBackupImport,null);assert.deepEqual(calls.events,[]);assert.deepEqual(calls.downloads,[]);assert.deepEqual(calls.statuses,['backup.changed']);return}
-  if(stale){calls.confirm=null;assert.equal(fn(7),false,'Import first waits for explicit confirmation');sandbox.state.marker='changed-after-prompt';calls.approved='backup-import-7';calls.confirm.retry();assert.equal(sandbox.state.marker,'changed-after-prompt','Stale confirmation cannot replace newer active data');assert.equal(calls.events.length,0,'Stale confirmation performs no backup, persistence or rendering');assert.deepEqual(calls.statuses,['backup.changed']);return}
+  if(stale){calls.confirm=null;assert.equal(fn(7),false,'Import first waits for explicit confirmation');sandbox.state.lang='fr';calls.approved='backup-import-7';calls.confirm.retry();assert.equal(sandbox.state.lang,'fr','Stale confirmation cannot replace newer active data');assert.equal(calls.events.length,0,'Stale confirmation performs no backup, persistence or rendering');assert.deepEqual(calls.statuses,['backup.changed']);return}
   assert.equal(fn(7),false,'Import prompts for confirmation before replacing the live session');
   assert.ok(calls.confirm,'Scoped replacement confirmation is pending');
   const confirmation=calls.confirm;calls.approved=confirmation.key;confirmation.retry();
-  if(downloadFails){assert.equal(sandbox.state.marker,'old','Failure to preserve the current session leaves it active');assert.equal(calls.events.includes('saved-candidate'),false,'A failed pre-import export never persists the candidate');assert.deepEqual(calls.statuses,['backup.failed']);return}
+  if(downloadFails){assert.equal(JSON.stringify(sandbox.state),JSON.stringify(current),'Failure to preserve the current session leaves it active');assert.equal(calls.events.includes('saved-candidate'),false,'A failed pre-import export never persists the candidate');assert.deepEqual(calls.statuses,['backup.failed']);return}
   assert.equal(calls.downloads.length,1,'Current role-specific session is exported before replacement');
-  assert.equal(calls.downloads[0].suffix,'pre-import');assert.equal(calls.downloads[0].active.marker,'old','Pre-import export occurs before active state changes');
+  assert.equal(calls.downloads[0].suffix,'pre-import');assert.equal(JSON.stringify(calls.downloads[0].active),JSON.stringify(current),'Pre-import export occurs before active state changes');
   assert.equal(JSON.parse(calls.downloads[0].raw).role,role,'Pre-import file keeps the active role label');
   assert.equal(sandbox.state.phase,candidate.phase,'Validated backup replaces the active phase after confirmation');
   assert.equal(calls.events.includes('saved-candidate'),true,'Imported state is persisted after replacement');
@@ -1517,7 +1517,7 @@ for(const role of ['instructor','student'])for(const newer of ['file','cancel','
  const sourceFile=role==='instructor'?instructorSource:studentSource,calls={staged:[],statuses:[],parsed:[]};
  const context={MAX_BACKUP_CHARS:500000,MAX_BACKUP_BYTES:1500000,state:{sessionCode:'active'},pendingBackupImport:null,backupImportGeneration:0,STORE_KEY:'test-role-store',JSON,
   parseBackup(raw){calls.parsed.push(raw);return JSON.parse(raw)},validateInstructorSave:x=>x,validateStudentSave:x=>x,
-  backupStatus:key=>calls.statuses.push(key),sessionStorage:{getItem:()=>newer==='missing-restore'?null:newer==='invalid-restore'?'{':JSON.stringify({marker:'restored'})},
+  backupStatus:key=>calls.statuses.push(key),SEADomain:{instructorRestoreFingerprint:value=>JSON.stringify(value),studentRestoreFingerprint:value=>JSON.stringify(value)},sessionStorage:{getItem:()=>newer==='missing-restore'?null:newer==='invalid-restore'?'{':JSON.stringify({marker:'restored'})},
   commitBackupImport(token){calls.staged.push({token,marker:context.pendingBackupImport.candidate.marker});return false}};
  const api=runInNewContext('async '+extractFunction(sourceFile,'readBackupFile')+'\n'+extractFunction(sourceFile,'restorePreviousBackup')+'\n;({readBackupFile,restorePreviousBackup})',context);
  let resolveOld,rejectOld;const oldRead=new Promise((resolve,reject)=>{resolveOld=resolve;rejectOld=reject});

@@ -54,10 +54,10 @@ export function mount(host,onFailure,onInspect){
     highlight?.update();if(changed)fit();else request();
   }
   const pointer=new THREE.Vector2(),raycaster=new THREE.Raycaster();let press=null;
-  let uiPress=null;function uiHit(e){if(!uiEnabled)return null;const r=renderer.domElement.getBoundingClientRect();return ui.hit((e.clientX-r.left)*host.clientWidth/r.width,(e.clientY-r.top)*host.clientHeight/r.height);}
+  let uiPress=null;function uiPoint(e){const r=renderer.domElement.getBoundingClientRect();return {x:(e.clientX-r.left)*host.clientWidth/r.width,y:(e.clientY-r.top)*host.clientHeight/r.height};}function uiHit(e){if(!uiEnabled)return null;const point=uiPoint(e);return ui.hit(point.x,point.y);}
   renderer.domElement.addEventListener('pointerdown',e=>{const hit=uiHit(e);if(hit){uiPress=hit;e.preventDefault();e.stopImmediatePropagation();renderer.domElement.setPointerCapture(e.pointerId);}},true);
   renderer.domElement.addEventListener('pointermove',e=>{if(uiPress||uiHit(e)){e.stopImmediatePropagation();renderer.domElement.style.cursor=uiHit(e)&&uiHit(e)!=='__panel'?'pointer':'default';}},true);
-  renderer.domElement.addEventListener('pointerup',e=>{if(uiPress){const key=uiPress;uiPress=null;e.preventDefault();e.stopImmediatePropagation();if(uiHit(e)===key){ui.activate(key);fit();}}},true);
+  renderer.domElement.addEventListener('pointerup',e=>{if(uiPress){const key=uiPress;uiPress=null;e.preventDefault();e.stopImmediatePropagation();if(uiHit(e)===key){ui.activate(key,uiPoint(e));fit();}}},true);
   renderer.domElement.addEventListener('wheel',e=>{const hit=uiHit(e);if(hit){e.preventDefault();e.stopImmediatePropagation();ui.activate(e.deltaY>0?'__next':'__previous');fit();}},{capture:true,passive:false});
   renderer.domElement.addEventListener('pointerdown',e=>{press=[e.clientX,e.clientY];dragging=[e.clientX,e.clientY];dragged=false;renderer.domElement.setPointerCapture(e.pointerId);});
   renderer.domElement.addEventListener('pointermove',e=>{if(!dragging||!model)return;const dx=e.clientX-dragging[0];if(Math.hypot(e.clientX-press[0],e.clientY-press[1])>4){dragged=true;model.rotation.y+=dx*.009;model.updateWorldMatrix(true,true);highlight?.update();fit();}dragging=[e.clientX,e.clientY];});

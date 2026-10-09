@@ -8,7 +8,7 @@ const start=code.indexOf(' function sceneAction('),end=code.indexOf(' function s
 assert(start>=0&&end>start,'Actual editor bridge boundary exists');
 function harness(){
  const bodyChildren=[],events=[],node={tagName:'INPUT',type:'text',value:'',isConnected:true,disabled:false,hidden:false,labels:[{tagName:'LABEL',nodeType:1,childNodes:[{nodeType:3,textContent:'Profit'}]}],getAttribute:()=>null};
- function element(tag){return {tagName:tag.toUpperCase(),children:[],listeners:{},value:'',isConnected:true,setAttribute(){},removeAttribute(){},appendChild(child){this.children.push(child)},addEventListener(type,fn){this.listeners[type]=fn},focus(){doc.activeElement=this},remove(){this.isConnected=false},cloneNode(){return element(tag)}}}
+ function element(tag){return {tagName:tag.toUpperCase(),children:[],listeners:{},value:'',isConnected:true,setAttribute(){},removeAttribute(){},appendChild(child){this.children.push(child)},addEventListener(type,fn){this.listeners[type]=fn},click(){this.listeners.click?.()},focus(){doc.activeElement=this},remove(){this.isConnected=false},cloneNode(){return element(tag)}}}
  node.cloneNode=()=>element('input');node.dispatchEvent=e=>{events.push(e.type);if(e.type==='change')node.isConnected=false};
  const doc={activeElement:null,createElement:element,body:{appendChild:child=>bodyChildren.push(child)}};
  const ctx=vm.createContext({document:doc,Event:class{constructor(type){this.type=type}},host:{querySelector:()=>({focus(){}})},lang:'en',queue(){},semanticVisible:n=>!n.hidden,sceneTargets:new Map([['profit',node]]),scenePage:0,sceneSection:'task',sceneSectionEpoch:0,sceneSections:new Set(['task','inspect']),editor:null});
@@ -79,7 +79,7 @@ console.log('PASS: all editor dispatch/navigation paths reject lot/round changes
 
 for(const action of ['input','change','done','next']){
  const app=harness(),frames=[];app.ctx.requestAnimationFrame=fn=>frames.push(fn);const target={...app.node,isConnected:true,id:'next'};app.ctx.sceneTargets.set('next',target);app.ctx.sceneFieldKeys=['profit','next'];app.ctx.state={phase:'planning',sessionCode:'same',round:0,lot:0};
- app.ctx.act('profit');const oldInput=app.input(),oldDone=app.done(),oldNext=app.editor.children[3];oldInput.value='removed editor';app.ctx.act('profit');const newer=app.editor;
+ app.ctx.act('profit');const oldInput=app.input(),oldDone=app.done(),oldNext=app.editor.children[3];oldInput.value='removed editor';app.editor.listeners.keydown({key:'Escape',preventDefault(){}});app.ctx.act('profit');const newer=app.editor;
  if(action==='input'||action==='change')oldInput.listeners[action]();if(action==='done')oldDone.listeners.click();if(action==='next')oldNext.listeners.click();while(frames.length)frames.shift()();assert.deepEqual(app.events,[],'Removed same-context editor '+action+' is inert');assert.equal(app.editor,newer,'Removed editor cannot close/replace new editor');
 }
 for(const change of ['state','editor']){
@@ -95,3 +95,43 @@ for(const unavailable of ['removed','hidden','disabled','unmapped']){
  app.ctx.act('profit');app.editor.children[3].listeners.click();if(unavailable==='removed')target.isConnected=false;if(unavailable==='hidden')target.hidden=true;if(unavailable==='disabled')target.disabled=true;if(unavailable==='unmapped')app.ctx.sceneTargets.delete('next');while(frames.length)frames.shift()();assert.equal(app.editor,null,'Deferred navigation does not reopen unavailable '+unavailable+' target');assert.deepEqual(app.events,['change'],'Only original accepted field dispatch occurs');
 }
 console.log('PASS: deferred field navigation rejects removed/hidden/disabled/unmapped next target');
+
+// The editor visual must be a Three.js snapshot, with the real input as its semantic owner.
+{
+ const app=harness();app.ctx.act('profit');
+ assert.equal(typeof app.editor._seaSnapshot,'function','Active editor exposes a bounded visual draft snapshot to the Three.js renderer');
+ const draft=app.editor._seaSnapshot();assert.equal(draft.editor.label,'Profit');assert.equal(draft.editor.value,'');
+ assert(draft.rows.some(row=>row.key==='__editor_done'&&!row.disabled));
+ app.input().value='123.45';app.input().selectionStart=2;app.input().selectionEnd=4;
+ assert.equal(app.editor._seaSnapshot().editor.value,'123.45');assert.equal(app.editor._seaSnapshot().editor.selectionStart,2);
+ app.ctx.act('__editor_input');assert.equal(app.ctx.document.activeElement,app.input(),'Rendered field focuses the native input');
+ app.ctx.act('__editor_done');assert.deepEqual(app.events,['change']);assert.equal(app.editor,null);
+}
+
+// Modal background isolation, semantic focus owner and exact inert restoration.
+for(const action of ['done','escape']){
+ const app=harness(),background=[{inert:false},{inert:true}];app.ctx.document.querySelectorAll=()=>background;app.ctx.scenePage=3;let hits=0;
+ app.ctx.sceneTargets.set('background',{tagName:'BUTTON',isConnected:true,disabled:false,click(){hits++}});
+ app.ctx.act('profit');assert.deepEqual(background.map(x=>x.inert),[true,true]);assert.equal(app.ctx.scenePage,0);
+ app.ctx.act('background');assert.equal(hits,0,'Modal rejects a stale background game hit');
+ if(action==='done')app.ctx.act('__editor_done');else app.editor.listeners.keydown({key:'Escape',preventDefault(){}});
+ assert.deepEqual(background.map(x=>x.inert),[false,true],'Restore each original inert value');assert.equal(app.ctx.scenePage,3,'Return to original task page');
+}
+// Actual select actions stay bound to the native options and commit in one click.
+for(const stale of [false,true]){
+ const app=harness();app.node.tagName='SELECT';const clone=app.node.cloneNode;app.node.cloneNode=()=>{const input=clone();input.options=[{value:'ROUND',label:'Ronde',disabled:false},{value:'JIT',label:'Juste à temps',disabled:false},{value:'MANUAL',label:'Manuel',disabled:true}];return input;};app.node.value='ROUND';
+ app.ctx.act('profit');const draft=app.editor._seaSnapshot();assert.equal(draft.editor.type,'select');assert.equal(draft.rows[1].label,'Juste à temps');assert.equal(draft.rows[2].disabled,true);
+ if(stale)app.node.disabled=true;app.ctx.act('__editor_option:1');assert.equal(app.editor,null);assert.equal(app.node.value,stale?'ROUND':'JIT');assert.deepEqual(app.events,stale?[]:['change']);
+}
+{
+ const app=harness();app.ctx.act('profit');app.ctx.act('__previous',0);app.ctx.act('__next',1);assert.equal(app.ctx.scenePage,1,'Select modal pagination remains accessible without background navigation');
+ app.input().listeners.compositionstart();assert.equal(app.editor._seaSnapshot().rows.at(-1).disabled,true);app.ctx.act('__editor_done');assert(app.editor,'Rendered Done cannot close during composition');app.input().listeners.compositionend();
+ app.editor.listeners.keydown({key:'Tab',preventDefault(){}});assert.equal(app.ctx.document.activeElement,app.done());app.editor.listeners.keydown({key:'Tab',shiftKey:true,preventDefault(){}});assert.equal(app.ctx.document.activeElement,app.input());
+}
+console.log('PASS: Three.js editor draft/caret bridge, one-click options, modal background/inert/page restoration and composition/focus trap');
+
+{
+ const app=harness();app.node.type='number';app.node.getAttribute=key=>key==='step'?'0.01':null;app.ctx.act('profit');
+ assert.equal(app.input().type,'text','Native semantic editor supports actual caret selection while original numeric rule owner is unchanged');assert.equal(app.input().inputMode,'decimal');assert.equal(app.node.type,'number');
+ app.input().value='123.45';let moved=null;app.input().setSelectionRange=(a,b)=>moved=[a,b];app.ctx.act('__editor_input',2);assert.deepEqual(moved,[2,2]);app.ctx.act('__editor_input',99);assert.deepEqual(moved,[2,2],'Out-of-range canvas caret never alters native selection');
+}

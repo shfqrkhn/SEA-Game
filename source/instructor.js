@@ -82,7 +82,7 @@ function saveState(){
 
 function restoreState(){
  const stored=SEA_STORE.read(STORE_KEY);if(!stored.ok){storageFailed=true;return false}const raw=stored.raw;if(!raw)return false;
- try{must(raw.length<=MAX_BACKUP_CHARS);const x=validateInstructorSave(JSON.parse(raw));if(x.open){x.pausedRemaining=x.pausedRemaining??(x.timingMode==='TIMED'?Math.max(0,x.deadline-Date.now()):0)}state=x;lang=x.lang;return true}
+ try{must(raw.length<=MAX_BACKUP_CHARS);const x=SEADomain.instructorPrepareRestore(state,JSON.parse(raw),Date.now()).next;state=x;lang=x.lang;return true}
  catch{recoveryBlocked=true;storageNotice('common.badRecovery');return false}
 }
 let pendingBackupImport=null,backupImportGeneration=0,backupStatusKey=null;
@@ -100,28 +100,28 @@ function exportBackup(){
  }catch{backupStatus('backup.failed')}
 }
 function commitBackupImport(token){
- const pending=pendingBackupImport;if(!pending||pending.token!==token)return false;
+ const pending=pendingBackupImport;if(!pending||pending.token!==token||token!==backupImportGeneration)return false;
+ let prepared;try{prepared=SEADomain.instructorPrepareRestore(state,pending.candidate,Date.now())}catch{pendingBackupImport=null;backupStatus('backup.invalid');return false}
  if(!seaConfirmGate('backup-import-'+token,t('backup.confirmInstructor'),()=>commitBackupImport(token)))return false;
- if(state!==pending.original||JSON.stringify(state)!==pending.before){pendingBackupImport=null;backupStatus('backup.changed');return false}
- if(state.sessionCode){
-  const previous=makeBackup('INSTRUCTOR',{...state,privateEntry:false});
+ try{if(state!==pending.original||SEADomain.instructorRestoreFingerprint(state)!==pending.before){pendingBackupImport=null;backupStatus('backup.changed');return false}}catch{pendingBackupImport=null;backupStatus('backup.changed');return false}
+ if(prepared.previous){
+  let previous;try{previous=makeBackup('INSTRUCTOR',prepared.previous)}catch{pendingBackupImport=null;backupStatus('backup.failed');return false}
   try{sessionStorage.setItem(STORE_KEY+'_PRE_IMPORT',previous)}catch{}
   try{saveBackupDownload(previous,'pre-import')}catch{pendingBackupImport=null;backupStatus('backup.failed');return false}
  }else if(recoveryBlocked){
   try{const raw=sessionStorage.getItem(STORE_KEY);if(raw){const rescue=JSON.stringify({format:'SEA-GAME-RECOVERY-RESCUE',version:1,role:'INSTRUCTOR',raw});try{sessionStorage.setItem(STORE_KEY+'_PRE_IMPORT_RAW',rescue)}catch{}saveBackupDownload(rescue,'recovery-pre-import')}}catch{pendingBackupImport=null;backupStatus('backup.failed');return false}
  }
- stopTimer();state=pending.candidate;pendingBackupImport=null;lang=state.lang;recoveryBlocked=false;storageFailed=false;
- if(state.open)state.pausedRemaining=state.pausedRemaining??(state.timingMode==='TIMED'?Math.max(0,state.deadline-Date.now()):0);
+ stopTimer();state=prepared.next;pendingBackupImport=null;lang=state.lang;recoveryBlocked=false;storageFailed=false;
  const saved=saveState();$('#teamCount').value=String(state.teamCount);$('#revealMode').value=state.revealMode;$('#timingMode').value=state.timingMode;$('#bidSeconds').value=String(state.bidSeconds);
  phase(state.phase);renderAll();backupStatus(saved?'backup.imported':'backup.storageFailed');return true;
 }
 async function readBackupFile(file){
  const token=++backupImportGeneration;pendingBackupImport=null;if(!file)return;
  if(file.size>MAX_BACKUP_BYTES)return backupStatus('backup.tooLarge');
- const original=state,before=JSON.stringify(state);
+ const original=state;let before;try{before=SEADomain.instructorRestoreFingerprint(state)}catch{return backupStatus('backup.invalid')}
  try{
   const raw=await file.text();if(token!==backupImportGeneration)return;
-  if(state!==original||JSON.stringify(state)!==before)return backupStatus('backup.changed');
+  if(state!==original||SEADomain.instructorRestoreFingerprint(state)!==before)return backupStatus('backup.changed');
   const candidate=parseBackup(raw,'INSTRUCTOR',validateInstructorSave,MAX_BACKUP_CHARS);
   pendingBackupImport={token,candidate,before,original};
   commitBackupImport(token);
@@ -129,24 +129,25 @@ async function readBackupFile(file){
 }
 function restorePreviousBackup(){
  const token=++backupImportGeneration;pendingBackupImport=null;
- try{const raw=sessionStorage.getItem(STORE_KEY+'_PRE_IMPORT');if(!raw){backupStatus('backup.noPrevious');return false}const candidate=parseBackup(raw,'INSTRUCTOR',validateInstructorSave,MAX_BACKUP_CHARS);pendingBackupImport={token,candidate,before:JSON.stringify(state),original:state};return commitBackupImport(token)}
+ try{const before=SEADomain.instructorRestoreFingerprint(state),raw=sessionStorage.getItem(STORE_KEY+'_PRE_IMPORT');if(!raw){backupStatus('backup.noPrevious');return false}const candidate=parseBackup(raw,'INSTRUCTOR',validateInstructorSave,MAX_BACKUP_CHARS);pendingBackupImport={token,candidate,before,original:state};return commitBackupImport(token)}
  catch{backupStatus('backup.invalid');return false}
 }
-function resetClosedSession(before,original){
- if(state!==original||state.phase!=='closed'||JSON.stringify(state)!==before){backupStatus('backup.changed');return false}
- let previous;try{previous=makeBackup('INSTRUCTOR',{...state,privateEntry:false})}catch{backupStatus('backup.failed');return false}
+function resetClosedSession(before,original,options){
+ try{if(state!==original||SEADomain.instructorRestoreFingerprint(state)!==before){backupStatus('backup.changed');return false}}catch{backupStatus('backup.changed');return false}
+ const currentOptions={teamCount:Number($('#teamCount').value),bidSeconds:Number($('#bidSeconds').value),revealMode:$('#revealMode').value,timingMode:$('#timingMode').value};
+ if(JSON.stringify(currentOptions)!==JSON.stringify(options)){backupStatus('backup.changed');return false}
+ let prepared,previous;try{prepared=SEADomain.instructorPrepareClosedReset(state,options);previous=makeBackup('INSTRUCTOR',prepared.previous)}catch{backupStatus('backup.failed');return false}
  let storageIssue=false;try{sessionStorage.setItem(STORE_KEY+'_PRE_IMPORT',previous)}catch{storageIssue=true}
  try{saveBackupDownload(previous,'pre-reset')}catch{backupStatus('backup.failed');return false}
  try{sessionStorage.removeItem(STORE_KEY)}catch{storageIssue=true}
- const language=state.lang,teamCount=Number($('#teamCount').value),bidSeconds=Number($('#bidSeconds').value);
- stopTimer();state={phase:'setup',schema:3,lang:language,vehiclesLocked:false,sessionCode:null,marketSeed:null,market:[],teams:[],teamCount:Number.isInteger(teamCount)&&teamCount>=2&&teamCount<=10?teamCount:10,revealMode:$('#revealMode').value||'ROUND',timingMode:$('#timingMode').value||'TIMED',bidSeconds:Number.isInteger(bidSeconds)&&bidSeconds>=10&&bidSeconds<=120?bidSeconds:30,round:0,lot:0,revealed:true,open:false,pausedRemaining:null,deadline:null,leader:null,currentBid:null,ledger:[],seq:0,practice:{revealed:false,open:false,leader:false,closed:false}};
- lang=language;recoveryBlocked=false;storageFailed=storageIssue;phase('setup');renderAll();backupStatus('backup.exported');return true;
+ stopTimer();state=prepared.next;lang=state.lang;recoveryBlocked=false;storageFailed=storageIssue;phase('setup');renderAll();backupStatus('backup.exported');return true;
 }
 function startNewSession(){
- if(state.phase!=='closed'||!state.sessionCode)return false;
- const original=state,before=JSON.stringify(state);
- if(!seaConfirmGate('new-session',t('closed.newConfirm'),()=>resetClosedSession(before,original)))return false;
- return resetClosedSession(before,original);
+ const options={teamCount:Number($('#teamCount').value),bidSeconds:Number($('#bidSeconds').value),revealMode:$('#revealMode').value,timingMode:$('#timingMode').value};
+ try{SEADomain.instructorPrepareClosedReset(state,options)}catch{backupStatus('backup.failed');return false}
+ const original=state,before=SEADomain.instructorRestoreFingerprint(state);
+ if(!seaConfirmGate('new-session',t('closed.newConfirm'),()=>resetClosedSession(before,original,options)))return false;
+ return resetClosedSession(before,original,options);
 }
 function renderBackupControls(){
  $('#exportBackupBtn').disabled=!state.sessionCode&&!recoveryBlocked;
