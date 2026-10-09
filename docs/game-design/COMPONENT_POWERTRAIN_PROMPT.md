@@ -1,6 +1,6 @@
 # Powertrain component concept board
 
-Generated 2026-10-09 using the built-in imagegen tool and [imagegen skill](C:/Users/user/.codex/skills/.system/imagegen/SKILL.md). Generated-exploratory only; no visual, dimensional, rights, classroom or engineering acceptance.
+Generated 2026-10-09 using the built-in imagegen tool and imagegen skill (generation-host instruction path: `C:/Users/user/.codex/skills/.system/imagegen/SKILL.md`; not a portable repository dependency). Generated-exploratory only; no visual, dimensional, rights, classroom or engineering acceptance.
 
 Primary manufacturer sources read directly: [Cummins B6.7 Euro VI](https://www.cummins.com/en-na/engines/products/b67-euro-vi) supports an inline-six heavy-vehicle diesel with turbocharging and common-rail fuel architecture. [ZF PowerLine](https://www.zf.com/products/en/cv/products_76738.html) supports commercial-vehicle longitudinal transmission packaging. These sources constrain general plausibility, not exact dimensions, component matching or capability. No source photograph, logo, CAD or mesh was supplied to the generator or copied into the project. The original inferred construction is not a manufacturer replica, a maintenance instruction or a certified design. Source factual summary deliberately limited; existing SEA game capacities, rules and part identities remain unchanged.
 
