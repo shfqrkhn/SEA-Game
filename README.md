@@ -4,7 +4,7 @@
 
 Both EN/FR roles, eight classroom phases, a 70-card auction and six mission vehicles run from one embedded Three.js HTML. Classroom handoffs remain manual; no backend, synchronization or account. Export important work as role-specific JSON. Do not enter sensitive or operational information.
 
-Published staged rebuild: **4.0.0-dev.3**; local candidate: **4.0.0-dev.4**; rollback: **3.6.0**. Full offline/device/accessibility/rights/classroom acceptance and three-pass release closure remain open. Start maintenance with [current handover](docs/HANDOVER.md).
+Published staged rebuild: **4.0.0-dev.4**; rollback: **3.6.0**. Full offline/device/accessibility/rights/classroom acceptance and three-pass release closure remain open. Start maintenance with [current handover](docs/HANDOVER.md).
 
 ## Operate and maintain
 
@@ -21,7 +21,7 @@ Repository content is limited to the game, canonical authoring assets, necessary
 Node 22/24 are covered by CI; local integration uses Node 24.20.0. Dependencies are pinned in samples/threejs-recovery/package-lock.json. Despite its historical directory name, that directory contains production geometry helpers and required build/model regressions.
 
 ```sh
-npm ci --prefix samples/threejs-recovery
+npm ci --prefix samples/threejs-recovery --cache .artifacts/npm-cache
 node samples/threejs-recovery/node_modules/typescript/bin/tsc -p tsconfig.json
 node tools/build-domain.mjs
 node samples/threejs-recovery/build-game.mjs

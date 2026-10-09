@@ -1,42 +1,47 @@
 {
-  "date": "2026-10-09T19:55:25Z",
-  "scope": "Exact HTTPS bytes, actual candidate CI and bounded hosted French setup recheck; not full release acceptance",
-  "version": "4.0.0-dev.2",
-  "sourceCommit": "079d8b8306fb5e409c70a58f50a0f025f7041a0b",
-  "mainMerge": "ac56974952a6a5bc25f121af02f62f422c60ba59",
-  "pagesRun": 37982852698,
-  "sourcePRRun": 37982709047,
-  "url": "https://shfqrkhn.github.io/SEA-Game/dist/index.html?v=ac56974",
-  "bytes": 8189502,
-  "sourceSHA256": "feca594d51202c090b06bba3c44e378f7ee48de4a7e0ec5735c46bb4951dcade",
-  "hostedSHA256": "feca594d51202c090b06bba3c44e378f7ee48de4a7e0ec5735c46bb4951dcade",
+  "date": "2026-10-09T20:32:15Z",
+  "scope": "Exact HTTPS bytes, actual candidate/main CI and bounded hosted student setup/practice/planning/reload recovery; not full release acceptance",
+  "version": "4.0.0-dev.4",
+  "sourceCommit": "07bc0d5f1bb246a946ad629e8a522a5b05d6dd70",
+  "mainMerge": "dbde9fa1f6edbbbb69c70d94607b8ecf53592761",
+  "pagesRun": 37987029657,
+  "sourcePRRun": 37986900974,
+  "url": "https://shfqrkhn.github.io/SEA-Game/dist/index.html?v=dbde9fa",
+  "bytes": 8199201,
+  "sourceSHA256": "7e2d9395e39960fb238b620f01a8de1acbef83a6ac46942af84350cc253b512c",
+  "hostedSHA256": "7e2d9395e39960fb238b620f01a8de1acbef83a6ac46942af84350cc253b512c",
   "equal": true,
   "sourceMainRun": {
-    "id": 37982854457,
+    "id": 37987030082,
     "status": "success",
     "matrix": "Windows/Ubuntu; Node22/24; all four jobs"
   },
   "browser": {
     "tool": "Codex built-in browser",
-    "scope": "Fresh dev.2 student setup/native French switch only",
+    "scope": "Fresh dev.4 student example/preview/assignment, isolated practice, planning and reload recovery only",
     "checks": [
-      "Opened exact candidate student URL",
-      "Native Enter on language action switches document to French",
-      "Empty-session waiting status reads: Entrez le code de séance, puis choisissez votre groupe et votre véhicule.",
+      "Opened exact candidate student URL; version4.0.0-dev.4",
+      "Unselected mission labels Example: Recovery and explains no mission selected",
+      "Native Troop choice labels Preview: Troop Carrier and uncommitted preview status",
+      "Native Enter switches preview/status and setup to French",
+      "Lowercase synthetic session entry normalizes to SEA3-T2-0123456789ABCDEF",
+      "Actual team1 join/practice record/reset opens assigned Troop planning",
+      "Bilingual synthetic plan and French risk notes survive actual reload with French planning/session/mission retained",
+      "One canvas; no instructor generate/award/lock controls",
       "Captured warning/error console empty"
     ],
-    "localScreenshot": ".artifacts/rebuild-4-fr-fixed.png",
+    "localScreenshot": ".artifacts/rebuild-4-dev4-recovery.png",
     "limits": [
-      "No new complete auction, role/recovery/private-state or retained-session browser qualification on dev.2",
-      "Unselected mission still displays a default Recovery preview/caption; next launcher/projection must clarify selection",
-      "Screenshot is ignored local evidence, not a repository/runtime dependency"
+      "No fresh complete70-lot auction, instructor recovery, ten-team, timed/reveal or file download/import browser qualification",
+      "No file:// offline, OS egress, device, assistive, model/reference or classroom acceptance",
+      "Screenshot is ignored local evidence; not a repository/runtime dependency"
     ]
   },
   "priorCandidateBrowser": {
-    "version": "4.0.0-dev.1",
-    "sha256": "1ee024fd5517e1cfe38dac611cf260926e3c50433bc03f276bc99e5fd530818e",
-    "scope": "Chooser, instructor setup, Recovery assembled/exploded/cutaway controls, deliberate role reselection, student setup, one student canvas/no instructor controls, FR labels; not full model acceptance",
-    "localScreenshot": ".artifacts/rebuild-4-recovery.png",
+    "version": "4.0.0-dev.2",
+    "sha256": "feca594d51202c090b06bba3c44e378f7ee48de4a7e0ec5735c46bb4951dcade",
+    "scope": "French empty setup waiting-status correction only; dev.1 role/reselection/Recovery observations remain historical in release notes",
+    "localScreenshot": ".artifacts/rebuild-4-fr-fixed.png",
     "firstFailure": "Empty student waiting status remained English after French switch; actual-controller RED reproduced, dev.2 source and hosted recheck GREEN"
   },
   "sourceChecks": {
@@ -52,12 +57,21 @@
     "status": "success"
   },
   "open": [
-    "Fresh transactional role/session/phase/save/controller rebuild",
+    "Whole-role transactional command/ledger/save-validator and seeded-market rewrite",
     "Full current-candidate browser EN/FR/tie/ten-team/timed/reveal/recovery/private-state journeys",
     "Actual file:// offline and separately observed OS egress",
     "Devices, performance, accessibility and complete reference-matched visual quality",
     "Rights, content, classroom and release/operator lifecycle acceptance",
     "Three same-key full product passes"
   ],
-  "closure": "PRODUCT_RELEASE OPEN0/3"
+  "closure": "PRODUCT_RELEASE OPEN0/3",
+  "adversarialCorrections": {
+    "scope": "Shared-context read-only review and meaningful regression RED/GREEN, not independently commissioned assurance",
+    "firstFailures": [
+      "Lowercase accepted session identity could not export/re-import consistently",
+      "Student currentCard normalization mutated its input",
+      "Crafted live toJSON could bypass the export role-field check"
+    ],
+    "corrections": "Passive bounded descriptor copy; no accessor/serializer/cycle execution; canonical envelope/payload identity; fresh role normalization; actual mixed-case bilingual note/purchase/privacy regressions PASS"
+  }
 }
