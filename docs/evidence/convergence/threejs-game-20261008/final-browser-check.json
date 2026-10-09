@@ -1,0 +1,24 @@
+{
+  "status": "PASS_SCOPED",
+  "previewCommit": "91351ad",
+  "url": "https://shfqrkhn.github.io/SEA-Game/previews/threejs-game-20261008/SEA_Student_Standalone.html?v=91351ad",
+  "browser": "Codex built-in browser",
+  "checks": [
+    "Final published Recovery mission renders in WebGL",
+    "Front/rear/reset view controls exercised",
+    "Six mission selectors exercised on preceding embedded revision; shared mission geometry unchanged",
+    "320-pixel viewport has no horizontal overflow and header controls do not overlap brand",
+    "No external script, stylesheet or image resource elements"
+  ],
+  "mobile": {
+    "brandBottom": 68.19791793823242,
+    "controlsTop": 78.19792175292969,
+    "externalResourceElements": 0,
+    "headerSeparated": true,
+    "scrollWidth": 305,
+    "width": 305
+  },
+  "console": [],
+  "screenshot": "fully-embedded-game.png",
+  "scope": "Published final-candidate rendering and responsive checks, not full release acceptance"
+}
