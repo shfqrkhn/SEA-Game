@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-/7iNy3OBjTllQ8smxacLW7mw9LqKSReRIwF4XqsYASQ='; script-src-attr 'none'; style-src 'unsafe-inline'; img-src 'self' file: https://shfqrkhn.github.io/SEA-Game/assets/v1/; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-/4MQCV8NFUu3JxNPMjem6pEjlUNlap3h4DugHlMXur8='; script-src-attr 'none'; style-src 'unsafe-inline'; img-src 'self' file: https://shfqrkhn.github.io/SEA-Game/assets/v1/; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#252a27">
 <title>Systems Engineering Awareness</title>
@@ -465,6 +465,17 @@ main{max-width:1440px;padding:12px 18px 24px}
 @media print{.sea3d-workshop{display:none}.sea3d-active .art{display:block}}
 
 .sea3d-workshop [hidden]{display:none!important}
+
+/* Keep the scene visible beside the current task on desktop. */
+@media(min-width:1100px){
+ main{max-width:1480px;display:grid;grid-template-columns:minmax(0,1.12fr) minmax(380px,.88fr);gap:22px;align-items:start}
+ .sea3d-workshop{grid-column:2;grid-row:1;position:sticky;top:100px;align-self:start;margin:0}
+ main>.section{grid-column:1;grid-row:1;min-width:0}
+ main>.section>.auction{grid-template-columns:1fr}
+ #sea3dViewport{height:clamp(330px,38vw,490px)}
+ main>.foot{grid-column:1/-1}
+}
+@media print{main{display:block}.sea3d-workshop{display:none!important}}
 </style>
 </head>
 <body>
@@ -4983,7 +4994,7 @@ function sea3DView(s,role,selected,language,setupMission){
 }
 function sea3DStart(role){
  const host=document.getElementById('sea3dViewport');if(!host||typeof host.appendChild!=='function'||typeof requestAnimationFrame!=='function')return;
- const ui={en:{title:'3D vehicle workshop',object:'Inspect',team:'Team',vehicle:'Mission vehicle',configuration:'Vehicle and purchased equipment',reset:'Reset view',front:'Front',rear:'Rear',toggle:'Use 2D artwork',fallback:'3D unavailable. The game remains playable with 2D artwork.',hint:'Drag to orbit; scroll or pinch to zoom. Equipment stations illustrate purchases; game statistics and rules remain authoritative.',waiting:'Choose a mission to preview its vehicle.'},fr:{title:'Atelier de véhicules 3D',object:'Inspecter',team:'Équipe',vehicle:'Véhicule de mission',configuration:'Véhicule et équipements achetés',reset:'Réinitialiser la vue',front:'Avant',rear:'Arrière',toggle:'Illustrations 2D',fallback:'3D indisponible. Le jeu reste jouable avec les illustrations 2D.',hint:'Glissez pour tourner; défilez ou pincez pour zoomer. Les postes illustrent les achats; les statistiques et règles du jeu font autorité.',waiting:'Choisissez une mission pour voir son véhicule.'}};
+ const ui={en:{title:'3D vehicle workshop',object:'Inspect',team:'Team',vehicle:'Mission vehicle',configuration:'Vehicle and purchased equipment',reset:'Reset view',front:'Front',rear:'Rear',toggle:'Use 2D artwork',fallback:'3D unavailable. The game remains playable with 2D artwork.',hint:'Drag to orbit; scroll or pinch to zoom. Stations show the latest purchase per category; all owned cards remain inspectable. Game statistics and rules remain authoritative.',waiting:'Choose a mission to preview its vehicle.'},fr:{title:'Atelier de véhicules 3D',object:'Inspecter',team:'Équipe',vehicle:'Véhicule de mission',configuration:'Véhicule et équipements achetés',reset:'Réinitialiser la vue',front:'Avant',rear:'Arrière',toggle:'Illustrations 2D',fallback:'3D indisponible. Le jeu reste jouable avec les illustrations 2D.',hint:'Glissez pour tourner; défilez ou pincez pour zoomer. Les postes montrent le dernier achat de chaque catégorie; chaque carte achetée reste consultable. Les statistiques et règles font autorité.',waiting:'Choisissez une mission pour voir son véhicule.'}};
  let runtime=null,signature='',queued=false,enabled=true,failed=false,selection='',lastPhase='',lastCurrent='',selectedTeam='';
  const get=id=>document.getElementById(id),objects=get('sea3dObject'),teams=get('sea3dTeam');
  function fail(){failed=true;document.body.classList.remove('sea3d-active');get('sea3dStatus').textContent=ui[lang].fallback;host.hidden=true;}
