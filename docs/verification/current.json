@@ -1,79 +1,41 @@
 {
-  "date": "2026-10-09T21:28:18.374Z",
-  "scope": "Exact HTTPS bytes, actual candidate/main CI, English two-team timed STANDARD instructor70-lot eight-phase journey and retained French planning; not full release acceptance",
-  "version": "4.0.0-dev.6",
-  "sourceCommit": "528ec4a1fdcb088eea039dea0491fbe96c9f105d",
-  "mainMerge": "7751f952c21a65c74d27621238a8a9896101fb71",
-  "pagesRun": 37992518901,
-  "sourcePRRun": 37992169110,
-  "url": "https://shfqrkhn.github.io/SEA-Game/dist/index.html?v=7751f95",
-  "bytes": 8221492,
-  "sourceSHA256": "23f8ef7e41a869a13de6a50f20d77b03529ab1434d53d9b873c147657726bc50",
-  "hostedSHA256": "23f8ef7e41a869a13de6a50f20d77b03529ab1434d53d9b873c147657726bc50",
+  "date": "2026-10-09T21:52:53.786Z",
+  "scope": "Exact HTTPS bytes, actual candidate/main four-job CI, EN/FR closed72-entry ledger recovery and bounded Troop GPU inspection plus retained French student planning; not full release acceptance",
+  "version": "4.0.0-dev.7",
+  "sourceCommit": "f6de55556eedfc3454504b91ffe71de8998e058b",
+  "mainMerge": "d0e7d44d4f97f035f8a51fbb7f72fc6018683d95",
+  "pagesRun": 37995641177,
+  "sourcePRRun": 37995261048,
+  "url": "https://shfqrkhn.github.io/SEA-Game/dist/index.html?v=d0e7d44",
+  "bytes": 8224484,
+  "sourceSHA256": "11c7ea742b50974860499391547d1cafb2c5a4d9eda93ce66b1cc2de0b5669e8",
+  "hostedSHA256": "11c7ea742b50974860499391547d1cafb2c5a4d9eda93ce66b1cc2de0b5669e8",
   "equal": true,
   "sourceMainRun": {
-    "id": 37992519194,
+    "id": 37995641504,
     "status": "success",
     "matrix": "Windows/Ubuntu; Node22/24; all four jobs"
   },
   "browser": {
     "tool": "Codex built-in browser",
-    "scope": "Fresh actual built-in-browser dev.6 English two-team STANDARD timed30 session: setup, isolated practice/reset/planning, mission locks, pause30/extend-to60/resume, CAP-C Team2 sale/reload, confirmed VOID/reload and replacement Team1 sale/reload; all70lots finish with14Team1 purchases and56unsold. Independent rules-baseline oracle agrees: CAP18/MOB180/FP4/PRO13/COM50/SA5, cost$6,350,000, compliant Troop, score340. Confirmed private entry, native exact-cent profit$100,000.25, submittedTeam1, pendingTeam2 closure confirmation, AwardTeam1/bid$6,450,000.25/cost-per-point$18,970.59 and closed-room reload retaining72ledger entries (initialSALE/VOID/replacement plus69lots). Retained French student bilingual planning/session/mission restores in exactdev.6. Instructor warning/error console empty.",
+    "scope": "Fresh actual Codex built-in-browser dev.7 recovery of the closed two-team instructor session retains all72ledger entries. At1280x720 the grouped Current ledger spans7pages instead of dev.6 40; final page reached through actual game controls, EN/FR round/lot/card/result/price context remains intact. Front hardware, actual drag rotation with changed shadow, exploded/cutaway and assembled restoration/reload observed on the retained Troop build. French student session/mission/bilingual notes/maxWtp850000 and unconfirmed vehicle restore. Both warning/error consoles empty. Ignored local screenshots .artifacts/rebuild-4-dev7-ledger.png, rebuild-4-dev7-front.png and rebuild-4-dev7-exploded.png. This is bounded recovery/GPU smoke, not a fresh dev.7 full70-lot journey, all77model/device/fidelity/classroom acceptance or file/offline/OS-egress proof.",
     "checks": [
-      "Exact candidate roles show version4.0.0-dev.6",
-      "Synthetic two-team setup/practice/reset/planning/mission locks",
-      "Timed30 pause/extend-to60/resume",
-      "CAP-C Team2 sale/reload, confirmed VOID/reload, replacement Team1 sale/reload",
-      "All70lots:14purchases,56unsold, two purchases per round",
-      "Independent baseline cost6350000/score340/compliance/totals agree",
-      "Confirmed private entry, native exact-cent profit100000.25 and submittedTeam1",
-      "PendingTeam2 close confirmation; AwardTeam1, bid6450000.25, cost/point18970.59",
-      "Closed-room reload retains complete72-entry append-only ledger",
-      "Retained French bilingual planning/session/mission restored in dev.6",
-      "Instructor warning/error console empty"
+      "Exact candidate version4.0.0-dev.7 in both retained roles",
+      "Closed instructor72-entry ledger recovery and reload",
+      "Actual grouped ledger7pages at1280x720; final page reachable",
+      "EN/FR labelled event context and append order retained",
+      "Troop front hardware/actual rotation and changed shadow/exploded/cutaway/assembled restoration",
+      "French student private bilingual notes/session/mission/maxWtp retained",
+      "Both warning/error consoles empty"
     ],
-    "localScreenshot": ".artifacts/rebuild-4-dev6-journey.png",
+    "localScreenshot": ".artifacts/rebuild-4-dev7-ledger.png",
     "limits": [
-      "One EN2team timedSTANDARD instructor journey; complete student/ten-team/tie/reveal/download/import coverage open",
-      "Delayed canvas redraws/clipped native correction disclosure; focused native profit typing needed; no app failure inferred from locator fill attempt",
-      "No file://offline, OS egress, device/assistive, reference-fidelity/rights/classroom acceptance",
-      "Ignored local screenshot; no runtime/repository dependency",
-      "Actual closed ledger splits cells into40pages at1280x720; heading and values use different sections. Compact labelled ledger rows remain a GUI gap."
-    ],
-    "oracle": {
-      "mission": "TROOP",
-      "purchases": [
-        "CAP-C",
-        "MOB-G",
-        "CAP-A",
-        "MOB-D",
-        "CAP-F",
-        "PRO-E",
-        "MOB-B",
-        "PRO-B",
-        "FP-G",
-        "PRO-D",
-        "COM-A",
-        "SA-C",
-        "SA-F",
-        "SE-N"
-      ],
-      "totals": {
-        "CAP": 18,
-        "MOB": 180,
-        "FP": 4,
-        "PRO": 13,
-        "COM": 50,
-        "SA": 5,
-        "REC": 0,
-        "MC": 0
-      },
-      "costCents": 635000000,
-      "profitCents": 10000025,
-      "bidCents": 645000025,
-      "score": 340,
-      "compliant": true
-    }
+      "Prior dev.6 full70-lot instructor journey remains historical, not inherited dev.7 proof",
+      "Bounded Troop inspection; all77model GPU/reference fidelity remains open",
+      "No file/offline/OS egress, device/assistive, rights/classroom acceptance",
+      "Delayed canvas observations require settled screenshot; no hidden state/test-hook injection",
+      "Ignored local captures; no runtime/repository dependency"
+    ]
   },
   "priorCandidateBrowser": {
     "version": "4.0.0-dev.2",
@@ -119,5 +81,79 @@
       "Stale native advance intents",
       "Bootstrap extra role-field retention"
     ]
+  },
+  "historicalInstructorJourney": {
+    "version": "4.0.0-dev.6",
+    "sourceCommit": "528ec4a1fdcb088eea039dea0491fbe96c9f105d",
+    "mainMerge": "7751f952c21a65c74d27621238a8a9896101fb71",
+    "sha256": "23f8ef7e41a869a13de6a50f20d77b03529ab1434d53d9b873c147657726bc50",
+    "browser": {
+      "tool": "Codex built-in browser",
+      "scope": "Fresh actual built-in-browser dev.6 English two-team STANDARD timed30 session: setup, isolated practice/reset/planning, mission locks, pause30/extend-to60/resume, CAP-C Team2 sale/reload, confirmed VOID/reload and replacement Team1 sale/reload; all70lots finish with14Team1 purchases and56unsold. Independent rules-baseline oracle agrees: CAP18/MOB180/FP4/PRO13/COM50/SA5, cost$6,350,000, compliant Troop, score340. Confirmed private entry, native exact-cent profit$100,000.25, submittedTeam1, pendingTeam2 closure confirmation, AwardTeam1/bid$6,450,000.25/cost-per-point$18,970.59 and closed-room reload retaining72ledger entries (initialSALE/VOID/replacement plus69lots). Retained French student bilingual planning/session/mission restores in exactdev.6. Instructor warning/error console empty.",
+      "checks": [
+        "Exact candidate roles show version4.0.0-dev.6",
+        "Synthetic two-team setup/practice/reset/planning/mission locks",
+        "Timed30 pause/extend-to60/resume",
+        "CAP-C Team2 sale/reload, confirmed VOID/reload, replacement Team1 sale/reload",
+        "All70lots:14purchases,56unsold, two purchases per round",
+        "Independent baseline cost6350000/score340/compliance/totals agree",
+        "Confirmed private entry, native exact-cent profit100000.25 and submittedTeam1",
+        "PendingTeam2 close confirmation; AwardTeam1, bid6450000.25, cost/point18970.59",
+        "Closed-room reload retains complete72-entry append-only ledger",
+        "Retained French bilingual planning/session/mission restored in dev.6",
+        "Instructor warning/error console empty"
+      ],
+      "localScreenshot": ".artifacts/rebuild-4-dev6-journey.png",
+      "limits": [
+        "One EN2team timedSTANDARD instructor journey; complete student/ten-team/tie/reveal/download/import coverage open",
+        "Delayed canvas redraws/clipped native correction disclosure; focused native profit typing needed; no app failure inferred from locator fill attempt",
+        "No file://offline, OS egress, device/assistive, reference-fidelity/rights/classroom acceptance",
+        "Ignored local screenshot; no runtime/repository dependency",
+        "Actual closed ledger splits cells into40pages at1280x720; heading and values use different sections. Compact labelled ledger rows remain a GUI gap."
+      ],
+      "oracle": {
+        "mission": "TROOP",
+        "purchases": [
+          "CAP-C",
+          "MOB-G",
+          "CAP-A",
+          "MOB-D",
+          "CAP-F",
+          "PRO-E",
+          "MOB-B",
+          "PRO-B",
+          "FP-G",
+          "PRO-D",
+          "COM-A",
+          "SA-C",
+          "SA-F",
+          "SE-N"
+        ],
+        "totals": {
+          "CAP": 18,
+          "MOB": 180,
+          "FP": 4,
+          "PRO": 13,
+          "COM": 50,
+          "SA": 5,
+          "REC": 0,
+          "MC": 0
+        },
+        "costCents": 635000000,
+        "profitCents": 10000025,
+        "bidCents": 645000025,
+        "score": 340,
+        "compliant": true
+      }
+    }
+  },
+  "dev7FirstFailures": {
+    "run": 37994510832,
+    "source": "643fc8bf7fd25f7158aec5103ec9fff556bdca49",
+    "failure": "CRLF local Three.js source differed from Git LF provenance; all4failed",
+    "correction": "0c59f01 normalized LF and added pre-output source/text guards; no hash assertions weakened",
+    "interimRun": 37994798288,
+    "interimStatus": "success all4",
+    "followup": "Full-assembly opaque-ray RED found solid gasket hid reflector; formed actual openings corrected all5 carriers, final f6de555 fresh CI37995261048 all4PASS"
   }
 }
