@@ -15,7 +15,7 @@
     "components": 35,
     "assemblyRelationships": 48,
     "uiStates": 40,
-    "uiElements": 211,
+    "uiElements": 225,
     "materials": 12,
     "exploratoryDirections": 1
   },
@@ -14018,6 +14018,311 @@
       "conceptBatch": "UI-student-closed"
     },
     {
+      "id": "UI-ELEMENT-student-scene-navigation",
+      "kind": "interface-element",
+      "label": {
+        "en": "Game sections",
+        "fr": "Sections du jeu"
+      },
+      "reference": {
+        "status": "canonical-or-design-contract;visual-reference-open",
+        "evidence": []
+      },
+      "concept": {
+        "status": "planned",
+        "artifacts": []
+      },
+      "implementation": {
+        "status": "scene-native-synchronized;qualification-open",
+        "evidence": []
+      },
+      "acceptance": {
+        "status": "open",
+        "criteria": [
+          "U01",
+          "U02",
+          "U03",
+          "U04",
+          "U05",
+          "U06"
+        ],
+        "evidence": []
+      },
+      "role": "student",
+      "phase": "cross-phase",
+      "source": [
+        "source/shared/three-presentation.js#seaSceneNavigation",
+        "source/three/interface.mjs"
+      ],
+      "htmlTag": "nav",
+      "sceneCommand": null,
+      "conceptBatch": "UI-NAVIGATION"
+    },
+    {
+      "id": "UI-ELEMENT-student-scene-task",
+      "kind": "interface-element",
+      "label": {
+        "en": "Current",
+        "fr": "En cours"
+      },
+      "reference": {
+        "status": "canonical-or-design-contract;visual-reference-open",
+        "evidence": []
+      },
+      "concept": {
+        "status": "planned",
+        "artifacts": []
+      },
+      "implementation": {
+        "status": "scene-native-synchronized;qualification-open",
+        "evidence": []
+      },
+      "acceptance": {
+        "status": "open",
+        "criteria": [
+          "U01",
+          "U02",
+          "U03",
+          "U04",
+          "U05",
+          "U06"
+        ],
+        "evidence": []
+      },
+      "role": "student",
+      "phase": "cross-phase",
+      "source": [
+        "source/shared/three-presentation.js#seaSceneNavigation",
+        "source/three/interface.mjs"
+      ],
+      "htmlTag": "button",
+      "sceneCommand": {
+        "key": "__section",
+        "section": "task"
+      },
+      "conceptBatch": "UI-NAVIGATION"
+    },
+    {
+      "id": "UI-ELEMENT-student-scene-teams",
+      "kind": "interface-element",
+      "label": {
+        "en": "Teams",
+        "fr": "Équipes"
+      },
+      "reference": {
+        "status": "canonical-or-design-contract;visual-reference-open",
+        "evidence": []
+      },
+      "concept": {
+        "status": "planned",
+        "artifacts": []
+      },
+      "implementation": {
+        "status": "scene-native-synchronized;qualification-open",
+        "evidence": []
+      },
+      "acceptance": {
+        "status": "open",
+        "criteria": [
+          "U01",
+          "U02",
+          "U03",
+          "U04",
+          "U05",
+          "U06"
+        ],
+        "evidence": []
+      },
+      "role": "student",
+      "phase": "cross-phase",
+      "source": [
+        "source/shared/three-presentation.js#seaSceneNavigation",
+        "source/three/interface.mjs"
+      ],
+      "htmlTag": "button",
+      "sceneCommand": {
+        "key": "__section",
+        "section": "teams"
+      },
+      "conceptBatch": "UI-NAVIGATION"
+    },
+    {
+      "id": "UI-ELEMENT-student-scene-market",
+      "kind": "interface-element",
+      "label": {
+        "en": "Round",
+        "fr": "Manche"
+      },
+      "reference": {
+        "status": "canonical-or-design-contract;visual-reference-open",
+        "evidence": []
+      },
+      "concept": {
+        "status": "planned",
+        "artifacts": []
+      },
+      "implementation": {
+        "status": "scene-native-synchronized;qualification-open",
+        "evidence": []
+      },
+      "acceptance": {
+        "status": "open",
+        "criteria": [
+          "U01",
+          "U02",
+          "U03",
+          "U04",
+          "U05",
+          "U06"
+        ],
+        "evidence": []
+      },
+      "role": "student",
+      "phase": "cross-phase",
+      "source": [
+        "source/shared/three-presentation.js#seaSceneNavigation",
+        "source/three/interface.mjs"
+      ],
+      "htmlTag": "button",
+      "sceneCommand": {
+        "key": "__section",
+        "section": "market"
+      },
+      "conceptBatch": "UI-NAVIGATION"
+    },
+    {
+      "id": "UI-ELEMENT-student-scene-tools",
+      "kind": "interface-element",
+      "label": {
+        "en": "Manage",
+        "fr": "Gestion"
+      },
+      "reference": {
+        "status": "canonical-or-design-contract;visual-reference-open",
+        "evidence": []
+      },
+      "concept": {
+        "status": "planned",
+        "artifacts": []
+      },
+      "implementation": {
+        "status": "scene-native-synchronized;qualification-open",
+        "evidence": []
+      },
+      "acceptance": {
+        "status": "open",
+        "criteria": [
+          "U01",
+          "U02",
+          "U03",
+          "U04",
+          "U05",
+          "U06"
+        ],
+        "evidence": []
+      },
+      "role": "student",
+      "phase": "cross-phase",
+      "source": [
+        "source/shared/three-presentation.js#seaSceneNavigation",
+        "source/three/interface.mjs"
+      ],
+      "htmlTag": "button",
+      "sceneCommand": {
+        "key": "__section",
+        "section": "tools"
+      },
+      "conceptBatch": "UI-NAVIGATION"
+    },
+    {
+      "id": "UI-ELEMENT-student-scene-inspect",
+      "kind": "interface-element",
+      "label": {
+        "en": "Inspect",
+        "fr": "Explorer"
+      },
+      "reference": {
+        "status": "canonical-or-design-contract;visual-reference-open",
+        "evidence": []
+      },
+      "concept": {
+        "status": "planned",
+        "artifacts": []
+      },
+      "implementation": {
+        "status": "scene-native-synchronized;qualification-open",
+        "evidence": []
+      },
+      "acceptance": {
+        "status": "open",
+        "criteria": [
+          "U01",
+          "U02",
+          "U03",
+          "U04",
+          "U05",
+          "U06"
+        ],
+        "evidence": []
+      },
+      "role": "student",
+      "phase": "cross-phase",
+      "source": [
+        "source/shared/three-presentation.js#seaSceneNavigation",
+        "source/three/interface.mjs"
+      ],
+      "htmlTag": "button",
+      "sceneCommand": {
+        "key": "__section",
+        "section": "inspect"
+      },
+      "conceptBatch": "UI-NAVIGATION"
+    },
+    {
+      "id": "UI-ELEMENT-student-scene-help",
+      "kind": "interface-element",
+      "label": {
+        "en": "Help / save",
+        "fr": "Aide / sauvegarde"
+      },
+      "reference": {
+        "status": "canonical-or-design-contract;visual-reference-open",
+        "evidence": []
+      },
+      "concept": {
+        "status": "planned",
+        "artifacts": []
+      },
+      "implementation": {
+        "status": "scene-native-synchronized;qualification-open",
+        "evidence": []
+      },
+      "acceptance": {
+        "status": "open",
+        "criteria": [
+          "U01",
+          "U02",
+          "U03",
+          "U04",
+          "U05",
+          "U06"
+        ],
+        "evidence": []
+      },
+      "role": "student",
+      "phase": "cross-phase",
+      "source": [
+        "source/shared/three-presentation.js#seaSceneNavigation",
+        "source/three/interface.mjs"
+      ],
+      "htmlTag": "button",
+      "sceneCommand": {
+        "key": "__section",
+        "section": "help"
+      },
+      "conceptBatch": "UI-NAVIGATION"
+    },
+    {
       "id": "UI-ELEMENT-instructor-exportBackupBtn",
       "kind": "interface-element",
       "label": {
@@ -18012,6 +18317,311 @@
       "source": "source/instructor.template.html#startNewSessionBtn",
       "htmlTag": "button",
       "conceptBatch": "UI-instructor-closed"
+    },
+    {
+      "id": "UI-ELEMENT-instructor-scene-navigation",
+      "kind": "interface-element",
+      "label": {
+        "en": "Game sections",
+        "fr": "Sections du jeu"
+      },
+      "reference": {
+        "status": "canonical-or-design-contract;visual-reference-open",
+        "evidence": []
+      },
+      "concept": {
+        "status": "planned",
+        "artifacts": []
+      },
+      "implementation": {
+        "status": "scene-native-synchronized;qualification-open",
+        "evidence": []
+      },
+      "acceptance": {
+        "status": "open",
+        "criteria": [
+          "U01",
+          "U02",
+          "U03",
+          "U04",
+          "U05",
+          "U06"
+        ],
+        "evidence": []
+      },
+      "role": "instructor",
+      "phase": "cross-phase",
+      "source": [
+        "source/shared/three-presentation.js#seaSceneNavigation",
+        "source/three/interface.mjs"
+      ],
+      "htmlTag": "nav",
+      "sceneCommand": null,
+      "conceptBatch": "UI-NAVIGATION"
+    },
+    {
+      "id": "UI-ELEMENT-instructor-scene-task",
+      "kind": "interface-element",
+      "label": {
+        "en": "Current",
+        "fr": "En cours"
+      },
+      "reference": {
+        "status": "canonical-or-design-contract;visual-reference-open",
+        "evidence": []
+      },
+      "concept": {
+        "status": "planned",
+        "artifacts": []
+      },
+      "implementation": {
+        "status": "scene-native-synchronized;qualification-open",
+        "evidence": []
+      },
+      "acceptance": {
+        "status": "open",
+        "criteria": [
+          "U01",
+          "U02",
+          "U03",
+          "U04",
+          "U05",
+          "U06"
+        ],
+        "evidence": []
+      },
+      "role": "instructor",
+      "phase": "cross-phase",
+      "source": [
+        "source/shared/three-presentation.js#seaSceneNavigation",
+        "source/three/interface.mjs"
+      ],
+      "htmlTag": "button",
+      "sceneCommand": {
+        "key": "__section",
+        "section": "task"
+      },
+      "conceptBatch": "UI-NAVIGATION"
+    },
+    {
+      "id": "UI-ELEMENT-instructor-scene-teams",
+      "kind": "interface-element",
+      "label": {
+        "en": "Teams",
+        "fr": "Équipes"
+      },
+      "reference": {
+        "status": "canonical-or-design-contract;visual-reference-open",
+        "evidence": []
+      },
+      "concept": {
+        "status": "planned",
+        "artifacts": []
+      },
+      "implementation": {
+        "status": "scene-native-synchronized;qualification-open",
+        "evidence": []
+      },
+      "acceptance": {
+        "status": "open",
+        "criteria": [
+          "U01",
+          "U02",
+          "U03",
+          "U04",
+          "U05",
+          "U06"
+        ],
+        "evidence": []
+      },
+      "role": "instructor",
+      "phase": "cross-phase",
+      "source": [
+        "source/shared/three-presentation.js#seaSceneNavigation",
+        "source/three/interface.mjs"
+      ],
+      "htmlTag": "button",
+      "sceneCommand": {
+        "key": "__section",
+        "section": "teams"
+      },
+      "conceptBatch": "UI-NAVIGATION"
+    },
+    {
+      "id": "UI-ELEMENT-instructor-scene-market",
+      "kind": "interface-element",
+      "label": {
+        "en": "Round",
+        "fr": "Manche"
+      },
+      "reference": {
+        "status": "canonical-or-design-contract;visual-reference-open",
+        "evidence": []
+      },
+      "concept": {
+        "status": "planned",
+        "artifacts": []
+      },
+      "implementation": {
+        "status": "scene-native-synchronized;qualification-open",
+        "evidence": []
+      },
+      "acceptance": {
+        "status": "open",
+        "criteria": [
+          "U01",
+          "U02",
+          "U03",
+          "U04",
+          "U05",
+          "U06"
+        ],
+        "evidence": []
+      },
+      "role": "instructor",
+      "phase": "cross-phase",
+      "source": [
+        "source/shared/three-presentation.js#seaSceneNavigation",
+        "source/three/interface.mjs"
+      ],
+      "htmlTag": "button",
+      "sceneCommand": {
+        "key": "__section",
+        "section": "market"
+      },
+      "conceptBatch": "UI-NAVIGATION"
+    },
+    {
+      "id": "UI-ELEMENT-instructor-scene-tools",
+      "kind": "interface-element",
+      "label": {
+        "en": "Manage",
+        "fr": "Gestion"
+      },
+      "reference": {
+        "status": "canonical-or-design-contract;visual-reference-open",
+        "evidence": []
+      },
+      "concept": {
+        "status": "planned",
+        "artifacts": []
+      },
+      "implementation": {
+        "status": "scene-native-synchronized;qualification-open",
+        "evidence": []
+      },
+      "acceptance": {
+        "status": "open",
+        "criteria": [
+          "U01",
+          "U02",
+          "U03",
+          "U04",
+          "U05",
+          "U06"
+        ],
+        "evidence": []
+      },
+      "role": "instructor",
+      "phase": "cross-phase",
+      "source": [
+        "source/shared/three-presentation.js#seaSceneNavigation",
+        "source/three/interface.mjs"
+      ],
+      "htmlTag": "button",
+      "sceneCommand": {
+        "key": "__section",
+        "section": "tools"
+      },
+      "conceptBatch": "UI-NAVIGATION"
+    },
+    {
+      "id": "UI-ELEMENT-instructor-scene-inspect",
+      "kind": "interface-element",
+      "label": {
+        "en": "Inspect",
+        "fr": "Explorer"
+      },
+      "reference": {
+        "status": "canonical-or-design-contract;visual-reference-open",
+        "evidence": []
+      },
+      "concept": {
+        "status": "planned",
+        "artifacts": []
+      },
+      "implementation": {
+        "status": "scene-native-synchronized;qualification-open",
+        "evidence": []
+      },
+      "acceptance": {
+        "status": "open",
+        "criteria": [
+          "U01",
+          "U02",
+          "U03",
+          "U04",
+          "U05",
+          "U06"
+        ],
+        "evidence": []
+      },
+      "role": "instructor",
+      "phase": "cross-phase",
+      "source": [
+        "source/shared/three-presentation.js#seaSceneNavigation",
+        "source/three/interface.mjs"
+      ],
+      "htmlTag": "button",
+      "sceneCommand": {
+        "key": "__section",
+        "section": "inspect"
+      },
+      "conceptBatch": "UI-NAVIGATION"
+    },
+    {
+      "id": "UI-ELEMENT-instructor-scene-help",
+      "kind": "interface-element",
+      "label": {
+        "en": "Help / save",
+        "fr": "Aide / sauvegarde"
+      },
+      "reference": {
+        "status": "canonical-or-design-contract;visual-reference-open",
+        "evidence": []
+      },
+      "concept": {
+        "status": "planned",
+        "artifacts": []
+      },
+      "implementation": {
+        "status": "scene-native-synchronized;qualification-open",
+        "evidence": []
+      },
+      "acceptance": {
+        "status": "open",
+        "criteria": [
+          "U01",
+          "U02",
+          "U03",
+          "U04",
+          "U05",
+          "U06"
+        ],
+        "evidence": []
+      },
+      "role": "instructor",
+      "phase": "cross-phase",
+      "source": [
+        "source/shared/three-presentation.js#seaSceneNavigation",
+        "source/three/interface.mjs"
+      ],
+      "htmlTag": "button",
+      "sceneCommand": {
+        "key": "__section",
+        "section": "help"
+      },
+      "conceptBatch": "UI-NAVIGATION"
     }
   ],
   "materials": [
