@@ -8,7 +8,7 @@ function checkAuthored(directory){
   if(item.name==='node_modules'||item.name==='.git')continue;
   const target=new URL(item.name+(item.isDirectory()?'/':''),directory);
   if(item.isDirectory()){checkAuthored(target);continue;}
-  if(!/\.(?:mjs|js|html|css|json|md)$/.test(item.name))continue;
+  if(!/\.(?:mjs|js|ts|html|css|json|md)$/.test(item.name))continue;
   assert.doesNotThrow(()=>decoder.decode(fs.readFileSync(target)),target.pathname+' contains invalid UTF-8 bytes');checked++;
  }
 }

@@ -14,7 +14,7 @@ Standing authority: bounded separately owned subagents, routine implementation j
 
 Published 3.6.0: main00d4e85, implementation4729879, merged PR3/a31cb50. Latest source CI37974988409 passed Windows/Ubuntu Node22/24; Pages37974987787 succeeded. Play URL https://shfqrkhn.github.io/SEA-Game/dist/. HTML8,176,765 bytes, SHA2560aca2e9d8d1d5d4df31a080afb3932a84206b312f33c365a0efeac679e22aceb. [Published bounded checks](verification/current.json) do not establish full acceptance. Ordinary Git history preserves rollback; no historical purge claimed.
 
-Local rebuild candidate **4.0.0-dev.1**, not yet published or release-qualified. dist/index.html8,189,407 bytes, SHA2561ee024fd5517e1cfe38dac611cf260926e3c50433bc03f276bc99e5fd530818e. App major reflects the intended rebuild, not changed rules/deck/save schema. Only dist/index.html ships. Inspect current status/HEAD for integration edits and later identities.
+Local rebuild candidate **4.0.0-dev.1**, not yet published or release-qualified. Implementation8ef19e5 pushed through [PR4](https://github.com/shfqrkhn/SEA-Game/pull/4). First source CI37981550748 failed all four jobs in test-balance: the zero-score eligibility fixture omitted required team identity/cost/profit. Supply a complete canonical team fixture; keep the independent zero-score expectation unchanged. Preserve failed run as counterevidence, not an erased flaky retry. dist/index.html8,189,407 bytes, SHA2561ee024fd5517e1cfe38dac611cf260926e3c50433bc03f276bc99e5fd530818e. App major reflects the intended rebuild, not changed rules/deck/save schema. Only dist/index.html ships. Inspect current status/HEAD for integration edits and later identities.
 
 ## Implemented foundations and evidence
 

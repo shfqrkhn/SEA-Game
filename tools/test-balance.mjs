@@ -23,7 +23,11 @@ const independentCompliance=(m,t)=>Object.entries(baseline.missions[m].req).ever
 const fixtures=[['COMBAT',{MOB:89,FP:10},0],['COMBAT',{MOB:90,FP:11},40],['RECCE',{COM:99,SA:5},0],['RECCE',{COM:100,SA:6},40],['TROOP',{CAP:11,PRO:5},40],['COMMAND',{CAP:6,COM:150},40],['RECOVERY',{PRO:7,REC:4},60],['MINE',{SA:2,MC:4},60]];
 for(const [mission,extra,expected]of fixtures){const totals={...zero(),...baseline.missions[mission].req,...extra};assert.equal(independentScore(mission,totals),expected);assert.equal(api.score({mission,totals}),expected)}
 for(const [mission,{req}]of Object.entries(baseline.missions)){
- const t={...zero(),...req};assert(api.compliant({mission,totals:t}));assert.equal(api.score({mission,totals:t}),0);assert(!api.awardEligible({mission,totals:t,submitted:true}),'Compliance alone is insufficient for award');
+ const t={...zero(),...req};assert(api.compliant({mission,totals:t}));assert.equal(api.score({mission,totals:t}),0);
+ // Eligibility now checks the complete production team boundary. Preserve the
+ // independent zero-score oracle while supplying canonical identity/money fields.
+ const minimumTeam={...api.createTeams('SEA3-T2-0123456789ABCDEF')[0],mission,totals:t,submitted:true};
+ assert(!api.awardEligible(minimumTeam),'Compliance alone is insufficient for award');
  for(const k of Object.keys(req)){const low={...t,[k]:t[k]-1};assert(!api.compliant({mission,totals:low}),mission+'/'+k)}
 }
 // Static price/effect dominance ignores auction timing, availability, competition,
