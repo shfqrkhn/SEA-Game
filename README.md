@@ -22,19 +22,11 @@ These documents distinguish observed implementation from outstanding release acc
 - [Instructor Master](SEA_Instructor_Standalone.html)
 - [Student Companion](SEA_Student_Standalone.html)
 
-For offline gameplay, download an HTML file and open it directly as `file://`. Each HTML contains its CSS, JavaScript, game data, translations and 77 vector artwork fallbacks. The high-detail WebP collection is optional and separate. No web server, account, external JavaScript, service worker or internet is required; supported-device classroom acceptance remains open.
+Download either candidate HTML and open it directly. Each file contains CSS, JavaScript, game data, translations, Three.js, all 77 geometry models and 77 native vector illustrations for print. No adjacent assets folder, CDN, web server, account or internet connection is required. The screen presentation is 3D; there is no external image-loading chain or alternate 2D selector. A WebGL startup error reports status while leaving game controls usable; it does not load another rendering method.
 
-For the **local raster collection**, [download the repository ZIP](https://github.com/shfqrkhn/SEA-Game/archive/refs/heads/main.zip), extract it and open one of the two standalone HTML files without moving it from the extracted folder.
+## Embedded presentation
 
-## Three-tier image chain
-
-For each card, the browser renders the embedded artwork immediately and optionally substitutes:
-
-1. HTTPS WebP from `https://shfqrkhn.github.io/SEA-Game/assets/v1/cards/CAP-A.webp` (example).
-2. On remote load failure, the exact same local file at `./assets/v1/cards/CAP-A.webp`.
-3. If both fail, the built-in card-specific vector SVG remains visible.
-
-Practice uses `assets/v1/practice/TRAIN-CAP.webp`. Mission previews use the six `assets/v1/vehicles/` illustrations with embedded vector fallbacks. Instructor assignment previews are collapsible; the student sees its selected mission in Setup and Planning. The SVG files and embedded fallbacks are actual vectors, rather than WebP wrappers. Candidate browser/visual acceptance remains open.
+The current [3D candidate](https://shfqrkhn.github.io/SEA-Game/previews/threejs-game-20261008/) runs from its two self-contained HTML files. The repository artwork collection preserves editable originals and repair provenance; gameplay does not request those external files. Existing root Pages games remain the previous release until the candidate is accepted.
 
 Card rules, labels, descriptions, prices, calculations, instructor ledger and student work remain local application data. Images contain no authoritative rule text. Session state is not sent to GitHub.
 
@@ -73,6 +65,6 @@ Do not enter personal, Protected, Classified, real-project, or operational infor
 
 ## Three.js game candidate
 
-[Play the 3D workshop](https://shfqrkhn.github.io/SEA-Game/previews/threejs-game-20261008/) in either role. All eight phases have a 3D mission/equipment scene; six vehicles and 71 part/process/practice models share scale and materials. Inspect revealed lots and owned cards. The configuration shows the latest purchase per category on separate equipment stations; all purchases remain in the ledger and inspection menu. Rules and schema-3 saves are preserved. Repaired artwork remains available through the 2D/no-WebGL fallback.
+[Play the 3D workshop](https://shfqrkhn.github.io/SEA-Game/previews/threejs-game-20261008/) in either role. All eight phases have a 3D mission/equipment scene; six vehicles and 71 part/process/practice models share scale and materials. Inspect revealed lots and owned cards. The configuration shows the latest purchase per category on separate equipment stations; all purchases remain in the ledger and inspection menu. Rules and schema-3 saves are preserved. Three.js, geometry and print illustrations are embedded; no alternate rendering or external artwork loading is used.
 
 Geometry: `source/three/game-models.mjs`; renderer: `source/three/workshop.mjs`; public role adapter: `source/shared/three-presentation.js`. Three.js 0.186.1 is locally bundled under MIT. Regenerate with `npm ci --prefix samples/threejs-recovery`, `node samples/threejs-recovery/build-game.mjs`, then `node tools/build.mjs`. Run `node tools/test-three-presentation.mjs` and `node samples/threejs-recovery/verify-game.mjs` alongside existing tests. See [qualification and limits](docs/THREE_JS_GAME.md).

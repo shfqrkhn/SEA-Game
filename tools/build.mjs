@@ -27,7 +27,7 @@ for(const [name,target] of [['instructor','SEA_Instructor_Standalone.html'],['st
  if(/<\/script/i.test(script))throw Error(name+': embedded script closing tag introduced');
  new Script(script,{filename:'shared rules/presentation + source/'+name+'.js'});
  const scriptHash=createHash('sha256').update(script,'utf8').digest('base64');
- const policy="default-src 'none'; script-src 'sha256-"+scriptHash+"'; script-src-attr 'none'; style-src 'unsafe-inline'; img-src 'self' file: https://shfqrkhn.github.io/SEA-Game/assets/v1/; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'";
+ const policy="default-src 'none'; script-src 'sha256-"+scriptHash+"'; script-src-attr 'none'; style-src 'unsafe-inline'; img-src 'none'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'";
  const html=template.replace('{{SEA_CSP}}',()=>'<meta http-equiv="Content-Security-Policy" content="'+policy+'">').replace('{{SEA_STYLES}}',()=>'<style>'+css+'</style>').replace('{{SEA_SCRIPT}}',()=>'<script>'+script+'</script>');
  if(!html.startsWith('<!doctype html>')||!html.endsWith('</html>'))throw Error(name+': malformed output');
  if(/\b(?:confirm|alert|prompt)\s*\(/.test(js))throw Error(name+': native dialog introduced');

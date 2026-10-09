@@ -289,7 +289,6 @@ $('#restorePreviousBtn').onclick=restorePreviousBackup;
 $('#startNewSessionBtn').onclick=startNewSession;
 $('#backupFile').onchange=e=>{const file=e.target.files?.[0];e.target.value='';readBackupFile(file)};
 $("#langBtn").onclick=()=>setLang(lang==="en"?"fr":"en");
-bindArtworkEvents();
 if(restoreState()){$("#sessionInput").value=state.sessionCode;populateTeamSelect(state.sessionCode);$("#teamSelect").value=String(state.teamId);$("#joinStatus").className="notice good";$("#joinStatus").textContent=t("setup.recovered");phase(state.phase)}else{$("#joinStatus").textContent=safeSessionStorage()?t("setup.waiting"):t("setup.noStorage");phase("setup")}
 renderAll();
 

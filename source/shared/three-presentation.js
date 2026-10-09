@@ -12,13 +12,13 @@ function sea3DView(s,role,selected,language,setupMission){
 }
 function sea3DStart(role){
  const host=document.getElementById('sea3dViewport');if(!host||typeof host.appendChild!=='function'||typeof requestAnimationFrame!=='function')return;
- const ui={en:{title:'3D vehicle workshop',object:'Inspect',team:'Team',vehicle:'Mission vehicle',configuration:'Vehicle and purchased equipment',reset:'Reset view',front:'Front',rear:'Rear',toggle:'Use 2D artwork',fallback:'3D unavailable. The game remains playable with 2D artwork.',hint:'Drag to orbit; scroll or pinch to zoom. Stations show the latest purchase per category; all owned cards remain inspectable. Game statistics and rules remain authoritative.',waiting:'Choose a mission to preview its vehicle.'},fr:{title:'Atelier de véhicules 3D',object:'Inspecter',team:'Équipe',vehicle:'Véhicule de mission',configuration:'Véhicule et équipements achetés',reset:'Réinitialiser la vue',front:'Avant',rear:'Arrière',toggle:'Illustrations 2D',fallback:'3D indisponible. Le jeu reste jouable avec les illustrations 2D.',hint:'Glissez pour tourner; défilez ou pincez pour zoomer. Les postes montrent le dernier achat de chaque catégorie; chaque carte achetée reste consultable. Les statistiques et règles font autorité.',waiting:'Choisissez une mission pour voir son véhicule.'}};
- let runtime=null,signature='',queued=false,enabled=true,failed=false,selection='',lastPhase='',lastCurrent='',selectedTeam='';
+ const ui={en:{title:'3D vehicle workshop',object:'Inspect',team:'Team',vehicle:'Mission vehicle',configuration:'Vehicle and purchased equipment',reset:'Reset view',front:'Front',rear:'Rear',fallback:'3D could not start. Game controls remain available.',hint:'Drag to orbit; scroll or pinch to zoom. Stations show the latest purchase per category; all owned cards remain inspectable. Game statistics and rules remain authoritative.',waiting:'Choose a mission to preview its vehicle.'},fr:{title:'Atelier de véhicules 3D',object:'Inspecter',team:'Équipe',vehicle:'Véhicule de mission',configuration:'Véhicule et équipements achetés',reset:'Réinitialiser la vue',front:'Avant',rear:'Arrière',fallback:'La 3D n’a pas démarré. Les commandes du jeu restent disponibles.',hint:'Glissez pour tourner; défilez ou pincez pour zoomer. Les postes montrent le dernier achat de chaque catégorie; chaque carte achetée reste consultable. Les statistiques et règles font autorité.',waiting:'Choisissez une mission pour voir son véhicule.'}};
+ let runtime=null,signature='',queued=false,failed=false,selection='',lastPhase='',lastCurrent='',selectedTeam='';
  const get=id=>document.getElementById(id),objects=get('sea3dObject'),teams=get('sea3dTeam');
  function fail(){failed=true;document.body.classList.remove('sea3d-active');get('sea3dStatus').textContent=ui[lang].fallback;host.hidden=true;}
  function option(select,value,label){const e=document.createElement('option');e.value=value;e.textContent=label;select.appendChild(e);}
  function sync(){queued=false;try{
-   const labels=ui[lang]||ui.en;for(const key of ['title','object','team','reset','front','rear','toggle','hint'])get('sea3d-'+key).textContent=labels[key];host.setAttribute('aria-label',labels.title);
+   const labels=ui[lang]||ui.en;for(const key of ['title','object','team','reset','front','rear','hint'])get('sea3d-'+key).textContent=labels[key];host.setAttribute('aria-label',labels.title);
    const view=sea3DView(state,role,selectedTeam,lang,get('vehicleSelect')?.value);
    teams.replaceChildren();view.teams.forEach(x=>option(teams,String(x.id),labels.team+' '+x.id));teams.value=String(view.teamId||'');teams.closest('label').hidden=role!=='instructor'||view.teams.length<2;
    const choices=[['vehicle',labels.vehicle],['configuration',labels.configuration]];
@@ -26,7 +26,7 @@ function sea3DStart(role){
    if(view.phase!==lastPhase){selection=view.current?'part:'+view.current.id:['build','submit','debrief','closed'].includes(view.phase)?'configuration':'vehicle';lastPhase=view.phase;}
    if(view.current&&view.current.id!==lastCurrent)selection='part:'+view.current.id;lastCurrent=view.current?.id||'';
    if(!choices.some(c=>c[0]===selection))selection='vehicle';objects.replaceChildren();choices.forEach(c=>option(objects,...c));objects.value=selection;
-   const next=JSON.stringify([view,selection]);if(failed){fail();return;}if(!enabled){document.body.classList.remove('sea3d-active');host.hidden=true;return;}
+   const next=JSON.stringify([view,selection]);if(failed){fail();return;}
    if(!runtime){host.hidden=false;runtime=SEAThree.mount(host,fail);}
    host.hidden=false;document.body.classList.add('sea3d-active');get('sea3dStatus').textContent=view.current&&selection==='part:'+view.current.id?view.current.title:labels.vehicle;
    if(next!==signature){runtime.update(view,selection);signature=next;}
@@ -34,7 +34,6 @@ function sea3DStart(role){
  function queue(){if(!queued){queued=true;requestAnimationFrame(sync);}}
  objects.addEventListener('change',()=>{selection=objects.value;queue();});teams.addEventListener('change',()=>{selectedTeam=teams.value;signature='';queue();});
  for(const key of ['reset','front','rear'])get('sea3d-'+key).addEventListener('click',()=>runtime?.view(key));
- get('sea3dToggle').addEventListener('change',e=>{enabled=!e.target.checked;signature='';queue();});
  host.addEventListener('sea3drestored',()=>{failed=false;signature='';queue();});
  document.addEventListener('click',queue);document.addEventListener('change',queue);document.addEventListener('input',queue);
  window.addEventListener('pagehide',()=>runtime?.dispose(),{once:true});

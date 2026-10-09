@@ -1,0 +1,7 @@
+Both classroom roles now present the full auction lifecycle through a bundled Three.js workshop. Six mission vehicles and all 70 canonical card models plus the practice model share materials/scale; only revealed and owned equipment reaches the 3D renderer. Purchased equipment appears on separate stations without claiming mechanical-fit certification. The rules, scores and schema-3 saves remain authoritative, with accessible bilingual controls and a 2D/no-WebGL fallback.
+
+This also brings the previously uncommitted game repairs, canonical-source build, privacy/recovery boundaries, lifecycle MPES and scoped historical evidence into version control. All 54 flagged artworks were individually repaired; originals, prompts and conversion hashes are retained. Frozen evidence/reference files preserve exact bytes through Git attributes.
+
+Validation: canonical model inventory and all-vertex camera tests for 77 models; 3D role/visibility/privacy and bundle-hash tests; existing rules, six English/French production-command journeys, artwork routes, build reproduction, package integrity and specification tests. The additive [playable preview](https://shfqrkhn.github.io/SEA-Game/previews/threejs-game-20261008/) has real Codex built-in-browser checks; browser evidence is being finalized. Existing production root files are unchanged by preview publication.
+
+Draft: classroom/content, assistive-technology, low-powered hardware and final release/operations acceptance remain open. This is not a claim of 100% release completion or three fresh full-closure passes.

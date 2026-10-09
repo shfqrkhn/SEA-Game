@@ -25,6 +25,7 @@ jobs:
       - run: node tools/test-journey.mjs
       - run: node tools/test-artwork-host.mjs
       - run: node tools/test-three-presentation.mjs
+      - run: node tools/test-text-encoding.mjs
       - run: npm ci --prefix samples/threejs-recovery
       - run: node samples/threejs-recovery/verify-game.mjs
       - run: node tools/test-package.mjs

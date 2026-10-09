@@ -468,3 +468,6 @@ main{max-width:1440px;padding:12px 18px 24px}
  main>.foot{grid-column:1/-1}
 }
 @media print{main{display:block}.sea3d-workshop{display:none!important}}
+
+/* Embedded vector illustrations are for print; the screen game is 3D only. */
+@media screen{.art{display:none!important}}

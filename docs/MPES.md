@@ -1,6 +1,6 @@
 # SEA Game MPES
 
-Version: 1.2.0. Issued: 2026-10-08. Status: autonomous SDD/TDD lifecycle specification; product acceptance outstanding. SDD means specification-driven development; TDD means test-driven development.
+Version: 1.2.1. Issued: 2026-10-08. Status: autonomous SDD/TDD lifecycle specification; product acceptance outstanding. SDD means specification-driven development; TDD means test-driven development.
 
 This is a standalone lifecycle execution specification for completing Systems Engineering Awareness (SEA Game). “MPES” follows the supplied Omni contract: a specification sufficient for an authorized engineering agent to carry the product through requirements, implementation, verification, release, operation, improvement and retirement without chat history. The supplied source does not establish an expanded form of the acronym; none is invented here.
 
@@ -102,8 +102,8 @@ Statuses at issue: PARTIAL means implementation exists without all evidence; GAP
 | R10 | Schema-3 compatible recovery, bounded import/export, corrupt-state preservation and storage-denied operation are demonstrated. | T08,T11 | M4 | GAP |
 | R11 | Student private state and future market order never leak through public UI, export, QA, logging or optional network requests. | T12 | M3,M4,M6 | PARTIAL |
 | R12 | Complete meaningful EN/FR strings, labels, units, errors, dynamic content and exports; preserve accents and ASCII UI hyphens. | T14 | M5,M7 | PARTIAL |
-| R13 | Responsive task-focused game with primary Three.js workshop, inspectable revealed/owned equipment and accessible 2D/no-WebGL fallback; no QA controls in apps. | T13,T14,T16 | M5 | PARTIAL |
-| R14 | 77 identities have correct mapping, usable embedded fallback, valid raster/vector content and inspected rights/provenance. | T15,T18 | M5,M6 | PARTIAL |
+| R13 | Responsive task-focused game with primary Three.js workshop, inspectable revealed/owned equipment and fully embedded runtime/visuals with WebGL error status; no QA controls in apps. | T13,T14,T16 | M5 | PARTIAL |
+| R14 | 77 identities have correct 3D mapping and embedded print illustration, valid authored raster/vector content and inspected rights/provenance. | T15,T18 | M5,M6 | PARTIAL |
 | R15 | Applicable WCAG 2.2 AA criteria and keyboard/touch/zoom/screen-reader critical journeys pass with evidence. | T13,T16 | M5,M7 | GAP |
 | R16 | Same approved inputs yield identical standalone bytes on supported Windows/Linux build environments. | T17 | M1,M2 | FAIL |
 | R17 | Untrusted text/imports are inert and bounded; external executable resources, telemetry and unauthorized writes are absent. | T11,T12,T18 | M4,M6 | PARTIAL |
@@ -130,7 +130,7 @@ Keep development modular and delivery self-contained. Build-time composition, no
 | Role state/commands | Instructor ledger/auction and student planning/inventory. Apply validated commands transactionally; derive totals from canonical data. Inject clock and random seed where relevant. |
 | Persistence | Role/version envelope, bounded parsing, schema migration, validation/reconstruction, pre-replacement backup and recovery. No merging of instructor and student state. |
 | Presentation | Shared design tokens, accessible confirmation/notification and art rendering; role-specific views. User strings go through safe text/escaping. No business logic embedded in HTML strings. |
-| Build/release | Assemble fixed inputs, inline all runtime code/style/data/fallback art, validate generated structure, hash outputs and prove deterministic parity. |
+| Build/release | Assemble fixed inputs, inline all runtime code/style/data/geometry/print art, validate generated structure, hash outputs and prove deterministic parity. |
 
 Retain current filenames and session compatibility during migration. Extract one concern at a time behind characterization and independent rule tests. Avoid a framework, bundler or runtime library unless a documented benefit outweighs dependency/recovery costs. Development-only browser automation is permitted within authorized environment setup; it never becomes a game dependency. Pin test tool/browser versions when adopted and retain reproducible setup instructions.
 
@@ -158,7 +158,8 @@ Accessibility target is the applicable WCAG 2.2 AA criteria for the supported fu
 
 All static and dynamic content, validation, confirmation, instructions, labels and backup feedback must work in EN/FR. Missing translation keys fail build-time checks rather than silently falling back unnoticed. Preserve accents and meaningful Unicode; user-facing em-dashes become ordinary hyphens per recorded design preference. Language switching preserves phase, entered amounts, intent and private work. Review French with a competent reviewer; lexical key equality alone is not translation acceptance.
 
-Canonical art mapping includes 70 cards, six vehicles and `practice/TRAIN-CAP`. Embed an immediately usable fallback in each HTML. HTTPS mode may try hosted WebP then local WebP; file/offline mode should prefer local and must work with embedded-only assets. Failures cannot block controls or show broken-image icons. Preserve both raster-backed SVG fidelity and actual vector fallback; label their nature accurately. Decode and inspect every image, verify no cropping/slivers, identity and alt text. Art is illustrative, never authoritative rule data. Hash/version assets and record origin, generation/edit history where known, usage permission and unresolved rights. Do not assert that “synthetic” by itself proves all rights are cleared.
+Canonical mapping covers 70 card models, six mission vehicles and TRAIN-CAP. Embed all runtime code, geometry/materials, data and print illustrations in each standalone HTML. Do not load external artwork, use a remote/local image chain or offer an alternate 2D mode. Screen rendering is Three.js; WebGL initialization/context errors show clear bilingual status without changing state. Accessible authoritative controls remain usable. Inspect every geometry/print identity and preserved authored image for bounds, cropping/slivers, labels and recognizable intent. Art is illustrative, never authoritative rule data. Hash/version assets and record origin, generation/edit history, usage permission and unresolved rights.
+
 
 ## Security, privacy and reliability
 
@@ -188,7 +189,7 @@ Run tests against the generated standalone outputs as well as pure modules. Stub
 | T12 | Student DOM/accessibility tree, exports, URLs, console/logs and network inspection at each phase. No market seed/order, instructor-only answers or other teams' private work. Instructor projection/private-entry guard resets on restore and phase change. |
 | T13 | Keyboard-only dialogs and journeys, focus return/order, status/errors, accessible names, screen reader and virtual keyboard. No inert confirmation and no focus trapped outside an active dialog. |
 | T14 | Locale completeness and human EN/FR review over all phases, errors, art alternatives and exports; long strings do not clip, language changes retain edits. |
-| T15 | Enumerate, decode and visually inspect all 77 identities in hosted/local/embedded/vector fallback paths. Broken remote/local requests do not erase fallback; training and vehicle art render in both applicable workflows. |
+| T15 | Enumerate and inspect all 77 geometry/embedded-print identities and preserved authored assets. Verify both HTML files work without resource paths or adjacent assets, have no loading/failure chain or 2D selector, and training/mission/current/owned models render in applicable phases. |
 | T16 | Desktop/tablet/mobile, 320px reflow, 200%/400% zoom, high contrast and reduced motion; touch controls and focused content remain usable. Record screenshots and criterion outcomes. |
 | T17 | Clean Windows/Linux builds twice from identical inputs; byte comparison, syntax, unique IDs, no external scripts, content/assets/locale validation; execute actual CI jobs for candidate SHA. |
 | T18 | Import/text injection, CSP and external-request review, dependency/action provenance, no secrets/telemetry, source/asset licensing and permitted distribution. |
@@ -343,6 +344,10 @@ Final delivery may state “100% of the accepted MPES release scope completed”
 
 The later user instruction, “Make the whole game 3D using 3js”, supersedes R13's earlier prohibition on art-mode controls. Both role applications use one offline bundled Three.js workshop across all eight phases. Preserve authoritative auction/scoring rules, role privacy, bilingual HTML, keyboard controls, backups and schema 3. Six mission vehicles and all 70 canonical cards plus TRAIN-CAP must map to genuine finite geometry with consistent scale/materials. Process cards can be physical review stations. Separate equipment stations illustrate the latest purchase per category without claiming unverified mechanical fit; all purchases remain inspectable and authoritative in the ledger.
 
-R14/R16/R17/R21/R24 qualification also covers exact model-ID inventory, all-vertex camera framing at portrait/wide aspects, pinned dependency/bundle recipe, no runtime CDN/fetch/eval, copied public data only, hidden-market/private-draft isolation, responsive and keyboard interaction, on-demand rendering/disposal, context failure and usable fallback. Existing T13/T15/T16/T17/T18/T22/T25/T27 apply without replacing earlier obligations.
+R14/R16/R17/R21/R24 qualification also covers exact model-ID inventory, all-vertex camera framing at portrait/wide aspects, pinned dependency/bundle recipe, no runtime CDN/fetch/eval, copied public data only, hidden-market/private-draft isolation, responsive and keyboard interaction, on-demand rendering/disposal, context failure with clear status and unchanged game state. Existing T13/T15/T16/T17/T18/T22/T25/T27 apply without replacing earlier obligations.
 
 After `npm ci --prefix samples/threejs-recovery`, regenerate the bundle with `node samples/threejs-recovery/build-game.mjs` and the games with `node tools/build.mjs`. Ordinary builds need only Node and the checked-in bundle. `node tools/test-three-presentation.mjs` verifies visibility/privacy and bundle provenance; `node samples/threejs-recovery/verify-game.mjs` verifies all geometry and camera poses against the canonical inventory. Run existing rule/journey/package/specification checks as well. Exact-byte hosted browser qualification is evidence, not classroom acceptance. The user directed best judgment for all questions; continue routine technical work without asking. Genuine external acceptance gates remain recorded, with no invented waiver or completed full-closure pass.
+
+## Fully embedded presentation amendment — 2026-10-08
+
+The user's subsequent instruction says fallback methods are unnecessary when everything is embedded. It supersedes the earlier 2D/no-WebGL fallback design: remove the 2D selector and external WebP remote/local loading/failure chain. Each HTML embeds Three.js, all geometry/materials, translations, rules and native print illustrations. CSP denies image and connection loads. WebGL errors are reported, not routed through another rendering method; underlying game controls and recovery stay intact. Preserve old fallback receipts as historical evidence only. T15 now qualifies the embedded resources, all identities and absence of a resource-loading chain, while R17 and other game/privacy/recovery gates remain unchanged.

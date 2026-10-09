@@ -27,7 +27,7 @@ for(const name of ['instructor','student']){
  const hash=createHash('sha256').update(scripts[0][1],'utf8').digest('base64'),directives=new Map(meta[1].split(';').map(item=>{const [key,...values]=item.trim().split(/\s+/);return [key,values]}));
  assert.deepEqual(directives.get('script-src'),["'sha256-"+hash+"'"],name+' policy permits only the exact bundled script');
  assert.deepEqual(directives.get('script-src-attr'),["'none'"]);assert.deepEqual(directives.get('default-src'),["'none'"]);assert.deepEqual(directives.get('connect-src'),["'none'"]);assert.deepEqual(directives.get('object-src'),["'none'"]);assert.deepEqual(directives.get('base-uri'),["'none'"]);assert.deepEqual(directives.get('form-action'),["'none'"]);
- assert.deepEqual(directives.get('img-src'),["'self'",'file:','https://shfqrkhn.github.io/SEA-Game/assets/v1/']);
+ assert.deepEqual(directives.get('img-src'),["'none'"]);
  assert.ok(delivered.indexOf(meta[0])<delivered.indexOf('<style>'),'Policy precedes resource content');assert.ok(!delivered.includes('\r'),'Delivered hash input uses LF');
  assert.notEqual(createHash('sha256').update(scripts[0][1]+' ').digest('base64'),hash,'One-byte script change cannot retain the bound digest');
  assert.match(template,/id="practiceArt"/,'Practice art host');
@@ -345,17 +345,17 @@ function extractFunction(source,name){
 // R14 / T15: production artwork routes and mission previews preserve all identities.
 const missionArt={COMBAT:'combat',RECCE:'recce',TROOP:'troop-carrier',COMMAND:'command-post',RECOVERY:'recovery',MINE:'mine-clearing'};
 for(const roleSource of [instructorSource,studentSource])for(const lang of ['en','fr']){
- const artNames=['art','vehiclePreview'];const named=artNames.map(name=>extractFunction(presentation,name)).join('\n');
+ const artNames=['embeddedArt','art','vehiclePreview'];const named=artNames.map(name=>extractFunction(presentation,name)).join('\n');
  const builtins=Object.fromEntries([...Object.values(missionArt),'TRAIN-CAP',...acquisitionRules.CARD_INDEX.keys()].map(id=>[id,'<svg data-test-id="'+id+'"></svg>']));
- const api=runInNewContext(sharedEngineSource+'\n'+named+'\n;({art,vehiclePreview})',{lang,BUILTIN_CARD_ART:builtins,placeholderArt:card=>builtins[card.id]||'<svg></svg>',esc:String,t:key=>key,navigator:{onLine:true},location:{protocol:'https:'}});
+ const api=runInNewContext(sharedEngineSource+'\n'+named+'\n;({art,vehiclePreview})',{lang,BUILTIN_CARD_ART:builtins,esc:String,t:key=>key,navigator:{onLine:true},location:{protocol:'https:'}});
  for(const[mission,id]of Object.entries(missionArt)){
   const html=api.art({id,title:{en:'English mission',fr:'Mission française'}});
-  assert.ok(html.includes('https://shfqrkhn.github.io/SEA-Game/assets/v1/vehicles/'+id+'.webp'),'Mission raster route uses vehicles directory: '+id);
-  assert.ok(html.includes('data-test-id="'+id+'"'),'Vector fallback is immediately included');
-  assert.ok(api.vehiclePreview(mission).includes('/vehicles/'+id+'.webp'),'Mission preview displays its illustration');
+  assert.doesNotMatch(html,/<img|\ssrc=/,'Mission artwork has no external resource');
+  assert.ok(html.includes('data-test-id="'+id+'"'),'Embedded illustration is immediately included');
+  assert.ok(api.vehiclePreview(mission).includes('data-test-id="'+id+'"'),'Mission preview displays its illustration');
  }
- const fallback=runInNewContext(extractFunction(presentation,'placeholderArt')+'\n;placeholderArt',{lang,BUILTIN_CARD_ART:{combat:'<svg role="img" aria-label="combat detailed vector artwork"></svg>'},esc:String});
- assert.ok(fallback({id:'combat',title:{en:'English mission',fr:'Mission française'}}).includes('aria-label="'+(lang==='en'?'English mission':'Mission française')+'"'),'Embedded fallback uses localized description');
+ const fallback=runInNewContext(extractFunction(presentation,'embeddedArt')+'\n;embeddedArt',{lang,BUILTIN_CARD_ART:{combat:'<svg role="img" aria-label="combat detailed vector artwork"></svg>'},esc:String});
+ assert.ok(fallback({id:'combat',title:{en:'English mission',fr:'Mission française'}}).includes('aria-label="'+(lang==='en'?'English mission':'Mission française')+'"'),'Embedded illustration uses localized description');
 }
 const artIdentities=[...acquisitionRules.CARD_INDEX.keys(),'TRAIN-CAP',...Object.values(missionArt)];
 for(const [role,roleSource]of [['instructor',instructorSource],['student',studentSource]]){
@@ -372,36 +372,20 @@ assert.throws(()=>embeddedArtworkSource([...artIdentities.slice(1),artIdentities
 assert.throws(()=>embeddedArtworkSource([...artIdentities.slice(1),'../outside']),/Unsafe/);
 for(const [protocol,online]of [['https:',true],['https:',false],['file:',true],['file:',false]]){
  const builtin=Object.fromEntries(artIdentities.map(id=>[id,'<svg data-identity="'+id+'" role="img" aria-label="old"></svg>']));
- const listeners={};let registrations=0;
- const api=runInNewContext(sharedEngineSource+'\n'+presentation+'\n;({art,artworkAssetPath,bindArtworkEvents})',{BUILTIN_CARD_ART:builtin,lang:'fr',esc:value=>String(value).replaceAll('"','&quot;'),navigator:{onLine:online},location:{protocol},document:{addEventListener(type,callback,capture){assert.equal(capture,true);listeners[type]=callback;registrations++}}});
- api.bindArtworkEvents();api.bindArtworkEvents();assert.equal(registrations,2,'Capture listeners bind once');
- for(const id of artIdentities){
-  const expected=id==='TRAIN-CAP'?'practice/TRAIN-CAP.webp':Object.values(missionArt).includes(id)?'vehicles/'+id+'.webp':'cards/'+id+'.webp';
-  assert.equal(api.artworkAssetPath(id),expected);
-  const html=api.art({id,title:{en:'English',fr:'Français "nom"'}}),src=html.match(/ src="([^"]+)"/)[1];
-  assert.equal(src,(protocol==='https:'&&online?'https://shfqrkhn.github.io/SEA-Game/assets/v1/':'./assets/v1/')+expected);
-  assert.ok(html.includes('data-identity="'+id+'"'));assert.ok(html.includes('aria-label="Français &quot;nom&quot;"'));assert.ok(html.includes('alt="Français &quot;nom&quot;"'));
-  assert.ok(!/\son[a-z]+\s*=/.test(html),'Artwork contains no executable attributes');
-  const image={tagName:'IMG',isConnected:true,style:{opacity:'0'},dataset:{seaArt:id,seaArtRemote:html.match(/data-sea-art-remote="([01])"/)[1]},removed:false,src,remove(){this.removed=true;this.isConnected=false}};
-  listeners.load({target:image});assert.equal(image.style.opacity,'1');
-  const fail=()=>listeners.error({target:image});fail();
-  if(protocol==='https:'&&online){assert.equal(image.removed,false);assert.equal(image.src,'./assets/v1/'+expected);fail()}
-  assert.equal(image.removed,true,'Exhausted optional raster removes itself, leaving the vector');
-  listeners.load({target:image});assert.equal(image.isConnected,false);
- }
- for(const target of [{tagName:'DIV',isConnected:true,dataset:{seaArt:'CAP-F'}},{tagName:'IMG',isConnected:false,dataset:{seaArt:'CAP-F'}},{tagName:'IMG',isConnected:true,dataset:{seaArt:'../outside'}}]){listeners.error({target});listeners.load({target});assert.equal(target.style,undefined,'Unrelated or detached targets are ignored')}
- assert.equal(api.artworkAssetPath('../outside'),null);assert.equal(api.artworkAssetPath('https://example.invalid'),null);
+ const api=runInNewContext(sharedEngineSource+'\n'+presentation+'\n;({art,artworkAssetPath})',{BUILTIN_CARD_ART:builtin,lang:'fr',esc:value=>String(value).replaceAll('"','&quot;'),navigator:{onLine:online},location:{protocol}});
+ for(const id of artIdentities){const html=api.art({id,title:{en:'English',fr:'Français "nom"'}});assert.ok(html.includes('data-identity="'+id+'"'));assert.ok(html.includes('aria-label="Français &quot;nom&quot;"'));assert.doesNotMatch(html,/<img|\ssrc=|https?:|\son[a-z]+\s*=/,'Every identity is inline and has no resource/failure handler');}
+ assert.equal(api.art({id:'unknown',title:{en:'Unknown',fr:'Inconnu'}}),'');
 }
 for(const lang of ['en','fr']){
- const builtin=Object.fromEntries(artIdentities.map(id=>[id,'<svg role="img" aria-label="old"></svg>'])),state={phase:'planning',vehiclesLocked:false,sessionCode:'SEA3-T6-0123456789ABCDEF',teamCount:6,teams:Object.keys(missionArt).map((mission,i)=>({id:i+1,mission,purchases:[]}))},target={id:'planningTeams',innerHTML:'',querySelectorAll:()=>[]};
+ const builtin=Object.fromEntries(artIdentities.map(id=>[id,'<svg data-identity="'+id+'" role="img" aria-label="old"></svg>'])),state={phase:'planning',vehiclesLocked:false,sessionCode:'SEA3-T6-0123456789ABCDEF',teamCount:6,teams:Object.keys(missionArt).map((mission,i)=>({id:i+1,mission,purchases:[]}))},target={id:'planningTeams',innerHTML:'',querySelectorAll:()=>[]};
  runInNewContext(sharedEngineSource+'\n'+presentation+'\n'+['choicesEditable','vehicleOptions','renderAssignments'].map(name=>extractFunction(instructorSource,name)).join('\n')+'\nrenderAssignments(target)',{state,target,lang,BUILTIN_CARD_ART:builtin,esc:String,t:key=>key,navigator:{onLine:false},location:{protocol:'file:'},document:{getElementById:()=>null}});
- for(const id of Object.values(missionArt))assert.ok(target.innerHTML.includes('./assets/v1/vehicles/'+id+'.webp'),'Instructor assignment displays '+id);
+ for(const id of Object.values(missionArt))assert.ok(target.innerHTML.includes('data-identity="'+id+'"'),'Instructor assignment displays '+id);
  const elements={},$=key=>elements[key]||(elements[key]={value:'',textContent:'',innerHTML:''});
  const studentState={team:{id:1,mission:'RECCE'},lockedMission:null,vehicleConfirmed:true,plan:'private plan',risks:'private risks',maxWtpCents:85000000};
  runInNewContext(sharedEngineSource+'\n'+presentation+'\n'+['vehicleOptions','amountInput','renderVehiclePreview','renderPlanning'].map(name=>extractFunction(studentSource,name)).join('\n')+'\nrenderPlanning()',{state:studentState,lang,BUILTIN_CARD_ART:builtin,$,esc:String,t:key=>key,navigator:{onLine:false},location:{protocol:'file:'},renderRequirements(){},document:{getElementById:id=>$('#'+id)}});
- assert.ok($('#planVehiclePreview').innerHTML.includes('./assets/v1/vehicles/recce.webp'),'Student Planning displays the selected mission');
+ assert.ok($('#planVehiclePreview').innerHTML.includes('data-identity="recce"'),'Student Planning displays the selected mission');
 }
-console.log('All 77 artwork routes, optional-raster failure and bilingual mission-preview integration PASS');
+console.log('All 77 embedded artwork identities and bilingual mission-preview integration PASS');
 // R02/R09/R10, T03/T10/T11: instructor setup generation is transactional.
 function setupGenerationHarness(){
  const elements={'#teamCount':{value:'2'},'#bidSeconds':{value:'30'},'#revealMode':{value:'ROUND'},'#timingMode':{value:'TIMED'},'#setupStatus':{textContent:''}},calls={saves:0,renders:0,stops:0,notices:[],pending:null,approved:null};

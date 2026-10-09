@@ -14,7 +14,7 @@
     "One-byte identity mutation changes convergence key"
   ],
   "scenarioCount": 29,
-  "key": "e1a7ffef7d60779cb3a36a7f36329c29d39c0c61da2d69f28aa0b2614a0f4eca",
+  "key": "ecbf88e1406c986a8ecd2f41927717f70ecc9314aea73368449c0065ecfc54a4",
   "excludedRunRecords": [
     "docs/evidence/convergence/**",
     "docs/evidence/audit-runs/**",
