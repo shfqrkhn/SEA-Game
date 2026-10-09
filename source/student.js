@@ -87,7 +87,7 @@ function phase(p){
  const moved=state.phase!==p;state.phase=p;$$('.section').forEach(x=>x.classList.toggle('active',x.id===p));$('#phaseBadge').textContent=t('phase.'+p);if(moved){window.scrollTo(0,0);const h=document.querySelector('#'+p+' h2');if(h){h.tabIndex=-1;h.focus({preventScroll:true})}}saveState();return true;
 }
 
-function saveState(){if(recoveryBlocked)return false;if(!state.sessionCode)return true;try{state.lang=lang;sessionStorage.setItem(STORE_KEY,JSON.stringify(state));return true}catch{storageFailed=true;storageNotice('common.refresh');return false}}
+function saveState(){if(recoveryBlocked)return false;if(!state.sessionCode)return true;try{state.lang=lang;const raw=JSON.stringify(state);if(sessionStorage.getItem(STORE_KEY)!==raw)sessionStorage.setItem(STORE_KEY,raw);return true}catch{storageFailed=true;storageNotice('common.refresh');return false}}
 
 function restoreState(){
  let raw;try{raw=sessionStorage.getItem(STORE_KEY)}catch{storageFailed=true;return false}if(!raw)return false;

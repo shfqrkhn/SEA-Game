@@ -1,16 +1,10 @@
 import * as THREE from 'three';
 import {RoundedBoxGeometry} from 'three/addons/geometries/RoundedBoxGeometry.js';
 import {box,cylinder,rod,tube,bolts,createWheel,createVehicle,createWinch} from '../../samples/threejs-recovery/models.mjs';
+import {materials} from './materials.mjs';
+export {materials};
 
 // Original concept geometry in metres. References inform construction, never game ratings.
-export function materials(){
- const data=new Uint8Array(64*64*4);let seed=947;
- for(let i=0;i<data.length;i+=4){seed=(Math.imul(seed,1664525)+1013904223)>>>0;const n=205+(seed>>>27);data.set([n,n,n,255],i);}
- const grain=new THREE.DataTexture(data,64,64);grain.wrapS=grain.wrapT=THREE.RepeatWrapping;grain.repeat.set(4,4);grain.needsUpdate=true;
- const mat=(color,roughness,metalness=0,extra={})=>new THREE.MeshStandardMaterial({color,roughness,metalness,...extra});
- const result={paint:new THREE.MeshPhysicalMaterial({color:'#596548',roughness:.72,metalness:.12,roughnessMap:grain,bumpMap:grain,bumpScale:.006,clearcoat:.12,clearcoatRoughness:.6}),edge:mat('#343d32',.72,.24,{roughnessMap:grain}),steel:mat('#969e9c',.27,.88),darkSteel:mat('#42494a',.44,.8),rubber:mat('#191c19',.93,0,{bumpMap:grain,bumpScale:.012}),glass:new THREE.MeshPhysicalMaterial({color:'#173137',roughness:.08,metalness:.18,clearcoat:1,envMapIntensity:1.5}),amber:mat('#e1a33c',.29,.2),lamp:mat('#e2e9db',.24,.1),red:mat('#b34736',.42)};
- for(const [key,name]of Object.entries({paint:'powder coated metal',steel:'machined steel',rubber:'moulded rubber',glass:'optical glass'}))result[key].name=name;return result;
-}
 export function soften(model){
  model.traverse(o=>{if(o.isMesh&&o.geometry.type==='BoxGeometry'){const {width:w,height:h,depth:d}=o.geometry.parameters;if(Math.min(w,h,d)>.045){o.geometry.dispose();o.geometry=new RoundedBoxGeometry(w,h,d,1,Math.min(.024,Math.min(w,h,d)*.12));}}});return model;
 }
@@ -28,9 +22,9 @@ export function detailPart(g,m,prefix,v){
   // The seating factory owns variant dimensions, restraints and boarding mounts.
   return soften(g);
  }else if(prefix==='FP'){
-  for(const s of [-1,1]){cylinder(g,m.steel,.075,.07,[0,.56,s*.30],'z');bolts(g,m.darkSteel,[0,.56,s*.345],.05,6,'z',.009);}
-  panel(g,m,[.31,.25,.018],[-.15,.5,-.57]);rod(g,m.darkSteel,[-.26,.63,-.58],[-.04,.63,-.58],.014);
-  tube(g,m.rubber,[[-.13,.12,.22],[-.3,.28,.35],[-.27,.57,.36],[.08,.69,.32]],.017);
+  // The station factory owns its shield, supported control enclosure and
+  // trunnion fittings. The former block-layout overlays do not mate to them.
+  return soften(g);
  }else if(prefix==='PRO'){
   // The protection factory owns its formed layers, apertures and attachments;
   // generic overlay fittings would no longer correspond to those surfaces.
@@ -67,38 +61,84 @@ export function formedCabPanel(g,m,outline,holes,place){
  const p=geometry.attributes.position;for(let i=0;i<p.count;i++)p.setXYZ(i,...place(p.getX(i),p.getY(i),p.getZ(i)));geometry.computeVertexNormals();
  const material=m.clone();material.side=THREE.DoubleSide;const mesh=new THREE.Mesh(geometry,material);mesh.name='hull shell';mesh.castShadow=true;mesh.receiveShadow=true;g.add(mesh);return mesh;
 }
+function carrierSheet(g,material,outline,holes,place,depth,name){
+ const shape=new THREE.Shape();outline.forEach(([a,b],i)=>i?shape.lineTo(a,b):shape.moveTo(a,b));shape.closePath();shape.holes.push(...holes);
+ const geometry=new THREE.ExtrudeGeometry(shape,{depth,steps:1,curveSegments:12,bevelEnabled:true,bevelSize:.002,bevelThickness:.001,bevelSegments:2});
+ const p=geometry.attributes.position;for(let i=0;i<p.count;i++)p.setXYZ(i,...place(p.getX(i),p.getY(i),p.getZ(i)));geometry.computeVertexNormals();
+ const finish=material.clone();finish.side=THREE.DoubleSide;const mesh=new THREE.Mesh(geometry,finish);mesh.name=name;mesh.castShadow=mesh.receiveShadow=true;g.add(mesh);return mesh;
+}
+function carrierWindow(g,m,bounds,place){
+ const [a,b,c,d]=bounds,contour=roundedOpening(a,b,c,d,.045),outer=roundedOpening(a-.038,b-.038,c+.038,d+.038,.065).getPoints(12).map(p=>[p.x,p.y]);
+ carrierSheet(g,m.edge,outer,[contour.clone()],(u,y,t)=>place(u,y,.013+t),.017,'hull shell').userData.component='carrier window retaining bezel';
+ const gasket=roundedOpening(a-.007,b-.007,c+.007,d+.007,.052).getPoints(12).map(p=>[p.x,p.y]);
+ carrierSheet(g,m.rubber,gasket,[roundedOpening(a+.016,b+.016,c-.016,d-.016,.029)],(u,y,t)=>place(u,y,-.034+t),.066,'carrier window compression gasket');
+ const optical=m.glass.clone();optical.color.set('#92b2b0');optical.transparent=true;optical.opacity=.38;optical.metalness=0;optical.depthWrite=false;
+ carrierSheet(g,optical,contour.getPoints(12).map(p=>[p.x,p.y]),[],(u,y,t)=>place(u,y,-.025-t),.010,'cab glazing').castShadow=false;
+ carrierSheet(g,m.edge,outer,[contour.clone()],(u,y,t)=>place(u,y,-.057-t),.012,'hull shell').userData.component='carrier window inner retaining frame';
+ for(const x of [a-.023,c+.023])for(const y of [b+.04,d-.04]){
+  const center=new THREE.Vector3(...place(x,y,.032)),axis=new THREE.Vector3(...place(x,y,.042)).sub(center).normalize();
+  const bolt=cylinder(g,m.steel,.007,.009,center.toArray(),'y',.007,6);bolt.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),axis);bolt.name='carrier bezel seated fastener';
+ }
+}
 export function missionBase(id,m){
  if(id==='RECOVERY'){const g=createVehicle(m);g.traverse(o=>{if(o.isMesh&&o.geometry.type==='BufferGeometry'&&o.material.name!=='optical glass')o.name='hull shell';});recoveryConstruction(g,m);const old=g.getObjectByName('mounted WR-12'),winch=detailPart(createWinch(m),m,'ACC',5);winch.name='mounted WR-12';winch.position.copy(old.position);winch.quaternion.copy(old.quaternion);old.removeFromParent();old.traverse(o=>o.geometry?.dispose());g.add(winch);detailVehicle(g,m,6.25,2.3);return soften(g);}
  const spec={COMBAT:[6.8,2.65,4],RECCE:[5.5,2.3,2],TROOP:[6.9,2.6,3],COMMAND:[6.7,2.6,3],MINE:[6.8,2.65,4]}[id], [length,width,axles]=spec;
- const g=new THREE.Group();g.name=id;g.userData={units:'metres',concept:true,axles,roof:2.37,length,width};
+ const g=new THREE.Group();g.name=id;g.userData={units:'metres',concept:true,axles,roof:id==='COMMAND'?2.75:2.37,length,width};
  const front=length/2,rear=-front,half=width/2;
  box(g,m.darkSteel,[length-.45,.2,width*.58],[0,.82,0],'chassis');
  box(g,m.edge,[length-.25,.48,width*.8],[0,1.16,0],'lower hull');
- for(const s of [-1,1])face(g,m.paint,[[rear,1.2,s*half*.75],[front,1.2,s*half*.75],[front-.75,2.36,s*half*.85],[rear+.17,2.36,s*half*.85]]);
- face(g,m.paint,[[rear+.17,2.36,-half*.85],[front-.75,2.36,-half*.85],[front-.75,2.36,half*.85],[rear+.17,2.36,half*.85]]);
- face(g,m.paint,[[front,1.2,-half*.75],[front,1.2,half*.75],[front-.75,2.36,half*.85],[front-.75,2.36,-half*.85]]);
- const frontX=y=>front-(y-1.2)*.75/1.16+.012;
- for(const range of [[-half*.67,-.09],[.09,half*.67]]){
-  face(g,m.glass,[[frontX(1.80),1.80,range[0]],[frontX(1.80),1.80,range[1]],[frontX(2.13),2.13,range[1]],[frontX(2.13),2.13,range[0]]]);
-  for(const y of [1.80,2.13])rod(g,m.rubber,[frontX(y)+.005,y,range[0]],[frontX(y)+.005,y,range[1]],.012);
-  for(const z of range)rod(g,m.rubber,[frontX(1.80)+.005,1.80,z],[frontX(2.13)+.005,2.13,z],.012);
-  rod(g,m.rubber,[frontX(1.83)+.018,1.83,(range[0]+range[1])*.5],[frontX(2.03)+.018,2.03,range[1]-.08],.009);
+ for(const s of [-1,1]){
+  const sideZ=y=>s*half*(.75+(y-1.2)*.1/1.16),bounds=[front-1.86,1.87,front-1.02,2.16];
+  const sideOpenings=[roundedOpening(...bounds)];
+  if(id==='TROOP')for(let i=0;i<4;i++)sideOpenings.push(roundedOpening(rear+.48+i*.94,1.97,rear+1.05+i*.94,2.20,.035));
+  formedCabPanel(g,m.paint,[[rear,1.2],[front,1.2],[front-.75,2.36],[rear+.17,2.36]],sideOpenings,(x,y,t)=>[x,y,sideZ(y)-s*t]);
+  if(id==='TROOP')for(let i=0;i<4;i++)carrierWindow(g,m,[rear+.48+i*.94,1.97,rear+1.05+i*.94,2.20],(x,y,t)=>[x,y,sideZ(y)+s*t]);
+  if(id==='COMMAND')formedCabPanel(g,m.paint,[[rear+.17,2.36],[1.14,2.36],[.95,2.74],[rear+.17,2.74]],[],(x,y,t)=>[x,y,s*(half*.85-t)]).userData.component='command raised rear side';
+  carrierSheet(g,m.paint,[[front-2.01,1.48],[front-.97,1.48],[front-.86,2.28],[front-1.02,2.31],[front-2.01,2.31]],[roundedOpening(...bounds)],(x,y,t)=>[x,y,sideZ(y)+s*(.012+t)],.015,'hull shell').userData.component='carrier formed cab door';
+  carrierWindow(g,m,bounds,(x,y,t)=>[x,y,sideZ(y)+s*t]);
  }
- face(g,m.edge,[[rear,1.2,-half*.75],[rear+.17,2.36,-half*.85],[rear+.17,2.36,half*.85],[rear,1.2,half*.75]]);
+ if(id==='COMBAT'){
+  const ring=new THREE.Path();ring.absarc(-.35,0,.405,0,Math.PI*2,true);
+  formedCabPanel(g,m.paint,[[rear+.17,-half*.85],[front-.75,-half*.85],[front-.75,half*.85],[rear+.17,half*.85]],[ring],(x,z,t)=>[x,2.36-t,z]);
+ }else if(id==='RECCE'){
+  const mast=new THREE.Path();mast.absarc(-1,-.48,.092,0,Math.PI*2,true);
+  formedCabPanel(g,m.paint,[[rear+.17,-half*.85],[front-.75,-half*.85],[front-.75,half*.85],[rear+.17,half*.85]],[mast],(x,z,t)=>[x,2.36-t,z]);
+ }else if(id==='COMMAND'){
+  face(g,m.paint,[[1.14,2.36,-half*.85],[front-.75,2.36,-half*.85],[front-.75,2.36,half*.85],[1.14,2.36,half*.85]]);
+  formedCabPanel(g,m.paint,[[rear+.17,-half*.85],[.95,-half*.85],[.95,half*.85],[rear+.17,half*.85]],[],(x,z,t)=>[x,2.74-t,z]).userData.component='command raised rear roof';
+  formedCabPanel(g,m.paint,[[.95,-half*.85],[1.14,-half*.85],[1.14,half*.85],[.95,half*.85]],[],(x,z,t)=>[x,2.74-(x-.95)*.38/.19-t,z]).userData.component='command roof transition';
+ }else face(g,m.paint,[[rear+.17,2.36,-half*.85],[front-.75,2.36,-half*.85],[front-.75,2.36,half*.85],[rear+.17,2.36,half*.85]]);
+ const frontX=y=>front-(y-1.2)*.75/1.16;
+ formedCabPanel(g,m.paint,[[-half*.75,1.2],[half*.75,1.2],[half*.85,2.36],[-half*.85,2.36]],[roundedOpening(-half*.67,1.80,-.09,2.13),roundedOpening(.09,1.80,half*.67,2.13)],(z,y,t)=>[frontX(y)-t,y,z]);
+ for(const range of [[-half*.67,-.09],[.09,half*.67]]){
+  carrierWindow(g,m,[range[0],1.80,range[1],2.13],(z,y,t)=>[frontX(y)+t,y,z]);
+  rod(g,m.rubber,[frontX(1.83)+.020,1.83,(range[0]+range[1])*.5],[frontX(2.03)+.020,2.03,range[1]-.08],.009).name='carrier seated windshield wiper';
+ }
+ if(id==='TROOP')formedCabPanel(g,m.edge,[[-half*.75,1.2],[half*.75,1.2],[half*.85,2.36],[-half*.85,2.36]],[roundedOpening(-.74,1.34,.74,2.23,.045)],(z,y,t)=>[rear+(y-1.2)*.17/1.16+t,y,z]);
+ else if(id==='COMMAND')formedCabPanel(g,m.edge,[[-half*.75,1.2],[half*.75,1.2],[half*.85,2.36],[half*.85,2.74],[-half*.85,2.74],[-half*.85,2.36]],[roundedOpening(-.47,1.47,.47,2.50,.045)],(z,y,t)=>[rear+(Math.min(y,2.36)-1.2)*.17/1.16+t,y,z]);
+ else face(g,m.edge,[[rear,1.2,-half*.75],[rear+.17,2.36,-half*.85],[rear+.17,2.36,half*.85],[rear,1.2,half*.75]]);
  const wheelXs=axles===2?[-1.67,1.67]:axles===3?[-2.25,-.75,1.9]:[-2.55,-1.05,1.0,2.4];
  for(const x of wheelXs){cylinder(g,m.darkSteel,.06,width*.81,[x,.67,0],'z');cylinder(g,m.edge,.13,.31,[x,.67,0],'z');for(const s of [-1,1]){const wheel=createWheel(m);wheel.position.set(x,.62,s*half*.88);g.add(wheel);rod(g,m.steel,[x-.15,.75,s*half*.62],[x+.1,1.2,s*half*.68],.045);box(g,m.paint,[1.22,.075,.48],[x,1.30,s*half*.91],'wheel guard');}}
  for(const s of [-1,1]){const z=s*half*.855,sideZ=y=>s*half*(.75+(y-1.2)*.1/1.16)+s*.01;
-  face(g,m.glass,[[front-.93,1.88,sideZ(1.88)],[front-1.88,1.88,sideZ(1.88)],[front-1.88,2.16,sideZ(2.16)],[front-1.05,2.16,sideZ(2.16)]]);
-  rod(g,m.darkSteel,[front-2.05,1.55,z],[front-2.05,2.29,z],.009);rod(g,m.steel,[front-1.83,1.78,z+.02*s],[front-1.61,1.78,z+.02*s],.014);
+  for(const y of [1.65,2.24]){box(g,m.darkSteel,[.055,.09,.041],[front-1.97,y,sideZ(y)+s*.024],'carrier door seated hinge leaf');cylinder(g,m.steel,.010,.065,[front-1.97,y,sideZ(y)+s*.043],'y',.010,16).name='carrier door hinge pin';}
+  const handleZ=sideZ(1.76)+s*.054;
+  for(const x of [front-1.56,front-1.34])rod(g,m.edge,[x,1.76,sideZ(1.76)+s*.017],[x,1.76,handleZ],.011).name='carrier door pull mounting post';
+  rod(g,m.steel,[front-1.56,1.76,handleZ],[front-1.34,1.76,handleZ],.012).name='carrier exterior door pull';
   box(g,m.edge,[.68,.05,.32],[front-1.61,1.36,s*(half*.87+.14)],'entry step');
+  for(const x of [front-1.83,front-1.39]){const inner=Math.abs(sideZ(1.36))-.010,outer=half*.87+.14;box(g,m.edge,[.05,.10,outer-inner+.05],[x,1.33,s*(inner+outer)/2],'carrier entry step hull bracket');}
   rod(g,m.darkSteel,[front-.98,1.86,z],[front-.9,2.07,s*(half+.1)],.02);box(g,m.glass,[.055,.20,.15],[front-.9,2.07,s*(half+.1)],'mirror');
-  for(let i=0;i<4;i++){const x=rear+.6+i*.64;panel(g,m,[.51,.49,.04],[x,1.95,s*half*.85]);}
+  if(id!=='TROOP')for(let i=0;i<4;i++){const x=rear+.6+i*.64;panel(g,m,[.51,.49,.04],[x,1.95,s*half*.85]);}
   for(let i=0;i<10;i++)box(g,m.darkSteel,[.02,.22,.02],[front-1.6+i*.06,2.38,s*.57],'vent grille');
-  cylinder(g,m.lamp,.067,.05,[front+.012,1.36,s*half*.65],'x');cylinder(g,m.amber,.028,.055,[front+.015,1.36,s*half*.76],'x');box(g,m.red,[.03,.07,.13],[rear-.02,1.32,s*half*.65]);
+  const lampY=1.385,lampX=frontX(lampY),lampZ=s*half*.65;
+  box(g,m.edge,[.16,.21,.205],[lampX+.035,lampY,lampZ],'carrier front lamp housing');
+  box(g,m.rubber,[.020,.175,.174],[lampX+.121,lampY,lampZ],'carrier lamp seated gasket');
+  cylinder(g,m.lamp,.058,.023,[lampX+.137,1.355,lampZ],'x',.058,32).name='carrier headlamp lens';
+  cylinder(g,m.amber,.022,.023,[lampX+.137,1.445,lampZ],'x',.022,24).name='carrier indicator lens';
+  box(g,m.red,[.03,.07,.13],[rear-.02,1.32,s*half*.65]);
  }
  box(g,m.darkSteel,[.15,.17,width*.85],[front,1.12,0],'front bumper');
  for(const s of [-1,1]){cylinder(g,m.steel,.055,.08,[front+.1,1.14,s*.73],'x');rod(g,m.steel,[rear+.25,1.44,s*.5],[rear+.25,2.05,s*.5],.016);}
- cylinder(g,m.edge,.32,.04,[.4,2.39,.5],'roof hatch');
+ cylinder(g,m.edge,.32,.04,[.4,id==='COMMAND'?2.77:2.39,.5],'roof hatch');
  detailVehicle(g,m,length,width);return soften(g);
 }
 function recoveryConstruction(g,m){
@@ -107,15 +147,26 @@ function recoveryConstruction(g,m){
  const polygons=g.children.filter(o=>o.isMesh&&o.geometry.type==='BufferGeometry'),paint=polygons.filter(o=>o.material.name!=='optical glass'),glass=polygons.filter(o=>o.material.name==='optical glass');
  function reshape(mesh,points){if(!mesh)return;const vertices=[];for(let i=1;i<points.length-1;i++)vertices.push(...points[0],...points[i],...points[i+1]);mesh.geometry.dispose();mesh.geometry=new THREE.BufferGeometry();mesh.geometry.setAttribute('position',new THREE.Float32BufferAttribute(vertices,3));mesh.geometry.computeVertexNormals();}
  const frontX=y=>2.94-(y-1.74)*(.47/1.01)+.012;
+ recoveryFrame(g,m);
+ for(const old of [...g.children]){
+  const obsoleteDoorLine=old.geometry?.type==='CylinderGeometry'&&old.geometry.parameters.radiusTop===.01&&Math.abs(Math.abs(old.position.z)-1.166)<.001;
+  if(old.name==='door handle'||obsoleteDoorLine){old.removeFromParent();old.geometry?.dispose();}
+ }
  for(const guard of g.children.filter(o=>o.name==='wheel guard')){const shape=new THREE.Shape();shape.moveTo(-.74,-.04);shape.lineTo(-.74,.19);shape.quadraticCurveTo(-.72,.25,-.68,.31);shape.lineTo(-.47,.68);shape.quadraticCurveTo(-.43,.74,-.36,.74);shape.lineTo(.36,.74);shape.quadraticCurveTo(.43,.74,.47,.68);shape.lineTo(.68,.31);shape.quadraticCurveTo(.72,.25,.74,.19);shape.lineTo(.74,-.04);shape.lineTo(.66,-.04);shape.lineTo(.66,.18);shape.lineTo(.39,.66);shape.lineTo(-.39,.66);shape.lineTo(-.66,.18);shape.lineTo(-.66,-.04);shape.closePath();guard.geometry.dispose();guard.geometry=new THREE.ExtrudeGeometry(shape,{depth:.50,curveSegments:5,bevelEnabled:true,bevelSize:.016,bevelThickness:.016,bevelSegments:3,steps:1});guard.name='recovery formed wheel guard';guard.position.y=.605;guard.position.z-=.25;}
  // Real openings replace dark glazing decals over opaque sheets. The short
  // bevels create formed highlights at cab corners and around recessed glass.
  for(const mesh of paint){mesh.removeFromParent();mesh.geometry.dispose();mesh.material.dispose();}
  for(const s of [-1,1]){
-  formedCabPanel(g,m.paint,[[.52,1.74],[2.94,1.74],[2.47,2.75],[.52,2.75]],[roundedOpening(.76,2.15,2.28,2.60)],(x,y,d)=>[x,y,s*(1.15-d)]);
+  formedCabPanel(g,m.paint,[[.52,1.74],[2.94,1.74],[2.47,2.75],[.52,2.75]],[roundedOpening(1.22,2.15,2.28,2.60)],(x,y,d)=>[x,y,s*(1.15-d)]);
   formedCabPanel(g,m.paint,[[.52,1.40],[2.83,1.40],[2.98,1.65],[2.94,1.74],[.52,1.74]],[],(x,y,d)=>[x,y,s*(1.15-d)]);
   // A separate pressed door skin gives the lower sill a deliberate contour.
-  formedCabPanel(g,m.paint,[[.70,1.78],[2.32,1.78],[2.55,2.10],[2.34,2.64],[.70,2.64]],[roundedOpening(.78,2.17,2.26,2.58)],(x,y,d)=>[x,y,s*(1.174-d*.35)]);
+  formedCabPanel(g,m.paint,[[1.08,1.78],[2.32,1.78],[2.55,2.10],[2.34,2.64],[1.08,2.64]],[roundedOpening(1.24,2.17,2.26,2.58)],(x,y,d)=>[x,y,s*(1.174-d*.35)]);
+  // Rear cab quarter is a formed structural panel, not more glazing. Its
+  // recessed service cover gives the cab a visible rear pillar and door joint.
+  box(g,m.edge,[.34,.58,.017],[.80,2.11,s*1.171],'rear cab access gasket');
+  box(g,m.paint,[.30,.54,.025],[.80,2.11,s*1.183],'rear cab service cover');
+  for(const y of [1.87,2.35])box(g,m.darkSteel,[.040,.07,.021],[.65,y,s*1.202],'cab service cover hinge');
+  box(g,m.darkSteel,[.035,.09,.023],[.92,2.10,s*1.203],'cab service cover latch');
  }
  const frontOutline=[[-1.15,1.74],[1.15,1.74],[1.15,2.75],[-1.15,2.75]];
  formedCabPanel(g,m.paint,frontOutline,[roundedOpening(-1.02,2.04,-.07,2.62),roundedOpening(.07,2.04,1.02,2.62)],(z,y,d)=>[frontX(y)-d,y,z]);
@@ -127,10 +178,12 @@ function recoveryConstruction(g,m){
  for(const pane of glass){pane.material.dispose();pane.material=glassMaterial;pane.castShadow=false;}
  const obsolete=[];g.traverse(o=>{if(o.material===m.rubber&&o.geometry.type==='CylinderGeometry'&&o.geometry.parameters.radiusTop===.012&&o.position.y>2.1)obsolete.push(o);});for(const o of obsolete){o.removeFromParent();o.geometry.dispose();}
  for(const [i,range]of [[0,[-1.02,-.07]],[1,[.07,1.02]]]){const points=[[frontX(2.04),2.04,range[0]],[frontX(2.04),2.04,range[1]],[frontX(2.62),2.62,range[1]],[frontX(2.62),2.62,range[0]]];reshape(glass[i],points);glass[i].name='cab glazing';for(let j=0;j<4;j++)rod(g,m.rubber,points[j],points[(j+1)%4],.018);const center=(range[0]+range[1])/2;rod(g,m.darkSteel,[frontX(2.05)+.018,2.05,center],[frontX(2.30)+.024,2.30,center-.20],.014);rod(g,m.rubber,[frontX(2.21)+.025,2.21,center-.27],[frontX(2.47)+.025,2.47,center-.09],.012);}
- for(const [i,s]of [[2,-1],[3,1]]){const points=[[.79,2.18,s*1.178],[2.25,2.18,s*1.178],[2.25,2.57,s*1.178],[.79,2.57,s*1.178]];reshape(glass[i],points);glass[i].name='cab glazing';for(let j=0;j<4;j++)rod(g,m.rubber,points[j],points[(j+1)%4],.017);box(g,m.edge,[.045,.39,.025],[1.45,2.375,s*1.196],'sliding window mullion');
+ for(const [i,s]of [[2,-1],[3,1]]){const points=[[1.25,2.18,s*1.178],[2.25,2.18,s*1.178],[2.25,2.57,s*1.178],[1.25,2.57,s*1.178]];reshape(glass[i],points);glass[i].name='cab glazing';for(let j=0;j<4;j++)rod(g,m.rubber,points[j],points[(j+1)%4],.017);box(g,m.edge,[.025,.39,.025],[2.05,2.375,s*1.196],'door quarter window divider');
   // Mirror backing and two-point arm share the existing mirror's mount and scale.
   box(g,m.rubber,[.085,.25,.18],[2.065,2.32,s*1.47],'mirror housing');rod(g,m.darkSteel,[2.11,2.08,s*1.16],[2.10,2.24,s*1.46],.018);
-  for(const y of [1.93,2.47])box(g,m.darkSteel,[.065,.13,.035],[.66,y,s*1.185],'door hinge');
+  for(const y of [1.93,2.47])box(g,m.darkSteel,[.065,.13,.035],[1.09,y,s*1.185],'door hinge');
+  box(g,m.edge,[.20,.10,.021],[1.30,2.015,s*1.194],'door handle recess');
+  rod(g,m.steel,[1.25,2.015,s*1.213],[1.37,2.015,s*1.213],.013).name='door release pull';
   box(g,m.edge,[.22,.26,.13],[2.99,1.79,s*.83],'recessed headlight surround');cylinder(g,m.lamp,.080,.033,[3.112,1.79,s*.83],'x',.08,32);
   cylinder(g,m.amber,.029,.024,[2.25,2.79,s*.90],'y',.029,20);
  }
@@ -138,6 +191,15 @@ function recoveryConstruction(g,m){
  // Rounded roof edge visually joins the cab planes and carries the marker lamps.
  rod(g,m.edge,[2.47,2.75,-1.15],[2.47,2.75,1.15],.031);for(const z of [-.75,-.38,0,.38,.75])box(g,m.amber,[.12,.04,.07],[2.38,2.80,z],'roof clearance lamp');
  const lockers=g.getObjectByName('recovery stowage');if(lockers){for(const o of lockers.children.filter(o=>o.name==='tool locker')){o.geometry.dispose();o.geometry=new THREE.BoxGeometry(2.6,.64,.43);o.position.y=1.99;}for(const s of [-1,1])for(const x of [-2.41,-1.56,-.71]){box(lockers,m.edge,[.78,.54,.015],[x,1.99,s*1.195],'locker door gasket');box(lockers,m.paint,[.73,.49,.019],[x,1.99,s*1.21],'formed locker door');for(const y of [1.83,2.15])box(lockers,m.darkSteel,[.05,.08,.028],[x-.31,y,s*1.235],'locker hinge');box(lockers,m.darkSteel,[.13,.14,.019],[x+.23,2.04,s*1.237],'recessed latch cup');rod(lockers,m.steel,[x+.19,2.04,s*1.253],[x+.27,2.04,s*1.253],.012).name='locker latch lever';}
+  for(const s of [-1,1]){
+   box(lockers,m.darkSteel,[2.64,.055,.47],[-1.56,1.68,s*.97],'locker load bearing plinth');
+   for(const x of [-2.41,-1.56,-.71]){
+    // Pressed door ribs have finite ends inside the door skin; unlike decals
+    // they catch light while remaining part of the sheet-metal construction.
+    for(const y of [1.84,2.14])box(lockers,m.paint,[.55,.018,.016],[x-.03,y,s*1.225],'pressed locker stiffening rib');
+    box(lockers,m.edge,[.045,.59,.025],[x-.40,1.99,s*1.212],'locker frame stile');
+   }
+  }
   for(const s of [-1,1]){box(lockers,m.darkSteel,[2.58,.024,.41],[-1.56,2.325,s*.97],'locker top tread plate');for(let i=0;i<13;i++){const x=-2.75+i*.19;rod(lockers,m.steel,[x,2.342,s*.97-.14],[x+.075,2.342,s*.97+.14],.006).name='raised walkway tread';}}
  }
  recoveryServices(g,m);
@@ -147,6 +209,61 @@ function recoveryConstruction(g,m){
  cylinder(g,m.rubber,.040,.075,[.37,2.81,.73],'y',.04,24).name='antenna spring base';
  cylinder(g,m.edge,.088,.080,[.60,2.80,-.72],'y',.088,32).name='beacon mounting pedestal';
  const crane=g.getObjectByName('recovery crane');if(crane)recoveryCrane(crane,m);
+}
+function recoveryFrame(g,m){
+ // A recovery truck carries its crane through a reinforced subframe to two
+ // longitudinal chassis rails. Replace the continuous toy-like hull slab with
+ // that load path; gaps between members remain visible under the service deck.
+ for(const name of ['chassis','lower armored hull','deck']){
+  const old=g.getObjectByName(name);if(old){old.removeFromParent();old.geometry.dispose();}
+ }
+ const frame=new THREE.Group();frame.name='reinforced recovery chassis';g.add(frame);
+ for(const s of [-1,1]){
+  const z=s*.52;
+  box(frame,m.darkSteel,[6.05,.26,.055],[0,.91,z],'chassis rail web');
+  for(const y of [.77,1.05])box(frame,m.darkSteel,[6.05,.04,.16],[0,y,z],'chassis rail flange');
+  box(frame,m.edge,[3.40,.17,.085],[-1.10,1.135,z],'crane subframe rail');
+  for(const x of [-2.60,-1.60,-.85,-.30]){
+   box(frame,m.darkSteel,[.14,.51,.12],[x,1.38,s*.76],'deck support post');
+   rod(frame,m.edge,[x,1.12,z],[x,1.55,s*1.02],.035).name='deck outrigger brace';
+  }
+  // Closed lower cab skirts join its formed side sheets, stopping above the
+  // tyre clearance rather than filling the entire truck's underbody.
+  formedCabPanel(frame,m.paint,[[.53,1.40],[2.83,1.40],[2.83,1.57],[.53,1.57]],[],(x,y,d)=>[x,y,s*(1.11-d)]).name='cab sill skirt';
+  for(const x of [-2.17,-.74,.72,2.15]){
+   box(frame,m.darkSteel,[.23,.16,.16],[x+.19,1.30,s*.85],'suspension upper mount');
+   box(frame,m.edge,[.23,.23,.15],[x+.19,1.45,s*.85],'suspension deck hanger');
+   box(frame,m.edge,[.55,.24,.08],[x,1.45,s*1.12],'wheel guard mounting apron');
+   box(frame,m.edge,[.46,.042,.10],[x,.86,s*.52],'axle spring saddle');
+   for(let i=0;i<3;i++)box(frame,m.darkSteel,[.64-i*.08,.016,.10],[x,.83-i*.018,s*.52],'leaf spring pack');
+  }
+ }
+ for(const x of [-2.85,-2.17,-.85,.72,2.15,2.82])box(frame,m.darkSteel,[.12,.17,1.22],[x,.93,0],'chassis crossmember');
+ box(frame,m.paint,[6.12,.08,2.38],[-.005,1.60,0],'formed load deck');
+ for(const s of [-1,1])box(frame,m.edge,[6.08,.11,.05],[-.005,1.57,s*1.175],'deck folded edge');
+ box(frame,m.darkSteel,[1.14,.16,1.60],[-.85,1.68,0],'crane foundation crossbeam');
+ for(const s of [-1,1])formedCabPanel(frame,m.darkSteel,[[-1.28,1.19],[-.44,1.19],[-.62,1.59],[-1.10,1.59]],[],(x,y,d)=>[x,y,s*(.56+d)]).name='crane foundation gusset';
+ // Stowed telescopic stabilizers remain inside the road width. Their beam,
+ // guide sleeve, jack barrel and carried foot are physically joined.
+ box(frame,m.edge,[.32,.22,2.08],[-2.92,1.16,0],'stabilizer crossbeam');
+ for(const s of [-1,1]){
+  box(frame,m.darkSteel,[.24,.14,.93],[-2.92,1.16,s*.58],'stowed telescopic stabilizer beam');
+  box(frame,m.paint,[.32,.36,.24],[-2.92,1.13,s*1.02],'stabilizer jack guide');
+  cylinder(frame,m.paint,.080,.33,[-2.92,.92,s*1.02],'y',.08,32).name='stabilizer jack barrel';
+  cylinder(frame,m.steel,.033,.12,[-2.92,.72,s*1.02],'y',.033,24).name='stowed jack piston';
+  cylinder(frame,m.darkSteel,.060,.17,[-2.92,.68,s*1.02],'z',.06,24).name='jack foot pivot';
+  box(frame,m.darkSteel,[.27,.065,.29],[-2.92,.64,s*1.02],'carried stabilizer foot');
+  tube(frame,m.rubber,[[-2.55,1.25,s*.60],[-2.75,1.30,s*.70],[-2.94,1.30,s*.89],[-2.96,1.06,s*.93]],.018,24).name='stabilizer hydraulic supply';
+  // The tail lamp sits on a reinforced carrier; mudflaps hang aft of the last
+  // tyre and do not occupy its swept volume.
+  box(frame,m.edge,[.10,.21,.41],[-3.035,1.40,s*.92],'rear lamp carrier');
+  box(frame,m.red,[.025,.09,.20],[-3.10,1.43,s*.97],'rear tail lamp');
+  box(frame,m.amber,[.026,.07,.09],[-3.10,1.43,s*.79],'rear turn lamp');
+  box(frame,m.rubber,[.05,.37,.26],[-2.88,.90,s*1.28],'rear flexible mudflap');
+ }
+ box(frame,m.darkSteel,[.18,.25,1.25],[-3.015,1.10,0],'rear towing crossmember');
+ box(frame,m.edge,[.21,.23,.28],[-3.075,1.10,0],'rear tow coupling body');
+ cylinder(frame,m.steel,.034,.30,[-3.15,1.10,0],'y',.034,24).name='tow coupling pin';
 }
 function recoveryServices(g,m){
  // Cab services mount to the deck/rear bulkhead, leaving the central crane
@@ -174,7 +291,17 @@ function recoveryServices(g,m){
 }
 function recoveryCrane(crane,m){
  for(const old of [...crane.children]){old.removeFromParent();old.traverse(o=>o.geometry?.dispose());}
- const beam=(a,b,w,h,material,name)=>{const shape=new THREE.Shape(roundedOpening(-w/2,-h/2,w/2,h/2,.025).getPoints(6));const direction=new THREE.Vector3(...b).sub(new THREE.Vector3(...a));const mesh=new THREE.Mesh(new THREE.ExtrudeGeometry(shape,{depth:direction.length(),curveSegments:5,steps:1,bevelEnabled:true,bevelSize:.009,bevelThickness:.009,bevelSegments:2}),material);mesh.position.set(...a);mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0,0,1),direction.normalize());mesh.name=name;mesh.castShadow=true;mesh.receiveShadow=true;crane.add(mesh);return mesh;};
+ // Eight-faced folded sections have real wall thickness and open mouths; the
+ // smaller section slides inside the larger, rather than meeting a solid cap.
+ const beam=(a,b,start,end,wall,material,name)=>{
+  const direction=new THREE.Vector3(...b).sub(new THREE.Vector3(...a)),length=direction.length(),vertices=[];
+  const ring=([w,h],inset,z)=>{const x=w/2-inset,y=h/2-inset,c=Math.min(x,y)*.28;return [[-x+c,-y,z],[x-c,-y,z],[x,-y+c,z],[x,y-c,z],[x-c,y,z],[-x+c,y,z],[-x,y-c,z],[-x,-y+c,z]];};
+  const outer=[ring(start,0,0),ring(end,0,length)],inner=[ring(start,wall,0),ring(end,wall,length)];
+  const quad=(a,b,c,d)=>vertices.push(...a,...b,...c,...a,...c,...d);
+  for(let i=0;i<8;i++){const j=(i+1)%8;quad(outer[0][i],outer[0][j],outer[1][j],outer[1][i]);quad(inner[0][j],inner[0][i],inner[1][i],inner[1][j]);quad(outer[0][j],outer[0][i],inner[0][i],inner[0][j]);quad(outer[1][i],outer[1][j],inner[1][j],inner[1][i]);}
+  const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.Float32BufferAttribute(vertices,3));geometry.computeVertexNormals();
+  const mesh=new THREE.Mesh(geometry,material);mesh.position.set(...a);mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0,0,1),direction.normalize());mesh.name=name;mesh.castShadow=true;mesh.receiveShadow=true;crane.add(mesh);return mesh;
+ };
  box(crane,m.edge,[.95,.12,1.20],[-.85,1.78,0],'crane mounting crossmember');
  cylinder(crane,m.darkSteel,.44,.14,[-.85,1.88,0],'y',.44,48).name='slewing ring';cylinder(crane,m.paint,.33,.32,[-.85,2.10,0],'y',.33,40).name='crane pedestal';
  for(const s of [-1,1]){
@@ -182,24 +309,44 @@ function recoveryCrane(crane,m){
   cylinder(crane,m.steel,.095,.075,[-.85,2.46,s*.32],'z',.095,40).name='boom pivot bearing';rod(crane,m.edge,[-.85,1.80,s*.55],[-.85,2.14,s*.29],.045).name='pedestal brace';
  }
  cylinder(crane,m.darkSteel,.075,.73,[-.85,2.46,0],'z',.075,40).name='boom hinge pin';
- beam([-.85,2.46,0],[-2.47,3.12,0],.36,.42,m.paint,'formed main boom');beam([-2.34,3.07,0],[-3.05,3.36,0],.23,.27,m.darkSteel,'telescoping extension');
- const base=[-.73,2.08,.32],gland=[-1.65,2.69,.32],tip=[-2.13,2.91,.32];rod(crane,m.paint,base,gland,.085).name='lift cylinder barrel';rod(crane,m.steel,gland,tip,.032).name='lift piston rod';
- const collar=rod(crane,m.darkSteel,[-1.60,2.657,.32],[-1.69,2.715,.32],.103);collar.name='cylinder gland';
+ beam([-.65,2.38,0],[-2.47,3.12,0],[.42,.46],[.32,.34],.025,m.paint,'formed main boom');
+ beam([-2.34,3.067,0],[-3.05,3.356,0],[.245,.26],[.205,.22],.017,m.darkSteel,'telescoping extension');
+ // Wear pads and the mouth collar bear against the inner sliding section.
+ beam([-2.37,3.079,0],[-2.49,3.128,0],[.36,.38],[.355,.375],.026,m.edge,'boom mouth reinforcement');
+ for(const s of [-1,1]){const pad=box(crane,m.rubber,[.14,.12,.035],[-2.435,3.105,s*.141],'telescopic wear pad');pad.rotation.z=-.386;}
+ // Root trunnion flanges bridge the boom walls and the supporting cheeks.
+ for(const s of [-1,1])cylinder(crane,m.paint,.16,.055,[-.85,2.46,s*.225],'z',.16,40).name='boom root trunnion';
+ formedCabPanel(crane,m.paint,[[-2.02,2.77],[-2.25,2.85],[-2.20,2.99],[-1.96,2.89]],[],(x,y,d)=>[x,y,.25+d]).name='boom cylinder lug';
+ const base=[-.73,2.08,.32],tip=[-2.13,2.91,.32],axis=new THREE.Vector3(...tip).sub(new THREE.Vector3(...base)),point=f=>new THREE.Vector3(...base).addScaledVector(axis,f).toArray(),gland=point(.68);
+ rod(crane,m.paint,base,gland,.085).name='lift cylinder barrel';rod(crane,m.steel,gland,tip,.032).name='lift piston rod';
+ rod(crane,m.darkSteel,point(.65),point(.71),.103).name='cylinder gland';
+ rod(crane,m.edge,point(.04),point(.12),.098).name='cylinder end cap';
  for(const [x,y]of [[base[0],base[1]],[tip[0],tip[1]]]){cylinder(crane,m.steel,.067,.13,[x,y,.32],'z',.067,32).name='cylinder clevis pin';box(crane,m.paint,[.17,.17,.08],[x,y,.26],'lift cylinder clevis');}
- box(crane,m.paint,[.21,.17,.08],[-2.13,2.975,.26],'boom cylinder lug');
- cylinder(crane,m.edge,.12,.29,[-.36,2.37,0],'z',.12,40).name='hoist drum';for(const s of [-1,1]){cylinder(crane,m.steel,.15,.025,[-.36,2.37,s*.155],'z',.15,40).name='hoist drum flange';rod(crane,m.paint,[-.36,2.10,s*.19],[-.36,2.37,s*.19],.045).name='hoist winch support';rod(crane,m.edge,[-.68,2.10,s*.19],[-.36,2.10,s*.19],.037).name='hoist support tie';}
+ cylinder(crane,m.edge,.135,.34,[-.36,2.37,0],'z',.135,48).name='hoist drum';
+ for(let i=0;i<13;i++){const winding=new THREE.Mesh(new THREE.TorusGeometry(.137,.0075,6,36),m.darkSteel);winding.position.set(-.36,2.37,-.15+i*.025);winding.name='hoist cable winding';crane.add(winding);}
+ for(const s of [-1,1]){cylinder(crane,m.steel,.18,.03,[-.36,2.37,s*.185],'z',.18,40).name='hoist drum flange';formedCabPanel(crane,m.paint,[[-.62,2.10],[-.08,2.10],[-.08,2.36],[-.20,2.54],[-.47,2.54],[-.62,2.36]],[],(x,y,d)=>[x,y,s*(.225+d)]).name='hoist bearing cradle';}
+ box(crane,m.edge,[.55,.065,.60],[-.35,2.105,0],'hoist cradle base');rod(crane,m.edge,[-.68,2.10,0],[-.35,2.10,0],.055).name='hoist support tie';
+ cylinder(crane,m.paint,.17,.13,[-.36,2.37,-.335],'z',.14,40).name='planetary hoist gearbox';cylinder(crane,m.darkSteel,.095,.21,[-.36,2.37,-.505],'z',.095,32).name='hoist hydraulic motor';
+ tube(crane,m.rubber,[[-.36,2.35,-.60],[-.18,2.20,-.62],[-.44,2.06,-.46],[-.73,2.0,-.36]],.018,24).name='hoist motor supply';
  for(const s of [-1,1])formedCabPanel(crane,m.paint,[[-3.13,3.19],[-3.17,3.40],[-2.94,3.48],[-2.85,3.35]],[],(x,y,d)=>[x,y,s*(.12+d)]).name='boom head cheek';
- cylinder(crane,m.darkSteel,.095,.18,[-3.04,3.35,0],'z',.095,40).name='head sheave';
+ cylinder(crane,m.darkSteel,.095,.18,[-3.04,3.35,0],'z',.095,40).name='head sheave';cylinder(crane,m.steel,.035,.35,[-3.04,3.35,0],'z',.035,32).name='head sheave axle';
  for(const s of [-1,1]){const ring=new THREE.Mesh(new THREE.TorusGeometry(.086,.013,8,36),m.steel);ring.position.set(-3.04,3.35,s*.075);ring.name='sheave flange';crane.add(ring);}
- tube(crane,m.steel,[[-.36,2.49,0],[-.73,2.72,0],[-2.40,3.39,0],[-2.98,3.43,0],[-3.12,3.35,0],[-3.12,2.79,0]],.012,48).name='hoist rope';
+ // Taut rope is straight between supports, with only the sheave wrap curved.
+ rod(crane,m.darkSteel,[-.36,2.507,0],[-2.995,3.433,0],.011).name='hoist rope';
+ const wrap=[];for(let i=0;i<=12;i++){const angle=Math.PI*.34+i/12*Math.PI*.66;wrap.push([-3.04+Math.cos(angle)*.095,3.35+Math.sin(angle)*.095,0]);}tube(crane,m.darkSteel,wrap,.011,24).name='hoist rope sheave wrap';
+ rod(crane,m.darkSteel,[-3.135,3.35,0],[-3.135,2.79,0],.011).name='hoist rope fall';
  cylinder(crane,m.darkSteel,.047,.16,[-3.12,2.77,0]).name='hook swivel';
  tube(crane,m.amber,[[-3.12,2.70,0],[-3.19,2.65,0],[-3.23,2.54,0],[-3.18,2.45,0],[-3.07,2.46,0],[-3.01,2.55,0],[-3.04,2.61,0]],.033,32).name='forged lifting hook';rod(crane,m.darkSteel,[-3.04,2.61,0],[-3.14,2.67,0],.008).name='hook safety latch';
- for(const s of [-1,1]){const offset=s===1?0:.04;tube(crane,m.rubber,[[-.80,2.0,.36+offset],[-.59,2.18,.39+offset],[-.71,2.59,.38+offset],[-1.16,2.64,.39+offset],[-1.59,2.66,.34+offset]],.021,32).name='lift cylinder hydraulic line';box(crane,m.paint,[.46,.24,.15],[-2.69,1.51,s*1.11],'stowed stabilizer');cylinder(crane,m.darkSteel,.064,.31,[-2.69,1.28,s*1.11]);box(crane,m.darkSteel,[.23,.045,.24],[-2.69,1.11,s*1.11],'stabilizer foot');}
+ for(let i=0;i<2;i++){
+  const p=point(.58+i*.05),z=.44+i*.045;
+  cylinder(crane,m.steel,.025,.065,[p[0],p[1],.409],'z',.025,24).name='lift cylinder hose union';
+  tube(crane,m.rubber,[[-.80,2.0,z],[-.59,2.18,z+.03],[-.71,2.59,z+.03],[-1.16,2.67,z],[p[0],p[1],.444]],.018,32).name='lift cylinder hydraulic line';
+ }
 }
 function recoveryCockpit(g,m){
  const cockpit=new THREE.Group();cockpit.name='driver controls';g.add(cockpit);
  const trim=new THREE.MeshStandardMaterial({color:'#79816f',roughness:.86,metalness:0});trim.name='cab interior trim';
- const upholstery=new THREE.MeshStandardMaterial({color:'#3b4540',roughness:.94,metalness:0});upholstery.name='woven seat upholstery';
+ const upholstery=m.upholstery.clone();upholstery.name='woven seat upholstery';
  const round=(material,size,pos,name,r=.035)=>{const o=new THREE.Mesh(new RoundedBoxGeometry(...size,3,r),material);o.position.set(...pos);o.name=name;o.castShadow=true;o.receiveShadow=true;cockpit.add(o);return o;};
  const floor=1.79;
  round(m.rubber,[1.86,.045,1.99],[1.49,floor,0],'cab floor mat',.018);
@@ -243,21 +390,37 @@ function detailVehicle(g,m,length,width){
  if(g.userData.sharedPart==='WR-12')recoveryCockpit(g,m);
  else{
  const cockpit=new THREE.Group();cockpit.name='driver controls';g.add(cockpit);const x=length/2-1.4,y=g.userData.roof?1.53:1.86;
- box(cockpit,m.edge,[.22,.26,1.42],[x+.17,y+.14,0],'dashboard');
- for(const s of [-1,1]){box(cockpit,m.rubber,[.48,.14,.47],[x-.45,y,s*.48],'driver seat');box(cockpit,m.rubber,[.12,.58,.47],[x-.68,y+.27,s*.48],'seat back');rod(cockpit,m.steel,[x-.45,y-.30,s*.48],[x-.45,y-.07,s*.48],.026);}
- const steering=new THREE.Mesh(new THREE.TorusGeometry(.18,.017,8,40),m.rubber);steering.rotation.y=Math.PI/2;steering.position.set(x-.15,y+.41,-.48);cockpit.add(steering);for(let i=0;i<3;i++){const a=i*Math.PI*2/3;rod(cockpit,m.darkSteel,[x-.15,y+.41,-.48],[x-.15,y+.41+Math.cos(a)*.16,-.48+Math.sin(a)*.16],.009);}
- for(let i=0;i<4;i++)cylinder(cockpit,m.glass,.034,.012,[x+.045,y+.21,-.57+i*.09],'x');
+ const trim=m.edge.clone();trim.color.set('#79816f');trim.metalness=0;trim.roughness=.85;trim.name='carrier moulded interior trim';
+ const upholstery=m.upholstery.clone();upholstery.name='woven seat upholstery';
+ const round=(material,size,pos,name,r=.025)=>{const o=new THREE.Mesh(new RoundedBoxGeometry(...size,3,r),material);o.position.set(...pos);o.name=name;o.castShadow=o.receiveShadow=true;cockpit.add(o);return o;};
+ const floor=y-.12,cowlShape=new THREE.Shape();
+ [[x+.23,floor+.012],[x+.33,floor+.012],[x+.33,y+.32],[x+.05,y+.32],[x+.02,y+.17],[x+.23,y+.17]].forEach(([a,b],i)=>i?cowlShape.lineTo(a,b):cowlShape.moveTo(a,b));cowlShape.closePath();
+ const cowl=new THREE.Mesh(new THREE.ExtrudeGeometry(cowlShape,{depth:1.68,steps:1,bevelEnabled:true,bevelSize:.009,bevelThickness:.007,bevelSegments:2}),trim);cowl.position.z=-.84;cowl.name='carrier supported dashboard cowl';cowl.castShadow=cowl.receiveShadow=true;cockpit.add(cowl);
+ round(m.edge,[.035,.16,1.55],[x+.029,y+.24,0],'dashboard',.012);
+ round(m.darkSteel,[.20,.055,.48],[x-.02,y+.34,-.43],'carrier instrument sun hood',.018);
+ for(const s of [-1,1]){
+  round(m.darkSteel,[.41,.105,.33],[x-.45,floor+.075,s*.48],'carrier seat suspension pedestal',.018);
+  for(const yy of [floor+.047,floor+.076,floor+.105])round(m.rubber,[.425,.010,.34],[x-.45,yy,s*.48],'carrier seat suspension bellows',.004);
+  round(upholstery,[.49,.15,.44],[x-.43,y+.06,s*.48],'driver seat',.048);
+  const back=round(upholstery,[.115,.49,.40],[x-.67,y+.31,s*.48],'seat back',.032);back.rotation.z=-.10;
+  for(const dz of [-.17,.17]){round(upholstery,[.41,.070,.065],[x-.42,y+.14,s*.48+dz],'carrier cushion side bolster',.023);const side=round(upholstery,[.105,.39,.065],[x-.615,y+.31,s*.48+dz],'carrier back side bolster',.021);side.rotation.z=-.10;}
+  for(const dz of [-.09,.09]){tube(cockpit,m.edge,[[x-.13,y+.137,s*.48+dz],[x-.43,y+.137,s*.48+dz],[x-.64,y+.16,s*.48+dz]],.0025,14).name='carrier cushion stitched channel';}
+  carrierSheet(cockpit,trim,[[x-.71,y-.015],[x-.09,y-.015],[x-.09,y+.235],[x-.71,y+.235]],[],(px,py,t)=>[px,py,s*(width/2*(.75+(py-1.2)*.1/1.16)-.038-t)],.030,'carrier door interior liner');
+  const pullZ=s*(width/2*(.75+(y+.22-1.2)*.1/1.16)-.080);
+  rod(cockpit,m.darkSteel,[x-.59,y+.22,pullZ],[x-.29,y+.22,pullZ],.015).name='carrier interior door pull';
+ }
+ const steering=new THREE.Mesh(new THREE.TorusGeometry(.18,.019,10,48),m.rubber);steering.rotation.y=Math.PI/2;steering.position.set(x-.15,y+.41,-.48);steering.name='steering wheel';cockpit.add(steering);for(let i=0;i<3;i++){const a=i*Math.PI*2/3;rod(cockpit,m.darkSteel,[x-.15,y+.41,-.48],[x-.15,y+.41+Math.cos(a)*.16,-.48+Math.sin(a)*.16],.012).name='steering spoke';}
+ for(let i=0;i<4;i++)cylinder(cockpit,m.rubber,.034,.012,[x+.007,y+.21,-.57+i*.09],'x').name='instrument dial';
  // Controls are supported by the floor/seat frame and dashboard, rather than
  // floating cues. The shared cab still represents an original illustrative vehicle.
- const floor=y-.12;
  box(cockpit,m.edge,[1.50,.05,1.80],[x-.18,floor,0],'cab floor');
  for(const s of [-1,1]){
   for(const z of [s*.48-.16,s*.48+.16])box(cockpit,m.darkSteel,[.58,.045,.04],[x-.47,floor+.04,z],'seat adjustment rail');
-  box(cockpit,m.rubber,[.13,.17,.32],[x-.67,y+.60,s*.48],'driver head restraint');
+  round(upholstery,[.13,.17,.32],[x-.67,y+.60,s*.48],'driver head restraint',.030);
   for(const z of [s*.48-.10,s*.48+.10])rod(cockpit,m.steel,[x-.67,y+.50,z],[x-.67,y+.60,z],.013);
-  rod(cockpit,m.darkSteel,[x-.60,y+.41,s*.65],[x-.13,y-.02,s*.34],.012).name='diagonal restraint';
-  box(cockpit,m.red,[.025,.035,.045],[x-.13,y-.015,s*.34],'restraint buckle');
-  tube(cockpit,m.darkSteel,[[x-.67,y+.20,s*.73],[x-.41,y-.02,s*.73],[x-.13,y-.02,s*.34]],.009,22).name='lap restraint';
+  tube(cockpit,m.darkSteel,[[x-.60,y+.47,s*.65],[x-.55,y+.31,s*.48],[x-.32,y+.147,s*.36],[x-.13,y+.137,s*.34]],.012,24).name='diagonal restraint';
+  box(cockpit,m.red,[.025,.035,.045],[x-.13,y+.140,s*.34],'restraint buckle');
+  tube(cockpit,m.darkSteel,[[x-.55,y+.147,s*.66],[x-.32,y+.147,s*.60],[x-.13,y+.137,s*.34]],.009,22).name='lap restraint';
  }
  rod(cockpit,m.darkSteel,[x-.15,y+.41,-.48],[x+.07,y+.30,-.48],.026).name='steering column';
  cylinder(cockpit,m.edge,.04,.06,[x-.15,y+.41,-.48],'x',.04,24).name='steering hub';
@@ -265,11 +428,15 @@ function detailVehicle(g,m,length,width){
  box(cockpit,m.edge,[.30,.16,.19],[x-.10,floor+.10,.02],'gear selector console');
  rod(cockpit,m.darkSteel,[x-.10,floor+.18,.02],[x-.14,y+.16,.02],.012).name='gear selector';cylinder(cockpit,m.rubber,.03,.045,[x-.14,y+.18,.02]).name='selector grip';
  // Raised needles and bezels read as instruments in the cutaway close-up.
- for(let i=0;i<4;i++){const z=-.57+i*.09;cylinder(cockpit,m.darkSteel,.037,.009,[x+.035,y+.21,z],'x',.037,24).name='instrument bezel';rod(cockpit,m.lamp,[x+.028,y+.21,z],[x+.028,y+.23,z+.009],.0025).name='instrument needle';}
+ for(let i=0;i<4;i++){const z=-.57+i*.09;cylinder(cockpit,m.steel,.037,.009,[x+.006,y+.21,z],'x',.037,32).name='instrument bezel';rod(cockpit,m.lamp,[x-.001,y+.21,z],[x-.001,y+.23,z+.009],.0025).name='instrument needle';}
  }
  refineWheels(g,m);
+ // Recovery has a dedicated ladder-frame construction and service system.
+ // Generic armoured-hull overlays would reintroduce a solid belly slab and
+ // floating cooling louvres on the locker doors.
+ if(g.userData.sharedPart==='WR-12')return;
  const guards=[];g.traverse(o=>{if(o.name==='wheel guard')guards.push(o);});for(const guard of guards){const shape=new THREE.Shape();for(let i=0;i<=12;i++){const a=i*Math.PI/12,x=Math.cos(a)*.70,y=Math.sin(a)*.70;(i?shape.lineTo(x,y):shape.moveTo(x,y));}for(let i=12;i>=0;i--){const a=i*Math.PI/12;shape.lineTo(Math.cos(a)*.64,Math.sin(a)*.64);}shape.closePath();guard.geometry.dispose();guard.geometry=new THREE.ExtrudeGeometry(shape,{depth:.46,bevelEnabled:true,bevelSegments:1,steps:1,bevelSize:.009,bevelThickness:.009});guard.position.y=.62;guard.position.z-=.23;}
- for(const side of [-1,1]){const z=side*width*.45;for(const x of [-length*.38,-length*.22]){box(g,m.edge,[.028,.12,.028],[x,1.75,z],'panel hinge');cylinder(g,m.steel,.011,.07,[x,1.75,z+side*.024],'y',.011,12);}for(let i=0;i<6;i++)box(g,m.darkSteel,[.3,.02,.03],[-length*.27,2.08+i*.035,z+side*.018],'louvred cooling intake');rod(g,m.darkSteel,[length*.36,1.38,z],[length*.36,1.95,z],.016);}
+ if(!['TROOP','COMMAND','RECCE'].includes(g.name))for(const side of [-1,1]){const z=side*width*.45;for(const x of [-length*.38,-length*.22]){box(g,m.edge,[.028,.12,.028],[x,1.75,z],'panel hinge');cylinder(g,m.steel,.011,.07,[x,1.75,z+side*.024],'y',.011,12);}for(let i=0;i<6;i++)box(g,m.darkSteel,[.3,.02,.03],[-length*.27,2.08+i*.035,z+side*.018],'louvred cooling intake');rod(g,m.darkSteel,[length*.36,1.38,z],[length*.36,1.95,z],.016);}
  // Connected drive shaft, armoured belly plate, exhaust and fuel-tank plumbing.
  rod(g,m.darkSteel,[-length*.34,.80,0],[length*.31,.80,0],.06);box(g,m.edge,[length*.56,.065,width*.48],[0,.90,0],'belly protection');
  cylinder(g,m.darkSteel,.11,.85,[-length*.22,1.18,-width*.28],'x');tube(g,m.darkSteel,[[-length*.22,1.18,-width*.28],[-length*.38,1.18,-width*.28],[-length*.42,1.37,-width*.37]],.034);

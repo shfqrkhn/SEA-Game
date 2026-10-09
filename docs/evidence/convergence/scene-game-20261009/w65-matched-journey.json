@@ -1,0 +1,605 @@
+{
+  "time": "2026-10-09T15:55:29.103Z",
+  "sourceCommit": "afdae7a8d38c4ca163bf808d0e77ac7ef2c4ef59",
+  "previewCommit": "cf29aa83f387bdfdfd183399588e5e1712f3d094",
+  "version": "3.2.0",
+  "session": "SEA3-T2-E32F1AA3BF55ABC3",
+  "missions": [
+    "COMBAT",
+    "TROOP"
+  ],
+  "phases": [
+    "setup",
+    "practice",
+    "planning",
+    "auction",
+    "build",
+    "submit",
+    "debrief",
+    "closed"
+  ],
+  "method": "Actual built-in browser; mixed scene pointer and native keyboard controls; no private state injection. One fresh matched journey with EN/FR switches, not two separate complete language journeys.",
+  "lots": [
+    {
+      "round": 1,
+      "lot": 1,
+      "card": "CAP-A",
+      "outcome": "SALE",
+      "team": 1,
+      "price": "300000",
+      "studentNext": "2"
+    },
+    {
+      "round": 1,
+      "lot": 2,
+      "card": "MOB-G",
+      "outcome": "SALE",
+      "team": 2,
+      "price": "450000"
+    },
+    {
+      "round": 1,
+      "lot": 3,
+      "card": "FP-G",
+      "outcome": "SALE",
+      "team": 1,
+      "price": "550000",
+      "rejectedID": "FIR-E"
+    },
+    {
+      "round": 1,
+      "lot": 4,
+      "card": "PRO-A",
+      "outcome": "UNSOLD",
+      "heading": "Round 1/7 · Lot 4/10"
+    },
+    {
+      "round": 1,
+      "lot": 5,
+      "card": "COM-A",
+      "outcome": "UNSOLD",
+      "heading": "Round 1/7 · Lot 5/10"
+    },
+    {
+      "round": 1,
+      "lot": 6,
+      "card": "SA-A",
+      "outcome": "UNSOLD",
+      "heading": "Round 1/7 · Lot 6/10"
+    },
+    {
+      "round": 1,
+      "lot": 7,
+      "card": "ACC-C",
+      "outcome": "UNSOLD",
+      "heading": "Round 1/7 · Lot 7/10"
+    },
+    {
+      "round": 1,
+      "lot": 8,
+      "card": "SE-U",
+      "outcome": "UNSOLD",
+      "heading": "Round 1/7 · Lot 8/10"
+    },
+    {
+      "round": 1,
+      "lot": 9,
+      "card": "SE-P",
+      "outcome": "UNSOLD",
+      "heading": "Round 1/7 · Lot 9/10"
+    },
+    {
+      "round": 1,
+      "lot": 10,
+      "card": "SE-S",
+      "outcome": "UNSOLD",
+      "heading": "Round 1/7 · Lot 10/10"
+    },
+    {
+      "round": 2,
+      "lot": 1,
+      "card": "CAP-B",
+      "outcome": "UNSOLD",
+      "heading": "Ronde 2/7 · Lot 1/10",
+      "language": "fr"
+    },
+    {
+      "round": 2,
+      "lot": 2,
+      "card": "MOB-F",
+      "outcome": "UNSOLD",
+      "heading": "Ronde 2/7 · Lot 2/10",
+      "language": "fr"
+    },
+    {
+      "round": 2,
+      "lot": 3,
+      "card": "FP-B",
+      "outcome": "UNSOLD",
+      "heading": "Ronde 2/7 · Lot 3/10",
+      "language": "fr"
+    },
+    {
+      "round": 2,
+      "lot": 4,
+      "card": "PRO-F",
+      "outcome": "UNSOLD",
+      "heading": "Ronde 2/7 · Lot 4/10",
+      "language": "fr"
+    },
+    {
+      "round": 2,
+      "lot": 5,
+      "card": "COM-B",
+      "outcome": "UNSOLD",
+      "heading": "Ronde 2/7 · Lot 5/10",
+      "language": "fr"
+    },
+    {
+      "round": 2,
+      "lot": 6,
+      "card": "SA-D",
+      "outcome": "UNSOLD",
+      "heading": "Ronde 2/7 · Lot 6/10",
+      "language": "fr"
+    },
+    {
+      "round": 2,
+      "lot": 7,
+      "card": "ACC-G",
+      "outcome": "UNSOLD",
+      "heading": "Ronde 2/7 · Lot 7/10",
+      "language": "fr"
+    },
+    {
+      "round": 2,
+      "lot": 8,
+      "card": "ISSE-H",
+      "outcome": "UNSOLD",
+      "heading": "Ronde 2/7 · Lot 8/10",
+      "language": "fr"
+    },
+    {
+      "round": 2,
+      "lot": 9,
+      "card": "ISSE-E",
+      "outcome": "UNSOLD",
+      "heading": "Ronde 2/7 · Lot 9/10",
+      "language": "fr"
+    },
+    {
+      "round": 2,
+      "lot": 10,
+      "card": "ISSE-G",
+      "outcome": "UNSOLD",
+      "heading": "Ronde 2/7 · Lot 10/10",
+      "language": "fr"
+    },
+    {
+      "round": 3,
+      "lot": 1,
+      "card": "CAP-F",
+      "outcome": "UNSOLD",
+      "heading": "Ronde 3/7 · Lot 1/10",
+      "language": "fr"
+    },
+    {
+      "round": 3,
+      "lot": 2,
+      "card": "MOB-A",
+      "outcome": "UNSOLD",
+      "heading": "Ronde 3/7 · Lot 2/10",
+      "language": "fr"
+    },
+    {
+      "round": 3,
+      "lot": 3,
+      "card": "FP-F",
+      "outcome": "UNSOLD",
+      "heading": "Ronde 3/7 · Lot 3/10",
+      "language": "fr"
+    },
+    {
+      "round": 3,
+      "lot": 4,
+      "card": "PRO-C",
+      "outcome": "UNSOLD",
+      "heading": "Ronde 3/7 · Lot 4/10",
+      "language": "fr"
+    },
+    {
+      "round": 3,
+      "lot": 5,
+      "card": "COM-D",
+      "outcome": "UNSOLD",
+      "heading": "Ronde 3/7 · Lot 5/10",
+      "language": "fr"
+    },
+    {
+      "round": 3,
+      "lot": 6,
+      "card": "SA-E",
+      "outcome": "UNSOLD",
+      "heading": "Ronde 3/7 · Lot 6/10",
+      "language": "fr"
+    },
+    {
+      "round": 3,
+      "lot": 7,
+      "card": "ACC-D",
+      "outcome": "UNSOLD",
+      "heading": "Ronde 3/7 · Lot 7/10",
+      "language": "fr"
+    },
+    {
+      "round": 3,
+      "lot": 8,
+      "card": "ISSE-R",
+      "outcome": "UNSOLD",
+      "heading": "Ronde 3/7 · Lot 8/10",
+      "language": "fr"
+    },
+    {
+      "round": 3,
+      "lot": 9,
+      "card": "ISSE-N",
+      "outcome": "UNSOLD",
+      "heading": "Ronde 3/7 · Lot 9/10",
+      "language": "fr"
+    },
+    {
+      "round": 3,
+      "lot": 10,
+      "card": "ISSE-M",
+      "outcome": "UNSOLD",
+      "heading": "Ronde 3/7 · Lot 10/10",
+      "language": "fr"
+    },
+    {
+      "round": 4,
+      "lot": 1,
+      "card": "CAP-G",
+      "outcome": "UNSOLD",
+      "heading": "Ronde 4/7 · Lot 1/10",
+      "language": "fr"
+    },
+    {
+      "round": 4,
+      "lot": 2,
+      "card": "MOB-C",
+      "outcome": "UNSOLD",
+      "heading": "Ronde 4/7 · Lot 2/10",
+      "language": "fr"
+    },
+    {
+      "round": 4,
+      "lot": 3,
+      "card": "FP-C",
+      "outcome": "UNSOLD",
+      "heading": "Ronde 4/7 · Lot 3/10",
+      "language": "fr"
+    },
+    {
+      "round": 4,
+      "lot": 4,
+      "card": "PRO-B",
+      "outcome": "UNSOLD",
+      "heading": "Ronde 4/7 · Lot 4/10",
+      "language": "fr"
+    },
+    {
+      "round": 4,
+      "lot": 5,
+      "card": "COM-G",
+      "outcome": "UNSOLD",
+      "heading": "Ronde 4/7 · Lot 5/10",
+      "language": "fr"
+    },
+    {
+      "round": 4,
+      "lot": 6,
+      "card": "SA-B",
+      "outcome": "UNSOLD",
+      "heading": "Ronde 4/7 · Lot 6/10",
+      "language": "fr"
+    },
+    {
+      "round": 4,
+      "lot": 7,
+      "card": "ACC-B",
+      "outcome": "UNSOLD",
+      "heading": "Ronde 4/7 · Lot 7/10",
+      "language": "fr"
+    },
+    {
+      "round": 4,
+      "lot": 8,
+      "card": "ISSE-O",
+      "outcome": "UNSOLD",
+      "heading": "Ronde 4/7 · Lot 8/10",
+      "language": "fr"
+    },
+    {
+      "round": 4,
+      "lot": 9,
+      "card": "ISSE-C",
+      "outcome": "UNSOLD",
+      "heading": "Ronde 4/7 · Lot 9/10",
+      "language": "fr"
+    },
+    {
+      "round": 4,
+      "lot": 10,
+      "card": "ISSE-I",
+      "outcome": "UNSOLD",
+      "heading": "Ronde 4/7 · Lot 10/10",
+      "language": "fr"
+    },
+    {
+      "round": 5,
+      "lot": 1,
+      "card": "CAP-E",
+      "outcome": "SALE",
+      "team": 2,
+      "price": "350000",
+      "correction": {
+        "originalTeam": 1,
+        "voidReason": "Synthetic W65 transcription correction: official caller was Team 2.",
+        "studentReconcilePending": false
+      }
+    },
+    {
+      "round": 5,
+      "lot": 2,
+      "card": "MOB-E",
+      "outcome": "UNSOLD",
+      "heading": "Round 5/7 · Lot 2/10",
+      "language": "en"
+    },
+    {
+      "round": 5,
+      "lot": 3,
+      "card": "FP-D",
+      "outcome": "UNSOLD",
+      "heading": "Round 5/7 · Lot 3/10",
+      "language": "en"
+    },
+    {
+      "round": 5,
+      "lot": 4,
+      "card": "PRO-G",
+      "outcome": "UNSOLD",
+      "heading": "Round 5/7 · Lot 4/10",
+      "language": "en"
+    },
+    {
+      "round": 5,
+      "lot": 5,
+      "card": "COM-C",
+      "outcome": "UNSOLD",
+      "heading": "Round 5/7 · Lot 5/10",
+      "language": "en"
+    },
+    {
+      "round": 5,
+      "lot": 6,
+      "card": "SA-F",
+      "outcome": "UNSOLD",
+      "heading": "Round 5/7 · Lot 6/10",
+      "language": "en"
+    },
+    {
+      "round": 5,
+      "lot": 7,
+      "card": "ACC-A",
+      "outcome": "UNSOLD",
+      "heading": "Round 5/7 · Lot 7/10",
+      "language": "en"
+    },
+    {
+      "round": 5,
+      "lot": 8,
+      "card": "SE-Q",
+      "outcome": "UNSOLD",
+      "heading": "Round 5/7 · Lot 8/10",
+      "language": "en"
+    },
+    {
+      "round": 5,
+      "lot": 9,
+      "card": "SE-L",
+      "outcome": "UNSOLD",
+      "heading": "Round 5/7 · Lot 9/10",
+      "language": "en"
+    },
+    {
+      "round": 5,
+      "lot": 10,
+      "card": "SE-F",
+      "outcome": "UNSOLD",
+      "heading": "Round 5/7 · Lot 10/10",
+      "language": "en"
+    },
+    {
+      "round": 6,
+      "lot": 1,
+      "card": "CAP-D",
+      "outcome": "UNSOLD",
+      "heading": "Round 6/7 · Lot 1/10",
+      "language": "en"
+    },
+    {
+      "round": 6,
+      "lot": 2,
+      "card": "MOB-B",
+      "outcome": "UNSOLD",
+      "heading": "Round 6/7 · Lot 2/10",
+      "language": "en"
+    },
+    {
+      "round": 6,
+      "lot": 3,
+      "card": "FP-E",
+      "outcome": "UNSOLD",
+      "heading": "Round 6/7 · Lot 3/10",
+      "language": "en"
+    },
+    {
+      "round": 6,
+      "lot": 4,
+      "card": "PRO-E",
+      "outcome": "UNSOLD",
+      "heading": "Round 6/7 · Lot 4/10",
+      "language": "en"
+    },
+    {
+      "round": 6,
+      "lot": 5,
+      "card": "COM-F",
+      "outcome": "UNSOLD",
+      "heading": "Round 6/7 · Lot 5/10",
+      "language": "en"
+    },
+    {
+      "round": 6,
+      "lot": 6,
+      "card": "SA-C",
+      "outcome": "UNSOLD",
+      "heading": "Round 6/7 · Lot 6/10",
+      "language": "en"
+    },
+    {
+      "round": 6,
+      "lot": 7,
+      "card": "ACC-E",
+      "outcome": "UNSOLD",
+      "heading": "Round 6/7 · Lot 7/10",
+      "language": "en"
+    },
+    {
+      "round": 6,
+      "lot": 8,
+      "card": "SE-T",
+      "outcome": "UNSOLD",
+      "heading": "Round 6/7 · Lot 8/10",
+      "language": "en"
+    },
+    {
+      "round": 6,
+      "lot": 9,
+      "card": "SE-J",
+      "outcome": "UNSOLD",
+      "heading": "Round 6/7 · Lot 9/10",
+      "language": "en"
+    },
+    {
+      "round": 6,
+      "lot": 10,
+      "card": "SE-D",
+      "outcome": "UNSOLD",
+      "heading": "Round 6/7 · Lot 10/10",
+      "language": "en"
+    },
+    {
+      "round": 7,
+      "lot": 1,
+      "card": "CAP-C",
+      "outcome": "UNSOLD",
+      "heading": "Round 7/7 · Lot 1/10",
+      "language": "en"
+    },
+    {
+      "round": 7,
+      "lot": 2,
+      "card": "MOB-D",
+      "outcome": "UNSOLD",
+      "heading": "Round 7/7 · Lot 2/10",
+      "language": "en"
+    },
+    {
+      "round": 7,
+      "lot": 3,
+      "card": "FP-A",
+      "outcome": "UNSOLD",
+      "heading": "Round 7/7 · Lot 3/10",
+      "language": "en"
+    },
+    {
+      "round": 7,
+      "lot": 4,
+      "card": "PRO-D",
+      "outcome": "UNSOLD",
+      "heading": "Round 7/7 · Lot 4/10",
+      "language": "en"
+    },
+    {
+      "round": 7,
+      "lot": 5,
+      "card": "COM-E",
+      "outcome": "UNSOLD",
+      "heading": "Round 7/7 · Lot 5/10",
+      "language": "en"
+    },
+    {
+      "round": 7,
+      "lot": 6,
+      "card": "SA-G",
+      "outcome": "UNSOLD",
+      "heading": "Round 7/7 · Lot 6/10",
+      "language": "en"
+    },
+    {
+      "round": 7,
+      "lot": 7,
+      "card": "ACC-F",
+      "outcome": "UNSOLD",
+      "heading": "Round 7/7 · Lot 7/10",
+      "language": "en"
+    },
+    {
+      "round": 7,
+      "lot": 8,
+      "card": "SE-A",
+      "outcome": "UNSOLD",
+      "heading": "Round 7/7 · Lot 8/10",
+      "language": "en"
+    },
+    {
+      "round": 7,
+      "lot": 9,
+      "card": "SE-K",
+      "outcome": "UNSOLD",
+      "heading": "Round 7/7 · Lot 9/10",
+      "language": "en"
+    },
+    {
+      "round": 7,
+      "lot": 10,
+      "card": "SE-B",
+      "outcome": "UNSOLD",
+      "heading": "Round 7/7 · Lot 10/10",
+      "language": "en"
+    }
+  ],
+  "correction": "R5L1 Team1 original SALE -> VOID -> Team2 replacement SALE; student confirmed removal after cancel preserved original",
+  "commercial": {
+    "team1Cost": "850000.00",
+    "profit": "100.01",
+    "bid": "850100.01",
+    "score": 0,
+    "noAward": true
+  },
+  "keyboard": "Actual Tab entry and Return activate Current/Teams and Team1/Team2 disclosure; direct locator.press method did not establish visual activation.",
+  "limits": [
+    "No eligible-award/tie browser case",
+    "Only two teams here; ten-team candidate pagination still pending",
+    "No full device/offline/assistive/classroom/rights acceptance",
+    "Render/concept fidelity remains rejected",
+    "Immediate canvas screenshot after native event can precede two-frame redraw; scene editor/toggle verified"
+  ],
+  "backupPaths": {
+    "instructor": "C:\\Users\\user\\Downloads\\sea-instructor-2026-10-09 (1).json",
+    "student": "C:\\Users\\user\\Downloads\\sea-student-2026-10-09 (1).json"
+  },
+  "consoleWarningsErrors": []
+}

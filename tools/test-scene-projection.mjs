@@ -7,7 +7,9 @@ const text=value=>({nodeType:3,textContent:value});
 function node(tag,content='',children=[],props={}){
  const n={tagName:tag.toUpperCase(),nodeType:1,childNodes:[...(content?[text(content)]:[]),...children],children,labels:[],disabled:false,hidden:false,...props};
  n.classList={contains:c=>(n.classes||[]).includes(c)};
- n.getAttribute=k=>n.attrs?.[k]||null;n.closest=()=>null;
+ n.getAttribute=k=>n.attrs?.[k]||null;
+ n.closest=selector=>{for(let current=n;current;current=current.parentElement){if(['[data-scene-priority]','[data-scene-section]'].includes(selector)&&current.getAttribute(selector.slice(1,-1))!==null)return current;if(selector==='.field'&&current.classList?.contains('field'))return current;}return null;};
+ for(const child of children)child.parentElement=n;
  n.querySelector=selector=>n.querySelectorAll(selector)[0]||null;
  n.querySelectorAll=selector=>{const tags=selector.split(',');return children.flatMap(c=>[...(tags.includes(c.tagName?.toLowerCase())?[c]:[]),...(c.querySelectorAll?.(selector)||[])]);};
  Object.defineProperty(n,'textContent',{get:()=>n.childNodes.map(c=>c.textContent||'').join(' ')});return n;
@@ -52,5 +54,62 @@ assert.equal(utilities.rows.find(r=>r.label==='FR').utility,'language','Language
 assert.equal(utilities.targets.get(utilities.rows.find(r=>r.label==='FR').key),language,'Utility invokes the original validated semantic control');
 assert.equal(utilities.rows.find(r=>r.label==='Save').utility,'','Ordinary task controls cannot become header utilities');
 language.hidden=true;assert(!ctx.project([language],visible,keyFor).rows.length,'Hidden language control cannot leak into the header');
+// Ten callers used to expand to thirty separate rows in the actual auction.
+// Public team/mission/eligibility context now travels with each original action.
+for(const language of ['en','fr']){
+ const buttons=[],expected=[];
+ const roster=node('div','',Array.from({length:10},(_,i)=>{
+  const team=language==='fr'?`Équipe ${i+1}`:`Team ${i+1}`;
+  const mission=language==='fr'?'Récupération':'Recovery';
+  const wins=language==='fr'?`${i%3} achats · ${2-i%3} restants`:`${i%3} wins · ${2-i%3} remaining`;
+  const action=language==='fr'?'Accepter 700 000 $':'Accept $700,000';
+  const button=node('button',action,[],{disabled:i===4,classes:['primary'],attrs:{'data-bid-team':String(i+1)}});buttons.push(button);
+  expected.push({team,mission,wins,action});
+  return node('div','',[node('strong',team),node('span',mission,[node('small',wins),node('small',secret,[],{hidden:true})]),button],{classes:['bid-row']});
+ }),{attrs:{'data-scene-priority':'30','data-scene-section':'teams'}});
+ const result=ctx.project([roster,roster,...buttons],visible,keyFor);
+ assert.equal(result.rows.length,10,'Each bidder must have one contextual action, including repeated roots');
+ result.rows.forEach((row,i)=>{
+  const context=expected[i];
+  for(const word of [context.team,context.mission,context.wins])assert(row.label.includes(word),'Public bidder context missing: '+word);
+  assert.equal(row.value,context.action,'Original localized button label must survive');
+  assert.equal(row.kind,'button');assert.equal(row.disabled,i===4);assert.equal(row.priority,30);assert.equal(row.section,i===4?'teams':'task','Enabled canonical caller is directly in Current; unavailable caller remains Teams');assert.equal(row.compact,'bid');assert.equal(row.teamId,i+1);
+  assert.equal(result.targets.get(row.key),buttons[i],'GPU action must route to the actual semantic button');
+ });
+ assert(!JSON.stringify(result.rows).includes(secret),'Private or hidden bidder content must remain excluded');
+ buttons[0].hidden=true;
+ const hiddenAction=ctx.project([roster],visible,keyFor);
+ assert(!hiddenAction.targets.has(keyFor(buttons[0])),'Hidden bid actions must not be projected');
+ assert(hiddenAction.rows.some(row=>row.label===expected[0].team),'Visible public context survives a hidden action');
+}
+const futureInput=node('input','',[],{labels:[node('label','Bid amount')],value:'700000'});
+const futureAction=node('button','Accept');
+const futureRoster=node('div','',[node('strong','Team 1'),futureInput,futureAction],{classes:['bid-row']});
+const futureProjection=ctx.project([futureRoster],visible,keyFor);
+assert(futureProjection.rows.some(row=>row.label==='Bid amount'&&row.value==='700000'),'Unrecognized bidder controls cannot disappear');
+assert.equal(futureProjection.targets.get(keyFor(futureAction)),futureAction);
+const instructions=['Reveal the card.','Open bidding.','Accept the next caller.','Close and record the winner.','Advance after checking the sale.'];
+const workflow=node('div','',instructions.map(word=>node('p',word)),{classes:['workflow'],attrs:{'data-scene-priority':'70'}});
+const workflowProjection=ctx.project([workflow],visible,keyFor);
+assert.equal(workflowProjection.rows.length,1,'Workflow help must consolidate padding without dropping instructions');
+for(const sentence of instructions)assert(workflowProjection.rows[0].label.includes(sentence));
+assert.equal(workflowProjection.rows[0].priority,70);
+const template=fs.readFileSync(new URL('../source/instructor.template.html',import.meta.url),'utf8');
+assert(template.includes('id="workflow" data-scene-section="help" data-scene-priority="70"'),'Procedural help follows the current card and live actions');
+for(const id of ['leaderSummary','nextBid','timerValue'])assert(new RegExp('<div(?=[^>]*\\bclass="metric")(?=[^>]*\\bdata-scene-priority="20")[^>]*><div class="label"[^>]*></div><div class="value" id="'+id+'"').test(template),'Live metric priority must be on the projected parent: '+id);
 hidden.hidden=false;assert(JSON.stringify(ctx.project([root],visible,keyFor).rows).includes(secret),'Visible content must not be accidentally omitted');
 console.log('Scene projection hidden-content privacy, identity, disabled controls, summaries, table actions and immutability PASS');
+
+const contextual=node('button','Open bidding',[],{attrs:{'data-scene-current-action':'true'}});
+const summary=node('div','CAP-G',[node('strong','Light utility hull'),node('div','Capacity +4 · Mobility +10'),node('p',secret,[],{hidden:true})],{attrs:{'data-scene-summary':'true'}});
+const teamGroup=node('div','',[node('button','Accept next legal bid')],{attrs:{'data-scene-section':'teams'}});
+const sections=ctx.project([summary,contextual,teamGroup],visible,keyFor);
+assert.equal(sections.rows.find(r=>r.key===keyFor(contextual)).section,'task');
+assert.equal(sections.rows.find(r=>r.label==='Accept next legal bid').section,'teams');
+assert.equal(sections.rows.filter(r=>r.key===keyFor(summary)).length,1);
+assert(sections.rows[0].label.includes('Capacity +4 · Mobility +10'));
+assert(!JSON.stringify(sections.rows).includes(secret));
+contextual.disabled=true;assert.equal(ctx.project([contextual],visible,keyFor).rows[0].section,'tools','Disabled primary action stays available in management without crowding current task');
+console.log('Named public scene sections, consolidated card context and dynamic native-action routing PASS');
+
+const navigation=node('nav','',[node('button','Current'),node('button','Inspect')],{id:'sea3dNavigation'});assert.equal(ctx.project([navigation],visible,keyFor).rows.length,0,'Synchronized native navigation cannot duplicate task rows or feed back into sections');

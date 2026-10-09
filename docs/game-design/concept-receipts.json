@@ -1,156 +1,1741 @@
 {
   "schema": 1,
   "policy": "External receipts are projected deterministically into inventory. Generation never implies acceptance.",
-  "receipts": [{
-    "id": "GEN-interface-direction-v1",
-    "inventoryIds": ["DIRECTION-SCENE-UI"],
-    "status": "generated-exploratory",
-    "tool": "imagegen",
-    "date": "2026-10-09",
-    "artifact": "docs/game-design/concepts/interface-direction-v1.png",
-    "sha256": "553d903dbfe8da7448628eba47175fb3b646e72383ae515065eac3d4b5d25a96",
-    "nativeOutputPath": "C:/Users/user/.codex/generated_images/01a11d09-97df-7000-a3e7-a4b9bfcb4add/exec-1b6e53fb-20d8-4b95-bd61-ed0bb8ad9f79.png",
-    "promptConstraintsBrief": "Explore integrated SEA scene interface with realistic recovery vehicle hero, equipment auction, engine exploded inspection and narrow-device layout; sage/ink/brass/limestone visual language. This is a constraints brief, not the exact original tool prompt.",
-    "visualReview": {
-      "status": "exploratory-only;canonical acceptance open",
-      "usefulDirection": ["Vehicle-led hierarchy", "Quiet material palette", "Detailed formed cab and equipment packaging", "Engine inspection panel"],
-      "knownMismatches": ["Invented phase sequence differs from canonical eight phases", "Invented card titles, coins and prices differ from deck", "Six-wheel recovery hero differs from current eight-wheel model", "Inset vehicle variant differs from hero", "Labels and mechanical paths need independent reference review"],
-      "doesNotProve": ["Any of 77 identities fully concepted", "Any primary phase/role screen accepted", "Functioning UI or Three.js model", "Reference-quality or project completion"]
+  "receipts": [
+    {
+      "id": "GEN-interface-direction-v1",
+      "inventoryIds": [
+        "DIRECTION-SCENE-UI"
+      ],
+      "status": "generated-exploratory",
+      "tool": "imagegen",
+      "date": "2026-10-09",
+      "artifact": "docs/game-design/concepts/interface-direction-v1.png",
+      "sha256": "553d903dbfe8da7448628eba47175fb3b646e72383ae515065eac3d4b5d25a96",
+      "nativeOutputPath": "C:/Users/user/.codex/generated_images/01a11d09-97df-7000-a3e7-a4b9bfcb4add/exec-1b6e53fb-20d8-4b95-bd61-ed0bb8ad9f79.png",
+      "promptConstraintsBrief": "Explore integrated SEA scene interface with realistic recovery vehicle hero, equipment auction, engine exploded inspection and narrow-device layout; sage/ink/brass/limestone visual language. This is a constraints brief, not the exact original tool prompt.",
+      "visualReview": {
+        "status": "exploratory-only;canonical acceptance open",
+        "usefulDirection": [
+          "Vehicle-led hierarchy",
+          "Quiet material palette",
+          "Detailed formed cab and equipment packaging",
+          "Engine inspection panel"
+        ],
+        "knownMismatches": [
+          "Invented phase sequence differs from canonical eight phases",
+          "Invented card titles, coins and prices differ from deck",
+          "Six-wheel recovery hero differs from current eight-wheel model",
+          "Inset vehicle variant differs from hero",
+          "Labels and mechanical paths need independent reference review"
+        ],
+        "doesNotProve": [
+          "Any of 77 identities fully concepted",
+          "Any primary phase/role screen accepted",
+          "Functioning UI or Three.js model",
+          "Reference-quality or project completion"
+        ]
+      },
+      "acceptanceStatus": "open"
     },
-    "acceptanceStatus": "open"
-  }, {
-    "id": "GEN-recovery-assemblies-v1",
-    "inventoryIds": ["RECOVERY"],
-    "status": "generated-exploratory",
-    "tool": "imagegen",
-    "date": "2026-10-09",
-    "artifact": "docs/game-design/concepts/recovery-assemblies-v1.png",
-    "sha256": "56ec064032f9738d5dbd9ddec1589f687dbb2fef29b9cd3a8db837e7e365d909",
-    "nativeOutputPath": "C:/Users/user/.codex/generated_images/01a11d09-97df-7000-a3e7-a4b9bfcb4add/exec-7c7cd5cd-e829-4367-a016-bb32fe6f45f4.png",
-    "promptConstraintsBrief": "Original eight-wheel/four-axle recovery vehicle matching current axle metadata; neutral olive/ivory/steel/rubber palette; three-quarter, side and exploded assembly views plus crane/winch/engine/brake close-ups. Headings RECOVERY/Side/Assemblies/Details; no invented prices, phases or logos. This is a constraints brief, not the exact original tool prompt.",
-    "visualReview": {
-      "status": "exploratory-only; reference and implementation acceptance open",
-      "usefulDirection": ["Four axle positions are visible in hero and side views", "Formed cab/glazing and wheel guards", "Separated major chassis/powertrain/crane assemblies", "Mechanical close-up targets for engine, brake, crane cylinder and winch"],
-      "knownMismatches": ["Generated dimensions and mechanical paths are not independently verified against primary dimensional references", "Current Three.js implementation does not yet match this concept's geometric/material fidelity", "Detailed assembly views do not prove purchased-card variant interfaces or compatibility", "Full-frame margin and close-up framing need V08 qualification"],
-      "doesNotProve": ["Any component identity separately completed", "Every recovery category assembly concept complete", "A functioning exploded Three.js assembly", "Manufacturer-certified dimensions or construction", "Visual or product acceptance"]
+    {
+      "id": "GEN-recovery-assemblies-v1",
+      "inventoryIds": [
+        "RECOVERY"
+      ],
+      "status": "generated-exploratory",
+      "tool": "imagegen",
+      "date": "2026-10-09",
+      "artifact": "docs/game-design/concepts/recovery-assemblies-v1.png",
+      "sha256": "56ec064032f9738d5dbd9ddec1589f687dbb2fef29b9cd3a8db837e7e365d909",
+      "nativeOutputPath": "C:/Users/user/.codex/generated_images/01a11d09-97df-7000-a3e7-a4b9bfcb4add/exec-7c7cd5cd-e829-4367-a016-bb32fe6f45f4.png",
+      "promptConstraintsBrief": "Original eight-wheel/four-axle recovery vehicle matching current axle metadata; neutral olive/ivory/steel/rubber palette; three-quarter, side and exploded assembly views plus crane/winch/engine/brake close-ups. Headings RECOVERY/Side/Assemblies/Details; no invented prices, phases or logos. This is a constraints brief, not the exact original tool prompt.",
+      "visualReview": {
+        "status": "exploratory-only; reference and implementation acceptance open",
+        "usefulDirection": [
+          "Four axle positions are visible in hero and side views",
+          "Formed cab/glazing and wheel guards",
+          "Separated major chassis/powertrain/crane assemblies",
+          "Mechanical close-up targets for engine, brake, crane cylinder and winch"
+        ],
+        "knownMismatches": [
+          "Generated dimensions and mechanical paths are not independently verified against primary dimensional references",
+          "Current Three.js implementation does not yet match this concept's geometric/material fidelity",
+          "Detailed assembly views do not prove purchased-card variant interfaces or compatibility",
+          "Full-frame margin and close-up framing need V08 qualification"
+        ],
+        "doesNotProve": [
+          "Any component identity separately completed",
+          "Every recovery category assembly concept complete",
+          "A functioning exploded Three.js assembly",
+          "Manufacturer-certified dimensions or construction",
+          "Visual or product acceptance"
+        ]
+      },
+      "acceptanceStatus": "open"
     },
-    "acceptanceStatus": "open"
-  }, {
-    "id": "GEN-mobility-family-v1",
-    "inventoryIds": ["MOB-A", "MOB-B", "MOB-C", "MOB-D", "MOB-E", "MOB-F", "MOB-G"],
-    "status": "generated-exploratory",
-    "tool": "imagegen",
-    "date": "2026-10-09",
-    "artifact": "docs/game-design/concepts/mobility-family-v1.png",
-    "sha256": "66615f24cfd621c2ea3863df65a75c3a680896cd833d118a641cbe6f07b20cc5",
-    "nativeOutputPath": "C:/Users/user/.codex/generated_images/01a11d09-97df-7000-a3e7-a4b9bfcb4add/exec-edab1e86-8f22-4f8a-9537-65703c6bdb1b.png",
-    "promptConstraintsBrief": "Seven distinct mobility variants, each with assembled and exploded views: A efficient inline power pack; B all-terrain axle; C high-output V-engine; D heavy axle/suspension; E long-range fuel/engine; F compact engine; G traction differential/electronics. Neutral shared material palette. Only exact MOB-A through MOB-G labels; no prices/effects text. This is a constraints brief, not the exact original tool prompt. Requested C subject conflicts with canonical Lightweight Running Gear and must be corrected before acceptance.",
-    "panelMap": [
-      {"panel": 1, "inventoryId": "MOB-A", "position": "top row, first", "views": ["assembled-upper", "exploded-lower"]},
-      {"panel": 2, "inventoryId": "MOB-B", "position": "top row, second", "views": ["assembled-upper", "exploded-lower"]},
-      {"panel": 3, "inventoryId": "MOB-C", "position": "top row, third", "views": ["assembled-upper", "exploded-lower"], "canonicalMismatch": "V-engine instead of Lightweight Running Gear"},
-      {"panel": 4, "inventoryId": "MOB-D", "position": "top row, fourth", "views": ["assembled-upper", "exploded-lower"]},
-      {"panel": 5, "inventoryId": "MOB-E", "position": "bottom row, first", "views": ["assembled-upper", "exploded-lower"]},
-      {"panel": 6, "inventoryId": "MOB-F", "position": "bottom row, second", "views": ["assembled-upper", "exploded-lower"]},
-      {"panel": 7, "inventoryId": "MOB-G", "position": "bottom row, third", "views": ["assembled-upper", "exploded-lower"]}
-    ],
-    "visualReview": {
-      "status": "exploratory-only; canonical and implementation acceptance open",
-      "usefulDirection": ["All seven ID headings present", "Each panel contains assembled/exploded forms", "Distinct power-pack, axle, suspension, fuel and traction packaging", "Shared paint/metal/rubber palette"],
-      "knownMismatches": ["MOB-C is canonically Lightweight Running Gear; V-engine concept conflicts with its identity", "Dimensions and hydraulic/electrical paths are generated, not verified primary references", "Three.js renders have not been matched against the sheet", "Panel safe margins, tiny parts and exploded clearances require qualification"],
-      "doesNotProve": ["Canonical MOB-C concept acceptance", "All mobility component concepts completed", "Mechanically certified hardware", "Functional exploded Three.js models", "Visual or product acceptance"]
+    {
+      "id": "GEN-mobility-family-v1",
+      "inventoryIds": [
+        "MOB-A",
+        "MOB-B",
+        "MOB-C",
+        "MOB-D",
+        "MOB-E",
+        "MOB-F",
+        "MOB-G"
+      ],
+      "status": "generated-exploratory",
+      "tool": "imagegen",
+      "date": "2026-10-09",
+      "artifact": "docs/game-design/concepts/mobility-family-v1.png",
+      "sha256": "66615f24cfd621c2ea3863df65a75c3a680896cd833d118a641cbe6f07b20cc5",
+      "nativeOutputPath": "C:/Users/user/.codex/generated_images/01a11d09-97df-7000-a3e7-a4b9bfcb4add/exec-edab1e86-8f22-4f8a-9537-65703c6bdb1b.png",
+      "promptConstraintsBrief": "Seven distinct mobility variants, each with assembled and exploded views: A efficient inline power pack; B all-terrain axle; C high-output V-engine; D heavy axle/suspension; E long-range fuel/engine; F compact engine; G traction differential/electronics. Neutral shared material palette. Only exact MOB-A through MOB-G labels; no prices/effects text. This is a constraints brief, not the exact original tool prompt. Requested C subject conflicts with canonical Lightweight Running Gear and must be corrected before acceptance.",
+      "panelMap": [
+        {
+          "panel": 1,
+          "inventoryId": "MOB-A",
+          "position": "top row, first",
+          "views": [
+            "assembled-upper",
+            "exploded-lower"
+          ]
+        },
+        {
+          "panel": 2,
+          "inventoryId": "MOB-B",
+          "position": "top row, second",
+          "views": [
+            "assembled-upper",
+            "exploded-lower"
+          ]
+        },
+        {
+          "panel": 3,
+          "inventoryId": "MOB-C",
+          "position": "top row, third",
+          "views": [
+            "assembled-upper",
+            "exploded-lower"
+          ],
+          "canonicalMismatch": "V-engine instead of Lightweight Running Gear"
+        },
+        {
+          "panel": 4,
+          "inventoryId": "MOB-D",
+          "position": "top row, fourth",
+          "views": [
+            "assembled-upper",
+            "exploded-lower"
+          ]
+        },
+        {
+          "panel": 5,
+          "inventoryId": "MOB-E",
+          "position": "bottom row, first",
+          "views": [
+            "assembled-upper",
+            "exploded-lower"
+          ]
+        },
+        {
+          "panel": 6,
+          "inventoryId": "MOB-F",
+          "position": "bottom row, second",
+          "views": [
+            "assembled-upper",
+            "exploded-lower"
+          ]
+        },
+        {
+          "panel": 7,
+          "inventoryId": "MOB-G",
+          "position": "bottom row, third",
+          "views": [
+            "assembled-upper",
+            "exploded-lower"
+          ]
+        }
+      ],
+      "visualReview": {
+        "status": "exploratory-only; canonical and implementation acceptance open",
+        "usefulDirection": [
+          "All seven ID headings present",
+          "Each panel contains assembled/exploded forms",
+          "Distinct power-pack, axle, suspension, fuel and traction packaging",
+          "Shared paint/metal/rubber palette"
+        ],
+        "knownMismatches": [
+          "MOB-C is canonically Lightweight Running Gear; V-engine concept conflicts with its identity",
+          "Dimensions and hydraulic/electrical paths are generated, not verified primary references",
+          "Three.js renders have not been matched against the sheet",
+          "Panel safe margins, tiny parts and exploded clearances require qualification"
+        ],
+        "doesNotProve": [
+          "Canonical MOB-C concept acceptance",
+          "All mobility component concepts completed",
+          "Mechanically certified hardware",
+          "Functional exploded Three.js models",
+          "Visual or product acceptance"
+        ]
+      },
+      "acceptanceStatus": "open"
     },
-    "acceptanceStatus": "open"
-  }, {
-    "id": "GEN-mob-c-running-gear-v2",
-    "inventoryIds": ["MOB-C"],
-    "status": "generated-exploratory",
-    "preferredDirection": true,
-    "supersedesDirection": "GEN-mobility-family-v1#panel-3",
-    "tool": "imagegen",
-    "date": "2026-10-09",
-    "artifact": "docs/game-design/concepts/mob-c-running-gear-v2.png",
-    "sha256": "58d42d56cd384098eb567ab1664c1ad07bb9eb1891ed13a08a62ed05dc532b20",
-    "nativeOutputPath": "C:/Users/user/.codex/generated_images/01a11d09-97df-7000-a3e7-a4b9bfcb4add/exec-42a8e295-9043-401a-b8d3-bbdfe5b4fb64.png",
-    "promptConstraintsBrief": "Correct MOB-C to canonical Lightweight Running Gear, not an engine. Two lighter wheels with connected axle/differential/half-shafts/cradle/steering/springs; assembled and matched exploded views, exact identity label, no effects or prices. This is a constraints brief, not the exact original tool prompt.",
-    "panelMap": [{"panel": 1, "inventoryId": "MOB-C", "position": "upper", "view": "assembled"}, {"panel": 2, "inventoryId": "MOB-C", "position": "lower", "view": "exploded"}],
-    "visualReview": {
-      "status": "corrected category direction only; physical plausibility and matched implementation acceptance open",
-      "usefulDirection": ["Correct identity/title and running-gear category", "Two wheels, differential, half-shafts, cradle, springs and steering packaging", "Assembled/exploded comparative layout"],
-      "knownMismatches": ["Generated joints, clearances and connections cannot establish actual mechanical correctness", "Real dimensional and primary-source qualification pending", "Exploded wheel proximity to image edges requires V08 review", "No matching Three.js render or implementation acceptance"],
-      "doesNotProve": ["Any generic component concept separately complete", "Certified lightweight construction", "Mechanically compatible running gear", "Visual or product acceptance"]
+    {
+      "id": "GEN-mob-c-running-gear-v2",
+      "inventoryIds": [
+        "MOB-C"
+      ],
+      "status": "generated-exploratory",
+      "preferredDirection": true,
+      "supersedesDirection": "GEN-mobility-family-v1#panel-3",
+      "tool": "imagegen",
+      "date": "2026-10-09",
+      "artifact": "docs/game-design/concepts/mob-c-running-gear-v2.png",
+      "sha256": "58d42d56cd384098eb567ab1664c1ad07bb9eb1891ed13a08a62ed05dc532b20",
+      "nativeOutputPath": "C:/Users/user/.codex/generated_images/01a11d09-97df-7000-a3e7-a4b9bfcb4add/exec-42a8e295-9043-401a-b8d3-bbdfe5b4fb64.png",
+      "promptConstraintsBrief": "Correct MOB-C to canonical Lightweight Running Gear, not an engine. Two lighter wheels with connected axle/differential/half-shafts/cradle/steering/springs; assembled and matched exploded views, exact identity label, no effects or prices. This is a constraints brief, not the exact original tool prompt.",
+      "panelMap": [
+        {
+          "panel": 1,
+          "inventoryId": "MOB-C",
+          "position": "upper",
+          "view": "assembled"
+        },
+        {
+          "panel": 2,
+          "inventoryId": "MOB-C",
+          "position": "lower",
+          "view": "exploded"
+        }
+      ],
+      "visualReview": {
+        "status": "corrected category direction only; physical plausibility and matched implementation acceptance open",
+        "usefulDirection": [
+          "Correct identity/title and running-gear category",
+          "Two wheels, differential, half-shafts, cradle, springs and steering packaging",
+          "Assembled/exploded comparative layout"
+        ],
+        "knownMismatches": [
+          "Generated joints, clearances and connections cannot establish actual mechanical correctness",
+          "Real dimensional and primary-source qualification pending",
+          "Exploded wheel proximity to image edges requires V08 review",
+          "No matching Three.js render or implementation acceptance"
+        ],
+        "doesNotProve": [
+          "Any generic component concept separately complete",
+          "Certified lightweight construction",
+          "Mechanically compatible running gear",
+          "Visual or product acceptance"
+        ]
+      },
+      "acceptanceStatus": "open"
     },
-    "acceptanceStatus": "open"
-  }, {
-    "id": "GEN-capacity-family-v1",
-    "inventoryIds": ["CAP-A", "CAP-B", "CAP-C", "CAP-D", "CAP-E", "CAP-F", "CAP-G", "TRAIN-CAP"],
-    "status": "generated-exploratory",
-    "tool": "imagegen",
-    "date": "2026-10-09",
-    "artifact": "docs/game-design/concepts/capacity-family-v1.png",
-    "sha256": "20773043127a378916d49b66c3e020dad0927f67fffbd3e06abd6f470708c828",
-    "nativeOutputPath": "C:/Users/user/.codex/generated_images/01a11d09-97df-7000-a3e7-a4b9bfcb4add/exec-44140f9d-4094-47fa-bd6d-a1b3df4c2f77.png",
-    "promptConstraintsBrief": "Eight panels with exact CAP-A through CAP-G and TRAIN-CAP IDs, requested seat counts 6/6/4/8/5/5/4/4. Coherent formed hull cutaways, restrained seats and connected mounts; protected F, light-frame G, removable E; shared sage/ink/brass material language. This is a constraints brief, not the exact original tool prompt. Requested counts are not visually certified by the generated image.",
-    "panelMap": [
-      {"panel": 1, "inventoryId": "CAP-A", "position": "top row, first", "requestedSeats": 6, "countReview": "open; occlusion/count ambiguity"},
-      {"panel": 2, "inventoryId": "CAP-B", "position": "top row, second", "requestedSeats": 6, "countReview": "open; six-seat direction appears legible, not qualified"},
-      {"panel": 3, "inventoryId": "CAP-C", "position": "top row, third", "requestedSeats": 4, "countReview": "open; occlusion/count ambiguity"},
-      {"panel": 4, "inventoryId": "CAP-D", "position": "top row, fourth", "requestedSeats": 8, "countReview": "open; occlusion/count ambiguity"},
-      {"panel": 5, "inventoryId": "CAP-E", "position": "bottom row, first", "requestedSeats": 5, "countReview": "open; five-seat direction appears legible, not qualified"},
-      {"panel": 6, "inventoryId": "CAP-F", "position": "bottom row, second", "requestedSeats": 5, "countReview": "open; occlusion/count ambiguity"},
-      {"panel": 7, "inventoryId": "CAP-G", "position": "bottom row, third", "requestedSeats": 4, "countReview": "open; four-seat direction appears legible, not qualified"},
-      {"panel": 8, "inventoryId": "TRAIN-CAP", "position": "bottom row, fourth", "requestedSeats": 4, "countReview": "open; occlusion/count ambiguity"}
-    ],
-    "visualReview": {
-      "status": "exploratory-only; exact capacities and runtime match acceptance open",
-      "usefulDirection": ["All eight ID headings visible", "Formed hull/enclosure panels and restrained seats", "Removable E, protective F and open light G are distinct", "Shared framing and material palette"],
-      "knownMismatches": ["Exact requested seat counts are not proved by single oblique views, especially A/C/D/F/TRAIN", "Actual mounts, wall thickness, clearances and dimensional references unverified", "No matched Three.js render acceptance", "No side, rear, exploded or service-interface qualification for each identity"],
-      "doesNotProve": ["Canonical capacity acceptance", "Generic seats/hull component coverage complete", "Installed assembly compatibility", "Visual or product acceptance"]
+    {
+      "id": "GEN-capacity-family-v1",
+      "inventoryIds": [
+        "CAP-A",
+        "CAP-B",
+        "CAP-C",
+        "CAP-D",
+        "CAP-E",
+        "CAP-F",
+        "CAP-G",
+        "TRAIN-CAP"
+      ],
+      "status": "generated-exploratory",
+      "tool": "imagegen",
+      "date": "2026-10-09",
+      "artifact": "docs/game-design/concepts/capacity-family-v1.png",
+      "sha256": "20773043127a378916d49b66c3e020dad0927f67fffbd3e06abd6f470708c828",
+      "nativeOutputPath": "C:/Users/user/.codex/generated_images/01a11d09-97df-7000-a3e7-a4b9bfcb4add/exec-44140f9d-4094-47fa-bd6d-a1b3df4c2f77.png",
+      "promptConstraintsBrief": "Eight panels with exact CAP-A through CAP-G and TRAIN-CAP IDs, requested seat counts 6/6/4/8/5/5/4/4. Coherent formed hull cutaways, restrained seats and connected mounts; protected F, light-frame G, removable E; shared sage/ink/brass material language. This is a constraints brief, not the exact original tool prompt. Requested counts are not visually certified by the generated image.",
+      "panelMap": [
+        {
+          "panel": 1,
+          "inventoryId": "CAP-A",
+          "position": "top row, first",
+          "requestedSeats": 6,
+          "countReview": "open; occlusion/count ambiguity"
+        },
+        {
+          "panel": 2,
+          "inventoryId": "CAP-B",
+          "position": "top row, second",
+          "requestedSeats": 6,
+          "countReview": "open; six-seat direction appears legible, not qualified"
+        },
+        {
+          "panel": 3,
+          "inventoryId": "CAP-C",
+          "position": "top row, third",
+          "requestedSeats": 4,
+          "countReview": "open; occlusion/count ambiguity"
+        },
+        {
+          "panel": 4,
+          "inventoryId": "CAP-D",
+          "position": "top row, fourth",
+          "requestedSeats": 8,
+          "countReview": "open; occlusion/count ambiguity"
+        },
+        {
+          "panel": 5,
+          "inventoryId": "CAP-E",
+          "position": "bottom row, first",
+          "requestedSeats": 5,
+          "countReview": "open; five-seat direction appears legible, not qualified"
+        },
+        {
+          "panel": 6,
+          "inventoryId": "CAP-F",
+          "position": "bottom row, second",
+          "requestedSeats": 5,
+          "countReview": "open; occlusion/count ambiguity"
+        },
+        {
+          "panel": 7,
+          "inventoryId": "CAP-G",
+          "position": "bottom row, third",
+          "requestedSeats": 4,
+          "countReview": "open; four-seat direction appears legible, not qualified"
+        },
+        {
+          "panel": 8,
+          "inventoryId": "TRAIN-CAP",
+          "position": "bottom row, fourth",
+          "requestedSeats": 4,
+          "countReview": "open; occlusion/count ambiguity"
+        }
+      ],
+      "visualReview": {
+        "status": "exploratory-only; exact capacities and runtime match acceptance open",
+        "usefulDirection": [
+          "All eight ID headings visible",
+          "Formed hull/enclosure panels and restrained seats",
+          "Removable E, protective F and open light G are distinct",
+          "Shared framing and material palette"
+        ],
+        "knownMismatches": [
+          "Exact requested seat counts are not proved by single oblique views, especially A/C/D/F/TRAIN",
+          "Actual mounts, wall thickness, clearances and dimensional references unverified",
+          "No matched Three.js render acceptance",
+          "No side, rear, exploded or service-interface qualification for each identity"
+        ],
+        "doesNotProve": [
+          "Canonical capacity acceptance",
+          "Generic seats/hull component coverage complete",
+          "Installed assembly compatibility",
+          "Visual or product acceptance"
+        ]
+      },
+      "acceptanceStatus": "open"
     },
-    "acceptanceStatus": "open"
-  }, {
-    "id": "GEN-protection-family-v1",
-    "inventoryIds": ["PRO-A", "PRO-B", "PRO-C", "PRO-D", "PRO-E", "PRO-F", "PRO-G"],
-    "status": "generated-exploratory",
-    "tool": "imagegen",
-    "date": "2026-10-09",
-    "artifact": "docs/game-design/concepts/protection-family-v1.png",
-    "sha256": "4fe49eb178da9240849deb3c87205ebbdec420236599e9420b57d199b4e27c05",
-    "nativeOutputPath": "C:/Users/user/.codex/generated_images/01a11d09-97df-7000-a3e7-a4b9bfcb4add/exec-62b0149b-dd5a-4a1b-b615-7bf638cae88b.png",
-    "promptFile": "docs/game-design/PROTECTION_PROMPT.md",
-    "panels": [
-      {"panel": 1, "inventoryId": "PRO-A"},
-      {"panel": 2, "inventoryId": "PRO-B"},
-      {"panel": 3, "inventoryId": "PRO-C"},
-      {"panel": 4, "inventoryId": "PRO-D"},
-      {"panel": 5, "inventoryId": "PRO-E"},
-      {"panel": 6, "inventoryId": "PRO-F"},
-      {"panel": 7, "inventoryId": "PRO-G"}
-    ],
-    "visualReview": {
-      "status": "exploratory-only; margins and reference/runtime acceptance open",
-      "usefulDirection": ["Seven legible identity headings", "Formed panel edges and fastener interfaces", "Two visible supported crew seats in D", "Sectioned layered/composite/V-underbody/shell construction"],
-      "knownMismatches": ["Main contextual vehicle crops touch panel borders in A/C/E/F; safe-margin criterion not passed", "Composite material and joints are illustrative, not dimensioned or verified", "B and C assembled silhouettes remain similar", "No matched Three.js render or physical clearance qualification"],
-      "doesNotProve": ["Visual acceptance", "Engineering performance", "Generic component or assembly coverage", "Product completion"]
+    {
+      "id": "GEN-protection-family-v1",
+      "inventoryIds": [
+        "PRO-A",
+        "PRO-B",
+        "PRO-C",
+        "PRO-D",
+        "PRO-E",
+        "PRO-F",
+        "PRO-G"
+      ],
+      "status": "generated-exploratory",
+      "tool": "imagegen",
+      "date": "2026-10-09",
+      "artifact": "docs/game-design/concepts/protection-family-v1.png",
+      "sha256": "4fe49eb178da9240849deb3c87205ebbdec420236599e9420b57d199b4e27c05",
+      "nativeOutputPath": "C:/Users/user/.codex/generated_images/01a11d09-97df-7000-a3e7-a4b9bfcb4add/exec-62b0149b-dd5a-4a1b-b615-7bf638cae88b.png",
+      "promptFile": "docs/game-design/PROTECTION_PROMPT.md",
+      "panels": [
+        {
+          "panel": 1,
+          "inventoryId": "PRO-A"
+        },
+        {
+          "panel": 2,
+          "inventoryId": "PRO-B"
+        },
+        {
+          "panel": 3,
+          "inventoryId": "PRO-C"
+        },
+        {
+          "panel": 4,
+          "inventoryId": "PRO-D"
+        },
+        {
+          "panel": 5,
+          "inventoryId": "PRO-E"
+        },
+        {
+          "panel": 6,
+          "inventoryId": "PRO-F"
+        },
+        {
+          "panel": 7,
+          "inventoryId": "PRO-G"
+        }
+      ],
+      "visualReview": {
+        "status": "exploratory-only; margins and reference/runtime acceptance open",
+        "usefulDirection": [
+          "Seven legible identity headings",
+          "Formed panel edges and fastener interfaces",
+          "Two visible supported crew seats in D",
+          "Sectioned layered/composite/V-underbody/shell construction"
+        ],
+        "knownMismatches": [
+          "Main contextual vehicle crops touch panel borders in A/C/E/F; safe-margin criterion not passed",
+          "Composite material and joints are illustrative, not dimensioned or verified",
+          "B and C assembled silhouettes remain similar",
+          "No matched Three.js render or physical clearance qualification"
+        ],
+        "doesNotProve": [
+          "Visual acceptance",
+          "Engineering performance",
+          "Generic component or assembly coverage",
+          "Product completion"
+        ]
+      },
+      "acceptanceStatus": "open"
     },
-    "acceptanceStatus": "open"
-  }, {
-    "id": "GEN-firepower-family-v1",
-    "inventoryIds": ["FP-A","FP-B","FP-C","FP-D","FP-E","FP-F","FP-G"],
-    "status": "generated-exploratory",
-    "tool": "imagegen",
-    "date": "2026-10-09",
-    "artifact": "docs/game-design/concepts/firepower-family-v1.png",
-    "sha256": "119f0cb8f50315e33d6743cd5a68a85853a387c75e0a837d7079fc4305b273be",
-    "nativeOutputPath": "C:/Users/user/.codex/generated_images/01a11d09-97df-7000-a3e7-a4b9bfcb4add/exec-422252ba-f5d5-4d3b-8a62-76d39cbe9f39.png",
-    "promptFile": "docs/game-design/FIREPOWER_PROMPT.md",
-    "panels": [{"panel":1,"inventoryId":"FP-A"},{"panel":2,"inventoryId":"FP-B"},{"panel":3,"inventoryId":"FP-C"},{"panel":4,"inventoryId":"FP-D"},{"panel":5,"inventoryId":"FP-E"},{"panel":6,"inventoryId":"FP-F"},{"panel":7,"inventoryId":"FP-G"}],
-    "visualReview": {
-      "status": "exploratory-only; construction, margins and runtime acceptance open",
-      "usefulDirection": ["All seven canonical titles/IDs visible", "D/E/F have distinct remote/open-cradle/gimbal silhouettes", "Mount/control/housing external-interface insets", "Formed housing surfaces and restrained materials"],
-      "knownMismatches": ["Decorative dark serif frames and brown background differ from shared minimalist UI typography/palette", "A/B/C remain closely related turret silhouettes", "Eight-percent per-panel safe margin not established", "No dimensional, attachment-clearance or matched Three.js qualification"],
-      "doesNotProve": ["Visual acceptance", "Operational or mechanical specifications", "Generic component coverage", "Product release acceptance"]
+    {
+      "id": "GEN-firepower-family-v1",
+      "inventoryIds": [
+        "FP-A",
+        "FP-B",
+        "FP-C",
+        "FP-D",
+        "FP-E",
+        "FP-F",
+        "FP-G"
+      ],
+      "status": "generated-exploratory",
+      "tool": "imagegen",
+      "date": "2026-10-09",
+      "artifact": "docs/game-design/concepts/firepower-family-v1.png",
+      "sha256": "119f0cb8f50315e33d6743cd5a68a85853a387c75e0a837d7079fc4305b273be",
+      "nativeOutputPath": "C:/Users/user/.codex/generated_images/01a11d09-97df-7000-a3e7-a4b9bfcb4add/exec-422252ba-f5d5-4d3b-8a62-76d39cbe9f39.png",
+      "promptFile": "docs/game-design/FIREPOWER_PROMPT.md",
+      "panels": [
+        {
+          "panel": 1,
+          "inventoryId": "FP-A"
+        },
+        {
+          "panel": 2,
+          "inventoryId": "FP-B"
+        },
+        {
+          "panel": 3,
+          "inventoryId": "FP-C"
+        },
+        {
+          "panel": 4,
+          "inventoryId": "FP-D"
+        },
+        {
+          "panel": 5,
+          "inventoryId": "FP-E"
+        },
+        {
+          "panel": 6,
+          "inventoryId": "FP-F"
+        },
+        {
+          "panel": 7,
+          "inventoryId": "FP-G"
+        }
+      ],
+      "visualReview": {
+        "status": "exploratory-only; construction, margins and runtime acceptance open",
+        "usefulDirection": [
+          "All seven canonical titles/IDs visible",
+          "D/E/F have distinct remote/open-cradle/gimbal silhouettes",
+          "Mount/control/housing external-interface insets",
+          "Formed housing surfaces and restrained materials"
+        ],
+        "knownMismatches": [
+          "Decorative dark serif frames and brown background differ from shared minimalist UI typography/palette",
+          "A/B/C remain closely related turret silhouettes",
+          "Eight-percent per-panel safe margin not established",
+          "No dimensional, attachment-clearance or matched Three.js qualification"
+        ],
+        "doesNotProve": [
+          "Visual acceptance",
+          "Operational or mechanical specifications",
+          "Generic component coverage",
+          "Product release acceptance"
+        ]
+      },
+      "acceptanceStatus": "open"
     },
-    "acceptanceStatus": "open"
-  }]
+    {
+      "id": "GEN-communications-family-v1",
+      "inventoryIds": [
+        "COM-A",
+        "COM-B",
+        "COM-C",
+        "COM-D",
+        "COM-E",
+        "COM-F",
+        "COM-G"
+      ],
+      "status": "generated-exploratory",
+      "tool": "imagegen",
+      "date": "2026-10-09",
+      "artifact": "docs/game-design/concepts/communications-family-v1.png",
+      "sha256": "fa7e2b98f159929a4755be617c57a66552ea9e1a95e82dafa842be8d6ee35f39",
+      "nativeOutputPath": "C:/Users/user/.codex/generated_images/01a12098-2b2f-7e51-b7c4-dccc3557c71d/exec-0acfd412-8025-4728-b2bf-0f4104f82702.png",
+      "promptFile": "docs/game-design/COMMUNICATIONS_PROMPT.md",
+      "panels": [
+        {
+          "panel": 1,
+          "inventoryId": "COM-A"
+        },
+        {
+          "panel": 2,
+          "inventoryId": "COM-B"
+        },
+        {
+          "panel": 3,
+          "inventoryId": "COM-C"
+        },
+        {
+          "panel": 4,
+          "inventoryId": "COM-D"
+        },
+        {
+          "panel": 5,
+          "inventoryId": "COM-E"
+        },
+        {
+          "panel": 6,
+          "inventoryId": "COM-F"
+        },
+        {
+          "panel": 7,
+          "inventoryId": "COM-G"
+        }
+      ],
+      "visualReview": {
+        "status": "exploratory-only; margins, connections and reference/runtime acceptance open",
+        "usefulDirection": [
+          "Seven exact canonical captions with assembled/exploded views",
+          "Distinct cradle, stack, handheld, mast, broad unit, dock and twin-bay silhouettes",
+          "Shared ivory/sage/ink sans-serif direction"
+        ],
+        "knownMismatches": [
+          "Overall 8% margin not passed: upper captions/antennae near edge",
+          "Assembled A/E/G show loose plugs instead of fully mated endpoints",
+          "Dimensions, mast/dock/battery joints, clearances and actual reference correspondence unverified",
+          "No matched Three.js render acceptance"
+        ],
+        "doesNotProve": [
+          "Runtime model fidelity",
+          "Component/assembly concept coverage",
+          "Radio performance or security certification",
+          "Rights, visual or product acceptance"
+        ]
+      },
+      "acceptanceStatus": "open"
+    },
+    {
+      "id": "GEN-situational-awareness-family-v1",
+      "inventoryIds": [
+        "SA-A",
+        "SA-B",
+        "SA-C",
+        "SA-D",
+        "SA-E",
+        "SA-F",
+        "SA-G"
+      ],
+      "status": "generated-exploratory",
+      "tool": "imagegen",
+      "date": "2026-10-09",
+      "artifact": "docs/game-design/concepts/situational-awareness-family-v1.png",
+      "sha256": "07b5d4f9cc6e730404b73b5d97a93856981020a3d69442376293bd9d17536233",
+      "nativeOutputPath": "C:/Users/user/.codex/generated_images/01a120c8-5de9-7280-a507-0080f3cd5dc9/exec-a7f4fee9-97c8-4163-ab25-9257bdca448e.png",
+      "promptFile": "docs/game-design/SA_PROMPT.md",
+      "panels": [
+        {
+          "panel": 1,
+          "inventoryId": "SA-A"
+        },
+        {
+          "panel": 2,
+          "inventoryId": "SA-B"
+        },
+        {
+          "panel": 3,
+          "inventoryId": "SA-C"
+        },
+        {
+          "panel": 4,
+          "inventoryId": "SA-D"
+        },
+        {
+          "panel": 5,
+          "inventoryId": "SA-E"
+        },
+        {
+          "panel": 6,
+          "inventoryId": "SA-F"
+        },
+        {
+          "panel": 7,
+          "inventoryId": "SA-G"
+        }
+      ],
+      "visualReview": {
+        "status": "exploratory-only; construction/reference/runtime acceptance open",
+        "usefulDirection": [
+          "Seven exact canonical captions with assembled/exploded/detail views",
+          "Distinct paired bar, yoke, basic camera, mast, hood, annular sensor and distributed pods",
+          "Outer margins corrected by generation edit; no visible cropped captions/equipment",
+          "Shared ivory/sage/ink direction"
+        ],
+        "knownMismatches": [
+          "SA-A exploded lens/plate aperture mismatch",
+          "Mast internals, pedestal/cable ports and clearance correspondence remain unverified",
+          "Generative margin edit changed details; not an exact geometric rescale",
+          "No matched Three.js acceptance"
+        ],
+        "doesNotProve": [
+          "Runtime model fidelity",
+          "Generic component/assembly/UI concept coverage",
+          "Detection or environmental protection performance",
+          "Rights, visual or product acceptance"
+        ]
+      },
+      "acceptanceStatus": "open"
+    },
+    {
+      "id": "GEN-accessories-family-v1",
+      "inventoryIds": [
+        "ACC-A",
+        "ACC-B",
+        "ACC-C",
+        "ACC-D",
+        "ACC-E",
+        "ACC-F",
+        "ACC-G"
+      ],
+      "status": "generated-exploratory",
+      "tool": "imagegen",
+      "date": "2026-10-09",
+      "artifact": "docs/game-design/concepts/accessories-family-v1.png",
+      "sha256": "8bd7736d510e408b9388aa049410608007f4ff9dc2aa77a6bb1339e9c9970862",
+      "nativeOutputPath": "C:/Users/user/.codex/generated_images/01a120d7-32af-7163-bf11-372d619a967f/exec-80ec99f5-fd7f-4131-ac3f-0af66f4bf747.png",
+      "promptFile": "docs/game-design/ACCESSORIES_PROMPT.md",
+      "panels": [
+        {
+          "panel": 1,
+          "inventoryId": "ACC-A"
+        },
+        {
+          "panel": 2,
+          "inventoryId": "ACC-B"
+        },
+        {
+          "panel": 3,
+          "inventoryId": "ACC-C"
+        },
+        {
+          "panel": 4,
+          "inventoryId": "ACC-D"
+        },
+        {
+          "panel": 5,
+          "inventoryId": "ACC-E"
+        },
+        {
+          "panel": 6,
+          "inventoryId": "ACC-F"
+        },
+        {
+          "panel": 7,
+          "inventoryId": "ACC-G"
+        }
+      ],
+      "visualReview": {
+        "status": "exploratory-only; construction/reference/runtime acceptance open",
+        "usefulDirection": [
+          "Seven exact canonical captions and distinct accessory families",
+          "Assembled/exploded/detail construction direction",
+          "Selected overall margins visually clear and uncropped",
+          "Shared ivory/sage/ink material direction"
+        ],
+        "knownMismatches": [
+          "ACC-A retained cylinder reads partly as powered ram rather than towbar",
+          "ACC-B spring/axle/service routing and clearances unqualified",
+          "ACC-C/E roller bearing and mounting alignment synthetic",
+          "ACC-D work-surface deployment not demonstrated",
+          "ACC-F rope/fairlead clearances and hydraulic ports unverified",
+          "ACC-G assembled/exploded shelf correspondence ambiguous",
+          "Margin edits changed details; not exact rescaling",
+          "No matched Three.js acceptance"
+        ],
+        "doesNotProve": [
+          "Runtime fidelity or physical capabilities",
+          "Generic component/assembly/UI concept coverage",
+          "Rights, classroom or product acceptance"
+        ]
+      },
+      "acceptanceStatus": "open"
+    },
+    {
+      "id": "GEN-vehicles-family-v1",
+      "inventoryIds": [
+        "COMBAT",
+        "RECCE",
+        "TROOP",
+        "COMMAND",
+        "MINE"
+      ],
+      "status": "generated-exploratory",
+      "tool": "imagegen",
+      "date": "2026-10-09",
+      "artifact": "docs/game-design/concepts/vehicles-family-v1.png",
+      "sha256": "66c3c03855085b3c4411448cc91c962a4a3a6eef18020022df59a54676fb4907",
+      "nativeOutputPath": "C:/Users/user/.codex/generated_images/01a11d09-97df-7000-a3e7-a4b9bfcb4add/exec-1ff14c70-0dca-4411-a7db-ef5622d525a0.png",
+      "promptFile": "docs/game-design/VEHICLES_PROMPT.md",
+      "panels": [
+        {
+          "panel": 1,
+          "inventoryId": "COMBAT"
+        },
+        {
+          "panel": 2,
+          "inventoryId": "RECCE"
+        },
+        {
+          "panel": 3,
+          "inventoryId": "TROOP"
+        },
+        {
+          "panel": 4,
+          "inventoryId": "COMMAND"
+        },
+        {
+          "panel": 5,
+          "inventoryId": "MINE"
+        }
+      ],
+      "visualReview": {
+        "status": "lead inspected pixels; exploratory-only; acceptance open",
+        "usefulDirection": [
+          "Exact canonical headings visibly mapped",
+          "Distinct family subjects and close-up/decision construction direction",
+          "Selected overall sheet margins visually at least 8%; not independent segmentation acceptance"
+        ],
+        "knownMismatches": [
+          "Far-side wheel occlusion prevents wheel-count acceptance",
+          "COMBAT head reads partly optical; actual defensive mount construction unqualified",
+          "TROOP seat envelopes and COMMAND synthetic screens unqualified",
+          "MINE roller supports, hose routes and service clearance unqualified",
+          "Exploded views omit some mission hardware; no matched runtime comparison",
+          "Generative margin edits changed details; not exact geometric rescaling",
+          "Essential labels require bilingual accessible native runtime text",
+          "No matched Three.js visual acceptance"
+        ],
+        "doesNotProve": [
+          "Generic component, assembly or UI concept coverage",
+          "Dimensional, performance or physical compatibility qualification",
+          "Rights, classroom, handover or product acceptance"
+        ]
+      },
+      "acceptanceStatus": "open"
+    },
+    {
+      "id": "GEN-process-family-a-v1",
+      "inventoryIds": [
+        "SE-A",
+        "SE-B",
+        "SE-C",
+        "SE-D",
+        "SE-E",
+        "SE-F",
+        "SE-G"
+      ],
+      "status": "generated-exploratory",
+      "tool": "imagegen",
+      "date": "2026-10-09",
+      "artifact": "docs/game-design/concepts/process-family-a-v1.png",
+      "sha256": "8ca1d528fbd3c80ab19aa059d5f83b3cbfec20d0ac5fb51579d6509ea37b2eca",
+      "nativeOutputPath": "C:/Users/user/.codex/generated_images/01a120e9-e280-7490-8db7-ee8bc881260f/exec-0f3b3f12-43c9-4afa-b1e4-56436527c71b.png",
+      "promptFile": "docs/game-design/PROCESS_PROMPT.md",
+      "panels": [
+        {
+          "panel": 1,
+          "inventoryId": "SE-A"
+        },
+        {
+          "panel": 2,
+          "inventoryId": "SE-B"
+        },
+        {
+          "panel": 3,
+          "inventoryId": "SE-C"
+        },
+        {
+          "panel": 4,
+          "inventoryId": "SE-D"
+        },
+        {
+          "panel": 5,
+          "inventoryId": "SE-E"
+        },
+        {
+          "panel": 6,
+          "inventoryId": "SE-F"
+        },
+        {
+          "panel": 7,
+          "inventoryId": "SE-G"
+        }
+      ],
+      "visualReview": {
+        "status": "lead inspected pixels; exploratory-only; acceptance open",
+        "usefulDirection": [
+          "Exact canonical headings visibly mapped",
+          "Distinct family subjects and close-up/decision construction direction",
+          "Selected overall sheet margins visually at least 8%; not independent segmentation acceptance"
+        ],
+        "knownMismatches": [
+          "Connector pin counts/keying/mating interfaces unqualified",
+          "Compressed risk-axis text and nonmeasurable verification criteria",
+          "Trade and validation examples synthetic, not approved rules",
+          "Generative margin edits changed details; not exact geometric rescaling",
+          "Essential labels require bilingual accessible native runtime text",
+          "No matched Three.js visual acceptance"
+        ],
+        "doesNotProve": [
+          "Generic component, assembly or UI concept coverage",
+          "Dimensional, performance or physical compatibility qualification",
+          "Rights, classroom, handover or product acceptance"
+        ]
+      },
+      "acceptanceStatus": "open"
+    },
+    {
+      "id": "GEN-process-family-b-v1",
+      "inventoryIds": [
+        "SE-H",
+        "SE-I",
+        "SE-J",
+        "SE-K",
+        "SE-L",
+        "SE-M",
+        "SE-N"
+      ],
+      "status": "generated-exploratory",
+      "tool": "imagegen",
+      "date": "2026-10-09",
+      "artifact": "docs/game-design/concepts/process-family-b-v1.png",
+      "sha256": "c2ca2d84ad727466b896b92dcead25824a94a2e71ae6a3ec32943ec49186654b",
+      "nativeOutputPath": "C:/Users/user/.codex/generated_images/01a120e9-e280-7490-8db7-ee8bc881260f/exec-9baa350b-5d4e-49c3-af31-7812e622c705.png",
+      "promptFile": "docs/game-design/PROCESS_PROMPT.md",
+      "panels": [
+        {
+          "panel": 1,
+          "inventoryId": "SE-H"
+        },
+        {
+          "panel": 2,
+          "inventoryId": "SE-I"
+        },
+        {
+          "panel": 3,
+          "inventoryId": "SE-J"
+        },
+        {
+          "panel": 4,
+          "inventoryId": "SE-K"
+        },
+        {
+          "panel": 5,
+          "inventoryId": "SE-L"
+        },
+        {
+          "panel": 6,
+          "inventoryId": "SE-M"
+        },
+        {
+          "panel": 7,
+          "inventoryId": "SE-N"
+        }
+      ],
+      "visualReview": {
+        "status": "lead inspected pixels; exploratory-only; acceptance open",
+        "usefulDirection": [
+          "Exact canonical headings visibly mapped",
+          "Distinct family subjects and close-up/decision construction direction",
+          "Selected overall sheet margins visually at least 8%; not independent segmentation acceptance"
+        ],
+        "knownMismatches": [
+          "Supplier dependency arrow has a dangling endpoint",
+          "Tiny prototype label may read Auction rather than Actuation",
+          "Integration miniature fit and invented error bars unqualified",
+          "Generative margin edits changed details; not exact geometric rescaling",
+          "Essential labels require bilingual accessible native runtime text",
+          "No matched Three.js visual acceptance"
+        ],
+        "doesNotProve": [
+          "Generic component, assembly or UI concept coverage",
+          "Dimensional, performance or physical compatibility qualification",
+          "Rights, classroom, handover or product acceptance"
+        ]
+      },
+      "acceptanceStatus": "open"
+    },
+    {
+      "id": "GEN-process-family-c-v1",
+      "inventoryIds": [
+        "SE-O",
+        "SE-P",
+        "SE-Q",
+        "SE-R",
+        "SE-S",
+        "SE-T",
+        "SE-U"
+      ],
+      "status": "generated-exploratory",
+      "tool": "imagegen",
+      "date": "2026-10-09",
+      "artifact": "docs/game-design/concepts/process-family-c-v1.png",
+      "sha256": "a276cb188ae994a8c7d7f830214ef0a20b24566352a05c8fadb82d52baf2adc5",
+      "nativeOutputPath": "C:/Users/user/.codex/generated_images/01a120e9-e280-7490-8db7-ee8bc881260f/exec-62095d65-88f1-4097-b84f-288c5e6e058e.png",
+      "promptFile": "docs/game-design/PROCESS_PROMPT.md",
+      "panels": [
+        {
+          "panel": 1,
+          "inventoryId": "SE-O"
+        },
+        {
+          "panel": 2,
+          "inventoryId": "SE-P"
+        },
+        {
+          "panel": 3,
+          "inventoryId": "SE-Q"
+        },
+        {
+          "panel": 4,
+          "inventoryId": "SE-R"
+        },
+        {
+          "panel": 5,
+          "inventoryId": "SE-S"
+        },
+        {
+          "panel": 6,
+          "inventoryId": "SE-T"
+        },
+        {
+          "panel": 7,
+          "inventoryId": "SE-U"
+        }
+      ],
+      "visualReview": {
+        "status": "lead inspected pixels; exploratory-only; acceptance open",
+        "usefulDirection": [
+          "Exact canonical headings visibly mapped",
+          "Distinct family subjects and close-up/decision construction direction",
+          "Selected overall sheet margins visually at least 8%; not independent segmentation acceptance"
+        ],
+        "knownMismatches": [
+          "Reach/egress envelopes and removal/service clearances unmeasured",
+          "Synthetic baseline parameters and acceptance criteria are not game rules",
+          "Mission terrain, maintenance directions and evidence folders illustrative only",
+          "Generative margin edits changed details; not exact geometric rescaling",
+          "Essential labels require bilingual accessible native runtime text",
+          "No matched Three.js visual acceptance"
+        ],
+        "doesNotProve": [
+          "Generic component, assembly or UI concept coverage",
+          "Dimensional, performance or physical compatibility qualification",
+          "Rights, classroom, handover or product acceptance"
+        ]
+      },
+      "acceptanceStatus": "open"
+    },
+    {
+      "id": "GEN-component-powertrain-v1",
+      "inventoryIds": [
+        "COMP-powerpack",
+        "COMP-crankcase",
+        "COMP-cooling",
+        "COMP-intake",
+        "COMP-exhaust",
+        "COMP-transmission",
+        "COMP-connections",
+        "COMP-fuel"
+      ],
+      "status": "generated-exploratory",
+      "tool": "imagegen",
+      "date": "2026-10-09",
+      "artifact": "docs/game-design/concepts/component-powertrain-v1.png",
+      "sha256": "a6027294b562f612f338bc8ea783922b7fc2342f1b907a6a7d3b765e1566ac8f",
+      "nativeOutputPath": "C:/Users/user/.codex/generated_images/01a12112-3dbe-7a60-8d40-d78b3c5fdba2/exec-1de5ffa5-1759-462f-9983-c2faffe716dd.png",
+      "promptFile": "docs/game-design/COMPONENT_POWERTRAIN_PROMPT.md",
+      "panels": [
+        {
+          "panel": 1,
+          "inventoryId": "COMP-powerpack"
+        },
+        {
+          "panel": 2,
+          "inventoryId": "COMP-crankcase"
+        },
+        {
+          "panel": 3,
+          "inventoryId": "COMP-cooling"
+        },
+        {
+          "panel": 4,
+          "inventoryId": "COMP-intake"
+        },
+        {
+          "panel": 5,
+          "inventoryId": "COMP-exhaust"
+        },
+        {
+          "panel": 6,
+          "inventoryId": "COMP-transmission"
+        },
+        {
+          "panel": 7,
+          "inventoryId": "COMP-connections"
+        },
+        {
+          "panel": 8,
+          "inventoryId": "COMP-fuel"
+        }
+      ],
+      "visualReview": {
+        "status": "lead pixel inspected; exploratory only",
+        "usefulDirection": [
+          "Eight exact readable component IDs",
+          "Cast/folded/machined surfaces and assembled/exploded interface direction",
+          "Selected overall subject/caption margins exceed8% by visual estimate"
+        ],
+        "knownMismatches": [
+          "Cylinder/internal topology and fan support unqualified",
+          "Turbo air/exhaust and transmission flange correspondence synthetic",
+          "Fuel lacks clear high-pressure pump; illustrated injectors are not seated in a head",
+          "Generated margin edits alter details rather than exact rescaling",
+          "No matched runtime or dimension qualification"
+        ],
+        "doesNotProve": [
+          "Other27 component concepts",
+          "Mission assembly/UI/material concepts",
+          "Physical performance, rights, classroom or product acceptance"
+        ]
+      },
+      "acceptanceStatus": "open"
+    },
+    {
+      "id": "GEN-ui-auction-v1",
+      "inventoryIds": [
+        "UI-instructor-auction",
+        "UI-student-auction",
+        "UI-student-build",
+        "UI-instructor-confirmation"
+      ],
+      "status": "generated-exploratory",
+      "tool": "imagegen",
+      "date": "2026-10-09",
+      "artifact": "docs/game-design/concepts/ui-auction-v1.png",
+      "sha256": "ded388546c6baefc42551e5584576166525bbed15a5b5e913f0ba96b3e48164c",
+      "nativeOutputPath": "C:/Users/user/.codex/generated_images/01a12050-c7b3-75a0-bd82-c4c1a405dc44/exec-81a201d9-77ca-4bc8-8cf4-32af68f212f5.png",
+      "promptFile": "docs/game-design/UI_AUCTION_PROMPT.md",
+      "panels": [
+        {
+          "panel": "A",
+          "inventoryId": "UI-instructor-auction",
+          "state": "active bidding"
+        },
+        {
+          "panel": "B",
+          "inventoryId": "UI-student-auction",
+          "state": "private decision"
+        },
+        {
+          "panel": "C",
+          "inventoryId": "UI-instructor-auction",
+          "state": "committed result"
+        },
+        {
+          "panel": "D",
+          "inventoryId": "UI-student-build",
+          "state": "reconciliation"
+        },
+        {
+          "panel": "E",
+          "inventoryId": "UI-instructor-auction",
+          "state": "correction"
+        },
+        {
+          "panel": "F",
+          "inventoryId": "UI-instructor-confirmation",
+          "state": "void confirmation"
+        }
+      ],
+      "visualReview": {
+        "status": "lead pixel inspected; exploratory only",
+        "usefulDirection": [
+          "Complete six panels/captions with approximately10%horizontal and12%vertical blank margins",
+          "Clear public/private role separation, primary progression and reason-required correction",
+          "Canonical ACC-F starting350000/recovery+2, bidincrement50000"
+        ],
+        "knownMismatches": [
+          "French copy/currency/glyphs not exact canonical localization",
+          "Committed panel retains obsolete disabled Accept price labels; runtime now uses inactive result labels",
+          "Some panel controls imply cross-section shortcuts; actual reachability is not established by pixels",
+          "Generated winch fidelity and runtime layout/material matching remain open"
+        ],
+        "doesNotProve": [
+          "Remaining36 UI state concepts or all228 element concepts",
+          "Pointer/keyboard/assistive/privacy/transaction or classroom acceptance"
+        ]
+      },
+      "acceptanceStatus": "open"
+    },
+    {
+      "id": "GEN-ui-lifecycle-v1",
+      "inventoryIds": [
+        "UI-instructor-build",
+        "UI-student-build",
+        "UI-instructor-submit",
+        "UI-instructor-confirmation",
+        "UI-instructor-private-entry",
+        "UI-student-submit",
+        "UI-instructor-debrief",
+        "UI-student-debrief",
+        "UI-instructor-closed",
+        "UI-student-closed"
+      ],
+      "status": "generated-exploratory",
+      "tool": "imagegen",
+      "date": "2026-10-09",
+      "artifact": "docs/game-design/concepts/ui-lifecycle-v1.png",
+      "sha256": "1959cae880eb612cfbe49d99a17a79997f1e284a92040971c326d874f08480f0",
+      "nativeOutputPath": "C:/Users/user/.codex/generated_images/01a12050-c7b3-75a0-bd82-c4c1a405dc44/exec-63d704c4-d523-4f47-9333-1479ed749ae3.png",
+      "exactPromptSource": "docs/game-design/UI_LIFECYCLE_PROMPT.md",
+      "panelMappings": [
+        {
+          "panel": "A",
+          "inventoryIds": [
+            "UI-instructor-build"
+          ]
+        },
+        {
+          "panel": "B",
+          "inventoryIds": [
+            "UI-student-build"
+          ]
+        },
+        {
+          "panel": "C",
+          "inventoryIds": [
+            "UI-instructor-submit",
+            "UI-instructor-confirmation",
+            "UI-instructor-private-entry"
+          ]
+        },
+        {
+          "panel": "D",
+          "inventoryIds": [
+            "UI-student-submit"
+          ]
+        },
+        {
+          "panel": "E",
+          "inventoryIds": [
+            "UI-instructor-debrief"
+          ]
+        },
+        {
+          "panel": "F",
+          "inventoryIds": [
+            "UI-student-debrief"
+          ]
+        },
+        {
+          "panel": "G",
+          "inventoryIds": [
+            "UI-instructor-closed",
+            "UI-instructor-confirmation"
+          ]
+        },
+        {
+          "panel": "H",
+          "inventoryIds": [
+            "UI-student-closed"
+          ]
+        }
+      ],
+      "visualReview": {
+        "status": "lead pixel inspected; exploratory only",
+        "usefulDirection": [
+          "Eight complete panels with safe blank outer margins",
+          "Chronological private-entry guard/confirmation/editor and backup-before-clear",
+          "Canonical illustrative ACC-F400000 purchase, noncompliance, zero-profit/no-award"
+        ],
+        "knownMismatches": [
+          "French typography, exact labels and currency formatting remain unqualified",
+          "Single-team board does not prove complete ten-team navigation",
+          "Runtime/native accessibility, private-entry and model matching require actual candidate checks"
+        ],
+        "doesNotProve": [
+          "Remaining UI states, component/assembly/material acceptance",
+          "Classroom/rights/device/full-product acceptance"
+        ]
+      },
+      "acceptanceStatus": "open"
+    },
+    {
+      "id": "GEN-components-boarding-v1",
+      "inventoryIds": [
+        "COMP-ramp",
+        "COMP-seat",
+        "COMP-crew-bay",
+        "COMP-chassis",
+        "COMP-roller",
+        "ASM-TROOP-CAPACITY",
+        "ASM-COMMAND-CAPACITY",
+        "ASM-MINE-ACCESSORIES"
+      ],
+      "status": "generated-exploratory",
+      "tool": "imagegen",
+      "date": "2026-10-09",
+      "artifact": "docs/game-design/concepts/components-boarding-v1.png",
+      "sha256": "d984cb987dda3e8d70b980baa25b8fc7c0c9e226146f1414d96c2d0b428a2245",
+      "nativeOutputPath": "C:/Users/user/.codex/generated_images/01a12050-c7b3-75a0-bd82-c4c1a405dc44/exec-8b89b640-e700-4465-96f3-7889ceae8708.png",
+      "exactPromptSource": "docs/game-design/COMPONENT_BOARDING_PROMPT.md",
+      "panelMappings": [
+        {
+          "panel": "1",
+          "inventoryIds": [
+            "COMP-ramp"
+          ]
+        },
+        {
+          "panel": "2",
+          "inventoryIds": [
+            "COMP-seat"
+          ]
+        },
+        {
+          "panel": "3",
+          "inventoryIds": [
+            "COMP-crew-bay"
+          ]
+        },
+        {
+          "panel": "4",
+          "inventoryIds": [
+            "COMP-chassis"
+          ]
+        },
+        {
+          "panel": "5",
+          "inventoryIds": [
+            "COMP-roller"
+          ]
+        },
+        {
+          "panel": "6",
+          "inventoryIds": [
+            "ASM-TROOP-CAPACITY"
+          ]
+        },
+        {
+          "panel": "7",
+          "inventoryIds": [
+            "ASM-COMMAND-CAPACITY"
+          ]
+        },
+        {
+          "panel": "8",
+          "inventoryIds": [
+            "ASM-MINE-ACCESSORIES"
+          ]
+        }
+      ],
+      "visualReview": {
+        "status": "lead pixel inspected; exploratory only",
+        "usefulDirection": [
+          "Eight complete correctly labelled panels and intact outer borders",
+          "Connected boarding/seating/chassis/roller and differentiated troop/command assemblies"
+        ],
+        "knownMismatches": [
+          "Dimensions, hinge mechanisms and service routing not qualified",
+          "Synthetic capacities and exact vehicle fitment remain open",
+          "Matched Three.js renders remain below reference/concept fidelity"
+        ],
+        "doesNotProve": [
+          "Mechanical certification",
+          "Rights/classroom/device/full-release acceptance"
+        ]
+      },
+      "acceptanceStatus": "open"
+    },
+    {
+      "id": "GEN-components-mission-interiors-v1",
+      "inventoryIds": [
+        "COMP-cockpit",
+        "COMP-glazing",
+        "COMP-radio",
+        "COMP-antenna",
+        "COMP-rack",
+        "COMP-service",
+        "ASM-TROOP-COMMS",
+        "ASM-COMMAND-COMMS",
+        "ASM-RECCE-SA"
+      ],
+      "status": "generated-exploratory",
+      "tool": "imagegen",
+      "date": "2026-10-09",
+      "artifact": "docs/game-design/concepts/components-mission-interiors-v1.png",
+      "sha256": "a041de9c39e6c72eb5ef0404471457bc3928e73bda5afc00be7a119ee40681a6",
+      "nativeOutputPath": "C:/Users/user/.codex/generated_images/01a11d09-97df-7000-a3e7-a4b9bfcb4add/exec-76eacc0f-c384-48c6-b4dd-38390651cbb9.png",
+      "exactPromptSource": "docs/game-design/COMPONENT_MISSION_INTERIORS_PROMPT.md",
+      "panelMappings": [
+        {
+          "panel": "1",
+          "inventoryIds": [
+            "COMP-cockpit"
+          ]
+        },
+        {
+          "panel": "2",
+          "inventoryIds": [
+            "COMP-glazing"
+          ]
+        },
+        {
+          "panel": "3",
+          "inventoryIds": [
+            "COMP-radio"
+          ]
+        },
+        {
+          "panel": "4",
+          "inventoryIds": [
+            "COMP-antenna"
+          ]
+        },
+        {
+          "panel": "5",
+          "inventoryIds": [
+            "COMP-rack"
+          ]
+        },
+        {
+          "panel": "6",
+          "inventoryIds": [
+            "COMP-service"
+          ]
+        },
+        {
+          "panel": "7",
+          "inventoryIds": [
+            "ASM-TROOP-COMMS"
+          ]
+        },
+        {
+          "panel": "8",
+          "inventoryIds": [
+            "ASM-COMMAND-COMMS"
+          ]
+        },
+        {
+          "panel": "9",
+          "inventoryIds": [
+            "ASM-RECCE-SA"
+          ]
+        }
+      ],
+      "visualReview": {
+        "status": "lead pixel inspected; exploratory only",
+        "usefulDirection": [
+          "All exact ID labels and panel subjects visibly present",
+          "Distinct connected construction and material families",
+          "Original detailed sheet retained as generation history"
+        ],
+        "knownMismatches": [
+          "Outer margins below required safe-margin target; superseded by v2 framing",
+          "Contextual hull cutaway boundaries are intentional; full mechanical dimensions/ergonomics/load/service interfaces unqualified",
+          "Exploded mechanism/connectors and precise wiring remain illustrative inferences",
+          "Actual matched runtime fidelity and independent visual acceptance remain open"
+        ],
+        "doesNotProve": [
+          "Mechanical certification, real-world ratings or manufacturer asset rights",
+          "Classroom/device/language/full-release acceptance"
+        ]
+      },
+      "acceptanceStatus": "open"
+    },
+    {
+      "id": "GEN-components-mission-interiors-v2",
+      "inventoryIds": [
+        "COMP-cockpit",
+        "COMP-glazing",
+        "COMP-radio",
+        "COMP-antenna",
+        "COMP-rack",
+        "COMP-service",
+        "ASM-TROOP-COMMS",
+        "ASM-COMMAND-COMMS",
+        "ASM-RECCE-SA"
+      ],
+      "status": "generated-exploratory",
+      "tool": "imagegen",
+      "date": "2026-10-09",
+      "artifact": "docs/game-design/concepts/components-mission-interiors-v2.png",
+      "sha256": "e943fe40366d485c4ebe547bc8b1370cb4e7401af666fe3360e3224d1a7bab64",
+      "nativeOutputPath": "C:/Users/user/.codex/generated_images/01a11d09-97df-7000-a3e7-a4b9bfcb4add/exec-af4a3b7b-3a6f-471e-af99-91bae31116e1.png",
+      "exactPromptSource": "docs/game-design/W68_MARGIN_CORRECTION_PROMPT.md",
+      "panelMappings": [
+        {
+          "panel": "1",
+          "inventoryIds": [
+            "COMP-cockpit"
+          ]
+        },
+        {
+          "panel": "2",
+          "inventoryIds": [
+            "COMP-glazing"
+          ]
+        },
+        {
+          "panel": "3",
+          "inventoryIds": [
+            "COMP-radio"
+          ]
+        },
+        {
+          "panel": "4",
+          "inventoryIds": [
+            "COMP-antenna"
+          ]
+        },
+        {
+          "panel": "5",
+          "inventoryIds": [
+            "COMP-rack"
+          ]
+        },
+        {
+          "panel": "6",
+          "inventoryIds": [
+            "COMP-service"
+          ]
+        },
+        {
+          "panel": "7",
+          "inventoryIds": [
+            "ASM-TROOP-COMMS"
+          ]
+        },
+        {
+          "panel": "8",
+          "inventoryIds": [
+            "ASM-COMMAND-COMMS"
+          ]
+        },
+        {
+          "panel": "9",
+          "inventoryIds": [
+            "ASM-RECCE-SA"
+          ]
+        }
+      ],
+      "visualReview": {
+        "status": "lead pixel inspected; exploratory only",
+        "usefulDirection": [
+          "All exact ID labels and panel subjects visibly present",
+          "Distinct connected construction and material families",
+          "Whole board has broad intact outer margins after generative correction"
+        ],
+        "knownMismatches": [
+          "Generative margin correction is not a byte-preserving resize; minor shape/detail differences remain",
+          "Contextual hull cutaway boundaries are intentional; full mechanical dimensions/ergonomics/load/service interfaces unqualified",
+          "Exploded mechanism/connectors and precise wiring remain illustrative inferences",
+          "Actual matched runtime fidelity and independent visual acceptance remain open",
+          "Interior host cutaway fragments do not prove full enclosure/ingress clearance or cockpit seat/dial count",
+          "RECCE sensor separate pitch trunnion/yoke and two-axis cable travel are not established",
+          "Antenna stowed/deployed take-up and locking interfaces remain unverified",
+          "Rack exploded supports do not prove full equipment/cable correspondence, roof/floor fit or maintenance aisle clearance"
+        ],
+        "doesNotProve": [
+          "Mechanical certification, real-world ratings or manufacturer asset rights",
+          "Classroom/device/language/full-release acceptance"
+        ],
+        "peerReview": "Bounded shared-context read-only pixel review; not independent acceptance"
+      },
+      "acceptanceStatus": "open",
+      "preferredDirection": true,
+      "supersedesDirection": "GEN-components-mission-interiors-v1",
+      "referenceInputs": [
+        {
+          "path": "docs/game-design/concepts/components-mission-interiors-v1.png",
+          "sha256": "a041de9c39e6c72eb5ef0404471457bc3928e73bda5afc00be7a119ee40681a6"
+        }
+      ]
+    },
+    {
+      "id": "GEN-materials-family-v1",
+      "inventoryIds": [
+        "MAT-paint",
+        "MAT-edge",
+        "MAT-steel",
+        "MAT-darkSteel",
+        "MAT-rubber",
+        "MAT-glass",
+        "MAT-amber",
+        "MAT-lamp",
+        "MAT-red",
+        "MAT-pressedSteel",
+        "MAT-castSteel",
+        "MAT-upholstery"
+      ],
+      "status": "generated-exploratory",
+      "tool": "imagegen",
+      "date": "2026-10-09",
+      "artifact": "docs/game-design/concepts/materials-family-v1.png",
+      "sha256": "6a6732fb333ae590026060033d008b5d12d7b961192a9b25fbfa2586879360de",
+      "nativeOutputPath": "C:/Users/user/.codex/generated_images/01a11d09-97df-7000-a3e7-a4b9bfcb4add/exec-09611665-50a5-4089-a1d1-1162d458e712.png",
+      "exactPromptSource": "docs/game-design/MATERIALS_PROMPT.md",
+      "panelMappings": [
+        {
+          "panel": "1",
+          "inventoryIds": [
+            "MAT-paint"
+          ]
+        },
+        {
+          "panel": "2",
+          "inventoryIds": [
+            "MAT-edge"
+          ]
+        },
+        {
+          "panel": "3",
+          "inventoryIds": [
+            "MAT-steel"
+          ]
+        },
+        {
+          "panel": "4",
+          "inventoryIds": [
+            "MAT-darkSteel"
+          ]
+        },
+        {
+          "panel": "5",
+          "inventoryIds": [
+            "MAT-rubber"
+          ]
+        },
+        {
+          "panel": "6",
+          "inventoryIds": [
+            "MAT-glass"
+          ]
+        },
+        {
+          "panel": "7",
+          "inventoryIds": [
+            "MAT-amber"
+          ]
+        },
+        {
+          "panel": "8",
+          "inventoryIds": [
+            "MAT-lamp"
+          ]
+        },
+        {
+          "panel": "9",
+          "inventoryIds": [
+            "MAT-red"
+          ]
+        },
+        {
+          "panel": "10",
+          "inventoryIds": [
+            "MAT-pressedSteel"
+          ]
+        },
+        {
+          "panel": "11",
+          "inventoryIds": [
+            "MAT-castSteel"
+          ]
+        },
+        {
+          "panel": "12",
+          "inventoryIds": [
+            "MAT-upholstery"
+          ]
+        }
+      ],
+      "visualReview": {
+        "status": "lead pixel inspected; exploratory only",
+        "usefulDirection": [
+          "All exact ID labels and panel subjects visibly present",
+          "Distinct connected construction and material families",
+          "Original detailed sheet retained as generation history"
+        ],
+        "knownMismatches": [
+          "Outer margins below required safe-margin target; superseded by v2 framing",
+          "Concept optical transmission/lens structure exceeds current shared reflection-only material",
+          "Cast texture appears coarser than authored runtime finish; not calibrated physical properties",
+          "Actual matched runtime fidelity and independent visual acceptance remain open"
+        ],
+        "doesNotProve": [
+          "Mechanical certification, real-world ratings or manufacturer asset rights",
+          "Classroom/device/language/full-release acceptance"
+        ]
+      },
+      "acceptanceStatus": "open"
+    },
+    {
+      "id": "GEN-materials-family-v2",
+      "inventoryIds": [
+        "MAT-paint",
+        "MAT-edge",
+        "MAT-steel",
+        "MAT-darkSteel",
+        "MAT-rubber",
+        "MAT-glass",
+        "MAT-amber",
+        "MAT-lamp",
+        "MAT-red",
+        "MAT-pressedSteel",
+        "MAT-castSteel",
+        "MAT-upholstery"
+      ],
+      "status": "generated-exploratory",
+      "tool": "imagegen",
+      "date": "2026-10-09",
+      "artifact": "docs/game-design/concepts/materials-family-v2.png",
+      "sha256": "42296b42c792065664b251ad823e701be9331deefbd35a7418812094e196db96",
+      "nativeOutputPath": "C:/Users/user/.codex/generated_images/01a11d09-97df-7000-a3e7-a4b9bfcb4add/exec-b066bc5c-ec93-433b-a030-628d59130dc9.png",
+      "exactPromptSource": "docs/game-design/W68_MARGIN_CORRECTION_PROMPT.md",
+      "panelMappings": [
+        {
+          "panel": "1",
+          "inventoryIds": [
+            "MAT-paint"
+          ]
+        },
+        {
+          "panel": "2",
+          "inventoryIds": [
+            "MAT-edge"
+          ]
+        },
+        {
+          "panel": "3",
+          "inventoryIds": [
+            "MAT-steel"
+          ]
+        },
+        {
+          "panel": "4",
+          "inventoryIds": [
+            "MAT-darkSteel"
+          ]
+        },
+        {
+          "panel": "5",
+          "inventoryIds": [
+            "MAT-rubber"
+          ]
+        },
+        {
+          "panel": "6",
+          "inventoryIds": [
+            "MAT-glass"
+          ]
+        },
+        {
+          "panel": "7",
+          "inventoryIds": [
+            "MAT-amber"
+          ]
+        },
+        {
+          "panel": "8",
+          "inventoryIds": [
+            "MAT-lamp"
+          ]
+        },
+        {
+          "panel": "9",
+          "inventoryIds": [
+            "MAT-red"
+          ]
+        },
+        {
+          "panel": "10",
+          "inventoryIds": [
+            "MAT-pressedSteel"
+          ]
+        },
+        {
+          "panel": "11",
+          "inventoryIds": [
+            "MAT-castSteel"
+          ]
+        },
+        {
+          "panel": "12",
+          "inventoryIds": [
+            "MAT-upholstery"
+          ]
+        }
+      ],
+      "visualReview": {
+        "status": "lead pixel inspected; exploratory only",
+        "usefulDirection": [
+          "All exact ID labels and panel subjects visibly present",
+          "Distinct connected construction and material families",
+          "Whole board has broad intact outer margins after generative correction"
+        ],
+        "knownMismatches": [
+          "Generative margin correction is not a byte-preserving resize; minor shape/detail differences remain",
+          "Concept optical transmission/lens structure exceeds current shared reflection-only material",
+          "Cast texture appears coarser than authored runtime finish; not calibrated physical properties",
+          "Actual matched runtime fidelity and independent visual acceptance remain open",
+          "Dark and ordinary cast steel housings have similar grain; distinction is subtle",
+          "Casting grain and upholstery weave lack physical scale calibration"
+        ],
+        "doesNotProve": [
+          "Mechanical certification, real-world ratings or manufacturer asset rights",
+          "Classroom/device/language/full-release acceptance"
+        ],
+        "peerReview": "Bounded shared-context read-only pixel review; not independent acceptance"
+      },
+      "acceptanceStatus": "open",
+      "preferredDirection": true,
+      "supersedesDirection": "GEN-materials-family-v1",
+      "referenceInputs": [
+        {
+          "path": "docs/game-design/concepts/materials-family-v1.png",
+          "sha256": "6a6732fb333ae590026060033d008b5d12d7b961192a9b25fbfa2586879360de"
+        }
+      ]
+    }
+  ]
 }

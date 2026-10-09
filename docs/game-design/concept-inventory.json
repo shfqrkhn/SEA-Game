@@ -4,7 +4,7 @@
   "date": "2026-10-09",
   "canonicalSource": {
     "path": "source/shared/engine.js",
-    "sha256": "e0edea105fdb7ce53f431294909e7abc36614046d9746938b50300d28f6b73e1"
+    "sha256": "de0c54dc05e179c83aa147c32cb856819995a63f051c29346cd4ddc6ee71b030"
   },
   "status": "Inventory/exploratory direction; canonical/model/UI acceptance open",
   "counts": {
@@ -15,8 +15,8 @@
     "components": 35,
     "assemblyRelationships": 48,
     "uiStates": 40,
-    "uiElements": 211,
-    "materials": 9,
+    "uiElements": 242,
+    "materials": 12,
     "exploratoryDirections": 1
   },
   "subjects": [
@@ -1906,8 +1906,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/communications-family-v1.png",
+            "sha256": "fa7e2b98f159929a4755be617c57a66552ea9e1a95e82dafa842be8d6ee35f39",
+            "receiptId": "GEN-communications-family-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -1963,8 +1972,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/communications-family-v1.png",
+            "sha256": "fa7e2b98f159929a4755be617c57a66552ea9e1a95e82dafa842be8d6ee35f39",
+            "receiptId": "GEN-communications-family-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -2020,8 +2038,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/communications-family-v1.png",
+            "sha256": "fa7e2b98f159929a4755be617c57a66552ea9e1a95e82dafa842be8d6ee35f39",
+            "receiptId": "GEN-communications-family-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -2077,8 +2104,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/communications-family-v1.png",
+            "sha256": "fa7e2b98f159929a4755be617c57a66552ea9e1a95e82dafa842be8d6ee35f39",
+            "receiptId": "GEN-communications-family-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -2135,8 +2171,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/communications-family-v1.png",
+            "sha256": "fa7e2b98f159929a4755be617c57a66552ea9e1a95e82dafa842be8d6ee35f39",
+            "receiptId": "GEN-communications-family-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -2192,8 +2237,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/communications-family-v1.png",
+            "sha256": "fa7e2b98f159929a4755be617c57a66552ea9e1a95e82dafa842be8d6ee35f39",
+            "receiptId": "GEN-communications-family-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -2249,8 +2303,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/communications-family-v1.png",
+            "sha256": "fa7e2b98f159929a4755be617c57a66552ea9e1a95e82dafa842be8d6ee35f39",
+            "receiptId": "GEN-communications-family-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -2306,8 +2369,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/situational-awareness-family-v1.png",
+            "sha256": "07b5d4f9cc6e730404b73b5d97a93856981020a3d69442376293bd9d17536233",
+            "receiptId": "GEN-situational-awareness-family-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -2363,8 +2435,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/situational-awareness-family-v1.png",
+            "sha256": "07b5d4f9cc6e730404b73b5d97a93856981020a3d69442376293bd9d17536233",
+            "receiptId": "GEN-situational-awareness-family-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -2420,8 +2501,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/situational-awareness-family-v1.png",
+            "sha256": "07b5d4f9cc6e730404b73b5d97a93856981020a3d69442376293bd9d17536233",
+            "receiptId": "GEN-situational-awareness-family-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -2477,8 +2567,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/situational-awareness-family-v1.png",
+            "sha256": "07b5d4f9cc6e730404b73b5d97a93856981020a3d69442376293bd9d17536233",
+            "receiptId": "GEN-situational-awareness-family-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -2535,8 +2634,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/situational-awareness-family-v1.png",
+            "sha256": "07b5d4f9cc6e730404b73b5d97a93856981020a3d69442376293bd9d17536233",
+            "receiptId": "GEN-situational-awareness-family-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -2592,8 +2700,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/situational-awareness-family-v1.png",
+            "sha256": "07b5d4f9cc6e730404b73b5d97a93856981020a3d69442376293bd9d17536233",
+            "receiptId": "GEN-situational-awareness-family-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -2649,8 +2766,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/situational-awareness-family-v1.png",
+            "sha256": "07b5d4f9cc6e730404b73b5d97a93856981020a3d69442376293bd9d17536233",
+            "receiptId": "GEN-situational-awareness-family-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -2707,8 +2833,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/accessories-family-v1.png",
+            "sha256": "8bd7736d510e408b9388aa049410608007f4ff9dc2aa77a6bb1339e9c9970862",
+            "receiptId": "GEN-accessories-family-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -2764,8 +2899,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/accessories-family-v1.png",
+            "sha256": "8bd7736d510e408b9388aa049410608007f4ff9dc2aa77a6bb1339e9c9970862",
+            "receiptId": "GEN-accessories-family-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -2822,8 +2966,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/accessories-family-v1.png",
+            "sha256": "8bd7736d510e408b9388aa049410608007f4ff9dc2aa77a6bb1339e9c9970862",
+            "receiptId": "GEN-accessories-family-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -2879,8 +3032,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/accessories-family-v1.png",
+            "sha256": "8bd7736d510e408b9388aa049410608007f4ff9dc2aa77a6bb1339e9c9970862",
+            "receiptId": "GEN-accessories-family-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -2937,8 +3099,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/accessories-family-v1.png",
+            "sha256": "8bd7736d510e408b9388aa049410608007f4ff9dc2aa77a6bb1339e9c9970862",
+            "receiptId": "GEN-accessories-family-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -2995,8 +3166,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/accessories-family-v1.png",
+            "sha256": "8bd7736d510e408b9388aa049410608007f4ff9dc2aa77a6bb1339e9c9970862",
+            "receiptId": "GEN-accessories-family-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -3052,8 +3232,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/accessories-family-v1.png",
+            "sha256": "8bd7736d510e408b9388aa049410608007f4ff9dc2aa77a6bb1339e9c9970862",
+            "receiptId": "GEN-accessories-family-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -3110,8 +3299,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/process-family-a-v1.png",
+            "sha256": "8ca1d528fbd3c80ab19aa059d5f83b3cbfec20d0ac5fb51579d6509ea37b2eca",
+            "receiptId": "GEN-process-family-a-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -3162,8 +3360,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/process-family-a-v1.png",
+            "sha256": "8ca1d528fbd3c80ab19aa059d5f83b3cbfec20d0ac5fb51579d6509ea37b2eca",
+            "receiptId": "GEN-process-family-a-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -3214,8 +3421,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/process-family-a-v1.png",
+            "sha256": "8ca1d528fbd3c80ab19aa059d5f83b3cbfec20d0ac5fb51579d6509ea37b2eca",
+            "receiptId": "GEN-process-family-a-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -3266,8 +3482,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/process-family-a-v1.png",
+            "sha256": "8ca1d528fbd3c80ab19aa059d5f83b3cbfec20d0ac5fb51579d6509ea37b2eca",
+            "receiptId": "GEN-process-family-a-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -3318,8 +3543,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/process-family-a-v1.png",
+            "sha256": "8ca1d528fbd3c80ab19aa059d5f83b3cbfec20d0ac5fb51579d6509ea37b2eca",
+            "receiptId": "GEN-process-family-a-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -3370,8 +3604,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/process-family-a-v1.png",
+            "sha256": "8ca1d528fbd3c80ab19aa059d5f83b3cbfec20d0ac5fb51579d6509ea37b2eca",
+            "receiptId": "GEN-process-family-a-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -3422,8 +3665,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/process-family-a-v1.png",
+            "sha256": "8ca1d528fbd3c80ab19aa059d5f83b3cbfec20d0ac5fb51579d6509ea37b2eca",
+            "receiptId": "GEN-process-family-a-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -3474,8 +3726,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/process-family-b-v1.png",
+            "sha256": "c2ca2d84ad727466b896b92dcead25824a94a2e71ae6a3ec32943ec49186654b",
+            "receiptId": "GEN-process-family-b-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -3526,8 +3787,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/process-family-b-v1.png",
+            "sha256": "c2ca2d84ad727466b896b92dcead25824a94a2e71ae6a3ec32943ec49186654b",
+            "receiptId": "GEN-process-family-b-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -3578,8 +3848,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/process-family-b-v1.png",
+            "sha256": "c2ca2d84ad727466b896b92dcead25824a94a2e71ae6a3ec32943ec49186654b",
+            "receiptId": "GEN-process-family-b-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -3630,8 +3909,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/process-family-b-v1.png",
+            "sha256": "c2ca2d84ad727466b896b92dcead25824a94a2e71ae6a3ec32943ec49186654b",
+            "receiptId": "GEN-process-family-b-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -3682,8 +3970,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/process-family-b-v1.png",
+            "sha256": "c2ca2d84ad727466b896b92dcead25824a94a2e71ae6a3ec32943ec49186654b",
+            "receiptId": "GEN-process-family-b-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -3734,8 +4031,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/process-family-b-v1.png",
+            "sha256": "c2ca2d84ad727466b896b92dcead25824a94a2e71ae6a3ec32943ec49186654b",
+            "receiptId": "GEN-process-family-b-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -3786,8 +4092,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/process-family-b-v1.png",
+            "sha256": "c2ca2d84ad727466b896b92dcead25824a94a2e71ae6a3ec32943ec49186654b",
+            "receiptId": "GEN-process-family-b-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -3838,8 +4153,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/process-family-c-v1.png",
+            "sha256": "a276cb188ae994a8c7d7f830214ef0a20b24566352a05c8fadb82d52baf2adc5",
+            "receiptId": "GEN-process-family-c-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -3890,8 +4214,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/process-family-c-v1.png",
+            "sha256": "a276cb188ae994a8c7d7f830214ef0a20b24566352a05c8fadb82d52baf2adc5",
+            "receiptId": "GEN-process-family-c-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -3942,8 +4275,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/process-family-c-v1.png",
+            "sha256": "a276cb188ae994a8c7d7f830214ef0a20b24566352a05c8fadb82d52baf2adc5",
+            "receiptId": "GEN-process-family-c-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -3994,8 +4336,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/process-family-c-v1.png",
+            "sha256": "a276cb188ae994a8c7d7f830214ef0a20b24566352a05c8fadb82d52baf2adc5",
+            "receiptId": "GEN-process-family-c-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -4046,8 +4397,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/process-family-c-v1.png",
+            "sha256": "a276cb188ae994a8c7d7f830214ef0a20b24566352a05c8fadb82d52baf2adc5",
+            "receiptId": "GEN-process-family-c-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -4098,8 +4458,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/process-family-c-v1.png",
+            "sha256": "a276cb188ae994a8c7d7f830214ef0a20b24566352a05c8fadb82d52baf2adc5",
+            "receiptId": "GEN-process-family-c-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -4150,8 +4519,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/process-family-c-v1.png",
+            "sha256": "a276cb188ae994a8c7d7f830214ef0a20b24566352a05c8fadb82d52baf2adc5",
+            "receiptId": "GEN-process-family-c-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -4202,8 +4580,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/vehicles-family-v1.png",
+            "sha256": "66c3c03855085b3c4411448cc91c962a4a3a6eef18020022df59a54676fb4907",
+            "receiptId": "GEN-vehicles-family-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -4262,8 +4649,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/vehicles-family-v1.png",
+            "sha256": "66c3c03855085b3c4411448cc91c962a4a3a6eef18020022df59a54676fb4907",
+            "receiptId": "GEN-vehicles-family-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -4322,8 +4718,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/vehicles-family-v1.png",
+            "sha256": "66c3c03855085b3c4411448cc91c962a4a3a6eef18020022df59a54676fb4907",
+            "receiptId": "GEN-vehicles-family-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -4382,8 +4787,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/vehicles-family-v1.png",
+            "sha256": "66c3c03855085b3c4411448cc91c962a4a3a6eef18020022df59a54676fb4907",
+            "receiptId": "GEN-vehicles-family-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -4512,8 +4926,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/vehicles-family-v1.png",
+            "sha256": "66c3c03855085b3c4411448cc91c962a4a3a6eef18020022df59a54676fb4907",
+            "receiptId": "GEN-vehicles-family-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -4674,8 +5097,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/components-boarding-v1.png",
+            "sha256": "d984cb987dda3e8d70b980baa25b8fc7c0c9e226146f1414d96c2d0b428a2245",
+            "receiptId": "GEN-components-boarding-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -4899,8 +5331,28 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/components-mission-interiors-v1.png",
+            "sha256": "a041de9c39e6c72eb5ef0404471457bc3928e73bda5afc00be7a119ee40681a6",
+            "receiptId": "GEN-components-mission-interiors-v1"
+          },
+          {
+            "path": "docs/game-design/concepts/components-mission-interiors-v2.png",
+            "sha256": "e943fe40366d485c4ebe547bc8b1370cb4e7401af666fe3360e3224d1a7bab64",
+            "receiptId": "GEN-components-mission-interiors-v2"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ],
+        "preferredDirection": {
+          "path": "docs/game-design/concepts/components-mission-interiors-v2.png",
+          "receiptId": "GEN-components-mission-interiors-v2",
+          "supersedes": "GEN-components-mission-interiors-v1",
+          "acceptance": "open"
+        }
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -4944,8 +5396,28 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/components-mission-interiors-v1.png",
+            "sha256": "a041de9c39e6c72eb5ef0404471457bc3928e73bda5afc00be7a119ee40681a6",
+            "receiptId": "GEN-components-mission-interiors-v1"
+          },
+          {
+            "path": "docs/game-design/concepts/components-mission-interiors-v2.png",
+            "sha256": "e943fe40366d485c4ebe547bc8b1370cb4e7401af666fe3360e3224d1a7bab64",
+            "receiptId": "GEN-components-mission-interiors-v2"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ],
+        "preferredDirection": {
+          "path": "docs/game-design/concepts/components-mission-interiors-v2.png",
+          "receiptId": "GEN-components-mission-interiors-v2",
+          "supersedes": "GEN-components-mission-interiors-v1",
+          "acceptance": "open"
+        }
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -4989,8 +5461,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/components-boarding-v1.png",
+            "sha256": "d984cb987dda3e8d70b980baa25b8fc7c0c9e226146f1414d96c2d0b428a2245",
+            "receiptId": "GEN-components-boarding-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -5034,8 +5515,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/components-boarding-v1.png",
+            "sha256": "d984cb987dda3e8d70b980baa25b8fc7c0c9e226146f1414d96c2d0b428a2245",
+            "receiptId": "GEN-components-boarding-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -5079,8 +5569,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/components-boarding-v1.png",
+            "sha256": "d984cb987dda3e8d70b980baa25b8fc7c0c9e226146f1414d96c2d0b428a2245",
+            "receiptId": "GEN-components-boarding-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -5124,8 +5623,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/component-powertrain-v1.png",
+            "sha256": "a6027294b562f612f338bc8ea783922b7fc2342f1b907a6a7d3b765e1566ac8f",
+            "receiptId": "GEN-component-powertrain-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -5169,8 +5677,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/component-powertrain-v1.png",
+            "sha256": "a6027294b562f612f338bc8ea783922b7fc2342f1b907a6a7d3b765e1566ac8f",
+            "receiptId": "GEN-component-powertrain-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -5214,8 +5731,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/component-powertrain-v1.png",
+            "sha256": "a6027294b562f612f338bc8ea783922b7fc2342f1b907a6a7d3b765e1566ac8f",
+            "receiptId": "GEN-component-powertrain-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -5259,8 +5785,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/component-powertrain-v1.png",
+            "sha256": "a6027294b562f612f338bc8ea783922b7fc2342f1b907a6a7d3b765e1566ac8f",
+            "receiptId": "GEN-component-powertrain-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -5304,8 +5839,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/component-powertrain-v1.png",
+            "sha256": "a6027294b562f612f338bc8ea783922b7fc2342f1b907a6a7d3b765e1566ac8f",
+            "receiptId": "GEN-component-powertrain-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -5349,8 +5893,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/component-powertrain-v1.png",
+            "sha256": "a6027294b562f612f338bc8ea783922b7fc2342f1b907a6a7d3b765e1566ac8f",
+            "receiptId": "GEN-component-powertrain-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -5394,8 +5947,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/component-powertrain-v1.png",
+            "sha256": "a6027294b562f612f338bc8ea783922b7fc2342f1b907a6a7d3b765e1566ac8f",
+            "receiptId": "GEN-component-powertrain-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -5439,8 +6001,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/component-powertrain-v1.png",
+            "sha256": "a6027294b562f612f338bc8ea783922b7fc2342f1b907a6a7d3b765e1566ac8f",
+            "receiptId": "GEN-component-powertrain-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -5619,8 +6190,28 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/components-mission-interiors-v1.png",
+            "sha256": "a041de9c39e6c72eb5ef0404471457bc3928e73bda5afc00be7a119ee40681a6",
+            "receiptId": "GEN-components-mission-interiors-v1"
+          },
+          {
+            "path": "docs/game-design/concepts/components-mission-interiors-v2.png",
+            "sha256": "e943fe40366d485c4ebe547bc8b1370cb4e7401af666fe3360e3224d1a7bab64",
+            "receiptId": "GEN-components-mission-interiors-v2"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ],
+        "preferredDirection": {
+          "path": "docs/game-design/concepts/components-mission-interiors-v2.png",
+          "receiptId": "GEN-components-mission-interiors-v2",
+          "supersedes": "GEN-components-mission-interiors-v1",
+          "acceptance": "open"
+        }
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -5664,8 +6255,28 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/components-mission-interiors-v1.png",
+            "sha256": "a041de9c39e6c72eb5ef0404471457bc3928e73bda5afc00be7a119ee40681a6",
+            "receiptId": "GEN-components-mission-interiors-v1"
+          },
+          {
+            "path": "docs/game-design/concepts/components-mission-interiors-v2.png",
+            "sha256": "e943fe40366d485c4ebe547bc8b1370cb4e7401af666fe3360e3224d1a7bab64",
+            "receiptId": "GEN-components-mission-interiors-v2"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ],
+        "preferredDirection": {
+          "path": "docs/game-design/concepts/components-mission-interiors-v2.png",
+          "receiptId": "GEN-components-mission-interiors-v2",
+          "supersedes": "GEN-components-mission-interiors-v1",
+          "acceptance": "open"
+        }
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -5844,8 +6455,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/components-boarding-v1.png",
+            "sha256": "d984cb987dda3e8d70b980baa25b8fc7c0c9e226146f1414d96c2d0b428a2245",
+            "receiptId": "GEN-components-boarding-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -5934,8 +6554,28 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/components-mission-interiors-v1.png",
+            "sha256": "a041de9c39e6c72eb5ef0404471457bc3928e73bda5afc00be7a119ee40681a6",
+            "receiptId": "GEN-components-mission-interiors-v1"
+          },
+          {
+            "path": "docs/game-design/concepts/components-mission-interiors-v2.png",
+            "sha256": "e943fe40366d485c4ebe547bc8b1370cb4e7401af666fe3360e3224d1a7bab64",
+            "receiptId": "GEN-components-mission-interiors-v2"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ],
+        "preferredDirection": {
+          "path": "docs/game-design/concepts/components-mission-interiors-v2.png",
+          "receiptId": "GEN-components-mission-interiors-v2",
+          "supersedes": "GEN-components-mission-interiors-v1",
+          "acceptance": "open"
+        }
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -6024,8 +6664,28 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/components-mission-interiors-v1.png",
+            "sha256": "a041de9c39e6c72eb5ef0404471457bc3928e73bda5afc00be7a119ee40681a6",
+            "receiptId": "GEN-components-mission-interiors-v1"
+          },
+          {
+            "path": "docs/game-design/concepts/components-mission-interiors-v2.png",
+            "sha256": "e943fe40366d485c4ebe547bc8b1370cb4e7401af666fe3360e3224d1a7bab64",
+            "receiptId": "GEN-components-mission-interiors-v2"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ],
+        "preferredDirection": {
+          "path": "docs/game-design/concepts/components-mission-interiors-v2.png",
+          "receiptId": "GEN-components-mission-interiors-v2",
+          "supersedes": "GEN-components-mission-interiors-v1",
+          "acceptance": "open"
+        }
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -6765,8 +7425,28 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/components-mission-interiors-v1.png",
+            "sha256": "a041de9c39e6c72eb5ef0404471457bc3928e73bda5afc00be7a119ee40681a6",
+            "receiptId": "GEN-components-mission-interiors-v1"
+          },
+          {
+            "path": "docs/game-design/concepts/components-mission-interiors-v2.png",
+            "sha256": "e943fe40366d485c4ebe547bc8b1370cb4e7401af666fe3360e3224d1a7bab64",
+            "receiptId": "GEN-components-mission-interiors-v2"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ],
+        "preferredDirection": {
+          "path": "docs/game-design/concepts/components-mission-interiors-v2.png",
+          "receiptId": "GEN-components-mission-interiors-v2",
+          "supersedes": "GEN-components-mission-interiors-v1",
+          "acceptance": "open"
+        }
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -6894,8 +7574,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/components-boarding-v1.png",
+            "sha256": "d984cb987dda3e8d70b980baa25b8fc7c0c9e226146f1414d96c2d0b428a2245",
+            "receiptId": "GEN-components-boarding-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -7066,8 +7755,28 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/components-mission-interiors-v1.png",
+            "sha256": "a041de9c39e6c72eb5ef0404471457bc3928e73bda5afc00be7a119ee40681a6",
+            "receiptId": "GEN-components-mission-interiors-v1"
+          },
+          {
+            "path": "docs/game-design/concepts/components-mission-interiors-v2.png",
+            "sha256": "e943fe40366d485c4ebe547bc8b1370cb4e7401af666fe3360e3224d1a7bab64",
+            "receiptId": "GEN-components-mission-interiors-v2"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ],
+        "preferredDirection": {
+          "path": "docs/game-design/concepts/components-mission-interiors-v2.png",
+          "receiptId": "GEN-components-mission-interiors-v2",
+          "supersedes": "GEN-components-mission-interiors-v1",
+          "acceptance": "open"
+        }
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -7238,8 +7947,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/components-boarding-v1.png",
+            "sha256": "d984cb987dda3e8d70b980baa25b8fc7c0c9e226146f1414d96c2d0b428a2245",
+            "receiptId": "GEN-components-boarding-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -7410,8 +8128,28 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/components-mission-interiors-v1.png",
+            "sha256": "a041de9c39e6c72eb5ef0404471457bc3928e73bda5afc00be7a119ee40681a6",
+            "receiptId": "GEN-components-mission-interiors-v1"
+          },
+          {
+            "path": "docs/game-design/concepts/components-mission-interiors-v2.png",
+            "sha256": "e943fe40366d485c4ebe547bc8b1370cb4e7401af666fe3360e3224d1a7bab64",
+            "receiptId": "GEN-components-mission-interiors-v2"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ],
+        "preferredDirection": {
+          "path": "docs/game-design/concepts/components-mission-interiors-v2.png",
+          "receiptId": "GEN-components-mission-interiors-v2",
+          "supersedes": "GEN-components-mission-interiors-v1",
+          "acceptance": "open"
+        }
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -8184,8 +8922,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/components-boarding-v1.png",
+            "sha256": "d984cb987dda3e8d70b980baa25b8fc7c0c9e226146f1414d96c2d0b428a2245",
+            "receiptId": "GEN-components-boarding-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -8402,8 +9149,17 @@
         "evidence": []
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/ui-auction-v1.png",
+            "sha256": "ded388546c6baefc42551e5584576166525bbed15a5b5e913f0ba96b3e48164c",
+            "receiptId": "GEN-ui-auction-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "semantic-html-existing;scene-migration-open",
@@ -8447,8 +9203,22 @@
         "evidence": []
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/ui-auction-v1.png",
+            "sha256": "ded388546c6baefc42551e5584576166525bbed15a5b5e913f0ba96b3e48164c",
+            "receiptId": "GEN-ui-auction-v1"
+          },
+          {
+            "path": "docs/game-design/concepts/ui-lifecycle-v1.png",
+            "sha256": "1959cae880eb612cfbe49d99a17a79997f1e284a92040971c326d874f08480f0",
+            "receiptId": "GEN-ui-lifecycle-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "semantic-html-existing;scene-migration-open",
@@ -8491,8 +9261,17 @@
         "evidence": []
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/ui-lifecycle-v1.png",
+            "sha256": "1959cae880eb612cfbe49d99a17a79997f1e284a92040971c326d874f08480f0",
+            "receiptId": "GEN-ui-lifecycle-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "semantic-html-existing;scene-migration-open",
@@ -8535,8 +9314,17 @@
         "evidence": []
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/ui-lifecycle-v1.png",
+            "sha256": "1959cae880eb612cfbe49d99a17a79997f1e284a92040971c326d874f08480f0",
+            "receiptId": "GEN-ui-lifecycle-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "semantic-html-existing;scene-migration-open",
@@ -8579,8 +9367,17 @@
         "evidence": []
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/ui-lifecycle-v1.png",
+            "sha256": "1959cae880eb612cfbe49d99a17a79997f1e284a92040971c326d874f08480f0",
+            "receiptId": "GEN-ui-lifecycle-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "semantic-html-existing;scene-migration-open",
@@ -9163,8 +9960,17 @@
         "evidence": []
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/ui-auction-v1.png",
+            "sha256": "ded388546c6baefc42551e5584576166525bbed15a5b5e913f0ba96b3e48164c",
+            "receiptId": "GEN-ui-auction-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "semantic-html-existing;scene-migration-open",
@@ -9208,8 +10014,17 @@
         "evidence": []
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/ui-lifecycle-v1.png",
+            "sha256": "1959cae880eb612cfbe49d99a17a79997f1e284a92040971c326d874f08480f0",
+            "receiptId": "GEN-ui-lifecycle-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "semantic-html-existing;scene-migration-open",
@@ -9252,8 +10067,17 @@
         "evidence": []
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/ui-lifecycle-v1.png",
+            "sha256": "1959cae880eb612cfbe49d99a17a79997f1e284a92040971c326d874f08480f0",
+            "receiptId": "GEN-ui-lifecycle-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "semantic-html-existing;scene-migration-open",
@@ -9296,8 +10120,17 @@
         "evidence": []
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/ui-lifecycle-v1.png",
+            "sha256": "1959cae880eb612cfbe49d99a17a79997f1e284a92040971c326d874f08480f0",
+            "receiptId": "GEN-ui-lifecycle-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "semantic-html-existing;scene-migration-open",
@@ -9340,8 +10173,17 @@
         "evidence": []
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/ui-lifecycle-v1.png",
+            "sha256": "1959cae880eb612cfbe49d99a17a79997f1e284a92040971c326d874f08480f0",
+            "receiptId": "GEN-ui-lifecycle-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "semantic-html-existing;scene-migration-open",
@@ -9384,8 +10226,22 @@
         "evidence": []
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/ui-auction-v1.png",
+            "sha256": "ded388546c6baefc42551e5584576166525bbed15a5b5e913f0ba96b3e48164c",
+            "receiptId": "GEN-ui-auction-v1"
+          },
+          {
+            "path": "docs/game-design/concepts/ui-lifecycle-v1.png",
+            "sha256": "1959cae880eb612cfbe49d99a17a79997f1e284a92040971c326d874f08480f0",
+            "receiptId": "GEN-ui-lifecycle-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-or-required;unqualified",
@@ -9758,8 +10614,17 @@
         "evidence": []
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/ui-lifecycle-v1.png",
+            "sha256": "1959cae880eb612cfbe49d99a17a79997f1e284a92040971c326d874f08480f0",
+            "receiptId": "GEN-ui-lifecycle-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-or-required;unqualified",
@@ -13595,6 +14460,580 @@
       "conceptBatch": "UI-student-closed"
     },
     {
+      "id": "UI-ELEMENT-student-scene-previous-field",
+      "kind": "interface-element",
+      "label": {
+        "en": "Previous field",
+        "fr": "Champ précédent"
+      },
+      "reference": {
+        "status": "canonical-or-design-contract;visual-reference-open",
+        "evidence": []
+      },
+      "concept": {
+        "status": "planned",
+        "artifacts": []
+      },
+      "implementation": {
+        "status": "native-editor-navigation;qualification-open",
+        "evidence": []
+      },
+      "acceptance": {
+        "status": "open",
+        "criteria": [
+          "U01",
+          "U02",
+          "U03",
+          "U04",
+          "U05",
+          "U06"
+        ],
+        "evidence": []
+      },
+      "role": "student",
+      "phase": "cross-phase",
+      "source": "source/shared/three-presentation.js#sceneAction",
+      "htmlTag": "button",
+      "conceptBatch": "UI-RECOVERY"
+    },
+    {
+      "id": "UI-ELEMENT-student-scene-next-field",
+      "kind": "interface-element",
+      "label": {
+        "en": "Next field",
+        "fr": "Champ suivant"
+      },
+      "reference": {
+        "status": "canonical-or-design-contract;visual-reference-open",
+        "evidence": []
+      },
+      "concept": {
+        "status": "planned",
+        "artifacts": []
+      },
+      "implementation": {
+        "status": "native-editor-navigation;qualification-open",
+        "evidence": []
+      },
+      "acceptance": {
+        "status": "open",
+        "criteria": [
+          "U01",
+          "U02",
+          "U03",
+          "U04",
+          "U05",
+          "U06"
+        ],
+        "evidence": []
+      },
+      "role": "student",
+      "phase": "cross-phase",
+      "source": "source/shared/three-presentation.js#sceneAction",
+      "htmlTag": "button",
+      "conceptBatch": "UI-RECOVERY"
+    },
+    {
+      "id": "UI-ELEMENT-student-scene-save",
+      "kind": "interface-element",
+      "label": {
+        "en": "Help / save",
+        "fr": "Aide / sauvegarde"
+      },
+      "reference": {
+        "status": "canonical-or-design-contract;visual-reference-open",
+        "evidence": []
+      },
+      "concept": {
+        "status": "planned",
+        "artifacts": []
+      },
+      "implementation": {
+        "status": "original-native-controls-directly-exposed;qualification-open",
+        "evidence": []
+      },
+      "acceptance": {
+        "status": "open",
+        "criteria": [
+          "U01",
+          "U02",
+          "U03",
+          "U04",
+          "U05",
+          "U06"
+        ],
+        "evidence": []
+      },
+      "role": "student",
+      "phase": "cross-phase",
+      "source": "source/shared/three-presentation.js#seaSceneSaveControls",
+      "htmlTag": "div",
+      "conceptBatch": "UI-RECOVERY"
+    },
+    {
+      "id": "UI-ELEMENT-student-scene-inspection",
+      "kind": "interface-element",
+      "label": {
+        "en": "Model views",
+        "fr": "Vues du modèle"
+      },
+      "reference": {
+        "status": "canonical-or-design-contract;visual-reference-open",
+        "evidence": []
+      },
+      "concept": {
+        "status": "planned",
+        "artifacts": []
+      },
+      "implementation": {
+        "status": "scene-native-synchronized;qualification-open",
+        "evidence": []
+      },
+      "acceptance": {
+        "status": "open",
+        "criteria": [
+          "U01",
+          "U02",
+          "U03",
+          "U04",
+          "U05",
+          "U06"
+        ],
+        "evidence": []
+      },
+      "role": "student",
+      "phase": "cross-phase",
+      "source": "source/shared/three-presentation.js#seaSceneInspection",
+      "htmlTag": "nav",
+      "sceneCommand": null,
+      "conceptBatch": "UI-INSPECTION"
+    },
+    {
+      "id": "UI-ELEMENT-student-scene-assembled",
+      "kind": "interface-element",
+      "label": {
+        "en": "Assembled",
+        "fr": "Assemblé"
+      },
+      "reference": {
+        "status": "canonical-or-design-contract;visual-reference-open",
+        "evidence": []
+      },
+      "concept": {
+        "status": "planned",
+        "artifacts": []
+      },
+      "implementation": {
+        "status": "scene-native-synchronized;qualification-open",
+        "evidence": []
+      },
+      "acceptance": {
+        "status": "open",
+        "criteria": [
+          "U01",
+          "U02",
+          "U03",
+          "U04",
+          "U05",
+          "U06"
+        ],
+        "evidence": []
+      },
+      "role": "student",
+      "phase": "cross-phase",
+      "source": "source/shared/three-presentation.js#seaSceneInspection",
+      "htmlTag": "button",
+      "sceneCommand": {
+        "mode": "assembled"
+      },
+      "conceptBatch": "UI-INSPECTION"
+    },
+    {
+      "id": "UI-ELEMENT-student-scene-exploded",
+      "kind": "interface-element",
+      "label": {
+        "en": "Exploded",
+        "fr": "Éclaté"
+      },
+      "reference": {
+        "status": "canonical-or-design-contract;visual-reference-open",
+        "evidence": []
+      },
+      "concept": {
+        "status": "planned",
+        "artifacts": []
+      },
+      "implementation": {
+        "status": "scene-native-synchronized;qualification-open",
+        "evidence": []
+      },
+      "acceptance": {
+        "status": "open",
+        "criteria": [
+          "U01",
+          "U02",
+          "U03",
+          "U04",
+          "U05",
+          "U06"
+        ],
+        "evidence": []
+      },
+      "role": "student",
+      "phase": "cross-phase",
+      "source": "source/shared/three-presentation.js#seaSceneInspection",
+      "htmlTag": "button",
+      "sceneCommand": {
+        "mode": "exploded"
+      },
+      "conceptBatch": "UI-INSPECTION"
+    },
+    {
+      "id": "UI-ELEMENT-student-scene-cutaway",
+      "kind": "interface-element",
+      "label": {
+        "en": "Cutaway",
+        "fr": "En coupe"
+      },
+      "reference": {
+        "status": "canonical-or-design-contract;visual-reference-open",
+        "evidence": []
+      },
+      "concept": {
+        "status": "planned",
+        "artifacts": []
+      },
+      "implementation": {
+        "status": "scene-native-synchronized;qualification-open",
+        "evidence": []
+      },
+      "acceptance": {
+        "status": "open",
+        "criteria": [
+          "U01",
+          "U02",
+          "U03",
+          "U04",
+          "U05",
+          "U06"
+        ],
+        "evidence": []
+      },
+      "role": "student",
+      "phase": "cross-phase",
+      "source": "source/shared/three-presentation.js#seaSceneInspection",
+      "htmlTag": "button",
+      "sceneCommand": {
+        "mode": "cutaway"
+      },
+      "conceptBatch": "UI-INSPECTION"
+    },
+    {
+      "id": "UI-ELEMENT-student-scene-navigation",
+      "kind": "interface-element",
+      "label": {
+        "en": "Game sections",
+        "fr": "Sections du jeu"
+      },
+      "reference": {
+        "status": "canonical-or-design-contract;visual-reference-open",
+        "evidence": []
+      },
+      "concept": {
+        "status": "planned",
+        "artifacts": []
+      },
+      "implementation": {
+        "status": "scene-native-synchronized;qualification-open",
+        "evidence": []
+      },
+      "acceptance": {
+        "status": "open",
+        "criteria": [
+          "U01",
+          "U02",
+          "U03",
+          "U04",
+          "U05",
+          "U06"
+        ],
+        "evidence": []
+      },
+      "role": "student",
+      "phase": "cross-phase",
+      "source": [
+        "source/shared/three-presentation.js#seaSceneNavigation",
+        "source/three/interface.mjs"
+      ],
+      "htmlTag": "nav",
+      "sceneCommand": null,
+      "conceptBatch": "UI-NAVIGATION"
+    },
+    {
+      "id": "UI-ELEMENT-student-scene-task",
+      "kind": "interface-element",
+      "label": {
+        "en": "Current",
+        "fr": "En cours"
+      },
+      "reference": {
+        "status": "canonical-or-design-contract;visual-reference-open",
+        "evidence": []
+      },
+      "concept": {
+        "status": "planned",
+        "artifacts": []
+      },
+      "implementation": {
+        "status": "scene-native-synchronized;qualification-open",
+        "evidence": []
+      },
+      "acceptance": {
+        "status": "open",
+        "criteria": [
+          "U01",
+          "U02",
+          "U03",
+          "U04",
+          "U05",
+          "U06"
+        ],
+        "evidence": []
+      },
+      "role": "student",
+      "phase": "cross-phase",
+      "source": [
+        "source/shared/three-presentation.js#seaSceneNavigation",
+        "source/three/interface.mjs"
+      ],
+      "htmlTag": "button",
+      "sceneCommand": {
+        "key": "__section",
+        "section": "task"
+      },
+      "conceptBatch": "UI-NAVIGATION"
+    },
+    {
+      "id": "UI-ELEMENT-student-scene-teams",
+      "kind": "interface-element",
+      "label": {
+        "en": "Teams",
+        "fr": "Équipes"
+      },
+      "reference": {
+        "status": "canonical-or-design-contract;visual-reference-open",
+        "evidence": []
+      },
+      "concept": {
+        "status": "planned",
+        "artifacts": []
+      },
+      "implementation": {
+        "status": "scene-native-synchronized;qualification-open",
+        "evidence": []
+      },
+      "acceptance": {
+        "status": "open",
+        "criteria": [
+          "U01",
+          "U02",
+          "U03",
+          "U04",
+          "U05",
+          "U06"
+        ],
+        "evidence": []
+      },
+      "role": "student",
+      "phase": "cross-phase",
+      "source": [
+        "source/shared/three-presentation.js#seaSceneNavigation",
+        "source/three/interface.mjs"
+      ],
+      "htmlTag": "button",
+      "sceneCommand": {
+        "key": "__section",
+        "section": "teams"
+      },
+      "conceptBatch": "UI-NAVIGATION"
+    },
+    {
+      "id": "UI-ELEMENT-student-scene-market",
+      "kind": "interface-element",
+      "label": {
+        "en": "Round",
+        "fr": "Manche"
+      },
+      "reference": {
+        "status": "canonical-or-design-contract;visual-reference-open",
+        "evidence": []
+      },
+      "concept": {
+        "status": "planned",
+        "artifacts": []
+      },
+      "implementation": {
+        "status": "scene-native-synchronized;qualification-open",
+        "evidence": []
+      },
+      "acceptance": {
+        "status": "open",
+        "criteria": [
+          "U01",
+          "U02",
+          "U03",
+          "U04",
+          "U05",
+          "U06"
+        ],
+        "evidence": []
+      },
+      "role": "student",
+      "phase": "cross-phase",
+      "source": [
+        "source/shared/three-presentation.js#seaSceneNavigation",
+        "source/three/interface.mjs"
+      ],
+      "htmlTag": "button",
+      "sceneCommand": {
+        "key": "__section",
+        "section": "market"
+      },
+      "conceptBatch": "UI-NAVIGATION"
+    },
+    {
+      "id": "UI-ELEMENT-student-scene-tools",
+      "kind": "interface-element",
+      "label": {
+        "en": "Manage",
+        "fr": "Gestion"
+      },
+      "reference": {
+        "status": "canonical-or-design-contract;visual-reference-open",
+        "evidence": []
+      },
+      "concept": {
+        "status": "planned",
+        "artifacts": []
+      },
+      "implementation": {
+        "status": "scene-native-synchronized;qualification-open",
+        "evidence": []
+      },
+      "acceptance": {
+        "status": "open",
+        "criteria": [
+          "U01",
+          "U02",
+          "U03",
+          "U04",
+          "U05",
+          "U06"
+        ],
+        "evidence": []
+      },
+      "role": "student",
+      "phase": "cross-phase",
+      "source": [
+        "source/shared/three-presentation.js#seaSceneNavigation",
+        "source/three/interface.mjs"
+      ],
+      "htmlTag": "button",
+      "sceneCommand": {
+        "key": "__section",
+        "section": "tools"
+      },
+      "conceptBatch": "UI-NAVIGATION"
+    },
+    {
+      "id": "UI-ELEMENT-student-scene-inspect",
+      "kind": "interface-element",
+      "label": {
+        "en": "Inspect",
+        "fr": "Explorer"
+      },
+      "reference": {
+        "status": "canonical-or-design-contract;visual-reference-open",
+        "evidence": []
+      },
+      "concept": {
+        "status": "planned",
+        "artifacts": []
+      },
+      "implementation": {
+        "status": "scene-native-synchronized;qualification-open",
+        "evidence": []
+      },
+      "acceptance": {
+        "status": "open",
+        "criteria": [
+          "U01",
+          "U02",
+          "U03",
+          "U04",
+          "U05",
+          "U06"
+        ],
+        "evidence": []
+      },
+      "role": "student",
+      "phase": "cross-phase",
+      "source": [
+        "source/shared/three-presentation.js#seaSceneNavigation",
+        "source/three/interface.mjs"
+      ],
+      "htmlTag": "button",
+      "sceneCommand": {
+        "key": "__section",
+        "section": "inspect"
+      },
+      "conceptBatch": "UI-NAVIGATION"
+    },
+    {
+      "id": "UI-ELEMENT-student-scene-help",
+      "kind": "interface-element",
+      "label": {
+        "en": "Help / save",
+        "fr": "Aide / sauvegarde"
+      },
+      "reference": {
+        "status": "canonical-or-design-contract;visual-reference-open",
+        "evidence": []
+      },
+      "concept": {
+        "status": "planned",
+        "artifacts": []
+      },
+      "implementation": {
+        "status": "scene-native-synchronized;qualification-open",
+        "evidence": []
+      },
+      "acceptance": {
+        "status": "open",
+        "criteria": [
+          "U01",
+          "U02",
+          "U03",
+          "U04",
+          "U05",
+          "U06"
+        ],
+        "evidence": []
+      },
+      "role": "student",
+      "phase": "cross-phase",
+      "source": [
+        "source/shared/three-presentation.js#seaSceneNavigation",
+        "source/three/interface.mjs"
+      ],
+      "htmlTag": "button",
+      "sceneCommand": {
+        "key": "__section",
+        "section": "help"
+      },
+      "conceptBatch": "UI-NAVIGATION"
+    },
+    {
       "id": "UI-ELEMENT-instructor-exportBackupBtn",
       "kind": "interface-element",
       "label": {
@@ -16333,6 +17772,43 @@
       "conceptBatch": "UI-instructor-auction"
     },
     {
+      "id": "UI-ELEMENT-instructor-nextBidMetric",
+      "kind": "interface-element",
+      "label": {
+        "en": "nextBidMetric"
+      },
+      "reference": {
+        "status": "canonical-or-design-contract;visual-reference-open",
+        "evidence": []
+      },
+      "concept": {
+        "status": "planned",
+        "artifacts": []
+      },
+      "implementation": {
+        "status": "semantic-html-existing;scene-migration-open",
+        "path": "source/instructor.template.html#nextBidMetric",
+        "evidence": []
+      },
+      "acceptance": {
+        "status": "open",
+        "criteria": [
+          "U01",
+          "U02",
+          "U03",
+          "U04",
+          "U05",
+          "U06"
+        ],
+        "evidence": []
+      },
+      "role": "instructor",
+      "phase": "auction",
+      "source": "source/instructor.template.html#nextBidMetric",
+      "htmlTag": "div",
+      "conceptBatch": "UI-instructor-auction"
+    },
+    {
       "id": "UI-ELEMENT-instructor-nextBid",
       "kind": "interface-element",
       "label": {
@@ -16703,6 +18179,43 @@
       "conceptBatch": "UI-instructor-auction"
     },
     {
+      "id": "UI-ELEMENT-instructor-preCommitCorrection",
+      "kind": "interface-element",
+      "label": {
+        "en": "preCommitCorrection"
+      },
+      "reference": {
+        "status": "canonical-or-design-contract;visual-reference-open",
+        "evidence": []
+      },
+      "concept": {
+        "status": "planned",
+        "artifacts": []
+      },
+      "implementation": {
+        "status": "semantic-html-existing;scene-migration-open",
+        "path": "source/instructor.template.html#preCommitCorrection",
+        "evidence": []
+      },
+      "acceptance": {
+        "status": "open",
+        "criteria": [
+          "U01",
+          "U02",
+          "U03",
+          "U04",
+          "U05",
+          "U06"
+        ],
+        "evidence": []
+      },
+      "role": "instructor",
+      "phase": "auction",
+      "source": "source/instructor.template.html#preCommitCorrection",
+      "htmlTag": "details",
+      "conceptBatch": "UI-instructor-auction"
+    },
+    {
       "id": "UI-ELEMENT-instructor-winnerSelect",
       "kind": "interface-element",
       "label": {
@@ -16922,6 +18435,43 @@
       "phase": "auction",
       "source": "source/instructor.template.html#commitStatus",
       "htmlTag": "div",
+      "conceptBatch": "UI-instructor-auction"
+    },
+    {
+      "id": "UI-ELEMENT-instructor-postCommitCorrection",
+      "kind": "interface-element",
+      "label": {
+        "en": "postCommitCorrection"
+      },
+      "reference": {
+        "status": "canonical-or-design-contract;visual-reference-open",
+        "evidence": []
+      },
+      "concept": {
+        "status": "planned",
+        "artifacts": []
+      },
+      "implementation": {
+        "status": "semantic-html-existing;scene-migration-open",
+        "path": "source/instructor.template.html#postCommitCorrection",
+        "evidence": []
+      },
+      "acceptance": {
+        "status": "open",
+        "criteria": [
+          "U01",
+          "U02",
+          "U03",
+          "U04",
+          "U05",
+          "U06"
+        ],
+        "evidence": []
+      },
+      "role": "instructor",
+      "phase": "auction",
+      "source": "source/instructor.template.html#postCommitCorrection",
+      "htmlTag": "details",
       "conceptBatch": "UI-instructor-auction"
     },
     {
@@ -17589,6 +19139,580 @@
       "source": "source/instructor.template.html#startNewSessionBtn",
       "htmlTag": "button",
       "conceptBatch": "UI-instructor-closed"
+    },
+    {
+      "id": "UI-ELEMENT-instructor-scene-previous-field",
+      "kind": "interface-element",
+      "label": {
+        "en": "Previous field",
+        "fr": "Champ précédent"
+      },
+      "reference": {
+        "status": "canonical-or-design-contract;visual-reference-open",
+        "evidence": []
+      },
+      "concept": {
+        "status": "planned",
+        "artifacts": []
+      },
+      "implementation": {
+        "status": "native-editor-navigation;qualification-open",
+        "evidence": []
+      },
+      "acceptance": {
+        "status": "open",
+        "criteria": [
+          "U01",
+          "U02",
+          "U03",
+          "U04",
+          "U05",
+          "U06"
+        ],
+        "evidence": []
+      },
+      "role": "instructor",
+      "phase": "cross-phase",
+      "source": "source/shared/three-presentation.js#sceneAction",
+      "htmlTag": "button",
+      "conceptBatch": "UI-RECOVERY"
+    },
+    {
+      "id": "UI-ELEMENT-instructor-scene-next-field",
+      "kind": "interface-element",
+      "label": {
+        "en": "Next field",
+        "fr": "Champ suivant"
+      },
+      "reference": {
+        "status": "canonical-or-design-contract;visual-reference-open",
+        "evidence": []
+      },
+      "concept": {
+        "status": "planned",
+        "artifacts": []
+      },
+      "implementation": {
+        "status": "native-editor-navigation;qualification-open",
+        "evidence": []
+      },
+      "acceptance": {
+        "status": "open",
+        "criteria": [
+          "U01",
+          "U02",
+          "U03",
+          "U04",
+          "U05",
+          "U06"
+        ],
+        "evidence": []
+      },
+      "role": "instructor",
+      "phase": "cross-phase",
+      "source": "source/shared/three-presentation.js#sceneAction",
+      "htmlTag": "button",
+      "conceptBatch": "UI-RECOVERY"
+    },
+    {
+      "id": "UI-ELEMENT-instructor-scene-save",
+      "kind": "interface-element",
+      "label": {
+        "en": "Help / save",
+        "fr": "Aide / sauvegarde"
+      },
+      "reference": {
+        "status": "canonical-or-design-contract;visual-reference-open",
+        "evidence": []
+      },
+      "concept": {
+        "status": "planned",
+        "artifacts": []
+      },
+      "implementation": {
+        "status": "original-native-controls-directly-exposed;qualification-open",
+        "evidence": []
+      },
+      "acceptance": {
+        "status": "open",
+        "criteria": [
+          "U01",
+          "U02",
+          "U03",
+          "U04",
+          "U05",
+          "U06"
+        ],
+        "evidence": []
+      },
+      "role": "instructor",
+      "phase": "cross-phase",
+      "source": "source/shared/three-presentation.js#seaSceneSaveControls",
+      "htmlTag": "div",
+      "conceptBatch": "UI-RECOVERY"
+    },
+    {
+      "id": "UI-ELEMENT-instructor-scene-inspection",
+      "kind": "interface-element",
+      "label": {
+        "en": "Model views",
+        "fr": "Vues du modèle"
+      },
+      "reference": {
+        "status": "canonical-or-design-contract;visual-reference-open",
+        "evidence": []
+      },
+      "concept": {
+        "status": "planned",
+        "artifacts": []
+      },
+      "implementation": {
+        "status": "scene-native-synchronized;qualification-open",
+        "evidence": []
+      },
+      "acceptance": {
+        "status": "open",
+        "criteria": [
+          "U01",
+          "U02",
+          "U03",
+          "U04",
+          "U05",
+          "U06"
+        ],
+        "evidence": []
+      },
+      "role": "instructor",
+      "phase": "cross-phase",
+      "source": "source/shared/three-presentation.js#seaSceneInspection",
+      "htmlTag": "nav",
+      "sceneCommand": null,
+      "conceptBatch": "UI-INSPECTION"
+    },
+    {
+      "id": "UI-ELEMENT-instructor-scene-assembled",
+      "kind": "interface-element",
+      "label": {
+        "en": "Assembled",
+        "fr": "Assemblé"
+      },
+      "reference": {
+        "status": "canonical-or-design-contract;visual-reference-open",
+        "evidence": []
+      },
+      "concept": {
+        "status": "planned",
+        "artifacts": []
+      },
+      "implementation": {
+        "status": "scene-native-synchronized;qualification-open",
+        "evidence": []
+      },
+      "acceptance": {
+        "status": "open",
+        "criteria": [
+          "U01",
+          "U02",
+          "U03",
+          "U04",
+          "U05",
+          "U06"
+        ],
+        "evidence": []
+      },
+      "role": "instructor",
+      "phase": "cross-phase",
+      "source": "source/shared/three-presentation.js#seaSceneInspection",
+      "htmlTag": "button",
+      "sceneCommand": {
+        "mode": "assembled"
+      },
+      "conceptBatch": "UI-INSPECTION"
+    },
+    {
+      "id": "UI-ELEMENT-instructor-scene-exploded",
+      "kind": "interface-element",
+      "label": {
+        "en": "Exploded",
+        "fr": "Éclaté"
+      },
+      "reference": {
+        "status": "canonical-or-design-contract;visual-reference-open",
+        "evidence": []
+      },
+      "concept": {
+        "status": "planned",
+        "artifacts": []
+      },
+      "implementation": {
+        "status": "scene-native-synchronized;qualification-open",
+        "evidence": []
+      },
+      "acceptance": {
+        "status": "open",
+        "criteria": [
+          "U01",
+          "U02",
+          "U03",
+          "U04",
+          "U05",
+          "U06"
+        ],
+        "evidence": []
+      },
+      "role": "instructor",
+      "phase": "cross-phase",
+      "source": "source/shared/three-presentation.js#seaSceneInspection",
+      "htmlTag": "button",
+      "sceneCommand": {
+        "mode": "exploded"
+      },
+      "conceptBatch": "UI-INSPECTION"
+    },
+    {
+      "id": "UI-ELEMENT-instructor-scene-cutaway",
+      "kind": "interface-element",
+      "label": {
+        "en": "Cutaway",
+        "fr": "En coupe"
+      },
+      "reference": {
+        "status": "canonical-or-design-contract;visual-reference-open",
+        "evidence": []
+      },
+      "concept": {
+        "status": "planned",
+        "artifacts": []
+      },
+      "implementation": {
+        "status": "scene-native-synchronized;qualification-open",
+        "evidence": []
+      },
+      "acceptance": {
+        "status": "open",
+        "criteria": [
+          "U01",
+          "U02",
+          "U03",
+          "U04",
+          "U05",
+          "U06"
+        ],
+        "evidence": []
+      },
+      "role": "instructor",
+      "phase": "cross-phase",
+      "source": "source/shared/three-presentation.js#seaSceneInspection",
+      "htmlTag": "button",
+      "sceneCommand": {
+        "mode": "cutaway"
+      },
+      "conceptBatch": "UI-INSPECTION"
+    },
+    {
+      "id": "UI-ELEMENT-instructor-scene-navigation",
+      "kind": "interface-element",
+      "label": {
+        "en": "Game sections",
+        "fr": "Sections du jeu"
+      },
+      "reference": {
+        "status": "canonical-or-design-contract;visual-reference-open",
+        "evidence": []
+      },
+      "concept": {
+        "status": "planned",
+        "artifacts": []
+      },
+      "implementation": {
+        "status": "scene-native-synchronized;qualification-open",
+        "evidence": []
+      },
+      "acceptance": {
+        "status": "open",
+        "criteria": [
+          "U01",
+          "U02",
+          "U03",
+          "U04",
+          "U05",
+          "U06"
+        ],
+        "evidence": []
+      },
+      "role": "instructor",
+      "phase": "cross-phase",
+      "source": [
+        "source/shared/three-presentation.js#seaSceneNavigation",
+        "source/three/interface.mjs"
+      ],
+      "htmlTag": "nav",
+      "sceneCommand": null,
+      "conceptBatch": "UI-NAVIGATION"
+    },
+    {
+      "id": "UI-ELEMENT-instructor-scene-task",
+      "kind": "interface-element",
+      "label": {
+        "en": "Current",
+        "fr": "En cours"
+      },
+      "reference": {
+        "status": "canonical-or-design-contract;visual-reference-open",
+        "evidence": []
+      },
+      "concept": {
+        "status": "planned",
+        "artifacts": []
+      },
+      "implementation": {
+        "status": "scene-native-synchronized;qualification-open",
+        "evidence": []
+      },
+      "acceptance": {
+        "status": "open",
+        "criteria": [
+          "U01",
+          "U02",
+          "U03",
+          "U04",
+          "U05",
+          "U06"
+        ],
+        "evidence": []
+      },
+      "role": "instructor",
+      "phase": "cross-phase",
+      "source": [
+        "source/shared/three-presentation.js#seaSceneNavigation",
+        "source/three/interface.mjs"
+      ],
+      "htmlTag": "button",
+      "sceneCommand": {
+        "key": "__section",
+        "section": "task"
+      },
+      "conceptBatch": "UI-NAVIGATION"
+    },
+    {
+      "id": "UI-ELEMENT-instructor-scene-teams",
+      "kind": "interface-element",
+      "label": {
+        "en": "Teams",
+        "fr": "Équipes"
+      },
+      "reference": {
+        "status": "canonical-or-design-contract;visual-reference-open",
+        "evidence": []
+      },
+      "concept": {
+        "status": "planned",
+        "artifacts": []
+      },
+      "implementation": {
+        "status": "scene-native-synchronized;qualification-open",
+        "evidence": []
+      },
+      "acceptance": {
+        "status": "open",
+        "criteria": [
+          "U01",
+          "U02",
+          "U03",
+          "U04",
+          "U05",
+          "U06"
+        ],
+        "evidence": []
+      },
+      "role": "instructor",
+      "phase": "cross-phase",
+      "source": [
+        "source/shared/three-presentation.js#seaSceneNavigation",
+        "source/three/interface.mjs"
+      ],
+      "htmlTag": "button",
+      "sceneCommand": {
+        "key": "__section",
+        "section": "teams"
+      },
+      "conceptBatch": "UI-NAVIGATION"
+    },
+    {
+      "id": "UI-ELEMENT-instructor-scene-market",
+      "kind": "interface-element",
+      "label": {
+        "en": "Round",
+        "fr": "Manche"
+      },
+      "reference": {
+        "status": "canonical-or-design-contract;visual-reference-open",
+        "evidence": []
+      },
+      "concept": {
+        "status": "planned",
+        "artifacts": []
+      },
+      "implementation": {
+        "status": "scene-native-synchronized;qualification-open",
+        "evidence": []
+      },
+      "acceptance": {
+        "status": "open",
+        "criteria": [
+          "U01",
+          "U02",
+          "U03",
+          "U04",
+          "U05",
+          "U06"
+        ],
+        "evidence": []
+      },
+      "role": "instructor",
+      "phase": "cross-phase",
+      "source": [
+        "source/shared/three-presentation.js#seaSceneNavigation",
+        "source/three/interface.mjs"
+      ],
+      "htmlTag": "button",
+      "sceneCommand": {
+        "key": "__section",
+        "section": "market"
+      },
+      "conceptBatch": "UI-NAVIGATION"
+    },
+    {
+      "id": "UI-ELEMENT-instructor-scene-tools",
+      "kind": "interface-element",
+      "label": {
+        "en": "Manage",
+        "fr": "Gestion"
+      },
+      "reference": {
+        "status": "canonical-or-design-contract;visual-reference-open",
+        "evidence": []
+      },
+      "concept": {
+        "status": "planned",
+        "artifacts": []
+      },
+      "implementation": {
+        "status": "scene-native-synchronized;qualification-open",
+        "evidence": []
+      },
+      "acceptance": {
+        "status": "open",
+        "criteria": [
+          "U01",
+          "U02",
+          "U03",
+          "U04",
+          "U05",
+          "U06"
+        ],
+        "evidence": []
+      },
+      "role": "instructor",
+      "phase": "cross-phase",
+      "source": [
+        "source/shared/three-presentation.js#seaSceneNavigation",
+        "source/three/interface.mjs"
+      ],
+      "htmlTag": "button",
+      "sceneCommand": {
+        "key": "__section",
+        "section": "tools"
+      },
+      "conceptBatch": "UI-NAVIGATION"
+    },
+    {
+      "id": "UI-ELEMENT-instructor-scene-inspect",
+      "kind": "interface-element",
+      "label": {
+        "en": "Inspect",
+        "fr": "Explorer"
+      },
+      "reference": {
+        "status": "canonical-or-design-contract;visual-reference-open",
+        "evidence": []
+      },
+      "concept": {
+        "status": "planned",
+        "artifacts": []
+      },
+      "implementation": {
+        "status": "scene-native-synchronized;qualification-open",
+        "evidence": []
+      },
+      "acceptance": {
+        "status": "open",
+        "criteria": [
+          "U01",
+          "U02",
+          "U03",
+          "U04",
+          "U05",
+          "U06"
+        ],
+        "evidence": []
+      },
+      "role": "instructor",
+      "phase": "cross-phase",
+      "source": [
+        "source/shared/three-presentation.js#seaSceneNavigation",
+        "source/three/interface.mjs"
+      ],
+      "htmlTag": "button",
+      "sceneCommand": {
+        "key": "__section",
+        "section": "inspect"
+      },
+      "conceptBatch": "UI-NAVIGATION"
+    },
+    {
+      "id": "UI-ELEMENT-instructor-scene-help",
+      "kind": "interface-element",
+      "label": {
+        "en": "Help / save",
+        "fr": "Aide / sauvegarde"
+      },
+      "reference": {
+        "status": "canonical-or-design-contract;visual-reference-open",
+        "evidence": []
+      },
+      "concept": {
+        "status": "planned",
+        "artifacts": []
+      },
+      "implementation": {
+        "status": "scene-native-synchronized;qualification-open",
+        "evidence": []
+      },
+      "acceptance": {
+        "status": "open",
+        "criteria": [
+          "U01",
+          "U02",
+          "U03",
+          "U04",
+          "U05",
+          "U06"
+        ],
+        "evidence": []
+      },
+      "role": "instructor",
+      "phase": "cross-phase",
+      "source": [
+        "source/shared/three-presentation.js#seaSceneNavigation",
+        "source/three/interface.mjs"
+      ],
+      "htmlTag": "button",
+      "sceneCommand": {
+        "key": "__section",
+        "section": "help"
+      },
+      "conceptBatch": "UI-NAVIGATION"
     }
   ],
   "materials": [
@@ -17603,8 +19727,28 @@
         "evidence": []
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/materials-family-v1.png",
+            "sha256": "6a6732fb333ae590026060033d008b5d12d7b961192a9b25fbfa2586879360de",
+            "receiptId": "GEN-materials-family-v1"
+          },
+          {
+            "path": "docs/game-design/concepts/materials-family-v2.png",
+            "sha256": "42296b42c792065664b251ad823e701be9331deefbd35a7418812094e196db96",
+            "receiptId": "GEN-materials-family-v2"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ],
+        "preferredDirection": {
+          "path": "docs/game-design/concepts/materials-family-v2.png",
+          "receiptId": "GEN-materials-family-v2",
+          "supersedes": "GEN-materials-family-v1",
+          "acceptance": "open"
+        }
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -17624,7 +19768,7 @@
         ],
         "evidence": []
       },
-      "source": "source/three/realism.mjs#materials",
+      "source": "source/three/materials.mjs#materials",
       "conceptBatch": "MATERIALS",
       "referenceIds": [],
       "conceptPrompt": "paint material sphere and applied close-up under the same neutral calibrated lighting; provide roughness/metalness/opacity intent, not an arbitrary flat swatch."
@@ -17640,8 +19784,28 @@
         "evidence": []
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/materials-family-v1.png",
+            "sha256": "6a6732fb333ae590026060033d008b5d12d7b961192a9b25fbfa2586879360de",
+            "receiptId": "GEN-materials-family-v1"
+          },
+          {
+            "path": "docs/game-design/concepts/materials-family-v2.png",
+            "sha256": "42296b42c792065664b251ad823e701be9331deefbd35a7418812094e196db96",
+            "receiptId": "GEN-materials-family-v2"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ],
+        "preferredDirection": {
+          "path": "docs/game-design/concepts/materials-family-v2.png",
+          "receiptId": "GEN-materials-family-v2",
+          "supersedes": "GEN-materials-family-v1",
+          "acceptance": "open"
+        }
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -17661,7 +19825,7 @@
         ],
         "evidence": []
       },
-      "source": "source/three/realism.mjs#materials",
+      "source": "source/three/materials.mjs#materials",
       "conceptBatch": "MATERIALS",
       "referenceIds": [],
       "conceptPrompt": "edge material sphere and applied close-up under the same neutral calibrated lighting; provide roughness/metalness/opacity intent, not an arbitrary flat swatch."
@@ -17677,8 +19841,28 @@
         "evidence": []
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/materials-family-v1.png",
+            "sha256": "6a6732fb333ae590026060033d008b5d12d7b961192a9b25fbfa2586879360de",
+            "receiptId": "GEN-materials-family-v1"
+          },
+          {
+            "path": "docs/game-design/concepts/materials-family-v2.png",
+            "sha256": "42296b42c792065664b251ad823e701be9331deefbd35a7418812094e196db96",
+            "receiptId": "GEN-materials-family-v2"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ],
+        "preferredDirection": {
+          "path": "docs/game-design/concepts/materials-family-v2.png",
+          "receiptId": "GEN-materials-family-v2",
+          "supersedes": "GEN-materials-family-v1",
+          "acceptance": "open"
+        }
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -17698,7 +19882,7 @@
         ],
         "evidence": []
       },
-      "source": "source/three/realism.mjs#materials",
+      "source": "source/three/materials.mjs#materials",
       "conceptBatch": "MATERIALS",
       "referenceIds": [],
       "conceptPrompt": "steel material sphere and applied close-up under the same neutral calibrated lighting; provide roughness/metalness/opacity intent, not an arbitrary flat swatch."
@@ -17714,8 +19898,28 @@
         "evidence": []
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/materials-family-v1.png",
+            "sha256": "6a6732fb333ae590026060033d008b5d12d7b961192a9b25fbfa2586879360de",
+            "receiptId": "GEN-materials-family-v1"
+          },
+          {
+            "path": "docs/game-design/concepts/materials-family-v2.png",
+            "sha256": "42296b42c792065664b251ad823e701be9331deefbd35a7418812094e196db96",
+            "receiptId": "GEN-materials-family-v2"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ],
+        "preferredDirection": {
+          "path": "docs/game-design/concepts/materials-family-v2.png",
+          "receiptId": "GEN-materials-family-v2",
+          "supersedes": "GEN-materials-family-v1",
+          "acceptance": "open"
+        }
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -17735,7 +19939,7 @@
         ],
         "evidence": []
       },
-      "source": "source/three/realism.mjs#materials",
+      "source": "source/three/materials.mjs#materials",
       "conceptBatch": "MATERIALS",
       "referenceIds": [],
       "conceptPrompt": "darkSteel material sphere and applied close-up under the same neutral calibrated lighting; provide roughness/metalness/opacity intent, not an arbitrary flat swatch."
@@ -17751,8 +19955,28 @@
         "evidence": []
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/materials-family-v1.png",
+            "sha256": "6a6732fb333ae590026060033d008b5d12d7b961192a9b25fbfa2586879360de",
+            "receiptId": "GEN-materials-family-v1"
+          },
+          {
+            "path": "docs/game-design/concepts/materials-family-v2.png",
+            "sha256": "42296b42c792065664b251ad823e701be9331deefbd35a7418812094e196db96",
+            "receiptId": "GEN-materials-family-v2"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ],
+        "preferredDirection": {
+          "path": "docs/game-design/concepts/materials-family-v2.png",
+          "receiptId": "GEN-materials-family-v2",
+          "supersedes": "GEN-materials-family-v1",
+          "acceptance": "open"
+        }
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -17772,7 +19996,7 @@
         ],
         "evidence": []
       },
-      "source": "source/three/realism.mjs#materials",
+      "source": "source/three/materials.mjs#materials",
       "conceptBatch": "MATERIALS",
       "referenceIds": [],
       "conceptPrompt": "rubber material sphere and applied close-up under the same neutral calibrated lighting; provide roughness/metalness/opacity intent, not an arbitrary flat swatch."
@@ -17788,8 +20012,28 @@
         "evidence": []
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/materials-family-v1.png",
+            "sha256": "6a6732fb333ae590026060033d008b5d12d7b961192a9b25fbfa2586879360de",
+            "receiptId": "GEN-materials-family-v1"
+          },
+          {
+            "path": "docs/game-design/concepts/materials-family-v2.png",
+            "sha256": "42296b42c792065664b251ad823e701be9331deefbd35a7418812094e196db96",
+            "receiptId": "GEN-materials-family-v2"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ],
+        "preferredDirection": {
+          "path": "docs/game-design/concepts/materials-family-v2.png",
+          "receiptId": "GEN-materials-family-v2",
+          "supersedes": "GEN-materials-family-v1",
+          "acceptance": "open"
+        }
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -17809,7 +20053,7 @@
         ],
         "evidence": []
       },
-      "source": "source/three/realism.mjs#materials",
+      "source": "source/three/materials.mjs#materials",
       "conceptBatch": "MATERIALS",
       "referenceIds": [],
       "conceptPrompt": "glass material sphere and applied close-up under the same neutral calibrated lighting; provide roughness/metalness/opacity intent, not an arbitrary flat swatch."
@@ -17825,8 +20069,28 @@
         "evidence": []
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/materials-family-v1.png",
+            "sha256": "6a6732fb333ae590026060033d008b5d12d7b961192a9b25fbfa2586879360de",
+            "receiptId": "GEN-materials-family-v1"
+          },
+          {
+            "path": "docs/game-design/concepts/materials-family-v2.png",
+            "sha256": "42296b42c792065664b251ad823e701be9331deefbd35a7418812094e196db96",
+            "receiptId": "GEN-materials-family-v2"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ],
+        "preferredDirection": {
+          "path": "docs/game-design/concepts/materials-family-v2.png",
+          "receiptId": "GEN-materials-family-v2",
+          "supersedes": "GEN-materials-family-v1",
+          "acceptance": "open"
+        }
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -17846,7 +20110,7 @@
         ],
         "evidence": []
       },
-      "source": "source/three/realism.mjs#materials",
+      "source": "source/three/materials.mjs#materials",
       "conceptBatch": "MATERIALS",
       "referenceIds": [],
       "conceptPrompt": "amber material sphere and applied close-up under the same neutral calibrated lighting; provide roughness/metalness/opacity intent, not an arbitrary flat swatch."
@@ -17862,8 +20126,28 @@
         "evidence": []
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/materials-family-v1.png",
+            "sha256": "6a6732fb333ae590026060033d008b5d12d7b961192a9b25fbfa2586879360de",
+            "receiptId": "GEN-materials-family-v1"
+          },
+          {
+            "path": "docs/game-design/concepts/materials-family-v2.png",
+            "sha256": "42296b42c792065664b251ad823e701be9331deefbd35a7418812094e196db96",
+            "receiptId": "GEN-materials-family-v2"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ],
+        "preferredDirection": {
+          "path": "docs/game-design/concepts/materials-family-v2.png",
+          "receiptId": "GEN-materials-family-v2",
+          "supersedes": "GEN-materials-family-v1",
+          "acceptance": "open"
+        }
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -17883,7 +20167,7 @@
         ],
         "evidence": []
       },
-      "source": "source/three/realism.mjs#materials",
+      "source": "source/three/materials.mjs#materials",
       "conceptBatch": "MATERIALS",
       "referenceIds": [],
       "conceptPrompt": "lamp material sphere and applied close-up under the same neutral calibrated lighting; provide roughness/metalness/opacity intent, not an arbitrary flat swatch."
@@ -17899,8 +20183,28 @@
         "evidence": []
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/materials-family-v1.png",
+            "sha256": "6a6732fb333ae590026060033d008b5d12d7b961192a9b25fbfa2586879360de",
+            "receiptId": "GEN-materials-family-v1"
+          },
+          {
+            "path": "docs/game-design/concepts/materials-family-v2.png",
+            "sha256": "42296b42c792065664b251ad823e701be9331deefbd35a7418812094e196db96",
+            "receiptId": "GEN-materials-family-v2"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ],
+        "preferredDirection": {
+          "path": "docs/game-design/concepts/materials-family-v2.png",
+          "receiptId": "GEN-materials-family-v2",
+          "supersedes": "GEN-materials-family-v1",
+          "acceptance": "open"
+        }
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -17920,10 +20224,181 @@
         ],
         "evidence": []
       },
-      "source": "source/three/realism.mjs#materials",
+      "source": "source/three/materials.mjs#materials",
       "conceptBatch": "MATERIALS",
       "referenceIds": [],
       "conceptPrompt": "red material sphere and applied close-up under the same neutral calibrated lighting; provide roughness/metalness/opacity intent, not an arbitrary flat swatch."
+    },
+    {
+      "id": "MAT-pressedSteel",
+      "kind": "material",
+      "label": {
+        "en": "pressedSteel"
+      },
+      "reference": {
+        "status": "canonical-or-design-contract;visual-reference-open",
+        "evidence": []
+      },
+      "concept": {
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/materials-family-v1.png",
+            "sha256": "6a6732fb333ae590026060033d008b5d12d7b961192a9b25fbfa2586879360de",
+            "receiptId": "GEN-materials-family-v1"
+          },
+          {
+            "path": "docs/game-design/concepts/materials-family-v2.png",
+            "sha256": "42296b42c792065664b251ad823e701be9331deefbd35a7418812094e196db96",
+            "receiptId": "GEN-materials-family-v2"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ],
+        "preferredDirection": {
+          "path": "docs/game-design/concepts/materials-family-v2.png",
+          "receiptId": "GEN-materials-family-v2",
+          "supersedes": "GEN-materials-family-v1",
+          "acceptance": "open"
+        }
+      },
+      "implementation": {
+        "status": "existing-unqualified",
+        "evidence": []
+      },
+      "acceptance": {
+        "status": "open",
+        "criteria": [
+          "V01",
+          "V02",
+          "V03",
+          "V04",
+          "V05",
+          "V06",
+          "V07",
+          "V08"
+        ],
+        "evidence": []
+      },
+      "source": "source/three/materials.mjs#materials",
+      "conceptBatch": "MATERIALS",
+      "referenceIds": [],
+      "conceptPrompt": "pressedSteel material sphere and applied close-up under the same neutral calibrated lighting; provide roughness/metalness/opacity intent, not an arbitrary flat swatch."
+    },
+    {
+      "id": "MAT-castSteel",
+      "kind": "material",
+      "label": {
+        "en": "castSteel"
+      },
+      "reference": {
+        "status": "canonical-or-design-contract;visual-reference-open",
+        "evidence": []
+      },
+      "concept": {
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/materials-family-v1.png",
+            "sha256": "6a6732fb333ae590026060033d008b5d12d7b961192a9b25fbfa2586879360de",
+            "receiptId": "GEN-materials-family-v1"
+          },
+          {
+            "path": "docs/game-design/concepts/materials-family-v2.png",
+            "sha256": "42296b42c792065664b251ad823e701be9331deefbd35a7418812094e196db96",
+            "receiptId": "GEN-materials-family-v2"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ],
+        "preferredDirection": {
+          "path": "docs/game-design/concepts/materials-family-v2.png",
+          "receiptId": "GEN-materials-family-v2",
+          "supersedes": "GEN-materials-family-v1",
+          "acceptance": "open"
+        }
+      },
+      "implementation": {
+        "status": "existing-unqualified",
+        "evidence": []
+      },
+      "acceptance": {
+        "status": "open",
+        "criteria": [
+          "V01",
+          "V02",
+          "V03",
+          "V04",
+          "V05",
+          "V06",
+          "V07",
+          "V08"
+        ],
+        "evidence": []
+      },
+      "source": "source/three/materials.mjs#materials",
+      "conceptBatch": "MATERIALS",
+      "referenceIds": [],
+      "conceptPrompt": "castSteel material sphere and applied close-up under the same neutral calibrated lighting; provide roughness/metalness/opacity intent, not an arbitrary flat swatch."
+    },
+    {
+      "id": "MAT-upholstery",
+      "kind": "material",
+      "label": {
+        "en": "upholstery"
+      },
+      "reference": {
+        "status": "canonical-or-design-contract;visual-reference-open",
+        "evidence": []
+      },
+      "concept": {
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/materials-family-v1.png",
+            "sha256": "6a6732fb333ae590026060033d008b5d12d7b961192a9b25fbfa2586879360de",
+            "receiptId": "GEN-materials-family-v1"
+          },
+          {
+            "path": "docs/game-design/concepts/materials-family-v2.png",
+            "sha256": "42296b42c792065664b251ad823e701be9331deefbd35a7418812094e196db96",
+            "receiptId": "GEN-materials-family-v2"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ],
+        "preferredDirection": {
+          "path": "docs/game-design/concepts/materials-family-v2.png",
+          "receiptId": "GEN-materials-family-v2",
+          "supersedes": "GEN-materials-family-v1",
+          "acceptance": "open"
+        }
+      },
+      "implementation": {
+        "status": "existing-unqualified",
+        "evidence": []
+      },
+      "acceptance": {
+        "status": "open",
+        "criteria": [
+          "V01",
+          "V02",
+          "V03",
+          "V04",
+          "V05",
+          "V06",
+          "V07",
+          "V08"
+        ],
+        "evidence": []
+      },
+      "source": "source/three/materials.mjs#materials",
+      "conceptBatch": "MATERIALS",
+      "referenceIds": [],
+      "conceptPrompt": "upholstery material sphere and applied close-up under the same neutral calibrated lighting; provide roughness/metalness/opacity intent, not an arbitrary flat swatch."
     }
   ],
   "directions": [

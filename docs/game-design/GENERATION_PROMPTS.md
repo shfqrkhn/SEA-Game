@@ -1,6 +1,6 @@
 # Executed image-generation prompts
 
-The five images below were generated with the built-in imagegen tool, opaque backgrounds. Subsequent family prompts are in [PROTECTION_PROMPT.md](PROTECTION_PROMPT.md) and [FIREPOWER_PROMPT.md](FIREPOWER_PROMPT.md). These are executed prompts, not acceptance claims. Artifact hashes, output paths and review findings are in [receipts](concept-receipts.json). Canonical identity prompts for future generation are separate in [IDENTITY_PROMPTS.md](IDENTITY_PROMPTS.md).
+The five images below were generated with the built-in imagegen tool, opaque backgrounds. Subsequent family prompts are in [PROTECTION_PROMPT.md](PROTECTION_PROMPT.md), [FIREPOWER_PROMPT.md](FIREPOWER_PROMPT.md) and [COMMUNICATIONS_PROMPT.md](COMMUNICATIONS_PROMPT.md). These are executed prompts, not acceptance claims. Artifact hashes, output paths and review findings are in [receipts](concept-receipts.json). Canonical identity prompts for future generation are separate in [IDENTITY_PROMPTS.md](IDENTITY_PROMPTS.md).
 
 ## interface-direction-v1.png
 
