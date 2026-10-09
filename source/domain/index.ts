@@ -8,3 +8,6 @@ export * from './teams';
 export * from './transactions';
 export * from './session';
 export * from './recovery';
+export * from './market';
+export * from './role-saves';
+export * from './commands';

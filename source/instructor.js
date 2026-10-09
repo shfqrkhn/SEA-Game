@@ -33,7 +33,6 @@ function sessionCode(teamCount){return `SEA3-T${teamCount}-${randomHex(8)}`}
 
 
 
-function removePurchase(team,index){must(Number.isInteger(index)&&index>=0&&index<team.purchases.length);applyTeamSnapshot(team,SEADomain.removePurchase(team,team.purchases[index].instance))}
 function effectsHtml(card){return Object.entries(card.e).map(([k,v])=>`<div class="effect">${esc(LABELS[k][lang][0])}<strong>${v>=0?"+":""}${v}</strong><small>${esc(LABELS[k][lang][1])}</small></div>`).join("")}
 function safeSessionStorage(){return SEA_STORE.available()}
 
@@ -66,41 +65,7 @@ function extendAuction(){
 }
 function nextOffer(){try{return state.leader?addCents(state.currentBid,APP.bidIncrementCents):currentCard().start}catch{return null}}
 function liveClosing(){return state.phase==="auction"&&state.open&&!committed()&&state.pausedRemaining===null}
-function validateInstructorSave(x){
- const cfg=validateBase(x);must(hasOnlyKeys(x,['schema','phase','lang','vehiclesLocked','sessionCode','marketSeed','market','teams','teamCount','revealMode','timingMode','bidSeconds','round','lot','revealed','open','pausedRemaining','deadline','leader','currentBid','ledger','seq','practice','privateEntry','resultDraft','finalCallAnnounced']));
- must(x.finalCallAnnounced===undefined||typeof x.finalCallAnnounced==='boolean');
- if(x.resultDraft!==undefined&&x.resultDraft!==null)must(hasOnlyKeys(x.resultDraft,['team','price','reason'])&&Object.keys(x.resultDraft).length===3&&typeof x.resultDraft.team==='string'&&x.resultDraft.team.length<=10&&typeof x.resultDraft.price==='string'&&x.resultDraft.price.length<=20&&typeof x.resultDraft.reason==='string'&&x.resultDraft.reason.length<=120);
- must(typeof x.vehiclesLocked==="boolean"&&Array.isArray(x.teams)&&x.teams.length===cfg.teamCount);
- must(["ROUND","JIT","MANUAL"].includes(x.revealMode)&&["TIMED","UNTIMED"].includes(x.timingMode)&&Number.isInteger(x.bidSeconds)&&x.bidSeconds>=10&&x.bidSeconds<=120);
- must(typeof x.marketSeed==="string"&&/^[A-F0-9]{32}$/.test(x.marketSeed));
- const expected=marketFromSeed(x.marketSeed);must(JSON.stringify(x.market)===JSON.stringify(expected));
- must(typeof x.open==="boolean"&&typeof x.revealed==="boolean"&&Array.isArray(x.ledger)&&x.ledger.length<=MAX_INSTRUCTOR_LEDGER_ENTRIES&&x.seq===x.ledger.length);
- const rebuilt=x.teams.map((tm,i)=>{must(tm.id===i+1);return cleanTeam({...tm,purchases:[]},!x.vehiclesLocked)});
- if(x.vehiclesLocked){must(!["setup","practice","planning"].includes(x.phase));rebuilt.forEach(tm=>must(tm.mission===tm.lockedMission&&validMission(tm.mission)))}else{must(["setup","practice","planning"].includes(x.phase)&&x.ledger.length===0);rebuilt.forEach(tm=>must(tm.lockedMission===null))}
- const active=new Map();
- x.ledger.forEach((e,i)=>{
-  must(e&&["SALE","UNSOLD","VOID"].includes(e.kind));const allowedEntry=e.kind==="VOID"?['seq','kind','round','lot','card','team','price','ref','reason']:e.kind==="SALE"?['seq','kind','round','lot','card','team','price','reason']:['seq','kind','round','lot','card','team','price'];must(hasOnlyKeys(e,allowedEntry)&&e.seq===i+1);if(e.kind==="SALE"&&e.reason!==undefined)must(typeof e.reason==='string'&&e.reason.trim().length>0&&e.reason.length<=120);const c=cardAt(e.card,e.round,e.lot);must(expected[e.round-1][e.lot-1].id===c.id);
-  const k=e.round+'-'+e.lot,prior=active.get(k);
-  if(e.kind==="VOID"){must(prior&&e.ref===prior.seq&&e.team===prior.team&&e.price===prior.price&&typeof e.reason==="string"&&e.reason.trim().length>0&&e.reason.length<=120);active.delete(k)}
-  else{must(!prior);if(e.kind==="SALE"){must(Number.isInteger(e.team)&&e.team>=1&&e.team<=cfg.teamCount&&validCents(e.price)&&e.price>=c.start&&(e.price-c.start)%APP.bidIncrementCents===0)}else must(e.team===null&&e.price===null);active.set(k,e)}
- });
- for(const e of active.values())if(e.kind==="SALE")acquire(rebuilt[e.team-1],expected[e.round-1][e.lot-1],e.price);
- x.teams.forEach((tm,i)=>{const normalized=cleanTeam(tm,!x.vehiclesLocked);must(JSON.stringify(normalized.purchases)===JSON.stringify(rebuilt[i].purchases))});
- const position=x.round*10+x.lot;
- for(let i=0;i<position;i++)if(x.phase==="auction"||["build","submit","debrief","closed"].includes(x.phase))must(active.has((Math.floor(i/10)+1)+'-'+(i%10+1)));
- if(["build","submit","debrief","closed"].includes(x.phase))must(active.size===70);
- if(x.phase==="auction")for(const e of active.values())must((e.round-1)*10+e.lot-1<=position);
- if(x.leader!==null){must(Number.isInteger(x.leader)&&x.leader>=1&&x.leader<=cfg.teamCount&&validCents(x.currentBid));const c=expected[x.round][x.lot];must(x.currentBid>=c.start&&(x.currentBid-c.start)%APP.bidIncrementCents===0)}else must(x.currentBid===null);
- if(x.phase==="auction"&&!x.open){const e=active.get((x.round+1)+'-'+(x.lot+1));if(e?.kind==="SALE")must(x.leader===e.team&&x.currentBid===e.price);else must(x.leader===null&&x.currentBid===null)}
- if(x.open){must(x.phase==="auction"&&x.revealed&&!active.has((x.round+1)+'-'+(x.lot+1)));if(x.timingMode==="TIMED")must(Number.isFinite(x.deadline));must(x.pausedRemaining===null||(Number.isFinite(x.pausedRemaining)&&x.pausedRemaining>=0))}
- must(hasOnlyKeys(x.practice,['revealed','open','leader','closed'])&&['revealed','open','leader','closed'].every(k=>typeof x.practice[k]==="boolean"));
- const practice=x.practice;
- if(practice.open)must(practice.revealed&&!practice.closed);
- if(practice.leader)must(practice.revealed&&(practice.open||practice.closed));
- if(practice.closed)must(practice.revealed&&practice.leader&&!practice.open);
- if(x.phase!=="practice")must(!practice.revealed&&!practice.open&&!practice.leader&&!practice.closed);
- return {...x,sessionCode:cfg.code,teams:rebuilt,market:expected,privateEntry:false,resultDraft:x.resultDraft??null};
-}
+function validateInstructorSave(x){try{return SEADomain.validateInstructorSave(x)}catch{must(false)}}
 
 const STORE_KEY="SEA_INSTRUCTOR_V300";
 let state={phase:"setup",schema:3,lang:"en",vehiclesLocked:false,sessionCode:null,marketSeed:null,market:[],teams:[],teamCount:10,revealMode:"ROUND",timingMode:"TIMED",bidSeconds:30,round:0,lot:0,revealed:true,open:false,pausedRemaining:null,deadline:null,leader:null,currentBid:null,ledger:[],seq:0,practice:{revealed:false,open:false,leader:false,closed:false}};
@@ -194,10 +159,8 @@ function visibleLot(i){return SEA_AUCTION.visible(state.revealMode,state.lot,sta
 function effectiveEntry(round=state.round+1,lot=state.lot+1){const xs=state.ledger.filter(x=>x.round===round&&x.lot===lot);if(!xs.length)return null;const last=xs[xs.length-1];return last.kind==="VOID"?null:last}
 function committed(){return !!effectiveEntry()}
 function ledgerCapacity(kind){
- const position=state.round*APP.lotsPerRound+state.lot,total=APP.rounds*APP.lotsPerRound;
- return Number.isInteger(position)&&position>=0&&position<total&&state.ledger.length+1+(total-1-position)+(kind==='VOID'?1:0)<=MAX_INSTRUCTOR_LEDGER_ENTRIES;
+ return SEADomain.ledgerHasCapacity(state.round,state.lot,state.ledger.length,kind);
 }
-function appendLog(e){state.ledger.push(Object.freeze({...e,seq:++state.seq}));saveState()}
 function stopTimer(){if(timerHandle)clearInterval(timerHandle);timerHandle=null}
 function timedOut(){return state.timingMode==="TIMED"&&state.open&&state.pausedRemaining===null&&state.deadline!==null&&Date.now()>=state.deadline}
 
@@ -313,9 +276,8 @@ function commitSale(teamId,price,reason=''){
  const original=state,before=JSON.stringify(state);
  const apply=()=>{
   if(state!==original||JSON.stringify(state)!==before||!state.teams.includes(tm)){seaNotify(t('errors.changed'));return false}
-  try{acquire(tm,currentCard(),price)}catch{seaNotify(t('errors.moneyRange'));return false}
-  const c=currentCard();state.leader=teamId;state.currentBid=price;state.open=false;state.pausedRemaining=null;state.resultDraft=null;stopTimer();
-  appendLog({kind:'SALE',round:c.round,lot:c.lot,card:c.id,team:teamId,price,...(corrected?{reason}: {})});renderAuction();return true;
+  try{applyInstructorOutcome(state,SEADomain.instructorCommitSale(state,teamId,price,reason))}catch(e){seaNotify(t(e.message==='invalid-state'?'errors.state':'errors.moneyRange'));return false}
+  stopTimer();saveState();renderAuction();return true;
  };
  if(corrected&&!seaConfirmGate('sale-correction',t('common.confirmCorrection'),apply))return false;
  return apply();
@@ -328,7 +290,8 @@ function commitUnsold(){
  if(!liveClosing())return false;if(!ledgerCapacity('UNSOLD')){seaNotify(t('errors.ledgerLimit'));return false}const original=state,before=JSON.stringify(state);
  const apply=()=>{
   if(state!==original||JSON.stringify(state)!==before){seaNotify(t('errors.changed'));return false}
-  const c=currentCard();state.open=false;state.pausedRemaining=null;state.leader=null;state.currentBid=null;state.resultDraft=null;stopTimer();appendLog({kind:'UNSOLD',round:c.round,lot:c.lot,card:c.id,team:null,price:null});renderAuction();return true;
+  try{applyInstructorOutcome(state,SEADomain.instructorCommitUnsold(state))}catch{seaNotify(t('errors.state'));return false}
+  stopTimer();saveState();renderAuction();return true;
  };
  if(state.leader!==null&&!seaConfirmGate('unsold-leader',t('auction.confirmUnsoldWithLeader'),apply))return false;
  return apply();
@@ -340,8 +303,8 @@ function voidCurrent(){
  const original=state,before=JSON.stringify(state);
  const apply=()=>{
   if(state!==original||JSON.stringify(state)!==before||$('#correctionReason').value.trim()!==reason){seaNotify(t('errors.changed'));return false}
-  if(e.kind==='SALE'){const tm=state.teams.find(x=>x.id===e.team),idx=tm?.purchases.findIndex(p=>p.round===e.round&&p.lot===e.lot&&p.id===e.card&&p.paid===e.price);if(!tm||idx<0){seaNotify(t('errors.state'));return false}removePurchase(tm,idx)}
-  state.open=false;state.pausedRemaining=null;state.leader=null;state.currentBid=null;state.resultDraft=null;stopTimer();appendLog({kind:'VOID',ref:e.seq,round:e.round,lot:e.lot,card:e.card,team:e.team,price:e.price,reason});$('#correctionReason').value='';renderAuction();return true;
+  try{applyInstructorOutcome(state,SEADomain.instructorVoidCurrent(state,reason))}catch{seaNotify(t('errors.state'));return false}
+  stopTimer();saveState();$('#correctionReason').value='';renderAuction();return true;
  };
  if(!seaConfirmGate('void-lot',t('common.confirmCorrection'),apply))return false;
  return apply();

@@ -21,7 +21,7 @@ function role(value: unknown): BackupRole {
  return value;
 }
 /** Copy JSON data through own value descriptors; never execute serialization/accessor hooks. */
-function passiveSnapshot(value: unknown): unknown {
+export function passiveSnapshot(value: unknown): unknown {
  let budget = MAX_BACKUP_CHARS;
  const active = new Set<object>();
  function copy(input: unknown, depth: number): unknown {

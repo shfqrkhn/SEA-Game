@@ -506,6 +506,15 @@ function studentAuctionCommandHarness(){
  context.state={phase:'auction',sessionCode:'SEA3-T2-0123456789ABCDEF',team,lockedMission:'COMBAT',round:0,lot:0,currentCard:null,scratch:{}};
  return {...api,get state(){return context.state},replaceState:value=>context.state=value,calls,elements,$,finish:()=>$('#finishAuctionBtn').click(),cancel:()=>calls.pending=null,approve(){const pending=calls.pending;assert.ok(pending);calls.pending=null;calls.approved=pending.key;try{return pending.retry()}finally{calls.approved=null}}};
 }
+{
+ const stale=studentAuctionCommandHarness();
+ const otherLot=stale.cardAt('CAP-B',2,1);
+ stale.state.currentCard=otherLot;stale.$('#wonPrice').value=String(otherLot.start/100);
+ const before=JSON.stringify(stale.state);
+ assert.equal(stale.recordWin(),false,'Loaded card from another position cannot be recorded in the current lot');
+ assert.equal(JSON.stringify(stale.state),before,'Rejected stale-position win preserves inventory, offer and position');
+ assert.equal(stale.calls.saves+stale.calls.auction+stale.calls.all,0,'Rejected stale win has no persistence or presentation effects');
+}
 for(const change of ['session','team','position','card','purchase','replacement-state','phase']){
  const app=studentAuctionCommandHarness();app.finish();
  if(change==='session')app.state.sessionCode='SEA3-T2-FEDCBA9876543210';
@@ -791,7 +800,7 @@ for(const role of ['instructor','student']){
  const denied=closedResetHarness(role,{storageSetFails:true});assert.equal(denied.app.startNewSession(),false);assert.equal(denied.calls.pending(),true,role+' can continue in memory when previous-session storage is denied');assert.equal(denied.app.getState().phase,'setup');assert.equal(denied.context.storageFailed,true);
 }
 console.log('Instructor/student closed-session reset confirmation, backup, stale-state and storage-failure cases PASS');
-const transactionNames=['effectiveEntry','committed','liveClosing','ledgerCapacity','currentCard','appendLog','removePurchase','commitSale','voidCurrent','validateInstructorSave'];
+const transactionNames=['effectiveEntry','committed','liveClosing','ledgerCapacity','currentCard','commitSale','voidCurrent','validateInstructorSave'];
 const transactionSource=sharedEngineSource+'\n'+transactionNames.map(name=>extractFunction(instructorSource,name)).join('\n')+'\n({commitSale,voidCurrent,effectiveEntry,validateInstructorSave})';
 const transactionMarketSeed='0123456789ABCDEF0123456789ABCDEF';
 const transactionMarket=JSON.parse(JSON.stringify(marketFromSeed(transactionMarketSeed)));
@@ -958,7 +967,7 @@ for(const mode of ['ROUND','JIT','MANUAL']){
 }
 const timedOpen=openHarness({timingMode:'TIMED'});assert.equal(timedOpen.fns.openAuction(),true);assert.deepEqual(timedOpen.calls.starts,[30000],'Timed lot opening starts configured bid window');
 console.log('Instructor auction-open guards and reveal-mode transitions PASS');
-const flowNames=['phase','effectiveEntry','committed','liveClosing','ledgerCapacity','currentCard','appendLog','stopTimer','removePurchase','allChosen','openAuction','commitSale','commitUnsold','voidCurrent','advance'];
+const flowNames=['phase','effectiveEntry','committed','liveClosing','ledgerCapacity','currentCard','stopTimer','allChosen','openAuction','commitSale','commitUnsold','voidCurrent','advance'];
 const flowSource=sharedEngineSource+'\n'+flowNames.map(name=>extractFunction(instructorSource,name)).join('\n')+'\n({commitSale,commitUnsold,voidCurrent,advance,openAuction,committed,effectiveEntry})';
 function auctionFlowHarness({phase='auction',round=0,lot=0,open=true,pausedRemaining=null,leader=null,currentBid=null,revealMode='MANUAL',timingMode='UNTIMED',ledger=[],teams=null,reason='',approved=null,confirmCallbacks=false}={}){
  const makeTeam=id=>({id,mission:'COMBAT',lockedMission:'COMBAT',totals:{CAP:0,MOB:0,FP:0,PRO:0,COM:0,SA:0,REC:0,MC:0},cost:0,purchases:[],purchasesByRound:[0,0,0,0,0,0,0],profit:0,submitted:false});
@@ -975,7 +984,7 @@ function auctionFlowHarness({phase='auction',round=0,lot=0,open=true,pausedRemai
 // Approval must apply to the exact lot/result shown when the dialog opened.
 // The gate captures the actual production retry, unlike pre-approved call tests.
 for(const operation of ['sale','unsold','void']){
- const make=()=>auctionFlowHarness({confirmCallbacks:true,leader:1,currentBid:transactionCard.start,open:operation!=='void',reason:'verified mistake',ledger:operation==='void'?[{seq:1,kind:'UNSOLD',round:1,lot:1,card:transactionCard.id,team:null,price:null}]:[]});
+ const make=()=>auctionFlowHarness({confirmCallbacks:true,leader:operation==='void'?null:1,currentBid:operation==='void'?null:transactionCard.start,open:operation!=='void',reason:'verified mistake',ledger:operation==='void'?[{seq:1,kind:'UNSOLD',round:1,lot:1,card:transactionCard.id,team:null,price:null}]:[]});
  const request=app=>operation==='sale'?app.fns.commitSale(2,transactionCard.start+5000000,'verified mistake'):operation==='unsold'?app.fns.commitUnsold():app.fns.voidCurrent();
  const fresh=make();assert.equal(request(fresh),false);assert.equal(typeof fresh.calls.pending,'function');assert.equal(fresh.calls.pending(),true,operation+' unchanged approval applies');assert.equal(fresh.state.ledger.at(-1).kind,{sale:'SALE',unsold:'UNSOLD',void:'VOID'}[operation]);
  const changes=[['lot',app=>app.state.lot=1],['session',app=>app.state.sessionCode='SEA3-T2-FFFFFFFFFFFFFFFF'],['accepted caller',app=>{app.state.leader=2;app.state.currentBid+=5000000}],['result draft',app=>app.state.resultDraft.reason='changed correction'],['phase',app=>app.state.phase='build'],['pause',app=>app.state.pausedRemaining=5000],['equal-byte restored state',app=>app.replaceState(structuredClone(app.state))]];
@@ -984,10 +993,32 @@ for(const operation of ['sale','unsold','void']){
  for(const [label,change] of changes){const app=make();assert.equal(request(app),false);change(app);const before=JSON.stringify(app.state);assert.equal(app.calls.pending(),false,operation+' rejects changed '+label);assert.equal(JSON.stringify(app.state),before,operation+' stale approval preserves state');assert.equal(app.calls.saves,0);assert.equal(app.calls.renders,0);assert.equal(app.calls.stops,0);assert.deepEqual(app.calls.notices,['errors.changed'])}
 }
 console.log('Instructor correction/unsold/void confirmation captured-result boundaries PASS');
+// A malformed live append sequence must never produce a purchase or a
+// persisted outcome that the recovery boundary itself would reject.
+for(const outcome of ['sale','unsold']){
+ const malformed=auctionFlowHarness({leader:outcome==='sale'?1:null,currentBid:outcome==='sale'?transactionCard.start:null});
+ malformed.state.seq=1;
+ const before=JSON.stringify(malformed.state);
+ const applied=outcome==='sale'?malformed.fns.commitSale(1,transactionCard.start):malformed.fns.commitUnsold();
+ assert.equal(applied,false,outcome+' rejects inconsistent live ledger sequence');
+ assert.equal(JSON.stringify(malformed.state),before,outcome+' failed atomic command preserves all state');
+ assert.equal(malformed.calls.saves,0);assert.equal(malformed.calls.renders,0);assert.equal(malformed.calls.stops,0);
+}
+console.log('Actual instructor result commands reject inconsistent append sequence before any effect PASS');
+for(const frozenTarget of ['sibling','state-sequence']){
+ const app=auctionFlowHarness({leader:1,currentBid:transactionCard.start});
+ if(frozenTarget==='sibling')Object.freeze(app.state.teams[1]);
+ else Object.defineProperty(app.state,'seq',{value:0,writable:false,enumerable:true,configurable:true});
+ const before=JSON.stringify(app.state);
+ assert.equal(app.fns.commitSale(1,transactionCard.start),false,'Non-writable '+frozenTarget+' rejects without throwing or partial writes');
+ assert.equal(JSON.stringify(app.state),before,'All inventory, ledger and command fields survive rejected '+frozenTarget);
+ assert.equal(app.calls.saves+app.calls.renders+app.calls.stops,0,'No effect occurs before write preflight finishes');
+}
+console.log('Actual instructor adapter preflights all writes before committing a complete outcome PASS');
 const unsoldLeader=auctionFlowHarness({leader:1,currentBid:transactionCard.start}),unsoldLeaderBefore=JSON.stringify(unsoldLeader.state);
 assert.equal(unsoldLeader.fns.commitUnsold(),false,'Unsold with an accepted leader waits for confirmation');assert.equal(JSON.stringify(unsoldLeader.state),unsoldLeaderBefore,'Unconfirmed leader override is mutation-free');assert.deepEqual(unsoldLeader.calls.notices,[]);
 unsoldLeader.state.approved='unsold-leader';assert.equal(unsoldLeader.fns.commitUnsold(),true,'Confirmed facilitator override commits the lot as unsold');
-assert.deepEqual(unsoldLeader.state.ledger.map(e=>({kind:e.kind,round:e.round,lot:e.lot,card:e.card,team:e.team,price:e.price,seq:e.seq})),[{kind:'UNSOLD',round:1,lot:1,card:transactionCard.id,team:null,price:null,seq:1}]);
+assert.deepEqual(JSON.parse(JSON.stringify(unsoldLeader.state.ledger.map(e=>({kind:e.kind,round:e.round,lot:e.lot,card:e.card,team:e.team,price:e.price,seq:e.seq})))),[{kind:'UNSOLD',round:1,lot:1,card:transactionCard.id,team:null,price:null,seq:1}]);
 assert.equal(unsoldLeader.state.open,false);assert.equal(unsoldLeader.state.leader,null);assert.equal(unsoldLeader.state.currentBid,null);assert.equal(unsoldLeader.fns.committed(),true);
 const unsoldVoid=auctionFlowHarness({open:false,ledger:unsoldLeader.state.ledger,reason:''}),unsoldVoidBefore=JSON.stringify(unsoldVoid.state);
 assert.equal(unsoldVoid.fns.voidCurrent(),false,'Voiding an unsold result requires a reason and confirmation');assert.equal(JSON.stringify(unsoldVoid.state),unsoldVoidBefore);assert.deepEqual(unsoldVoid.calls.notices,['errors.reason']);
