@@ -40,6 +40,21 @@ const prompts=node('ol','',[node('li','Explain the cost tradeoff.'),node('li','I
 const info=ctx.project([ranking,prompts],visible,keyFor).rows.map(r=>r.label);
 for(const value of ['1. Team 1','$4,000,000 · 80 points · $50,000.00','Explain the cost tradeoff.','Identify the mission shortfall.'])assert(info.includes(value),'Ranking/debrief information must survive: '+value);
 const inlineLabel=node('label','Profit',[node('span',secret,[],{hidden:true})]);
+// A ledger entry is one public event. Splitting its cells into unrelated pages
+// makes the round/lot, correction and price impossible to read together.
+for(const locale of ['en','fr']){
+ const expected=locale==='en'?['Round 1','Lot 1','CAP-C','Void','$250,000']:['Ronde 1','Lot 1','CAP-C','Annulé','250 000 $'];
+ const entries=expected.map(value=>node('span',value));
+ const event=node('div','',entries,{classes:['ledger-row']});
+ const hiddenPrivate=node('span',secret,[],{hidden:true});event.children.push(hiddenPrivate);event.childNodes.push(hiddenPrivate);
+ const log=node('div','',[event],{attrs:{'data-scene-section':'task'}});
+ const result=ctx.project([log],visible,keyFor);
+ assert.equal(result.rows.length,1,'Each ledger event must remain a single contextual row');
+ for(const value of expected)assert(result.rows[0].label.includes(value),'Ledger event omitted '+value);
+ assert(!result.rows[0].label.includes(secret),'Hidden ledger descendants cannot leak');
+ assert.equal(result.rows[0].section,'task');
+ assert.equal(event.children[0].textContent,expected[0],'Projection leaves semantic ledger unchanged');
+}
 const privateLabelInput=node('input','',[],{value:'250000',labels:[inlineLabel]});
 assert(!JSON.stringify(ctx.project([privateLabelInput],visible,keyFor).rows).includes(secret),'Hidden label descendants must not enter GPU control names');
 closed.open=true;assert(ctx.project([root],visible,keyFor).rows.some(r=>r.label==='Export'));

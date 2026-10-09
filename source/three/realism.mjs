@@ -81,6 +81,52 @@ function carrierWindow(g,m,bounds,place){
   const bolt=cylinder(g,m.steel,.007,.009,center.toArray(),'y',.007,6);bolt.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),axis);bolt.name='carrier bezel seated fastener';
  }
 }
+
+// Small exterior systems follow the authored hull/glass surfaces. These are
+// original illustrative assemblies, not dimensions or ratings of a real vehicle.
+function carrierWiper(g,m,frontX,range){
+ const k=.75/1.16,normal=new THREE.Vector3(1,k,0).normalize(),mid=(range[0]+range[1])/2;
+ const assembly=new THREE.Group();assembly.name='carrier windshield wiper assembly';
+ const mount=new THREE.Vector3(frontX(1.755),1.755,mid-.06);assembly.position.copy(mount);g.add(assembly);
+ const at=(y,z,d,glass=false)=>new THREE.Vector3(frontX(y)-(glass ? .025 : 0),y,z).addScaledVector(normal,d).sub(mount).toArray();
+ const axisCylinder=(radius,height,y,z,d,name)=>{const o=cylinder(assembly,m.darkSteel,radius,height,at(y,z,d),'y',radius,24);o.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),normal);o.name=name;return o;};
+ axisCylinder(.027,.028,1.755,mid-.06,.014,'carrier wiper spindle housing');
+ axisCylinder(.014,.031,1.755,mid-.06,.042,'carrier wiper pivot shaft');
+ const bladeCenter=[1.96,mid+.035],span=(range[1]-range[0])*.32;
+ rod(assembly,m.darkSteel,at(1.755,mid-.06,.055),at(1.87,mid-.10,.061),.012).name='carrier wiper articulated arm';
+ rod(assembly,m.darkSteel,at(1.87,mid-.10,.061),at(bladeCenter[0],bladeCenter[1],.032,true),.009).name='carrier wiper articulated arm';
+ // The glazing extrusion has a 1 mm bevel beyond its nominal plane.
+ const contactOffset=.003+.001/Math.sqrt(1+k*k);
+ const a=at(1.935,mid+.035-span,contactOffset,true),b=at(1.985,mid+.035+span,contactOffset,true);
+ rod(assembly,m.rubber,a,b,.003).name='carrier wiper rubber contact lip';
+ rod(assembly,m.darkSteel,at(1.935,mid+.035-span,.012,true),at(1.985,mid+.035+span,.012,true),.007).name='carrier wiper spring blade spine';
+ rod(assembly,m.darkSteel,at(bladeCenter[0],bladeCenter[1],.012,true),at(bladeCenter[0],bladeCenter[1],.035,true),.014).name='carrier wiper blade swivel';
+}
+function carrierMirror(g,m,front,half,s){
+ const original=new Set(g.children);
+ const sideZ=y=>s*half*(.75+(y-1.2)*.1/1.16),x=front-.92;
+ const plate=box(g,m.edge,[.12,.18,.034],[x,1.74,sideZ(1.74)+s*.025],'carrier mirror hull mounting plate');plate.rotation.x=-s*Math.atan(half*.1/1.16);
+ const center=[front-.90,2.08,s*(half+.10)];
+ box(g,m.rubber,[.086,.26,.185],center,'carrier mirror sealed backing');
+ box(g,m.glass,[.006,.218,.15],[center[0]+.045,center[1],center[2]],'mirror');
+ for(const dy of [-.055,.055]){
+  rod(g,m.darkSteel,[x,1.74+dy,sideZ(1.74+dy)+s*.040],[center[0]-.025,center[1]+dy,center[2]],.014).name='carrier mirror support strut';
+  cylinder(g,m.steel,.014,.014,[x,1.74+dy,sideZ(1.74+dy)+s*.044],'z',.014,6).name='carrier mirror mount fastener';
+ }
+ const assembly=new THREE.Group();assembly.name='carrier mirror assembly';assembly.position.copy(plate.position);g.add(assembly);g.updateMatrixWorld(true);
+ for(const child of [...g.children])if(child!==assembly&&!original.has(child))assembly.attach(child);
+}
+function carrierHeadlamp(g,m,x,y,z){
+ const ring=new THREE.Mesh(new THREE.TorusGeometry(.061,.008,8,36),m.steel);ring.rotation.y=Math.PI/2;ring.position.set(x+.150,y,z);ring.name='carrier headlamp retaining ring';ring.castShadow=ring.receiveShadow=true;g.add(ring);
+ const profile=[[0,-.030],[.022,-.027],[.042,-.014],[.056,0]].map(([r,d])=>new THREE.Vector2(r,d));
+ const bowl=new THREE.Mesh(new THREE.LatheGeometry(profile.reverse(),32),m.steel);bowl.rotation.z=-Math.PI/2;bowl.position.set(x+.145,y,z);bowl.name='carrier headlamp reflector bowl';g.add(bowl);
+ const optical=m.glass.clone();optical.color.set('#e0e9df');optical.transparent=true;optical.opacity=.45;optical.metalness=0;optical.roughness=.10;optical.depthWrite=false;
+ cylinder(g,optical,.056,.004,[x+.154,y,z],'x',.056,36).name='carrier headlamp clear cover';
+ cylinder(g,m.lamp,.011,.012,[x+.129,y,z],'x',.011,16).name='carrier headlamp bulb capsule';
+ // Fine cover ribs are actual shallow geometry, confined to the aperture.
+ for(const dz of [-.032,-.016,0,.016,.032]){const h=Math.sqrt(.050*.050-dz*dz);rod(g,optical,[x+.157,y-h,z+dz],[x+.157,y+h,z+dz],.0012).name='carrier headlamp cover rib';}
+}
+
 export function missionBase(id,m){
  if(id==='RECOVERY'){const g=createVehicle(m);g.traverse(o=>{if(o.isMesh&&o.geometry.type==='BufferGeometry'&&o.material.name!=='optical glass')o.name='hull shell';});recoveryConstruction(g,m);const old=g.getObjectByName('mounted WR-12'),winch=detailPart(createWinch(m),m,'ACC',5);winch.name='mounted WR-12';winch.position.copy(old.position);winch.quaternion.copy(old.quaternion);old.removeFromParent();old.traverse(o=>o.geometry?.dispose());g.add(winch);detailVehicle(g,m,6.25,2.3);return soften(g);}
  const spec={COMBAT:[6.8,2.65,4],RECCE:[5.5,2.3,2],TROOP:[6.9,2.6,3],COMMAND:[6.7,2.6,3],MINE:[6.8,2.65,4]}[id], [length,width,axles]=spec;
@@ -113,7 +159,7 @@ export function missionBase(id,m){
  formedCabPanel(g,m.paint,[[-half*.75,1.2],[half*.75,1.2],[half*.85,2.36],[-half*.85,2.36]],[roundedOpening(-half*.67,1.80,-.09,2.13),roundedOpening(.09,1.80,half*.67,2.13)],(z,y,t)=>[frontX(y)-t,y,z]);
  for(const range of [[-half*.67,-.09],[.09,half*.67]]){
   carrierWindow(g,m,[range[0],1.80,range[1],2.13],(z,y,t)=>[frontX(y)+t,y,z]);
-  rod(g,m.rubber,[frontX(1.83)+.020,1.83,(range[0]+range[1])*.5],[frontX(2.03)+.020,2.03,range[1]-.08],.009).name='carrier seated windshield wiper';
+  carrierWiper(g,m,frontX,range);
  }
  if(id==='TROOP')formedCabPanel(g,m.edge,[[-half*.75,1.2],[half*.75,1.2],[half*.85,2.36],[-half*.85,2.36]],[roundedOpening(-.74,1.34,.74,2.23,.045)],(z,y,t)=>[rear+(y-1.2)*.17/1.16+t,y,z]);
  else if(id==='COMMAND')formedCabPanel(g,m.edge,[[-half*.75,1.2],[half*.75,1.2],[half*.85,2.36],[half*.85,2.74],[-half*.85,2.74],[-half*.85,2.36]],[roundedOpening(-.47,1.47,.47,2.50,.045)],(z,y,t)=>[rear+(Math.min(y,2.36)-1.2)*.17/1.16+t,y,z]);
@@ -127,18 +173,25 @@ export function missionBase(id,m){
   rod(g,m.steel,[front-1.56,1.76,handleZ],[front-1.34,1.76,handleZ],.012).name='carrier exterior door pull';
   box(g,m.edge,[.68,.05,.32],[front-1.61,1.36,s*(half*.87+.14)],'entry step');
   for(const x of [front-1.83,front-1.39]){const inner=Math.abs(sideZ(1.36))-.010,outer=half*.87+.14;box(g,m.edge,[.05,.10,outer-inner+.05],[x,1.33,s*(inner+outer)/2],'carrier entry step hull bracket');}
-  rod(g,m.darkSteel,[front-.98,1.86,z],[front-.9,2.07,s*(half+.1)],.02);box(g,m.glass,[.055,.20,.15],[front-.9,2.07,s*(half+.1)],'mirror');
+  carrierMirror(g,m,front,half,s);
   if(id!=='TROOP')for(let i=0;i<4;i++){const x=rear+.6+i*.64;panel(g,m,[.51,.49,.04],[x,1.95,s*half*.85]);}
   for(let i=0;i<10;i++)box(g,m.darkSteel,[.02,.22,.02],[front-1.6+i*.06,2.38,s*.57],'vent grille');
   const lampY=1.385,lampX=frontX(lampY),lampZ=s*half*.65;
   box(g,m.edge,[.16,.21,.205],[lampX+.035,lampY,lampZ],'carrier front lamp housing');
-  box(g,m.rubber,[.020,.175,.174],[lampX+.121,lampY,lampZ],'carrier lamp seated gasket');
-  cylinder(g,m.lamp,.058,.023,[lampX+.137,1.355,lampZ],'x',.058,32).name='carrier headlamp lens';
+  const lampOpening=new THREE.Path(),indicatorOpening=new THREE.Path();
+  lampOpening.absarc(lampZ,1.355,.059,0,Math.PI*2,true);indicatorOpening.absarc(lampZ,1.445,.023,0,Math.PI*2,true);
+  const gasketOutline=roundedOpening(lampZ-.087,lampY-.095,lampZ+.087,lampY+.095,.008).getPoints(12).map(p=>[p.x,p.y]);
+  carrierSheet(g,m.rubber,gasketOutline,[lampOpening,indicatorOpening],(z,y,t)=>[lampX+.111+t,y,z],.020,'carrier lamp seated gasket');
+  carrierHeadlamp(g,m,lampX,1.355,lampZ);
   cylinder(g,m.amber,.022,.023,[lampX+.137,1.445,lampZ],'x',.022,24).name='carrier indicator lens';
   box(g,m.red,[.03,.07,.13],[rear-.02,1.32,s*half*.65]);
  }
  box(g,m.darkSteel,[.15,.17,width*.85],[front,1.12,0],'front bumper');
- for(const s of [-1,1]){cylinder(g,m.steel,.055,.08,[front+.1,1.14,s*.73],'x');rod(g,m.steel,[rear+.25,1.44,s*.5],[rear+.25,2.05,s*.5],.016);}
+ for(const s of [-1,1]){
+  box(g,m.darkSteel,[.12,.09,.07],[front+.100,1.14,s*.73],'carrier tow eye bracket '+s);
+  const eye=new THREE.Mesh(new THREE.TorusGeometry(.073,.018,10,32),m.steel);eye.position.set(front+.18,1.14,s*.73);eye.name='carrier front tow eye';eye.castShadow=eye.receiveShadow=true;g.add(eye);
+  rod(g,m.steel,[rear+.25,1.44,s*.5],[rear+.25,2.05,s*.5],.016);
+ }
  cylinder(g,m.edge,.32,.04,[.4,id==='COMMAND'?2.77:2.39,.5],'roof hatch');
  detailVehicle(g,m,length,width);return soften(g);
 }

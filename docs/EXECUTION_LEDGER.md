@@ -1,6 +1,6 @@
 # SEA Game current execution ledger
 
-Checkpoint2026-10-09. Canonical requirements: [MPES1.5.0](MPES.md); exact continuation/commands/identities: [handover](HANDOVER.md). Full PRODUCT_RELEASE **OPEN, 0/3**. Bounded checks never certify full milestones.
+Checkpoint2026-10-09. Canonical requirements: [MPES1.5.1](MPES.md); exact continuation/commands/identities: [handover](HANDOVER.md). Full PRODUCT_RELEASE **OPEN, 0/3**. Bounded checks never certify full milestones.
 
 | Item | Actual state | Next action |
 |---|---|---|
@@ -27,3 +27,5 @@ Next: finish coherent launcher/editor/reset/import coordination and actual refer
 Composed shared-context review found frozen sibling could partially mutate a sale adapter. Meaningful actual-controller RED now GREEN: all team/state assignment targets preflight before writes; readonly sibling/sequence failures preserve state and produce no save/render/timer effects. Full rules/recovery and six VM journeys reran PASS. New HTML identity is recorded in handover; no independent full assurance inferred.
 
 Dev.6 first failures: actual historical malformed studentadvance/private submissions, partial readonly mission locks, invalid timer clock, bid profit headroom and stale native intents reproduced in exact5bb85 controllers read into memory. Composed bootstrap privacy RED and stale boolean practice repair are now GREEN. Complete schema3 fixture/prefix/timer preparation and extraction repairs preserve every prior assertion/oracle; root syntax/ambiguous-removal feedback fixes retained in handover. Fresh live snapshots reject inconsistent aggregates; typed commands prepare full patches; display-only timers do not recalculate deadlines. Native slot/session/deadline intents and once-per-projection Three.js button guards pass actual VM tests. Publisheddev.6 exact identity and scoped checks plus remaining browser/external limits are in handover/current receipt.
+
+Localdev.7: coherent localized ledger events/heading and five-carrier fitted wipers/backed mirrors/layered lamps/open tow eyes implemented with meaningful RED/GREEN; exact newHTML identity/first failures/references in handover. Source suites/package parity PASS; all77model/42build wrappers PASS; CI/Pages/current-byte GPU review pending. Published receipt remainsdev.6, full closure OPEN0/3.

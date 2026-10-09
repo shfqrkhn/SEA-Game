@@ -25,6 +25,23 @@ try{
   for(const row of rows.filter(r=>r.section==='help'))assert.equal(retained.get(row.key)?.join(' ').replace(/\s+/g,' ').trim(),row.label,'Wide-glyph content is completely reachable without hidden continuation text');
  }
  const huge='W'.repeat(120);const wrapped=api.wrapInterfaceText(huge,64,value=>width(value));assert.equal(wrapped.join(''),huge,'Unbroken tokens preserved');assert(wrapped.every(line=>width(line)<=64),'Unbroken tokens fitted by measurement');
+ // Public append-only history stays readable as events, including corrected
+ // and French results. This bounds navigation without dropping older records.
+ for(const language of ['en','fr']){
+  const records=Array.from({length:72},(_,i)=>({key:'event-'+i,kind:'text',section:'task',label:language==='en'?`Round ${Math.floor(i/10)+1} Lot ${i%10+1} CAP-C ${i===1?'Void':'Team 2'} $250,000`:`Ronde ${Math.floor(i/10)+1} Lot ${i%10+1} CAP-C ${i===1?'Annulé':'Équipe 2'} 250 000 $`}));
+  const heading={key:'ledger-heading',kind:'text',section:'task',label:language==='en'?'Final append-only ledger':'Registre final'};
+  for(const [w,h]of [[320,640],[1280,720]]){
+   let page=ui.set({title:'Closed',lang:language,section:'task',rows:[heading,...records]},()=>{},w,h);
+   if(w===1280)assert(page.pages<=12,'72 contextual ledger entries fit at most12 desktop pages instead of40 fragmented pages');
+   const reached=[];
+   for(let i=0;i<page.pages;i++){
+    page=ui.set({title:'Closed',lang:language,section:'task',page:i,rows:[heading,...records]},()=>{},w,h);
+    for(const item of page.placed){reached.push(item.row.key);assert(item.y+item.h<=page.panel.y+page.panel.h-page.footerHeight,'History cannot overlap footer');}
+   }
+   assert.deepEqual(reached,[heading,...records].map(row=>row.key),'Every history event remains reachable once, in append order');
+  }
+ }
+ ui.set({title:'Closed',rows:[]},()=>{},1280,720);
  const before=draws.length,layout=ui.layout;assert.equal(ui.resize(1280,720),layout);assert.equal(draws.length,before,'Unchanged resize allocates no textures');
  ui.dispose();assert.equal(ui.scene.children.length,0);ui.dispose();
  console.log('PASS: shared measured layout, wide-glyph continuation reachability, exact full-line texture bounds, persistent next action and unchanged-size reuse. CPU canvas stub only; GPU/browser/accessibility acceptance remains open.');
