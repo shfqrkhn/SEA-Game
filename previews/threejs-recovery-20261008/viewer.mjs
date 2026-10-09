@@ -6,7 +6,7 @@ const host=document.querySelector('#viewport'),status=document.querySelector('#s
 let renderer;
 try{renderer=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});}
 catch{status.textContent='WebGL is unavailable. The static previews remain available below.';throw new Error('WebGL unavailable');}
-renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.0;host.append(renderer.domElement);
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFShadowMap;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.0;host.append(renderer.domElement);
 let model,scene,camera,controls,kind='vehicle';
 const mat=materials();
 function load(next){
@@ -25,5 +25,5 @@ document.querySelectorAll('[data-kind]').forEach(b=>b.addEventListener('click',(
 document.querySelector('#reset').addEventListener('click',()=>{fitCamera(camera,model,host.clientWidth/host.clientHeight);controls.target.copy(new THREE.Box3().setFromObject(model,true).getCenter(new THREE.Vector3()));controls.update();});
 function download(blob,name){const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
 document.querySelector('#png').addEventListener('click',()=>{renderer.render(scene,camera);renderer.domElement.toBlob(blob=>{if(blob)download(blob,`${kind}.png`);});});
-document.querySelector('#glb').addEventListener('click',async()=>{try{const data=await new GLTFExporter().parseAsync(model,{binary:true});download(new Blob([data],{type:'model/gltf-binary'}),`${kind}.glb`);}catch(e){status.textContent=`Export failed: ${e.message}`;}});
+document.querySelector('#glb').addEventListener('click',async()=>{try{const data=await new GLTFExporter().parseAsync(model,{binary:true});download(new Blob([data],{type:'model/gltf-binary'}),`${kind}.glb`);status.textContent='GLB download initiated. Direct model downloads are also available below.';}catch(e){status.textContent=`Export failed: ${e.message}`;}});
 load('vehicle');renderer.setAnimationLoop(()=>{controls.update();renderer.render(scene,camera);});
