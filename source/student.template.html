@@ -10,13 +10,13 @@
 </head>
 <body>
 <a class="skip-link" href="#mainContent"><span data-i18n="common.skip"></span></a>
-<header data-scene-priority="100">
+<header data-scene-priority="100" data-scene-section="help">
   <div class="brand"><div class="mark">SE</div><div><h1 data-i18n="app.title">Systems Engineering Awareness</h1><small data-i18n="role"></small></div></div>
   <div class="top"><details class="save-menu"><summary data-i18n="backup.menu">Save & restore</summary><div><button id="exportBackupBtn" class="btn ghost" type="button" data-i18n="backup.export"></button><button id="importBackupBtn" class="btn ghost" type="button" data-i18n="backup.import"></button><button id="restorePreviousBtn" class="btn ghost" type="button" data-i18n="backup.restorePrevious" disabled></button><input id="backupFile" class="sr-only" type="file" accept="application/json,.json" tabindex="-1" aria-hidden="true"></div></details><button id="langBtn" class="btn ghost" type="button">FR</button></div>
 </header>
 <div id="storageNotice" class="notice bad hidden" role="status"></div><div id="backupStatus" class="notice info hidden" role="status" aria-live="polite"></div><div class="status"><span class="badge">v3.0.0-local</span><span id="vehicleBadge" class="badge"></span><span id="phaseBadge" class="badge"></span><span id="sessionBadge" class="badge"></span></div>
 <main id="mainContent">
-<section id="sea3dScene" class="sea3d-stage" aria-labelledby="sea3d-title" data-scene-priority="90">
+<section id="sea3dScene" class="sea3d-stage" aria-labelledby="sea3d-title" data-scene-priority="90" data-scene-section="inspect">
  <div class="sea3d-heading"><h2 id="sea3d-title">Your vehicle</h2><details class="view-controls"><summary id="sea3d-views">Views</summary><div class="inline"><button id="sea3d-reset" class="btn ghost" type="button">Reset view</button><button id="sea3d-front" class="btn ghost" type="button">Front</button><button id="sea3d-rear" class="btn ghost" type="button">Rear</button></div></details></div>
  <div class="sea3d-toolbar">
   <label><span id="sea3d-team">Team</span><select id="sea3dTeam"></select></label>
@@ -29,7 +29,7 @@
  <p id="sea3dStatus" role="status" aria-live="polite"></p><p id="sea3d-hint" class="muted"></p>
 </section>
 <section id="setup" class="section active">
-  <div class="hero" data-scene-priority="70"><div class="kicker" data-i18n="setup.kicker"></div><h2 data-i18n="setup.title"></h2><p data-i18n="setup.desc"></p></div>
+  <div class="hero" data-scene-priority="70" data-scene-section="help"><div class="kicker" data-i18n="setup.kicker"></div><h2 data-i18n="setup.title"></h2><p data-i18n="setup.desc"></p></div>
   <div class="grid two">
     <div class="card">
       <div class="field"><label for="sessionInput" data-i18n="setup.code"></label><input id="sessionInput" class="code-box" autocomplete="off" maxlength="32" data-scene-priority="20"></div>
@@ -42,7 +42,7 @@
 </section>
 
 <section id="practice" class="section">
-  <div class="hero" data-scene-priority="70"><div class="kicker" data-i18n="practice.kicker"></div><h2 data-i18n="practice.title"></h2><p data-i18n="practice.desc"></p></div>
+  <div class="hero" data-scene-priority="70" data-scene-section="help"><div class="kicker" data-i18n="practice.kicker"></div><h2 data-i18n="practice.title"></h2><p data-i18n="practice.desc"></p></div>
   <div class="grid two">
     <div class="gamecard"><div class="band"><span data-i18n="category.CAPACITY"></span><span>TRAIN-CAP</span></div><div class="body"><div class="art" id="practiceArt" aria-label="Training capacity illustration"></div><h3 data-i18n="practice.cardTitle"></h3><div class="effects"><div class="effect"><span data-i18n="practice.capacity"></span><strong>+4</strong><small data-i18n="practice.persons"></small></div><div class="effect"><span data-i18n="practice.mobility"></span><strong>-10</strong><small>km/h</small></div></div><div class="price" data-practice-price></div></div></div>
     <div class="card"><div id="practiceStatus" class="notice info" role="status" aria-atomic="true"></div><p class="inline"><button id="practiceRecord" class="btn good" type="button" data-i18n="practice.record"></button><button id="practiceReset" class="btn" type="button" data-i18n="practice.reset" data-scene-priority="80"></button></p><p><button id="toPlanning" class="btn primary" type="button" disabled data-i18n="practice.toPlanning"></button></p></div>
@@ -50,7 +50,7 @@
 </section>
 
 <section id="planning" class="section">
-  <div class="hero" data-scene-priority="70"><div class="kicker" data-i18n="planning.kicker"></div><h2 id="planningTitle"></h2></div>
+  <div class="hero" data-scene-priority="70" data-scene-section="help"><div class="kicker" data-i18n="planning.kicker"></div><h2 id="planningTitle"></h2></div>
   <div class="grid two">
     <div class="card"><div class="field"><label for="planVehicle" data-i18n="vehicle.label"></label><select id="planVehicle" data-scene-priority="15"></select></div><div id="planVehiclePreview"></div><p data-i18n="vehicle.hint"></p><div id="planVehicleNotice" role="status"></div><label class="check-label"><input id="vehicleConfirmed" type="checkbox" data-scene-priority="25"><span data-i18n="vehicle.confirm"></span></label><div class="field"><label for="plan" data-i18n="planning.plan"></label><textarea id="plan" maxlength="1200" data-scene-priority="30"></textarea><small class="muted" data-i18n="common.warningInfo"></small></div><div class="field"><label for="risks" data-i18n="planning.risks"></label><textarea id="risks" maxlength="1200" data-scene-priority="30"></textarea><small class="muted" data-i18n="common.warningInfo"></small></div><div class="field"><label for="maxWtp" data-i18n="planning.maxWtp"></label><input id="maxWtp" inputmode="numeric" data-scene-priority="30"></div><p><button id="toAuction" class="btn primary" type="button" data-i18n="planning.toAuction" data-scene-priority="40"></button></p></div>
     <div class="card"><h3 data-i18n="planning.requirements"></h3><table id="reqTable" class="req" data-scene-priority="20"></table><details><summary><strong data-i18n="planning.rolesTitle"></strong></summary><p data-i18n="planning.roles"></p></details><details><summary><strong data-i18n="planning.guidanceTitle"></strong></summary><ul><li data-i18n="planning.g1"></li><li data-i18n="planning.g2"></li><li data-i18n="planning.g3"></li><li data-i18n="planning.g4"></li><li data-i18n="planning.g5"></li><li data-i18n="planning.g6"></li><li data-i18n="planning.g7"></li></ul></details><details><summary><strong data-i18n="planning.quickRulesTitle"></strong></summary><ol><li data-i18n="planning.r1"></li><li data-i18n="planning.r2"></li><li data-i18n="planning.r3"></li><li data-i18n="planning.r4"></li><li data-i18n="planning.r5"></li><li data-i18n="planning.r6"></li><li data-i18n="planning.r7"></li></ol></details></div>
@@ -58,20 +58,20 @@
 </section>
 
 <section id="auction" class="section">
-  <div class="hero" data-scene-priority="70"><div class="kicker" data-i18n="auction.kicker"></div><h2 data-i18n="auction.title"></h2><p data-i18n="auction.desc"></p></div>
-  <p><button id="finishAuctionBtn" class="btn" type="button" data-i18n="auction.finish" data-scene-priority="80"></button></p><div class="card"><h3 data-i18n="auction.position"></h3><div class="grid two"><div class="field"><label for="roundSelect" data-i18n="auction.round"></label><select id="roundSelect" data-scene-priority="10"></select></div><div class="field"><label for="lotSelect" data-i18n="auction.lot"></label><select id="lotSelect" data-scene-priority="10"></select></div></div></div>
+  <div class="hero" data-scene-priority="70" data-scene-section="help"><div class="kicker" data-i18n="auction.kicker"></div><h2 data-i18n="auction.title"></h2><p data-i18n="auction.desc"></p></div>
+  <p><button id="finishAuctionBtn" data-scene-section="tools" class="btn" type="button" data-i18n="auction.finish" data-scene-priority="80"></button></p><div class="card"><h3 data-i18n="auction.position"></h3><div class="grid two"><div class="field"><label for="roundSelect" data-i18n="auction.round"></label><select id="roundSelect" data-scene-priority="10"></select></div><div class="field"><label for="lotSelect" data-i18n="auction.lot"></label><select id="lotSelect" data-scene-priority="10"></select></div></div></div>
   <div class="auction">
-    <div class="gamecard"><div class="band"><span id="cardCat" data-scene-priority="15">-</span><span id="cardId" data-scene-priority="15">-</span></div><div class="body"><div id="cardArt" class="art"></div><h3 id="cardTitle" data-scene-priority="15"></h3><div id="cardEffects" class="effects" data-scene-priority="15"></div><strong id="startPrice" data-scene-priority="15"></strong></div></div>
+    <div class="gamecard" data-scene-summary="true" data-scene-priority="15"><div class="band"><span id="cardCat" data-scene-priority="15">-</span><span id="cardId" data-scene-priority="15">-</span></div><div class="body"><div id="cardArt" class="art"></div><h3 id="cardTitle" data-scene-priority="15"></h3><div id="cardEffects" class="effects" data-scene-priority="15"></div><strong id="startPrice" data-scene-priority="15"></strong></div></div>
     <div class="grid">
-      <div class="card"><h3 data-i18n="auction.currentCard"></h3><div class="field"><label for="cardInput" data-i18n="auction.cardInput"></label><input id="cardInput" autocomplete="off" maxlength="24" data-scene-priority="20"></div><p><button id="loadCardBtn" class="btn secondary" type="button" data-i18n="auction.load" data-scene-priority="20"></button></p><div class="field"><label for="wtp" data-i18n="auction.wtp"></label><input id="wtp" inputmode="numeric" data-scene-priority="30"></div><div class="field"><label for="decision" data-i18n="auction.note"></label><textarea id="decision" maxlength="600" data-i18n-placeholder="auction.notePlaceholder" data-scene-priority="30"></textarea><small class="muted" data-i18n="common.warningInfo"></small></div><div id="gapNotice" class="notice info" data-scene-priority="25"></div></div>
+      <div class="card"><h3 data-scene-section="market" data-i18n="auction.currentCard"></h3><div class="field"><label for="cardInput" data-i18n="auction.cardInput"></label><input id="cardInput" data-scene-section="market" autocomplete="off" maxlength="24" data-scene-priority="20"></div><p><button id="loadCardBtn" data-scene-section="market" class="btn secondary" type="button" data-i18n="auction.load" data-scene-priority="20"></button></p><div class="field"><label for="wtp" data-i18n="auction.wtp"></label><input id="wtp" inputmode="numeric" data-scene-priority="30"></div><div class="field"><label for="decision" data-i18n="auction.note"></label><textarea id="decision" data-scene-section="tools" maxlength="600" data-i18n-placeholder="auction.notePlaceholder" data-scene-priority="30"></textarea><small class="muted" data-i18n="common.warningInfo"></small></div><div id="gapNotice" class="notice info" data-scene-priority="25"></div></div>
       <div class="card"><h3 data-i18n="auction.afterClose"></h3><div class="field"><label for="wonPrice" data-i18n="auction.winPrice"></label><input id="wonPrice" inputmode="numeric" autocomplete="off" min="0" type="number" step="1" data-scene-priority="40"></div><p class="inline"><button id="recordWinBtn" class="btn good" type="button" data-i18n="auction.won" data-scene-priority="40"></button><button id="advanceLocalBtn" class="btn" type="button" data-i18n="auction.notOurs" data-scene-priority="40"></button></p></div>
-      <div class="card"><h3 data-i18n="auction.inventory"></h3><div id="snapshotMetrics" class="grid two" data-scene-priority="60"></div><div id="auctionInventory" class="purchase-list" data-scene-priority="60"></div></div>
+      <div class="card"><h3 data-scene-section="teams" data-i18n="auction.inventory"></h3><div id="snapshotMetrics" data-scene-section="teams" class="grid two" data-scene-priority="60"></div><div id="auctionInventory" data-scene-section="teams" class="purchase-list" data-scene-priority="60"></div></div>
     </div>
   </div>
 </section>
 
 <section id="build" class="section">
-  <div class="hero" data-scene-priority="70"><div class="kicker" data-i18n="build.kicker"></div><h2 data-i18n="build.title"></h2><p data-i18n="build.desc"></p></div>
+  <div class="hero" data-scene-priority="70" data-scene-section="help"><div class="kicker" data-i18n="build.kicker"></div><h2 data-i18n="build.title"></h2><p data-i18n="build.desc"></p></div>
   <div class="grid two">
     <div class="card"><h3 data-i18n="build.localPurchases"></h3><p data-i18n="common.correctOnly"></p><div id="reconcileInventory" class="purchase-list" data-scene-priority="55"></div></div>
     <div class="card"><h3 data-i18n="build.addMissing"></h3><div class="reconcile-actions"><div class="field"><label for="addRound" data-i18n="build.round"></label><select id="addRound" data-scene-priority="60"></select></div><div class="field"><label for="addLot" data-i18n="build.lot"></label><select id="addLot" data-scene-priority="60"></select></div><div class="field"><label for="addCard" data-i18n="build.card"></label><input id="addCard" maxlength="24" data-scene-priority="60"></div><div class="field"><label for="addPrice" data-i18n="build.price"></label><input id="addPrice" inputmode="numeric" data-scene-priority="60"></div></div><p><button id="addPurchaseBtn" class="btn secondary" type="button" data-i18n="build.add" data-scene-priority="60"></button></p></div>
@@ -81,7 +81,7 @@
 </section>
 
 <section id="submit" class="section">
-  <div class="hero" data-scene-priority="70"><div class="kicker" data-i18n="submit.kicker"></div><h2 data-i18n="submit.title"></h2><p data-i18n="submit.desc"></p></div>
+  <div class="hero" data-scene-priority="70" data-scene-section="help"><div class="kicker" data-i18n="submit.kicker"></div><h2 data-i18n="submit.title"></h2><p data-i18n="submit.desc"></p></div>
   <div class="notice info" data-i18n="submit.incentive"></div>
   <div class="card">
     <div class="grid two"><div class="field"><label for="profitMode" data-i18n="submit.mode"></label><select id="profitMode" data-scene-priority="20"><option value="AMOUNT" data-i18n="submit.amount"></option><option value="PERCENT" data-i18n="submit.percent"></option></select></div><div class="field"><label id="profitLabel" for="profitInput"></label><input id="profitInput" inputmode="decimal" data-scene-priority="20"></div></div>
@@ -91,13 +91,13 @@
 </section>
 
 <section id="debrief" class="section">
-  <div class="hero" data-scene-priority="70"><div class="kicker" data-i18n="debrief.kicker"></div><h2 data-i18n="debrief.title"></h2><p data-i18n="debrief.official"></p></div>
+  <div class="hero" data-scene-priority="70" data-scene-section="help"><div class="kicker" data-i18n="debrief.kicker"></div><h2 data-i18n="debrief.title"></h2><p data-i18n="debrief.official"></p></div>
   <div id="debriefCard" class="card" data-scene-priority="20"></div>
   <p><button id="toClosed" class="btn primary" type="button" data-i18n="debrief.close" data-scene-priority="40"></button></p>
 </section>
 
 <section id="closed" class="section">
-  <div class="hero" data-scene-priority="70"><div class="kicker" data-i18n="closed.kicker"></div><h2 data-i18n="closed.title"></h2><p data-i18n="closed.note"></p></div>
+  <div class="hero" data-scene-priority="70" data-scene-section="help"><div class="kicker" data-i18n="closed.kicker"></div><h2 data-i18n="closed.title"></h2><p data-i18n="closed.note"></p></div>
   <div id="closedSummary" class="card" data-scene-priority="20"></div>
   <p><button id="startNewSessionBtn" class="btn" type="button" data-i18n="closed.newSession" data-scene-priority="80"></button></p>
 </section>

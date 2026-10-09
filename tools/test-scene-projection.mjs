@@ -8,7 +8,7 @@ function node(tag,content='',children=[],props={}){
  const n={tagName:tag.toUpperCase(),nodeType:1,childNodes:[...(content?[text(content)]:[]),...children],children,labels:[],disabled:false,hidden:false,...props};
  n.classList={contains:c=>(n.classes||[]).includes(c)};
  n.getAttribute=k=>n.attrs?.[k]||null;
- n.closest=selector=>{for(let current=n;current;current=current.parentElement){if(selector==='[data-scene-priority]'&&current.getAttribute('data-scene-priority')!==null)return current;if(selector==='.field'&&current.classList?.contains('field'))return current;}return null;};
+ n.closest=selector=>{for(let current=n;current;current=current.parentElement){if(['[data-scene-priority]','[data-scene-section]'].includes(selector)&&current.getAttribute(selector.slice(1,-1))!==null)return current;if(selector==='.field'&&current.classList?.contains('field'))return current;}return null;};
  for(const child of children)child.parentElement=n;
  n.querySelector=selector=>n.querySelectorAll(selector)[0]||null;
  n.querySelectorAll=selector=>{const tags=selector.split(',');return children.flatMap(c=>[...(tags.includes(c.tagName?.toLowerCase())?[c]:[]),...(c.querySelectorAll?.(selector)||[])]);};
@@ -95,7 +95,21 @@ assert.equal(workflowProjection.rows.length,1,'Workflow help must consolidate pa
 for(const sentence of instructions)assert(workflowProjection.rows[0].label.includes(sentence));
 assert.equal(workflowProjection.rows[0].priority,70);
 const template=fs.readFileSync(new URL('../source/instructor.template.html',import.meta.url),'utf8');
-assert(template.includes('id="workflow" data-scene-priority="70"'),'Procedural help follows the current card and live actions');
+assert(template.includes('id="workflow" data-scene-section="help" data-scene-priority="70"'),'Procedural help follows the current card and live actions');
 for(const id of ['leaderSummary','nextBid','timerValue'])assert(new RegExp('<div class="metric" data-scene-priority="20"><div class="label"[^>]*></div><div class="value" id="'+id+'"').test(template),'Live metric priority must be on the projected parent: '+id);
 hidden.hidden=false;assert(JSON.stringify(ctx.project([root],visible,keyFor).rows).includes(secret),'Visible content must not be accidentally omitted');
 console.log('Scene projection hidden-content privacy, identity, disabled controls, summaries, table actions and immutability PASS');
+
+const contextual=node('button','Open bidding',[],{attrs:{'data-scene-current-action':'true'}});
+const summary=node('div','CAP-G',[node('strong','Light utility hull'),node('div','Capacity +4 · Mobility +10'),node('p',secret,[],{hidden:true})],{attrs:{'data-scene-summary':'true'}});
+const teamGroup=node('div','',[node('button','Accept next legal bid')],{attrs:{'data-scene-section':'teams'}});
+const sections=ctx.project([summary,contextual,teamGroup],visible,keyFor);
+assert.equal(sections.rows.find(r=>r.key===keyFor(contextual)).section,'task');
+assert.equal(sections.rows.find(r=>r.label==='Accept next legal bid').section,'teams');
+assert.equal(sections.rows.filter(r=>r.key===keyFor(summary)).length,1);
+assert(sections.rows[0].label.includes('Capacity +4 · Mobility +10'));
+assert(!JSON.stringify(sections.rows).includes(secret));
+contextual.disabled=true;assert.equal(ctx.project([contextual],visible,keyFor).rows[0].section,'tools','Disabled primary action stays available in management without crowding current task');
+console.log('Named public scene sections, consolidated card context and dynamic native-action routing PASS');
+
+const navigation=node('nav','',[node('button','Current'),node('button','Inspect')],{id:'sea3dNavigation'});assert.equal(ctx.project([navigation],visible,keyFor).rows.length,0,'Synchronized native navigation cannot duplicate task rows or feed back into sections');

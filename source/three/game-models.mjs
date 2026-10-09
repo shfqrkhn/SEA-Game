@@ -37,6 +37,17 @@ function seat(g,m,x,z,reinforced=false){
  for(const side of [-1,1]){const bolster=new THREE.Mesh(new THREE.CapsuleGeometry(.038,.31,6,14),upholstery);bolster.rotation.z=Math.PI/2;bolster.position.set(.015,.505,side*.17);bolster.name='cushion side bolster';s.add(bolster);}
  const shell=pad(m.edge,[.074,.49,.38],[-.215,.77,0],.025,'seat back shell');shell.rotation.z=.12;
  const back=pad(upholstery,[.095,.46,.32],[-.16,.78,0],.035,'contoured back cushion');back.rotation.z=.12;
+ if(reinforced){
+  // The softer inset is physically on the cushion face, with a restrained
+  // stitched-channel pattern rather than painted stripes floating in space.
+  const inset=upholstery.clone();inset.color.multiplyScalar(.82);inset.roughness=.93;inset.name='crew seat woven center insert';
+  const center=pad(inset,[.018,.335,.205],[-.108,.782,0],.008,'crew seat contoured back insert');center.rotation.z=.12;
+  pad(inset,[.295,.018,.235],[.045,.508,0],.008,'crew seat cushion center insert');
+  for(const side of [-1,1]){
+   tube(s,m.darkSteel,[[-.080,.632,side*.065],[-.098,.782,side*.065],[-.117,.932,side*.065]],.0018,18).name='seat back stitched channel';
+   tube(s,m.darkSteel,[[-.087,.520,side*.075],[.045,.520,side*.075],[.175,.520,side*.075]],.0018,18).name='seat cushion stitched channel';
+  }
+ }
  for(const side of [-1,1]){const bolster=pad(upholstery,[.10,.39,.075],[-.135,.77,side*.16],.030,'back side bolster');bolster.rotation.z=.12;rod(s,m.steel,[-.225,.99,side*.09],[-.225,1.08,side*.09],.009);}
  pad(upholstery,[.115,.15,.28],[-.225,1.085,0],.040,'adjustable head restraint');
  for(const y of [.66,.82])tube(s,m.edge,[[-.111-(y-.78)*.12,y,-.11],[-.108-(y-.78)*.12,y,0],[-.111-(y-.78)*.12,y,.11]],.003,16).name='back upholstery seam';
@@ -119,7 +130,22 @@ function protection(m,v){
  const fasten=(x,y,z)=>{cylinder(g,m.steel,.016,.035,[x,y,z],'z',.016,6).name='protection attachment bolt';cylinder(g,m.darkSteel,.024,.008,[x,y,z-.015],'z').name='attachment washer';};
  if([3,6].includes(v)){
   const wide=v===3?.67:.77,length=v===3?1.70:2.30,back=-length/2,front=length/2,height=v===3?1.38:1.30;
-  box(g,m.edge,[length,.09,wide*2],[0,.045,0],'reinforced floor');
+  if(v===3){
+   // A deck cassette carries both suspension rail bolt lines into continuous
+   // longitudinal sills. Its original four shoes remain visible in card view.
+   box(g,m.edge,[length,.024,wide*2],[0,.083,0],'crew cell cassette deck');
+   for(const side of [-1,1]){
+    box(g,m.darkSteel,[length,.12,.12],[0,.015,side*.55],'crew cell longitudinal floor sill');
+    for(const x of [-.61,.61]){
+     box(g,m.darkSteel,[.16,.080,.12],[x,-.080,side*.55],'crew cell attachment pedestal');
+     cylinder(g,m.rubber,.067,.035,[x,-.1375,side*.55],'y',.067,24).name='crew cell mounting isolator';
+     box(g,m.steel,[.20,.025,.18],[x,-.1675,side*.55],'crew cell attachment shoe');
+     for(const dx of [-.065,.065])cylinder(g,m.steel,.010,.030,[x+dx,-.146,side*.55],'y',.010,6).name='crew cell shoe retaining bolt';
+    }
+   }
+   for(const x of [-.27,.09])box(g,m.darkSteel,[.085,.10,1.14],[x,.025,0],'crew cell seat load crossmember');
+   for(const x of [back+.065,front-.065])box(g,m.darkSteel,[.13,.10,1.14],[x,.025,0],'crew cell cassette end member');
+  }else box(g,m.edge,[length,.09,wide*2],[0,.045,0],'reinforced floor');
   // Inward inclined walls and a chamfered rear frame replace the box silhouette.
   const shoulder=height-.22,roofWide=wide-.13;
   const shellZ=y=>y<=shoulder?wide-.065*(y-.09)/(shoulder-.09):wide-.065-.065*Math.min(1,(y-shoulder)/(height-shoulder));
@@ -145,6 +171,13 @@ function protection(m,v){
    enclosure(cellPanel(g,frame,roundedOpening(a-.042,b-.042,c+.042,d+.042,.070).getPoints(12).map(p=>[p.x,p.y]),[contour.clone()],(u,y,t)=>place(u,y,-.057-t),'window interior retaining frame'),'window interior retaining frame');
   };
   const optical=m.glass.clone();optical.transparent=true;optical.opacity=.58;optical.metalness=0;optical.depthWrite=false;
+  // Visible fasteners are seated against an actual plate with a washer land.
+  // This is a depiction of serviceable construction, not a ballistic design.
+  const faceBolt=(parent,place,name='cell flange retaining fastener')=>{
+   const center=new THREE.Vector3(...place(0)),axis=new THREE.Vector3(...place(.01)).sub(center).normalize();
+   const washer=cylinder(parent,m.steel,.020,.004,center.clone().addScaledVector(axis,.002).toArray(),'y',.020,24);washer.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),axis);washer.name='cell flange seated washer';
+   const head=cylinder(parent,m.darkSteel,.012,.009,center.clone().addScaledVector(axis,.0085).toArray(),'y',.012,6);head.quaternion.copy(washer.quaternion);head.name=name;
+  };
   for(const s of [-1,1]){
    const outline=[[back,.09],[front,.09],[front-.25,height-.08],[front-.42,height],[back+.07,height]];
    const hole=roundedOpening(back+.20,.85,front-.48,height-.13,.045);
@@ -160,11 +193,31 @@ function protection(m,v){
    for(const x of [back+.12,front-.20])fasten(x,.20,s*(wide+.02));
    // A folded sill joins the floor and side skin; it is not a painted stripe.
    cellPanel(g,m.paint,[[back,.085],[front-.03,.085],[front-.03,.19],[back,.19]],[],(x,y,t)=>[x,y,s*(wide-.026+t)],'formed crew cell lower sill',.030);
+   if(v===3){
+    // A folded lower cover is retained to the sill and inner load path, while
+    // its visible shallow perimeter is separated from the surrounding skin.
+    for(const x of [back+.28,-.10,front-.32])for(const y of [.285,.655])faceBolt(g,t=>[x,y,s*(shellZ(y)+.040+t)],'service cover retaining fastener');
+    for(const x of [back+.18,-.10,front-.32])faceBolt(g,t=>[x,.14,s*(wide+.006+t)],'lower sill flange retaining fastener');
+    // Broad hat-section ribs return into the floor, not rods hung beside it.
+    for(const x of [back+.14,front-.39]){
+     const ribOutline=[[x-.036,.135],[x+.036,.135],[x+.036,shoulder-.015],[x+.025,height-.092],[x-.025,height-.092],[x-.036,shoulder-.015]];
+     cellPanel(g,frame,ribOutline,[],(px,y,t)=>[px,y,s*(shellZ(y)-.087-t)],'crew cell formed interior pillar',.033);
+     box(g,frame,[.13,.028,.16],[x,.135,s*(wide-.115)],'interior pillar foot flange');
+    }
+   }
   }
   const slope=y=>front-(y-.09)*.25/(height-.17);
   const frontHole=roundedOpening(-wide+.16,.85,wide-.16,height-.18);
   formedCabPanel(g,m.paint,[[-wide,.09],[wide,.09],[wide,height-.08],[-wide,height-.08]],[frontHole],(z,y,d)=>[slope(y)-d,y,z*shellZ(y)/wide]);
   windowCassette([-wide+.16,.85,wide-.16,height-.18],(z,y,t)=>[slope(y)+t,y,z*shellZ(y)/wide],'protected windshield');
+  if(v===3){
+   // A real recessed lower service closure gives the front its own connected
+   // plate hierarchy instead of a single undifferentiated painted rectangle.
+   const closure=[[-wide+.16,.255],[wide-.16,.255],[wide-.20,.68],[-wide+.20,.68]];
+   enclosure(cellPanel(g,frame,closure,[],(z,y,t)=>[slope(y)+.009+t*.25,y,z*shellZ(y)/wide],'front closure perimeter backing',.018),'front closure perimeter backing');
+   enclosure(cellPanel(g,m.paint,[[-wide+.18,.275],[wide-.18,.275],[wide-.22,.66],[-wide+.22,.66]],[],(z,y,t)=>[slope(y)+.018+t*.25,y,z*shellZ(y)/wide],'formed front service closure',.018),'formed front service closure');
+   for(const z of [-wide+.235,wide-.235])for(const y of [.315,.62])faceBolt(g,t=>[slope(y)+.0225+t,y,z*shellZ(y)/wide],'front closure retaining fastener');
+  }
   const roofOutline=[[back+.07,-roofWide],[front-.42,-roofWide],[front-.32,-roofWide+.10],[front-.32,roofWide-.10],[front-.42,roofWide],[back+.07,roofWide],[back,roofWide-.075],[back,-roofWide+.075]];
   // Extrude an authored transverse roof section so its broad crown survives
   // triangulation; moving only a flat polygon's edge vertices cannot do this.
@@ -189,6 +242,15 @@ function protection(m,v){
   const aperture=[[-wide+.105,.18],[wide-.105,.18],[wide-.105,height-.31],[roofWide-.075,height-.13],[-roofWide+.075,height-.13],[-wide+.105,height-.31]];
   const doorHole=new THREE.Path();aperture.forEach(([z,y],i)=>i?doorHole.lineTo(z,y):doorHole.moveTo(z,y));doorHole.closePath();
   formedCabPanel(g,m.paint,[[-wide,.09],[wide,.09],[wide,height-.26],[roofWide,height],[-roofWide,height],[-wide,height-.26]],[doorHole],(z,y,d)=>[back+d,y,z]);
+  if(v===3){
+   // One continuous six-sided flange shares the boarding cutout exactly.
+   // Its return depth ties the skin to the structural ring behind the seal.
+   const perimeter=[[-wide+.018,.108],[wide-.018,.108],[wide-.018,height-.267],[roofWide-.012,height-.018],[-roofWide+.012,height-.018],[-wide+.018,height-.267]];
+   enclosure(cellPanel(g,m.paint,perimeter,[doorHole.clone()],(z,y,t)=>[back-.026+t,y,z],'boarding aperture bolted perimeter flange',.042),'boarding aperture bolted perimeter flange');
+   for(const side of [-1,1])for(const y of [.26,.52,.80,1.035])faceBolt(g,t=>[back-.026-t,y,side*(wide-.052)],'boarding perimeter retaining fastener');
+   for(const z of [-.40,-.20,0,.20,.40])faceBolt(g,t=>[back-.026-t,.13,z],'boarding lower flange retaining fastener');
+   for(const z of [-.36,-.18,0,.18,.36])faceBolt(g,t=>[back-.026-t,height-.062,z],'boarding header flange retaining fastener');
+  }
   // Return flange and a rear structural ring make the aperture visibly deep.
   // All six members share endpoints; the seal stays on the exact opening.
   for(let i=0;i<aperture.length;i++){
@@ -231,10 +293,26 @@ function protection(m,v){
    for(const y of [.38,.96]){
     cylinder(g,m.steel,.029,.13,[back-.016,y,hingeZ],'y',.029,20).name='boarding door hinge pin';
     box(g,frame,[.08,.10,.065],[back+.007,y,hingeZ-.025],'boarding hinge fixed leaf');
-    box(door,frame,[.05,.10,.09],[.012,y,.035],'boarding hinge moving leaf');
+    box(door,frame,[.07,.10,.09],[.012,y,.035],'boarding hinge moving leaf');
+    // Alternating knuckles touch both leaves on the common hinge axis.
+    for(const dy of [-.047,0,.047])cylinder(door,frame,.035,.038,[0,y+dy,0],'y',.035,24).name='boarding hinge barrel knuckle';
+    for(const dy of [-.062,.062])cylinder(g,m.darkSteel,.038,.013,[back-.014,y+dy,hingeZ],'y',.038,24).name='boarding hinge pin end collar';
+    for(const dy of [-.029,.029]){
+     faceBolt(g,t=>[back-.033-t,y+dy,hingeZ-.046],'fixed hinge leaf retaining fastener');
+     faceBolt(door,t=>[.047+t,y+dy,.061],'moving hinge leaf retaining fastener');
+    }
    }
    tube(door,m.steel,[[.061,.64,doorWidth-.14],[.105,.64,doorWidth-.14],[.105,.80,doorWidth-.14],[.061,.80,doorWidth-.14]],.013,20).name='door interior pull handle';
-   box(door,m.darkSteel,[.046,.105,.070],[.055,.70,doorWidth-.08],'boarding door latch housing');
+   box(door,m.darkSteel,[.080,.105,.070],[.064,.70,doorWidth-.08],'boarding door latch housing');
+   // Vertical multipoint latch link is supported by guides on the inner
+   // return. The exterior lever shares its spindle with this gearbox.
+   const latchZ=doorWidth-.085;
+   for(const y of [.40,1.025]){
+    box(door,frame,[.048,.07,.060],[.075,y,latchZ],'door latch rod guide');
+    cylinder(door,m.steel,.009,Math.abs(y-.70),[.094,(y+.70)/2,latchZ],'y',.009,16).name='guided boarding latch linkage';
+    box(door,m.steel,[.026,.045,.055],[.086,y,latchZ],'boarding latch cam');
+   }
+   for(const z of [.16,doorWidth-.16])for(const y of [.30,height-.29])faceBolt(door,t=>[.030+t,y,z],'door liner retaining fastener');
    box(door,frame,[.018,.23,.10],[-.070,.70,doorWidth-.08],'exterior latch backing plate');
    cylinder(door,m.steel,.021,.055,[-.061,.70,doorWidth-.08],'x',.021,16).name='external latch spindle';
    box(door,m.steel,[.022,.040,.135],[-.092,.70,doorWidth-.13],'exterior boarding latch lever');
@@ -243,7 +321,7 @@ function protection(m,v){
    rod(g,frame,[back+.015,.42,hingeZ+.10],restraintEnd.toArray(),.013).name='open door restraint arm';
    box(g,m.darkSteel,[.07,.11,.045],[back+.025,.70,wide-.105],'boarding latch keeper');
   }
-  if(v===3){for(const s of [-1,1]){seat(g,m,-.10,s*.32,true);rod(g,m.darkSteel,[-.29,1.08,s*.48],[.02,.47,s*.20],.013).name='crew cell restraint';}box(g,m.edge,[.18,.055,1.10],[back-.08,.12,0],'boarding threshold');}
+  if(v===3){for(const s of [-1,1])seat(g,m,-.10,s*.32,true);box(g,m.edge,[.18,.055,1.10],[back-.08,.12,0],'boarding threshold');box(g,m.paint,[.055,.13,1.14],[back-.015,.060,0],'formed boarding sill return');}
   else for(const x of [back+.26,front-.48]){rod(g,m.edge,[x,height-.06,-roofWide+.07],[x,height-.06,roofWide-.07],.027).name='roof hoop';}
   if(v!==3)for(const s of [-1,1])for(const y of [.35,1.02])box(g,m.darkSteel,[.045,.10,.06],[back+.025,y,s*(wide-.055)],'rear aperture hinge');
  }else if(v===5){
@@ -308,7 +386,16 @@ export function createConfiguration(mission,owned,m=materials()){
   if(prefix==='COM'){vehicle.getObjectByName('mission radio')?.removeFromParent();part.position.set(.1,1.45,-.65);}
   if(prefix==='SA'){vehicle.getObjectByName('mission sensor')?.removeFromParent();part.position.set(-2.3,roof,.5);}
   if(prefix==='PRO'){
-   if(id==='PRO-D'){part.position.set(-length/2-.78,.94,0);box(vehicle,m.edge,[1.10,.12,1.16],[-length/2-.44,.92,0],'crew cell chassis extension');}
+   if(id==='PRO-D'){
+    // The cell is behind the carrier body, not inside a translucent ghost hull.
+    // Shoes at local y=-.18 meet the extension top at world y=.89 exactly.
+    const rear=-length/2,cellX=rear-1.00;
+    part.position.set(cellX,1.07,0);
+    const support=group('crew cell chassis extension');vehicle.add(support);
+    for(const side of [-1,1])box(support,m.darkSteel,[2.20,.16,.16],[rear-.70,.81,side*.55],'crew cell carrier extension rail');
+    for(const x of [-.61,.61])box(support,m.darkSteel,[.20,.16,1.30],[cellX+x,.81,0],'crew cell carrier shoe crossmember');
+    box(support,m.darkSteel,[.16,.16,1.26],[rear+.25,.81,0],'crew cell extension chassis tie');
+   }
    else if(id==='PRO-G'){part.position.set(-1.3,1.40,0);}
    else if(id==='PRO-F'){part.position.set(0,.55,0);}
    else{part.position.set(-1.60,1.36,width*.46);const mirror=part.clone();mirror.rotation.y=Math.PI;mirror.position.z=-width*.46;vehicle.add(mirror);}

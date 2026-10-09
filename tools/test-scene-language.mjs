@@ -12,7 +12,7 @@ assert(actionStart>=0&&actionEnd>actionStart);
 let body,doc;
 function element(tag){
  const e={tagName:tag.toUpperCase(),nodeType:1,children:[],parentElement:null,attrs:{},style:{},disabled:false,hidden:false,value:'',labels:[],className:'',_text:'',
-  setAttribute(k,v){this.attrs[k]=v},getAttribute(k){return this.attrs[k]||null},closest(){return null},
+  setAttribute(k,v){this.attrs[k]=v},getAttribute(k){return this.attrs[k]||null},closest(selector){for(let n=this;n;n=n.parentElement){if(selector==='[data-scene-section]'&&n.getAttribute('data-scene-section')!==null)return n;if(selector==='[data-scene-priority]'&&n.getAttribute('data-scene-priority')!==null)return n;}return null},
   appendChild(n){n.parentElement?.children.splice(n.parentElement.children.indexOf(n),1);n.parentElement=this;this.children.push(n);return n},
   append(...nodes){nodes.forEach(n=>this.appendChild(n))},replaceChildren(...nodes){this.children.forEach(n=>{n.parentElement=null});this.children=[];this._text='';this.append(...nodes)},
   insertAdjacentElement(_,n){this.parentElement.appendChild(n)},remove(){if(this.parentElement){this.parentElement.children.splice(this.parentElement.children.indexOf(this),1);this.parentElement=null}},
@@ -32,9 +32,9 @@ doc={body,activeElement:canvas,createElement:element,getElementById:id=>findId(b
 let latest,saveCalls=0,renderCalls=0,destructiveEffects=0;
 const ctx=vm.createContext({document:doc,Event:class{},host:stage,semanticVisible:n=>n.isConnected&&!n.hidden,get:id=>doc.getElementById(id),t:key=>key,queue(){},
  runtime:{interface(snapshot){latest=snapshot;return {page:snapshot.page}}},renderAll(){renderCalls++;language.textContent=ctx.api.lang==='en'?'FR':'EN'},saveState(){saveCalls++}});
-vm.runInContext(`let lang='en', state={phase:'auction'}, scenePhase='auction', scenePage=0, sceneAlert='', sceneDialog=null, sceneTargets=new Map(), editor=null, serial=0;
+vm.runInContext(`let lang='en', state={phase:'auction'}, scenePhase='auction', sceneSection='task', sceneSectionEpoch=0, sceneSectionLanguage='', sceneSections=new Set(), scenePage=0, sceneAlert='', sceneDialog=null, sceneTargets=new Map(), editor=null, serial=0;
  const keys=new WeakMap();function keyFor(n){if(!keys.has(n))keys.set(n,'control-'+(++serial));return keys.get(n)}\n`+projection+presentation.slice(0,presentation.indexOf('function seaNotify('))+bridge.slice(actionStart,actionEnd)+`
- this.api={sync(){syncSceneInterface(stage,active,{context:{auction:'Live lot'}})},act:sceneAction,confirm(){seaConfirmGate('finish','Finish the auction?',()=>{if(seaConfirmGate('finish','Finish the auction?',()=>{}))destructive()})},get lang(){return lang}};`,Object.assign(ctx,{stage,active,destructive(){destructiveEffects++}}));
+ this.api={sync(){syncSceneInterface(stage,active,{context:{auction:'Live lot'}})},act:sceneAction,confirm(){seaConfirmGate('finish','Finish the auction?',()=>{if(seaConfirmGate('finish','Finish the auction?',()=>{}))destructive()})},get lang(){return lang},get section(){return sceneSection}};`,Object.assign(ctx,{stage,active,destructive(){destructiveEffects++}}));
 language.onclick=()=>vm.runInContext("setLang(lang==='en'?'fr':'en')",ctx);
 for(const nextLocale of ['fr','en']){
  ctx.api.confirm();ctx.api.sync();
@@ -55,3 +55,23 @@ ctx.api.act(currentConfirm.key);assert.equal(destructiveEffects,1,'Current confi
 ctx.api.act(currentConfirm.key);assert.equal(destructiveEffects,1,'Double activation cannot repeat a removed confirmation');
 console.log('PASS: actual scene projection/sync/action and setLang cancel confirmations in EN/FR; stale confirmation keys are inert before/after refresh. Browser focus/rendering qualification remains open.');
 
+
+// Execute actual synchronized native navigation: same named presentation command,
+// stable focus/identity under refresh and no projection feedback.
+header.setAttribute('data-scene-section','help');
+const caller=active.appendChild(element('button'));caller.textContent='Accept next caller';caller.setAttribute('data-scene-section','teams');
+const inspection=stage.appendChild(element('button'));inspection.textContent='Exploded view';inspection.setAttribute('data-scene-section','inspect');
+ctx.api.sync();let nav=findId(stage,'sea3dNavigation');assert(nav&&!nav.hidden);
+assert.equal(nav.getAttribute('role'),'navigation');assert.equal(nav.getAttribute('aria-label'),'Game sections');
+let inspectChoice=nav.children.find(button=>button.getAttribute('data-scene-section-choice')==='inspect');
+assert(inspectChoice);inspectChoice.focus();const originalChoice=inspectChoice;
+ctx.api.sync();nav=findId(stage,'sea3dNavigation');assert.equal(nav.children.find(button=>button.getAttribute('data-scene-section-choice')==='inspect'),originalChoice,'Timer refresh retains focused native button identity');assert.equal(doc.activeElement,originalChoice);
+assert(!latest.rows.some(row=>row.label==='Current'||row.label==='Inspect'||row.label==='Help / save'),'Native navigation cannot reproject itself into GPU content');
+inspectChoice.click();ctx.api.sync();assert.equal(ctx.api.section,'inspect');assert.equal(originalChoice.getAttribute('aria-current'),'page');
+const staleHandler=originalChoice.onclick;
+ctx.api.confirm();staleHandler();assert.equal(ctx.api.section,'inspect','Pending confirmation rejects previously captured native navigation before refresh');
+ctx.api.sync();assert.equal(nav.hidden,true,'Confirmation hides underlying native navigation');assert.equal(ctx.api.section,'task');staleHandler();assert.equal(ctx.api.section,'task');
+const confirmationLocale=latest.rows.find(row=>row.utility==='language');ctx.api.act(confirmationLocale.key);ctx.api.sync();
+nav=findId(stage,'sea3dNavigation');assert.equal(nav.getAttribute('aria-label'),'Sections du jeu');assert(nav.children.some(button=>button.textContent==='\u00c9quipes'));
+staleHandler();assert.equal(ctx.api.section,'task','Old epoch handler cannot choose a section after confirmation/language transitions');
+console.log('PASS: synchronized EN/FR native scene navigation, selected ARIA state, stable focus identity, no projection feedback and stale confirmation/epoch handlers');

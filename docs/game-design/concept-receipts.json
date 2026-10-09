@@ -688,6 +688,282 @@
         ]
       },
       "acceptanceStatus": "open"
+    },
+    {
+      "id": "GEN-vehicles-family-v1",
+      "inventoryIds": [
+        "COMBAT",
+        "RECCE",
+        "TROOP",
+        "COMMAND",
+        "MINE"
+      ],
+      "status": "generated-exploratory",
+      "tool": "imagegen",
+      "date": "2026-10-09",
+      "artifact": "docs/game-design/concepts/vehicles-family-v1.png",
+      "sha256": "66c3c03855085b3c4411448cc91c962a4a3a6eef18020022df59a54676fb4907",
+      "nativeOutputPath": "C:/Users/user/.codex/generated_images/01a11d09-97df-7000-a3e7-a4b9bfcb4add/exec-1ff14c70-0dca-4411-a7db-ef5622d525a0.png",
+      "promptFile": "docs/game-design/VEHICLES_PROMPT.md",
+      "panels": [
+        {
+          "panel": 1,
+          "inventoryId": "COMBAT"
+        },
+        {
+          "panel": 2,
+          "inventoryId": "RECCE"
+        },
+        {
+          "panel": 3,
+          "inventoryId": "TROOP"
+        },
+        {
+          "panel": 4,
+          "inventoryId": "COMMAND"
+        },
+        {
+          "panel": 5,
+          "inventoryId": "MINE"
+        }
+      ],
+      "visualReview": {
+        "status": "lead inspected pixels; exploratory-only; acceptance open",
+        "usefulDirection": [
+          "Exact canonical headings visibly mapped",
+          "Distinct family subjects and close-up/decision construction direction",
+          "Selected overall sheet margins visually at least 8%; not independent segmentation acceptance"
+        ],
+        "knownMismatches": [
+          "Far-side wheel occlusion prevents wheel-count acceptance",
+          "COMBAT head reads partly optical; actual defensive mount construction unqualified",
+          "TROOP seat envelopes and COMMAND synthetic screens unqualified",
+          "MINE roller supports, hose routes and service clearance unqualified",
+          "Exploded views omit some mission hardware; no matched runtime comparison",
+          "Generative margin edits changed details; not exact geometric rescaling",
+          "Essential labels require bilingual accessible native runtime text",
+          "No matched Three.js visual acceptance"
+        ],
+        "doesNotProve": [
+          "Generic component, assembly or UI concept coverage",
+          "Dimensional, performance or physical compatibility qualification",
+          "Rights, classroom, handover or product acceptance"
+        ]
+      },
+      "acceptanceStatus": "open"
+    },
+    {
+      "id": "GEN-process-family-a-v1",
+      "inventoryIds": [
+        "SE-A",
+        "SE-B",
+        "SE-C",
+        "SE-D",
+        "SE-E",
+        "SE-F",
+        "SE-G"
+      ],
+      "status": "generated-exploratory",
+      "tool": "imagegen",
+      "date": "2026-10-09",
+      "artifact": "docs/game-design/concepts/process-family-a-v1.png",
+      "sha256": "8ca1d528fbd3c80ab19aa059d5f83b3cbfec20d0ac5fb51579d6509ea37b2eca",
+      "nativeOutputPath": "C:/Users/user/.codex/generated_images/01a120e9-e280-7490-8db7-ee8bc881260f/exec-0f3b3f12-43c9-4afa-b1e4-56436527c71b.png",
+      "promptFile": "docs/game-design/PROCESS_PROMPT.md",
+      "panels": [
+        {
+          "panel": 1,
+          "inventoryId": "SE-A"
+        },
+        {
+          "panel": 2,
+          "inventoryId": "SE-B"
+        },
+        {
+          "panel": 3,
+          "inventoryId": "SE-C"
+        },
+        {
+          "panel": 4,
+          "inventoryId": "SE-D"
+        },
+        {
+          "panel": 5,
+          "inventoryId": "SE-E"
+        },
+        {
+          "panel": 6,
+          "inventoryId": "SE-F"
+        },
+        {
+          "panel": 7,
+          "inventoryId": "SE-G"
+        }
+      ],
+      "visualReview": {
+        "status": "lead inspected pixels; exploratory-only; acceptance open",
+        "usefulDirection": [
+          "Exact canonical headings visibly mapped",
+          "Distinct family subjects and close-up/decision construction direction",
+          "Selected overall sheet margins visually at least 8%; not independent segmentation acceptance"
+        ],
+        "knownMismatches": [
+          "Connector pin counts/keying/mating interfaces unqualified",
+          "Compressed risk-axis text and nonmeasurable verification criteria",
+          "Trade and validation examples synthetic, not approved rules",
+          "Generative margin edits changed details; not exact geometric rescaling",
+          "Essential labels require bilingual accessible native runtime text",
+          "No matched Three.js visual acceptance"
+        ],
+        "doesNotProve": [
+          "Generic component, assembly or UI concept coverage",
+          "Dimensional, performance or physical compatibility qualification",
+          "Rights, classroom, handover or product acceptance"
+        ]
+      },
+      "acceptanceStatus": "open"
+    },
+    {
+      "id": "GEN-process-family-b-v1",
+      "inventoryIds": [
+        "SE-H",
+        "SE-I",
+        "SE-J",
+        "SE-K",
+        "SE-L",
+        "SE-M",
+        "SE-N"
+      ],
+      "status": "generated-exploratory",
+      "tool": "imagegen",
+      "date": "2026-10-09",
+      "artifact": "docs/game-design/concepts/process-family-b-v1.png",
+      "sha256": "c2ca2d84ad727466b896b92dcead25824a94a2e71ae6a3ec32943ec49186654b",
+      "nativeOutputPath": "C:/Users/user/.codex/generated_images/01a120e9-e280-7490-8db7-ee8bc881260f/exec-9baa350b-5d4e-49c3-af31-7812e622c705.png",
+      "promptFile": "docs/game-design/PROCESS_PROMPT.md",
+      "panels": [
+        {
+          "panel": 1,
+          "inventoryId": "SE-H"
+        },
+        {
+          "panel": 2,
+          "inventoryId": "SE-I"
+        },
+        {
+          "panel": 3,
+          "inventoryId": "SE-J"
+        },
+        {
+          "panel": 4,
+          "inventoryId": "SE-K"
+        },
+        {
+          "panel": 5,
+          "inventoryId": "SE-L"
+        },
+        {
+          "panel": 6,
+          "inventoryId": "SE-M"
+        },
+        {
+          "panel": 7,
+          "inventoryId": "SE-N"
+        }
+      ],
+      "visualReview": {
+        "status": "lead inspected pixels; exploratory-only; acceptance open",
+        "usefulDirection": [
+          "Exact canonical headings visibly mapped",
+          "Distinct family subjects and close-up/decision construction direction",
+          "Selected overall sheet margins visually at least 8%; not independent segmentation acceptance"
+        ],
+        "knownMismatches": [
+          "Supplier dependency arrow has a dangling endpoint",
+          "Tiny prototype label may read Auction rather than Actuation",
+          "Integration miniature fit and invented error bars unqualified",
+          "Generative margin edits changed details; not exact geometric rescaling",
+          "Essential labels require bilingual accessible native runtime text",
+          "No matched Three.js visual acceptance"
+        ],
+        "doesNotProve": [
+          "Generic component, assembly or UI concept coverage",
+          "Dimensional, performance or physical compatibility qualification",
+          "Rights, classroom, handover or product acceptance"
+        ]
+      },
+      "acceptanceStatus": "open"
+    },
+    {
+      "id": "GEN-process-family-c-v1",
+      "inventoryIds": [
+        "SE-O",
+        "SE-P",
+        "SE-Q",
+        "SE-R",
+        "SE-S",
+        "SE-T",
+        "SE-U"
+      ],
+      "status": "generated-exploratory",
+      "tool": "imagegen",
+      "date": "2026-10-09",
+      "artifact": "docs/game-design/concepts/process-family-c-v1.png",
+      "sha256": "a276cb188ae994a8c7d7f830214ef0a20b24566352a05c8fadb82d52baf2adc5",
+      "nativeOutputPath": "C:/Users/user/.codex/generated_images/01a120e9-e280-7490-8db7-ee8bc881260f/exec-62095d65-88f1-4097-b84f-288c5e6e058e.png",
+      "promptFile": "docs/game-design/PROCESS_PROMPT.md",
+      "panels": [
+        {
+          "panel": 1,
+          "inventoryId": "SE-O"
+        },
+        {
+          "panel": 2,
+          "inventoryId": "SE-P"
+        },
+        {
+          "panel": 3,
+          "inventoryId": "SE-Q"
+        },
+        {
+          "panel": 4,
+          "inventoryId": "SE-R"
+        },
+        {
+          "panel": 5,
+          "inventoryId": "SE-S"
+        },
+        {
+          "panel": 6,
+          "inventoryId": "SE-T"
+        },
+        {
+          "panel": 7,
+          "inventoryId": "SE-U"
+        }
+      ],
+      "visualReview": {
+        "status": "lead inspected pixels; exploratory-only; acceptance open",
+        "usefulDirection": [
+          "Exact canonical headings visibly mapped",
+          "Distinct family subjects and close-up/decision construction direction",
+          "Selected overall sheet margins visually at least 8%; not independent segmentation acceptance"
+        ],
+        "knownMismatches": [
+          "Reach/egress envelopes and removal/service clearances unmeasured",
+          "Synthetic baseline parameters and acceptance criteria are not game rules",
+          "Mission terrain, maintenance directions and evidence folders illustrative only",
+          "Generative margin edits changed details; not exact geometric rescaling",
+          "Essential labels require bilingual accessible native runtime text",
+          "No matched Three.js visual acceptance"
+        ],
+        "doesNotProve": [
+          "Generic component, assembly or UI concept coverage",
+          "Dimensional, performance or physical compatibility qualification",
+          "Rights, classroom, handover or product acceptance"
+        ]
+      },
+      "acceptanceStatus": "open"
     }
   ]
 }

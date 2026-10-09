@@ -3299,8 +3299,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/process-family-a-v1.png",
+            "sha256": "8ca1d528fbd3c80ab19aa059d5f83b3cbfec20d0ac5fb51579d6509ea37b2eca",
+            "receiptId": "GEN-process-family-a-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -3351,8 +3360,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/process-family-a-v1.png",
+            "sha256": "8ca1d528fbd3c80ab19aa059d5f83b3cbfec20d0ac5fb51579d6509ea37b2eca",
+            "receiptId": "GEN-process-family-a-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -3403,8 +3421,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/process-family-a-v1.png",
+            "sha256": "8ca1d528fbd3c80ab19aa059d5f83b3cbfec20d0ac5fb51579d6509ea37b2eca",
+            "receiptId": "GEN-process-family-a-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -3455,8 +3482,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/process-family-a-v1.png",
+            "sha256": "8ca1d528fbd3c80ab19aa059d5f83b3cbfec20d0ac5fb51579d6509ea37b2eca",
+            "receiptId": "GEN-process-family-a-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -3507,8 +3543,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/process-family-a-v1.png",
+            "sha256": "8ca1d528fbd3c80ab19aa059d5f83b3cbfec20d0ac5fb51579d6509ea37b2eca",
+            "receiptId": "GEN-process-family-a-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -3559,8 +3604,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/process-family-a-v1.png",
+            "sha256": "8ca1d528fbd3c80ab19aa059d5f83b3cbfec20d0ac5fb51579d6509ea37b2eca",
+            "receiptId": "GEN-process-family-a-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -3611,8 +3665,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/process-family-a-v1.png",
+            "sha256": "8ca1d528fbd3c80ab19aa059d5f83b3cbfec20d0ac5fb51579d6509ea37b2eca",
+            "receiptId": "GEN-process-family-a-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -3663,8 +3726,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/process-family-b-v1.png",
+            "sha256": "c2ca2d84ad727466b896b92dcead25824a94a2e71ae6a3ec32943ec49186654b",
+            "receiptId": "GEN-process-family-b-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -3715,8 +3787,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/process-family-b-v1.png",
+            "sha256": "c2ca2d84ad727466b896b92dcead25824a94a2e71ae6a3ec32943ec49186654b",
+            "receiptId": "GEN-process-family-b-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -3767,8 +3848,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/process-family-b-v1.png",
+            "sha256": "c2ca2d84ad727466b896b92dcead25824a94a2e71ae6a3ec32943ec49186654b",
+            "receiptId": "GEN-process-family-b-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -3819,8 +3909,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/process-family-b-v1.png",
+            "sha256": "c2ca2d84ad727466b896b92dcead25824a94a2e71ae6a3ec32943ec49186654b",
+            "receiptId": "GEN-process-family-b-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -3871,8 +3970,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/process-family-b-v1.png",
+            "sha256": "c2ca2d84ad727466b896b92dcead25824a94a2e71ae6a3ec32943ec49186654b",
+            "receiptId": "GEN-process-family-b-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -3923,8 +4031,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/process-family-b-v1.png",
+            "sha256": "c2ca2d84ad727466b896b92dcead25824a94a2e71ae6a3ec32943ec49186654b",
+            "receiptId": "GEN-process-family-b-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -3975,8 +4092,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/process-family-b-v1.png",
+            "sha256": "c2ca2d84ad727466b896b92dcead25824a94a2e71ae6a3ec32943ec49186654b",
+            "receiptId": "GEN-process-family-b-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -4027,8 +4153,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/process-family-c-v1.png",
+            "sha256": "a276cb188ae994a8c7d7f830214ef0a20b24566352a05c8fadb82d52baf2adc5",
+            "receiptId": "GEN-process-family-c-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -4079,8 +4214,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/process-family-c-v1.png",
+            "sha256": "a276cb188ae994a8c7d7f830214ef0a20b24566352a05c8fadb82d52baf2adc5",
+            "receiptId": "GEN-process-family-c-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -4131,8 +4275,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/process-family-c-v1.png",
+            "sha256": "a276cb188ae994a8c7d7f830214ef0a20b24566352a05c8fadb82d52baf2adc5",
+            "receiptId": "GEN-process-family-c-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -4183,8 +4336,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/process-family-c-v1.png",
+            "sha256": "a276cb188ae994a8c7d7f830214ef0a20b24566352a05c8fadb82d52baf2adc5",
+            "receiptId": "GEN-process-family-c-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -4235,8 +4397,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/process-family-c-v1.png",
+            "sha256": "a276cb188ae994a8c7d7f830214ef0a20b24566352a05c8fadb82d52baf2adc5",
+            "receiptId": "GEN-process-family-c-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -4287,8 +4458,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/process-family-c-v1.png",
+            "sha256": "a276cb188ae994a8c7d7f830214ef0a20b24566352a05c8fadb82d52baf2adc5",
+            "receiptId": "GEN-process-family-c-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -4339,8 +4519,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/process-family-c-v1.png",
+            "sha256": "a276cb188ae994a8c7d7f830214ef0a20b24566352a05c8fadb82d52baf2adc5",
+            "receiptId": "GEN-process-family-c-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -4391,8 +4580,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/vehicles-family-v1.png",
+            "sha256": "66c3c03855085b3c4411448cc91c962a4a3a6eef18020022df59a54676fb4907",
+            "receiptId": "GEN-vehicles-family-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -4451,8 +4649,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/vehicles-family-v1.png",
+            "sha256": "66c3c03855085b3c4411448cc91c962a4a3a6eef18020022df59a54676fb4907",
+            "receiptId": "GEN-vehicles-family-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -4511,8 +4718,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/vehicles-family-v1.png",
+            "sha256": "66c3c03855085b3c4411448cc91c962a4a3a6eef18020022df59a54676fb4907",
+            "receiptId": "GEN-vehicles-family-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -4571,8 +4787,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/vehicles-family-v1.png",
+            "sha256": "66c3c03855085b3c4411448cc91c962a4a3a6eef18020022df59a54676fb4907",
+            "receiptId": "GEN-vehicles-family-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -4701,8 +4926,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/vehicles-family-v1.png",
+            "sha256": "66c3c03855085b3c4411448cc91c962a4a3a6eef18020022df59a54676fb4907",
+            "receiptId": "GEN-vehicles-family-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",

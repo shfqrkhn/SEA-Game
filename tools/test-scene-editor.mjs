@@ -11,7 +11,7 @@ function harness(){
  function element(tag){return {tagName:tag.toUpperCase(),children:[],listeners:{},value:'',isConnected:true,setAttribute(){},removeAttribute(){},appendChild(child){this.children.push(child)},addEventListener(type,fn){this.listeners[type]=fn},focus(){doc.activeElement=this},remove(){this.isConnected=false},cloneNode(){return element(tag)}}}
  node.cloneNode=()=>element('input');node.dispatchEvent=e=>{events.push(e.type);if(e.type==='change')node.isConnected=false};
  const doc={activeElement:null,createElement:element,body:{appendChild:child=>bodyChildren.push(child)}};
- const ctx=vm.createContext({document:doc,Event:class{constructor(type){this.type=type}},host:{querySelector:()=>({focus(){}})},lang:'en',queue(){},semanticVisible:n=>!n.hidden,sceneTargets:new Map([['profit',node]]),scenePage:0,editor:null});
+ const ctx=vm.createContext({document:doc,Event:class{constructor(type){this.type=type}},host:{querySelector:()=>({focus(){}})},lang:'en',queue(){},semanticVisible:n=>!n.hidden,sceneTargets:new Map([['profit',node]]),scenePage:0,sceneSection:'task',sceneSectionEpoch:0,sceneSections:new Set(['task','inspect']),editor:null});
  vm.runInContext(code.slice(0,code.indexOf('function seaSceneProjection('))+code.slice(start,end)+'\nthis.act=sceneAction;',ctx);
  return {ctx,node,events,get editor(){return ctx.editor},input(){return ctx.editor.children[0].children[0]},done(){return ctx.editor.children[1]}};
 }
@@ -32,11 +32,11 @@ const escape=harness();escape.ctx.act('profit');escape.editor.listeners.keydown(
 const syncStart=code.indexOf(' function syncSceneInterface('),syncEnd=code.indexOf(' function option(',syncStart);
 assert(syncStart>=0&&syncEnd>syncStart);
 let currentDialog={};const pages=[],rendered=[],taskRows=[],projectedRoots=[],languageControl={id:'langBtn'};
-const syncContext=vm.createContext({state:{phase:'setup'},scenePhase:'setup',scenePage:2,sceneAlert:'',sceneDialog:null,editor:null,lang:'en',keyFor(){},semanticVisible(){return true},t:x=>x,
+const syncContext=vm.createContext({state:{phase:'setup'},scenePhase:'setup',scenePage:2,sceneSection:'task',sceneSectionEpoch:0,sceneSectionLanguage:'en',sceneSections:new Set(),sceneAlert:'',sceneDialog:null,editor:null,lang:'en',keyFor(){},semanticVisible(){return true},t:x=>x,
  get:id=>id==='seaInlineConfirm'?currentDialog:id==='langBtn'?languageControl:null,sceneAction(){},
  document:{querySelectorAll:()=>[],querySelector:()=>null,body:{classList:{contains:()=>true}}},
  seaSceneProjection:roots=>{projectedRoots.push(roots);return {rows:[...taskRows],targets:new Map()}},runtime:{interface(snapshot){pages.push(snapshot.page);rendered.push(snapshot.rows.map(r=>r.label));return {page:snapshot.page}}}});
-vm.runInContext(code.slice(syncStart,syncEnd)+'\nthis.sync=syncSceneInterface;',syncContext);
+vm.runInContext(code.slice(code.indexOf('function seaSceneNavigation('),code.indexOf('function sea3DView('))+code.slice(syncStart,syncEnd)+'\nthis.sync=syncSceneInterface;',syncContext);
 syncContext.sync({}, {children:[]}, {context:{setup:'Setup'}});assert.equal(pages.at(-1),0,'A newly opened confirmation starts at page zero');
 assert.equal(projectedRoots.at(-1).length,2,'Confirmation projection exposes only the dialog and language control');
 assert.equal(projectedRoots.at(-1)[0],currentDialog);assert.equal(projectedRoots.at(-1)[1],languageControl,'Language cancellation remains reachable during a confirmation');

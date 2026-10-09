@@ -16,12 +16,14 @@ export function mount(host,onFailure,onInspect){
   const ui=createInterface();let uiEnabled=false;
   const scene=new THREE.Scene();scene.background=new THREE.Color('#f0f3f0');
   const pmrem=new THREE.PMREMGenerator(renderer),room=new RoomEnvironment(),environment=pmrem.fromScene(room,.04);scene.environment=environment.texture;scene.environmentIntensity=.65;room.dispose();pmrem.dispose();
-  scene.add(new THREE.HemisphereLight(0xe6f1ff,0x716b5f,.6));
+  // Keep the reflective studio response/key fixed while reducing diffuse fill.
+  // This preserves material highlights and gives formed recesses useful depth.
+  scene.add(new THREE.HemisphereLight(0xe6f1ff,0x716b5f,.28));
   // Fixed studio lights reveal recesses and material response without a dark,
   // hard-edged cast silhouette dominating the equipment. No baked shadow.
   const key=new THREE.DirectionalLight(0xfff1db,1.8);key.position.set(-5,9,6);key.castShadow=true;
   key.shadow.mapSize.set(2048,2048);Object.assign(key.shadow.camera,{left:-12,right:12,top:12,bottom:-12,near:.1,far:50});key.shadow.normalBias=.015;key.shadow.bias=-.0001;key.shadow.radius=5;scene.add(key);
-  const fill=new THREE.DirectionalLight(0xe6efff,.5);fill.position.set(-6,5,-7);scene.add(fill);
+  const fill=new THREE.DirectionalLight(0xe6efff,.30);fill.position.set(-6,5,-7);scene.add(fill);
   const camera=new THREE.PerspectiveCamera(38,1,.01,100);
   const controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=false;controls.enablePan=false;controls.enableRotate=false;controls.minZoom=.25;controls.maxZoom=5;
   controls.maxPolarAngle=Math.PI*.49;

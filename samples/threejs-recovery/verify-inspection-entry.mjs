@@ -76,6 +76,28 @@ for(const id of ['PRO-D','PRO-G']){
 }
 console.log('PRO-D/G exterior window gasket visibility: straight/corner lands on both sides PASS');
 
+// Purchased cells must bear on the actual carrier geometry, not a nominal
+// bounding volume or a floor hovering above disconnected mounting feet.
+let bearingFaces=0;
+for(const mission of MISSION_IDS){
+ const root=createConfiguration(mission,[{id:'PRO-D'}]);root.updateMatrixWorld(true);
+ const extension=root.getObjectByName('crew cell chassis extension');
+ assert(extension,mission+' requires connected crew-cell carrier support');
+ const shoes=[];root.traverse(o=>{if(o.name==='crew cell attachment shoe')shoes.push(o);});
+ assert.equal(shoes.length,4,mission+' requires exactly four physical shoes');
+ for(const shoe of shoes){
+  const b=new THREE.Box3().setFromObject(shoe,true),center=b.getCenter(new THREE.Vector3());
+  const ray=new THREE.Raycaster(new THREE.Vector3(center.x,b.min.y+.001,center.z),new THREE.Vector3(0,-1,0),0,.012);
+  const hit=ray.intersectObject(extension,true)[0];
+  assert(hit,mission+' shoe lacks an actual carrier bearing face');
+  assert(Math.abs(hit.point.y-b.min.y)<1e-6,mission+' shoe does not touch carrier');
+  assert(['crew cell carrier shoe crossmember','crew cell carrier extension rail'].includes(hit.object.name),mission+' false bearing on other hardware');
+  bearingFaces++;
+ }
+}
+assert.equal(bearingFaces,24);
+console.log('All six purchased PRO-D carriers: 24 actual shoe bearing-face contacts PASS');
+
 // Maximum separation alone is not a containing envelope: some groups translate
 // inward across an assembled extremum. Replay the actual runtime endpoint union.
 for(const [ids,factory]of [[MISSION_IDS,createMission],[MODEL_IDS,createPart]])for(const id of ids){

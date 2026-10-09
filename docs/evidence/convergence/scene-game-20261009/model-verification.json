@@ -727,18 +727,18 @@
     {
       "id": "PRO-D",
       "kind": "part",
-      "meshes": 207,
-      "triangles": 48192,
+      "meshes": 375,
+      "triangles": 62700,
       "bounds": {
         "min": [
           -1.973067499455908,
-          -1.7881393449270533e-9,
+          -0.18000000018626452,
           -0.8662051405893629
         ],
         "max": [
           0.865351140499115,
           1.4635000004619358,
-          0.7075000000745059
+          0.7111542054137616
         ]
       },
       "cameraChecks": 12
@@ -1524,7 +1524,7 @@
         "SA": "SA-D",
         "ACC": "ACC-D"
       },
-      "meshes": 1745,
+      "meshes": 1917,
       "cameraChecks": 12
     },
     {
@@ -1629,7 +1629,7 @@
         "SA": "SA-D",
         "ACC": "ACC-D"
       },
-      "meshes": 1333,
+      "meshes": 1505,
       "cameraChecks": 12
     },
     {
@@ -1734,7 +1734,7 @@
         "SA": "SA-D",
         "ACC": "ACC-D"
       },
-      "meshes": 1542,
+      "meshes": 1714,
       "cameraChecks": 12
     },
     {
@@ -1839,7 +1839,7 @@
         "SA": "SA-D",
         "ACC": "ACC-D"
       },
-      "meshes": 1539,
+      "meshes": 1711,
       "cameraChecks": 12
     },
     {
@@ -1944,7 +1944,7 @@
         "SA": "SA-D",
         "ACC": "ACC-D"
       },
-      "meshes": 2072,
+      "meshes": 2244,
       "cameraChecks": 12
     },
     {
@@ -2049,7 +2049,7 @@
         "SA": "SA-D",
         "ACC": "ACC-D"
       },
-      "meshes": 1813,
+      "meshes": 1985,
       "cameraChecks": 12
     },
     {
