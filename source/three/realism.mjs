@@ -107,15 +107,26 @@ function recoveryConstruction(g,m){
  const polygons=g.children.filter(o=>o.isMesh&&o.geometry.type==='BufferGeometry'),paint=polygons.filter(o=>o.material.name!=='optical glass'),glass=polygons.filter(o=>o.material.name==='optical glass');
  function reshape(mesh,points){if(!mesh)return;const vertices=[];for(let i=1;i<points.length-1;i++)vertices.push(...points[0],...points[i],...points[i+1]);mesh.geometry.dispose();mesh.geometry=new THREE.BufferGeometry();mesh.geometry.setAttribute('position',new THREE.Float32BufferAttribute(vertices,3));mesh.geometry.computeVertexNormals();}
  const frontX=y=>2.94-(y-1.74)*(.47/1.01)+.012;
+ recoveryFrame(g,m);
+ for(const old of [...g.children]){
+  const obsoleteDoorLine=old.geometry?.type==='CylinderGeometry'&&old.geometry.parameters.radiusTop===.01&&Math.abs(Math.abs(old.position.z)-1.166)<.001;
+  if(old.name==='door handle'||obsoleteDoorLine){old.removeFromParent();old.geometry?.dispose();}
+ }
  for(const guard of g.children.filter(o=>o.name==='wheel guard')){const shape=new THREE.Shape();shape.moveTo(-.74,-.04);shape.lineTo(-.74,.19);shape.quadraticCurveTo(-.72,.25,-.68,.31);shape.lineTo(-.47,.68);shape.quadraticCurveTo(-.43,.74,-.36,.74);shape.lineTo(.36,.74);shape.quadraticCurveTo(.43,.74,.47,.68);shape.lineTo(.68,.31);shape.quadraticCurveTo(.72,.25,.74,.19);shape.lineTo(.74,-.04);shape.lineTo(.66,-.04);shape.lineTo(.66,.18);shape.lineTo(.39,.66);shape.lineTo(-.39,.66);shape.lineTo(-.66,.18);shape.lineTo(-.66,-.04);shape.closePath();guard.geometry.dispose();guard.geometry=new THREE.ExtrudeGeometry(shape,{depth:.50,curveSegments:5,bevelEnabled:true,bevelSize:.016,bevelThickness:.016,bevelSegments:3,steps:1});guard.name='recovery formed wheel guard';guard.position.y=.605;guard.position.z-=.25;}
  // Real openings replace dark glazing decals over opaque sheets. The short
  // bevels create formed highlights at cab corners and around recessed glass.
  for(const mesh of paint){mesh.removeFromParent();mesh.geometry.dispose();mesh.material.dispose();}
  for(const s of [-1,1]){
-  formedCabPanel(g,m.paint,[[.52,1.74],[2.94,1.74],[2.47,2.75],[.52,2.75]],[roundedOpening(.76,2.15,2.28,2.60)],(x,y,d)=>[x,y,s*(1.15-d)]);
+  formedCabPanel(g,m.paint,[[.52,1.74],[2.94,1.74],[2.47,2.75],[.52,2.75]],[roundedOpening(1.22,2.15,2.28,2.60)],(x,y,d)=>[x,y,s*(1.15-d)]);
   formedCabPanel(g,m.paint,[[.52,1.40],[2.83,1.40],[2.98,1.65],[2.94,1.74],[.52,1.74]],[],(x,y,d)=>[x,y,s*(1.15-d)]);
   // A separate pressed door skin gives the lower sill a deliberate contour.
-  formedCabPanel(g,m.paint,[[.70,1.78],[2.32,1.78],[2.55,2.10],[2.34,2.64],[.70,2.64]],[roundedOpening(.78,2.17,2.26,2.58)],(x,y,d)=>[x,y,s*(1.174-d*.35)]);
+  formedCabPanel(g,m.paint,[[1.08,1.78],[2.32,1.78],[2.55,2.10],[2.34,2.64],[1.08,2.64]],[roundedOpening(1.24,2.17,2.26,2.58)],(x,y,d)=>[x,y,s*(1.174-d*.35)]);
+  // Rear cab quarter is a formed structural panel, not more glazing. Its
+  // recessed service cover gives the cab a visible rear pillar and door joint.
+  box(g,m.edge,[.34,.58,.017],[.80,2.11,s*1.171],'rear cab access gasket');
+  box(g,m.paint,[.30,.54,.025],[.80,2.11,s*1.183],'rear cab service cover');
+  for(const y of [1.87,2.35])box(g,m.darkSteel,[.040,.07,.021],[.65,y,s*1.202],'cab service cover hinge');
+  box(g,m.darkSteel,[.035,.09,.023],[.92,2.10,s*1.203],'cab service cover latch');
  }
  const frontOutline=[[-1.15,1.74],[1.15,1.74],[1.15,2.75],[-1.15,2.75]];
  formedCabPanel(g,m.paint,frontOutline,[roundedOpening(-1.02,2.04,-.07,2.62),roundedOpening(.07,2.04,1.02,2.62)],(z,y,d)=>[frontX(y)-d,y,z]);
@@ -127,10 +138,12 @@ function recoveryConstruction(g,m){
  for(const pane of glass){pane.material.dispose();pane.material=glassMaterial;pane.castShadow=false;}
  const obsolete=[];g.traverse(o=>{if(o.material===m.rubber&&o.geometry.type==='CylinderGeometry'&&o.geometry.parameters.radiusTop===.012&&o.position.y>2.1)obsolete.push(o);});for(const o of obsolete){o.removeFromParent();o.geometry.dispose();}
  for(const [i,range]of [[0,[-1.02,-.07]],[1,[.07,1.02]]]){const points=[[frontX(2.04),2.04,range[0]],[frontX(2.04),2.04,range[1]],[frontX(2.62),2.62,range[1]],[frontX(2.62),2.62,range[0]]];reshape(glass[i],points);glass[i].name='cab glazing';for(let j=0;j<4;j++)rod(g,m.rubber,points[j],points[(j+1)%4],.018);const center=(range[0]+range[1])/2;rod(g,m.darkSteel,[frontX(2.05)+.018,2.05,center],[frontX(2.30)+.024,2.30,center-.20],.014);rod(g,m.rubber,[frontX(2.21)+.025,2.21,center-.27],[frontX(2.47)+.025,2.47,center-.09],.012);}
- for(const [i,s]of [[2,-1],[3,1]]){const points=[[.79,2.18,s*1.178],[2.25,2.18,s*1.178],[2.25,2.57,s*1.178],[.79,2.57,s*1.178]];reshape(glass[i],points);glass[i].name='cab glazing';for(let j=0;j<4;j++)rod(g,m.rubber,points[j],points[(j+1)%4],.017);box(g,m.edge,[.045,.39,.025],[1.45,2.375,s*1.196],'sliding window mullion');
+ for(const [i,s]of [[2,-1],[3,1]]){const points=[[1.25,2.18,s*1.178],[2.25,2.18,s*1.178],[2.25,2.57,s*1.178],[1.25,2.57,s*1.178]];reshape(glass[i],points);glass[i].name='cab glazing';for(let j=0;j<4;j++)rod(g,m.rubber,points[j],points[(j+1)%4],.017);box(g,m.edge,[.025,.39,.025],[2.05,2.375,s*1.196],'door quarter window divider');
   // Mirror backing and two-point arm share the existing mirror's mount and scale.
   box(g,m.rubber,[.085,.25,.18],[2.065,2.32,s*1.47],'mirror housing');rod(g,m.darkSteel,[2.11,2.08,s*1.16],[2.10,2.24,s*1.46],.018);
-  for(const y of [1.93,2.47])box(g,m.darkSteel,[.065,.13,.035],[.66,y,s*1.185],'door hinge');
+  for(const y of [1.93,2.47])box(g,m.darkSteel,[.065,.13,.035],[1.09,y,s*1.185],'door hinge');
+  box(g,m.edge,[.20,.10,.021],[1.30,2.015,s*1.194],'door handle recess');
+  rod(g,m.steel,[1.25,2.015,s*1.213],[1.37,2.015,s*1.213],.013).name='door release pull';
   box(g,m.edge,[.22,.26,.13],[2.99,1.79,s*.83],'recessed headlight surround');cylinder(g,m.lamp,.080,.033,[3.112,1.79,s*.83],'x',.08,32);
   cylinder(g,m.amber,.029,.024,[2.25,2.79,s*.90],'y',.029,20);
  }
@@ -138,6 +151,15 @@ function recoveryConstruction(g,m){
  // Rounded roof edge visually joins the cab planes and carries the marker lamps.
  rod(g,m.edge,[2.47,2.75,-1.15],[2.47,2.75,1.15],.031);for(const z of [-.75,-.38,0,.38,.75])box(g,m.amber,[.12,.04,.07],[2.38,2.80,z],'roof clearance lamp');
  const lockers=g.getObjectByName('recovery stowage');if(lockers){for(const o of lockers.children.filter(o=>o.name==='tool locker')){o.geometry.dispose();o.geometry=new THREE.BoxGeometry(2.6,.64,.43);o.position.y=1.99;}for(const s of [-1,1])for(const x of [-2.41,-1.56,-.71]){box(lockers,m.edge,[.78,.54,.015],[x,1.99,s*1.195],'locker door gasket');box(lockers,m.paint,[.73,.49,.019],[x,1.99,s*1.21],'formed locker door');for(const y of [1.83,2.15])box(lockers,m.darkSteel,[.05,.08,.028],[x-.31,y,s*1.235],'locker hinge');box(lockers,m.darkSteel,[.13,.14,.019],[x+.23,2.04,s*1.237],'recessed latch cup');rod(lockers,m.steel,[x+.19,2.04,s*1.253],[x+.27,2.04,s*1.253],.012).name='locker latch lever';}
+  for(const s of [-1,1]){
+   box(lockers,m.darkSteel,[2.64,.055,.47],[-1.56,1.68,s*.97],'locker load bearing plinth');
+   for(const x of [-2.41,-1.56,-.71]){
+    // Pressed door ribs have finite ends inside the door skin; unlike decals
+    // they catch light while remaining part of the sheet-metal construction.
+    for(const y of [1.84,2.14])box(lockers,m.paint,[.55,.018,.016],[x-.03,y,s*1.225],'pressed locker stiffening rib');
+    box(lockers,m.edge,[.045,.59,.025],[x-.40,1.99,s*1.212],'locker frame stile');
+   }
+  }
   for(const s of [-1,1]){box(lockers,m.darkSteel,[2.58,.024,.41],[-1.56,2.325,s*.97],'locker top tread plate');for(let i=0;i<13;i++){const x=-2.75+i*.19;rod(lockers,m.steel,[x,2.342,s*.97-.14],[x+.075,2.342,s*.97+.14],.006).name='raised walkway tread';}}
  }
  recoveryServices(g,m);
@@ -147,6 +169,61 @@ function recoveryConstruction(g,m){
  cylinder(g,m.rubber,.040,.075,[.37,2.81,.73],'y',.04,24).name='antenna spring base';
  cylinder(g,m.edge,.088,.080,[.60,2.80,-.72],'y',.088,32).name='beacon mounting pedestal';
  const crane=g.getObjectByName('recovery crane');if(crane)recoveryCrane(crane,m);
+}
+function recoveryFrame(g,m){
+ // A recovery truck carries its crane through a reinforced subframe to two
+ // longitudinal chassis rails. Replace the continuous toy-like hull slab with
+ // that load path; gaps between members remain visible under the service deck.
+ for(const name of ['chassis','lower armored hull','deck']){
+  const old=g.getObjectByName(name);if(old){old.removeFromParent();old.geometry.dispose();}
+ }
+ const frame=new THREE.Group();frame.name='reinforced recovery chassis';g.add(frame);
+ for(const s of [-1,1]){
+  const z=s*.52;
+  box(frame,m.darkSteel,[6.05,.26,.055],[0,.91,z],'chassis rail web');
+  for(const y of [.77,1.05])box(frame,m.darkSteel,[6.05,.04,.16],[0,y,z],'chassis rail flange');
+  box(frame,m.edge,[3.40,.17,.085],[-1.10,1.135,z],'crane subframe rail');
+  for(const x of [-2.60,-1.60,-.85,-.30]){
+   box(frame,m.darkSteel,[.14,.51,.12],[x,1.38,s*.76],'deck support post');
+   rod(frame,m.edge,[x,1.12,z],[x,1.55,s*1.02],.035).name='deck outrigger brace';
+  }
+  // Closed lower cab skirts join its formed side sheets, stopping above the
+  // tyre clearance rather than filling the entire truck's underbody.
+  formedCabPanel(frame,m.paint,[[.53,1.40],[2.83,1.40],[2.83,1.57],[.53,1.57]],[],(x,y,d)=>[x,y,s*(1.11-d)]).name='cab sill skirt';
+  for(const x of [-2.17,-.74,.72,2.15]){
+   box(frame,m.darkSteel,[.23,.16,.16],[x+.19,1.30,s*.85],'suspension upper mount');
+   box(frame,m.edge,[.23,.23,.15],[x+.19,1.45,s*.85],'suspension deck hanger');
+   box(frame,m.edge,[.55,.24,.08],[x,1.45,s*1.12],'wheel guard mounting apron');
+   box(frame,m.edge,[.46,.042,.10],[x,.86,s*.52],'axle spring saddle');
+   for(let i=0;i<3;i++)box(frame,m.darkSteel,[.64-i*.08,.016,.10],[x,.83-i*.018,s*.52],'leaf spring pack');
+  }
+ }
+ for(const x of [-2.85,-2.17,-.85,.72,2.15,2.82])box(frame,m.darkSteel,[.12,.17,1.22],[x,.93,0],'chassis crossmember');
+ box(frame,m.paint,[6.12,.08,2.38],[-.005,1.60,0],'formed load deck');
+ for(const s of [-1,1])box(frame,m.edge,[6.08,.11,.05],[-.005,1.57,s*1.175],'deck folded edge');
+ box(frame,m.darkSteel,[1.14,.16,1.60],[-.85,1.68,0],'crane foundation crossbeam');
+ for(const s of [-1,1])formedCabPanel(frame,m.darkSteel,[[-1.28,1.19],[-.44,1.19],[-.62,1.59],[-1.10,1.59]],[],(x,y,d)=>[x,y,s*(.56+d)]).name='crane foundation gusset';
+ // Stowed telescopic stabilizers remain inside the road width. Their beam,
+ // guide sleeve, jack barrel and carried foot are physically joined.
+ box(frame,m.edge,[.32,.22,2.08],[-2.92,1.16,0],'stabilizer crossbeam');
+ for(const s of [-1,1]){
+  box(frame,m.darkSteel,[.24,.14,.93],[-2.92,1.16,s*.58],'stowed telescopic stabilizer beam');
+  box(frame,m.paint,[.32,.36,.24],[-2.92,1.13,s*1.02],'stabilizer jack guide');
+  cylinder(frame,m.paint,.080,.33,[-2.92,.92,s*1.02],'y',.08,32).name='stabilizer jack barrel';
+  cylinder(frame,m.steel,.033,.12,[-2.92,.72,s*1.02],'y',.033,24).name='stowed jack piston';
+  cylinder(frame,m.darkSteel,.060,.17,[-2.92,.68,s*1.02],'z',.06,24).name='jack foot pivot';
+  box(frame,m.darkSteel,[.27,.065,.29],[-2.92,.64,s*1.02],'carried stabilizer foot');
+  tube(frame,m.rubber,[[-2.55,1.25,s*.60],[-2.75,1.30,s*.70],[-2.94,1.30,s*.89],[-2.96,1.06,s*.93]],.018,24).name='stabilizer hydraulic supply';
+  // The tail lamp sits on a reinforced carrier; mudflaps hang aft of the last
+  // tyre and do not occupy its swept volume.
+  box(frame,m.edge,[.10,.21,.41],[-3.035,1.40,s*.92],'rear lamp carrier');
+  box(frame,m.red,[.025,.09,.20],[-3.10,1.43,s*.97],'rear tail lamp');
+  box(frame,m.amber,[.026,.07,.09],[-3.10,1.43,s*.79],'rear turn lamp');
+  box(frame,m.rubber,[.05,.37,.26],[-2.88,.90,s*1.28],'rear flexible mudflap');
+ }
+ box(frame,m.darkSteel,[.18,.25,1.25],[-3.015,1.10,0],'rear towing crossmember');
+ box(frame,m.edge,[.21,.23,.28],[-3.075,1.10,0],'rear tow coupling body');
+ cylinder(frame,m.steel,.034,.30,[-3.15,1.10,0],'y',.034,24).name='tow coupling pin';
 }
 function recoveryServices(g,m){
  // Cab services mount to the deck/rear bulkhead, leaving the central crane
@@ -194,7 +271,7 @@ function recoveryCrane(crane,m){
  tube(crane,m.steel,[[-.36,2.49,0],[-.73,2.72,0],[-2.40,3.39,0],[-2.98,3.43,0],[-3.12,3.35,0],[-3.12,2.79,0]],.012,48).name='hoist rope';
  cylinder(crane,m.darkSteel,.047,.16,[-3.12,2.77,0]).name='hook swivel';
  tube(crane,m.amber,[[-3.12,2.70,0],[-3.19,2.65,0],[-3.23,2.54,0],[-3.18,2.45,0],[-3.07,2.46,0],[-3.01,2.55,0],[-3.04,2.61,0]],.033,32).name='forged lifting hook';rod(crane,m.darkSteel,[-3.04,2.61,0],[-3.14,2.67,0],.008).name='hook safety latch';
- for(const s of [-1,1]){const offset=s===1?0:.04;tube(crane,m.rubber,[[-.80,2.0,.36+offset],[-.59,2.18,.39+offset],[-.71,2.59,.38+offset],[-1.16,2.64,.39+offset],[-1.59,2.66,.34+offset]],.021,32).name='lift cylinder hydraulic line';box(crane,m.paint,[.46,.24,.15],[-2.69,1.51,s*1.11],'stowed stabilizer');cylinder(crane,m.darkSteel,.064,.31,[-2.69,1.28,s*1.11]);box(crane,m.darkSteel,[.23,.045,.24],[-2.69,1.11,s*1.11],'stabilizer foot');}
+ for(const s of [-1,1]){const offset=s===1?0:.04;tube(crane,m.rubber,[[-.80,2.0,.36+offset],[-.59,2.18,.39+offset],[-.71,2.59,.38+offset],[-1.16,2.64,.39+offset],[-1.59,2.66,.34+offset]],.021,32).name='lift cylinder hydraulic line';}
 }
 function recoveryCockpit(g,m){
  const cockpit=new THREE.Group();cockpit.name='driver controls';g.add(cockpit);
@@ -268,6 +345,10 @@ function detailVehicle(g,m,length,width){
  for(let i=0;i<4;i++){const z=-.57+i*.09;cylinder(cockpit,m.darkSteel,.037,.009,[x+.035,y+.21,z],'x',.037,24).name='instrument bezel';rod(cockpit,m.lamp,[x+.028,y+.21,z],[x+.028,y+.23,z+.009],.0025).name='instrument needle';}
  }
  refineWheels(g,m);
+ // Recovery has a dedicated ladder-frame construction and service system.
+ // Generic armoured-hull overlays would reintroduce a solid belly slab and
+ // floating cooling louvres on the locker doors.
+ if(g.userData.sharedPart==='WR-12')return;
  const guards=[];g.traverse(o=>{if(o.name==='wheel guard')guards.push(o);});for(const guard of guards){const shape=new THREE.Shape();for(let i=0;i<=12;i++){const a=i*Math.PI/12,x=Math.cos(a)*.70,y=Math.sin(a)*.70;(i?shape.lineTo(x,y):shape.moveTo(x,y));}for(let i=12;i>=0;i--){const a=i*Math.PI/12;shape.lineTo(Math.cos(a)*.64,Math.sin(a)*.64);}shape.closePath();guard.geometry.dispose();guard.geometry=new THREE.ExtrudeGeometry(shape,{depth:.46,bevelEnabled:true,bevelSegments:1,steps:1,bevelSize:.009,bevelThickness:.009});guard.position.y=.62;guard.position.z-=.23;}
  for(const side of [-1,1]){const z=side*width*.45;for(const x of [-length*.38,-length*.22]){box(g,m.edge,[.028,.12,.028],[x,1.75,z],'panel hinge');cylinder(g,m.steel,.011,.07,[x,1.75,z+side*.024],'y',.011,12);}for(let i=0;i<6;i++)box(g,m.darkSteel,[.3,.02,.03],[-length*.27,2.08+i*.035,z+side*.018],'louvred cooling intake');rod(g,m.darkSteel,[length*.36,1.38,z],[length*.36,1.95,z],.016);}
  // Connected drive shaft, armoured belly plate, exhaust and fuel-tank plumbing.

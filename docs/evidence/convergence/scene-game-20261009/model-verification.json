@@ -727,17 +727,17 @@
     {
       "id": "PRO-D",
       "kind": "part",
-      "meshes": 133,
-      "triangles": 29644,
+      "meshes": 194,
+      "triangles": 33368,
       "bounds": {
         "min": [
           -1.991371864903602,
           -1.7881393449270533e-9,
-          -0.8043143297602928
+          -0.8662051405893629
         ],
         "max": [
           0.865351140499115,
-          1.4013999700546265,
+          1.4635000004619358,
           0.7075000000745059
         ]
       },
@@ -784,8 +784,8 @@
     {
       "id": "PRO-G",
       "kind": "part",
-      "meshes": 54,
-      "triangles": 12152,
+      "meshes": 85,
+      "triangles": 13824,
       "bounds": {
         "min": [
           -1.2807197570800781,
@@ -794,7 +794,7 @@
         ],
         "max": [
           1.165438175201416,
-          1.3214000463485718,
+          1.383500000461936,
           0.8075000000745058
         ]
       },
@@ -1430,8 +1430,8 @@
     {
       "id": "RECOVERY",
       "kind": "mission",
-      "meshes": 1307,
-      "triangles": 172348,
+      "meshes": 1412,
+      "triangles": 177984,
       "bounds": {
         "min": [
           -3.26259446144104,
@@ -1524,7 +1524,7 @@
         "SA": "SA-D",
         "ACC": "ACC-D"
       },
-      "meshes": 1671,
+      "meshes": 1732,
       "cameraChecks": 12
     },
     {
@@ -1569,7 +1569,7 @@
         "SA": "SA-G",
         "ACC": "ACC-G"
       },
-      "meshes": 1482,
+      "meshes": 1513,
       "cameraChecks": 12
     },
     {
@@ -1629,7 +1629,7 @@
         "SA": "SA-D",
         "ACC": "ACC-D"
       },
-      "meshes": 1259,
+      "meshes": 1320,
       "cameraChecks": 12
     },
     {
@@ -1674,7 +1674,7 @@
         "SA": "SA-G",
         "ACC": "ACC-G"
       },
-      "meshes": 1070,
+      "meshes": 1101,
       "cameraChecks": 12
     },
     {
@@ -1734,7 +1734,7 @@
         "SA": "SA-D",
         "ACC": "ACC-D"
       },
-      "meshes": 1468,
+      "meshes": 1529,
       "cameraChecks": 12
     },
     {
@@ -1779,7 +1779,7 @@
         "SA": "SA-G",
         "ACC": "ACC-G"
       },
-      "meshes": 1279,
+      "meshes": 1310,
       "cameraChecks": 12
     },
     {
@@ -1839,7 +1839,7 @@
         "SA": "SA-D",
         "ACC": "ACC-D"
       },
-      "meshes": 1465,
+      "meshes": 1526,
       "cameraChecks": 12
     },
     {
@@ -1884,7 +1884,7 @@
         "SA": "SA-G",
         "ACC": "ACC-G"
       },
-      "meshes": 1276,
+      "meshes": 1307,
       "cameraChecks": 12
     },
     {
@@ -1899,7 +1899,7 @@
         "SA": "SA-A",
         "ACC": "ACC-A"
       },
-      "meshes": 1725,
+      "meshes": 1810,
       "cameraChecks": 12
     },
     {
@@ -1914,7 +1914,7 @@
         "SA": "SA-B",
         "ACC": "ACC-B"
       },
-      "meshes": 2152,
+      "meshes": 2237,
       "cameraChecks": 12
     },
     {
@@ -1929,7 +1929,7 @@
         "SA": "SA-C",
         "ACC": "ACC-C"
       },
-      "meshes": 1918,
+      "meshes": 2003,
       "cameraChecks": 12
     },
     {
@@ -1944,7 +1944,7 @@
         "SA": "SA-D",
         "ACC": "ACC-D"
       },
-      "meshes": 1886,
+      "meshes": 2032,
       "cameraChecks": 12
     },
     {
@@ -1959,7 +1959,7 @@
         "SA": "SA-E",
         "ACC": "ACC-E"
       },
-      "meshes": 1799,
+      "meshes": 1884,
       "cameraChecks": 12
     },
     {
@@ -1974,7 +1974,7 @@
         "SA": "SA-F",
         "ACC": "ACC-F"
       },
-      "meshes": 1692,
+      "meshes": 1777,
       "cameraChecks": 12
     },
     {
@@ -1989,7 +1989,7 @@
         "SA": "SA-G",
         "ACC": "ACC-G"
       },
-      "meshes": 1697,
+      "meshes": 1813,
       "cameraChecks": 12
     },
     {
@@ -2049,7 +2049,7 @@
         "SA": "SA-D",
         "ACC": "ACC-D"
       },
-      "meshes": 1739,
+      "meshes": 1800,
       "cameraChecks": 12
     },
     {
@@ -2094,7 +2094,7 @@
         "SA": "SA-G",
         "ACC": "ACC-G"
       },
-      "meshes": 1550,
+      "meshes": 1581,
       "cameraChecks": 12
     }
   ]

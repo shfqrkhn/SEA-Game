@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {createMission,createPart,createConfiguration,materials} from './game-models.mjs';
-import {prepareInspection,prepareCutaway,fitPerspective} from './inspection.mjs';
+import {prepareInspection,prepareCutaway,fitPerspective,fitDirectionalShadow} from './inspection.mjs';
 import {createInterface} from './interface.mjs';
 
 // Presentation only. This module receives a public, copied snapshot, never game state.
@@ -31,7 +31,10 @@ export function mount(host,onFailure,onInspect){
   function draw(){pending=0;if(!active)return;const w=Math.max(host.clientWidth,1),h=Math.max(host.clientHeight,1);renderer.setViewport(0,0,w,h);renderer.setScissorTest(false);renderer.clear();if(model){const v=uiEnabled?ui.layout.model:{x:0,y:0,w,h};renderer.setViewport(v.x,h-v.y-v.h,v.w,v.h);renderer.setScissor(v.x,h-v.y-v.h,v.w,v.h);renderer.setScissorTest(true);renderer.render(scene,camera);}if(uiEnabled){renderer.setScissorTest(false);renderer.setViewport(0,0,w,h);renderer.autoClear=false;renderer.clearDepth();renderer.render(ui.scene,ui.camera);renderer.autoClear=true;}}
   function request(){if(active&&!pending)pending=requestAnimationFrame(draw);}
   controls.addEventListener('change',request);
-  function fit(){const w=Math.max(host.clientWidth,1),h=Math.max(host.clientHeight,1);renderer.setSize(w,h,false);if(uiEnabled)ui.resize(w,h);if(!model){request();return;}const v=uiEnabled?ui.layout.model:{w,h};if(mode==='exploded')inspection.apply(1);ground.position.y=new THREE.Box3().setFromObject(model).min.y-.025;controls.target.copy(fitPerspective(camera,model,v.w/v.h,angle));inspection.apply(mode==='exploded'?amount:0);controls.update();highlight?.update();request();}
+  function fit(){const w=Math.max(host.clientWidth,1),h=Math.max(host.clientHeight,1);renderer.setSize(w,h,false);if(uiEnabled)ui.resize(w,h);if(!model){request();return;}const v=uiEnabled?ui.layout.model:{w,h};
+    inspection.apply(0);const envelope=new THREE.Box3().setFromObject(model,true);
+    if(mode==='exploded'){inspection.apply(1);envelope.union(new THREE.Box3().setFromObject(model,true));}
+    ground.position.y=envelope.min.y-.025;controls.target.copy(fitPerspective(camera,model,v.w/v.h,angle,envelope));fitDirectionalShadow(key,model,ground.position.y,envelope);inspection.apply(mode==='exploded'?amount:0);controls.update();highlight?.update();request();}
   function release(){if(!model)return;scene.remove(model);const gs=new Set(),ms=new Set(),textures=new Set();model.traverse(o=>{if(o.geometry)gs.add(o.geometry);if(o.material)(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>ms.add(m));});gs.forEach(g=>g.dispose());ms.forEach(m=>{for(const value of Object.values(m))if(value?.isTexture)textures.add(value);m.dispose();});textures.forEach(t=>t.dispose());model=null;}
   function update(view,selection){last=[view,selection];clearInspection();release();const m=materials();model=new THREE.Group();
     if(selection.startsWith('part:')){const id=selection.slice(5);if(![view.current?.id,...view.owned.map(p=>p.id)].includes(id))throw Error('Part is not visible');model.add(createPart(id,m));}

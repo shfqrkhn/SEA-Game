@@ -58,11 +58,28 @@ export function prepareInspection(root){
  return {parts,apply(value){if(!Number.isFinite(value)||value<0||value>1)throw Error('Invalid assembly separation');for(const p of parts)p.object.position.copy(p.origin).addScaledVector(p.vector,value);root.updateWorldMatrix(true,true);},restore(){this.apply(0);}};
 }
 
-export function fitPerspective(camera,root,aspect,angle=[7,4.5,7]){
- root.updateWorldMatrix(true,true);const b=new THREE.Box3().setFromObject(root,true),center=b.getCenter(new THREE.Vector3()),radius=b.getSize(new THREE.Vector3()).length()/2;
+export function fitPerspective(camera,root,aspect,angle=[7,4.5,7],envelope=null){
+ root.updateWorldMatrix(true,true);const b=envelope||new THREE.Box3().setFromObject(root,true),center=b.getCenter(new THREE.Vector3()),radius=b.getSize(new THREE.Vector3()).length()/2;
  camera.aspect=aspect;const fov=THREE.MathUtils.degToRad(camera.fov),limit=Math.min(fov/2,Math.atan(Math.tan(fov/2)*aspect)),distance=Math.max(radius/Math.sin(limit)/.86,1);
  const direction=new THREE.Vector3(...angle).normalize(),corners=[];for(const x of [b.min.x,b.max.x])for(const y of [b.min.y,b.max.y])for(const z of [b.min.z,b.max.z])corners.push(new THREE.Vector3(x,y,z));
  let low=Math.max(radius*1.01,.1),high=distance;camera.near=.001;camera.far=distance+radius*3+1;camera.updateProjectionMatrix();
  for(let i=0;i<24;i++){const d=(low+high)/2;camera.position.copy(center).addScaledVector(direction,d);camera.lookAt(center);camera.updateMatrixWorld(true);let extent=0;for(const p of corners){const projected=p.clone().project(camera);extent=Math.max(extent,Math.abs(projected.x),Math.abs(projected.y));}if(extent>.86)low=d;else high=d;}
  camera.position.copy(center).addScaledVector(direction,high);camera.lookAt(center);camera.near=Math.max(.01,high-radius*1.5);camera.far=high+radius*3+1;camera.updateProjectionMatrix();camera.updateMatrixWorld(true);return center;
+}
+
+// Fit the fixed light's shadow map to the caster and its projected ground contact.
+// Rotation changes the bounds, never the world-space lighting direction.
+export function fitDirectionalShadow(light,root,groundY,envelope=null){
+ root.updateWorldMatrix(true,true);light.updateWorldMatrix(true,false);light.target.updateWorldMatrix(true,false);
+ const b=envelope||new THREE.Box3().setFromObject(root,true);if(b.isEmpty())return;
+ const direction=new THREE.Vector3().setFromMatrixPosition(light.matrixWorld).sub(new THREE.Vector3().setFromMatrixPosition(light.target.matrixWorld)).normalize();
+ light.shadow.updateMatrices(light);const camera=light.shadow.camera,points=[];
+ for(const x of [b.min.x,b.max.x])for(const y of [b.min.y,b.max.y])for(const z of [b.min.z,b.max.z]){
+  const p=new THREE.Vector3(x,y,z);points.push(p);
+  if(direction.y>1e-4)points.push(p.clone().addScaledVector(direction,-(y-groundY)/direction.y));
+ }
+ const bounds=new THREE.Box3().setFromPoints(points.map(p=>p.applyMatrix4(camera.matrixWorldInverse))),size=b.getSize(new THREE.Vector3()),margin=Math.max(.08,size.length()*.025);
+ Object.assign(camera,{left:bounds.min.x-margin,right:bounds.max.x+margin,bottom:bounds.min.y-margin,top:bounds.max.y+margin,near:Math.max(.01,-bounds.max.z-margin),far:Math.max(.1,-bounds.min.z+margin)});
+ light.shadow.normalBias=Math.min(.006,Math.max(.001,size.length()*.00065));
+ camera.updateProjectionMatrix();light.shadow.updateMatrices(light);
 }
