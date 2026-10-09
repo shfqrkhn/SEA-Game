@@ -1,0 +1,99 @@
+{
+  "time": "2026-10-09T13:25:23.107Z",
+  "node": "24.20.0",
+  "platform": "Windows",
+  "sourceCommit": "010c98df34af05b11b6514ba3bc9eb3a6e1dd46b",
+  "scope": "Local command/geometry/projection/packaging verification, not GPU or visual acceptance",
+  "checks": [
+    {
+      "command": "node tools/build.mjs --check",
+      "status": "fulfilled",
+      "exitCode": 0,
+      "output": "SEA_Instructor_Standalone.html: PASS byte-for-byte reproduction\nSEA_Student_Standalone.html: PASS byte-for-byte reproduction\n"
+    },
+    {
+      "command": "node tools/test.mjs",
+      "status": "fulfilled",
+      "exitCode": 0,
+      "output": "Warning: truncated output (original token count: 804)\nTotal output lines: 40\n\ninstructor: syntax and basic UI contract PASS\nstudent: syntax and basic UI contract PASS\nVersioned, bounded, role-specific backup envelope examples PASS\nInstructor visibility and lifecycle structural tests PASS\nStudent purchase removal click/cancel/confirm/stale-state regression PASS\nShared mission requirements, compliance and independent scoring examples PASS\nShared canonical mission, category and 70-card data contract PASS\nShared card index, slot identity and transactional acquisition examples PASS\nStudent sale-price default renders whole dollars and commits exact canonical cents for all 70 cards PASS\nShared session parsing, lifecycle phases and save-derived recovery validation PASS\nShared deterministic market generation, 70-slot mapping and seed variation PASS\nShared monetary parsing, rounding, safe-range and overflow examples PASS\nShared exact-ratio ordering, tie and award eligibility examples PASS\nAll 77 embedded artwork identities and bilingual mission-preview integration PASS\nInstructor setup generation bounds, recoverability, confirmation scope and repeat guards PASS\nStudent auction finish identity, 70-position advance and all-card win/reconciliation command examples PASS\nI…204 tokens truncated…le caller, eligibility, timing and purchase-cap boundary examples PASS\nInstructor auction-open guards and reveal-mode transitions PASS\nInstructor correction/unsold/void confirmation captured-result boundaries PASS\nInstructor unsold/void/recommit and 70-lot advance boundaries PASS\nInstructor maximum correction ledger preserves recovery and reserves all 70 final outcomes PASS\nInstructor reveal continuity survives validated reload and EN/FR render changes PASS\nInstructor/student schema-3 tutorial-state and role-import invariants PASS\nMaximum valid student escaped-text backup round trip PASS: 277654 UTF-16 units / 277654 UTF-8 bytes\nINSTRUCTOR exact character-bound read and UTF-8 boundary PASS: 500092 bytes\nSTUDENT exact character-bound read and UTF-8 boundary PASS: 588800 bytes\nReal role import/renderer escaping, canonical purchase metadata and private JSON text characterization PASS\nBoth-role production save/restore/rescue, denied storage and instructor timer/privacy characterization PASS\nInstructor/student import confirmation, stale-state rejection and pre-replacement preservation examples PASS\nInstructor sale, correction, invalid-result, void and recommit transaction examples PASS\n"
+    },
+    {
+      "command": "node tools/test-journey.mjs",
+      "status": "fulfilled",
+      "exitCode": 0,
+      "output": "en/ROUND: delivered commands, 10 companions, 70 outcomes, correction, independent totals/score and phase backups PASS\nen/JIT: delivered commands, 10 companions, 70 outcomes, correction, independent totals/score and phase backups PASS\nen/MANUAL: delivered commands, 10 companions, 70 outcomes, correction, independent totals/score and phase backups PASS\nfr/ROUND: delivered commands, 10 companions, 70 outcomes, correction, independent totals/score and phase backups PASS\nfr/JIT: delivered commands, 10 companions, 70 outcomes, correction, independent totals/score and phase backups PASS\nfr/MANUAL: delivered commands, 10 companions, 70 outcomes, correction, independent totals/score and phase backups PASS\nScope: command/persistence VM integration; browser/UI/classroom acceptance NOT_RUN\n"
+    },
+    {
+      "command": "node tools/test-artwork-host.mjs",
+      "status": "fulfilled",
+      "exitCode": 0,
+      "output": "77 embedded illustrations, standalone network-independent resources and no fallback chain PASS\n"
+    },
+    {
+      "command": "node tools/test-three-presentation.mjs",
+      "status": "fulfilled",
+      "exitCode": 0,
+      "output": "3D public projection, phase visibility, role privacy, copying, failure/restoration/disposal bridge and exact bundle provenance PASS\n"
+    },
+    {
+      "command": "node tools/test-scene-projection.mjs",
+      "status": "fulfilled",
+      "exitCode": 0,
+      "output": "Scene projection hidden-content privacy, identity, disabled controls, summaries, table actions and immutability PASS\n"
+    },
+    {
+      "command": "node tools/test-scene-editor.mjs",
+      "status": "fulfilled",
+      "exitCode": 0,
+      "output": "Scene native editor multi-digit input, final change, stale/disconnected/hidden/disabled target and Escape characterization PASS; browser qualification still required\n"
+    },
+    {
+      "command": "node tools/test-scene-language.mjs",
+      "status": "fulfilled",
+      "exitCode": 0,
+      "output": "PASS: actual scene projection/sync/action and setLang cancel confirmations in EN/FR; stale confirmation keys are inert before/after refresh. Browser focus/rendering qualification remains open.\n"
+    },
+    {
+      "command": "node tools/test-text-encoding.mjs",
+      "status": "fulfilled",
+      "exitCode": 0,
+      "output": "Both role dictionaries retain readable French accents and punctuation PASS\n"
+    },
+    {
+      "command": "node samples/threejs-recovery/verify-game.mjs",
+      "status": "fulfilled",
+      "exitCode": 0,
+      "output": "71 parts, 6 missions, 42 assembled builds; canonical capacity, axle topology and camera framing PASS\n"
+    },
+    {
+      "command": "node samples/threejs-recovery/verify-inspection.mjs",
+      "status": "fulfilled",
+      "exitCode": 0,
+      "output": "Material finish clone/cutaway isolation, scale/alias shader anchors and texture-free lifecycle PASS (actual GPU compile still requires browser)\nCutaway shader state, shared-paint isolation, original translucency/shadow restoration and bounded temporary material disposal PASS\nScale-aware directional shadow framing: caster/contact containment, rotation and fixed world light PASS\nReal cockpit and brake topology PASS\nRecovery hollow boom wall/bore and collinear hydraulic barrel/piston PASS\nAll 77 models: rotated assembled/exploded endpoint-union camera/shadow envelopes contain intermediate views PASS\nAll 77 semantic exploded assemblies: bounded perspective framing, repeatability and exact restoration PASS\nAll 42 purchased-hardware builds: exploded perspective framing and immutable purchases PASS\n"
+    },
+    {
+      "command": "node samples/threejs-recovery/verify-interface.mjs",
+      "status": "fulfilled",
+      "exitCode": 0,
+      "output": "PASS: responsive scene interface, pagination, hit boundaries and disabled actions\n"
+    },
+    {
+      "command": "node tools/test-package.mjs",
+      "status": "fulfilled",
+      "exitCode": 0,
+      "output": "Candidate packet exact-byte, missing/extra, manifest tampering, identity and path rejection PASS\n"
+    },
+    {
+      "command": "node tools/test-mpes.mjs",
+      "status": "fulfilled",
+      "exitCode": 0,
+      "output": "{\n  \"result\": \"PASS\",\n  \"scope\": \"Synthetic protocol and actual material-inventory CLI only; no product release acceptance\",\n  \"baselineCases\": 29,\n  \"semanticMutantsKilled\": 18,\n  \"mutants\": [\n    {\n      \"name\": \"authority bypass\",\n      \"killedBy\": [\n        \"A07\",\n        \"A08\",\n        \"A09\"\n      ]\n    },\n    {\n      \"name\": \"budget ignored\",\n      \"killedBy\": [\n        \"A11\"\n      ]\n    },\n    {\n      \"name\": \"unknown effect replay\",\n      \"killedBy\": [\n        \"A12\",\n        \"A29\"\n      ]\n    },\n    {\n      \"name\": \"sent effect replay\",\n      \"killedBy\": [\n        \"A29\"\n      ]\n    },\n    {\n      \"name\": \"unverified effect accepted\",\n      \"killedBy\": [\n        \"A27\"\n      ]\n    },\n    {\n      \"name\": \"concurrent head ignored\",\n      \"killedBy\": [\n        \"A14\"\n      ]\n    },\n    {\n      \"name\": \"specification change ignored\",\n      \"killedBy\": [\n        \"A16\"\n      ]\n    },\n    {\n      \"name\": \"stale evidence accepted\",\n      \"killedBy\": [\n        \"A15\"\n      ]\n    },\n    {\n      \"name\": \"empty gates accepted\",\n      \"killedBy\": [\n        \"A26\"\n      ]\n    },\n    {\n      \"name\": \"failed gate ignored\",\n      \"killedBy\": [\n        \"A17\"\n      ]\n    },\n    {\n      \"name\": \"mock evidence accepted\",\n      \"killedBy\": [\n        \"A19\"\n      ]\n    },\n    {\n      \"name\": \"retention unresolved\",\n      \"killedBy\": [\n        \"A22\"\n      ]\n    },\n    {\n      \"name\": \"runtime invented\",\n      \"killedBy\": [\n        \"A21\"\n      ]\n    },\n    {\n      \"name\": \"harness failure counts as red\",\n      \"killedBy\": [\n        \"A02\"\n      ]\n    },\n    {\n      \"name\": \"red bypassed\",\n      \"killedBy\": [\n        \"A03\"\n      ]\n    },\n    {\n      \"name\": \"stop ignored\",\n      \"killedBy\": [\n        \"A24\"\n      ]\n    },\n    {\n      \"name\": \"refactor baseline fabricated\",\n      \"killedBy\": [\n        \"A28\"\n      ]\n    },\n    {\n      \"name\": \"untrusted directive executed\",\n      \"killedBy\": [\n        \"A20\"\n      ]\n    }\n  ],\n  \"inventoryCases\": [\n    \"generated Python bytecode creation/change leaves key unchanged\",\n    \"ignored source creation/change still invalidates key\",\n    \"non-bytecode source in cache directory remains material\"\n  ]\n}\n"
+    },
+    {
+      "command": "node tools/check-mpes.mjs",
+      "status": "fulfilled",
+      "exitCode": 0,
+      "output": "{\n  \"result\": \"PASS\",\n  \"scope\": \"Specification contracts and synthetic protocol examples only\",\n  \"checks\": [\n    \"Unique R01-R26 and T01-T27 definitions and complete test linkage\",\n    \"Nine milestone weights sum to 100 and lifecycle is separately defined\",\n    \"Portable local Markdown links, heading anchors and valid representation\",\n    \"Every current document requirement/test reference resolves\",\n    \"Reference copies match provenance hashes\",\n    \"All operational JSON documents parse\",\n    \"Synthetic protocol challenge cases match independent expected dispositions\",\n    \"Invalid protocol inputs do not authorize an effect\",\n    \"Frozen baseline remains dated evidence, not a product completion assertion\",\n    \"One-byte identity mutation changes convergence key\"\n  ],\n  \"scenarioCount\": 29,\n  \"key\": \"3b2a424708db44d7eefd08867e41b1976d351187662ffe6f0b5b04e11fefaefe\",\n  \"excludedRunRecords\": [\n    \"docs/evidence/convergence/**\",\n    \"docs/evidence/audit-runs/**\",\n    \"docs/evidence/document-receipt.json\"\n  ],\n  \"excludedGeneratedArtifacts\": [\n    \"**/__pycache__/*.pyc\"\n  ]\n}\n"
+    }
+  ]
+}

@@ -727,11 +727,11 @@
     {
       "id": "PRO-D",
       "kind": "part",
-      "meshes": 194,
-      "triangles": 33368,
+      "meshes": 207,
+      "triangles": 48192,
       "bounds": {
         "min": [
-          -1.991371864903602,
+          -1.973067499455908,
           -1.7881393449270533e-9,
           -0.8662051405893629
         ],
@@ -784,8 +784,8 @@
     {
       "id": "PRO-G",
       "kind": "part",
-      "meshes": 85,
-      "triangles": 13824,
+      "meshes": 93,
+      "triangles": 28568,
       "bounds": {
         "min": [
           -1.2807197570800781,
@@ -1524,7 +1524,7 @@
         "SA": "SA-D",
         "ACC": "ACC-D"
       },
-      "meshes": 1732,
+      "meshes": 1745,
       "cameraChecks": 12
     },
     {
@@ -1569,7 +1569,7 @@
         "SA": "SA-G",
         "ACC": "ACC-G"
       },
-      "meshes": 1513,
+      "meshes": 1521,
       "cameraChecks": 12
     },
     {
@@ -1629,7 +1629,7 @@
         "SA": "SA-D",
         "ACC": "ACC-D"
       },
-      "meshes": 1320,
+      "meshes": 1333,
       "cameraChecks": 12
     },
     {
@@ -1674,7 +1674,7 @@
         "SA": "SA-G",
         "ACC": "ACC-G"
       },
-      "meshes": 1101,
+      "meshes": 1109,
       "cameraChecks": 12
     },
     {
@@ -1734,7 +1734,7 @@
         "SA": "SA-D",
         "ACC": "ACC-D"
       },
-      "meshes": 1529,
+      "meshes": 1542,
       "cameraChecks": 12
     },
     {
@@ -1779,7 +1779,7 @@
         "SA": "SA-G",
         "ACC": "ACC-G"
       },
-      "meshes": 1310,
+      "meshes": 1318,
       "cameraChecks": 12
     },
     {
@@ -1839,7 +1839,7 @@
         "SA": "SA-D",
         "ACC": "ACC-D"
       },
-      "meshes": 1526,
+      "meshes": 1539,
       "cameraChecks": 12
     },
     {
@@ -1884,7 +1884,7 @@
         "SA": "SA-G",
         "ACC": "ACC-G"
       },
-      "meshes": 1307,
+      "meshes": 1315,
       "cameraChecks": 12
     },
     {
@@ -1944,7 +1944,7 @@
         "SA": "SA-D",
         "ACC": "ACC-D"
       },
-      "meshes": 2059,
+      "meshes": 2072,
       "cameraChecks": 12
     },
     {
@@ -1989,7 +1989,7 @@
         "SA": "SA-G",
         "ACC": "ACC-G"
       },
-      "meshes": 1840,
+      "meshes": 1848,
       "cameraChecks": 12
     },
     {
@@ -2049,7 +2049,7 @@
         "SA": "SA-D",
         "ACC": "ACC-D"
       },
-      "meshes": 1800,
+      "meshes": 1813,
       "cameraChecks": 12
     },
     {
@@ -2094,7 +2094,7 @@
         "SA": "SA-G",
         "ACC": "ACC-G"
       },
-      "meshes": 1581,
+      "meshes": 1589,
       "cameraChecks": 12
     }
   ]
