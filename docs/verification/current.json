@@ -1,38 +1,39 @@
 {
-  "date": "2026-10-09T20:32:15Z",
-  "scope": "Exact HTTPS bytes, actual candidate/main CI and bounded hosted student setup/practice/planning/reload recovery; not full release acceptance",
-  "version": "4.0.0-dev.4",
-  "sourceCommit": "07bc0d5f1bb246a946ad629e8a522a5b05d6dd70",
-  "mainMerge": "dbde9fa1f6edbbbb69c70d94607b8ecf53592761",
-  "pagesRun": 37987029657,
-  "sourcePRRun": 37986900974,
-  "url": "https://shfqrkhn.github.io/SEA-Game/dist/index.html?v=dbde9fa",
-  "bytes": 8199201,
-  "sourceSHA256": "7e2d9395e39960fb238b620f01a8de1acbef83a6ac46942af84350cc253b512c",
-  "hostedSHA256": "7e2d9395e39960fb238b620f01a8de1acbef83a6ac46942af84350cc253b512c",
+  "date": "2026-10-09T20:55:34Z",
+  "scope": "Exact HTTPS bytes, actual candidate/main CI and bounded hosted instructor correction/reload and student planning recovery; not full release acceptance",
+  "version": "4.0.0-dev.5",
+  "sourceCommit": "66a784fae62943ddda0161a50557fee08eb64e26",
+  "mainMerge": "96cb25fdab291c165131fae2392d60165571b53e",
+  "pagesRun": 37989340179,
+  "sourcePRRun": 37988939552,
+  "url": "https://shfqrkhn.github.io/SEA-Game/dist/index.html?v=96cb25f",
+  "bytes": 8205812,
+  "sourceSHA256": "bdae9be6a8b692e9926325cc6ad693dc1c2735c8ed74c1256b1921e7476eec29",
+  "hostedSHA256": "bdae9be6a8b692e9926325cc6ad693dc1c2735c8ed74c1256b1921e7476eec29",
   "equal": true,
   "sourceMainRun": {
-    "id": 37987030082,
+    "id": 37989341014,
     "status": "success",
     "matrix": "Windows/Ubuntu; Node22/24; all four jobs"
   },
   "browser": {
     "tool": "Codex built-in browser",
-    "scope": "Fresh dev.4 student example/preview/assignment, isolated practice, planning and reload recovery only",
+    "scope": "Fresh dev.5 instructor practice, sale, confirmed VOID, replacement sale and reloads; dev.4 student French planning restored in dev.5",
     "checks": [
-      "Opened exact candidate student URL; version4.0.0-dev.4",
-      "Unselected mission labels Example: Recovery and explains no mission selected",
-      "Native Troop choice labels Preview: Troop Carrier and uncommitted preview status",
-      "Native Enter switches preview/status and setup to French",
-      "Lowercase synthetic session entry normalizes to SEA3-T2-0123456789ABCDEF",
-      "Actual team1 join/practice record/reset opens assigned Troop planning",
-      "Bilingual synthetic plan and French risk notes survive actual reload with French planning/session/mission retained",
-      "One canvas; no instructor generate/award/lock controls",
-      "Captured warning/error console empty"
+      "Exact candidate role URLs show version4.0.0-dev.5",
+      "Fresh instructor synthetic two-team untimed session and isolated practice/reset/open planning",
+      "Round1 lot1 CAP-B Team1 sale at450000 dollars survives actual reload; Team1 one win, Team2 zero",
+      "Visible Three.js Manage/pagination/disclosure reaches correction; synthetic reason and actual confirmation append VOID",
+      "VOID survives reload with no leader, neither team owning the lot and advance disabled",
+      "Replacement Team2 sale at450000 dollars survives reload; Team1 zero wins and Team2 one",
+      "Rendered append-only log retains Team1 SOLD, VOID and Team2 SOLD",
+      "French student Troop planning restores prior synthetic bilingual plan/risk notes/session in dev.5",
+      "Captured instructor warning/error console empty"
     ],
-    "localScreenshot": ".artifacts/rebuild-4-dev4-recovery.png",
+    "localScreenshot": ".artifacts/rebuild-4-dev5-correction.png",
     "limits": [
-      "No fresh complete70-lot auction, instructor recovery, ten-team, timed/reveal or file download/import browser qualification",
+      "No fresh complete70-lot auction, student purchase, ten-team, timed/reveal or file download/import browser qualification",
+      "Automation observed delayed canvas redraws and clipped native disclosure targets; full keyboard/assistive qualification remains open",
       "No file:// offline, OS egress, device, assistive, model/reference or classroom acceptance",
       "Screenshot is ignored local evidence; not a repository/runtime dependency"
     ]
@@ -57,7 +58,7 @@
     "status": "success"
   },
   "open": [
-    "Whole-role transactional command/ledger/save-validator and seeded-market rewrite",
+    "Remaining typed setup/practice/phase/bid/timer/submission/editor coordination and coherent whole-GUI rewrite",
     "Full current-candidate browser EN/FR/tie/ten-team/timed/reveal/recovery/private-state journeys",
     "Actual file:// offline and separately observed OS egress",
     "Devices, performance, accessibility and complete reference-matched visual quality",
