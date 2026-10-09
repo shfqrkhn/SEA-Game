@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-HdIKGJz036RCEWzMBOV8sU6OegNXA9C24KDJdrCBhDc='; script-src-attr 'none'; style-src 'unsafe-inline'; img-src 'self' file: https://shfqrkhn.github.io/SEA-Game/assets/v1/; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-EonAHmop6gLjmg3Nb3JlAvB8hXuQ855h7UKyEtEYiww='; script-src-attr 'none'; style-src 'unsafe-inline'; img-src 'none'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#252a27">
 <title>Systems Engineering Awareness</title>
@@ -476,6 +476,9 @@ main{max-width:1440px;padding:12px 18px 24px}
  main>.foot{grid-column:1/-1}
 }
 @media print{main{display:block}.sea3d-workshop{display:none!important}}
+
+/* Embedded vector illustrations are for print; the screen game is 3D only. */
+@media screen{.art{display:none!important}}
 </style>
 </head>
 <body>
@@ -487,7 +490,7 @@ main{max-width:1440px;padding:12px 18px 24px}
 <div id="storageNotice" class="notice bad hidden" role="status"></div><div id="backupStatus" class="notice info hidden" role="status" aria-live="polite"></div><div class="status"><span class="badge">v3.0.0-local</span><span id="vehicleBadge" class="badge"></span><span class="badge" data-i18n="role"></span><span id="phaseBadge" class="badge"></span><span id="sessionBadge" class="badge"></span></div>
 <main id="mainContent">
 <section id="sea3dWorkshop" class="sea3d-workshop" aria-labelledby="sea3d-title">
- <div class="sea3d-heading"><h2 id="sea3d-title">3D vehicle workshop</h2><label class="sea3d-mode"><input id="sea3dToggle" type="checkbox"><span id="sea3d-toggle">Use 2D artwork</span></label></div>
+ <div class="sea3d-heading"><h2 id="sea3d-title">3D vehicle workshop</h2></div>
  <div class="sea3d-toolbar">
   <label><span id="sea3d-team">Team</span><select id="sea3dTeam"></select></label>
   <label><span id="sea3d-object">Inspect</span><select id="sea3dObject"></select></label>
@@ -710,25 +713,11 @@ function vehiclePreview(id){
  const rows=Object.entries(MISSIONS[id].req).map(([k,v])=>`<tr><td>${esc(LABELS[k][lang][0])}</td><td>${v} ${esc(LABELS[k][lang][1])}</td></tr>`).join("");
  return `<div class="vehicle-preview"><div class="art vehicle-art">${art({id:MISSION_ARTWORK[id],title:{en:MISSIONS[id].en,fr:MISSIONS[id].fr}})}</div><p>${esc(t("vehicle."+id+".desc"))}</p><details><summary>${esc(t("vehicle.requirements"))}</summary><table class="req"><tbody>${rows}</tbody></table></details><p><strong>${esc(t("vehicle.rated"))}</strong><br>${esc(t("vehicle."+id+".rated"))}</p></div>`;
 }
-function placeholderArt(card){const svg=BUILTIN_CARD_ART[card.id]||'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 360" role="img"><rect width="1200" height="360" fill="#f4f2ed"/><text x="600" y="188" text-anchor="middle" font-family="Arial,sans-serif" font-size="32" fill="#3f4a45">'+esc(card.title[lang])+'</text></svg>';return svg.replace(/<svg\b[^>]*>/,opening=>opening.replace(/\saria-label="[^"]*"/,'').replace('>',` aria-label="${esc(card.title[lang])}">`))}
-
-function art(card){
- const fallback=placeholderArt(card);
- if(!Object.prototype.hasOwnProperty.call(BUILTIN_CARD_ART,card.id))return fallback;
- const path=artworkAssetPath(card.id);if(!path)return fallback;
- const local='./assets/v1/'+path;
- const remote=/^https?:$/.test(location.protocol)&&typeof location.href==='string'?new URL(local,location.href).href:'https://shfqrkhn.github.io/SEA-Game/assets/v1/'+path;
- const initial=(navigator.onLine===false||location.protocol==='file:')?local:remote;
- return `<div style="height:100%;width:100%;position:relative">${fallback}<img alt="${esc(card.title[lang])}" decoding="async" src="${initial}" data-sea-art="${esc(card.id)}" data-sea-art-remote="${initial===remote?'1':'0'}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:0;background:#f0ede5"></div>`;
+function embeddedArt(card){
+ const svg=BUILTIN_CARD_ART[card.id];if(!svg)return '';
+ return svg.replace(/<svg\b[^>]*>/,opening=>opening.replace(/\saria-label="[^"]*"/,'').replace('>',` aria-label="${esc(card.title[lang])}">`));
 }
-
-let artworkEventsBound=false;
-function bindArtworkEvents(){
- if(artworkEventsBound)return;artworkEventsBound=true;
- const validImage=image=>image?.tagName==='IMG'&&image.isConnected&&Object.prototype.hasOwnProperty.call(BUILTIN_CARD_ART,image.dataset?.seaArt)&&artworkAssetPath(image.dataset.seaArt);
- document.addEventListener('load',event=>{if(validImage(event.target))event.target.style.opacity='1'},true);
- document.addEventListener('error',event=>{const image=event.target,path=validImage(image);if(!path)return;if(image.dataset.seaArtRemote==='1'){image.style.opacity='0';image.dataset.seaArtRemote='0';image.src='./assets/v1/'+path}else image.remove()},true);
-}
+function art(card){return embeddedArt(card)}
 
 var SEAThree=(()=>{var no=Object.defineProperty;var Wh=Object.getOwnPropertyDescriptor;var Xh=Object.getOwnPropertyNames;var qh=Object.prototype.hasOwnProperty;var Yh=(i,t)=>{for(var e in t)no(i,e,{get:t[e],enumerable:!0})},Zh=(i,t,e,n)=>{if(t&&typeof t=="object"||typeof t=="function")for(let s of Xh(t))!qh.call(i,s)&&s!==e&&no(i,s,{get:()=>t[s],enumerable:!(n=Wh(t,s))||n.enumerable});return i};var Jh=i=>Zh(no({},"__esModule",{value:!0}),i);var m0={};Yh(m0,{mount:()=>p0});/**
  * @license
@@ -4973,13 +4962,13 @@ function sea3DView(s,role,selected,language,setupMission){
 }
 function sea3DStart(role){
  const host=document.getElementById('sea3dViewport');if(!host||typeof host.appendChild!=='function'||typeof requestAnimationFrame!=='function')return;
- const ui={en:{title:'3D vehicle workshop',object:'Inspect',team:'Team',vehicle:'Mission vehicle',configuration:'Vehicle and purchased equipment',reset:'Reset view',front:'Front',rear:'Rear',toggle:'Use 2D artwork',fallback:'3D unavailable. The game remains playable with 2D artwork.',hint:'Drag to orbit; scroll or pinch to zoom. Stations show the latest purchase per category; all owned cards remain inspectable. Game statistics and rules remain authoritative.',waiting:'Choose a mission to preview its vehicle.'},fr:{title:'Atelier de véhicules 3D',object:'Inspecter',team:'Équipe',vehicle:'Véhicule de mission',configuration:'Véhicule et équipements achetés',reset:'Réinitialiser la vue',front:'Avant',rear:'Arrière',toggle:'Illustrations 2D',fallback:'3D indisponible. Le jeu reste jouable avec les illustrations 2D.',hint:'Glissez pour tourner; défilez ou pincez pour zoomer. Les postes montrent le dernier achat de chaque catégorie; chaque carte achetée reste consultable. Les statistiques et règles font autorité.',waiting:'Choisissez une mission pour voir son véhicule.'}};
- let runtime=null,signature='',queued=false,enabled=true,failed=false,selection='',lastPhase='',lastCurrent='',selectedTeam='';
+ const ui={en:{title:'3D vehicle workshop',object:'Inspect',team:'Team',vehicle:'Mission vehicle',configuration:'Vehicle and purchased equipment',reset:'Reset view',front:'Front',rear:'Rear',fallback:'3D could not start. Game controls remain available.',hint:'Drag to orbit; scroll or pinch to zoom. Stations show the latest purchase per category; all owned cards remain inspectable. Game statistics and rules remain authoritative.',waiting:'Choose a mission to preview its vehicle.'},fr:{title:'Atelier de véhicules 3D',object:'Inspecter',team:'Équipe',vehicle:'Véhicule de mission',configuration:'Véhicule et équipements achetés',reset:'Réinitialiser la vue',front:'Avant',rear:'Arrière',fallback:'La 3D n’a pas démarré. Les commandes du jeu restent disponibles.',hint:'Glissez pour tourner; défilez ou pincez pour zoomer. Les postes montrent le dernier achat de chaque catégorie; chaque carte achetée reste consultable. Les statistiques et règles font autorité.',waiting:'Choisissez une mission pour voir son véhicule.'}};
+ let runtime=null,signature='',queued=false,failed=false,selection='',lastPhase='',lastCurrent='',selectedTeam='';
  const get=id=>document.getElementById(id),objects=get('sea3dObject'),teams=get('sea3dTeam');
  function fail(){failed=true;document.body.classList.remove('sea3d-active');get('sea3dStatus').textContent=ui[lang].fallback;host.hidden=true;}
  function option(select,value,label){const e=document.createElement('option');e.value=value;e.textContent=label;select.appendChild(e);}
  function sync(){queued=false;try{
-   const labels=ui[lang]||ui.en;for(const key of ['title','object','team','reset','front','rear','toggle','hint'])get('sea3d-'+key).textContent=labels[key];host.setAttribute('aria-label',labels.title);
+   const labels=ui[lang]||ui.en;for(const key of ['title','object','team','reset','front','rear','hint'])get('sea3d-'+key).textContent=labels[key];host.setAttribute('aria-label',labels.title);
    const view=sea3DView(state,role,selectedTeam,lang,get('vehicleSelect')?.value);
    teams.replaceChildren();view.teams.forEach(x=>option(teams,String(x.id),labels.team+' '+x.id));teams.value=String(view.teamId||'');teams.closest('label').hidden=role!=='instructor'||view.teams.length<2;
    const choices=[['vehicle',labels.vehicle],['configuration',labels.configuration]];
@@ -4987,7 +4976,7 @@ function sea3DStart(role){
    if(view.phase!==lastPhase){selection=view.current?'part:'+view.current.id:['build','submit','debrief','closed'].includes(view.phase)?'configuration':'vehicle';lastPhase=view.phase;}
    if(view.current&&view.current.id!==lastCurrent)selection='part:'+view.current.id;lastCurrent=view.current?.id||'';
    if(!choices.some(c=>c[0]===selection))selection='vehicle';objects.replaceChildren();choices.forEach(c=>option(objects,...c));objects.value=selection;
-   const next=JSON.stringify([view,selection]);if(failed){fail();return;}if(!enabled){document.body.classList.remove('sea3d-active');host.hidden=true;return;}
+   const next=JSON.stringify([view,selection]);if(failed){fail();return;}
    if(!runtime){host.hidden=false;runtime=SEAThree.mount(host,fail);}
    host.hidden=false;document.body.classList.add('sea3d-active');get('sea3dStatus').textContent=view.current&&selection==='part:'+view.current.id?view.current.title:labels.vehicle;
    if(next!==signature){runtime.update(view,selection);signature=next;}
@@ -4995,7 +4984,6 @@ function sea3DStart(role){
  function queue(){if(!queued){queued=true;requestAnimationFrame(sync);}}
  objects.addEventListener('change',()=>{selection=objects.value;queue();});teams.addEventListener('change',()=>{selectedTeam=teams.value;signature='';queue();});
  for(const key of ['reset','front','rear'])get('sea3d-'+key).addEventListener('click',()=>runtime?.view(key));
- get('sea3dToggle').addEventListener('change',e=>{enabled=!e.target.checked;signature='';queue();});
  host.addEventListener('sea3drestored',()=>{failed=false;signature='';queue();});
  document.addEventListener('click',queue);document.addEventListener('change',queue);document.addEventListener('input',queue);
  window.addEventListener('pagehide',()=>runtime?.dispose(),{once:true});
@@ -5293,7 +5281,6 @@ $('#restorePreviousBtn').onclick=restorePreviousBackup;
 $('#startNewSessionBtn').onclick=startNewSession;
 $('#backupFile').onchange=e=>{const file=e.target.files?.[0];e.target.value='';readBackupFile(file)};
 $("#langBtn").onclick=()=>setLang(lang==="en"?"fr":"en");
-bindArtworkEvents();
 if(restoreState()){$("#sessionInput").value=state.sessionCode;populateTeamSelect(state.sessionCode);$("#teamSelect").value=String(state.teamId);$("#joinStatus").className="notice good";$("#joinStatus").textContent=t("setup.recovered");phase(state.phase)}else{$("#joinStatus").textContent=safeSessionStorage()?t("setup.waiting"):t("setup.noStorage");phase("setup")}
 renderAll();
 
