@@ -1,7 +1,0 @@
-{
-  "identity": "cards/SA-B",
-  "inputSha256": "b3bf628f99d4440cf392a054729d6e8e941d71e07b4b20e28f8076105ab4359c",
-  "path": "C:\\Users\\user\\.codex\\generated_images\\01a11d09-97df-7000-a3e7-a4b9bfcb4add\\exec-106890d0-7ff8-47d6-8807-e2898ecadcfb.png",
-  "prompt": "Precise artwork repair of SEA Game cards/SA-B. Findings: Thin top/bottom frame.. Remove unwanted white edge borders, grid dividers and fragments from neighboring panels. Restore any missing focal subject edges, antennas, barrels or equipment through coherent reconstruction. Preserve the original subject identity, recognizable geometry, component count, arrangement, colors, realistic detail and lighting. Show the complete standalone equipment/vehicle with all protrusions and cables visible. Blend the hard portrait-panel backdrop seamlessly into a continuous matching beige studio background. Use one opaque wide 3:1 landscape canvas with generous safe margins around all focal content. No grid sheet, no neighboring assets, no new objects or text. Do not crop tighter. Clean coherent realistic game artwork.",
-  "tool": "built-in image_gen"
-}

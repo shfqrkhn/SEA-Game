@@ -4,6 +4,22 @@ import {prepareInspection,prepareCutaway,fitPerspective,fitDirectionalShadow} fr
 import {createMission,createPart,createConfiguration,MISSION_IDS,MODEL_IDS} from '../../source/three/game-models.mjs';
 import {materials,FinishMaterial,SURFACE_PROFILES} from '../../source/three/materials.mjs';
 const finishes=materials();
+// Regression from the actual selected-Team-2 assembled build: running gear
+// must not ghost the hull or install a second cab behind the rear bumper.
+{
+ const root=createConfiguration('TROOP',[{id:'MOB-G'},{id:'PRO-D'}]);root.updateMatrixWorld(true);
+ root.traverse(o=>{if(o.isMesh&&o.name==='hull shell'&&o.material.name!=='optical glass')assert.equal(o.material.opacity,1,'Assembled purchased hardware keeps carrier skins opaque');});
+ assert.equal(root.getObjectByName('crew cell chassis extension'),undefined,'Reinforced crew cell fits the existing cab, without aft-cab extension');
+}
+for(const mission of MISSION_IDS)for(const v of 'ABCDEFG'){
+ const root=createConfiguration(mission,[{id:'CAP-'+v},{id:'MOB-'+v},{id:'PRO-'+v}]);root.updateMatrixWorld(true);let wheels=0;root.traverse(o=>{if(o.name==='run-flat wheel')wheels++;if(o.isMesh&&o.name==='hull shell'&&o.material.name!=='optical glass')assert.equal(o.material.opacity,1,'Assembled skins remain opaque');});assert.equal(wheels,root.userData.axles*2,mission+' installed running gear retains actual wheel topology');
+ const cap=root.getObjectByName('CAP-'+v),d=root.userData.length||6.25,start=-d/2+.28,end=mission==='RECOVERY'?-.58:d/2-2.65,top=mission==='RECOVERY'?2.80:2.36;
+ const b=new THREE.Box3().setFromObject(cap,true);assert(b.min.x>=start-1e-5&&b.max.x<=end+1e-5&&b.max.y<=top,mission+' fitted CAP seats and floor remain within carrier zone');let count=0;cap.traverse(o=>{if(o.name==='crew seat cushion')count++;});assert.equal(count,cap.userData.fittedSeatCount);
+ const floor=cap.getObjectByName('fitted capacity carrier floor'),hull=root.getObjectByName(mission==='RECOVERY'?'formed load deck':'lower hull'),feet=[];cap.traverse(o=>{if(o.name==='fitted capacity floor bearing foot')feet.push(o);});for(const foot of feet){const b=new THREE.Box3().setFromObject(foot,true),c=b.getCenter(new THREE.Vector3()),hit=new THREE.Raycaster(new THREE.Vector3(c.x,b.min.y+.001,c.z),new THREE.Vector3(0,-1,0),0,.02).intersectObject(hull,false)[0];assert(hit&&Math.abs(hit.point.y-b.min.y)<1e-6,'CAP bearing foot meets actual carrier');assert(new THREE.Box3().setFromObject(floor,true).intersectsBox(b),'CAP foot supports fitted floor');}
+}
+{
+ const owned=[{id:'CAP-A'},{id:'CAP-C'},{id:'PRO-D'},{id:'PRO-G'},{id:'MOB-B'},{id:'MOB-G'},{id:'SE-A'}],before=JSON.stringify(owned),root=createConfiguration('TROOP',owned);assert.equal(JSON.stringify(owned),before);assert.deepEqual(root.userData.authoritativePurchaseIds,owned.map(p=>p.id));assert.deepEqual(root.userData.purchaseSources.CAP,['CAP-A','CAP-C']);assert.deepEqual(root.getObjectByName('MOB-G').userData.contributingPurchasedIds,['MOB-B','MOB-G']);assert.equal(root.userData.installed.PRO,'PRO-G');assert(root.getObjectByName('CAP-C').userData.representativeOnly);
+}
 // Empty carrier shells used to expose the bare lower-hull slab. Probe the actual
 // assembled rear floor surface rather than merely requiring a furniture name.
 for(const id of ['TROOP','COMMAND','RECCE']){
@@ -251,27 +267,26 @@ for(const id of ['PRO-D','PRO-G']){
 }
 console.log('PRO-D/G exterior window gasket visibility: straight/corner lands on both sides PASS');
 
-// Purchased cells must bear on the actual carrier geometry, not a nominal
-// bounding volume or a floor hovering above disconnected mounting feet.
+// Fitted reinforced cab feet now bear on the actual existing carrier floor,
+// replacing the former test which endorsed a detached cab/chassis extension.
 let bearingFaces=0;
 for(const mission of MISSION_IDS){
  const root=createConfiguration(mission,[{id:'PRO-D'}]);root.updateMatrixWorld(true);
- const extension=root.getObjectByName('crew cell chassis extension');
- assert(extension,mission+' requires connected crew-cell carrier support');
- const shoes=[];root.traverse(o=>{if(o.name==='crew cell attachment shoe')shoes.push(o);});
+ assert.equal(root.getObjectByName('crew cell chassis extension'),undefined);
+ const shoes=[];root.traverse(o=>{if(o.name==='fitted cab frame bearing foot')shoes.push(o);});
  assert.equal(shoes.length,4,mission+' requires exactly four physical shoes');
  for(const shoe of shoes){
   const b=new THREE.Box3().setFromObject(shoe,true),center=b.getCenter(new THREE.Vector3());
   const ray=new THREE.Raycaster(new THREE.Vector3(center.x,b.min.y+.001,center.z),new THREE.Vector3(0,-1,0),0,.012);
-  const hit=ray.intersectObject(extension,true)[0];
+  const receivers=[];root.traverse(o=>{if(['cab floor mat','cab floor','fitted cab lower-hull bearing rail'].includes(o.name))receivers.push(o);});const hit=ray.intersectObjects(receivers,false)[0];
   assert(hit,mission+' shoe lacks an actual carrier bearing face');
   assert(Math.abs(hit.point.y-b.min.y)<1e-6,mission+' shoe does not touch carrier');
-  assert(['crew cell carrier shoe crossmember','crew cell carrier extension rail'].includes(hit.object.name),mission+' false bearing on other hardware');
+  assert(['cab floor mat','cab floor','fitted cab lower-hull bearing rail'].includes(hit.object.name),mission+' false bearing on other hardware');
   bearingFaces++;
  }
 }
 assert.equal(bearingFaces,24);
-console.log('All six purchased PRO-D carriers: 24 actual shoe bearing-face contacts PASS');
+console.log('All six fitted PRO-D cabs: 24 existing-floor bearing contacts, no aft-cab extension PASS');
 
 // Follow-up source review found millimetre gaps at the actual coolant tank and
 // manifold flanges. Probe individual physical faces in all engine variants.

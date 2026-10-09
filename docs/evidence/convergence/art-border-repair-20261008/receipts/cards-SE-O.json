@@ -1,7 +1,0 @@
-{
-  "identity": "cards/SE-O",
-  "inputSha256": "617b66d36cb7489ed46cd7e46d4732d4f4e8c61582044b22919b5156c2df4bc9",
-  "path": "C:\\Users\\user\\.codex\\generated_images\\01a11d09-97df-7000-a3e7-a4b9bfcb4add\\exec-7c2a5891-2131-42be-8b6e-81f227a46771.png",
-  "prompt": "Precise artwork repair of SEA Game cards/SE-O. Findings: Thin bottom frame.; Stacked-paper composition reaches left edge; distinguish intentional overlap from clipped focal material.. Remove unwanted white edge borders, grid dividers and fragments from neighboring panels. Restore any missing focal subject edges, antennas, barrels or equipment through coherent reconstruction. Preserve the original subject identity, recognizable geometry, component count, arrangement, colors, realistic detail and lighting. Preserve the meaning and relationships of this systems-engineering scene/diagram, its symbols, chart structure and intentional contextual composition. Keep all focal icons and equipment complete. Do not remove intentional diagram lines or add new labels. Use one opaque wide 3:1 landscape canvas with generous safe margins around all focal content. No grid sheet, no neighboring assets, no new objects or text. Do not crop tighter. Clean coherent realistic game artwork.",
-  "tool": "built-in image_gen"
-}

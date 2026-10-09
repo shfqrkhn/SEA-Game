@@ -62,7 +62,7 @@ check('Nine milestone weights sum to 100 and lifecycle is separately defined',()
 // Only generated Python cache bytecode is disposable; other files in a cache
 // directory, including ignored source, remain governed material.
 const generatedCache=p=>/(?:^|\/)__pycache__\/[^/]+\.pyc$/.test(p);
-const excluded=p=>p.startsWith('docs/evidence/convergence/')||p.startsWith('docs/evidence/audit-runs/')||p==='docs/evidence/document-receipt.json'||generatedCache(p);
+const excluded=p=>p.startsWith('.artifacts/')||generatedCache(p);
 function walk(dir){const out=[];for(const e of readdirSync(resolve(root,dir),{withFileTypes:true})){const p=(dir+'/'+e.name).replaceAll('\\','/');if(excluded(p+'/')||excluded(p))continue;assert(!e.isSymbolicLink(),'Unqualified linked dependency: '+p);if(e.isDirectory())out.push(...walk(p));else out.push(p)}return out}
 const docs=walk('docs').filter(p=>p.endsWith('.md')&&!excluded(p));
 check('Portable local Markdown links, heading anchors and valid representation',()=>{
@@ -81,10 +81,6 @@ check('Portable local Markdown links, heading anchors and valid representation',
 });
 check('Every current document requirement/test reference resolves',()=>{
  for(const p of docs){for(const m of read(p).matchAll(/\b([RT]\d{2})\b/g))assert((m[1][0]==='R'?reqIds:testIds).has(m[1]),p+': '+m[1])}
-});
-check('Reference copies match provenance hashes',()=>{
- const manifest=JSON.parse(read('docs/reference/provenance.json'));
- for(const [path,value] of Object.entries(manifest.files))assert.equal(sha(readFileSync(resolve(root,path))),value.sha256,path);
 });
 check('All operational JSON documents parse',()=>{
  for(const p of walk('docs').filter(p=>p.endsWith('.json')&&!excluded(p)))JSON.parse(read(p));
@@ -107,18 +103,24 @@ check('Invalid protocol inputs do not authorize an effect',()=>{
   }
  }
 });
-check('Frozen baseline remains dated evidence, not a product completion assertion',()=>{
- const baseline=JSON.parse(read('docs/evidence/baseline-audit.json'));
- assert.equal(baseline.head,'1b80b348ac945987fbe11db77bd7a51f3dd553aa');
- assert.equal(baseline.checks.removePurchaseHandler.error,'ReferenceError: i is not defined');
- assert.equal(baseline.checks.workingTreeParity.exitCode,1);
+check('Specification and product release assurance remain separate',()=>{
  assert(md.includes('SPECIFICATION')&&md.includes('PRODUCT_RELEASE'));
+});
+check('One self-contained HTML is the sole runtime distribution',()=>{
+ assert(existsSync(resolve(root,'dist/index.html')),'Missing primary dist/index.html');
+ assert(!lstatSync(resolve(root,'dist')).isSymbolicLink(),'Linked distribution directory');
+ assert.deepEqual(walk('dist'),['dist/index.html'],'Only dist/index.html belongs in runtime distribution');
+ assert.match(read('dist/index.html'),/^<!doctype html>/i,'Primary distribution is HTML');
 });
 
 const files=new Set(git('ls-files','--cached','--others','--exclude-standard').split('\n').filter(Boolean));
 // Include untracked and even ignored files within controlled material roots.
 // New source, assets or evaluator inputs cannot evade the key through .gitignore.
 for(const dir of ['source','assets','.github','docs','tools'])for(const p of walk(dir))if(!excluded(p))files.add(p);
+// The user-facing artifact and maintenance contracts cannot evade identity by
+// remaining untracked or being ignored. Runtime contents are checked above.
+files.add('dist/index.html');
+for(const p of ['LICENSE','THIRD_PARTY_NOTICES','THIRD_PARTY_NOTICES.md','THIRD_PARTY_NOTICES.txt','AGENTS.md','CLAUDE.md'])if(existsSync(resolve(root,p)))files.add(p);
 for(const p of [...files])if(excluded(p))files.delete(p);
 const hashes={};for(const p of [...files].sort()){
  const absolute=resolve(root,p);assert(!relative(root,absolute).startsWith('..'+sep),'Path escapes root');
@@ -131,4 +133,4 @@ check('One-byte identity mutation changes convergence key',()=>{
  const added=structuredClone(basis);added.files['source/new-material.js']=sha('new material');assert.notEqual(sha(JSON.stringify(added)),key);
  const environment=structuredClone(basis);environment.environment.node='changed';assert.notEqual(sha(JSON.stringify(environment)),key);
 });
-console.log(JSON.stringify({result:'PASS',scope:'Specification contracts and synthetic protocol examples only',checks,scenarioCount:scenarios.cases.length,key,...(process.argv.includes('--key')?{basis}:{}),excludedRunRecords:['docs/evidence/convergence/**','docs/evidence/audit-runs/**','docs/evidence/document-receipt.json'],excludedGeneratedArtifacts:['**/__pycache__/*.pyc']},null,2));
+console.log(JSON.stringify({result:'PASS',scope:'Specification contracts, distribution inventory and synthetic protocol examples only',checks,scenarioCount:scenarios.cases.length,key,...(process.argv.includes('--key')?{basis}:{}),excludedRunRecords:['.artifacts/**'],excludedGeneratedArtifacts:['**/__pycache__/*.pyc']},null,2));

@@ -2,6 +2,8 @@
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {runInNewContext} from 'node:vm';
+import {generateArtifacts} from './build.mjs';
+const generated=generateArtifacts();
 const source=readFileSync(new URL('../source/shared/presentation.js',import.meta.url),'utf8');
 const engine=readFileSync(new URL('../source/shared/engine.js',import.meta.url),'utf8');
 const ids=runInNewContext(engine+'\n[...CARD_INDEX.keys(),"TRAIN-CAP",...Object.values(MISSION_ARTWORK)]');
@@ -12,7 +14,7 @@ for(const href of ['https://shfqrkhn.github.io/SEA-Game/SEA_Student_Standalone.h
 }
 assert.doesNotMatch(source,/function bindArtworkEvents|data-sea-art|new URL\(|navigator\.onLine/,'No external image loading/failure chain');
 for(const role of ['Instructor','Student']){
- const html=readFileSync(new URL('../SEA_'+role+'_Standalone.html',import.meta.url),'utf8');
+ const html=generated.get('SEA_'+role+'_Standalone.html');
  const markup=html.replace(/<script>[\s\S]*?<\/script>/g,'');
  assert.doesNotMatch(markup,/<(?:script|img|link)[^>]+(?:src|href)=/,'No external runtime resource element');
  assert.doesNotMatch(markup,/sea3dToggle/,'No alternative 2D mode');

@@ -1,5 +1,7 @@
 # SEA Game session backup and recovery EN and FR
 
+Current delivery checkpoint: see [handover](HANDOVER.md). Primary next distribution is one dist/index.html with deliberate role selection; exports/imports remain matching-role private JSON. Published3.5 evidence is limited, built 3.6 candidate qualification is pending.
+
 This guide describes the current candidate workflow. The export/import controls still need browser and classroom acceptance before this guide can be treated as an approved operating procedure.
 
 Read the English instructions below or the [French recovery instructions](#français). Both describe the same candidate; French-language and actual recovery acceptance remain outstanding.
@@ -14,7 +16,7 @@ Use synthetic classroom details only. Do not save personal, Protected, Classifie
 
 ## Export during play
 
-Use **Export backup** in the app header. The app requests a JSON download. Check that the file appears in the browser's download list and can be found before relying on it. A download request does not prove the browser saved a file.
+Choose **Help/save**, then **Export backup**. The app requests a JSON download. Check that the file appears in the browser's download list and can be found before relying on it. A download request does not prove the browser saved a file.
 
 Export before scored play, after each completed round, before changing devices or tabs, and before closing the session. Store instructor and student files separately in a private location. The filename identifies the role and date but not the team or session; add any needed label only in a private location.
 
@@ -50,7 +52,7 @@ After closing a session, use **Start a new session** in the Closed screen and co
 
 ## Acceptance still required
 
-This candidate flow has deterministic schema, handler and production save/restore/rescue boundary tests. The boundary tests preserve corrupt stored bytes, model denied storage and verify instructor timer/privacy recovery; they do not prove real browser storage or completed downloads. It has not yet been accepted in supported browsers, local-file mode, offline mode, assistive technology, or a real classroom. Verify export and re-import at setup, auction, build, submission, debrief, and closed phases; corrupt/oversize/wrong-role/newer-schema files; denied/quota storage; cancellation and interrupted downloads; previous-session restore; open-timer pause; device handoff; and rollback before approving this guide for classroom use.
+This candidate flow has deterministic schema, handler and production save/restore/rescue boundary tests. The boundary tests preserve corrupt stored  bytes, model denied storage and verify instructor timer/privacy recovery; they do not prove real browser storage or completed downloads. It has not yet been accepted in supported browsers, local-file mode, offline mode, assistive technology, or a real classroom. Verify export and re-import at setup, auction, build, submission, debrief, and closed phases; corrupt/oversize/wrong-role/newer-schema files; denied/quota storage; cancellation and interrupted downloads; previous-session restore; open-timer pause; device handoff; and rollback before approving this guide for classroom use.
 
 ## Français
 

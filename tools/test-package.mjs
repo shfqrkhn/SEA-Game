@@ -4,11 +4,13 @@ import {mkdtempSync,mkdirSync,writeFileSync,readFileSync,rmSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {createHash} from 'node:crypto';
-import {packageKey,verifyPacket} from './package.mjs';
+import {fileURLToPath} from 'node:url';
+import {packageKey,verifyPacket,createPacket} from './package.mjs';
 const root=mkdtempSync(join(tmpdir(),'sea-packet-test-'));
 try{
- const files={'SEA_Instructor_Standalone.html':createHash('sha256').update('instructor').digest('hex'),'source/student.js':createHash('sha256').update('student').digest('hex')},key=packageKey(files);
- mkdirSync(join(root,'material/source'),{recursive:true});writeFileSync(join(root,'material/SEA_Instructor_Standalone.html'),'instructor');writeFileSync(join(root,'material/source/student.js'),'student');
+ for(const output of [root,fileURLToPath(new URL('../.artifacts',import.meta.url)),fileURLToPath(new URL('../.artifacts/nested/packet',import.meta.url))])assert.throws(()=>createPacket(output),/new direct child under \.artifacts/,'Packet output must remain inside the local direct-child boundary');
+ const files={'dist/index.html':createHash('sha256').update('game').digest('hex'),'source/student.js':createHash('sha256').update('student').digest('hex')},key=packageKey(files);
+ mkdirSync(join(root,'material/source'),{recursive:true});mkdirSync(join(root,'material/dist'),{recursive:true});writeFileSync(join(root,'material/dist/index.html'),'game');writeFileSync(join(root,'material/source/student.js'),'student');
  const manifest={format:'SEA-CANDIDATE-PACKET',version:1,status:'UNQUALIFIED_CANDIDATE',releaseAuthorized:false,fullClosurePasses:0,key,files};
  const save=()=>writeFileSync(join(root,'packet.json'),JSON.stringify(manifest));save();
  assert.equal(verifyPacket(root,key).fileCount,2);

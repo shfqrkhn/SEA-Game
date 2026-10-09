@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Local candidate snapshot/integrity only; never a release authorizer.
-import {readFileSync,writeFileSync,mkdirSync,readdirSync,lstatSync} from 'node:fs';
+import {readFileSync,writeFileSync,mkdirSync,readdirSync,lstatSync,existsSync} from 'node:fs';
 import {resolve,relative,dirname,sep,isAbsolute} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {createHash} from 'node:crypto';
@@ -38,8 +38,11 @@ export function verifyPacket(directory,expectedKey){
  return {result:'PASS',key,fileCount:Object.keys(manifest.files).length,scope:'Exact candidate packet bytes only; no release acceptance'};
 }
 export function createPacket(output){
- const destination=resolve(output),allowed=resolve(root,'docs/evidence/convergence'),location=relative(allowed,destination);
- if(!location||isAbsolute(location)||location.includes(sep)||location==='..'||resolve(allowed,location)!==destination||lstatSync(allowed).isSymbolicLink())fail('Output must be a new direct child under docs/evidence/convergence');
+ const destination=resolve(output),allowed=resolve(root,'.artifacts'),location=relative(allowed,destination);
+ if(!location||isAbsolute(location)||location.includes(sep)||location==='..'||resolve(allowed,location)!==destination)fail('Output must be a new direct child under .artifacts');
+ if(existsSync(allowed)&&lstatSync(allowed).isSymbolicLink())fail('Linked artifact output directory');
+ mkdirSync(allowed,{recursive:true});
+ if(lstatSync(allowed).isSymbolicLink())fail('Linked artifact output directory');
  execFileSync(process.execPath,[resolve(root,'tools/build.mjs'),'--check'],{cwd:root,stdio:'pipe'});
  const checkpoint=JSON.parse(execFileSync(process.execPath,[resolve(root,'tools/check-mpes.mjs'),'--key'],{cwd:root,encoding:'utf8'}));
  const files=checkpoint.basis.files,key=packageKey(files);

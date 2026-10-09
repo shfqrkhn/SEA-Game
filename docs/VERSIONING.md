@@ -1,6 +1,6 @@
 # Game version and change scale
 
-`APP.version` in `source/shared/engine.js` is the single game-version authority. The build inserts it into both standalone badges; backup envelopes carry the same value. Git commits and artifact hashes identify exact bytes within that version. A version number is not release acceptance.
+`APP.version` in `source/shared/engine.js` is the single game-version authority. The build inserts it into both selected-role badges; backup envelopes carry the same value. Git commits and artifact hashes identify exact bytes within that version. A version number is not release acceptance.
 
 Increment before publishing a changed candidate:
 
@@ -10,27 +10,12 @@ Increment before publishing a changed candidate:
 
 Use the largest change in the publication batch. Evidence-only documentation changes do not increment game bytes. Never renumber historical evidence or silently change rules/deck/schema with an app-version bump. Ruleset, deck, save schema and backup envelope version remain separate identities; preserve storage keys for compatible updates so existing sessions survive.
 
-## Candidate history
+## Current candidate identity
 
-| Version | Scope | Compatibility and qualification |
-| --- | --- | --- |
-| 3.0.0-local | Previous embedded Three.js development candidates | Historical identity; schema3, STANDARD, synthetic-v1. |
-| 3.1.0 | Consolidated scene navigation and functional engine assembly/cutaway inspection; powertrain detail and auction presentation corrections | Compatible app update; rules/deck/schema/storage keys unchanged. Candidate visual, device, classroom and release acceptance remains open. |
-| 3.2.0 | Accessible per-team Build disclosure and synchronized submission status; real generic carrier glazing apertures, supported cab hardware and contoured cockpit construction | Compatible interface capability; rules/deck/schema/storage keys unchanged. Exact-candidate qualification and broader acceptance remain required. |
-
-| 3.2.1 | Chassis-connected mine roller pivots/draw arms and sloped troop ramp with actual aperture and bearing hinges | Compatible geometry refinement; canonical rules/deck/schema/storage unchanged. Actual new-candidate visual qualification remains required. |
-| 3.3.0 | Task-centered scene interface with pinned next action, six direct inspection views, direct sections, paired current auction callers and Build-summary model selection | Compatible interface capability; includes intermediate 3.2.1 geometry. Rules/deck/schema/storage unchanged. Exact browser and full device/accessibility acceptance remain required. |
-| 3.4.0 | Consolidated student current-lot task; selected instructor Build detail/model; Previous/Next native field editing with composition/stale-target guards; persistent Closed next action and compact French overview label | Compatible interface capability; rules/deck/schema/storage unchanged. Original hollow COMBAT/firepower mounts and crew roof-ring/basket geometry are integrated subject to actual visual qualification. No acceptance inferred. |
-| 3.4.1 | Correct student auction primary cue before a manually known card is loaded | Compatible presentation fix; rules/native enabled states/storage unchanged. Meaningful EN/FR actual-snapshot regression and exact-candidate browser evidence remain distinct. |
-| 3.4.2 | Isolate native editor callbacks by active editor, state identity and round/lot; revalidate deferred field navigation | Compatible stale-action fix; rules/deck/schema/storage unchanged. Focused regressions and exact published browser checks are recorded separately from full acceptance. |
-| 3.5.0 | Distinct supported rear mission interiors, Command raised roof, Troop glazing and Reconnaissance mast architecture; prerequisite-first student auction | Compatible substantial content update; installed replacements avoid duplicate role furniture. Canonical rules/deck/schema/storage unchanged; reference/GPU/device/acceptance evidence remains separately scoped. |
-
-Historical 3.3.0 source revision: `01204c8`; published candidate preview revision: `18dc0db`. Preserve these exact identities in historical records. Version 3.4.0 needs its own source/preview hashes and affected checks; the version label does not inherit 3.3.0 evidence.
-
-For each next publication, add its version, concrete change, exact source/preview identity and affected checks to the execution ledger/release notes. Bilingual badges use the same version; teaching and support evidence must bind the exact published artifacts.
+Delivered3.5.0 and planned3.6.0 are recorded with exact identities/outcomes in [handover](HANDOVER.md), [ledger](EXECUTION_LEDGER.md) and [release notes](RELEASE_NOTES.md). Version labels do not inherit old receipts. Full commit history supplies historic release changes; do not duplicate exploratory iteration logs. Primary runtime is dist/index.html; each role badge/backup uses the same APP.version.
 
 ## Disk-write constraint
 
 Project development uses finite, requested builds/tests/publications; do not start persistent watchers, local servers, recurring polling jobs or file loggers. The browser game writes a session snapshot only when its serialized bytes differ from the stored snapshot. Rendering, model rotation and the countdown do not intentionally persist on every frame/tick. Changed user input and transactions remain immediately recoverable; explicit backup exports and finite build/evidence operations still write files. This policy covers the project, not Windows, browser caches or Codex application activity.
 
-Finite build, bundle and concept-inventory generators share `tools/artifact-io.mjs` and skip writing identical outputs. Build/evidence-only changes after publication leave the game version unchanged when the application bytes are identical.
+Finite build and bundle generators share `tools/artifact-io.mjs` and skip writing identical outputs. Build/evidence-only changes after publication leave the game version unchanged when the application bytes are identical.

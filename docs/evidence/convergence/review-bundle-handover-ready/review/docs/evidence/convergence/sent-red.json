@@ -1,5 +1,0 @@
-{
-  "exitCode": 1,
-  "stdout": "",
-  "stderr": "node:internal/modules/run_main:107\r\n    triggerUncaughtException(\r\n    ^\r\n\r\nAssertionError [ERR_ASSERTION]: A29 Crash with SENT journal entry requires readback before retry.\r\n+ actual - expected\r\n\r\n+ 'EXECUTE_GRANTED_EFFECT'\r\n- 'RECONCILE_EFFECT'\r\n\r\n    at file:///D:/VSCode/SEA-Game/current/tools/check-mpes.mjs:94:10\r\n    at check (file:///D:/VSCode/SEA-Game/current/tools/check-mpes.mjs:17:25)\r\n    at file:///D:/VSCode/SEA-Game/current/tools/check-mpes.mjs:90:1\r\n    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)\r\n    at async node:internal/modules/esm/loader:647:26\r\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5) {\r\n  generatedMessage: false,\r\n  code: 'ERR_ASSERTION',\r\n  actual: 'EXECUTE_GRANTED_EFFECT',\r\n  expected: 'RECONCILE_EFFECT',\r\n  operator: 'strictEqual',\r\n  diff: 'simple'\r\n}\r\n\r\nNode.js v24.20.0\r\n"
-}

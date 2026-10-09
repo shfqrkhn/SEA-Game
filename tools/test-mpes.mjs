@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Mutation checks for the synthetic protocol model. No game/release certification.
 import assert from 'node:assert/strict';
-import {readFileSync,writeFileSync,mkdirSync,mkdtempSync,rmSync,readdirSync} from 'node:fs';
+import {readFileSync,writeFileSync,mkdirSync,mkdtempSync,rmSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import {resolve,dirname,join,relative,sep} from 'node:path';
 import {fileURLToPath} from 'node:url';
@@ -53,26 +53,31 @@ try{
   assert(relative(sandbox,target)&&!relative(sandbox,target).startsWith('..'+sep));
  mkdirSync(dirname(target),{recursive:true});writeFileSync(target,readFileSync(resolve(project,name)));
  }
- // Linked external receipts are needed for document checks but stay unkeyed.
- const records=join(sandbox,'docs/evidence/convergence');mkdirSync(records,{recursive:true});
- for(const entry of readdirSync(join(project,'docs/evidence/convergence'),{withFileTypes:true})){
-  if(entry.isFile())writeFileSync(join(records,entry.name),readFileSync(join(project,'docs/evidence/convergence',entry.name)));
- }
- // New evidence can be nested. Copy referenced receipt files without keying them
- // or copying the entire large historical packet/image collection into fixtures.
- for(const name of ['README.md',...Object.keys(checkpoint.basis.files).filter(p=>p.startsWith('docs/')&&p.endsWith('.md'))]){
-  const text=readFileSync(resolve(project,name),'utf8');
-  for(const match of text.matchAll(/\]\(([^)]+)\)/g)){
-   const href=match[1].split('#')[0];if(!href||/^[a-z]+:\/\//i.test(href))continue;
-   const input=resolve(dirname(resolve(project,name)),href),rel=relative(project,input);
-   if(!rel.startsWith('docs'+sep+'evidence'+sep+'convergence'+sep))continue;
-   const target=resolve(sandbox,rel);mkdirSync(dirname(target),{recursive:true});writeFileSync(target,readFileSync(input));
-  }
- }
  const git=(...args)=>execFileSync('git',args,{cwd:sandbox,stdio:'pipe'});
  git('init');git('add','.');git('-c','user.name=SEA test','-c','user.email=sea-test@example.invalid','commit','-m','Isolated inventory fixture');
- const inspect=()=>JSON.parse(execFileSync(process.execPath,[join(sandbox,'tools/check-mpes.mjs'),'--key'],{cwd:sandbox,encoding:'utf8'}));
+ const inspect=()=>JSON.parse(execFileSync(process.execPath,[join(sandbox,'tools/check-mpes.mjs'),'--key'],{cwd:sandbox,encoding:'utf8',stdio:'pipe'}));
  const before=inspect();
+ const artifact=join(sandbox,'.artifacts/local-run/receipt.json');
+ mkdirSync(dirname(artifact),{recursive:true});writeFileSync(artifact,'{"status":"local"}');
+ assert.equal(inspect().key,before.key,'Local run outputs must not change material identity');
+ writeFileSync(artifact,'{"status":"changed"}');assert.equal(inspect().key,before.key,'Changed run outputs must remain outside material identity');
+ inventoryCases.push('local run output creation/change leaves key unchanged');
+ // Exercise the shipped HTML even when a contributor ignores and untracks it.
+ git('rm','--cached','dist/index.html');
+ writeFileSync(join(sandbox,'.git/info/exclude'),'dist/index.html\nAGENTS.md\n');
+ assert.equal(inspect().key,before.key,'Tracking status cannot change identical distribution identity');
+ const distribution=join(sandbox,'dist/index.html'),originalDistribution=readFileSync(distribution);
+ writeFileSync(distribution,Buffer.concat([originalDistribution,Buffer.from(' ')]));
+ assert.notEqual(inspect().key,before.key,'Ignored primary distribution mutations remain material');
+ writeFileSync(distribution,originalDistribution);
+ const sibling=join(sandbox,'dist/extra.js');writeFileSync(sibling,'extra runtime');
+ assert.throws(()=>inspect(),/Only dist\/index.html belongs/,'Runtime siblings cannot silently join the distribution');rmSync(sibling);
+ inventoryCases.push('ignored primary HTML changes remain keyed; runtime siblings are rejected');
+ const contract=join(sandbox,'AGENTS.md'),originalContract=checkpoint.basis.files['AGENTS.md']?readFileSync(contract):null;
+ writeFileSync(contract,originalContract?Buffer.concat([originalContract,Buffer.from('\n')]):'Maintenance contract fixture.\n');
+ assert.notEqual(inspect().key,before.key,'Ignored root maintenance contracts remain material');
+ if(originalContract)writeFileSync(contract,originalContract);else rmSync(contract);
+ inventoryCases.push('ignored root maintenance contract creation/change changes material identity');
  const cache=join(sandbox,'tools/__pycache__/inventory-fixture.cpython-312.pyc');
  mkdirSync(dirname(cache),{recursive:true});writeFileSync(cache,'disposable bytecode A');
  const cached=inspect();assert.equal(cached.key,before.key,'Generated Python bytecode must not change material identity');

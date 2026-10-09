@@ -288,8 +288,8 @@ function engine(m,v){
  }
  if(compact)g.scale.setScalar(.78);return g;
 }
-function axle(m,{wheels=false,light=false,adaptive=false,springs=false}={}){
- const g=group('connected drive axle'),width=light?1.3:1.65,y=.44,r=light?.13:.19;
+function axle(m,{wheels=false,light=false,adaptive=false,springs=false,widthOverride=null}={}){
+ const g=group('connected drive axle'),width=widthOverride??(light?1.3:1.65),y=.44,r=light?.13:.19;
  const differential=new THREE.Mesh(new THREE.SphereGeometry(r,32,20),m.paint);differential.scale.set(1.18,1,1.05);differential.position.set(0,y,0);differential.name='cast differential housing';g.add(differential);cylinder(g,m.darkSteel,r*.90,.055,[r*.80,y,0],'x',r*.90,32);cylinder(g,m.steel,.065,.17,[r*1.2,y,0],'x');
  for(const s of [-1,1]){rod(g,m.paint,[0,y,s*.07],[0,y,s*width*.43],light?.043:.068);for(let i=0;i<5;i++)cylinder(g,m.rubber,light?.06:.09,.045,[0,y,s*(.24+i*.05)],'z',light?.06:.09,24);cylinder(g,m.steel,.16,.045,[0,y,s*width*.47],'z',.16,32);cylinder(g,m.darkSteel,.10,.10,[0,y,s*width*.46],'z');if(wheels){const w=createWheel(m);w.scale.setScalar(light?.56:.76);w.position.set(0,y,s*width*.49);g.add(w);}else{bolts(g,m.steel,[0,y,s*(width*.47+.03)],.115,8,'z',.014);}
   const z=s*width*.29;rod(g,m.edge,[-.28,y+.03,z],[.12,y+.41,z],light?.025:.043);rod(g,m.edge,[.28,y+.03,z],[.12,y+.41,z],light?.025:.043);box(g,m.edge,[.16,.095,.15],[.12,y+.43,z],'suspension upper mount');
@@ -777,11 +777,81 @@ function mineRollerMount(vehicle,m,roller){
  }
 }
 
-// Purchases occupy meaningful mounting zones; processes remain decisions, not bolted-on hardware.
-// A sectioned hull exposes seats/powertrain without claiming certified mechanical compatibility.
+// Fitted adapters use carrier datums; standalone card enclosures are deliberately
+// not copied wholesale into an already complete vehicle. Their representations
+// are illustrative and never recompute canonical inventory effects or capacity.
+function carrierDatums(vehicle){
+ const recovery=vehicle.userData.mission==='RECOVERY',length=vehicle.userData.length||6.25,width=vehicle.userData.width||2.3,front=length/2;
+ const wheels=[];vehicle.traverse(o=>{if(o.name==='run-flat wheel')wheels.push(o);});
+ return {recovery,length,width,front,rear:-front,crewStart:-front+.28,crewEnd:recovery?-.58:front-2.65,crewBase:recovery?1.64:1.4,cabFloor:recovery?1.8125:1.435,cabRoof:recovery?2.78:2.36,cabBack:recovery?.70:front-2.15,cabFront:recovery?2.30:front-.98,cabHalf:recovery?.95:.76,axles:[...new Set(wheels.map(w=>w.position.x))].sort((a,b)=>a-b),wheelY:wheels[0]?.position.y??.62,wheelZ:Math.abs(wheels[0]?.position.z??width*.44)};
+}
+function fittedCapacity(vehicle,m,id,d){
+ const part=createPart(id,m),seats=part.children.filter(o=>o.name==='supported crew seat'),keep=new Set(seats),geometry=new Set(),paint=new Set();
+ for(const o of [...part.children])if(!keep.has(o)){o.removeFromParent();o.traverse(n=>{if(n.geometry)geometry.add(n.geometry);if(n.material&&!Object.values(m).includes(n.material))paint.add(n.material);});}
+ for(const g of geometry)g.dispose();for(const p of paint)p.dispose();
+ const length=d.crewEnd-d.crewStart,center=(d.crewEnd+d.crewStart)/2,half=d.width*.34,scale=.70,rows=Math.ceil(seats.length/2),pitch=(length-.35)/rows;
+ box(part,m.edge,[length,.035,half*2],[center,d.crewBase+.0175,0],'fitted capacity carrier floor');
+ box(part,m.rubber,[length-.04,.004,half*2-.035],[center,d.crewBase+.037,0],'fitted capacity nonslip floor');
+ for(let i=0;i<seats.length;i++){const row=Math.floor(i/2),single=i===seats.length-1&&seats.length%2;seats[i].position.set(center+(row-(rows-1)/2)*pitch,d.crewBase+.039+.315*scale,single?0:(i%2?1:-1)*Math.min(.49,half-.22));seats[i].scale.setScalar(scale);}
+ for(const x of [d.crewStart+.12,d.crewEnd-.12])for(const s of [-1,1])box(part,m.castSteel,[.16,.04,.16],[x,d.crewBase+.020,s*(half-.12)],'fitted capacity floor bearing foot');
+ part.userData.fittedZone='rear crew floor';part.userData.fittedSeatCount=seats.length;return part;
+}
+function fittedProtection(vehicle,m,id,d){
+ const v=id.charCodeAt(4)-65,part=group(id);part.userData={assetId:id,illustrative:true,units:'metres',fittedZone:v===3?'existing front cab':v===6?'existing carrier skins':'carrier protective surfaces'};
+ if(v===6){
+  // Replace the original skins one-for-one: same apertures and geometry,
+  // different lightweight-shell finish, no second cabin/roof/floor envelope.
+  vehicle.updateWorldMatrix(true,true);const skins=[];vehicle.traverse(o=>{if(o.isMesh&&o.name==='hull shell')skins.push(o);});
+  for(const old of skins){const mesh=new THREE.Mesh(old.geometry.clone().applyMatrix4(old.matrixWorld),m.paint.clone());mesh.material.color.multiplyScalar(1.075);mesh.name='hull shell';mesh.userData={...old.userData,component:'fitted lightweight carrier skin'};mesh.castShadow=old.castShadow;mesh.receiveShadow=old.receiveShadow;part.add(mesh);old.removeFromParent();old.geometry.dispose();}
+ }else if(v===3){
+  for(const x of [d.cabBack,d.cabFront])for(const s of [-1,1]){
+   if(!d.recovery)box(part,m.edge,[.18,.035,.19],[x,1.4175,s*d.cabHalf],'fitted cab lower-hull bearing rail');
+   box(part,m.castSteel,[.12,.040,.12],[x,d.cabFloor+.020,s*d.cabHalf],'fitted cab frame bearing foot');
+   rod(part,m.pressedSteel,[x,d.cabFloor+.035,s*d.cabHalf],[x,d.cabRoof-.035,s*d.cabHalf],.029).name='fitted reinforced cab continuous pillar';
+  }
+  for(const s of [-1,1])box(part,m.pressedSteel,[d.cabFront-d.cabBack+.08,.05,.065],[(d.cabFront+d.cabBack)/2,d.cabRoof-.025,s*d.cabHalf],'fitted cab roof longitudinal reinforcement');
+  for(const x of [d.cabBack,d.cabFront])box(part,m.pressedSteel,[.065,.05,d.cabHalf*2+.06],[x,d.cabRoof-.025,0],'fitted cab roof transverse reinforcement');
+  const frontX=y=>d.recovery?2.94-(y-1.74)*(.47/1.01)+.012:d.front-(y-1.2)*.75/1.16;
+  const low=d.recovery?1.80:1.48,high=d.recovery?1.99:1.73,half=d.recovery?1.03:d.width*.32;
+  const skin=formedCabPanel(part,m.paint,[[-half,low],[half,low],[half-.055,high],[-half+.055,high]],[],(z,y,t)=>[frontX(y)+.004+t*.45,y,z]);skin.name='fitted reinforced cab lower front skin';skin.userData.cutawayShell=true;
+  const cockpit=vehicle.getObjectByName('driver controls');if(cockpit)cockpit.userData.reinforcedBy=id;
+ }else if(v===5){
+  for(const s of [-1,1]){formedCabPanel(part,m.paint,[[-d.length*.36,0],[d.length*.36,0],[d.length*.40,.20],[-d.length*.40,.20]],[],(x,a,t)=>[x,.83+a*.28+t*.3,s*a*3.0]).name='fitted underside protective plate';for(const x of [-d.length*.30,d.length*.30])box(part,m.edge,[.16,.14,.16],[x,.94,s*.50],'fitted underside carrier attachment');}
+ }else{
+  const a=d.recovery?1.13:d.front-1.94,b=d.recovery?2.22:d.front-1.08,low=d.recovery?1.83:1.50,high=d.recovery?2.06:1.83;
+  for(const s of [-1,1]){const side=y=>d.recovery?1.174:d.width/2*(.75+(y-1.2)*.1/1.16)+.012;
+   const skin=formedCabPanel(part,v===1?m.castSteel:m.paint,[[a,low],[b,low],[b+.035,high-.05],[b-.05,high],[a+.03,high]],[],(x,y,t)=>[x,y,s*(side(y)+t*.45)]);skin.name='fitted cab side protective panel';skin.userData.cutawayShell=true;
+  }
+ }
+ return part;
+}
+function fittedMobility(vehicle,m,id,d,discard){
+ const v=id.charCodeAt(4)-65;
+ if([1,2,3,6].includes(v)){
+  const part=group(id);part.userData={assetId:id,illustrative:true,units:'metres',fittedZone:'existing axle stations'};
+  // Retain the actual carrier wheels; adapt the upgraded mechanisms to them.
+  for(const old of [...vehicle.children])if(old.isMesh&&old.geometry.type==='CylinderGeometry'&&old.position.y<1.35&&d.axles.some(x=>Math.abs(old.position.x-x)<.35))discard(old);
+  for(const x of d.axles){const unit=axle(m,{light:v===2,adaptive:v===6,springs:[1,2,3].includes(v),widthOverride:d.wheelZ/.49});unit.position.set(x,d.wheelY-.44,0);part.add(unit);
+   for(const s of [-1,1]){const z=s*d.wheelZ/.49*.29,y=d.wheelY+.43;if(d.recovery)box(part,m.edge,[.12,1.60-y,.14],[x+.12,(1.60+y)/2,z],'fitted suspension load-deck bearing bracket');else{box(part,m.edge,[.15,.030,.16],[x+.12,.935,z],'fitted suspension chassis bearing shoe');rod(part,m.castSteel,[x+.12,.94,z],[x+.12,y,z],.030).name='fitted suspension connected chassis hanger';}}
+  }
+  return soften(part);
+ }
+ const part=createPart(id,m);part.scale.multiplyScalar(.64);part.position.set(d.front-1.13,d.recovery?.98:1.12,d.recovery?0:.37);part.userData.fittedZone='enclosed front power bay';part.userData.illustrativeFitScale=.64;
+ // A proper right-side machinery compartment replaces the passenger footwell,
+ // rather than making the complete hull transparent to expose a power pack.
+ if(!d.recovery){const cockpit=vehicle.getObjectByName('driver controls');if(cockpit){for(const o of [...cockpit.children])if(o.isMesh&&o.position.z>.25&&/seat|bolster|head restraint|restraint|bellows/.test(o.name))discard(o);for(const name of ['cab floor','dashboard','carrier supported dashboard cowl']){const o=cockpit.getObjectByName(name);if(!o)continue;if(o.geometry.type==='ExtrudeGeometry'){const p=o.geometry.parameters;o.geometry.dispose();o.geometry=new THREE.ExtrudeGeometry(p.shapes,{...p.options,depth:.84});}else{const b=new THREE.Box3().setFromObject(o),size=b.getSize(new THREE.Vector3());o.geometry.dispose();o.geometry=new RoundedBoxGeometry(size.x,size.y,size.z/2,2,Math.min(.010,size.y*.2));o.position.z=-size.z/4;}}}
+  const wall=box(vehicle,m.edge,[1.65,.74,.035],[d.front-1.15,1.77,-.015],'fitted engine crew bulkhead');wall.userData.cutawayShell=true;
+ }
+ // Bearing beams contact the carrier's lower hull/deck and the actual skid rails.
+ const base=d.recovery?1.64:1.4,skidY=part.position.y+.064*.64*(v===5?.78:1);
+ for(const s of [-1,1])box(vehicle,m.edge,[1.47,Math.abs(base-skidY)+.025,.14],[part.position.x-.12,(base+skidY)/2,part.position.z+s*.38*.64*(v===5?.78:1)],'fitted power-pack carrier bearing beam');
+ return part;
+}
+
 export function createConfiguration(mission,owned,m=materials()){
- const vehicle=createMission(mission,m),latest=new Map();owned.forEach(p=>{const id=typeof p==='string'?p:p.id;if(!MODEL_IDS.includes(id))throw new Error('Unknown 3D asset: '+id);if(!id.startsWith('SE-'))latest.set(id.split('-')[0],id);});
+ const vehicle=createMission(mission,m),latest=new Map(),sources=new Map(),purchaseIds=[];owned.forEach(p=>{const id=typeof p==='string'?p:p.id;if(!MODEL_IDS.includes(id))throw new Error('Unknown 3D asset: '+id);purchaseIds.push(id);if(!id.startsWith('SE-')){const family=id.split('-')[0];latest.set(family,id);if(!sources.has(family))sources.set(family,[]);sources.get(family).push(id);}});
  const length=vehicle.userData.length||6.25,width=vehicle.userData.width||2.3,roof=vehicle.userData.roof||2.75;
+ const datums=carrierDatums(vehicle);
  // Role furniture is a baseline illustration, never an extra purchased capacity.
  // Replace its complete rear cassette with CAP, and its electronics with COM.
  // Keep the carrier's access closure; avoid stacked floors/seats/console racks.
@@ -790,32 +860,12 @@ export function createConfiguration(mission,owned,m=materials()){
  if(latest.has('CAP')&&interior){const retained=interior.getObjectByName('command rear access assembly');if(retained){vehicle.updateWorldMatrix(true,true);vehicle.attach(retained);}discard(interior);}
  if(latest.has('COM')){const electronics=vehicle.getObjectByName('mission role electronic installation');if(electronics)discard(electronics);const obsolete=[];vehicle.traverse(o=>{if(o.userData.reservedOriginalRadioZone||o.userData.originalRoleElectronics)obsolete.push(o);});for(const o of obsolete)discard(o);}
  if(latest.has('SA')&&mission==='RECCE'){const obsolete=[];vehicle.traverse(o=>{if(o.userData.originalRoleSensor)obsolete.push(o);});for(const o of obsolete)discard(o);const cover=cylinder(vehicle,m.paint,.12,.035,[-1,2.37,-.48],'y',.12,40);cover.name='recce replaced mast port blanking cover';cover.userData.cutawayShell=true;}
- if(latest.has('CAP')||latest.has('MOB')){
-  const shells=[];vehicle.traverse(o=>{if(o.isMesh&&o.name==='hull shell')shells.push(o);});
-  for(const o of shells){o.material=o.material.clone();o.material.transparent=true;o.material.opacity=.16;o.material.depthWrite=false;}
- }
  for(const [prefix,id]of latest){
-  const part=createPart(id,m);part.userData.mountedCard=id;
-  if(prefix==='CAP'){part.position.set(-1.45,mission==='RECOVERY'?1.75:1.4,0);if(mission==='RECOVERY'){vehicle.getObjectByName('recovery stowage')?.removeFromParent();const crane=vehicle.getObjectByName('recovery crane');if(crane)crane.position.z=-.95;}const lid=part.getObjectByName('crew roof');if(lid){lid.visible=false;}}
-  if(prefix==='MOB'){part.position.set(length/2-1.35,1.18,0);if(['MOB-B','MOB-C','MOB-D','MOB-G'].includes(id))part.position.set(0,.20,0);}
+  const part=prefix==='CAP'?fittedCapacity(vehicle,m,id,datums):prefix==='PRO'?fittedProtection(vehicle,m,id,datums):prefix==='MOB'?fittedMobility(vehicle,m,id,datums,discard):createPart(id,m);part.userData.mountedCard=id;part.userData.representativeOnly=true;part.userData.contributingPurchasedIds=[...sources.get(prefix)];
+  if(prefix==='CAP'&&mission==='RECOVERY'){const stowage=vehicle.getObjectByName('recovery stowage');if(stowage)discard(stowage);const crane=vehicle.getObjectByName('recovery crane');if(crane)crane.position.z=-.95;}
   if(prefix==='FP'){vehicle.getObjectByName('mission weapon')?.removeFromParent();part.position.set(-.35,roof,0);}
   if(prefix==='COM'){vehicle.getObjectByName('mission radio')?.removeFromParent();part.position.set(.1,1.45,-.65);if(interior&&!latest.has('CAP')){const count=id==='COM-B'?3:id==='COM-G'?2:1;box(vehicle,m.edge,[count*.40-.03,.080,.29],[.1,1.47,-.65],'purchased radio supported carrier shelf');}}
   if(prefix==='SA'){vehicle.getObjectByName('mission sensor')?.removeFromParent();part.position.set(-2.3,roof,.5);}
-  if(prefix==='PRO'){
-   if(id==='PRO-D'){
-    // The cell is behind the carrier body, not inside a translucent ghost hull.
-    // Shoes at local y=-.18 meet the extension top at world y=.89 exactly.
-    const rear=-length/2,cellX=rear-1.00;
-    part.position.set(cellX,1.07,0);
-    const support=group('crew cell chassis extension');vehicle.add(support);
-    for(const side of [-1,1])box(support,m.darkSteel,[2.20,.16,.16],[rear-.70,.81,side*.55],'crew cell carrier extension rail');
-    for(const x of [-.61,.61])box(support,m.darkSteel,[.20,.16,1.30],[cellX+x,.81,0],'crew cell carrier shoe crossmember');
-    box(support,m.darkSteel,[.16,.16,1.26],[rear+.25,.81,0],'crew cell extension chassis tie');
-   }
-   else if(id==='PRO-G'){part.position.set(-1.3,1.40,0);}
-   else if(id==='PRO-F'){part.position.set(0,.55,0);}
-   else{part.position.set(-1.60,1.36,width*.46);const mirror=part.clone();mirror.rotation.y=Math.PI;mirror.position.z=-width*.46;vehicle.add(mirror);}
-  }
   if(prefix==='ACC'){
    if(id==='ACC-B'){part.position.set(-length/2-1.43,0,0);}
    else if(['ACC-C','ACC-E'].includes(id)){vehicle.getObjectByName('mission roller')?.removeFromParent();part.scale.setScalar(1.9);part.rotation.y=Math.PI/2;part.position.set(length/2+1.05,.1,0);}
@@ -824,5 +874,5 @@ export function createConfiguration(mission,owned,m=materials()){
   }
   vehicle.add(part);
  }
- vehicle.userData.configuration=true;vehicle.userData.installed=Object.fromEntries(latest);return vehicle;
+ vehicle.userData.configuration=true;vehicle.userData.installed=Object.fromEntries(latest);vehicle.userData.authoritativePurchaseIds=[...purchaseIds];vehicle.userData.purchaseSources=Object.fromEntries([...sources].map(([key,ids])=>[key,[...ids]]));vehicle.userData.representation='one physical representative per family; authoritative purchase effects remain additive';return vehicle;
 }
