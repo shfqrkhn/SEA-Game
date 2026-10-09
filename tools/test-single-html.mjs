@@ -63,6 +63,11 @@ for(const role of [null,'instructor','student','invalid','constructor','__proto_
   assert.equal(doc.body.getAttribute('data-sea-role'),role,'A second live role cannot boot');
   assert.equal(frames.length,before,'No competing render start');
   assert(doc.getElementById('seaLicenses'),'Embedded notices remain accessible');
+  if(role==='student'){
+   doc.getElementById('langBtn').click();
+   assert.equal(doc.documentElement.lang,'fr');
+   assert.equal(doc.getElementById('joinStatus').textContent,'Entrez le code de séance, puis choisissez votre groupe et votre véhicule.','Empty setup status must switch with the actual controller language');
+  }
   doc.getElementById('seaChooseRole').click();
   assert.deepEqual(navigations,['file:///candidate/index.html'],'Choose role deliberately reloads selector URL without role query');
   assert.equal(doc.body.getAttribute('data-sea-role'),role,'Role-change request does not boot a second live controller');
