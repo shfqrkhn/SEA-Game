@@ -33,6 +33,7 @@ for(const role of ['student','instructor']){
   if(tag==='<\/section>')phase='global';
  }
  // Navigation is generated at runtime, so template-ID scanning cannot cover it.
+ for(const [id,en,fr]of [['previous-field','Previous field','Champ précédent'],['next-field','Next field','Champ suivant']])uiElements.push(entry(`UI-ELEMENT-${role}-scene-${id}`,'interface-element',{en,fr},{role,phase:'cross-phase',source:'source/shared/three-presentation.js#sceneAction',htmlTag:'button',conceptBatch:'UI-RECOVERY',implementation:{status:'native-editor-navigation;qualification-open',evidence:[]},acceptance:{status:'open',criteria:['U01','U02','U03','U04','U05','U06'],evidence:[]}}));
  uiElements.push(entry(`UI-ELEMENT-${role}-scene-save`,'interface-element',{en:'Help / save',fr:'Aide / sauvegarde'},{role,phase:'cross-phase',source:'source/shared/three-presentation.js#seaSceneSaveControls',htmlTag:'div',conceptBatch:'UI-RECOVERY',implementation:{status:'original-native-controls-directly-exposed;qualification-open',evidence:[]},acceptance:{status:'open',criteria:['U01','U02','U03','U04','U05','U06'],evidence:[]}}));
  // Inventory the native root and each shared scene/native section identity.
  for(const [id,en,fr,htmlTag]of [['inspection','Model views','Vues du modèle','nav'],['assembled','Assembled','Assemblé','button'],['exploded','Exploded','Éclaté','button'],['cutaway','Cutaway','En coupe','button']])uiElements.push(entry(`UI-ELEMENT-${role}-scene-${id}`,'interface-element',{en,fr},{role,phase:'cross-phase',source:'source/shared/three-presentation.js#seaSceneInspection',htmlTag,sceneCommand:id==='inspection'?null:{mode:id},conceptBatch:'UI-INSPECTION',implementation:{status:'scene-native-synchronized;qualification-open',evidence:[]},acceptance:{status:'open',criteria:['U01','U02','U03','U04','U05','U06'],evidence:[]}}));
@@ -56,5 +57,4 @@ const promptDoc=['# Canonical identity concept prompts','', 'Generated directly 
 for(const category of [...Object.keys(pools),'VEHICLES']){promptDoc.push('## '+category,'');for(const subject of subjects.filter(s=>s.conceptBatch===category))promptDoc.push('- **'+subject.id+' — '+subject.label.en+' / '+subject.label.fr+'**: '+subject.conceptPrompt);promptDoc.push('');}
 writeChangedArtifact(path.join(root,'docs/game-design/IDENTITY_PROMPTS.md'),promptDoc.join('\n')+'\n');
 console.log(JSON.stringify(inventory.counts));
-
 

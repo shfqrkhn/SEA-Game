@@ -1,5 +1,7 @@
 # Scene-driven completion graph
 
+W67 next verification: publish the integrated3.4.0 batch, then measure student Current known-card/note/result workflow, native Previous/Next and selected instructor Build detail/model in exact bytes. Include actual French narrow-label redraw, persistent Closed action and changed COMBAT/firepower model assembled/cutaway/exploded rendering. Preserve manual authority, IME/private entry and stale guards. W66 exact3.3.0 readback/CI and bounded browser evidence remain historical. Continue remaining model/reference/entire-role-phase/device/offline/assistive/classroom/rights/handover gates; full closure OPEN0/3.
+
 W66 continuation: the [task-centered XY analysis](game-design/UI_CLEANROOM_REBUILD.md) guides an original compatible Three.js interface rebuild in3.3.0. Primary commands stay visible, six inspection modes/cameras require one activation, all sections stay directly reachable, current live callers use paired desktop tiles, and opening a Build team selects its model. Preserve semantic/native controls and every canonical guard. Publish the exact candidate and measure actual pointer/native EN/FR tasks, responsive font clipping, save/recovery access and confirmations. Local renderer/bridge tests are not device or classroom acceptance. Dynamic inspection subjects bring the inventory to238 UI elements/451 total records. Full closure remains OPEN0/3.
 
 The current goal supersedes the model-in-page presentation. All release obligations in MPES 1.3.0 remain applicable. This graph is implementation work, not a completion receipt.

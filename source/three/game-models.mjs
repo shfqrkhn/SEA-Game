@@ -301,7 +301,79 @@ function axle(m,{wheels=false,light=false,adaptive=false,springs=false}={}){
 }
 function runningGear(m,v){if(v!==2)return axle(m,{wheels:v===1,adaptive:v===6,springs:v===1});const g=axle(m,{wheels:true,light:true,springs:true});g.name='lightweight running gear';for(const x of [-.30,.30])box(g,m.paint,[.075,.09,.83],[x,.22,0],'lightweight cradle crossmember');for(const z of [-.40,.40])box(g,m.paint,[.67,.09,.07],[0,.22,z],'lightweight cradle side rail');return g;}
 function suspension(m){return axle(m,{springs:true});}
-function weapon(m,v){const g=group('weapon station');cylinder(g,m.edge,.37,.12,[0,.06,0]);cylinder(g,m.paint,.28,.27,[0,.25,0]);box(g,m.paint,[.60,.42,.50],[0,.49,0]);const length=[.68,1.05,1.60,.74,.65,1.14,1.04][v];const count=v===6?2:1;for(let i=0;i<count;i++){const z=count===2?(i-.5)*.44:0;box(g,m.edge,[.44,.17,.17],[.18,.70,z]);cylinder(g,m.darkSteel,v===2?.055:.032,length,[.45+length/2,.70,z],'x');cylinder(g,m.darkSteel,.07,.15,[.45+length,.70,z],'x');cylinder(g,m.rubber,.03,.003,[.53+length,.70,z],'x');}box(g,m.paint,[.34,.35,.34],[-.15,.51,-.39]);for(const x of [-.2,.2])bolts(g,m.steel,[x,.45,.27],.055,5);if([3,5].includes(v)){const sensor=createSensor(m,0);sensor.scale.setScalar(.42);sensor.position.set(-.1,.73,.29);g.add(sensor);}return g;}
+function weapon(m,v){
+ // Original static exterior illustration. These surfaces describe enclosure,
+ // mounting and access relationships, not working weapon mechanisms or ratings.
+ const g=group('weapon station'),base=group('station mounting ring'),body=group('station shield and cradle'),barrel=group('station barrel exterior');
+ body.position.y=.5;barrel.position.set(.45,.70,0);g.add(base,body,barrel);
+ const profile=[[.405,-.01],[.51,-.01],[.51,.035],[.47,.055],[.43,.19],[.405,.20],[.34,.20],[.34,.15],[.395,.02],[.405,-.01]].map(p=>new THREE.Vector2(...p));
+ const ring=new THREE.Mesh(new THREE.LatheGeometry(profile,64),m.paint);ring.name='station hollow mounting ring';ring.castShadow=ring.receiveShadow=true;base.add(ring);ring.userData.cutawayShell=true;
+ for(let i=0;i<12;i++){const a=i*Math.PI/6,x=Math.cos(a)*.475,z=Math.sin(a)*.475;cylinder(base,m.steel,.013,.020,[x,.045,z],'y',.013,6).name='station flange seated fastener';}
+ const upper=new THREE.Mesh(new THREE.TorusGeometry(.373,.017,8,64),m.darkSteel);upper.rotation.x=Math.PI/2;upper.position.y=.20;upper.name='station ring bearing seal';base.add(upper);
+ // Two bearing strips leave a true center passage through the ring.
+ for(const s of [-1,1])box(body,m.castSteel,[.60,.060,.14],[0,-.27,s*.265],'station cradle bearing strip');
+ const width=v===6?.53:v===2?.45:.36,open=v===4;
+ const sideOutline=[[-.42,-.24],[.34,-.24],[.38,.12],[.18,.47],[-.22,.52],[-.46,.19]];
+ for(const s of [-1,1]){
+  // The inner cast cheeks carry the trunnions; the separated outer skins
+  // remain serviceable covers, exposing the whole load path in cutaway.
+  formedCabPanel(body,m.castSteel,[[-.24,-.24],[.26,-.24],[.26,.30],[.11,.37],[-.20,.30]],[],(x,y,t)=>[x,y,s*(.22+t)]).name='station structural trunnion cheek';
+  const pivot=cylinder(body,m.steel,.085,.105,[.10,.20,s*.265],'z',.085,40);pivot.name='station seated trunnion pivot';
+  const cap=cylinder(body,m.edge,.108,.026,[.10,.20,s*.33],'z',.108,40);cap.name='station retained trunnion cap';
+  bolts(body,m.steel,[.10,.20,s*.347],.077,6,'z',.009);
+  if(!open){
+   const cover=formedCabPanel(body,m.paint,sideOutline,[],(x,y,t)=>[x,y,s*(width+t)]);cover.name='station formed side shield';cover.userData.cutawayShell=true;
+   // Brackets bridge the cover to the actual cheek rather than placing a
+   // free-standing side box next to a cylinder.
+   for(const x of [-.20,.23])box(body,m.edge,[.06,.065,width-.245],[x,-.14,s*(width+.245)/2],'station shield retaining standoff');
+   for(const [x,y]of [[-.34,-.16],[.25,-.15],[.20,.16],[-.19,.43],[-.40,.13]])cylinder(body,m.steel,.008,.014,[x,y,s*(width+.052)],'z',.008,6).name='station shield seated screw';
+  }
+ }
+ box(body,m.castSteel,[.43,.075,.47],[.025,-.195,0],'station connected cradle crossmember');
+ // Enclosed receiver silhouette and inspection-visible supported sliding
+ // carriage are illustrative inert solids; no internals or firing animation.
+ const carriage=new THREE.Mesh(new RoundedBoxGeometry(.53,.17,.33,3,.035),m.darkSteel);carriage.position.set(.035,.20,0);carriage.name='station supported inert carriage';body.add(carriage);
+ for(const s of [-1,1])rod(body,m.steel,[-.23,.105,s*.125],[.30,.105,s*.125],.020).name='station carriage support rail';
+ for(const s of [-1,1])box(body,m.castSteel,[.12,.280,.06],[.10,-.025,s*.125],'station connected carriage saddle');
+ const count=v===6?2:1,length=[.68,1.05,1.60,.74,.65,1.14,1.04][v],radius=v===2?.055:.032;
+ for(let i=0;i<count;i++){
+  const z=count===2?(i-.5)*.26:0;
+  const collar=cylinder(body,m.castSteel,.102,.25,[.32,.20,z],'x',.092,40);collar.name='station seated mantlet collar';
+  const barrelProfile=[[radius*.64,-.02],[radius,-.02],[radius*.94,length-.02],[radius*.64,length-.02],[radius*.64,-.02]].map(p=>new THREE.Vector2(...p));
+  const sleeve=new THREE.Mesh(new THREE.LatheGeometry(barrelProfile,48),m.darkSteel);sleeve.rotation.z=-Math.PI/2;sleeve.position.z=z;sleeve.name='station continuous barrel exterior';barrel.add(sleeve);
+  for(const x of [.015,.105])cylinder(barrel,m.edge,radius+.012,.025,[x,0,z],'x',radius+.012,40).name='station barrel retaining band';
+  // Annular muzzle has an actual visible opening; a recessed dark disk merely
+  // limits the view into this non-operational exterior demonstration.
+  const muzzleProfile=[[radius*.64,-.025],[radius+.012,-.025],[radius+.012,.035],[radius*.64,.035],[radius*.64,-.025]].map(p=>new THREE.Vector2(...p));
+  const muzzle=new THREE.Mesh(new THREE.LatheGeometry(muzzleProfile,40),m.darkSteel);muzzle.rotation.z=-Math.PI/2;muzzle.position.set(length-.02,0,z);muzzle.name='station open muzzle exterior';barrel.add(muzzle);
+  cylinder(barrel,m.rubber,radius*.62,.003,[length-.12,0,z],'x',radius*.62,40).name='station recessed inert bore backing';
+ }
+ if(!open){
+  const holes=[];for(let i=0;i<count;i++){const z=count===2?(i-.5)*.26:0;const h=new THREE.Path();h.absarc(z,.20,.108,0,Math.PI*2,true);holes.push(h);}
+  const shield=formedCabPanel(body,m.paint,[[-width,-.24],[width,-.24],[width,.47],[-width,.47]],holes,(z,y,t)=>[.38-Math.max(0,y-.12)*.20/.35-t,y,z]);shield.name='station front shield with mantlet aperture';shield.userData.cutawayShell=true;
+  const top=formedCabPanel(body,m.paint,[[-.22,-width],[.18,-width],[.18,width],[-.22,width]],[],(x,z,t)=>[x,.52-(x+.22)*.125-t,z]);top.name='station sloped service roof';top.userData.cutawayShell=true;
+  const rearRoof=formedCabPanel(body,m.paint,[[-.46,-width],[-.22,-width],[-.22,width],[-.46,width]],[],(x,z,t)=>[x,.19+(x+.46)*.33/.24-t,z]);rearRoof.name='station sloped rear shoulder';rearRoof.userData.cutawayShell=true;
+  const back=formedCabPanel(body,m.paint,[[-width,-.24],[width,-.24],[width,.19],[-width,.19]],[],(z,y,t)=>[-.46+t,y,z]);back.name='station removable rear cover';back.userData.cutawayShell=true;
+  // Seated access cover with a supported handle and hinge knuckles.
+  box(body,m.edge,[.023,.20,.25],[-.474,.08,0],'station rear service hatch').userData.cutawayShell=true;
+  for(const z of [-.075,.075])rod(body,m.steel,[-.475,.08,z],[-.50,.08,z],.010).name='station hatch handle post';
+  rod(body,m.steel,[-.50,.08,-.075],[-.50,.08,.075],.010).name='station service hatch handle';
+ }
+ // Supported electrical control enclosure and strain-relieved harness replace
+ // the former floating side block, loose cable and loose ammunition decoration.
+ box(body,m.castSteel,[.10,.12,.15],[-.28,-.16,-width-.06],'station control enclosure bracket');
+ const controls=new THREE.Mesh(new RoundedBoxGeometry(.25,.24,.18,3,.018),m.paint);controls.position.set(-.28,-.02,-width-.075);controls.name='station supported control enclosure';body.add(controls);
+ box(body,m.edge,[.20,.18,.015],[-.28,-.02,-width-.172],'station control service cover');
+ for(const x of [-.355,-.205])for(const y of [-.08,.04])cylinder(body,m.steel,.007,.014,[x,y,-width-.183],'z',.007,6).name='station control cover fastener';
+ tube(body,m.rubber,[[-.28,-.10,-width-.075],[-.28,-.17,-width-.075],[-.20,-.24,-width-.02],[-.14,-.25,-.265]],.014,24).name='station supported control harness';
+ if([3,5,6].includes(v)){
+  box(body,m.edge,[.17,.095,.17],[-.09,.505,0],'station optical package seated foot');
+  const housing=new THREE.Mesh(new RoundedBoxGeometry(.22,.21,.23,3,.028),m.paint);housing.position.set(-.09,.64,0);housing.name='station optical housing';body.add(housing);
+  cylinder(body,m.edge,.078,.035,[.034,.64,0],'x',.078,40).name='station optical retaining bezel';
+  cylinder(body,m.glass,.058,.008,[.055,.64,0],'x',.058,40).name='station optical lens';
+ }
+ return g;
+}
 function protection(m,v){
  const g=group('protection kit');
  const sheet=(outline,z,material=m.paint,name='formed protection panel')=>{const mesh=formedCabPanel(g,material,outline,[],(x,y,d)=>[x,y,z+d]);mesh.name=name;return mesh;};
@@ -540,11 +612,36 @@ export function createMission(id,m=materials()){
   const vehicle=missionBase(id,m);vehicle.name=id;vehicle.userData.mission=id;
   const roof=vehicle.userData.roof||2.75;
   if(id==='COMBAT'||id==='MINE'){const turret=weapon(m,id==='COMBAT'?2:1);turret.name='mission weapon';turret.position.set(-.35,roof,0);vehicle.add(turret);}
+  if(id==='COMBAT')combatCrewBasket(vehicle,m,roof);
   if(id==='RECCE'){const sensor=createSensor(m,3);sensor.name='mission sensor';sensor.position.set(-1.0,roof,-.48);vehicle.add(sensor);}
   if(id==='COMMAND'){const comm=radio(m,4);comm.name='mission radio';comm.position.set(-1.5,roof,-.4);vehicle.add(comm);}
   if(id==='TROOP')troopRamp(vehicle,m);
   if(id==='MINE'){const roller=clearance(m);roller.name='mission roller';roller.scale.setScalar(1.9);roller.rotation.y=Math.PI/2;roller.position.set(4.45,.1,0);vehicle.add(roller);mineRollerMount(vehicle,m,roller);}
   return soften(vehicle);
+}
+
+function combatCrewBasket(vehicle,m,roof){
+ const basket=group('combat supported crew compartment');basket.position.set(-.35,roof-.94,0);vehicle.add(basket);
+ cylinder(basket,m.edge,.60,.06,[0,0,0],'y',.60,64).name='combat suspended crew floor';
+ cylinder(basket,m.rubber,.565,.012,[0,.036,0],'y',.565,64).name='combat nonslip crew floor insert';
+ for(const [x,z]of [[-.35,0],[.35,0],[0,-.35],[0,.35]]){
+  rod(basket,m.castSteel,[x,.02,z],[x,1.14,z],.025).name='combat continuous roof ring basket support';
+  box(basket,m.edge,[.085,.055,.085],[x,.032,z],'combat basket floor support shoe');
+  box(basket,m.edge,[.085,.07,.085],[x,1.12,z],'combat basket roof ring attachment');
+ }
+ for(const s of [-1,1]){
+  const chair=seat(basket,m,-.16,s*.33,true);chair.scale.setScalar(.75);chair.position.y=.259125;
+  // The scaled floor-rail bottom is seated on the .042 m insert.
+  chair.name='combat restrained operator seat';
+ }
+ box(basket,m.castSteel,[.19,.05,.19],[.24,.066,0],'combat console floor shoe');
+ rod(basket,m.edge,[.24,.08,0],[.24,.48,0],.033).name='combat crew console supported column';
+ const console=new THREE.Mesh(new RoundedBoxGeometry(.18,.25,.34,3,.025),m.paint);console.position.set(.24,.51,0);console.name='combat crew console enclosure';basket.add(console);
+ box(basket,m.edge,[.014,.18,.26],[.144,.54,0],'combat crew console screen bezel');
+ const screen=m.glass.clone();screen.color.set('#182d32');screen.roughness=.20;
+ box(basket,screen,[.005,.14,.22],[.134,.54,0],'combat crew console inert display');
+ for(const s of [-1,1]){rod(basket,m.edge,[.15,.43,s*.13],[.08,.43,s*.13],.012).name='combat crew console grip support';cylinder(basket,m.rubber,.02,.08,[.08,.47,s*.13]).name='combat crew console grip';}
+ tube(basket,m.rubber,[[.24,.385,0],[.24,.14,0],[.30,.075,0],[.35,.075,0],[.35,1.12,0]],.013,24).name='combat supported console harness';
 }
 
 function troopRamp(vehicle,m){

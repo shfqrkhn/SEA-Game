@@ -22,9 +22,9 @@ export function detailPart(g,m,prefix,v){
   // The seating factory owns variant dimensions, restraints and boarding mounts.
   return soften(g);
  }else if(prefix==='FP'){
-  for(const s of [-1,1]){cylinder(g,m.steel,.075,.07,[0,.56,s*.30],'z');bolts(g,m.darkSteel,[0,.56,s*.345],.05,6,'z',.009);}
-  panel(g,m,[.31,.25,.018],[-.15,.5,-.57]);rod(g,m.darkSteel,[-.26,.63,-.58],[-.04,.63,-.58],.014);
-  tube(g,m.rubber,[[-.13,.12,.22],[-.3,.28,.35],[-.27,.57,.36],[.08,.69,.32]],.017);
+  // The station factory owns its shield, supported control enclosure and
+  // trunnion fittings. The former block-layout overlays do not mate to them.
+  return soften(g);
  }else if(prefix==='PRO'){
   // The protection factory owns its formed layers, apertures and attachments;
   // generic overlay fittings would no longer correspond to those surfaces.
@@ -93,7 +93,10 @@ export function missionBase(id,m){
   carrierSheet(g,m.paint,[[front-2.01,1.48],[front-.97,1.48],[front-.86,2.28],[front-1.02,2.31],[front-2.01,2.31]],[roundedOpening(...bounds)],(x,y,t)=>[x,y,sideZ(y)+s*(.012+t)],.015,'hull shell').userData.component='carrier formed cab door';
   carrierWindow(g,m,bounds,(x,y,t)=>[x,y,sideZ(y)+s*t]);
  }
- face(g,m.paint,[[rear+.17,2.36,-half*.85],[front-.75,2.36,-half*.85],[front-.75,2.36,half*.85],[rear+.17,2.36,half*.85]]);
+ if(id==='COMBAT'){
+  const ring=new THREE.Path();ring.absarc(-.35,0,.405,0,Math.PI*2,true);
+  formedCabPanel(g,m.paint,[[rear+.17,-half*.85],[front-.75,-half*.85],[front-.75,half*.85],[rear+.17,half*.85]],[ring],(x,z,t)=>[x,2.36-t,z]);
+ }else face(g,m.paint,[[rear+.17,2.36,-half*.85],[front-.75,2.36,-half*.85],[front-.75,2.36,half*.85],[rear+.17,2.36,half*.85]]);
  const frontX=y=>front-(y-1.2)*.75/1.16;
  formedCabPanel(g,m.paint,[[-half*.75,1.2],[half*.75,1.2],[half*.85,2.36],[-half*.85,2.36]],[roundedOpening(-half*.67,1.80,-.09,2.13),roundedOpening(.09,1.80,half*.67,2.13)],(z,y,t)=>[frontX(y)-t,y,z]);
  for(const range of [[-half*.67,-.09],[.09,half*.67]]){

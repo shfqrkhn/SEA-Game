@@ -20,6 +20,9 @@ Use the largest change in the publication batch. Evidence-only documentation cha
 
 | 3.2.1 | Chassis-connected mine roller pivots/draw arms and sloped troop ramp with actual aperture and bearing hinges | Compatible geometry refinement; canonical rules/deck/schema/storage unchanged. Actual new-candidate visual qualification remains required. |
 | 3.3.0 | Task-centered scene interface with pinned next action, six direct inspection views, direct sections, paired current auction callers and Build-summary model selection | Compatible interface capability; includes intermediate 3.2.1 geometry. Rules/deck/schema/storage unchanged. Exact browser and full device/accessibility acceptance remain required. |
+| 3.4.0 | Consolidated student current-lot task; selected instructor Build detail/model; Previous/Next native field editing with composition/stale-target guards; persistent Closed next action and compact French overview label | Compatible interface capability; rules/deck/schema/storage unchanged. Original hollow COMBAT/firepower mounts and crew roof-ring/basket geometry are integrated subject to actual visual qualification. No acceptance inferred. |
+
+Historical 3.3.0 source revision: `01204c8`; published candidate preview revision: `18dc0db`. Preserve these exact identities in historical records. Version 3.4.0 needs its own source/preview hashes and affected checks; the version label does not inherit 3.3.0 evidence.
 
 For each next publication, add its version, concrete change, exact source/preview identity and affected checks to the execution ledger/release notes. Bilingual badges use the same version; teaching and support evidence must bind the exact published artifacts.
 

@@ -1,5 +1,11 @@
 # Whole-game scene integration checkpoint
 
+## W67 integrated workflow acceleration, version3.4.0
+
+W66 source01204c8 has successful four-job CI37958177358; Pages37958181928 succeeds, and hosted-18dc0db.json confirms both published role hashes match exactly. The pre-deployment stale-byte receipt is retained separately. Actual bounded3.3.0 browser checks resume both matched schema-3 sessions, exercise one-activation assembled/exploded/cutaway, two-activation Help/save export, shadow toggling and native exploded separation70→100. A completed320x640 French redraw is readable; the compact overview label and unpinned Closed action prompted the prepared3.4.0 corrections. See w66-browser-check.json and w66-direct-save-cutaway.png. This does not extend the older full journey to new bytes.
+
+Parallel3.4.0 implementation consolidates student known-card/load/WTP/note/purchase recording in Current while retaining manual Round context. Selected instructor Build details align with the model and preserve all native disclosures/compact team summaries. Native editors navigate Previous/Next through eligible fields using original change validation, fresh IDs and composition/stale-context guards. Closed now pins its next action; narrow French overview uses Aperçu. Actual-template EN/FR projection and bridge/editor/renderer checks pass. The new task-layout regression is added to CI after its existing dependency installation. Obsolete local-WebP recovery instructions are corrected. Model construction and exact-candidate browser evidence follow after integration; no changed model or new workflow is pre-qualified. Full release/acceptance and same-key closure remain OPEN0/3.
+
 ## W66 task-centered original interface rebuild, version3.3.0
 
 The XY analysis distinguishes the player's next legal task from the historical menu structure. Original Three.js layout uses persistent primary action, six direct model-view commands, direct section navigation, paired current eligible auction callers and Build-summary/model correlation. Canonical rules, money, manual communication and compatible save keys remain unchanged. Primary sources and MIT boundaries are recorded in [UI_CLEANROOM_REBUILD.md](../../../game-design/UI_CLEANROOM_REBUILD.md); no new UI dependency or copied sample assets are adopted. Version3.3.0 includes intermediate3.2.1 structural geometry.

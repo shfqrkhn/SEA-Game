@@ -16,8 +16,9 @@ function seaSceneProjection(roots,visible,keyFor){
   const emphasis=node.classList?.contains('danger')?'danger':node.classList?.contains('primary')||node.classList?.contains('good')?'primary':'';
   const group=node.closest?.('[data-scene-section]')?.getAttribute?.('data-scene-section');
   const section=['task','teams','market','tools','inspect','help'].includes(group)?group:priority>=70?'help':'task';
+  let detail=node;while(detail&&!(detail.tagName?.toLowerCase()==='details'&&detail.dataset?.buildTeam))detail=detail.parentElement;const buildTeamId=detail?Number(detail.dataset.buildTeam):null,buildSummary=!!detail&&node.tagName?.toLowerCase()==='summary';
   const currentAction=node.getAttribute?.('data-scene-current-action')==='true',caller=Number(node.getAttribute?.('data-bid-team')),bid=Number.isInteger(caller)&&caller>=1&&caller<=10;
-  rows.push({section:bid?(node.disabled?'teams':'task'):currentAction?(node.disabled?'tools':'task'):section,compact:bid?'bid':'',teamId:bid?caller:null,key,kind,label:String(label),value:String(value),disabled:!!node.disabled,priority,emphasis,utility:node.id==='langBtn'?'language':node.getAttribute?.('data-scene-utility')||'',selected:node.getAttribute?.('aria-pressed')==='true',currentAction});
+  rows.push({section:buildTeamId?(buildSummary?'teams':'task'):bid?(node.disabled?'teams':'task'):currentAction?(node.disabled?'tools':'task'):section,buildTeamId,buildSummary,compact:bid?'bid':'',teamId:bid?caller:null,key,kind,label:String(label),value:String(value),disabled:!!node.disabled,priority,emphasis,utility:node.id==='langBtn'?'language':node.getAttribute?.('data-scene-utility')||'',selected:node.getAttribute?.('aria-pressed')==='true',currentAction});
  }
  function walk(node){
   if(!node||seen.has(node)||!visible(node))return;seen.add(node);
@@ -117,7 +118,7 @@ function sea3DStart(role){
  const host=document.getElementById('sea3dViewport');if(!host||typeof host.appendChild!=='function'||typeof requestAnimationFrame!=='function')return;
  const ui={en:{title:'Your vehicle',object:'Explore',team:'Team',vehicle:'Mission vehicle',configuration:'Your build',reset:'Overview',front:'Front',rear:'Rear',views:'Views',shadows:'Shadows',mode:'View',assembled:'Assembled',exploded:'Exploded',cutaway:'Cutaway',separation:'Separation',map:'Assembly map',fallback:'The scene could not start. Game controls remain available.',hint:'Drag to rotate · Scroll to zoom. Select fitted equipment to inspect.',waiting:'Choose your mission.',context:{setup:'Choose a vehicle for your mission.',practice:'Try a practice purchase. Your scored budget is unchanged.',planning:'Plan your build against the mission requirements.',auction:'Compare the equipment with your mission needs.',build:'Purchased equipment fitted. Use cutaway to inspect the interior.',submit:'Check your build, then choose your profit.',debrief:'Review the decisions that shaped your vehicle.',closed:'Your final vehicle and purchases.'}},fr:{title:'Votre véhicule',object:'Explorer',team:'Équipe',vehicle:'Véhicule de mission',configuration:'Votre configuration',reset:'Vue générale',front:'Avant',rear:'Arrière',views:'Vues',shadows:'Ombres',mode:'Vue',assembled:'Assemblé',exploded:'Éclaté',cutaway:'En coupe',separation:'Séparation',map:'Plan des assemblages',fallback:'La scène n’a pas démarré. Les commandes du jeu restent disponibles.',hint:'Glissez pour tourner · Défilez pour zoomer. Sélectionnez un équipement installé pour l’examiner.',waiting:'Choisissez votre mission.',context:{setup:'Choisissez un véhicule pour votre mission.',practice:'Essayez un achat d’entraînement sans modifier le budget coté.',planning:'Planifiez votre configuration selon les exigences.',auction:'Comparez l’équipement aux besoins de votre mission.',build:'Équipements achetés installés. Utilisez la coupe pour examiner l’intérieur.',submit:'Vérifiez votre configuration, puis choisissez votre profit.',debrief:'Examinez les décisions qui ont façonné votre véhicule.',closed:'Votre véhicule final et vos achats.'}}};
  let runtime=null,signature='',queued=false,failed=false,selection='',lastPhase='',lastCurrent='',selectedTeam='',inspectionMode='assembled';
- let sceneSection='task',sceneSectionEpoch=0,sceneSectionLanguage='',sceneSections=new Set(),scenePage=0,scenePhase='',sceneAlert='',sceneDialog=null,sceneTargets=new Map(),editor=null,serial=0;const sceneKeys=new WeakMap();
+ let sceneSection='task',sceneSectionEpoch=0,sceneSectionLanguage='',sceneSections=new Set(),scenePage=0,scenePhase='',sceneAlert='',sceneDialog=null,sceneTargets=new Map(),sceneFieldKeys=[],editor=null,serial=0;const sceneKeys=new WeakMap();
  const keyFor=node=>{if(!sceneKeys.has(node))sceneKeys.set(node,'control-'+(++serial));return sceneKeys.get(node);};
  const get=id=>document.getElementById(id),objects=get('sea3dObject'),teams=get('sea3dTeam');
  function fail(){failed=true;document.body.classList.remove('sea3d-active','scene-game');editor?.remove();editor=null;get('sea3dStatus').textContent=ui[lang].fallback;host.hidden=true;}
@@ -125,10 +126,15 @@ function sea3DStart(role){
   for(let n=node;n&&n!==document.body;n=n.parentElement){if(n.hidden||n.getAttribute?.('aria-hidden')==='true'||n.classList?.contains('hidden'))return false;const style=window.getComputedStyle(n);if(style.display==='none'||style.visibility==='hidden')return false;if(n.parentElement?.tagName==='DETAILS'&&!n.parentElement.open&&n.tagName!=='SUMMARY')return false;}
   return true;
  }
+ function selectInspectedTeam(team,open=false){
+  if(!state.teams?.some(item=>String(item.id)===String(team)))return;
+  selectedTeam=String(team);if(state.phase==='build')selection='configuration';signature='';
+  if(open&&state.phase==='build'){const build=get('authoritativeBuild');if(build?._buildSession===state.sessionCode)for(const detail of Array.from(build.children||[]))if(String(detail.dataset?.buildTeam)===selectedTeam)detail.open=true;}
+ }
  function selectBuildSummary(summary){
   if(get('seaInlineConfirm')||!semanticVisible(summary))return;
   const team=seaSceneBuildTeam(summary,state);if(team===null)return;
-  selectedTeam=team;selection='configuration';signature='';
+  selectInspectedTeam(team);
  }
  function sceneAction(key,nextPage){
   if(key==='__section'){if(typeof nextPage!=='string'||!sceneSections.has(nextPage))return;sceneSection=nextPage;scenePage=0;editor?.remove();editor=null;queue();return;}
@@ -143,13 +149,20 @@ function sea3DStart(role){
   editor.setAttribute('aria-label',title.textContent|| (lang==='fr'?'Modifier la valeur':'Edit value'));
   const input=node.cloneNode(true);input.removeAttribute('id');input.removeAttribute('style');input.removeAttribute('aria-hidden');input.removeAttribute('tabindex');input.className='';input.value=node.value;title.appendChild(input);editor.appendChild(title);
   const done=document.createElement('button');done.type='button';done.className='btn primary';done.textContent=lang==='fr'?'Terminé':'Done';editor.appendChild(done);document.body.appendChild(editor);
-  const close=()=>{editor?.remove();editor=null;host.querySelector('canvas')?.focus();queue();};
-  const apply=type=>{if(!node.isConnected||node.disabled||!sceneTargets.has(key)||!semanticVisible(node)){close();return;}node.value=input.value;node.dispatchEvent(new Event(type,{bubbles:true}));queue();};
+  const activeEditor=editor;const close=()=>{if(editor!==activeEditor)return;editor.remove();editor=null;host.querySelector('canvas')?.focus();queue();};
+  const apply=type=>{if(binding!==fieldContext()||!node.isConnected||node.disabled||!sceneTargets.has(key)||!semanticVisible(node)){close();return false;}node.value=input.value;node.dispatchEvent(new Event(type,{bubbles:true}));queue();return true;};
   // Keep the editor hit surface alive until click: blur/change can replace its source.
   done.addEventListener('pointerdown',e=>e.preventDefault());
-  done.addEventListener('click',()=>{apply('change');close();});
+  done.addEventListener('click',()=>{if(composing)return;apply('change');close();});
   input.addEventListener('input',()=>apply('input'));input.addEventListener('change',()=>apply('change'));
-  editor.addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();close();}else if(e.key==='Tab'){if(e.shiftKey&&document.activeElement===input){e.preventDefault();done.focus();}else if(!e.shiftKey&&document.activeElement===done){e.preventDefault();input.focus();}}});input.focus();
+  let composing=false;input.addEventListener('compositionstart',()=>{composing=true});input.addEventListener('compositionend',()=>{composing=false});
+  const fieldContext=()=>JSON.stringify([typeof state==='undefined'?null:state.phase,typeof state==='undefined'?null:state.sessionCode,lang,sceneSection]),binding=fieldContext();
+  const fieldKeys=typeof sceneFieldKeys==='undefined'?[]:sceneFieldKeys,index=fieldKeys.indexOf(key),navigation=[];
+  for(const [step,label] of [[-1,lang==='fr'?'Champ précédent':'Previous field'],[1,lang==='fr'?'Champ suivant':'Next field']]){
+   const button=document.createElement('button');button.type='button';button.className='btn';button.textContent=label;const targetKey=fieldKeys[index+step],target=sceneTargets.get(targetKey);button.disabled=index<0||!target;editor.appendChild(button);navigation.push(button);
+   button.addEventListener('pointerdown',event=>event.preventDefault());button.addEventListener('click',()=>{if(composing||button.disabled||binding!==fieldContext())return;const targetId=target.id;if(!apply('change'))return;close();requestAnimationFrame(()=>{if(binding!==fieldContext())return;const fresh=targetId?document.getElementById(targetId):target;const next=Array.from(sceneTargets).find(([candidate,n])=>n===fresh&&sceneFieldKeys.includes(candidate));if(next)sceneAction(next[0]);});});
+  }
+  editor.addEventListener('keydown',e=>{if(composing||e.isComposing)return;if(e.key==='Escape'){e.preventDefault();close();}else if(e.key==='Tab'){const focusables=[input,done,...navigation.filter(button=>!button.disabled)],position=focusables.indexOf(document.activeElement);e.preventDefault();focusables[(position+(e.shiftKey?-1:1)+focusables.length)%focusables.length].focus();}});input.focus();
  }
  function syncSceneInterface(stage,active,labels,context=null){
   if(!runtime.interface||!active||!document.querySelectorAll)return;
@@ -158,6 +171,7 @@ function sea3DStart(role){
   const alertSignature=alerts.map(x=>x.textContent).join('|');if(alertSignature!==sceneAlert){sceneAlert=alertSignature;if(alertSignature){scenePage=0;sceneSection='task';editor?.remove();editor=null;}}
   const dialog=get('seaInlineConfirm');const roots=dialog?[dialog,get('langBtn')].filter(Boolean):[...alerts,...Array.from(active.children||[]).filter(x=>x!==stage),stage,document.querySelector('header'),...document.querySelectorAll('body>.notice'),document.querySelector('body>.status'),document.querySelector('main>.footer')].filter(Boolean);
   const projected=seaSceneProjection(roots,semanticVisible,keyFor);sceneTargets=projected.targets;
+  if(state.phase==='build'&&state.teams?.length){const team=typeof selectedTeam==='string'&&state.teams.some(item=>String(item.id)===selectedTeam)?Number(selectedTeam):state.teams[0].id;projected.rows=projected.rows.filter(row=>!row.buildTeamId||row.buildSummary||row.buildTeamId===team);sceneTargets=new Map(projected.rows.map(row=>[row.key,projected.targets.get(row.key)]));}
   if(context&&!dialog){projected.rows=projected.rows.filter(row=>{const node=projected.targets.get(row.key);return !(node?.id==='phaseBadge'&&row.label===context.phase)&&!(node?.id==='sessionBadge'&&row.label===context.session)&&!(node?.classList?.contains('badge')&&row.label==='v'+context.version);});}
   const primary=projected.rows.find(row=>row.kind==='button'&&!row.disabled&&row.currentAction&&!row.utility)||projected.rows.find(row=>row.kind==='button'&&!row.disabled&&row.section==='task'&&row.emphasis==='primary'&&!row.utility);
   if(primary){primary.primary=true;primary.emphasis='primary';primary.priority=Math.min(primary.priority,49);}
@@ -169,6 +183,7 @@ function sea3DStart(role){
   sceneSections=new Set(projected.rows.filter(row=>!row.utility).map(row=>row.section));
   if(sceneSections.size&&!sceneSections.has(sceneSection)){sceneSection='task';scenePage=0;}
   seaSceneNavigation(stage,sceneSections,sceneSection,lang,sceneSectionEpoch,sceneAction,()=>get('seaInlineConfirm')||scenePhase!==state.phase||sceneSectionLanguage!==lang?-1:sceneSectionEpoch,!!dialog||!!alerts.length);
+  sceneFieldKeys=projected.rows.filter(row=>row.section===sceneSection&&!row.disabled&&['input','select'].includes(row.kind)&&!row.utility).map(row=>row.key);
   const result=runtime.interface({title:dialog?(lang==='fr'?'Confirmer':'Confirm'):t('phase.'+state.phase),subtitle:labels.context[state.phase],context,rows:projected.rows,page:scenePage,section:sceneSection,sectionEpoch:sceneSectionEpoch,lang},sceneAction);if(result?.page!==undefined)scenePage=result.page;
   if(!document.body.classList.contains('scene-game'))document.body.classList.add('scene-game');
  }
@@ -198,11 +213,11 @@ function sea3DStart(role){
    get('sea3d-views').closest('details').hidden=true;
    let sessionContext=get('sea3dSessionContext');if(!sessionContext){sessionContext=document.createElement('p');sessionContext.id='sea3dSessionContext';sessionContext.setAttribute('data-scene-section','help');sessionContext.setAttribute('data-scene-priority','90');stage.appendChild(sessionContext);}
    sessionContext.textContent=state.sessionCode?(lang==='fr'?'Séance : ':'Session: ')+state.sessionCode:'';
-   syncSceneInterface(stage,active,labels,{role:t('role'),version:APP.version,phase:t('phase.'+state.phase),mission:MISSIONS[view.mission][lang],session:state.sessionCode||''});
+   syncSceneInterface(stage,active,labels,{role:t('role'),team:view.teamId?t('common.team',{n:view.teamId}):'',version:APP.version,phase:t('phase.'+state.phase),mission:MISSIONS[view.mission][lang],session:state.sessionCode||''});
  }catch{fail();}}
  function queue(){if(!queued){queued=true;requestAnimationFrame(sync);}}
  get('sea3dMode').addEventListener('change',()=>{inspectionMode=get('sea3dMode').value;queue();});get('sea3dAmount').addEventListener('input',queue);
- objects.addEventListener('change',()=>{selection=objects.value;queue();});teams.addEventListener('change',()=>{selectedTeam=teams.value;signature='';queue();});
+ objects.addEventListener('change',()=>{selection=objects.value;queue();});teams.addEventListener('change',()=>{selectInspectedTeam(teams.value,true);queue();});
  host.addEventListener('sea3drestored',()=>{failed=false;signature='';queue();});
  document.addEventListener('click',e=>{const summary=e.target.closest?.('summary');if(summary)selectBuildSummary(summary);queue();});document.addEventListener('change',queue);document.addEventListener('input',queue);
  document.addEventListener('keydown',e=>{if(e.key==='Tab')document.body.classList.add('scene-keyboard');});document.addEventListener('pointerdown',()=>document.body.classList.remove('scene-keyboard'));

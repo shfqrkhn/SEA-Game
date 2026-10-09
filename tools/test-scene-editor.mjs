@@ -46,3 +46,21 @@ currentDialog=null;syncContext.scenePage=2;syncContext.sync({}, {children:[]}, {
 taskRows.push({label:'Finish',priority:80},{label:'Context',priority:20},{label:'Card ID',priority:20},{label:'Load',priority:30});
 syncContext.sync({}, {children:[]}, {context:{setup:'Setup'}});assert.deepEqual(rendered.at(-1),['Context','Card ID','Load','Finish'],'Stable task groups precede secondary actions without losing context');
 console.log('Scene native editor multi-digit input, final change, stale/disconnected/hidden/disabled target and Escape characterization PASS; browser qualification still required');
+
+// Navigate actual editor callbacks, including canonical rerender replacement and scope loss.
+{
+ const app=harness(),frames=[];app.ctx.requestAnimationFrame=fn=>frames.push(fn);app.ctx.state={phase:'submit',sessionCode:'session-A'};app.node.id='profit1';
+ const target={...app.node,id:'profit2',value:'second',labels:app.node.labels,isConnected:true};target.dispatchEvent=()=>{};
+ app.ctx.sceneTargets.set('next',target);app.ctx.sceneFieldKeys=['profit','next'];app.ctx.document.getElementById=id=>id==='profit2'?target:null;
+ app.ctx.act('profit');assert.equal(app.editor.children[2].disabled,true);assert.equal(app.editor.children[3].disabled,false,'Next is available only for a current-section projected field');
+ app.input().value='100.01';app.editor.children[3].listeners.click();assert.deepEqual(app.events,['change']);assert.equal(app.editor,null);const fresh={...app.node,isConnected:true,value:'100.01'};app.ctx.sceneTargets.delete('profit');app.ctx.sceneTargets.set('fresh',fresh);app.ctx.sceneFieldKeys=['fresh','next'];app.ctx.document.getElementById=id=>id==='profit1'?fresh:id==='profit2'?target:null;while(frames.length)frames.shift()();assert.equal(app.input().value,'second','Next focuses fresh original target editor after validated change');
+ assert.equal(app.editor.children[2].disabled,false,'Previous field is available after replacement');app.editor.children[2].listeners.click();while(frames.length)frames.shift()();assert.equal(app.input().value,'100.01','Previous resolves refreshed prior field by stable native identity');
+}
+{
+ const app=harness(),frames=[];app.ctx.requestAnimationFrame=fn=>frames.push(fn);const target={...app.node,id:'next',isConnected:true};app.ctx.sceneTargets.set('next',target);app.ctx.sceneFieldKeys=['profit','next'];app.ctx.act('profit');assert.equal(app.editor.children[3].disabled,false);app.input().listeners.compositionstart();const composingEditor=app.editor;app.editor.children[3].listeners.click();app.editor.children[1].listeners.click();app.editor.listeners.keydown({key:'Escape',isComposing:true,preventDefault(){throw Error('Composition Escape must remain native');}});assert.equal(app.editor,composingEditor,'Composition Done/Escape cannot close the editor');assert.equal(frames.length,0);assert.deepEqual(app.events,[],'IME composition does not commit or navigate');app.input().listeners.compositionend();
+}
+for(const stale of ['session','section','target']){
+ const app=harness(),frames=[];app.ctx.requestAnimationFrame=fn=>frames.push(fn);app.ctx.state={phase:'submit',sessionCode:'session-A'};const target={...app.node,id:'next',isConnected:true};app.ctx.sceneTargets.set('next',target);app.ctx.sceneFieldKeys=['profit','next'];app.ctx.document.getElementById=()=>target;
+ app.ctx.act('profit');const next=app.editor.children[3];if(stale==='session')app.ctx.state.sessionCode='session-B';if(stale==='section')app.ctx.sceneSection='help';if(stale==='target')app.ctx.sceneTargets.delete('profit');next.listeners.click();while(frames.length)frames.shift()();assert.deepEqual(app.events,[],'Stale navigation cannot dispatch canonical input: '+stale);
+}
+console.log('PASS: editor Next/Previous field bounds, validated change, refreshed target focus, composition and stale scope guards');

@@ -4,6 +4,34 @@ import {prepareInspection,prepareCutaway,fitPerspective,fitDirectionalShadow} fr
 import {createMission,createPart,createConfiguration,MISSION_IDS,MODEL_IDS} from '../../source/three/game-models.mjs';
 import {materials,FinishMaterial,SURFACE_PROFILES} from '../../source/three/materials.mjs';
 const finishes=materials();
+// The Combat station must sit over an actual roof opening; opaque roof backing
+// defeats both the illustrated crew basket and the station's hollow mounting ring.
+{
+ const root=createMission('COMBAT');root.updateMatrixWorld(true);const roofShells=[];
+ root.traverse(o=>{if(o.isMesh&&o.name==='hull shell')roofShells.push(o);});
+ const roofRay=new THREE.Raycaster(new THREE.Vector3(-.35,2.50,0),new THREE.Vector3(0,-1,0),0,.22);
+ assert.equal(roofRay.intersectObjects(roofShells,false).length,0,'Combat roof has a real open turret-ring aperture');
+ const ring=root.getObjectByName('station hollow mounting ring'),roof=root.userData.roof,basket=root.getObjectByName('combat supported crew compartment');assert(ring&&basket);
+ for(const [dx,dz]of [[-1,0],[1,0],[0,-1],[0,1]]){
+  const origin=new THREE.Vector3(-.35,roof+.18,0),face=new THREE.Raycaster(origin,new THREE.Vector3(dx,0,dz),0,.55).intersectObject(ring,false)[0];assert(face,'Ring retains actual inner structural wall');
+  const shoes=[];basket.traverse(o=>{if(o.name==='combat basket roof ring attachment')shoes.push(o);});
+  assert(shoes.some(o=>new THREE.Box3().setFromObject(o,true).containsPoint(face.point)),'Basket upper attachment spans actual ring bearing face');
+ }
+ const floor=basket.getObjectByName('combat nonslip crew floor insert'),rails=[];basket.traverse(o=>{if(o.name==='crew seat bolted floor rail')rails.push(o);});assert.equal(rails.length,4);
+ for(const rail of rails){const b=new THREE.Box3().setFromObject(rail,true),c=b.getCenter(new THREE.Vector3()),face=new THREE.Raycaster(new THREE.Vector3(c.x,b.min.y+.005,c.z),new THREE.Vector3(0,-1,0),0,.015).intersectObject(floor,false)[0];assert(face&&Math.abs(face.point.y-b.min.y)<1e-6,'Combat seat floor rail bears on actual nonslip floor');}
+ const shellMaterials=[];root.traverse(o=>{if(o.userData.cutawayShell)shellMaterials.push([o,o.material]);});const cut=prepareCutaway(root);cut.apply(true);
+ for(const [o,material]of shellMaterials){assert.equal(o.material.opacity,.13);assert.notEqual(o.material,material);}
+ assert.equal(root.getObjectByName('station structural trunnion cheek').material.transparent,false,'Cutaway preserves structural support opacity');cut.dispose();for(const[o,material]of shellMaterials)assert.equal(o.material,material);
+}
+for(const id of 'ABCDEFG'.split('').map(l=>'FP-'+l)){
+ const root=createPart(id);root.updateMatrixWorld(true);const meshes=[];root.traverse(o=>{if(o.isMesh)meshes.push(o);});
+ const named=name=>meshes.filter(o=>o.name===name),pivots=named('station seated trunnion pivot'),cheeks=named('station structural trunnion cheek');assert.equal(pivots.length,2);
+ for(const pivot of pivots){const p=pivot.getWorldPosition(new THREE.Vector3()),s=Math.sign(p.z),cheek=cheeks.find(o=>Math.sign(new THREE.Box3().setFromObject(o).getCenter(new THREE.Vector3()).z)===s),hit=new THREE.Raycaster(new THREE.Vector3(p.x,p.y,s*.5),new THREE.Vector3(0,0,-s),0,.5).intersectObject(cheek,false)[0];assert(hit&&new THREE.Box3().setFromObject(pivot,true).containsPoint(hit.point),id+' actual trunnion pivot spans cast cheek outer bearing face');}
+ const shield=root.getObjectByName('station front shield with mantlet aperture');
+ if(shield){for(const collar of named('station seated mantlet collar')){const p=collar.getWorldPosition(new THREE.Vector3()),ray=new THREE.Raycaster(new THREE.Vector3(.7,p.y,p.z),new THREE.Vector3(-1,0,0),0,.6);assert.equal(ray.intersectObject(shield,false).length,0,id+' front shield has actual mantlet-axis opening');assert(ray.intersectObject(collar,false).length>0,id+' mantlet is present on that axis');}}
+ for(const muzzle of named('station open muzzle exterior')){const p=muzzle.getWorldPosition(new THREE.Vector3()),ray=new THREE.Raycaster(p.clone().add(new THREE.Vector3(.15,0,0)),new THREE.Vector3(-1,0,0),0,.30);assert.equal(ray.intersectObject(muzzle,false).length,0,id+' muzzle exterior retains real axial opening');assert.equal(ray.intersectObject(root,true)[0]?.object.name,'station recessed inert bore backing',id+' complete barrel has no solid end-cap occluding the recessed opening');}
+}
+console.log('Combat actual open roof/crew-ring load path, seated floor rails, enclosure-only cutaway; seven stations seated trunnions, open mantlets/muzzles PASS');
 // Mission access/load paths must meet real carrier structure in world space.
 {
  const root=createMission('TROOP');root.updateMatrixWorld(true);const meshes=[];root.traverse(o=>{if(o.isMesh)meshes.push(o);});const rear=-root.userData.length/2;

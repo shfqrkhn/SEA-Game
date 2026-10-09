@@ -1,10 +1,15 @@
 # SEA Game candidate release notes EN and FR
 
-Status: unaccepted development candidate, revised 2026-10-09. Current source app identity is `3.3.0`, ruleset `STANDARD`, deck `synthetic-v1`, save schema 3 and backup envelope version 1. The version label does not identify exact bytes or establish release acceptance. Use the source/preview identities and role hashes in the [current qualification report](evidence/convergence/scene-game-20261009/REPORT.md), plus the externally retained packet key at accepted release. Root deployment, rights/content/classroom acceptance and operator handover remain open.
+Status: unaccepted development candidate, revised 2026-10-09. Current source app identity is `3.4.0`, ruleset `STANDARD`, deck `synthetic-v1`, save schema 3 and backup envelope version 1. The version label does not identify exact bytes or establish release acceptance. Use the source/preview identities and role hashes in the [current qualification report](evidence/convergence/scene-game-20261009/REPORT.md), plus the externally retained packet key at accepted release. Root deployment, rights/content/classroom acceptance and operator handover remain open.
+
+Historical version 3.3.0 binds source `01204c8` and preview `18dc0db`; it does not qualify new 3.4.0 bytes. / La version historique 3.3.0 correspond à la source `01204c8` et à l’aperçu `18dc0db`; ses preuves ne valident pas les nouveaux fichiers 3.4.0.
 
 ## English
 
 ### Changes in the candidate
+
+- Version 3.4.0 puts student known-card entry/loading, private decision notes and purchase results together in Current, while Round retains round/lot context. Instructor Build selection aligns the selected team's detail and inspected model. Native editing adds Previous/Next field navigation with composition and stale-target guards; Closed keeps its new-session action visible, and the compact French overview label is « Aperçu ». Existing commands, manual authority, privacy, rules and save compatibility are preserved. Exact-candidate browser verification remains required.
+- This batch prepares original illustrative hollow COMBAT/firepower mounts and crew roof-ring/basket geometry. Integration, mechanical/reference fidelity, lighting and actual browser qualification remain open; preparation is not acceptance or manufacturer certification.
 
 - Version 3.3.0 rebuilds the scene interface around the current task: an enabled next action stays visible across sections, six model views are directly accessible, live callers share the Current auction surface and opening a Build team selects its inspected configuration. Rounded surfaces, restrained hierarchy and direct compact navigation use original code informed by public usability and MIT Three.js/uikit patterns. No additional UI library, copied example assets or game-rule changes were introduced. See the [XY analysis and licence record](game-design/UI_CLEANROOM_REBUILD.md).
 
@@ -33,6 +38,9 @@ Local command, rules, persistence, build, artwork and integrity evidence does no
 ## Français
 
 ### Changements de la version candidate
+
+- La version 3.4.0 regroupe dans « En cours » la saisie et le chargement de la carte annoncée, la note privée et le résultat d’achat; « Manche » conserve le contexte de ronde et de lot. La sélection d’équipe relie ses détails de conception au modèle inspecté. La saisie native ajoute les commandes de champ précédent/suivant avec protection de la composition et des cibles périmées. L’action de nouvelle séance reste visible et la vue générale compacte devient « Aperçu ». Les commandes, l’autorité manuelle, la confidentialité, les règles et la compatibilité des sauvegardes sont conservées. Cette version exige ses propres essais dans le navigateur.
+- Ce lot prépare une géométrie originale illustrative : supports creux COMBAT/puissance de feu et anneau de toit avec panier pour l’équipage. L’intégration, la fidélité mécanique aux références, l’éclairage et la validation réelle dans le navigateur restent ouverts; cette préparation ne constitue ni une approbation ni une certification du fabricant.
 
 - La version 3.3.0 organise l’interface Three.js autour de la tâche en cours : l’action suivante disponible reste visible, six vues du modèle sont directement accessibles, les enchérisseurs admissibles sont regroupés dans « En cours » et l’ouverture du résumé d’une équipe sélectionne sa configuration. Les commandes natives, les calculs et les règles existantes sont conservés. Aucun code de bibliothèque ni aucune ressource d’exemple supplémentaire n’a été intégré.
 - La construction intermédiaire 3.2.1 relie le rouleau de déminage aux appuis du châssis et aux bras de traction; le transporteur possède une véritable ouverture arrière, une rampe inclinée, des joints et des charnières sur appuis. Cette géométrie illustrative doit encore être comparée aux références dans le navigateur.

@@ -34,7 +34,7 @@ let latest,saveCalls=0,renderCalls=0,destructiveEffects=0;
 const ctx=vm.createContext({document:doc,Event:class{},host:stage,semanticVisible:n=>n.isConnected&&!n.hidden,get:id=>doc.getElementById(id),t:key=>key,queue(){},
  runtime:{interface(snapshot){latest=snapshot;return {page:snapshot.page}}},renderAll(){renderCalls++;language.textContent=ctx.api.lang==='en'?'FR':'EN'},saveState(){saveCalls++}});
 vm.runInContext(`let lang='en', state={phase:'auction'}, scenePhase='auction', sceneSection='task', sceneSectionEpoch=0, sceneSectionLanguage='', sceneSections=new Set(), scenePage=0, sceneAlert='', sceneDialog=null, sceneTargets=new Map(), editor=null, serial=0;
- const keys=new WeakMap();function keyFor(n){if(!keys.has(n))keys.set(n,'control-'+(++serial));return keys.get(n)}\n`+projection+presentation.slice(0,presentation.indexOf('function seaNotify('))+bridge.slice(bridge.indexOf(' function selectBuildSummary('),actionEnd)+`
+ const keys=new WeakMap();function keyFor(n){if(!keys.has(n))keys.set(n,'control-'+(++serial));return keys.get(n)}\n`+projection+presentation.slice(0,presentation.indexOf('function seaNotify('))+bridge.slice(bridge.indexOf(' function selectInspectedTeam('),actionEnd)+`
  this.api={sync(){syncSceneInterface(stage,active,{context:{auction:'Live lot'}})},act:sceneAction,confirm(){seaConfirmGate('finish','Finish the auction?',()=>{if(seaConfirmGate('finish','Finish the auction?',()=>{}))destructive()})},get lang(){return lang},get section(){return sceneSection}};`,Object.assign(ctx,{stage,active,destructive(){destructiveEffects++}}));
 language.onclick=()=>vm.runInContext("setLang(lang==='en'?'fr':'en')",ctx);
 for(const nextLocale of ['fr','en']){
@@ -140,3 +140,12 @@ console.log('PASS: opening current Build summary correlates model selection acro
  ctx.seaSceneSaveControls(stage,'Aide / sauvegarde');assert.equal(group.children.length,1,'Repeated sync cannot duplicate save controls');assert.equal(group.getAttribute('aria-label'),'Aide / sauvegarde');
 }
 console.log('PASS: native export/import identities exposed directly in Help/save without disclosure or duplicate dispatch');
+
+{
+ const build=findId(body,'authoritativeBuild');build._buildSession='session-A';const first=build.appendChild(element('details'));first.dataset={buildTeam:'1'};first.open=true;const firstSummary=first.appendChild(element('summary'));firstSummary.textContent='Team 1 comparison';const firstMetric=first.appendChild(element('p'));firstMetric.textContent='Team 1 exact metric';
+ const second=build.children.find(node=>node.dataset?.buildTeam==='2');second.open=true;const secondMetric=second.appendChild(element('p'));secondMetric.textContent='Team 2 exact metric';
+ vm.runInContext("state.phase='build';state.sessionCode='session-A';state.teams=[{id:1},{id:2}];selectedTeam='2'",ctx);ctx.api.sync();
+ assert(latest.rows.some(row=>row.label===firstSummary.textContent&&row.section==='teams'));assert(latest.rows.some(row=>row.label==='Team 2 exact metric'&&row.section==='task'));assert(!latest.rows.some(row=>row.label==='Team 1 exact metric'),'Other expanded native details do not dilute selected Current task');assert.equal(first.open,true,'Other native disclosures remain available unchanged');
+ vm.runInContext("selectInspectedTeam('1',true)",ctx);ctx.api.sync();assert(latest.rows.some(row=>row.label==='Team 1 exact metric'&&row.section==='task'));assert(!latest.rows.some(row=>row.label==='Team 2 exact metric'));assert.equal(ctx.selectedTeam,'1');
+}
+console.log('PASS: selected instructor Build team drives Current detail while all team summaries/native disclosures remain available');
