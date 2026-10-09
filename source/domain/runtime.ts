@@ -8,3 +8,6 @@ export { createTeams, normalizeTeam, validateTeamSnapshot, canonicalPurchaseRefe
 export { acquirePurchase, removePurchase } from './transactions';
 export { PHASES, parseSessionCode, validateBase, instructorPhaseAllowed, studentPhaseAllowed, studentAuctionStartAllowed, auctionVisible, canWin } from './session';
 export { BACKUP_FORMAT, BACKUP_VERSION, MAX_BACKUP_CHARS, MAX_BACKUP_BYTES, makeBackup, parseBackup, createRecoveryStore } from './recovery';
+export { marketFromSeed } from './market';
+export { validateInstructorSave, validateStudentSave, MAX_INSTRUCTOR_LEDGER_ENTRIES } from './role-saves';
+export { instructorCommitSale, instructorCommitUnsold, instructorVoidCurrent, studentRecordWin, ledgerHasCapacity } from './commands';

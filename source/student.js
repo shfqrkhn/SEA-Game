@@ -55,19 +55,7 @@ function startStudentAuction(){
  state.lockedMission=state.team.mission;state.team.lockedMission=state.team.mission;state.planBaseline=state.plan;
  phase('auction');renderAll();return true;
 }
-function validateStudentSave(x){
- const cfg=validateBase(x);must(hasOnlyKeys(x,['schema','phase','lang','vehicleConfirmed','lockedMission','sessionCode','teamCount','teamId','team','round','lot','currentCard','plan','planBaseline','risks','maxWtpCents','scratch','profitMode','profitInput','profitCents','practiceWon','vehicleChangeNotice']));
- must(x.vehicleChangeNotice===undefined||typeof x.vehicleChangeNotice==='boolean');must(x.team&&x.team.id===x.teamId&&x.teamId<=cfg.teamCount);
- const tm=cleanTeam(x.team);if(['auction','build','submit','debrief','closed'].includes(x.phase))must(x.lockedMission===tm.mission&&tm.lockedMission===tm.mission);else must(x.lockedMission===null&&tm.purchases.length===0);
- must(typeof x.vehicleConfirmed==='boolean'&&typeof x.practiceWon==='boolean');
- must(x.phase==='practice'||!x.practiceWon);
- for(const key of ['plan','risks'])must(typeof x[key]==='string'&&x[key].length<=1200);must(x.planBaseline===null||(typeof x.planBaseline==='string'&&x.planBaseline.length<=1200));
- must(validCents(x.maxWtpCents)&&validCents(x.profitCents)&&['AMOUNT','PERCENT'].includes(x.profitMode)&&typeof x.profitInput==='string'&&x.profitInput.length<=20);addCents(tm.cost,x.profitCents);
- must(x.scratch&&typeof x.scratch==='object'&&!Array.isArray(x.scratch)&&Object.keys(x.scratch).length<=70);
- for(const[key,v]of Object.entries(x.scratch))must(/^[1-7]-(10|[1-9])$/.test(key)&&hasOnlyKeys(v,['wtp','note'])&&Object.keys(v).length===2&&typeof v.wtp==='string'&&v.wtp.length<=20&&typeof v.note==='string'&&v.note.length<=600);
- let currentCard=x.currentCard;if(currentCard){const c=cardAt(currentCard.id,x.round+1,x.lot+1);must(currentCard.instance===c.instance);currentCard=c}
- return {...x,sessionCode:cfg.code,team:tm,currentCard,vehicleChangeNotice:x.vehicleChangeNotice===true};
-}
+function validateStudentSave(x){try{return SEADomain.validateStudentSave(x)}catch{must(false)}}
 function calculateDraftProfit(mode,input){
  const p=mode==='AMOUNT'?parseAmount(input):profitFromBps(state.team.cost,parsePercentBps(input));addCents(state.team.cost,p);return p;
 }
@@ -197,7 +185,13 @@ function setPosition(){if(state.phase!=='auction')return;const round=Number($('#
 function recordWin(){
  if(state.phase!=='auction'||!state.lockedMission)return false;
  if(!state.currentCard){seaNotify(t('errors.loadFirst'));return false}
- try{acquire(state.team,state.currentCard,parseWholeDollars($('#wonPrice').value));state.currentCard=null;saveState();advancePosition();return true}
+ try{
+  const next=SEADomain.studentRecordWin(state,parseWholeDollars($('#wonPrice').value));
+  applyTeamSnapshot(state.team,next.team);state.round=next.round;state.lot=next.lot;state.currentCard=null;
+  if(next.phase==='build'){phase('build');renderAll()}
+  else{$('#cardInput').value='';$('#wonPrice').value='';$('#wonPrice').dataset.cardId='';renderAuction()}
+  return true;
+ }
  catch(e){seaNotify(t(e.message==='duplicate'?'errors.duplicate':e.message==='limit'?'errors.purchaseLimit':'errors.moneyRange'));return false}
 }
 
