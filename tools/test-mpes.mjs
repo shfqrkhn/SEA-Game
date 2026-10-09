@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 // Mutation checks for the synthetic protocol model. No game/release certification.
 import assert from 'node:assert/strict';
-import {readFileSync,writeFileSync,mkdirSync,mkdtempSync,rmSync} from 'node:fs';
-import {tmpdir} from 'node:os';
+import {readFileSync,writeFileSync,mkdirSync,rmSync} from 'node:fs';
 import {resolve,dirname,join,relative,sep} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {execFileSync} from 'node:child_process';
 import {runInNewContext,Script} from 'node:vm';
+import {withLocalArtifactSandbox} from './artifact-io.mjs';
 const read=p=>readFileSync(new URL('../'+p,import.meta.url),'utf8');
 const source=read('tools/check-mpes.mjs');
 const start=source.indexOf('export function protocolExample('),end=source.indexOf('\n\ncheck(',start);
@@ -45,9 +45,8 @@ for(const [name,from,to]of mutants){
 // Exercise the real CLI in a disposable repository, not a mirrored filter.
 const project=resolve(dirname(fileURLToPath(import.meta.url)),'..');
 const checkpoint=JSON.parse(execFileSync(process.execPath,[join(project,'tools/check-mpes.mjs'),'--key'],{cwd:project,encoding:'utf8'}));
-const sandbox=mkdtempSync(join(tmpdir(),'sea-material-inventory-'));
 const inventoryCases=[];
-try{
+withLocalArtifactSandbox('sea-material-inventory-',sandbox=>{
  for(const name of Object.keys(checkpoint.basis.files)){
   const target=resolve(sandbox,name);
   assert(relative(sandbox,target)&&!relative(sandbox,target).startsWith('..'+sep));
@@ -91,8 +90,5 @@ try{
  const nested=join(sandbox,'tools/__pycache__/governed-source.js');writeFileSync(nested,'const governed=true;');
  assert(inspect().basis.files['tools/__pycache__/governed-source.js'],'Cache directory cannot hide non-bytecode material');
  inventoryCases.push('non-bytecode source in cache directory remains material');
-}finally{
- assert(dirname(sandbox)===resolve(tmpdir())&&sandbox.startsWith(join(resolve(tmpdir()),'sea-material-inventory-')));
- rmSync(sandbox,{recursive:true,force:true});
-}
+});
 console.log(JSON.stringify({result:'PASS',scope:'Synthetic protocol and actual material-inventory CLI only; no product release acceptance',baselineCases:fixtures.cases.length,semanticMutantsKilled:results.length,mutants:results,inventoryCases},null,2));

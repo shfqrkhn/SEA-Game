@@ -1,14 +1,13 @@
 #!/usr/bin/env node
 import assert from 'node:assert/strict';
-import {mkdtempSync,mkdirSync,writeFileSync,readFileSync,rmSync} from 'node:fs';
-import {tmpdir} from 'node:os';
+import {mkdirSync,writeFileSync,readFileSync,rmSync} from 'node:fs';
 import {join} from 'node:path';
 import {createHash} from 'node:crypto';
 import {fileURLToPath} from 'node:url';
 import {packageKey,verifyPacket,createPacket} from './package.mjs';
-const root=mkdtempSync(join(tmpdir(),'sea-packet-test-'));
-try{
- for(const output of [root,fileURLToPath(new URL('../.artifacts',import.meta.url)),fileURLToPath(new URL('../.artifacts/nested/packet',import.meta.url))])assert.throws(()=>createPacket(output),/new direct child under \.artifacts/,'Packet output must remain inside the local direct-child boundary');
+import {withLocalArtifactSandbox} from './artifact-io.mjs';
+withLocalArtifactSandbox('sea-packet-test-',root=>{
+ for(const output of [join(root,'nested'),fileURLToPath(new URL('../.artifacts',import.meta.url)),fileURLToPath(new URL('../.artifacts/nested/packet',import.meta.url))])assert.throws(()=>createPacket(output),/new direct child under \.artifacts/,'Packet output must remain inside the local direct-child boundary');
  const files={'dist/index.html':createHash('sha256').update('game').digest('hex'),'source/student.js':createHash('sha256').update('student').digest('hex')},key=packageKey(files);
  mkdirSync(join(root,'material/source'),{recursive:true});mkdirSync(join(root,'material/dist'),{recursive:true});writeFileSync(join(root,'material/dist/index.html'),'game');writeFileSync(join(root,'material/source/student.js'),'student');
  const manifest={format:'SEA-CANDIDATE-PACKET',version:1,status:'UNQUALIFIED_CANDIDATE',releaseAuthorized:false,fullClosurePasses:0,key,files};
@@ -26,4 +25,4 @@ try{
  assert.throws(()=>packageKey({'File':originalHash,'file':originalHash}),/Case-colliding/);
  const prototypeNamed=JSON.parse(JSON.stringify(files));Object.defineProperty(prototypeNamed,'__proto__',{value:originalHash,enumerable:true});assert.notEqual(packageKey(prototypeNamed),key,'Prototype-named member cannot disappear from the key');
  assert.equal(verifyPacket(root,key).result,'PASS');console.log('Candidate packet exact-byte, missing/extra, manifest tampering, identity and path rejection PASS');
-}finally{rmSync(root,{recursive:true,force:true})}
+});

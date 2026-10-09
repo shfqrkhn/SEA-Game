@@ -1,8 +1,8 @@
 # SEA Game classroom quick start EN and FR
 
-Current delivery checkpoint: see [handover](HANDOVER.md). Primary next distribution is one dist/index.html with deliberate role selection; exports/imports remain matching-role private JSON. Published3.5 evidence is limited, built 3.6 candidate qualification is pending.
+Current delivered/local versions, hashes and evidence: see [handover](HANDOVER.md). The primary distribution is one dist/index.html with deliberate role selection; exports/imports remain matching-role private JSON. Prior-version passes do not qualify newer bytes.
 
-Candidate instructions for the facilitator and students. Use a version approved for your classroom and tested on your devices. This local candidate still requires browser, French-language, rights and classroom acceptance; it is not the version currently hosted on Pages.
+Candidate instructions for the facilitator and students. Use a version approved for your classroom and tested on your devices. Publishing a development candidate on Pages does not establish full offline, French-language, device, rights or classroom acceptance; those gates remain open.
 
 ## English
 

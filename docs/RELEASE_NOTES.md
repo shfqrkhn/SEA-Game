@@ -2,13 +2,19 @@
 
 Status 2026-10-09: development candidate, full acceptance OPEN, 0/3. Exact delivery/checkpoint: [handover](HANDOVER.md). APP.version is separate from rulesSTANDARD/decksynthetic-v1/schema3/backup-envelope1; version labels do not identify exact bytes or establish acceptance.
 
-## Staged clean rebuild 4.0.0-dev.1
+## Current published staged rebuild 4.0.0-dev.2
+
+Empty student setup status now follows the native EN/FR language action. The actual-controller regression reproduced the observed English-in-French defect before the fix; fresh hosted student setup confirms the French message. PR6/source079d8b8 mergedac56974; all four source/main Windows/Ubuntu Node22/24 jobs pass, Pages succeeds and HTTPS bytes match8,189,502bytes/SHA256feca594d51202c090b06bba3c44e378f7ee48de4a7e0ec5735c46bb4951dcade. [Current bounded verification](verification/current.json) separates this recheck from prior-candidate model/role observations. Full acceptance stays OPEN0/3.
+
+Maintenance-only updates preserve game bytes/version: current handover/operating docs, one ignored project artifact root, and cleanup-guarded package/inventory verification sandboxes instead of system temp. Their existing integrity/mutation tests pass; no exploratory files or prompts are published.
+
+## Initial staged clean rebuild 4.0.0-dev.1
 
 Fresh measured Three.js interface corrects missing continuation pages/clipped text while retaining persistent task/view controls. New strict typed money/scoring functions are integrated in the actual role engine, reject arbitrary coercion hooks and unsafe score arithmetic, and retain compatible cents/BPS/save behavior. Shared wheel construction corrects inward-facing rims and floating fasteners, adds actual ventilated brake channels, and batches repeated tread/fastener geometry. Only one embedded HTML is built.
 
-Independent targeted regressions, strict checking, existing gameplay and six EN/FR/reveal VM journeys pass. This is a staged rebuild foundation, not the completed whole-game rewrite: old role/session/persistence adapters remain; actual new-candidate browser/offline/device/classroom/reference acceptance stays open. Published3.6.0 remains rollback until candidate publication is verified. All new work remains in the existing project root; local reference/concept/evidence outputs stay outside GitHub.
+Independent targeted regressions, strict checking, existing gameplay and six EN/FR/reveal VM journeys pass. This is a staged rebuild foundation, not the completed whole-game rewrite: old role/session/persistence adapters remain; full browser/offline/device/classroom/reference acceptance stays open. Version3.6.0 remains the Git rollback baseline. All new work remains in the existing project root; local reference/concept/evidence outputs stay outside GitHub.
 
-PR4 was externally merged while its first balance fixture failed; PR5 corrected missing synthetic team fields without changing the zero-score oracle, four-job CI passed and merge9d9d4b2 is verified. HTTPS exact bytes and scoped built-in-browser roles/reselection/recovery views passed. FR switching exposed untranslated empty student setup status; it is fixed in local4.0.0-dev.2 with an actual-controller RED/GREEN regression. New bytes require fresh hosted qualification; full closure remains0/3.
+PR4 was externally merged while its first balance fixture failed; PR5 corrected missing synthetic team fields without changing the zero-score oracle, four-job CI passed and merge9d9d4b2 is verified. HTTPS exact bytes and scoped built-in-browser roles/reselection/Recovery controls passed. FR switching exposed untranslated empty student setup status; publisheddev.2 fixes it with actual-controller RED/GREEN and fresh hosted recheck. Full closure remains0/3.
 
 ## Previous baseline 3.5.0
 
@@ -16,11 +22,11 @@ Distinct supported Troop/Command/Reconnaissance rear interiors, Command raised r
 
 Fresh actual EN eight-phase/70-position journey and correct eligible COMMAND award are [recorded](verification/w68-matched-english-journey.json), with [exact hosted bytes](verification/hosted-996101c.json). Actual assembled Team2 reveals ghosted hull and an aft upright cab; model/reference fidelity remains rejected. Prior evidence does not qualify changed next-candidate bytes or full FR/devices/rights/classroom acceptance.
 
-## Current published candidate 3.6.0
+## Previous rollback candidate 3.6.0
 
 One primary dist/index.html selecting either isolated EN/FR role, fully embedded shared engine/Three/art and accessible licences; deliberate reload returns to role choice. Fitted-component adapters replace insertion of whole showroom cards: opaque assembled skins, CAP furniture within retained carrier, PRO integrated cab/conforming protection, MOB retained axles/enclosed engine. All purchased effects/IDs stay authoritative even when one physical representative per family is displayed.
 
-Root integrated and built sole dist/index.html (8176765 bytes, SHA256 0aca2e9d8d1d5d4df31a080afb3932a84206b312f33c365a0efeac679e22aceb). Scoped domain/journey/scene/model/package tests pass; actual newCI/hosted/browser/file/offline acceptance remains pending. Repository maintenance cleanup removes exploratory concepts/prompts/viewers, duplicated previews/artifacts and giant historical assurance packets while retaining production source, required tooling/tests/fixtures, current operational docs and provenance. Recovery archive is outside GitHub; ordinary Git history stays intact. No save/rules/deck/storage incompatibility intended.
+Root integrated and built sole dist/index.html (8176765 bytes, SHA256 0aca2e9d8d1d5d4df31a080afb3932a84206b312f33c365a0efeac679e22aceb). PR3/source/main CI, Pages, exact HTTPS bytes and bounded native-browser role/reselection/notices/retained-session/Troop observations passed. File/offline/full acceptance remained open. Repository maintenance cleanup removed exploratory concepts/prompts/viewers, duplicated previews/artifacts and giant historical assurance packets while retaining production source, required tooling/tests/fixtures, operational docs and provenance. Ordinary Git history stays intact. No save/rules/deck/storage incompatibility intended.
 
 ## Compatibility and operating limits
 
@@ -30,9 +36,7 @@ Whole game uses Three.js task controls with integrated semantic/native inputs; a
 
 ## Français
 
-La version livrée3.5.0 distingue les intérieurs des véhicules et met le chargement d’une carte inconnue avant les décisions privées. Le parcours anglais complet et les fichiers livrés sont vérifiés dans une portée limitée; un défaut de montage reste visible. La fidélité visuelle et l’acceptation complète ne sont pas acquises.
-
-La version candidate construite3.6.0 réunit les deux rôles dans un seul dist/index.html, avec ressources/licences intégrées et choix de rôle délibéré. Les composants doivent s’intégrer à la coque plutôt que juxtaposer des modèles complets. Les effets/achats, règles et sauvegardes compatibles restent inchangés. Le HTML final est construit; ses essais réels et sa publication restent à vérifier. Les explorations et copies historiques sont archivées localement hors GitHub.
+La version candidate publiée4.0.0-dev.2 comprend le domaine typé, la disposition mesurée de l’interface Three.js, les détails des roues et la correction du message d’attente en français. Les quatre tâches CI Windows/Ubuntu et les fichiers HTTPS exacts sont vérifiés; le navigateur intégré confirme cette correction. Les contrôleurs de rôle, les sessions et la persistance restent à reconstruire. La version3.6.0 reste une référence de retour arrière dans Git. Les règles, achats et sauvegardes compatibles sont conservés; l’acceptation complète reste ouverte.
 
 Conservez des sauvegardes privées par rôle, vérifiez les téléchargements avant fermeture et réconciliez les achats avec le registre instructeur. [Démarrage](CLASSROOM_QUICK_START.md#français), [récupération](RECOVERY_GUIDE.md#français), [publication](RELEASE_OPERATIONS.md). L’approbation pédagogique, les droits, appareils/accessibilité/hors-ligne/performances et transfert opérateur restent ouverts; aucune clôture100% n’est déclarée.
 
@@ -40,4 +44,4 @@ Conservez des sauvegardes privées par rôle, vérifiez les téléchargements av
 
 Before activation bind exact source/dist/preview/packet hashes, rules/deck/schema, actual CI/environment/acceptance and deployed download/reopen evidence, release date, responsible maintainer/support and verified recovery/rollback. Never fill these facts from a historical receipt. [MPES](MPES.md) and [release operations](RELEASE_OPERATIONS.md) govern full release.
 
-PR3 merged3.6.0 at a31cb50. Four-job source/main CI, Pages and exact hosted bytes pass; bounded native-browser roles/reselection/notices/compatible-session/Troop modes recorded in [current verification](verification/current.json). Full file/offline/device/rights/classroom and whole closure remain open.
+Published development-candidate evidence is recorded in [current verification](verification/current.json); it is not an accepted release record. Full file/offline/device/rights/classroom and whole closure remain open.

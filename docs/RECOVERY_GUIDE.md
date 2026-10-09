@@ -1,6 +1,6 @@
 # SEA Game session backup and recovery EN and FR
 
-Current delivery checkpoint: see [handover](HANDOVER.md). Primary next distribution is one dist/index.html with deliberate role selection; exports/imports remain matching-role private JSON. Published3.5 evidence is limited, built 3.6 candidate qualification is pending.
+Current delivered/local versions, hashes and evidence: see [handover](HANDOVER.md). The primary distribution is one dist/index.html with deliberate role selection; exports/imports remain matching-role private JSON. Prior-version passes do not qualify newer bytes.
 
 This guide describes the current candidate workflow. The export/import controls still need browser and classroom acceptance before this guide can be treated as an approved operating procedure.
 

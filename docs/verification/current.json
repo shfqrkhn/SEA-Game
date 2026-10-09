@@ -1,54 +1,62 @@
 {
-  "date": "2026-10-09T18:34:00.971Z",
-  "scope": "Exact HTTPS byte readback; not browser/offline/classroom acceptance",
-  "version": "3.6.0",
-  "sourceCommit": "472987924379b11f579d227e6da87aab1579a3bd",
-  "mainMerge": "a31cb50ffed26647972cc0ceda7df9409ebb751e",
-  "pagesRun": 37973942285,
-  "sourcePRRun": 37973619552,
-  "url": "https://shfqrkhn.github.io/SEA-Game/dist/index.html?verify=a31cb50",
-  "bytes": 8176765,
-  "sourceSHA256": "0aca2e9d8d1d5d4df31a080afb3932a84206b312f33c365a0efeac679e22aceb",
-  "hostedSHA256": "0aca2e9d8d1d5d4df31a080afb3932a84206b312f33c365a0efeac679e22aceb",
+  "date": "2026-10-09T19:55:25Z",
+  "scope": "Exact HTTPS bytes, actual candidate CI and bounded hosted French setup recheck; not full release acceptance",
+  "version": "4.0.0-dev.2",
+  "sourceCommit": "079d8b8306fb5e409c70a58f50a0f025f7041a0b",
+  "mainMerge": "ac56974952a6a5bc25f121af02f62f422c60ba59",
+  "pagesRun": 37982852698,
+  "sourcePRRun": 37982709047,
+  "url": "https://shfqrkhn.github.io/SEA-Game/dist/index.html?v=ac56974",
+  "bytes": 8189502,
+  "sourceSHA256": "feca594d51202c090b06bba3c44e378f7ee48de4a7e0ec5735c46bb4951dcade",
+  "hostedSHA256": "feca594d51202c090b06bba3c44e378f7ee48de4a7e0ec5735c46bb4951dcade",
   "equal": true,
   "sourceMainRun": {
-    "id": 37973945413,
+    "id": 37982854457,
     "status": "success",
-    "matrix": "Windows/Ubuntu; Node22/24"
+    "matrix": "Windows/Ubuntu; Node22/24; all four jobs"
   },
   "browser": {
     "tool": "Codex built-in browser",
-    "viewport": "1280x720",
-    "scope": "Bounded launcher, notices, role startup/reselection, retained schema3 sessions and selected fitted Troop modes; not a fresh full-game journey",
+    "scope": "Fresh dev.2 student setup/native French switch only",
     "checks": [
-      "Launcher has zero canvases before role selection",
-      "Embedded owned MIT and Three.js full notice are readable",
-      "Instructor selection starts one canvas and only instructor DOM",
-      "Choose role command performs same-file reload and removes role query",
-      "Student selection starts one canvas with student session input and no instructor team-count control",
-      "Native Enter switches student to French",
-      "Existing instructor session SEA3-T2-85F9EE87E2DEE0DB remains Closed with 70 ledger rows",
-      "Instructor Team2 retains MOB-G/PRO-D; opaque assembled hull and no detached aft cab observed",
-      "Assembled/cutaway/exploded/restored modes exercise same selected Troop build",
-      "Existing student same-session Closed summary preserves8 purchases,cost3900000,score120,profit100.01,bid3900100.01",
-      "Captured warn/error logs empty for retained instructor/student"
+      "Opened exact candidate student URL",
+      "Native Enter on language action switches document to French",
+      "Empty-session waiting status reads: Entrez le code de séance, puis choisissez votre groupe et votre véhicule.",
+      "Captured warning/error console empty"
     ],
+    "localScreenshot": ".artifacts/rebuild-4-fr-fixed.png",
     "limits": [
-      "Direct locator click on clipped native language control did not activate; native Enter succeeds. Actual canvas pointer language path not qualified in this slice.",
-      "Initial table-row count selector was inappropriate for DIV ledger rows; DOM-grounded .ledger-row confirms70.",
-      "Screenshots kept in ignored local .artifacts and external archive, not runtime/source distribution."
+      "No new complete auction, role/recovery/private-state or retained-session browser qualification on dev.2",
+      "Unselected mission still displays a default Recovery preview/caption; next launcher/projection must clarify selection",
+      "Screenshot is ignored local evidence, not a repository/runtime dependency"
     ]
   },
-  "modelRegression": {
+  "priorCandidateBrowser": {
+    "version": "4.0.0-dev.1",
+    "sha256": "1ee024fd5517e1cfe38dac611cf260926e3c50433bc03f276bc99e5fd530818e",
+    "scope": "Chooser, instructor setup, Recovery assembled/exploded/cutaway controls, deliberate role reselection, student setup, one student canvas/no instructor controls, FR labels; not full model acceptance",
+    "localScreenshot": ".artifacts/rebuild-4-recovery.png",
+    "firstFailure": "Empty student waiting status remained English after French switch; actual-controller RED reproduced, dev.2 source and hosted recheck GREEN"
+  },
+  "sourceChecks": {
     "status": "PASS",
-    "scope": "Actual source geometry/game/inspection/interface wrappers; framing, wheel topology, fitted provenance, 42builds/77identities and cab contacts. Not certified dimensional compatibility or full visual acceptance."
+    "scope": "Strict typed domain, actual runtime boundary, independent rules/balance, six70-outcome EN/FR/reveal VM journeys, measured-layout regression, single HTML/CSP/notices/parity, art/encoding and geometry/game/inspection/interface/package/spec checks. CPU/VM assertions do not establish GPU/device/classroom acceptance."
+  },
+  "firstCIFailure": {
+    "run": 37981550748,
+    "source": "8ef19e5",
+    "failure": "Balance zero-score fixture omitted complete team identity/money fields",
+    "correction": "4185942 used canonical complete fixture; independent zero-score oracle unchanged",
+    "rerun": 37981977323,
+    "status": "success"
   },
   "open": [
-    "Actual file:// offline/OS-egress",
-    "Full current-candidate EN/FR/tie/ten-team/timed/reveal journeys",
-    "Device/performance/accessibility",
-    "Complete visual/reference/rights/classroom acceptance",
-    "Release/lifecycle/handover acceptance",
+    "Fresh transactional role/session/phase/save/controller rebuild",
+    "Full current-candidate browser EN/FR/tie/ten-team/timed/reveal/recovery/private-state journeys",
+    "Actual file:// offline and separately observed OS egress",
+    "Devices, performance, accessibility and complete reference-matched visual quality",
+    "Rights, content, classroom and release/operator lifecycle acceptance",
     "Three same-key full product passes"
   ],
   "closure": "PRODUCT_RELEASE OPEN0/3"
