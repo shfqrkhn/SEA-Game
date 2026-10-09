@@ -36,6 +36,9 @@ jobs:
       - run: node tools/build-domain.mjs --check
       - run: node tools/test-domain-rebuild.mjs
       - run: node tools/test-runtime-domain.mjs
+      - run: node tools/test-transactions-rebuild.mjs
+      - run: node tools/test-session-rebuild.mjs
+      - run: node tools/test-recovery-rebuild.mjs
       - run: node tools/test-interface-rebuild.mjs
       - run: node tools/test-realism-rebuild.mjs
       - run: node tools/test-single-html.mjs

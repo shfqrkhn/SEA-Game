@@ -113,12 +113,26 @@ function seaSceneBuildTeam(summary,s){
 function sea3DView(s,role,selected,language,setupMission){
  const teams=role==='instructor'?(s.teams||[]):s.team?[s.team]:[];
  const team=teams.find(x=>String(x.id)===String(selected))||teams[0];
- const mission=validMission(team?.mission)?team.mission:validMission(setupMission)?setupMission:'RECOVERY';
+ const selectedMission=validMission(team?.mission)?team.mission:null;
+ const previewMission=role==='student'&&s.phase==='setup'&&validMission(setupMission)?setupMission:null;
+ // mission is the model identity only. The fallback is an illustrative example,
+ // never a team choice; captions must use the explicit public selection state.
+ const mission=selectedMission||previewMission||'RECOVERY';
+ const missionState=selectedMission?'assigned':previewMission?'preview':'pending';
  const copyCard=id=>{const c=id==='TRAIN-CAP'?{id,name:{en:'Training crew module',fr:'Module d’équipage d’entraînement'}}:CARD_INDEX.get(id);return c?{id,title:c.name?.[language]||c.title?.[language]||id}:null;};
  let current=null;
  if(s.phase==='practice'&&(role==='student'||s.practice?.revealed))current=copyCard('TRAIN-CAP');
  if(s.phase==='auction'){const id=role==='instructor'?(SEA_AUCTION.visible(s.revealMode,s.lot,s.revealed,s.lot)?s.market?.[s.round]?.[s.lot]?.id:null):(typeof s.currentCard==='string'?s.currentCard:s.currentCard?.id);if(id)current=copyCard(id);}
- return {phase:s.phase,role,lang:language,mission,teamId:team?.id||null,teams:teams.map(x=>({id:x.id,mission:validMission(x.mission)?x.mission:null})),current,owned:(team?.purchases||[]).map(p=>copyCard(p.id||p.cardId||p.card?.id)).filter(Boolean)};
+ return {phase:s.phase,role,lang:language,mission,selectedMission,missionState,teamId:team?.id||null,teams:teams.map(x=>({id:x.id,mission:validMission(x.mission)?x.mission:null})),current,owned:(team?.purchases||[]).map(p=>copyCard(p.id||p.cardId||p.card?.id)).filter(Boolean)};
+}
+function seaSceneModelLabels(view,selection,labels,partTitle=''){
+ const fr=view.lang==='fr',name=MISSIONS[view.mission][fr?'fr':'en'];
+ const assigned=view.missionState==='assigned',preview=view.missionState==='preview';
+ const vehicle=assigned?labels.vehicle:fr?(preview?'Aperçu du véhicule':'Véhicule exemple'):(preview?'Vehicle preview':'Example vehicle');
+ const configuration=assigned?labels.configuration:fr?'Assemblage exemple':'Example assembly';
+ const mission=assigned?name:fr?(preview?'Aperçu : ':'Exemple : ')+name:(preview?'Preview: ':'Example: ')+name;
+ const status=assigned?(labels.context[view.phase]||labels.waiting):fr?(preview?'Aperçu seulement. Rejoignez votre équipe pour confirmer cette mission.':'Aucune mission choisie. Ce véhicule est un exemple; choisissez votre mission dans les commandes du jeu.'):(preview?'Preview only. Join your team to confirm this mission.':'No mission selected. This vehicle is an example; choose your mission in the game controls.');
+ return {vehicle,configuration,mission,status,title:selection.startsWith('part:')?partTitle||labels.title:selection==='configuration'?configuration:mission};
 }
 function sea3DStart(role){
  const host=document.getElementById('sea3dViewport');if(!host||typeof host.appendChild!=='function'||typeof requestAnimationFrame!=='function')return;
@@ -201,14 +215,15 @@ function sea3DStart(role){
    const view=sea3DView(state,role,selectedTeam,lang,get('vehicleSelect')?.value);
    teams.replaceChildren();view.teams.forEach(x=>option(teams,String(x.id),labels.team+' '+x.id));teams.value=String(view.teamId||'');teams.closest('label').hidden=role!=='instructor'||view.teams.length<2;
    const stage=get('sea3dScene'),active=document.querySelector?.('.section.active');if(active&&stage.parentElement!==active)active.querySelector('.hero')?.insertAdjacentElement('afterend',stage);
-   const choices=[['vehicle',labels.vehicle]];if(view.owned.length)choices.push(['configuration',labels.configuration]);
+   const modelLabels=seaSceneModelLabels(view,selection,labels);
+   const choices=[['vehicle',modelLabels.vehicle]];if(view.owned.length&&view.selectedMission)choices.push(['configuration',modelLabels.configuration]);
    const unique=new Map();if(view.current)unique.set(view.current.id,view.current);view.owned.forEach(p=>unique.set(p.id,p));unique.forEach(p=>choices.push(['part:'+p.id,p.title]));
    if(view.phase!==lastPhase){selection=view.current?'part:'+view.current.id:['build','submit','debrief','closed'].includes(view.phase)?'configuration':'vehicle';lastPhase=view.phase;}
    if(view.current&&view.current.id!==lastCurrent)selection='part:'+view.current.id;lastCurrent=view.current?.id||'';
    if(!choices.some(c=>c[0]===selection))selection='vehicle';objects.replaceChildren();choices.forEach(c=>option(objects,...c));objects.value=selection;objects.closest('label').hidden=choices.length<2;const toolbar=stage.querySelector?.('.sea3d-toolbar');if(toolbar)toolbar.hidden=choices.length<2&&teams.closest('label').hidden;
    const next=JSON.stringify([view,selection]);if(failed){fail();return;}
    if(!runtime){host.hidden=false;runtime=SEAThree.mount(host,fail,id=>{selection='part:'+id;queue();});}
-   host.hidden=false;if(!document.body.classList.contains?.('sea3d-active'))document.body.classList.add('sea3d-active');const selectedPart=unique.get(selection.slice(5));get('sea3d-title').textContent=selection.startsWith('part:')?selectedPart?.title||labels.title:selection==='configuration'?labels.configuration:MISSIONS[view.mission][lang];get('sea3dStatus').textContent=labels.context[view.phase]||labels.waiting;host.setAttribute('aria-label',get('sea3d-title').textContent);
+   host.hidden=false;if(!document.body.classList.contains?.('sea3d-active'))document.body.classList.add('sea3d-active');const selectedPart=unique.get(selection.slice(5)),sceneLabels=seaSceneModelLabels(view,selection,labels,selectedPart?.title);get('sea3d-title').textContent=sceneLabels.title;get('sea3dStatus').textContent=sceneLabels.status;host.setAttribute('aria-label',sceneLabels.title);
    if(next!==signature){runtime.update(view,selection);signature=next;}
    const mode=get('sea3dMode');mode.replaceChildren();for(const key of ['assembled','exploded','cutaway'])option(mode,key,labels[key]);mode.value=inspectionMode;get('sea3dSeparation').hidden=inspectionMode!=='exploded';get('sea3dPercent').textContent=get('sea3dAmount').value+'%';runtime.inspect?.(inspectionMode,Number(get('sea3dAmount').value)/100);runtime.shadows?.(get('sea3dShadows').checked);
    const names={en:{body:'Body panels',chassis:'Chassis',cockpit:'Driver controls',glass:'Glazing',crane:'Recovery crane',wheel:'Wheel',roof:'Roof',seating:'Seats',frame:'Frame',cooling:'Cooling',heads:'Cylinder heads',connections:'Connections',powertrain:'Powertrain',barrel:'Barrel',mount:'Mount',controls:'Controls',optics:'Optics & antennae',protection:'Protection',mechanism:'Mechanism',display:'Display',documents:'Review documents',front:'Front equipment'},fr:{body:'Panneaux de carrosserie',chassis:'Châssis',cockpit:'Commandes du conducteur',glass:'Vitrage',crane:'Grue de dépannage',wheel:'Roue',roof:'Toit',seating:'Sièges',frame:'Cadre',cooling:'Refroidissement',heads:'Culasses',connections:'Raccordements',powertrain:'Groupe motopropulseur',barrel:'Canon',mount:'Support',controls:'Commandes',optics:'Optiques et antennes',protection:'Protection',mechanism:'Mécanisme',display:'Écran',documents:'Documents de revue',front:'Équipements avant'}};
@@ -221,7 +236,7 @@ function sea3DStart(role){
    get('sea3d-views').closest('details').hidden=true;
    let sessionContext=get('sea3dSessionContext');if(!sessionContext){sessionContext=document.createElement('p');sessionContext.id='sea3dSessionContext';sessionContext.setAttribute('data-scene-section','help');sessionContext.setAttribute('data-scene-priority','90');stage.appendChild(sessionContext);}
    sessionContext.textContent=state.sessionCode?(lang==='fr'?'Séance : ':'Session: ')+state.sessionCode:'';
-   syncSceneInterface(stage,active,labels,{role:t('role'),team:view.teamId?t('common.team',{n:view.teamId}):'',version:APP.version,phase:t('phase.'+state.phase),mission:MISSIONS[view.mission][lang],session:state.sessionCode||''});
+   syncSceneInterface(stage,active,labels,{role:t('role'),team:view.teamId?t('common.team',{n:view.teamId}):'',version:APP.version,phase:t('phase.'+state.phase),mission:sceneLabels.mission,session:state.sessionCode||''});
  }catch{fail();}}
  function queue(){if(!queued){queued=true;requestAnimationFrame(sync);}}
  get('sea3dMode').addEventListener('change',()=>{inspectionMode=get('sea3dMode').value;queue();});get('sea3dAmount').addEventListener('input',queue);
