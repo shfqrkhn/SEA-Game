@@ -139,7 +139,14 @@ function protection(m,v){
   const aperture=[[-wide+.105,.18],[wide-.105,.18],[wide-.105,height-.31],[roofWide-.075,height-.13],[-roofWide+.075,height-.13],[-wide+.105,height-.31]];
   const doorHole=new THREE.Path();aperture.forEach(([z,y],i)=>i?doorHole.lineTo(z,y):doorHole.moveTo(z,y));doorHole.closePath();
   formedCabPanel(g,m.paint,[[-wide,.09],[wide,.09],[wide,height-.26],[roofWide,height],[-roofWide,height],[-wide,height-.26]],[doorHole],(z,y,d)=>[back+d,y,z]);
-  const rearSeal=aperture.map(([z,y])=>[back-.007,y,z]);rearSeal.push(rearSeal[0]);tube(g,m.rubber,rearSeal,.018,64).name='rear aperture weather seal';
+  // Straight gasket lengths follow the aperture edges exactly; rounded joints
+  // connect the lengths without a spline bowing away from the chamfered frame.
+  const rearSeal=group('rear aperture weather seal');g.add(rearSeal);
+  const sealPoints=aperture.map(([z,y])=>[back-.007,y,z]);
+  for(let i=0;i<sealPoints.length;i++){
+   rod(rearSeal,m.rubber,sealPoints[i],sealPoints[(i+1)%sealPoints.length],.018).name='aperture gasket edge';
+   const joint=new THREE.Mesh(new THREE.SphereGeometry(.018,12,8),m.rubber);joint.position.set(...sealPoints[i]);joint.name='aperture gasket corner';joint.castShadow=true;joint.receiveShadow=true;rearSeal.add(joint);
+  }
   for(const s of [-1,1]){
    tube(g,frame,[[back+.059,.15,s*(wide-.065)],[back+.059,height-.29,s*(wide-.065)],[back+.059,height-.065,s*(roofWide-.045)]],.027,24).name='rear door jamb reinforcement';
    tube(g,m.steel,[[back-.022,.46,s*(wide-.04)],[back-.09,.46,s*(wide-.04)],[back-.09,.77,s*(wide-.04)],[back-.022,.77,s*(wide-.04)]],.016,24).name='connected boarding grab handle';

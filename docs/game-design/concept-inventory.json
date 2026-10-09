@@ -1906,8 +1906,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/communications-family-v1.png",
+            "sha256": "fa7e2b98f159929a4755be617c57a66552ea9e1a95e82dafa842be8d6ee35f39",
+            "receiptId": "GEN-communications-family-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -1963,8 +1972,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/communications-family-v1.png",
+            "sha256": "fa7e2b98f159929a4755be617c57a66552ea9e1a95e82dafa842be8d6ee35f39",
+            "receiptId": "GEN-communications-family-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -2020,8 +2038,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/communications-family-v1.png",
+            "sha256": "fa7e2b98f159929a4755be617c57a66552ea9e1a95e82dafa842be8d6ee35f39",
+            "receiptId": "GEN-communications-family-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -2077,8 +2104,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/communications-family-v1.png",
+            "sha256": "fa7e2b98f159929a4755be617c57a66552ea9e1a95e82dafa842be8d6ee35f39",
+            "receiptId": "GEN-communications-family-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -2135,8 +2171,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/communications-family-v1.png",
+            "sha256": "fa7e2b98f159929a4755be617c57a66552ea9e1a95e82dafa842be8d6ee35f39",
+            "receiptId": "GEN-communications-family-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -2192,8 +2237,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/communications-family-v1.png",
+            "sha256": "fa7e2b98f159929a4755be617c57a66552ea9e1a95e82dafa842be8d6ee35f39",
+            "receiptId": "GEN-communications-family-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -2249,8 +2303,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/communications-family-v1.png",
+            "sha256": "fa7e2b98f159929a4755be617c57a66552ea9e1a95e82dafa842be8d6ee35f39",
+            "receiptId": "GEN-communications-family-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
