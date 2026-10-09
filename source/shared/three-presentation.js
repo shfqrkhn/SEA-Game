@@ -47,7 +47,7 @@ function seaSceneProjection(roots,visible,keyFor){
   if(tag==='summary'){add(node,'button',text());return;}
   if(tag==='details'){for(const child of node.children||[])if(node.open||child.tagName?.toLowerCase()==='summary')walk(child);return;}
   if((['h2','h3','h4','p','small'].includes(tag)||node.classList?.contains('badge'))&&!node.querySelector?.('button,input,select,textarea')){add(node,'text',text());return;}
-  if(tag==='tr'||node.classList?.contains('metric')||node.classList?.contains('notice')||node.classList?.contains('effect')||node.classList?.contains('workflow')){
+  if(tag==='tr'||node.classList?.contains('ledger-row')||node.classList?.contains('metric')||node.classList?.contains('notice')||node.classList?.contains('effect')||node.classList?.contains('workflow')){
    add(node,'text',readable(node).replace(/\s+/g,' ').trim());
    for(const x of node.querySelectorAll('button,input,select,textarea'))walk(x);return;
   }

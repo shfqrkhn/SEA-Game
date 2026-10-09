@@ -1406,6 +1406,8 @@ for(const lang of ['en','fr'])for(const [text,escaped]of hostileTextExamples){
  const teacher=backupApi.parseBackup(backupApi.makeBackup('INSTRUCTOR',teacherSnapshot),'INSTRUCTOR',instructorValidator),target={innerHTML:''};
  runInNewContext(sharedEngineSource+'\n'+['esc','t','money','renderLedger'].map(name=>extractFunction(instructorSource,name)).join('\n')+'\nrenderLedger(target)',{state:teacher,target,lang,I18N:JSON.parse(instructorSource.match(/const I18N=(.*?);\n/)[1]),$:()=>target});
  assert.ok(!target.innerHTML.includes(text),'Private correction reason is not injected into ledger presentation');assert.equal(teacher.ledger[0].reason,text,'Bounded correction reason remains recoverable');
+ assert.ok(target.innerHTML.includes((lang==='fr'?'Ronde':'Round')+' '+teacher.ledger[0].round),'Published ledger identifies the round beside the event in '+lang);
+ assert.ok(target.innerHTML.includes('Lot '+teacher.ledger[0].lot),'Published ledger identifies the lot beside the event');
 }
 console.log('Real role import/renderer escaping, canonical purchase metadata and private JSON text characterization PASS');
 // R09-R11/R23, T11/T12/T24: execute production startup/storage/export boundaries.

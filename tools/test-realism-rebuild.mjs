@@ -10,6 +10,46 @@ import {prepareInspection} from './source/three/inspection.mjs';
 const reports=[];
 for(const [id,count]of [['RECOVERY',8],['COMBAT',8],['RECCE',4],['TROOP',6],['COMMAND',6],['MINE',8]]){
  const paint=materials(),root=missionBase(id,paint);root.userData.mission=id;root.updateMatrixWorld(true);
+ if(id!=='RECOVERY'){
+  const named=name=>{const result=[];root.traverse(o=>{if(o.name===name)result.push(o);});return result;};
+  assert.equal(named('carrier windshield wiper assembly').length,2,id+' has pivot/arm/blade systems instead of floating rods');
+  const k=.75/1.16,normal=new THREE.Vector3(1,k,0).normalize(),front=root.userData.length/2;
+  for(const lip of named('carrier wiper rubber contact lip')){
+   const half=lip.geometry.parameters.height/2;
+   for(const end of [-1,1]){
+    const contact=lip.localToWorld(new THREE.Vector3(0,end*half,0)),ray=new THREE.Raycaster(contact,normal.clone().negate(),0,.010);
+    const hit=ray.intersectObjects(named('cab glazing'),false)[0];assert(hit,'Both rubber endpoints seat over actual windshield geometry');
+    assert(Math.abs(hit.distance-.003)<1e-5,'Rubber contact is one lip radius from glazing, with no floating air gap: '+hit.distance);
+    assert(contact.y>1.82&&contact.y<2.11,'Blade is inside aperture height');
+   }
+  }
+  assert.equal(named('carrier wiper rubber contact lip').length,2);
+  assert.equal(named('carrier wiper spindle housing').length,2);
+  assert.equal(named('carrier wiper articulated arm').length,4);
+  for(const bezel of named('carrier headlamp retaining ring')){
+   assert.equal(bezel.geometry.type,'TorusGeometry');
+   const center=bezel.getWorldPosition(new THREE.Vector3()),ray=new THREE.Raycaster(center.clone().add(new THREE.Vector3(.15,0,0)),new THREE.Vector3(-1,0,0),0,.3);
+   assert.equal(ray.intersectObject(bezel,false).length,0,'Headlamp bezel has a real central optical opening');
+   assert(ray.intersectObjects(named('carrier headlamp clear cover'),false).length>0,'Cover is physically in the bezel aperture');
+   const reflectorRay=new THREE.Raycaster(center.clone().add(new THREE.Vector3(.15,0,.020)),new THREE.Vector3(-1,0,0),0,.3);
+   assert(reflectorRay.intersectObjects(named('carrier headlamp reflector bowl'),false).length>0,'Reflector is physically behind the cover');
+  }
+  assert.equal(named('carrier headlamp retaining ring').length,2);
+  assert.equal(named('carrier mirror sealed backing').length,2);
+  assert.equal(named('carrier mirror support strut').length,4);
+  for(const mount of named('carrier mirror hull mounting plate')){
+   const origin=mount.getWorldPosition(new THREE.Vector3()),direction=new THREE.Vector3(0,0,-Math.sign(origin.z));
+   assert(new THREE.Raycaster(origin,direction,0,.05).intersectObjects(named('hull shell'),false).length>0,'Mirror plate seats on actual hull instead of floating outside it '+id+' '+JSON.stringify(origin.toArray()));
+  }
+  for(const eye of named('carrier front tow eye')){
+   const center=eye.getWorldPosition(new THREE.Vector3());
+   assert.equal(new THREE.Raycaster(center.clone().add(new THREE.Vector3(0,0,.15)),new THREE.Vector3(0,0,-1),0,.30).intersectObject(eye,false).length,0,'Tow ring has a physical open pin bore');
+   const bounds=new THREE.Box3().setFromObject(eye),bracket=root.getObjectByName('carrier tow eye bracket '+Math.sign(center.z));
+   assert(bounds.intersectsBox(new THREE.Box3().setFromObject(bracket)),'Tow eye mates to supported bracket');
+   assert(bounds.min.x<=front+.12,'Tow eye stays connected to front bumper envelope');
+  }
+  assert.equal(named('carrier front tow eye').length,2);
+ }
  const wheels=[];root.traverse(o=>{if(o.name==='run-flat wheel')wheels.push(o);});assert.equal(wheels.length,count,id+' retains canonical wheels');
  const before=[];root.traverse(o=>{if(o.isMesh)before.push(o);});detailPart(root,paint,'MOB',1);const after=[];root.traverse(o=>{if(o.isMesh)after.push(o);});assert.equal(before.length,after.length,'Refinement is idempotent');
  let meshes=0,triangles=0;
@@ -46,11 +86,14 @@ for(const [id,count]of [['RECOVERY',8],['COMBAT',8],['RECCE',4],['TROOP',6],['CO
   let wheelMeshes=0,wheelTriangles=0;wheel.traverse(o=>{if(!o.isMesh)return;wheelMeshes++;wheelTriangles+=(o.geometry.index?.count??o.geometry.attributes.position.count)/3;for(const v of o.geometry.attributes.position.array)assert(Number.isFinite(v),'Finite vertex');});
   assert(wheelMeshes<=30,'Bounded wheel draw meshes');assert(wheelTriangles<=17000,'Bounded wheel triangles');meshes+=wheelMeshes;triangles+=wheelTriangles;
  }
+ const fitted=[];root.traverse(o=>{if(/carrier (?:wiper|mirror|headlamp|front tow)/.test(o.name))fitted.push([o,o.getWorldPosition(new THREE.Vector3()),o.getWorldQuaternion(new THREE.Quaternion())]);});
  const original=wheels.map(w=>w.getWorldPosition(new THREE.Vector3())),inspection=prepareInspection(root);inspection.apply(1);inspection.restore();wheels.forEach((w,i)=>assert(w.getWorldPosition(new THREE.Vector3()).distanceTo(original[i])<1e-9,'Exploded view restores wheel placement'));
+ for(const [part,position,quaternion]of fitted){assert(part.getWorldPosition(new THREE.Vector3()).distanceTo(position)<1e-9,'Exterior fit survives exploded/restored placement');assert(part.getWorldQuaternion(new THREE.Quaternion()).angleTo(quaternion)<1e-7,'Exterior slope alignment survives inspection');}
+
  reports.push({mission:id,wheels:count,wheelMeshes:meshes,wheelTriangles:triangles});
  const geometries=new Set(),paints=new Set(Object.values(paint));root.traverse(o=>{if(o.geometry)geometries.add(o.geometry);for(const m of Array.isArray(o.material)?o.material:[o.material])if(m)paints.add(m);});geometries.forEach(g=>g.dispose());paints.forEach(m=>m.dispose());
 }
-console.log('Rebuild wheel geometry: canonical topology, real seated fasteners/open cooling channels, bounded local batches and inspection restoration PASS');
+console.log('Rebuild geometry: carrier fitted wipers/mirrors/open tow eyes/layered optics; wheel contacts/cooling/budgets and inspection restoration PASS');
 console.log(JSON.stringify(reports));
 `,resolveDir:fileURLToPath(new URL('../',import.meta.url)),sourcefile:'realism-rebuild-test.mjs'},bundle:true,write:false,platform:'node',format:'esm',nodePaths:[fileURLToPath(new URL('../samples/threejs-recovery/node_modules',import.meta.url))]});
 try{await import('data:text/javascript;base64,'+Buffer.from(result.outputFiles[0].text).toString('base64'));}catch(error){console.error(error.name+': '+error.message);process.exitCode=1;}
