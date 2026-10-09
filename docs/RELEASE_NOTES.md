@@ -1,11 +1,14 @@
 # SEA Game candidate release notes EN and FR
 
-Status: unreleased local candidate, assessed 2026-10-08. App identity remains `3.0.0-local`, ruleset `STANDARD`, deck `synthetic-v1`, save schema 3 and backup envelope version 1. This app label is not a unique candidate identifier; use the externally retained packet key and exact HTML hashes in the qualification record. The baseline commit is `1b80b348ac945987fbe11db77bd7a51f3dd553aa`. These notes describe the local changes after that baseline; they do not claim a new public release or approval.
+Status: unaccepted development candidate, revised 2026-10-09. Current source app identity is `3.2.0`, ruleset `STANDARD`, deck `synthetic-v1`, save schema 3 and backup envelope version 1. The version label does not identify exact bytes or establish release acceptance. Use the source/preview identities and role hashes in the [current qualification report](evidence/convergence/scene-game-20261009/REPORT.md), plus the externally retained packet key at accepted release. Root deployment, rights/content/classroom acceptance and operator handover remain open.
 
 ## English
 
 ### Changes in the candidate
 
+- Three.js is the primary game interface across both roles and all eight phases, with synchronized semantic controls/native input, bilingual task sections, assembled/exploded/cutaway inspection and rotating fixed-light shadows. Runtime, rules, models and materials are embedded in each HTML; there is no external image-loading chain. Model construction and complete device/accessibility acceptance remain open.
+- Version 3.2.0 adds compact expandable instructor Build summaries, immediately synchronized Submitted status and a direct Closed-phase new-session action. Five generic carriers now have actual glazing apertures, connected lamp/step hardware and contoured supported cockpit construction. This is illustrative original geometry, not manufacturer-certified equipment.
+- Compatible versions retain schema-3 storage keys. Unchanged snapshots and identical generated artifacts skip writes; development uses finite operations without persistent watchers or loggers.
 - Student purchase removal now targets the intended purchase instance and rejects stale confirmations. Starting-price fields use whole dollars correctly. Wrong-phase, repeated and delayed commands receive validation before mutation.
 - Auction sale, unsold, correction and void paths retain authoritative ledger behavior and reject stale intent. The 210-entry audit limit reserves enough capacity to finish remaining lots; it does not introduce a spending cap.
 - Both roles have private JSON export/import, bounded schema-3 recovery and previous-session restore. Invalid imports preserve the current state; corrupt stored data can be exported as an unchanged rescue file. Open instructor auctions recover paused, with private submission entry closed. Closed sessions can start again after deliberate confirmation and a backup request.
@@ -15,7 +18,7 @@ Status: unreleased local candidate, assessed 2026-10-08. App identity remains `3
 
 ### Compatibility and use
 
-The 70-card deck, six missions, seven rounds, two-win-per-round limit, eight phases and manual role handoffs remain the governing classroom model. WTP remains advisory; no enforced total budget, networking or synchronization was added. Each standalone HTML retains embedded vector fallback artwork; raster files are optional. Keep instructor market/ledger backups and student private files separate.
+The 70-card deck, six missions, seven rounds, two-win-per-round limit, eight phases and manual role handoffs remain the governing classroom model. WTP remains advisory; no enforced total budget, networking or synchronization was added. Each standalone HTML embeds the Three.js runtime/models and native vector illustrations for print. Runtime does not load external raster files. Keep instructor market/ledger backups and student private files separate.
 
 Preserve original files and backups before changing versions. Import only into the matching role with compatible rules, deck and schema; a recognized app label alone is not proof of compatibility. The backup text limit is 500,000 UTF-16 units, with a 1,500,000-byte pre-read file limit. Do not truncate data to bypass either check. Follow the recovery guide and verify completed downloads before closing tabs. A compatible accepted predecessor and actual rollback rehearsal are still required; the hosted baseline is not automatically an approved rollback version.
 
@@ -27,6 +30,9 @@ Local command, rules, persistence, build, artwork and integrity evidence does no
 
 ### Changements de la version candidate
 
+- Three.js constitue l’interface principale des deux rôles et des huit phases, avec commandes sémantiques et saisie native synchronisées, sections bilingues, vues assemblée/éclatée/en coupe et ombres sous un éclairage fixe. Chaque HTML contient le moteur, les règles, les modèles et les matériaux; aucune chaîne de chargement d’images externes n’est utilisée. La fidélité des modèles et la validation complète des appareils et de l’accessibilité restent ouvertes.
+- La version 3.2.0 ajoute des résumés de conception dépliables par équipe, la mise à jour immédiate du statut Soumis et une commande de nouvelle séance dans la phase Fermé. Cinq véhicules disposent d’ouvertures réelles pour le vitrage, de supports de phares et de marches reliés à la coque, et de postes de conduite mieux construits. La géométrie originale demeure illustrative, sans certification du fabricant.
+- Les mises à jour compatibles conservent les clés de stockage du schéma 3. Les sauvegardes et fichiers générés identiques ne sont pas réécrits; le développement utilise des opérations finies sans observateurs ni journaux permanents.
 - La suppression d'un achat étudiant cible l'achat prévu et refuse les confirmations périmées. Les prix de départ sont correctement saisis en dollars entiers. Les commandes répétées, retardées ou utilisées à la mauvaise phase sont validées avant modification.
 - Les ventes, résultats invendus, corrections et annulations conservent le registre officiel et refusent une intention périmée. La limite de 210 entrées réserve la capacité nécessaire aux lots restants; elle n'impose pas de plafond de dépenses.
 - Les deux rôles disposent de sauvegardes JSON privées, d'une importation bornée compatible avec le schéma 3 et de la restauration précédente. Un import rejeté préserve l'état actuel. Les données stockées corrompues peuvent être exportées intactes dans un fichier de secours. Une enchère ouverte reprend en pause et la saisie privée reste fermée. Une nouvelle séance exige une confirmation volontaire et une demande de sauvegarde.
@@ -36,7 +42,7 @@ Local command, rules, persistence, build, artwork and integrity evidence does no
 
 ### Compatibilité et utilisation
 
-Les 70 cartes, six missions, sept rondes, deux gains maximum par ronde, huit phases et communications manuelles restent le modèle de la classe. La disposition à payer reste indicative. Aucun budget total imposé, réseau ou mécanisme de synchronisation n'a été ajouté. Chaque HTML contient des illustrations vectorielles de secours; les images matricielles sont facultatives. Séparez les sauvegardes privées de l'instructeur et des équipes.
+Les 70 cartes, six missions, sept rondes, deux gains maximum par ronde, huit phases et communications manuelles restent le modèle de la classe. La disposition à payer reste indicative. Aucun budget total imposé, réseau ou mécanisme de synchronisation n'a été ajouté. Chaque HTML contient Three.js, ses modèles et les illustrations vectorielles destinées à l’impression. Le jeu ne charge pas d’images matricielles externes. Séparez les sauvegardes privées de l'instructeur et des équipes.
 
 Préservez fichiers et sauvegardes avant tout changement de version. Importez seulement dans le bon rôle avec règles, cartes et schéma compatibles; le nom de version seul ne prouve pas la compatibilité. Les limites sont de 500 000 unités UTF-16 pour le texte et de 1 500 000 octets avant lecture du fichier. Ne tronquez pas les données. Vérifiez les téléchargements avant de fermer les onglets. La version précédente approuvée et le retour à cette version doivent encore être validés; la version hébergée n'est pas automatiquement une solution de retour approuvée.
 

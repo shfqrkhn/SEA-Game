@@ -647,17 +647,44 @@ function instructorSubmissionEditHarness(){
  const $=key=>elements[key]||(elements[key]={classList:{toggle(){}},innerHTML:''});
  const $$=key=>key==='[data-profit-team]'?[profit]:key==='[data-submitted-team]'?[submitted]:[];
  runInNewContext(sharedEngineSource+'\n'+extractFunction(instructorSource,'amountInput')+'\n'+extractFunction(instructorSource,'renderSubmit')+'\nrenderSubmit()',{state,lang:'en',$,$$,t:key=>key,esc:String,money:String,saveState:()=>calls.saves++,seaNotify:key=>calls.notices.push(key)});
- return {state,profit,submitted,calls};
+ return {state,profit,submitted,calls,elements};
 }
 for(const control of ['profit','submitted']){
  const live=instructorSubmissionEditHarness();live[control].onchange();assert.equal(control==='profit'?live.state.teams[0].profit:live.state.teams[0].submitted,control==='profit'?15000000:true,'Connected private submission input applies');
- if(control==='submitted'){live.submitted.checked=false;live.submitted.onchange();assert.equal(live.state.teams[0].submitted,false,'A connected submission checkbox remains editable')}
+ if(control==='submitted'){
+  assert.match(live.elements['#submissionRows'].innerHTML,/<span>submit.submitted<\/span>/,'Checkbox updates adjacent derived status immediately');assert.match(live.elements['#submissionRows'].innerHTML,/data-submitted-team="1" checked/,'Projected semantic checkbox matches saved submission');assert.equal(live.calls.saves,1,'Checkbox change saves exactly once');
+  live.submitted.checked=false;live.submitted.onchange();assert.equal(live.state.teams[0].submitted,false,'A connected submission checkbox remains editable');assert.match(live.elements['#submissionRows'].innerHTML,/<span>debrief.notSubmitted<\/span>/,'Unchecking restores adjacent not-submitted status');assert.doesNotMatch(live.elements['#submissionRows'].innerHTML,/data-submitted-team="1" checked/);assert.equal(live.calls.saves,2,'Each checkbox change saves once');
+ }
  for(const change of [app=>app.state.teams=app.state.teams.map(team=>({...team})),app=>app.state.sessionCode='SEA3-T2-FFFFFFFFFFFFFFFF',app=>app.state.teams=[],app=>app.state.privateEntry=false,app=>app.state.phase='debrief',app=>app[control].isConnected=false]){
   const stale=instructorSubmissionEditHarness();change(stale);const before=JSON.stringify(stale.state);stale[control].onchange();assert.equal(JSON.stringify(stale.state),before,'Delayed '+control+' input rejects replacement/missing team, session, phase, privacy or detached element');assert.equal(stale.calls.saves,0);
  }
 }
 const badSubmissionMoney=instructorSubmissionEditHarness();const submissionBefore=JSON.stringify(badSubmissionMoney.state);badSubmissionMoney.profit.value='-1';badSubmissionMoney.profit.onchange();assert.equal(JSON.stringify(badSubmissionMoney.state),submissionBefore);assert.equal(badSubmissionMoney.profit.value,'100000');
 console.log('Instructor submission input team/session identity and projection guards PASS');
+// Render canonical team data through real native disclosures; disclosure is presentation state.
+{
+ const i18n=runInNewContext(instructorSource.match(/const I18N=([^\n]+);/)[0]+';I18N',{});
+ const api=runInNewContext(sharedEngineSource+';({createTeams,acquire,CARD_INDEX})');
+ for(const lang of ['en','fr']){
+  const teams=api.createTeams({teamCount:10});for(const team of teams)team.mission='COMBAT';
+  const card=api.CARD_INDEX.get('CAP-A');api.acquire(teams[0],{...card,round:1,lot:1},card.start);
+  const state={phase:'build',sessionCode:'SEA3-T10-0123456789ABCDEF',teams},before=JSON.stringify(state),host={innerHTML:'',openNodes:[],querySelectorAll(){return this.openNodes}},calls={saves:0};
+  const translate=(key,vars={})=>Object.entries(vars).reduce((text,[k,v])=>text.replaceAll('{'+k+'}',v),i18n[lang][key]);
+  const render=runInNewContext(sharedEngineSource+'\n'+extractFunction(instructorSource,'renderBuild')+';renderBuild',{state,lang,$:()=>host,t:translate,esc:String,money:String,saveState:()=>calls.saves++});
+  render();const details=[...host.innerHTML.matchAll(/<details([^>]*)><summary>([\s\S]*?)<\/summary>([\s\S]*?)<\/details>/g)];assert.equal(details.length,10,'All ten teams remain directly selectable');
+  for(const [i,match] of details.entries()){
+   assert.doesNotMatch(match[1],/\bopen\b/,'Initial team disclosure is collapsed');
+   for(const key of ['common.team','common.noncompliant','common.cost','common.score','build.purchases'])assert.ok(match[2].includes(translate(key,{n:i+1})),lang+' canonical summary includes '+key);
+   assert.ok(match[3].includes('purchase-list'),'Full ledger stays inside disclosure');assert.ok(match[3].includes('effects'),'Every exact capacity remains available');assert.ok(match[3].includes(translate('build.shortfalls',{items:''}).split(':')[0]),'Shortfall explanation retained');
+  }
+  assert.ok(details[0][3].includes('CAP-A'));assert.ok(details[0][3].includes(card.title[lang]),'Canonical purchased title retained');
+  host.openNodes=[{dataset:{buildTeam:'2'}},{dataset:{buildTeam:'7'}}];render();assert.match(host.innerHTML,/data-build-team="2" open/);assert.match(host.innerHTML,/data-build-team="7" open/,'Multiple native disclosures survive same-session rerender');assert.doesNotMatch(host.innerHTML,/data-build-team="1" open/);
+  assert.equal(JSON.stringify(state),before,'Disclosure preservation never mutates business state');
+  state.sessionCode='SEA3-T10-FEDCBA9876543210';render();assert.doesNotMatch(host.innerHTML,/<details[^>]*\bopen\b/,'New session resets presentation disclosure');assert.equal(calls.saves,3,'Existing render save behavior is preserved without extra disclosure saves');
+ }
+}
+console.log('Instructor bilingual ten-team Build summaries retain complete details and session-scoped disclosure PASS');
+
 // R02/R10/R11, T03/T10/T11: private notes retain lot/session identity and recovery bounds.
 function scratchEditHarness(phase='auction'){
  const state={phase,sessionCode:'SEA3-T2-0123456789ABCDEF',team:{id:1},round:0,lot:0,scratch:{}};

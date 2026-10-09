@@ -16,6 +16,7 @@ Use the largest change in the publication batch. Evidence-only documentation cha
 | --- | --- | --- |
 | 3.0.0-local | Previous embedded Three.js development candidates | Historical identity; schema3, STANDARD, synthetic-v1. |
 | 3.1.0 | Consolidated scene navigation and functional engine assembly/cutaway inspection; powertrain detail and auction presentation corrections | Compatible app update; rules/deck/schema/storage keys unchanged. Candidate visual, device, classroom and release acceptance remains open. |
+| 3.2.0 | Accessible per-team Build disclosure and synchronized submission status; real generic carrier glazing apertures, supported cab hardware and contoured cockpit construction | Compatible interface capability; rules/deck/schema/storage keys unchanged. Exact-candidate qualification and broader acceptance remain required. |
 
 For each next publication, add its version, concrete change, exact source/preview identity and affected checks to the execution ledger/release notes. Bilingual badges use the same version; teaching and support evidence must bind the exact published artifacts.
 

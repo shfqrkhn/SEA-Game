@@ -4,6 +4,36 @@ import {prepareInspection,prepareCutaway,fitPerspective,fitDirectionalShadow} fr
 import {createMission,createPart,createConfiguration,MISSION_IDS,MODEL_IDS} from '../../source/three/game-models.mjs';
 import {materials,FinishMaterial,SURFACE_PROFILES} from '../../source/three/materials.mjs';
 const finishes=materials();
+// Carrier windows are actual holes in the opaque shell, not glass decals.
+for(const [id,wheelCount]of [['COMBAT',8],['RECCE',4],['TROOP',6],['COMMAND',6],['MINE',8]]){
+ const root=createMission(id);root.updateMatrixWorld(true);const meshes=[];root.traverse(o=>{if(o.isMesh)meshes.push(o);});
+ const front=root.userData.length/2,half=root.userData.width/2,shells=meshes.filter(o=>o.name==='hull shell');
+ const ray=(objects,p,d,far=2)=>new THREE.Raycaster(new THREE.Vector3(...p),new THREE.Vector3(...d),0,far).intersectObjects(objects,false);
+ for(const s of [-1,1]){
+  assert.equal(ray(shells,[front+1,1.965,s*.45],[-1,0,0],1.8).length,0,id+' front aperture has no opaque backing');
+  assert.equal(ray(shells,[front-1.40,2.02,s*(half+.5)],[0,0,-s],.9).length,0,id+' side aperture has no opaque backing');
+  const frontGasket=ray(meshes,[front+1,2.122,s*(half*.67+.09)/2],[-1,0,0],1.8)[0];assert.equal(frontGasket?.object.name,'carrier window compression gasket',id+' front gasket land remains visible ahead of formed skin');
+  const sideGasket=ray(meshes,[front-1.44,2.152,s*(half+.5)],[0,0,-s],.9)[0];assert.equal(sideGasket?.object.name,'carrier window compression gasket',id+' side gasket land remains visible ahead of door skin');
+ }
+ assert.equal(root.children.filter(o=>o.name==='run-flat wheel').length,wheelCount,id+' preserved axle topology');
+ const lights=meshes.filter(o=>o.name==='carrier front lamp housing');assert.equal(lights.length,2);
+ for(const housing of lights){const b=new THREE.Box3().setFromObject(housing),y=housing.position.y,z=housing.position.z;
+  const hit=ray(shells,[front+1,y,z],[-1,0,0],2)[0];assert(hit,id+' lamp shell mounting face');assert(b.containsPoint(hit.point),id+' lamp housing spans actual hull face');
+ }
+ for(const bracket of meshes.filter(o=>o.name==='carrier entry step hull bracket')){
+  const s=Math.sign(bracket.position.z),b=new THREE.Box3().setFromObject(bracket),hit=ray(shells,[bracket.position.x,bracket.position.y,s*(half+.5)],[0,0,-s],1)[0];assert(hit&&b.containsPoint(hit.point),id+' actual step bracket reaches sloped side skin');
+ }
+ const floor=meshes.find(o=>o.name==='cab floor'),cowl=meshes.find(o=>o.name==='carrier supported dashboard cowl');assert(floor&&cowl);
+ const floorBox=new THREE.Box3().setFromObject(floor),cowlBox=new THREE.Box3().setFromObject(cowl);assert(floorBox.intersectsBox(cowlBox),id+' dashboard cowl bears on cab floor');
+ const cowlFoot=ray([cowl],[front-1.12,1.10,0],[0,1,0],1)[0];assert(cowlFoot&&floorBox.containsPoint(cowlFoot.point),id+' actual cowl lower bearing face lies in floor');
+ const seats=meshes.filter(o=>o.name==='driver seat');assert.equal(seats.length,2);for(const seat of seats){
+  const base=meshes.find(o=>o.name==='carrier seat suspension pedestal'&&Math.sign(o.position.z)===Math.sign(seat.position.z));assert(base);const baseBox=new THREE.Box3().setFromObject(base);
+  const baseFoot=ray([base],[base.position.x,1.10,base.position.z],[0,1,0],1)[0];assert(baseFoot&&floorBox.containsPoint(baseFoot.point),id+' actual seat pedestal bears on floor');
+  const seatFoot=ray([seat],[seat.position.x,1.10,seat.position.z],[0,1,0],1)[0];assert(seatFoot&&baseBox.containsPoint(seatFoot.point),id+' actual cushion lower bearing face supported by pedestal');
+ }
+ const gs=new Set(),ms=new Set();root.traverse(o=>{if(o.geometry)gs.add(o.geometry);for(const m of Array.isArray(o.material)?o.material:o.material?[o.material]:[])ms.add(m);});gs.forEach(o=>o.dispose());ms.forEach(o=>o.dispose());
+}
+console.log('Five carrier cabs: actual open glass apertures, hull-spanning lamp housings, floor-supported cowl/seats and preserved 8/4/6/6/8 wheel topology PASS');
 for(const material of Object.values(finishes)){
  assert.equal(material.bumpMap,null,'Microscopic finishes cannot retain exaggerated bump textures');
  assert.equal(Object.values(material).filter(v=>v?.isTexture).length,0,'Finish lifecycle needs no external or orphan textures');

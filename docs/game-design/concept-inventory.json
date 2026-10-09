@@ -4,7 +4,7 @@
   "date": "2026-10-09",
   "canonicalSource": {
     "path": "source/shared/engine.js",
-    "sha256": "754d89d81f2f49dce1209000d213d6c516bac4ce1599aa02b47bfa6d5ee3a8fe"
+    "sha256": "b7bee555070be7a5a50201a381edd42bd02147dfe5d83b8eed897cd097a6feef"
   },
   "status": "Inventory/exploratory direction; canonical/model/UI acceptance open",
   "counts": {
@@ -8957,6 +8957,11 @@
             "path": "docs/game-design/concepts/ui-auction-v1.png",
             "sha256": "ded388546c6baefc42551e5584576166525bbed15a5b5e913f0ba96b3e48164c",
             "receiptId": "GEN-ui-auction-v1"
+          },
+          {
+            "path": "docs/game-design/concepts/ui-lifecycle-v1.png",
+            "sha256": "1959cae880eb612cfbe49d99a17a79997f1e284a92040971c326d874f08480f0",
+            "receiptId": "GEN-ui-lifecycle-v1"
           }
         ],
         "receipts": [
@@ -9004,8 +9009,17 @@
         "evidence": []
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/ui-lifecycle-v1.png",
+            "sha256": "1959cae880eb612cfbe49d99a17a79997f1e284a92040971c326d874f08480f0",
+            "receiptId": "GEN-ui-lifecycle-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "semantic-html-existing;scene-migration-open",
@@ -9048,8 +9062,17 @@
         "evidence": []
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/ui-lifecycle-v1.png",
+            "sha256": "1959cae880eb612cfbe49d99a17a79997f1e284a92040971c326d874f08480f0",
+            "receiptId": "GEN-ui-lifecycle-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "semantic-html-existing;scene-migration-open",
@@ -9092,8 +9115,17 @@
         "evidence": []
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/ui-lifecycle-v1.png",
+            "sha256": "1959cae880eb612cfbe49d99a17a79997f1e284a92040971c326d874f08480f0",
+            "receiptId": "GEN-ui-lifecycle-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "semantic-html-existing;scene-migration-open",
@@ -9730,8 +9762,17 @@
         "evidence": []
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/ui-lifecycle-v1.png",
+            "sha256": "1959cae880eb612cfbe49d99a17a79997f1e284a92040971c326d874f08480f0",
+            "receiptId": "GEN-ui-lifecycle-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "semantic-html-existing;scene-migration-open",
@@ -9774,8 +9815,17 @@
         "evidence": []
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/ui-lifecycle-v1.png",
+            "sha256": "1959cae880eb612cfbe49d99a17a79997f1e284a92040971c326d874f08480f0",
+            "receiptId": "GEN-ui-lifecycle-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "semantic-html-existing;scene-migration-open",
@@ -9818,8 +9868,17 @@
         "evidence": []
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/ui-lifecycle-v1.png",
+            "sha256": "1959cae880eb612cfbe49d99a17a79997f1e284a92040971c326d874f08480f0",
+            "receiptId": "GEN-ui-lifecycle-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "semantic-html-existing;scene-migration-open",
@@ -9862,8 +9921,17 @@
         "evidence": []
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/ui-lifecycle-v1.png",
+            "sha256": "1959cae880eb612cfbe49d99a17a79997f1e284a92040971c326d874f08480f0",
+            "receiptId": "GEN-ui-lifecycle-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "semantic-html-existing;scene-migration-open",
@@ -9912,6 +9980,11 @@
             "path": "docs/game-design/concepts/ui-auction-v1.png",
             "sha256": "ded388546c6baefc42551e5584576166525bbed15a5b5e913f0ba96b3e48164c",
             "receiptId": "GEN-ui-auction-v1"
+          },
+          {
+            "path": "docs/game-design/concepts/ui-lifecycle-v1.png",
+            "sha256": "1959cae880eb612cfbe49d99a17a79997f1e284a92040971c326d874f08480f0",
+            "receiptId": "GEN-ui-lifecycle-v1"
           }
         ],
         "receipts": [
@@ -10289,8 +10362,17 @@
         "evidence": []
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/ui-lifecycle-v1.png",
+            "sha256": "1959cae880eb612cfbe49d99a17a79997f1e284a92040971c326d874f08480f0",
+            "receiptId": "GEN-ui-lifecycle-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-or-required;unqualified",

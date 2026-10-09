@@ -1106,6 +1106,99 @@
         ]
       },
       "acceptanceStatus": "open"
+    },
+    {
+      "id": "GEN-ui-lifecycle-v1",
+      "inventoryIds": [
+        "UI-instructor-build",
+        "UI-student-build",
+        "UI-instructor-submit",
+        "UI-instructor-confirmation",
+        "UI-instructor-private-entry",
+        "UI-student-submit",
+        "UI-instructor-debrief",
+        "UI-student-debrief",
+        "UI-instructor-closed",
+        "UI-student-closed"
+      ],
+      "status": "generated-exploratory",
+      "tool": "imagegen",
+      "date": "2026-10-09",
+      "artifact": "docs/game-design/concepts/ui-lifecycle-v1.png",
+      "sha256": "1959cae880eb612cfbe49d99a17a79997f1e284a92040971c326d874f08480f0",
+      "nativeOutputPath": "C:/Users/user/.codex/generated_images/01a12050-c7b3-75a0-bd82-c4c1a405dc44/exec-63d704c4-d523-4f47-9333-1479ed749ae3.png",
+      "exactPromptSource": "docs/game-design/UI_LIFECYCLE_PROMPT.md",
+      "panelMappings": [
+        {
+          "panel": "A",
+          "inventoryIds": [
+            "UI-instructor-build"
+          ]
+        },
+        {
+          "panel": "B",
+          "inventoryIds": [
+            "UI-student-build"
+          ]
+        },
+        {
+          "panel": "C",
+          "inventoryIds": [
+            "UI-instructor-submit",
+            "UI-instructor-confirmation",
+            "UI-instructor-private-entry"
+          ]
+        },
+        {
+          "panel": "D",
+          "inventoryIds": [
+            "UI-student-submit"
+          ]
+        },
+        {
+          "panel": "E",
+          "inventoryIds": [
+            "UI-instructor-debrief"
+          ]
+        },
+        {
+          "panel": "F",
+          "inventoryIds": [
+            "UI-student-debrief"
+          ]
+        },
+        {
+          "panel": "G",
+          "inventoryIds": [
+            "UI-instructor-closed",
+            "UI-instructor-confirmation"
+          ]
+        },
+        {
+          "panel": "H",
+          "inventoryIds": [
+            "UI-student-closed"
+          ]
+        }
+      ],
+      "visualReview": {
+        "status": "lead pixel inspected; exploratory only",
+        "usefulDirection": [
+          "Eight complete panels with safe blank outer margins",
+          "Chronological private-entry guard/confirmation/editor and backup-before-clear",
+          "Canonical illustrative ACC-F400000 purchase, noncompliance, zero-profit/no-award"
+        ],
+        "knownMismatches": [
+          "French typography, exact labels and currency formatting remain unqualified",
+          "Single-team board does not prove complete ten-team navigation",
+          "Runtime/native accessibility, private-entry and model matching require actual candidate checks"
+        ],
+        "doesNotProve": [
+          "Remaining UI states, component/assembly/material acceptance",
+          "Classroom/rights/device/full-product acceptance"
+        ]
+      },
+      "acceptanceStatus": "open"
     }
   ]
 }
