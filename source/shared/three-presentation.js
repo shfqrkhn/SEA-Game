@@ -22,6 +22,15 @@ function seaSceneProjection(roots,visible,keyFor){
   if(['script','style','svg','canvas','img'].includes(tag)||node.id==='sea3dViewport')return;
   const text=()=>String(readable(node,true)).replace(/\s+/g,' ').trim();
   const name=()=>node.getAttribute?.('aria-label')||Array.from(node.labels||[]).map(x=>readable(x,true)).join(' ')||readable(node.closest?.('.field')?.querySelector('label'),true)||node.getAttribute?.('placeholder')||text();
+  // A caller's public eligibility context and its validated bid action belong
+  // together. Keep the original button as the target; never copy bid commands.
+  if(node.classList?.contains('bid-row')){
+   const controls=Array.from(node.querySelectorAll('button,input,select,textarea'));
+   const button=controls.length===1&&controls[0].tagName?.toLowerCase()==='button'?controls[0]:null;
+   if(button&&visible(button)){
+    seen.add(button);add(button,'button',readable(node),button.getAttribute?.('aria-label')||readable(button,true));return;
+   }
+  }
   if(tag==='button'){add(node,'button',name());return;}
   if(tag==='input'||tag==='textarea'||tag==='select'){
    if(['file','hidden'].includes(node.type))return;
@@ -32,7 +41,7 @@ function seaSceneProjection(roots,visible,keyFor){
   if(tag==='summary'){add(node,'button',text());return;}
   if(tag==='details'){for(const child of node.children||[])if(node.open||child.tagName?.toLowerCase()==='summary')walk(child);return;}
   if((['h2','h3','h4','p','small'].includes(tag)||node.classList?.contains('badge'))&&!node.querySelector?.('button,input,select,textarea')){add(node,'text',text());return;}
-  if(tag==='tr'||node.classList?.contains('metric')||node.classList?.contains('notice')||node.classList?.contains('effect')){
+  if(tag==='tr'||node.classList?.contains('metric')||node.classList?.contains('notice')||node.classList?.contains('effect')||node.classList?.contains('workflow')){
    add(node,'text',readable(node).replace(/\s+/g,' ').trim());
    for(const x of node.querySelectorAll('button,input,select,textarea'))walk(x);return;
   }

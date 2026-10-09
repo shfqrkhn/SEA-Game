@@ -16,7 +16,7 @@
     "assemblyRelationships": 48,
     "uiStates": 40,
     "uiElements": 211,
-    "materials": 9,
+    "materials": 12,
     "exploratoryDirections": 1
   },
   "subjects": [
@@ -2369,8 +2369,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/situational-awareness-family-v1.png",
+            "sha256": "07b5d4f9cc6e730404b73b5d97a93856981020a3d69442376293bd9d17536233",
+            "receiptId": "GEN-situational-awareness-family-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -2426,8 +2435,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/situational-awareness-family-v1.png",
+            "sha256": "07b5d4f9cc6e730404b73b5d97a93856981020a3d69442376293bd9d17536233",
+            "receiptId": "GEN-situational-awareness-family-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -2483,8 +2501,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/situational-awareness-family-v1.png",
+            "sha256": "07b5d4f9cc6e730404b73b5d97a93856981020a3d69442376293bd9d17536233",
+            "receiptId": "GEN-situational-awareness-family-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -2540,8 +2567,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/situational-awareness-family-v1.png",
+            "sha256": "07b5d4f9cc6e730404b73b5d97a93856981020a3d69442376293bd9d17536233",
+            "receiptId": "GEN-situational-awareness-family-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -2598,8 +2634,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/situational-awareness-family-v1.png",
+            "sha256": "07b5d4f9cc6e730404b73b5d97a93856981020a3d69442376293bd9d17536233",
+            "receiptId": "GEN-situational-awareness-family-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -2655,8 +2700,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/situational-awareness-family-v1.png",
+            "sha256": "07b5d4f9cc6e730404b73b5d97a93856981020a3d69442376293bd9d17536233",
+            "receiptId": "GEN-situational-awareness-family-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -2712,8 +2766,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/situational-awareness-family-v1.png",
+            "sha256": "07b5d4f9cc6e730404b73b5d97a93856981020a3d69442376293bd9d17536233",
+            "receiptId": "GEN-situational-awareness-family-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -17687,7 +17750,7 @@
         ],
         "evidence": []
       },
-      "source": "source/three/realism.mjs#materials",
+      "source": "source/three/materials.mjs#materials",
       "conceptBatch": "MATERIALS",
       "referenceIds": [],
       "conceptPrompt": "paint material sphere and applied close-up under the same neutral calibrated lighting; provide roughness/metalness/opacity intent, not an arbitrary flat swatch."
@@ -17724,7 +17787,7 @@
         ],
         "evidence": []
       },
-      "source": "source/three/realism.mjs#materials",
+      "source": "source/three/materials.mjs#materials",
       "conceptBatch": "MATERIALS",
       "referenceIds": [],
       "conceptPrompt": "edge material sphere and applied close-up under the same neutral calibrated lighting; provide roughness/metalness/opacity intent, not an arbitrary flat swatch."
@@ -17761,7 +17824,7 @@
         ],
         "evidence": []
       },
-      "source": "source/three/realism.mjs#materials",
+      "source": "source/three/materials.mjs#materials",
       "conceptBatch": "MATERIALS",
       "referenceIds": [],
       "conceptPrompt": "steel material sphere and applied close-up under the same neutral calibrated lighting; provide roughness/metalness/opacity intent, not an arbitrary flat swatch."
@@ -17798,7 +17861,7 @@
         ],
         "evidence": []
       },
-      "source": "source/three/realism.mjs#materials",
+      "source": "source/three/materials.mjs#materials",
       "conceptBatch": "MATERIALS",
       "referenceIds": [],
       "conceptPrompt": "darkSteel material sphere and applied close-up under the same neutral calibrated lighting; provide roughness/metalness/opacity intent, not an arbitrary flat swatch."
@@ -17835,7 +17898,7 @@
         ],
         "evidence": []
       },
-      "source": "source/three/realism.mjs#materials",
+      "source": "source/three/materials.mjs#materials",
       "conceptBatch": "MATERIALS",
       "referenceIds": [],
       "conceptPrompt": "rubber material sphere and applied close-up under the same neutral calibrated lighting; provide roughness/metalness/opacity intent, not an arbitrary flat swatch."
@@ -17872,7 +17935,7 @@
         ],
         "evidence": []
       },
-      "source": "source/three/realism.mjs#materials",
+      "source": "source/three/materials.mjs#materials",
       "conceptBatch": "MATERIALS",
       "referenceIds": [],
       "conceptPrompt": "glass material sphere and applied close-up under the same neutral calibrated lighting; provide roughness/metalness/opacity intent, not an arbitrary flat swatch."
@@ -17909,7 +17972,7 @@
         ],
         "evidence": []
       },
-      "source": "source/three/realism.mjs#materials",
+      "source": "source/three/materials.mjs#materials",
       "conceptBatch": "MATERIALS",
       "referenceIds": [],
       "conceptPrompt": "amber material sphere and applied close-up under the same neutral calibrated lighting; provide roughness/metalness/opacity intent, not an arbitrary flat swatch."
@@ -17946,7 +18009,7 @@
         ],
         "evidence": []
       },
-      "source": "source/three/realism.mjs#materials",
+      "source": "source/three/materials.mjs#materials",
       "conceptBatch": "MATERIALS",
       "referenceIds": [],
       "conceptPrompt": "lamp material sphere and applied close-up under the same neutral calibrated lighting; provide roughness/metalness/opacity intent, not an arbitrary flat swatch."
@@ -17983,10 +18046,121 @@
         ],
         "evidence": []
       },
-      "source": "source/three/realism.mjs#materials",
+      "source": "source/three/materials.mjs#materials",
       "conceptBatch": "MATERIALS",
       "referenceIds": [],
       "conceptPrompt": "red material sphere and applied close-up under the same neutral calibrated lighting; provide roughness/metalness/opacity intent, not an arbitrary flat swatch."
+    },
+    {
+      "id": "MAT-pressedSteel",
+      "kind": "material",
+      "label": {
+        "en": "pressedSteel"
+      },
+      "reference": {
+        "status": "canonical-or-design-contract;visual-reference-open",
+        "evidence": []
+      },
+      "concept": {
+        "status": "planned",
+        "artifacts": []
+      },
+      "implementation": {
+        "status": "existing-unqualified",
+        "evidence": []
+      },
+      "acceptance": {
+        "status": "open",
+        "criteria": [
+          "V01",
+          "V02",
+          "V03",
+          "V04",
+          "V05",
+          "V06",
+          "V07",
+          "V08"
+        ],
+        "evidence": []
+      },
+      "source": "source/three/materials.mjs#materials",
+      "conceptBatch": "MATERIALS",
+      "referenceIds": [],
+      "conceptPrompt": "pressedSteel material sphere and applied close-up under the same neutral calibrated lighting; provide roughness/metalness/opacity intent, not an arbitrary flat swatch."
+    },
+    {
+      "id": "MAT-castSteel",
+      "kind": "material",
+      "label": {
+        "en": "castSteel"
+      },
+      "reference": {
+        "status": "canonical-or-design-contract;visual-reference-open",
+        "evidence": []
+      },
+      "concept": {
+        "status": "planned",
+        "artifacts": []
+      },
+      "implementation": {
+        "status": "existing-unqualified",
+        "evidence": []
+      },
+      "acceptance": {
+        "status": "open",
+        "criteria": [
+          "V01",
+          "V02",
+          "V03",
+          "V04",
+          "V05",
+          "V06",
+          "V07",
+          "V08"
+        ],
+        "evidence": []
+      },
+      "source": "source/three/materials.mjs#materials",
+      "conceptBatch": "MATERIALS",
+      "referenceIds": [],
+      "conceptPrompt": "castSteel material sphere and applied close-up under the same neutral calibrated lighting; provide roughness/metalness/opacity intent, not an arbitrary flat swatch."
+    },
+    {
+      "id": "MAT-upholstery",
+      "kind": "material",
+      "label": {
+        "en": "upholstery"
+      },
+      "reference": {
+        "status": "canonical-or-design-contract;visual-reference-open",
+        "evidence": []
+      },
+      "concept": {
+        "status": "planned",
+        "artifacts": []
+      },
+      "implementation": {
+        "status": "existing-unqualified",
+        "evidence": []
+      },
+      "acceptance": {
+        "status": "open",
+        "criteria": [
+          "V01",
+          "V02",
+          "V03",
+          "V04",
+          "V05",
+          "V06",
+          "V07",
+          "V08"
+        ],
+        "evidence": []
+      },
+      "source": "source/three/materials.mjs#materials",
+      "conceptBatch": "MATERIALS",
+      "referenceIds": [],
+      "conceptPrompt": "upholstery material sphere and applied close-up under the same neutral calibrated lighting; provide roughness/metalness/opacity intent, not an arbitrary flat swatch."
     }
   ],
   "directions": [

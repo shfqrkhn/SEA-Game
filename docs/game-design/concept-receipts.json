@@ -543,6 +543,77 @@
         ]
       },
       "acceptanceStatus": "open"
+    },
+    {
+      "id": "GEN-situational-awareness-family-v1",
+      "inventoryIds": [
+        "SA-A",
+        "SA-B",
+        "SA-C",
+        "SA-D",
+        "SA-E",
+        "SA-F",
+        "SA-G"
+      ],
+      "status": "generated-exploratory",
+      "tool": "imagegen",
+      "date": "2026-10-09",
+      "artifact": "docs/game-design/concepts/situational-awareness-family-v1.png",
+      "sha256": "07b5d4f9cc6e730404b73b5d97a93856981020a3d69442376293bd9d17536233",
+      "nativeOutputPath": "C:/Users/user/.codex/generated_images/01a120c8-5de9-7280-a507-0080f3cd5dc9/exec-a7f4fee9-97c8-4163-ab25-9257bdca448e.png",
+      "promptFile": "docs/game-design/SA_PROMPT.md",
+      "panels": [
+        {
+          "panel": 1,
+          "inventoryId": "SA-A"
+        },
+        {
+          "panel": 2,
+          "inventoryId": "SA-B"
+        },
+        {
+          "panel": 3,
+          "inventoryId": "SA-C"
+        },
+        {
+          "panel": 4,
+          "inventoryId": "SA-D"
+        },
+        {
+          "panel": 5,
+          "inventoryId": "SA-E"
+        },
+        {
+          "panel": 6,
+          "inventoryId": "SA-F"
+        },
+        {
+          "panel": 7,
+          "inventoryId": "SA-G"
+        }
+      ],
+      "visualReview": {
+        "status": "exploratory-only; construction/reference/runtime acceptance open",
+        "usefulDirection": [
+          "Seven exact canonical captions with assembled/exploded/detail views",
+          "Distinct paired bar, yoke, basic camera, mast, hood, annular sensor and distributed pods",
+          "Outer margins corrected by generation edit; no visible cropped captions/equipment",
+          "Shared ivory/sage/ink direction"
+        ],
+        "knownMismatches": [
+          "SA-A exploded lens/plate aperture mismatch",
+          "Mast internals, pedestal/cable ports and clearance correspondence remain unverified",
+          "Generative margin edit changed details; not an exact geometric rescale",
+          "No matched Three.js acceptance"
+        ],
+        "doesNotProve": [
+          "Runtime model fidelity",
+          "Generic component/assembly/UI concept coverage",
+          "Detection or environmental protection performance",
+          "Rights, visual or product acceptance"
+        ]
+      },
+      "acceptanceStatus": "open"
     }
   ]
 }

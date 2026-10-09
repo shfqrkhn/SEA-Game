@@ -72,7 +72,7 @@
 
 <section id="auction" class="section">
   <div class="hero" data-scene-priority="70"><div class="kicker" data-i18n="auction.kicker"></div><h2 data-i18n="auction.title"></h2><p id="auctionRule"></p></div>
-  <div class="workflow" id="workflow" data-scene-priority="10"></div>
+  <div class="workflow" id="workflow" data-scene-priority="70"></div>
   <div class="card"><div class="space"><h3 id="roundHeading" data-scene-priority="10"></h3><span id="lotBadge" class="badge" data-scene-priority="10"></span></div><div id="market" class="market" data-scene-priority="70"></div></div>
   <div class="auction">
     <div class="gamecard"><div class="band"><span id="cardCat" data-scene-priority="15"></span><span id="cardId" data-scene-priority="15"></span></div><div class="body"><div class="art" id="cardArt"></div><h3 id="cardTitle" data-scene-priority="15"></h3><div id="cardEffects" class="effects" data-scene-priority="15"></div><div class="space"><strong id="startPrice" data-scene-priority="15"></strong><strong id="leaderText" data-scene-priority="15"></strong></div></div></div>
@@ -80,9 +80,9 @@
       <div class="card">
         <h3 data-i18n="auction.title"></h3>
         <div class="grid three">
-          <div class="metric"><div class="label" data-i18n="auction.currentLeader"></div><div class="value" id="leaderSummary" data-scene-priority="20">-</div></div>
-          <div class="metric"><div class="label" data-i18n="auction.nextLegal"></div><div class="value" id="nextBid" data-scene-priority="20">-</div></div>
-          <div class="metric"><div class="label" data-i18n="auction.time"></div><div class="value" id="timerValue" data-scene-priority="20">-</div></div>
+          <div class="metric" data-scene-priority="20"><div class="label" data-i18n="auction.currentLeader"></div><div class="value" id="leaderSummary">-</div></div>
+          <div class="metric" data-scene-priority="20"><div class="label" data-i18n="auction.nextLegal"></div><div class="value" id="nextBid">-</div></div>
+          <div class="metric" data-scene-priority="20"><div class="label" data-i18n="auction.time"></div><div class="value" id="timerValue">-</div></div>
         </div>
         <p class="inline"><button id="revealBtn" class="btn secondary" type="button" data-i18n="auction.reveal" data-scene-priority="25"></button><button id="openBtn" class="btn primary" type="button" data-i18n="auction.open" data-scene-priority="25"></button><button id="pauseBtn" class="btn" type="button" data-i18n="auction.pause" data-scene-priority="25"></button><button id="extendBtn" class="btn" type="button" data-i18n="auction.extend" data-scene-priority="25"></button></p>
         <h4 data-i18n="auction.acceptCaller"></h4><p class="muted" data-i18n="auction.acceptDesc"></p><div id="bidRoster" class="ledger" data-scene-priority="30"></div>

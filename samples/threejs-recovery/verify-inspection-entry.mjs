@@ -2,6 +2,24 @@ import assert from 'node:assert/strict';
 import * as THREE from 'three';
 import {prepareInspection,prepareCutaway,fitPerspective,fitDirectionalShadow} from '../../source/three/inspection.mjs';
 import {createMission,createPart,createConfiguration,MISSION_IDS,MODEL_IDS} from '../../source/three/game-models.mjs';
+import {materials,FinishMaterial} from '../../source/three/materials.mjs';
+const finishes=materials();
+for(const material of Object.values(finishes)){
+ assert.equal(material.bumpMap,null,'Microscopic finishes cannot retain exaggerated bump textures');
+ assert.equal(Object.values(material).filter(v=>v?.isTexture).length,0,'Finish lifecycle needs no external or orphan textures');
+ if(!(material instanceof FinishMaterial))continue;
+ const copy=material.clone();assert.deepEqual(copy.finishProfile,material.finishProfile);assert.notEqual(copy.finishProfile,material.finishProfile);
+ const compile=()=>({vertexShader:THREE.ShaderLib.physical.vertexShader,fragmentShader:THREE.ShaderLib.physical.fragmentShader,uniforms:{}});
+ const shader=compile(),cloneShader=compile();material.onBeforeCompile(shader);copy.onBeforeCompile(cloneShader);
+ assert.equal(shader.vertexShader,cloneShader.vertexShader);assert.equal(shader.fragmentShader,cloneShader.fragmentShader);assert.deepEqual(shader.uniforms.seaFinish.value,cloneShader.uniforms.seaFinish.value);
+ assert.notEqual(shader.uniforms.seaFinish.value,cloneShader.uniforms.seaFinish.value,'Compiled clones cannot share mutable finish uniforms');
+ assert(shader.vertexShader.includes('length(modelMatrix[0].xyz)'),'Finish scale follows actual mesh scale');assert(shader.fragmentShader.includes('dFdx(p)'),'Subpixel finish must suppress aliasing');
+ const original=copy.finishProfile.wavelength;copy.finishProfile.wavelength*=2;assert.equal(material.finishProfile.wavelength,original);
+ copy.dispose();
+}
+const finishShell=new THREE.Mesh(new THREE.BoxGeometry(),finishes.paint);finishShell.name='hull shell';const finishRoot=new THREE.Group();finishRoot.add(finishShell);const finishCutaway=prepareCutaway(finishRoot);
+finishCutaway.apply(true);assert(finishShell.material instanceof FinishMaterial);assert.deepEqual(finishShell.material.finishProfile,finishes.paint.finishProfile,'Cutaway must preserve the original finish shader');finishCutaway.dispose();assert.equal(finishShell.material,finishes.paint);finishShell.geometry.dispose();Object.values(finishes).forEach(m=>m.dispose());
+console.log('Material finish clone/cutaway isolation, scale/alias shader anchors and texture-free lifecycle PASS (actual GPU compile still requires browser)');
 const shared=new THREE.MeshStandardMaterial(),originalGhost=new THREE.MeshStandardMaterial({transparent:true,opacity:.16,depthWrite:false}),fixture=new THREE.Group();
 const shell=new THREE.Mesh(new THREE.BoxGeometry(),shared),equipment=new THREE.Mesh(new THREE.BoxGeometry(),shared),ghost=new THREE.Mesh(new THREE.BoxGeometry(),[originalGhost,shared]);
 shell.name=ghost.name='hull shell';shell.castShadow=true;fixture.add(shell,equipment,ghost);
@@ -36,6 +54,13 @@ for(const dimensions of [[1.7,1.4,1.4],[6.25,3.5,2.3],[11,7,6]]){
 console.log('Scale-aware directional shadow framing: caster/contact containment, rotation and fixed world light PASS');
 for(const id of MISSION_IDS){const model=createMission(id);assert(model.getObjectByName('driver controls'),id+' requires a real cockpit');let wheels=0,brakes=0;model.traverse(o=>{if(o.name==='run-flat wheel')wheels++;if(o.name==='ventilated brake rotor')brakes++;});assert.equal(brakes,wheels,id+' requires a brake per wheel');}
 console.log('Real cockpit and brake topology PASS');
+const recoveryProbe=createMission('RECOVERY');recoveryProbe.updateWorldMatrix(true,true);const mainBoom=recoveryProbe.getObjectByName('formed main boom');mainBoom.geometry.computeBoundingBox();
+const boomLength=mainBoom.geometry.boundingBox.max.z,beamRay=(origin,direction,far)=>new THREE.Raycaster(new THREE.Vector3(...origin).applyMatrix4(mainBoom.matrixWorld),new THREE.Vector3(...direction).transformDirection(mainBoom.matrixWorld),0,far).intersectObject(mainBoom,false);
+assert.equal(beamRay([0,0,-.1],[0,0,1],boomLength+.2).length,0,'Telescopic boom has an open axial bore, not a solid end cap');
+assert(beamRay([-.5,0,boomLength/2],[1,0,0],1).length>0,'Open boom retains actual structural walls');
+const cylinderAxis=name=>new THREE.Vector3(0,1,0).applyQuaternion(recoveryProbe.getObjectByName(name).getWorldQuaternion(new THREE.Quaternion()));
+assert(Math.abs(cylinderAxis('lift cylinder barrel').dot(cylinderAxis('lift piston rod')))>.999999,'Hydraulic barrel and piston must share one working axis');
+console.log('Recovery hollow boom wall/bore and collinear hydraulic barrel/piston PASS');
 
 // Maximum separation alone is not a containing envelope: some groups translate
 // inward across an assembled extremum. Replay the actual runtime endpoint union.

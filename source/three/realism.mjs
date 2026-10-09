@@ -1,16 +1,10 @@
 import * as THREE from 'three';
 import {RoundedBoxGeometry} from 'three/addons/geometries/RoundedBoxGeometry.js';
 import {box,cylinder,rod,tube,bolts,createWheel,createVehicle,createWinch} from '../../samples/threejs-recovery/models.mjs';
+import {materials} from './materials.mjs';
+export {materials};
 
 // Original concept geometry in metres. References inform construction, never game ratings.
-export function materials(){
- const data=new Uint8Array(64*64*4);let seed=947;
- for(let i=0;i<data.length;i+=4){seed=(Math.imul(seed,1664525)+1013904223)>>>0;const n=205+(seed>>>27);data.set([n,n,n,255],i);}
- const grain=new THREE.DataTexture(data,64,64);grain.wrapS=grain.wrapT=THREE.RepeatWrapping;grain.repeat.set(4,4);grain.needsUpdate=true;
- const mat=(color,roughness,metalness=0,extra={})=>new THREE.MeshStandardMaterial({color,roughness,metalness,...extra});
- const result={paint:new THREE.MeshPhysicalMaterial({color:'#596548',roughness:.72,metalness:.12,roughnessMap:grain,bumpMap:grain,bumpScale:.006,clearcoat:.12,clearcoatRoughness:.6}),edge:mat('#343d32',.72,.24,{roughnessMap:grain}),steel:mat('#969e9c',.27,.88),darkSteel:mat('#42494a',.44,.8),rubber:mat('#191c19',.93,0,{bumpMap:grain,bumpScale:.012}),glass:new THREE.MeshPhysicalMaterial({color:'#173137',roughness:.08,metalness:.18,clearcoat:1,envMapIntensity:1.5}),amber:mat('#e1a33c',.29,.2),lamp:mat('#e2e9db',.24,.1),red:mat('#b34736',.42)};
- for(const [key,name]of Object.entries({paint:'powder coated metal',steel:'machined steel',rubber:'moulded rubber',glass:'optical glass'}))result[key].name=name;return result;
-}
 export function soften(model){
  model.traverse(o=>{if(o.isMesh&&o.geometry.type==='BoxGeometry'){const {width:w,height:h,depth:d}=o.geometry.parameters;if(Math.min(w,h,d)>.045){o.geometry.dispose();o.geometry=new RoundedBoxGeometry(w,h,d,1,Math.min(.024,Math.min(w,h,d)*.12));}}});return model;
 }
@@ -251,7 +245,17 @@ function recoveryServices(g,m){
 }
 function recoveryCrane(crane,m){
  for(const old of [...crane.children]){old.removeFromParent();old.traverse(o=>o.geometry?.dispose());}
- const beam=(a,b,w,h,material,name)=>{const shape=new THREE.Shape(roundedOpening(-w/2,-h/2,w/2,h/2,.025).getPoints(6));const direction=new THREE.Vector3(...b).sub(new THREE.Vector3(...a));const mesh=new THREE.Mesh(new THREE.ExtrudeGeometry(shape,{depth:direction.length(),curveSegments:5,steps:1,bevelEnabled:true,bevelSize:.009,bevelThickness:.009,bevelSegments:2}),material);mesh.position.set(...a);mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0,0,1),direction.normalize());mesh.name=name;mesh.castShadow=true;mesh.receiveShadow=true;crane.add(mesh);return mesh;};
+ // Eight-faced folded sections have real wall thickness and open mouths; the
+ // smaller section slides inside the larger, rather than meeting a solid cap.
+ const beam=(a,b,start,end,wall,material,name)=>{
+  const direction=new THREE.Vector3(...b).sub(new THREE.Vector3(...a)),length=direction.length(),vertices=[];
+  const ring=([w,h],inset,z)=>{const x=w/2-inset,y=h/2-inset,c=Math.min(x,y)*.28;return [[-x+c,-y,z],[x-c,-y,z],[x,-y+c,z],[x,y-c,z],[x-c,y,z],[-x+c,y,z],[-x,y-c,z],[-x,-y+c,z]];};
+  const outer=[ring(start,0,0),ring(end,0,length)],inner=[ring(start,wall,0),ring(end,wall,length)];
+  const quad=(a,b,c,d)=>vertices.push(...a,...b,...c,...a,...c,...d);
+  for(let i=0;i<8;i++){const j=(i+1)%8;quad(outer[0][i],outer[0][j],outer[1][j],outer[1][i]);quad(inner[0][j],inner[0][i],inner[1][i],inner[1][j]);quad(outer[0][j],outer[0][i],inner[0][i],inner[0][j]);quad(outer[1][i],outer[1][j],inner[1][j],inner[1][i]);}
+  const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.Float32BufferAttribute(vertices,3));geometry.computeVertexNormals();
+  const mesh=new THREE.Mesh(geometry,material);mesh.position.set(...a);mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0,0,1),direction.normalize());mesh.name=name;mesh.castShadow=true;mesh.receiveShadow=true;crane.add(mesh);return mesh;
+ };
  box(crane,m.edge,[.95,.12,1.20],[-.85,1.78,0],'crane mounting crossmember');
  cylinder(crane,m.darkSteel,.44,.14,[-.85,1.88,0],'y',.44,48).name='slewing ring';cylinder(crane,m.paint,.33,.32,[-.85,2.10,0],'y',.33,40).name='crane pedestal';
  for(const s of [-1,1]){
@@ -259,24 +263,44 @@ function recoveryCrane(crane,m){
   cylinder(crane,m.steel,.095,.075,[-.85,2.46,s*.32],'z',.095,40).name='boom pivot bearing';rod(crane,m.edge,[-.85,1.80,s*.55],[-.85,2.14,s*.29],.045).name='pedestal brace';
  }
  cylinder(crane,m.darkSteel,.075,.73,[-.85,2.46,0],'z',.075,40).name='boom hinge pin';
- beam([-.85,2.46,0],[-2.47,3.12,0],.36,.42,m.paint,'formed main boom');beam([-2.34,3.07,0],[-3.05,3.36,0],.23,.27,m.darkSteel,'telescoping extension');
- const base=[-.73,2.08,.32],gland=[-1.65,2.69,.32],tip=[-2.13,2.91,.32];rod(crane,m.paint,base,gland,.085).name='lift cylinder barrel';rod(crane,m.steel,gland,tip,.032).name='lift piston rod';
- const collar=rod(crane,m.darkSteel,[-1.60,2.657,.32],[-1.69,2.715,.32],.103);collar.name='cylinder gland';
+ beam([-.65,2.38,0],[-2.47,3.12,0],[.42,.46],[.32,.34],.025,m.paint,'formed main boom');
+ beam([-2.34,3.067,0],[-3.05,3.356,0],[.245,.26],[.205,.22],.017,m.darkSteel,'telescoping extension');
+ // Wear pads and the mouth collar bear against the inner sliding section.
+ beam([-2.37,3.079,0],[-2.49,3.128,0],[.36,.38],[.355,.375],.026,m.edge,'boom mouth reinforcement');
+ for(const s of [-1,1]){const pad=box(crane,m.rubber,[.14,.12,.035],[-2.435,3.105,s*.141],'telescopic wear pad');pad.rotation.z=-.386;}
+ // Root trunnion flanges bridge the boom walls and the supporting cheeks.
+ for(const s of [-1,1])cylinder(crane,m.paint,.16,.055,[-.85,2.46,s*.225],'z',.16,40).name='boom root trunnion';
+ formedCabPanel(crane,m.paint,[[-2.02,2.77],[-2.25,2.85],[-2.20,2.99],[-1.96,2.89]],[],(x,y,d)=>[x,y,.25+d]).name='boom cylinder lug';
+ const base=[-.73,2.08,.32],tip=[-2.13,2.91,.32],axis=new THREE.Vector3(...tip).sub(new THREE.Vector3(...base)),point=f=>new THREE.Vector3(...base).addScaledVector(axis,f).toArray(),gland=point(.68);
+ rod(crane,m.paint,base,gland,.085).name='lift cylinder barrel';rod(crane,m.steel,gland,tip,.032).name='lift piston rod';
+ rod(crane,m.darkSteel,point(.65),point(.71),.103).name='cylinder gland';
+ rod(crane,m.edge,point(.04),point(.12),.098).name='cylinder end cap';
  for(const [x,y]of [[base[0],base[1]],[tip[0],tip[1]]]){cylinder(crane,m.steel,.067,.13,[x,y,.32],'z',.067,32).name='cylinder clevis pin';box(crane,m.paint,[.17,.17,.08],[x,y,.26],'lift cylinder clevis');}
- box(crane,m.paint,[.21,.17,.08],[-2.13,2.975,.26],'boom cylinder lug');
- cylinder(crane,m.edge,.12,.29,[-.36,2.37,0],'z',.12,40).name='hoist drum';for(const s of [-1,1]){cylinder(crane,m.steel,.15,.025,[-.36,2.37,s*.155],'z',.15,40).name='hoist drum flange';rod(crane,m.paint,[-.36,2.10,s*.19],[-.36,2.37,s*.19],.045).name='hoist winch support';rod(crane,m.edge,[-.68,2.10,s*.19],[-.36,2.10,s*.19],.037).name='hoist support tie';}
+ cylinder(crane,m.edge,.135,.34,[-.36,2.37,0],'z',.135,48).name='hoist drum';
+ for(let i=0;i<13;i++){const winding=new THREE.Mesh(new THREE.TorusGeometry(.137,.0075,6,36),m.darkSteel);winding.position.set(-.36,2.37,-.15+i*.025);winding.name='hoist cable winding';crane.add(winding);}
+ for(const s of [-1,1]){cylinder(crane,m.steel,.18,.03,[-.36,2.37,s*.185],'z',.18,40).name='hoist drum flange';formedCabPanel(crane,m.paint,[[-.62,2.10],[-.08,2.10],[-.08,2.36],[-.20,2.54],[-.47,2.54],[-.62,2.36]],[],(x,y,d)=>[x,y,s*(.225+d)]).name='hoist bearing cradle';}
+ box(crane,m.edge,[.55,.065,.60],[-.35,2.105,0],'hoist cradle base');rod(crane,m.edge,[-.68,2.10,0],[-.35,2.10,0],.055).name='hoist support tie';
+ cylinder(crane,m.paint,.17,.13,[-.36,2.37,-.335],'z',.14,40).name='planetary hoist gearbox';cylinder(crane,m.darkSteel,.095,.21,[-.36,2.37,-.505],'z',.095,32).name='hoist hydraulic motor';
+ tube(crane,m.rubber,[[-.36,2.35,-.60],[-.18,2.20,-.62],[-.44,2.06,-.46],[-.73,2.0,-.36]],.018,24).name='hoist motor supply';
  for(const s of [-1,1])formedCabPanel(crane,m.paint,[[-3.13,3.19],[-3.17,3.40],[-2.94,3.48],[-2.85,3.35]],[],(x,y,d)=>[x,y,s*(.12+d)]).name='boom head cheek';
- cylinder(crane,m.darkSteel,.095,.18,[-3.04,3.35,0],'z',.095,40).name='head sheave';
+ cylinder(crane,m.darkSteel,.095,.18,[-3.04,3.35,0],'z',.095,40).name='head sheave';cylinder(crane,m.steel,.035,.35,[-3.04,3.35,0],'z',.035,32).name='head sheave axle';
  for(const s of [-1,1]){const ring=new THREE.Mesh(new THREE.TorusGeometry(.086,.013,8,36),m.steel);ring.position.set(-3.04,3.35,s*.075);ring.name='sheave flange';crane.add(ring);}
- tube(crane,m.steel,[[-.36,2.49,0],[-.73,2.72,0],[-2.40,3.39,0],[-2.98,3.43,0],[-3.12,3.35,0],[-3.12,2.79,0]],.012,48).name='hoist rope';
+ // Taut rope is straight between supports, with only the sheave wrap curved.
+ rod(crane,m.darkSteel,[-.36,2.507,0],[-2.995,3.433,0],.011).name='hoist rope';
+ const wrap=[];for(let i=0;i<=12;i++){const angle=Math.PI*.34+i/12*Math.PI*.66;wrap.push([-3.04+Math.cos(angle)*.095,3.35+Math.sin(angle)*.095,0]);}tube(crane,m.darkSteel,wrap,.011,24).name='hoist rope sheave wrap';
+ rod(crane,m.darkSteel,[-3.135,3.35,0],[-3.135,2.79,0],.011).name='hoist rope fall';
  cylinder(crane,m.darkSteel,.047,.16,[-3.12,2.77,0]).name='hook swivel';
  tube(crane,m.amber,[[-3.12,2.70,0],[-3.19,2.65,0],[-3.23,2.54,0],[-3.18,2.45,0],[-3.07,2.46,0],[-3.01,2.55,0],[-3.04,2.61,0]],.033,32).name='forged lifting hook';rod(crane,m.darkSteel,[-3.04,2.61,0],[-3.14,2.67,0],.008).name='hook safety latch';
- for(const s of [-1,1]){const offset=s===1?0:.04;tube(crane,m.rubber,[[-.80,2.0,.36+offset],[-.59,2.18,.39+offset],[-.71,2.59,.38+offset],[-1.16,2.64,.39+offset],[-1.59,2.66,.34+offset]],.021,32).name='lift cylinder hydraulic line';}
+ for(let i=0;i<2;i++){
+  const p=point(.58+i*.05),z=.44+i*.045;
+  cylinder(crane,m.steel,.025,.065,[p[0],p[1],.409],'z',.025,24).name='lift cylinder hose union';
+  tube(crane,m.rubber,[[-.80,2.0,z],[-.59,2.18,z+.03],[-.71,2.59,z+.03],[-1.16,2.67,z],[p[0],p[1],.444]],.018,32).name='lift cylinder hydraulic line';
+ }
 }
 function recoveryCockpit(g,m){
  const cockpit=new THREE.Group();cockpit.name='driver controls';g.add(cockpit);
  const trim=new THREE.MeshStandardMaterial({color:'#79816f',roughness:.86,metalness:0});trim.name='cab interior trim';
- const upholstery=new THREE.MeshStandardMaterial({color:'#3b4540',roughness:.94,metalness:0});upholstery.name='woven seat upholstery';
+ const upholstery=m.upholstery.clone();upholstery.name='woven seat upholstery';
  const round=(material,size,pos,name,r=.035)=>{const o=new THREE.Mesh(new RoundedBoxGeometry(...size,3,r),material);o.position.set(...pos);o.name=name;o.castShadow=true;o.receiveShadow=true;cockpit.add(o);return o;};
  const floor=1.79;
  round(m.rubber,[1.86,.045,1.99],[1.49,floor,0],'cab floor mat',.018);

@@ -9,7 +9,7 @@ function group(name){const g=new THREE.Group();g.name=name;return g;}
 function seat(g,m,x,z,reinforced=false){
  // The inspection anchor is the seating datum, not the floor mounting datum.
  const datum=.40,s=group('supported crew seat');s.position.set(x,datum,z);g.add(s);
- const upholstery=m.rubber.clone();upholstery.color.set('#343a32');upholstery.bumpScale=.003;upholstery.name='woven seat upholstery';
+ const upholstery=m.upholstery.clone();upholstery.name='woven seat upholstery';
  const pad=(material,size,pos,radius,name)=>{const mesh=new THREE.Mesh(new RoundedBoxGeometry(...size,3,radius),material);mesh.position.set(...pos);mesh.name=name;s.add(mesh);return mesh;};
  if(reinforced){
   // Floor-connected, broad suspension cassette. The rails meet the floor

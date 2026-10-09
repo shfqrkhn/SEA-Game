@@ -1430,8 +1430,8 @@
     {
       "id": "RECOVERY",
       "kind": "mission",
-      "meshes": 1412,
-      "triangles": 177984,
+      "meshes": 1439,
+      "triangles": 184356,
       "bounds": {
         "min": [
           -3.26259446144104,
@@ -1899,7 +1899,7 @@
         "SA": "SA-A",
         "ACC": "ACC-A"
       },
-      "meshes": 1810,
+      "meshes": 1837,
       "cameraChecks": 12
     },
     {
@@ -1914,7 +1914,7 @@
         "SA": "SA-B",
         "ACC": "ACC-B"
       },
-      "meshes": 2237,
+      "meshes": 2264,
       "cameraChecks": 12
     },
     {
@@ -1929,7 +1929,7 @@
         "SA": "SA-C",
         "ACC": "ACC-C"
       },
-      "meshes": 2003,
+      "meshes": 2030,
       "cameraChecks": 12
     },
     {
@@ -1944,7 +1944,7 @@
         "SA": "SA-D",
         "ACC": "ACC-D"
       },
-      "meshes": 2032,
+      "meshes": 2059,
       "cameraChecks": 12
     },
     {
@@ -1959,7 +1959,7 @@
         "SA": "SA-E",
         "ACC": "ACC-E"
       },
-      "meshes": 1884,
+      "meshes": 1911,
       "cameraChecks": 12
     },
     {
@@ -1974,7 +1974,7 @@
         "SA": "SA-F",
         "ACC": "ACC-F"
       },
-      "meshes": 1777,
+      "meshes": 1804,
       "cameraChecks": 12
     },
     {
@@ -1989,7 +1989,7 @@
         "SA": "SA-G",
         "ACC": "ACC-G"
       },
-      "meshes": 1813,
+      "meshes": 1840,
       "cameraChecks": 12
     },
     {
