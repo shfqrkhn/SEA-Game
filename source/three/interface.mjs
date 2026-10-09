@@ -1,87 +1,164 @@
 import * as THREE from 'three';
 
-// Pixel-coordinate scene UI. Only copied presentation data crosses this boundary.
+// Pixel-space presentation: this renderer owns no game rules, storage or DOM controls.
+const GAP=8,INSET=12,LINE=18,TARGET=44;
+const COLORS={panel:'#f7f7f2',ink:'#1f302b',muted:'#52675d',line:'#d6ded5',field:'#ffffff',accent:'#365a46',selected:'#e3ece0',disabled:'#edf0e9',disabledInk:'#78877c'};
+const finiteSize=value=>Math.max(1,Number.isFinite(value)?value:1);
+const inside=(box,x,y)=>box&&x>=box.x&&x<box.x+box.w&&y>=box.y&&y<box.y+box.h;
+
 export function interfaceLayout(width,height,count=0){
-  width=Math.max(1,width);height=Math.max(1,height);
-  // Short portrait/keyboard viewports prioritize reachable controls over the model.
-  const wide=width>=850,short=!wide&&height<520,panel=wide?{x:width-Math.min(420,width*.4),y:0,w:Math.min(420,width*.4),h:height}:short?{x:0,y:0,w:width,h:height}:{x:0,y:Math.round(height*.42),w:width,h:Math.round(height*.58)};
+  width=finiteSize(width);height=finiteSize(height);
+  const wide=width>=850,short=!wide&&height<520;
+  const panelWidth=Math.min(420,width*.4);
+  const panel=wide?{x:width-panelWidth,y:0,w:panelWidth,h:height}:short?{x:0,y:0,w:width,h:height}:{x:0,y:Math.round(height*.42),w:width,h:height-Math.round(height*.42)};
   const model=wide?{x:0,y:0,w:panel.x,h:height}:{x:0,y:0,w:width,h:short?height:panel.y};
-  const rowHeight=54,capacity=Math.max(1,Math.floor((panel.h-140)/rowHeight));
-  return {panel,model,rowHeight,capacity,pages:Math.max(1,Math.ceil(count/capacity))};
+  const capacity=Math.max(1,Math.floor((panel.h-140)/54));
+  return {panel,model,rowHeight:54,capacity,pages:Math.max(1,Math.ceil(count/capacity)),short};
 }
-export function hitInterface(layout,x,y,rows,page=0){
-  const inside=b=>x>=b.x&&x<b.x+b.w&&y>=b.y&&y<b.y+b.h;
-  const inspection=layout.inspectionButtons?.find(inside);if(inspection)return inspection.row.disabled?'__panel':inspection.row.key;
-  if(layout.primaryButton&&inside(layout.primaryButton))return layout.primaryButton.row.disabled?'__panel':layout.primaryButton.row.key;
-  const p=layout.panel;if(x<p.x||x>p.x+p.w||y<p.y||y>p.y+p.h)return null;
-  const navigation=layout.sectionButtons?.find(b=>x>=b.x&&x<b.x+b.w&&y>=b.y&&y<b.y+b.h);if(navigation)return navigation.key;
-  const utility=layout.headerButtons?.find(b=>x>=b.x&&x<b.x+b.w&&y>=b.y&&y<b.y+b.h);if(utility)return utility.row.disabled?'__panel':utility.row.key;
-  if(layout.pageButtons){const button=layout.pageButtons.find(inside);if(button)return button.disabled?'__panel':button.key;}
-  else if(y>=p.y+p.h-46){if(x<p.x+p.w/2)return '__previous';return '__next';}
-  const placed=layout.placed?.find(r=>y>=r.y&&y<r.y+r.h&&(r.x===undefined||x>=r.x&&x<r.x+r.w));const index=Math.floor((y-p.y-88)/layout.rowHeight);if(!layout.placed&&(index<0||index>=layout.capacity))return '__panel';
-  const row=layout.placed?placed?.row:rows[page*layout.capacity+index];return row&&row.kind!=='text'&&!row.disabled?row.key:'__panel';
+
+// One wrapping algorithm supplies pagination AND texture drawing. Browser canvas
+// measurement is injected; the pure helpers also work without a document.
+export function wrapInterfaceText(value,width,measure=value=>String(value).length*8){
+  const limit=Math.max(1,width),lines=[];
+  for(const paragraph of String(value??'').split('\n')){
+    const words=paragraph.trim().split(/\s+/).filter(Boolean);let line='';
+    for(let word of words){
+      if(line&&measure(line+' '+word)<=limit){line+=' '+word;continue;}
+      if(line){lines.push(line);line='';}
+      const glyphs=Array.from(word);
+      while(glyphs.length&&measure(glyphs.join(''))>limit){
+        let end=1;while(end<glyphs.length&&measure(glyphs.slice(0,end+1).join(''))<=limit)end++;
+        lines.push(glyphs.splice(0,end).join(''));
+      }
+      line=glyphs.join('');
+    }
+    if(line)lines.push(line);else if(!words.length)lines.push('');
+  }
+  return lines;
 }
-// Split long informational rows into continuations rather than hide their text.
-export function paginateRows(rows,width,height,overhead=140){
-  const maxLines=Math.max(2,Math.floor((height-overhead-10)/18)),pages=[[]];let used=0;
-  function wrap(value,chars){const words=String(value??'').split(/\s+/),lines=[];let line='';for(let word of words){while(word.length>chars){if(line){lines.push(line);line='';}lines.push(word.slice(0,chars));word=word.slice(chars);}if(line.length+word.length+1>chars){lines.push(line);line=word;}else line+=(line?' ':'')+word;}if(line)lines.push(line);return lines;}
-  function pieces(row,columns){const chars=Math.max(12,Math.floor(((width-24-(columns-1)*8)/columns-20)/8)),all=[...wrap(row.label,chars),...wrap(row.value,chars)],result=[];for(let offset=0;offset<Math.max(1,all.length);offset+=maxLines){const lines=all.slice(offset,offset+maxLines);result.push({row:{...row,label:lines.join('\n'),value:null},h:Math.max(48,lines.length*18+14)});}return result;}
-  function band(items){const h=Math.max(...items.map(item=>item.h));if(used+h>height-overhead&&pages.at(-1).length){pages.push([]);used=0;}items.forEach((item,column)=>pages.at(-1).push({...item,h,column,columns:items.length===2?2:1,lastInBand:column===items.length-1}));used+=h;}
-  for(let index=0;index<rows.length;index++){
-    const row=rows[index],paired=width>=380&&row.compact==='bid'&&rows[index+1]?.compact==='bid';
-    if(paired){const first=pieces(row,2),second=pieces(rows[++index],2);for(let part=0;part<Math.max(first.length,second.length);part++){const items=[first[part],second[part]].filter(Boolean);band(items);}}
-    else for(const item of pieces(row,1))band([item]);
+
+export function paginateRows(rows,width,height,overhead=140,measure=value=>String(value).length*8){
+  const available=Math.max(TARGET,height-overhead),maxLines=Math.max(1,Math.floor((available-14)/LINE));
+  const pages=[[]];let used=0;
+  const pieces=(row,columns)=>{
+    const rowWidth=(width-INSET*2-(columns-1)*GAP)/columns;
+    const lines=[...wrapInterfaceText(row.label,rowWidth-24,measure),...(row.value?wrapInterfaceText(row.value,rowWidth-24,measure):[])];
+    const result=[];
+    for(let offset=0;offset<lines.length;offset+=maxLines){const selected=lines.slice(offset,offset+maxLines);result.push({row:{...row,label:selected.join('\n'),value:null},lines:selected,h:Math.max(TARGET,selected.length*LINE+14)});}
+    return result;
+  };
+  const band=items=>{
+    const h=Math.max(...items.map(item=>item.h));
+    if(used+h>available&&pages.at(-1).length){pages.push([]);used=0;}
+    items.forEach((item,column)=>pages.at(-1).push({...item,h,column,columns:items.length,lastInBand:column===items.length-1}));used+=h;
+  };
+  for(let i=0;i<rows.length;i++){
+    if(width>=380&&rows[i].compact==='bid'&&rows[i+1]?.compact==='bid'){
+      const a=pieces(rows[i],2),b=pieces(rows[++i],2);
+      for(let part=0;part<Math.max(a.length,b.length);part++)band([a[part],b[part]].filter(Boolean));
+    }else for(const item of pieces(rows[i],1))band([item]);
   }
   return pages;
 }
+
+export function hitInterface(layout,x,y,rows,page=0){
+  // Direct view controls can lie outside the task panel.
+  for(const box of [...(layout.inspectionButtons||[]),...(layout.primaryButton?[layout.primaryButton]:[]),...(layout.headerButtons||[])])if(inside(box,x,y))return box.row.disabled?'__panel':box.row.key;
+  if(!inside(layout.panel,x,y))return null;
+  for(const box of layout.sectionButtons||[])if(inside(box,x,y))return box.key;
+  for(const box of layout.pageButtons||[])if(inside(box,x,y))return box.disabled?'__panel':box.key;
+  if(layout.placed){const item=layout.placed.find(box=>inside(box,x,y));return item&&item.row.kind!=='text'&&!item.row.disabled?item.row.key:'__panel';}
+  // Historical helper callers can still use fixed-row layouts.
+  if(y>=layout.panel.y+layout.panel.h-46)return x<layout.panel.x+layout.panel.w/2?'__previous':'__next';
+  const index=Math.floor((y-layout.panel.y-88)/layout.rowHeight),row=index>=0&&index<layout.capacity?rows[page*layout.capacity+index]:null;
+  return row&&row.kind!=='text'&&!row.disabled?row.key:'__panel';
+}
+
+function plan(snapshot,width,height,measure){
+  const layout=interfaceLayout(width,height),p=layout.panel,compact=p.h<340;
+  const rows=snapshot.rows,language=rows.find(row=>row.utility==='language'),views=rows.filter(row=>row.utility==='inspection');
+  const all=rows.filter(row=>!row.utility),primary=all.find(row=>row.primary&&row.kind==='button'&&!row.disabled);
+  const names=snapshot.lang==='fr'?{task:'En cours',teams:'Équipes',market:'Manche',tools:'Gestion',inspect:'Explorer',help:compact?'Aide':'Aide / sauvegarde'}:{task:'Current',teams:'Teams',market:'Round',tools:'Manage',inspect:'Inspect',help:compact?'Help':'Help / save'};
+  const sections=Object.keys(names).filter(key=>all.some(row=>(row.section||'task')===key));
+  layout.section=sections.includes(snapshot.section)?snapshot.section:sections[0]||'task';
+  const header=layout.short&&compact?0:compact?44:76;
+  const navColumns=compact?Math.max(1,sections.length):Math.min(3,Math.max(1,sections.length));
+  const navRows=sections.length>1?Math.ceil(sections.length/navColumns):0;
+  const viewCols=Math.min(views.length,Math.max(1,Math.floor((layout.model.w-20)/48)));
+  const toolbar=layout.short&&views.length?Math.ceil(views.length/viewCols)*48:0;
+  layout.contentY=header+toolbar+navRows*48+8;
+  const primarySize=compact?12:14,primaryLines=primary?wrapInterfaceText(primary.label,p.w-48,v=>measure(v,primarySize)):[];
+  const primaryHeight=primary?Math.max(48,primaryLines.length*primarySize*1.25+18):0;
+  const content=all.filter(row=>(row.section||'task')===layout.section&&row.key!==primary?.key);
+  const pages=paginateRows(content,p.w,p.h,layout.contentY+primaryHeight+56,v=>measure(v,14));
+  layout.pages=pages.length;layout.page=Math.min(Math.max(0,Math.floor(Number(snapshot.page)||0)),pages.length-1);
+  const pager=pages.length>1||layout.short&&language?44:0;
+  layout.footerHeight=primaryHeight+pager+12;
+  layout.headerButtons=language?[{row:language,x:layout.short&&compact?p.x+p.w-116:p.x+p.w-60,y:layout.short&&compact?p.y+p.h-56:p.y+4,w:48,h:44}]:[];
+  const target=layout.short?p:layout.model,cols=Math.max(1,viewCols),viewWidth=Math.min(108,(target.w-24-(cols-1)*4)/cols);
+  layout.inspectionButtons=views.map((row,i)=>({row,x:target.x+12+(i%cols)*(viewWidth+4),y:target.y+(layout.short?header:12)+Math.floor(i/cols)*48,w:viewWidth,h:44}));
+  layout.sectionButtons=navRows?sections.map((section,i)=>({section,key:'__section:'+String(snapshot.sectionEpoch||0)+':'+section,x:p.x+12+(i%navColumns)*(p.w-24)/navColumns,y:p.y+header+toolbar+Math.floor(i/navColumns)*48,w:(p.w-24)/navColumns-4,h:44,label:names[section]})):[];
+  let y=p.y+layout.contentY;
+  layout.placed=pages[layout.page].map(item=>{const w=(p.w-24-(item.columns-1)*8)/item.columns,x=p.x+12+item.column*(w+8);const placed={...item,x,y,w};if(item.lastInBand)y+=item.h;return placed;});
+  let footerY=p.y+p.h-layout.footerHeight;
+  layout.primaryButton=primary?{row:primary,x:p.x+12,y:footerY,w:p.w-24,h:primaryHeight,lines:primaryLines,size:primarySize}:null;
+  if(primary)footerY+=primaryHeight;
+  layout.pageButtons=pager?[{key:'__previous',x:p.x+12,y:footerY,w:48,h:44,disabled:layout.page===0},{key:'__next',x:p.x+p.w-60,y:footerY,w:48,h:44,disabled:layout.page===pages.length-1}]:[];
+  return {layout,header,compact};
+}
+
 export function createInterface(){
-  const scene=new THREE.Scene(),camera=new THREE.OrthographicCamera(0,1,0,1,-10,10);
-  let snapshot={rows:[]},action=null,layout=interfaceLayout(1,1),page=0,lastSize=null,sectionKeys=new Map();
-  const resources=[];
-  const palette={panel:'#f7f7f2',ink:'#1f302b',muted:'#52675d',line:'#d6ded5',field:'#ffffff',accent:'#365a46',selected:'#e3ece0',disabled:'#edf0e9',disabledInk:'#78877c'};
-  function clear(){for(const r of resources)r.dispose();resources.length=0;scene.clear();}
+  const scene=new THREE.Scene(),camera=new THREE.OrthographicCamera(0,1,0,1,-10,10),resources=new Set();
+  const measuring=document.createElement('canvas').getContext('2d');
+  const measure=(value,size=14)=>{measuring.font=`400 ${size}px system-ui, sans-serif`;return measuring.measureText(String(value)).width;};
+  let snapshot={rows:[]},action=null,layout=interfaceLayout(1,1),lastSize=null,disposed=false;
+  function clear(){scene.clear();for(const resource of resources)resource.dispose();resources.clear();}
+  function own(...items){for(const item of items)resources.add(item);}
   function plane(x,y,w,h,color,z=0,radius=0){
-    if(w<=0||h<=0)return;let g;
-    if(radius){const r=Math.min(radius,w/2,h/2),s=new THREE.Shape();s.moveTo(r,0);s.lineTo(w-r,0);s.quadraticCurveTo(w,0,w,r);s.lineTo(w,h-r);s.quadraticCurveTo(w,h,w-r,h);s.lineTo(r,h);s.quadraticCurveTo(0,h,0,h-r);s.lineTo(0,r);s.quadraticCurveTo(0,0,r,0);g=new THREE.ShapeGeometry(s);g.translate(-w/2,-h/2,0);}else g=new THREE.PlaneGeometry(w,h);
-    const m=new THREE.MeshBasicMaterial({color,side:THREE.DoubleSide,toneMapped:false,depthTest:false,depthWrite:false});resources.push(g,m);const mesh=new THREE.Mesh(g,m);mesh.position.set(x+w/2,y+h/2,z);scene.add(mesh);
+    if(w<=0||h<=0)return;let geometry;
+    if(radius){const r=Math.min(radius,w/2,h/2),shape=new THREE.Shape();shape.moveTo(r,0);shape.lineTo(w-r,0);shape.quadraticCurveTo(w,0,w,r);shape.lineTo(w,h-r);shape.quadraticCurveTo(w,h,w-r,h);shape.lineTo(r,h);shape.quadraticCurveTo(0,h,0,h-r);shape.lineTo(0,r);shape.quadraticCurveTo(0,0,r,0);geometry=new THREE.ShapeGeometry(shape);geometry.translate(-w/2,-h/2,0);}else geometry=new THREE.PlaneGeometry(w,h);
+    const material=new THREE.MeshBasicMaterial({color,side:THREE.DoubleSide,toneMapped:false,depthTest:false,depthWrite:false});own(geometry,material);const mesh=new THREE.Mesh(geometry,material);mesh.position.set(x+w/2,y+h/2,z);scene.add(mesh);
   }
-  function text(value,x,y,w,h,size=14,color=palette.ink,weight='400'){
-    if(w<=0||h<=0)return;const canvas=document.createElement('canvas'),scale=2;canvas.width=Math.max(2,Math.ceil(w*scale));canvas.height=Math.max(2,Math.ceil(h*scale));const ctx=canvas.getContext('2d');ctx.scale(scale,scale);ctx.font=`${weight} ${size}px system-ui, sans-serif`;ctx.fillStyle=color;ctx.textBaseline='middle';
-    const lines=[];for(const paragraph of String(value??'').split('\n')){const words=paragraph.split(/\s+/);let line='';for(let word of words){while(ctx.measureText(word).width>w-4&&word.length>1){if(line){lines.push(line);line='';}let end=word.length;while(end>1&&ctx.measureText(word.slice(0,end)).width>w-4)end--;lines.push(word.slice(0,end));word=word.slice(end);}const next=line?line+' '+word:word;if(ctx.measureText(next).width>w-4&&line){lines.push(line);line=word;}else line=next;}if(line)lines.push(line);}lines.forEach((v,i)=>ctx.fillText(v,2,(i+.5)*size*1.25,w-4));
-    const t=new THREE.CanvasTexture(canvas);t.colorSpace=THREE.SRGBColorSpace;const m=new THREE.MeshBasicMaterial({map:t,transparent:true,depthTest:false,depthWrite:false,toneMapped:false,side:THREE.DoubleSide}),g=new THREE.PlaneGeometry(w,h);resources.push(t,m,g);const mesh=new THREE.Mesh(g,m);mesh.scale.y=-1;mesh.position.set(x+w/2,y+h/2,2);scene.add(mesh);
+  function text(value,x,y,w,h,size=14,color=COLORS.ink,weight='400',prepared){
+    if(w<=0||h<=0)return;
+    const canvas=document.createElement('canvas'),scale=2;canvas.width=Math.max(2,Math.ceil(w*scale));canvas.height=Math.max(2,Math.ceil(h*scale));
+    const ctx=canvas.getContext('2d');ctx.scale(scale,scale);ctx.font=`${weight} ${size}px system-ui, sans-serif`;ctx.fillStyle=color;ctx.textBaseline='middle';
+    // Measure in the exact rendered weight, including bold navigation labels.
+    const lines=prepared||wrapInterfaceText(value,w-4,v=>ctx.measureText(v).width),step=size*1.25;
+    lines.forEach((line,i)=>{if((i+1)*step<=h+.01)ctx.fillText(line,2,(i+.5)*step,w-4);});
+    const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;
+    const geometry=new THREE.PlaneGeometry(w,h),material=new THREE.MeshBasicMaterial({map:texture,transparent:true,depthTest:false,depthWrite:false,toneMapped:false,side:THREE.DoubleSide});own(texture,geometry,material);const mesh=new THREE.Mesh(geometry,material);mesh.scale.y=-1;mesh.position.set(x+w/2,y+h/2,2);scene.add(mesh);
+  }
+  function button(box,label,{selected=false,primary=false,size=12,lines}={}){
+    const row=box.row||box,color=row.disabled?COLORS.disabled:primary?row.emphasis==='danger'?'#855744':COLORS.accent:selected?COLORS.accent:COLORS.field;
+    plane(box.x,box.y,box.w,box.h-4,color,1,8);
+    text(label,box.x+8,box.y+6,box.w-16,box.h-12,size,row.disabled?COLORS.disabledInk:primary||selected?'#fff':COLORS.ink,'400',lines);
   }
   function render(width,height){
-    lastSize=[width,height];clear();layout=interfaceLayout(width,height);const p=layout.panel,compact=p.h<340,language=snapshot.rows.find(r=>r.utility==='language'),inspection=snapshot.rows.filter(r=>r.utility==='inspection');
-    const allContent=snapshot.rows.filter(r=>!r.utility),primary=allContent.find(r=>r.primary&&r.kind==='button'&&!r.disabled);
-    const names=snapshot.lang==='fr'?{task:'En cours',teams:'Équipes',market:'Manche',tools:'Gestion',inspect:'Explorer',help:compact?'Aide':'Aide / sauvegarde'}:{task:'Current',teams:'Teams',market:'Round',tools:'Manage',inspect:'Inspect',help:compact?'Help':'Help / save'};
-    const sections=Object.keys(names).filter(key=>allContent.some(row=>(row.section||'task')===key));
-    const selected=sections.includes(snapshot.section)?snapshot.section:sections[0]||'task';
-    const content=allContent.filter(row=>(row.section||'task')===selected&&row.key!==primary?.key);
-    const short=layout.model.h===height&&p.y===0&&p.w===width,toolHeight=short&&inspection.length?48:0;
-    const headerHeight=short&&compact?0:compact?44:76,navColumns=compact?Math.max(1,sections.length):Math.min(3,Math.max(1,sections.length)),navRows=sections.length>1?Math.ceil(sections.length/navColumns):0;
-    layout.contentY=headerHeight+navRows*48+toolHeight+8;layout.section=selected;sectionKeys=new Map();
-    const primaryHeight=primary?(compact?48:Math.max(52,Math.ceil((primary.label.length||0)/Math.max(18,Math.floor((p.w-56)/8)))*18+18)):0;
-    const pageOverhead=layout.contentY+primaryHeight+56;
-    const pages=paginateRows(content,p.w,p.h,pageOverhead);layout.pages=pages.length;page=Math.min(Math.max(0,Number(snapshot.page)||0),layout.pages-1);
-    const pagerHeight=layout.pages>1||short&&language?44:0;layout.footerHeight=primaryHeight+pagerHeight+12;
+    if(disposed)return layout;
+    width=finiteSize(width);height=finiteSize(height);lastSize=[width,height];clear();
+    const result=plan(snapshot,width,height,measure);layout=result.layout;const p=layout.panel;
     camera.left=0;camera.right=width;camera.top=0;camera.bottom=height;camera.updateProjectionMatrix();
-    plane(p.x,p.y,p.w,p.h,palette.panel);plane(p.x,p.y,1,p.h,palette.line,1);
-    if(headerHeight)text(snapshot.title,p.x+20,p.y+12,p.w-(language?94:40),30,compact?18:24,palette.ink,'600');
-    if(!compact){const context=snapshot.context,caption=context?[context.role,context.mission,context.team].filter(Boolean).join(' · '):snapshot.subtitle;text(caption,p.x+20,p.y+44,p.w-40,26,12,palette.muted);}
-    layout.headerButtons=[];if(language){const b={row:language,x:short&&compact?p.x+p.w-116:p.x+p.w-60,y:short&&compact?p.y+p.h-56:p.y+4,w:48,h:44};layout.headerButtons.push(b);plane(b.x,b.y,b.w,b.h,palette.field,1,8);text(language.label,b.x+10,b.y+13,b.w-20,26,13,palette.accent,'600');}
-    layout.inspectionButtons=[];if(inspection.length){const target=short?p:layout.model,gap=4,left=target.x+12,available=target.w-24,cols=Math.min(inspection.length,Math.max(1,Math.floor((available+gap)/48))),buttonWidth=Math.min(108,(available-gap*(cols-1))/cols),toolY=target.y+(short?headerHeight:12);
-      inspection.forEach((row,i)=>{const b={row,x:left+(i%cols)*(buttonWidth+gap),y:toolY+Math.floor(i/cols)*48,w:buttonWidth,h:44};layout.inspectionButtons.push(b);plane(b.x,b.y,b.w,b.h,row.disabled?palette.disabled:row.selected?palette.accent:palette.field,1,9);const label=b.w<72&&row.label==='Vue générale'?'Aperçu':row.label;text(label,b.x+5,b.y+8,b.w-10,32,b.w<72?10:12,row.disabled?palette.disabledInk:row.selected?'#ffffff':palette.ink,row.selected?'600':'400');});}
-    layout.sectionButtons=[];const navY=p.y+headerHeight+toolHeight;
-    if(navRows)sections.forEach((key,i)=>{const b={key:'__section:'+String(snapshot.sectionEpoch||0)+':'+key,x:p.x+12+(i%navColumns)*(p.w-24)/navColumns,y:navY+Math.floor(i/navColumns)*48,w:(p.w-24)/navColumns-4,h:44};sectionKeys.set(b.key,key);layout.sectionButtons.push(b);plane(b.x,b.y,b.w,b.h,key===selected?palette.selected:palette.panel,1,8);if(key===selected)plane(b.x+8,b.y+41,b.w-16,2,palette.accent,1);text(names[key],b.x+5,b.y+9,b.w-10,32,compact?10:12,key===selected?palette.ink:palette.muted,key===selected?'600':'400');});
-    let y=p.y+layout.contentY;layout.placed=[];for(const item of pages[page]){const {row,h}=item;const bottom=p.y+p.h-layout.footerHeight;if(y+h>bottom)break;const w=(p.w-24-((item.columns||1)-1)*8)/(item.columns||1),x=p.x+12+(item.column||0)*(w+8);layout.placed.push({row,x,w,y,h});const information=row.kind==='text',actionable=!information&&!row.disabled;
-      if(!information){plane(x,y,w,h-6,row.disabled?palette.disabled:row.kind==='button'?palette.selected:palette.field,1,8);if(actionable&&row.emphasis==='danger')plane(x,y,3,h-6,'#965c44',1);}
-      else plane(x+8,y+h-4,w-16,1,palette.line,1);
-      const label=row.kind==='checkbox'?(row.label.includes('✓')?'● ':'○ ')+row.label:row.label;
-      text(label,x+10,y+7,w-20,h-14,14,row.disabled?palette.disabledInk:information?palette.muted:palette.ink,row.kind==='button'?'500':'400');if(item.lastInBand!==false)y+=h;}
-    layout.primaryButton=null;layout.pageButtons=[];let footerY=p.y+p.h-layout.footerHeight;
-    if(primary){const b={row:primary,x:p.x+12,y:footerY,w:p.w-24,h:primaryHeight};layout.primaryButton=b;plane(b.x,b.y,b.w,b.h-4,primary.emphasis==='danger'?'#855744':palette.accent,1,10);text(primary.label,b.x+12,b.y+9,b.w-24,b.h-14,compact?(primary.label.length>70?10:12):14,'#ffffff','600');footerY+=primaryHeight;}
-    if(pagerHeight){const previous={key:'__previous',x:p.x+12,y:footerY,w:48,h:44,disabled:page===0},next={key:'__next',x:p.x+p.w-60,y:footerY,w:48,h:44,disabled:page===layout.pages-1};layout.pageButtons.push(previous,next);for(const b of [previous,next]){plane(b.x,b.y,b.w,b.h-4,palette.field,1,8);text(b.key==='__previous'?'‹':'›',b.x+16,b.y+7,b.w-24,28,22,b.disabled?palette.disabledInk:palette.accent);}text(short&&compact?`${snapshot.title} · ${page+1}/${layout.pages}`:`${page+1} / ${layout.pages}`,p.x+68,footerY+9,p.w-(short&&compact&&language?188:136),30,short&&compact?10:12,palette.muted);}
+    plane(p.x,p.y,p.w,p.h,COLORS.panel);plane(p.x,p.y,1,p.h,COLORS.line,1);
+    if(result.header){text(snapshot.title,p.x+20,p.y+10,p.w-(layout.headerButtons.length?94:40),30,result.compact?18:24,COLORS.ink,'600');if(!result.compact){const context=snapshot.context,caption=context?[context.role,context.mission,context.team].filter(Boolean).join(' · '):snapshot.subtitle;text(caption,p.x+20,p.y+44,p.w-40,26,12,COLORS.muted);}}
+    for(const box of layout.headerButtons)button(box,box.row.label);
+    for(const box of layout.inspectionButtons){const label=box.w<72&&box.row.label==='Vue générale'?'Aperçu':box.row.label;button(box,label,{selected:box.row.selected,size:box.w<72?10:12});}
+    for(const box of layout.sectionButtons){const selected=box.section===layout.section;plane(box.x,box.y,box.w,box.h,selected?COLORS.selected:COLORS.panel,1,8);if(selected)plane(box.x+8,box.y+41,box.w-16,2,COLORS.accent,1);text(box.label,box.x+5,box.y+9,box.w-10,32,result.compact?10:12,selected?COLORS.ink:COLORS.muted);}
+    for(const box of layout.placed){const row=box.row,information=row.kind==='text';if(information)plane(box.x+8,box.y+box.h-4,box.w-16,1,COLORS.line,1);else{plane(box.x,box.y,box.w,box.h-6,row.disabled?COLORS.disabled:row.kind==='button'?COLORS.selected:COLORS.field,1,8);if(!row.disabled&&row.emphasis==='danger')plane(box.x,box.y,3,box.h-6,'#965c44',1);}
+      text(row.label,box.x+10,box.y+7,box.w-20,box.h-14,14,row.disabled?COLORS.disabledInk:information?COLORS.muted:COLORS.ink,'400',box.lines);
+    }
+    if(layout.primaryButton)button(layout.primaryButton,layout.primaryButton.row.label,{primary:true,size:layout.primaryButton.size,lines:layout.primaryButton.lines});
+    for(const box of layout.pageButtons)button(box,box.key==='__previous'?'‹':'›',{size:22});
+    if(layout.pageButtons.length){const y=layout.pageButtons[0].y;text(`${layout.page+1} / ${layout.pages}`,p.x+68,y+9,p.w-(layout.short&&result.compact&&layout.headerButtons.length?188:136),26,12,COLORS.muted);}
     return layout;
   }
-  return {scene,camera,set(next,onAction,width,height){snapshot={...next,context:next.context?{...next.context}:undefined,rows:(next.rows||[]).map(r=>({...r}))};action=onAction;return render(width,height);},resize(width,height){return lastSize?.[0]===width&&lastSize?.[1]===height?layout:render(width,height);},hit(x,y){return hitInterface(layout,x,y,snapshot.rows,page);},activate(key){if(key?.startsWith('__section:')){const next=sectionKeys.get(key);if(next){snapshot.section=next;snapshot.page=0;action?.('__section',next);if(lastSize)render(...lastSize);}return;}if(key==='__previous'||key==='__next'){const next=Math.max(0,Math.min(layout.pages-1,page+(key==='__next'?1:-1)));if(next!==page){snapshot.page=next;action?.(key,next);if(page!==next&&lastSize)render(...lastSize);}return;}const row=snapshot.rows.find(r=>r.key===key);if(row&&row.kind!=='text'&&!row.disabled)action?.(key);},get layout(){return layout;},dispose:clear};
+  return {scene,camera,
+    set(next,onAction,width,height){if(disposed)return layout;snapshot={...next,context:next.context?{...next.context}:undefined,rows:(next.rows||[]).map(row=>({...row}))};action=onAction;return render(width,height);},
+    resize(width,height){return lastSize?.[0]===width&&lastSize?.[1]===height?layout:render(width,height);},
+    hit(x,y){return disposed?null:hitInterface(layout,x,y,snapshot.rows,layout.page);},
+    activate(key){if(disposed)return;if(key?.startsWith('__section:')){const box=layout.sectionButtons.find(box=>box.key===key);if(box){const previous=layout;snapshot.section=box.section;snapshot.page=0;action?.('__section',box.section);if(layout===previous&&lastSize)render(...lastSize);}return;}
+      if(key==='__previous'||key==='__next'){const next=Math.max(0,Math.min(layout.pages-1,layout.page+(key==='__next'?1:-1)));if(next!==layout.page){snapshot.page=next;action?.(key,next);if(layout.page!==next&&lastSize)render(...lastSize);}return;}
+      const row=snapshot.rows.find(row=>row.key===key);if(row&&row.kind!=='text'&&!row.disabled)action?.(key);
+    },get layout(){return layout;},dispose(){if(disposed)return;disposed=true;action=null;snapshot={rows:[]};clear();}
+  };
 }

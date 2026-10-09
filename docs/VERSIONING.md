@@ -12,7 +12,7 @@ Use the largest change in the publication batch. Evidence-only documentation cha
 
 ## Current candidate identity
 
-Delivered3.5.0 and planned3.6.0 are recorded with exact identities/outcomes in [handover](HANDOVER.md), [ledger](EXECUTION_LEDGER.md) and [release notes](RELEASE_NOTES.md). Version labels do not inherit old receipts. Full commit history supplies historic release changes; do not duplicate exploratory iteration logs. Primary runtime is dist/index.html; each role badge/backup uses the same APP.version.
+Published3.6.0 and local4.0.0-dev.1 are recorded with exact identities/outcomes in [handover](HANDOVER.md), [ledger](EXECUTION_LEDGER.md) and [release notes](RELEASE_NOTES.md). The new major denotes the staged from-scratch rebuild; prerelease status does not imply completion. Version labels do not inherit old receipts. Full commit history supplies historic release changes; do not duplicate exploratory iteration logs. Primary runtime is dist/index.html; each role badge/backup uses the same APP.version.
 
 ## Disk-write constraint
 

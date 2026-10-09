@@ -3,5 +3,8 @@
     "esbuild": "0.25.12",
     "linkedom": "0.18.12",
     "three": "0.186.1"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3"
   }
 }
