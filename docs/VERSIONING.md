@@ -22,3 +22,5 @@ For each next publication, add its version, concrete change, exact source/previe
 ## Disk-write constraint
 
 Project development uses finite, requested builds/tests/publications; do not start persistent watchers, local servers, recurring polling jobs or file loggers. The browser game writes a session snapshot only when its serialized bytes differ from the stored snapshot. Rendering, model rotation and the countdown do not intentionally persist on every frame/tick. Changed user input and transactions remain immediately recoverable; explicit backup exports and finite build/evidence operations still write files. This policy covers the project, not Windows, browser caches or Codex application activity.
+
+Finite build, bundle and concept-inventory generators share `tools/artifact-io.mjs` and skip writing identical outputs. Build/evidence-only changes after publication leave the game version unchanged when the application bytes are identical.

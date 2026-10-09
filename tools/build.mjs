@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // Build two independent offline applications from one shared presentation source.
-import {readFileSync,writeFileSync} from 'node:fs';
+import {readFileSync} from 'node:fs';
+import {writeChangedArtifact} from './artifact-io.mjs';
 import {Script,runInNewContext} from 'node:vm';
 import {embeddedArtworkSource} from './artwork-source.mjs';
 import {validateLocalization} from './localization.mjs';
@@ -36,6 +37,6 @@ for(const [name,target] of [['instructor','SEA_Instructor_Standalone.html'],['st
  if(check){
   if(readFileSync(new URL('../'+target,import.meta.url),'utf8')!==html){console.error(target+': generated output differs');failed=true}
   else console.log(target+': PASS byte-for-byte reproduction');
- }else{writeFileSync(new URL('../'+target,import.meta.url),html);console.log(target+': written')}
+ }else{const changed=writeChangedArtifact(new URL('../'+target,import.meta.url),html);console.log(target+': '+(changed?'written':'unchanged'))}
 }
 if(failed)process.exitCode=1;

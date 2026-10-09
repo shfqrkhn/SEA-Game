@@ -4,6 +4,7 @@ import vm from 'node:vm';
 import crypto from 'node:crypto';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
+import {writeChangedArtifact} from '../../tools/artifact-io.mjs';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../..');
 const read=p=>fs.readFileSync(path.join(root,p),'utf8');
 const engine=read('source/shared/engine.js');
@@ -48,10 +49,10 @@ for(const receipt of receipts){
  const actual=crypto.createHash('sha256').update(fs.readFileSync(path.join(root,receipt.artifact))).digest('hex');if(actual!==receipt.sha256)throw Error('Concept artifact hash mismatch: '+receipt.id);
  for(const id of receipt.inventoryIds){const record=all.find(r=>r.id===id);if(!record)throw Error('Unknown receipt inventory ID: '+id);record.concept={...record.concept,status:receipt.status,artifacts:[...record.concept.artifacts,{path:receipt.artifact,sha256:actual,receiptId:receipt.id}],receipts:['docs/game-design/concept-receipts.json']};if(receipt.preferredDirection)record.concept.preferredDirection={path:receipt.artifact,receiptId:receipt.id,supersedes:receipt.supersedesDirection,acceptance:'open'};}
 }
-fs.writeFileSync(path.join(root,'docs/game-design/concept-inventory.json'),JSON.stringify(inventory,null,2)+'\n');
+writeChangedArtifact(path.join(root,'docs/game-design/concept-inventory.json'),JSON.stringify(inventory,null,2)+'\n');
 const promptDoc=['# Canonical identity concept prompts','', 'Generated directly from source; these are prompts, not generated or accepted visuals. Combine each prompt below with VISUAL_INTERACTION_CONTRACT.md. Use stable numbered panels and retain the exact ID-to-panel map. Labels and effects must be checked against source after generation.',''];
 for(const category of [...Object.keys(pools),'VEHICLES']){promptDoc.push('## '+category,'');for(const subject of subjects.filter(s=>s.conceptBatch===category))promptDoc.push('- **'+subject.id+' — '+subject.label.en+' / '+subject.label.fr+'**: '+subject.conceptPrompt);promptDoc.push('');}
-fs.writeFileSync(path.join(root,'docs/game-design/IDENTITY_PROMPTS.md'),promptDoc.join('\n')+'\n');
+writeChangedArtifact(path.join(root,'docs/game-design/IDENTITY_PROMPTS.md'),promptDoc.join('\n')+'\n');
 console.log(JSON.stringify(inventory.counts));
 
 
