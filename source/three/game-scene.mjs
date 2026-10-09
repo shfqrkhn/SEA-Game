@@ -11,6 +11,7 @@ export function mount(host,onFailure,onInspect){
   renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.5));
   renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure=.95;renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFShadowMap;
+  renderer.domElement.tabIndex=0;
   host.appendChild(renderer.domElement);
   const ui=createInterface();let uiEnabled=false;
   const scene=new THREE.Scene();scene.background=new THREE.Color('#f0f3f0');

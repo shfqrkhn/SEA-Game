@@ -95,7 +95,7 @@ export function createConfiguration(mission,owned,m=materials()){
   if(prefix==='ACC'){
    if(id==='ACC-B'){part.position.set(-length/2-1.43,0,0);}
    else if(['ACC-C','ACC-E'].includes(id)){vehicle.getObjectByName('mission roller')?.removeFromParent();part.scale.setScalar(1.9);part.rotation.y=Math.PI/2;part.position.set(length/2+1.05,.1,0);}
-   else if(['ACC-A','ACC-F'].includes(id)){vehicle.getObjectByName('mounted WR-12')?.removeFromParent();part.rotation.y=Math.PI/2;part.position.set(length/2+.15,1.15,0);}
+   else if(['ACC-A','ACC-F'].includes(id)){vehicle.getObjectByName('mounted WR-12')?.removeFromParent();part.rotation.y=Math.PI/2;part.position.set(length/2+.15,1.15,0);box(vehicle,m.edge,[.80,.27,1.30],[length/2+.10,1.015,0],'winch chassis crossmember');for(const s of [-1,1])rod(vehicle,m.darkSteel,[length/2-.30,.92,s*.44],[length/2+.38,1.12,s*.44],.035).name='winch mounting brace';}
    else part.position.set(-length/2+.9,1.35,0);
   }
   vehicle.add(part);

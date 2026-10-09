@@ -5,17 +5,17 @@
     {
       "id": "ACC-A",
       "kind": "part",
-      "meshes": 51,
-      "triangles": 19956,
+      "meshes": 80,
+      "triangles": 22936,
       "bounds": {
         "min": [
-          -0.8250000029802322,
+          -0.8475000001862645,
           -0.04391548037528992,
           -0.2800000011920929
         ],
         "max": [
           0.5600000023841858,
-          0.6625000008940697,
+          0.7200528383255005,
           0.5449826717376709
         ]
       },
@@ -100,17 +100,17 @@
     {
       "id": "ACC-F",
       "kind": "part",
-      "meshes": 51,
-      "triangles": 19956,
+      "meshes": 80,
+      "triangles": 22936,
       "bounds": {
         "min": [
-          -0.8250000029802322,
+          -0.8475000001862645,
           -0.04391548037528992,
           -0.2800000011920929
         ],
         "max": [
           0.5600000023841858,
-          0.6625000008940697,
+          0.7200528383255005,
           0.5449826717376709
         ]
       },
@@ -1354,8 +1354,8 @@
     {
       "id": "COMBAT",
       "kind": "mission",
-      "meshes": 1330,
-      "triangles": 98418,
+      "meshes": 1366,
+      "triangles": 101422,
       "bounds": {
         "min": [
           -3.434999999664724,
@@ -1373,8 +1373,8 @@
     {
       "id": "RECCE",
       "kind": "mission",
-      "meshes": 741,
-      "triangles": 54010,
+      "meshes": 777,
+      "triangles": 57014,
       "bounds": {
         "min": [
           -2.784999999664724,
@@ -1392,8 +1392,8 @@
     {
       "id": "TROOP",
       "kind": "mission",
-      "meshes": 1025,
-      "triangles": 75626,
+      "meshes": 1061,
+      "triangles": 78630,
       "bounds": {
         "min": [
           -3.5179999992251396,
@@ -1411,8 +1411,8 @@
     {
       "id": "COMMAND",
       "kind": "mission",
-      "meshes": 1033,
-      "triangles": 76758,
+      "meshes": 1069,
+      "triangles": 79762,
       "bounds": {
         "min": [
           -3.384999999664724,
@@ -1430,8 +1430,8 @@
     {
       "id": "RECOVERY",
       "kind": "mission",
-      "meshes": 1434,
-      "triangles": 122656,
+      "meshes": 1515,
+      "triangles": 133708,
       "bounds": {
         "min": [
           -3.1593034267425537,
@@ -1449,8 +1449,8 @@
     {
       "id": "MINE",
       "kind": "mission",
-      "meshes": 1398,
-      "triangles": 100750,
+      "meshes": 1434,
+      "triangles": 103754,
       "bounds": {
         "min": [
           -3.434999999664724,
@@ -1479,536 +1479,11 @@
         "SA": "SA-A",
         "ACC": "ACC-A"
       },
-      "meshes": 1723,
-      "cameraChecks": 12
-    },
-    {
-      "mission": "COMBAT",
-      "variant": "B",
-      "installed": {
-        "CAP": "CAP-B",
-        "MOB": "MOB-B",
-        "FP": "FP-B",
-        "PRO": "PRO-B",
-        "COM": "COM-B",
-        "SA": "SA-B",
-        "ACC": "ACC-B"
-      },
-      "meshes": 2266,
-      "cameraChecks": 12
-    },
-    {
-      "mission": "COMBAT",
-      "variant": "C",
-      "installed": {
-        "CAP": "CAP-C",
-        "MOB": "MOB-C",
-        "FP": "FP-C",
-        "PRO": "PRO-C",
-        "COM": "COM-C",
-        "SA": "SA-C",
-        "ACC": "ACC-C"
-      },
-      "meshes": 1941,
-      "cameraChecks": 12
-    },
-    {
-      "mission": "COMBAT",
-      "variant": "D",
-      "installed": {
-        "CAP": "CAP-D",
-        "MOB": "MOB-D",
-        "FP": "FP-D",
-        "PRO": "PRO-D",
-        "COM": "COM-D",
-        "SA": "SA-D",
-        "ACC": "ACC-D"
-      },
-      "meshes": 1688,
-      "cameraChecks": 12
-    },
-    {
-      "mission": "COMBAT",
-      "variant": "E",
-      "installed": {
-        "CAP": "CAP-E",
-        "MOB": "MOB-E",
-        "FP": "FP-E",
-        "PRO": "PRO-E",
-        "COM": "COM-E",
-        "SA": "SA-E",
-        "ACC": "ACC-E"
-      },
-      "meshes": 1727,
-      "cameraChecks": 12
-    },
-    {
-      "mission": "COMBAT",
-      "variant": "F",
-      "installed": {
-        "CAP": "CAP-F",
-        "MOB": "MOB-F",
-        "FP": "FP-F",
-        "PRO": "PRO-F",
-        "COM": "COM-F",
-        "SA": "SA-F",
-        "ACC": "ACC-F"
-      },
-      "meshes": 1722,
-      "cameraChecks": 12
-    },
-    {
-      "mission": "COMBAT",
-      "variant": "G",
-      "installed": {
-        "CAP": "CAP-G",
-        "MOB": "MOB-G",
-        "FP": "FP-G",
-        "PRO": "PRO-G",
-        "COM": "COM-G",
-        "SA": "SA-G",
-        "ACC": "ACC-G"
-      },
-      "meshes": 1672,
-      "cameraChecks": 12
-    },
-    {
-      "mission": "RECCE",
-      "variant": "A",
-      "installed": {
-        "CAP": "CAP-A",
-        "MOB": "MOB-A",
-        "FP": "FP-A",
-        "PRO": "PRO-A",
-        "COM": "COM-A",
-        "SA": "SA-A",
-        "ACC": "ACC-A"
-      },
-      "meshes": 1143,
-      "cameraChecks": 12
-    },
-    {
-      "mission": "RECCE",
-      "variant": "B",
-      "installed": {
-        "CAP": "CAP-B",
-        "MOB": "MOB-B",
-        "FP": "FP-B",
-        "PRO": "PRO-B",
-        "COM": "COM-B",
-        "SA": "SA-B",
-        "ACC": "ACC-B"
-      },
-      "meshes": 1686,
-      "cameraChecks": 12
-    },
-    {
-      "mission": "RECCE",
-      "variant": "C",
-      "installed": {
-        "CAP": "CAP-C",
-        "MOB": "MOB-C",
-        "FP": "FP-C",
-        "PRO": "PRO-C",
-        "COM": "COM-C",
-        "SA": "SA-C",
-        "ACC": "ACC-C"
-      },
-      "meshes": 1361,
-      "cameraChecks": 12
-    },
-    {
-      "mission": "RECCE",
-      "variant": "D",
-      "installed": {
-        "CAP": "CAP-D",
-        "MOB": "MOB-D",
-        "FP": "FP-D",
-        "PRO": "PRO-D",
-        "COM": "COM-D",
-        "SA": "SA-D",
-        "ACC": "ACC-D"
-      },
-      "meshes": 1108,
-      "cameraChecks": 12
-    },
-    {
-      "mission": "RECCE",
-      "variant": "E",
-      "installed": {
-        "CAP": "CAP-E",
-        "MOB": "MOB-E",
-        "FP": "FP-E",
-        "PRO": "PRO-E",
-        "COM": "COM-E",
-        "SA": "SA-E",
-        "ACC": "ACC-E"
-      },
-      "meshes": 1147,
-      "cameraChecks": 12
-    },
-    {
-      "mission": "RECCE",
-      "variant": "F",
-      "installed": {
-        "CAP": "CAP-F",
-        "MOB": "MOB-F",
-        "FP": "FP-F",
-        "PRO": "PRO-F",
-        "COM": "COM-F",
-        "SA": "SA-F",
-        "ACC": "ACC-F"
-      },
-      "meshes": 1142,
-      "cameraChecks": 12
-    },
-    {
-      "mission": "RECCE",
-      "variant": "G",
-      "installed": {
-        "CAP": "CAP-G",
-        "MOB": "MOB-G",
-        "FP": "FP-G",
-        "PRO": "PRO-G",
-        "COM": "COM-G",
-        "SA": "SA-G",
-        "ACC": "ACC-G"
-      },
-      "meshes": 1092,
-      "cameraChecks": 12
-    },
-    {
-      "mission": "TROOP",
-      "variant": "A",
-      "installed": {
-        "CAP": "CAP-A",
-        "MOB": "MOB-A",
-        "FP": "FP-A",
-        "PRO": "PRO-A",
-        "COM": "COM-A",
-        "SA": "SA-A",
-        "ACC": "ACC-A"
-      },
-      "meshes": 1436,
-      "cameraChecks": 12
-    },
-    {
-      "mission": "TROOP",
-      "variant": "B",
-      "installed": {
-        "CAP": "CAP-B",
-        "MOB": "MOB-B",
-        "FP": "FP-B",
-        "PRO": "PRO-B",
-        "COM": "COM-B",
-        "SA": "SA-B",
-        "ACC": "ACC-B"
-      },
-      "meshes": 1979,
-      "cameraChecks": 12
-    },
-    {
-      "mission": "TROOP",
-      "variant": "C",
-      "installed": {
-        "CAP": "CAP-C",
-        "MOB": "MOB-C",
-        "FP": "FP-C",
-        "PRO": "PRO-C",
-        "COM": "COM-C",
-        "SA": "SA-C",
-        "ACC": "ACC-C"
-      },
-      "meshes": 1654,
-      "cameraChecks": 12
-    },
-    {
-      "mission": "TROOP",
-      "variant": "D",
-      "installed": {
-        "CAP": "CAP-D",
-        "MOB": "MOB-D",
-        "FP": "FP-D",
-        "PRO": "PRO-D",
-        "COM": "COM-D",
-        "SA": "SA-D",
-        "ACC": "ACC-D"
-      },
-      "meshes": 1401,
-      "cameraChecks": 12
-    },
-    {
-      "mission": "TROOP",
-      "variant": "E",
-      "installed": {
-        "CAP": "CAP-E",
-        "MOB": "MOB-E",
-        "FP": "FP-E",
-        "PRO": "PRO-E",
-        "COM": "COM-E",
-        "SA": "SA-E",
-        "ACC": "ACC-E"
-      },
-      "meshes": 1440,
-      "cameraChecks": 12
-    },
-    {
-      "mission": "TROOP",
-      "variant": "F",
-      "installed": {
-        "CAP": "CAP-F",
-        "MOB": "MOB-F",
-        "FP": "FP-F",
-        "PRO": "PRO-F",
-        "COM": "COM-F",
-        "SA": "SA-F",
-        "ACC": "ACC-F"
-      },
-      "meshes": 1435,
-      "cameraChecks": 12
-    },
-    {
-      "mission": "TROOP",
-      "variant": "G",
-      "installed": {
-        "CAP": "CAP-G",
-        "MOB": "MOB-G",
-        "FP": "FP-G",
-        "PRO": "PRO-G",
-        "COM": "COM-G",
-        "SA": "SA-G",
-        "ACC": "ACC-G"
-      },
-      "meshes": 1385,
-      "cameraChecks": 12
-    },
-    {
-      "mission": "COMMAND",
-      "variant": "A",
-      "installed": {
-        "CAP": "CAP-A",
-        "MOB": "MOB-A",
-        "FP": "FP-A",
-        "PRO": "PRO-A",
-        "COM": "COM-A",
-        "SA": "SA-A",
-        "ACC": "ACC-A"
-      },
-      "meshes": 1433,
-      "cameraChecks": 12
-    },
-    {
-      "mission": "COMMAND",
-      "variant": "B",
-      "installed": {
-        "CAP": "CAP-B",
-        "MOB": "MOB-B",
-        "FP": "FP-B",
-        "PRO": "PRO-B",
-        "COM": "COM-B",
-        "SA": "SA-B",
-        "ACC": "ACC-B"
-      },
-      "meshes": 1976,
-      "cameraChecks": 12
-    },
-    {
-      "mission": "COMMAND",
-      "variant": "C",
-      "installed": {
-        "CAP": "CAP-C",
-        "MOB": "MOB-C",
-        "FP": "FP-C",
-        "PRO": "PRO-C",
-        "COM": "COM-C",
-        "SA": "SA-C",
-        "ACC": "ACC-C"
-      },
-      "meshes": 1651,
-      "cameraChecks": 12
-    },
-    {
-      "mission": "COMMAND",
-      "variant": "D",
-      "installed": {
-        "CAP": "CAP-D",
-        "MOB": "MOB-D",
-        "FP": "FP-D",
-        "PRO": "PRO-D",
-        "COM": "COM-D",
-        "SA": "SA-D",
-        "ACC": "ACC-D"
-      },
-      "meshes": 1398,
-      "cameraChecks": 12
-    },
-    {
-      "mission": "COMMAND",
-      "variant": "E",
-      "installed": {
-        "CAP": "CAP-E",
-        "MOB": "MOB-E",
-        "FP": "FP-E",
-        "PRO": "PRO-E",
-        "COM": "COM-E",
-        "SA": "SA-E",
-        "ACC": "ACC-E"
-      },
-      "meshes": 1437,
-      "cameraChecks": 12
-    },
-    {
-      "mission": "COMMAND",
-      "variant": "F",
-      "installed": {
-        "CAP": "CAP-F",
-        "MOB": "MOB-F",
-        "FP": "FP-F",
-        "PRO": "PRO-F",
-        "COM": "COM-F",
-        "SA": "SA-F",
-        "ACC": "ACC-F"
-      },
-      "meshes": 1432,
-      "cameraChecks": 12
-    },
-    {
-      "mission": "COMMAND",
-      "variant": "G",
-      "installed": {
-        "CAP": "CAP-G",
-        "MOB": "MOB-G",
-        "FP": "FP-G",
-        "PRO": "PRO-G",
-        "COM": "COM-G",
-        "SA": "SA-G",
-        "ACC": "ACC-G"
-      },
-      "meshes": 1382,
-      "cameraChecks": 12
-    },
-    {
-      "mission": "RECOVERY",
-      "variant": "A",
-      "installed": {
-        "CAP": "CAP-A",
-        "MOB": "MOB-A",
-        "FP": "FP-A",
-        "PRO": "PRO-A",
-        "COM": "COM-A",
-        "SA": "SA-A",
-        "ACC": "ACC-A"
-      },
-      "meshes": 1759,
-      "cameraChecks": 12
-    },
-    {
-      "mission": "RECOVERY",
-      "variant": "B",
-      "installed": {
-        "CAP": "CAP-B",
-        "MOB": "MOB-B",
-        "FP": "FP-B",
-        "PRO": "PRO-B",
-        "COM": "COM-B",
-        "SA": "SA-B",
-        "ACC": "ACC-B"
-      },
-      "meshes": 2342,
-      "cameraChecks": 12
-    },
-    {
-      "mission": "RECOVERY",
-      "variant": "C",
-      "installed": {
-        "CAP": "CAP-C",
-        "MOB": "MOB-C",
-        "FP": "FP-C",
-        "PRO": "PRO-C",
-        "COM": "COM-C",
-        "SA": "SA-C",
-        "ACC": "ACC-C"
-      },
-      "meshes": 2017,
-      "cameraChecks": 12
-    },
-    {
-      "mission": "RECOVERY",
-      "variant": "D",
-      "installed": {
-        "CAP": "CAP-D",
-        "MOB": "MOB-D",
-        "FP": "FP-D",
-        "PRO": "PRO-D",
-        "COM": "COM-D",
-        "SA": "SA-D",
-        "ACC": "ACC-D"
-      },
-      "meshes": 1764,
-      "cameraChecks": 12
-    },
-    {
-      "mission": "RECOVERY",
-      "variant": "E",
-      "installed": {
-        "CAP": "CAP-E",
-        "MOB": "MOB-E",
-        "FP": "FP-E",
-        "PRO": "PRO-E",
-        "COM": "COM-E",
-        "SA": "SA-E",
-        "ACC": "ACC-E"
-      },
-      "meshes": 1803,
-      "cameraChecks": 12
-    },
-    {
-      "mission": "RECOVERY",
-      "variant": "F",
-      "installed": {
-        "CAP": "CAP-F",
-        "MOB": "MOB-F",
-        "FP": "FP-F",
-        "PRO": "PRO-F",
-        "COM": "COM-F",
-        "SA": "SA-F",
-        "ACC": "ACC-F"
-      },
-      "meshes": 1758,
-      "cameraChecks": 12
-    },
-    {
-      "mission": "RECOVERY",
-      "variant": "G",
-      "installed": {
-        "CAP": "CAP-G",
-        "MOB": "MOB-G",
-        "FP": "FP-G",
-        "PRO": "PRO-G",
-        "COM": "COM-G",
-        "SA": "SA-G",
-        "ACC": "ACC-G"
-      },
-      "meshes": 1748,
-      "cameraChecks": 12
-    },
-    {
-      "mission": "MINE",
-      "variant": "A",
-      "installed": {
-        "CAP": "CAP-A",
-        "MOB": "MOB-A",
-        "FP": "FP-A",
-        "PRO": "PRO-A",
-        "COM": "COM-A",
-        "SA": "SA-A",
-        "ACC": "ACC-A"
-      },
       "meshes": 1791,
       "cameraChecks": 12
     },
     {
-      "mission": "MINE",
+      "mission": "COMBAT",
       "variant": "B",
       "installed": {
         "CAP": "CAP-B",
@@ -2019,11 +1494,11 @@
         "SA": "SA-B",
         "ACC": "ACC-B"
       },
-      "meshes": 2334,
+      "meshes": 2302,
       "cameraChecks": 12
     },
     {
-      "mission": "MINE",
+      "mission": "COMBAT",
       "variant": "C",
       "installed": {
         "CAP": "CAP-C",
@@ -2034,11 +1509,11 @@
         "SA": "SA-C",
         "ACC": "ACC-C"
       },
-      "meshes": 1941,
+      "meshes": 1977,
       "cameraChecks": 12
     },
     {
-      "mission": "MINE",
+      "mission": "COMBAT",
       "variant": "D",
       "installed": {
         "CAP": "CAP-D",
@@ -2049,11 +1524,11 @@
         "SA": "SA-D",
         "ACC": "ACC-D"
       },
-      "meshes": 1756,
+      "meshes": 1724,
       "cameraChecks": 12
     },
     {
-      "mission": "MINE",
+      "mission": "COMBAT",
       "variant": "E",
       "installed": {
         "CAP": "CAP-E",
@@ -2064,11 +1539,11 @@
         "SA": "SA-E",
         "ACC": "ACC-E"
       },
-      "meshes": 1727,
+      "meshes": 1763,
       "cameraChecks": 12
     },
     {
-      "mission": "MINE",
+      "mission": "COMBAT",
       "variant": "F",
       "installed": {
         "CAP": "CAP-F",
@@ -2083,6 +1558,531 @@
       "cameraChecks": 12
     },
     {
+      "mission": "COMBAT",
+      "variant": "G",
+      "installed": {
+        "CAP": "CAP-G",
+        "MOB": "MOB-G",
+        "FP": "FP-G",
+        "PRO": "PRO-G",
+        "COM": "COM-G",
+        "SA": "SA-G",
+        "ACC": "ACC-G"
+      },
+      "meshes": 1708,
+      "cameraChecks": 12
+    },
+    {
+      "mission": "RECCE",
+      "variant": "A",
+      "installed": {
+        "CAP": "CAP-A",
+        "MOB": "MOB-A",
+        "FP": "FP-A",
+        "PRO": "PRO-A",
+        "COM": "COM-A",
+        "SA": "SA-A",
+        "ACC": "ACC-A"
+      },
+      "meshes": 1211,
+      "cameraChecks": 12
+    },
+    {
+      "mission": "RECCE",
+      "variant": "B",
+      "installed": {
+        "CAP": "CAP-B",
+        "MOB": "MOB-B",
+        "FP": "FP-B",
+        "PRO": "PRO-B",
+        "COM": "COM-B",
+        "SA": "SA-B",
+        "ACC": "ACC-B"
+      },
+      "meshes": 1722,
+      "cameraChecks": 12
+    },
+    {
+      "mission": "RECCE",
+      "variant": "C",
+      "installed": {
+        "CAP": "CAP-C",
+        "MOB": "MOB-C",
+        "FP": "FP-C",
+        "PRO": "PRO-C",
+        "COM": "COM-C",
+        "SA": "SA-C",
+        "ACC": "ACC-C"
+      },
+      "meshes": 1397,
+      "cameraChecks": 12
+    },
+    {
+      "mission": "RECCE",
+      "variant": "D",
+      "installed": {
+        "CAP": "CAP-D",
+        "MOB": "MOB-D",
+        "FP": "FP-D",
+        "PRO": "PRO-D",
+        "COM": "COM-D",
+        "SA": "SA-D",
+        "ACC": "ACC-D"
+      },
+      "meshes": 1144,
+      "cameraChecks": 12
+    },
+    {
+      "mission": "RECCE",
+      "variant": "E",
+      "installed": {
+        "CAP": "CAP-E",
+        "MOB": "MOB-E",
+        "FP": "FP-E",
+        "PRO": "PRO-E",
+        "COM": "COM-E",
+        "SA": "SA-E",
+        "ACC": "ACC-E"
+      },
+      "meshes": 1183,
+      "cameraChecks": 12
+    },
+    {
+      "mission": "RECCE",
+      "variant": "F",
+      "installed": {
+        "CAP": "CAP-F",
+        "MOB": "MOB-F",
+        "FP": "FP-F",
+        "PRO": "PRO-F",
+        "COM": "COM-F",
+        "SA": "SA-F",
+        "ACC": "ACC-F"
+      },
+      "meshes": 1210,
+      "cameraChecks": 12
+    },
+    {
+      "mission": "RECCE",
+      "variant": "G",
+      "installed": {
+        "CAP": "CAP-G",
+        "MOB": "MOB-G",
+        "FP": "FP-G",
+        "PRO": "PRO-G",
+        "COM": "COM-G",
+        "SA": "SA-G",
+        "ACC": "ACC-G"
+      },
+      "meshes": 1128,
+      "cameraChecks": 12
+    },
+    {
+      "mission": "TROOP",
+      "variant": "A",
+      "installed": {
+        "CAP": "CAP-A",
+        "MOB": "MOB-A",
+        "FP": "FP-A",
+        "PRO": "PRO-A",
+        "COM": "COM-A",
+        "SA": "SA-A",
+        "ACC": "ACC-A"
+      },
+      "meshes": 1504,
+      "cameraChecks": 12
+    },
+    {
+      "mission": "TROOP",
+      "variant": "B",
+      "installed": {
+        "CAP": "CAP-B",
+        "MOB": "MOB-B",
+        "FP": "FP-B",
+        "PRO": "PRO-B",
+        "COM": "COM-B",
+        "SA": "SA-B",
+        "ACC": "ACC-B"
+      },
+      "meshes": 2015,
+      "cameraChecks": 12
+    },
+    {
+      "mission": "TROOP",
+      "variant": "C",
+      "installed": {
+        "CAP": "CAP-C",
+        "MOB": "MOB-C",
+        "FP": "FP-C",
+        "PRO": "PRO-C",
+        "COM": "COM-C",
+        "SA": "SA-C",
+        "ACC": "ACC-C"
+      },
+      "meshes": 1690,
+      "cameraChecks": 12
+    },
+    {
+      "mission": "TROOP",
+      "variant": "D",
+      "installed": {
+        "CAP": "CAP-D",
+        "MOB": "MOB-D",
+        "FP": "FP-D",
+        "PRO": "PRO-D",
+        "COM": "COM-D",
+        "SA": "SA-D",
+        "ACC": "ACC-D"
+      },
+      "meshes": 1437,
+      "cameraChecks": 12
+    },
+    {
+      "mission": "TROOP",
+      "variant": "E",
+      "installed": {
+        "CAP": "CAP-E",
+        "MOB": "MOB-E",
+        "FP": "FP-E",
+        "PRO": "PRO-E",
+        "COM": "COM-E",
+        "SA": "SA-E",
+        "ACC": "ACC-E"
+      },
+      "meshes": 1476,
+      "cameraChecks": 12
+    },
+    {
+      "mission": "TROOP",
+      "variant": "F",
+      "installed": {
+        "CAP": "CAP-F",
+        "MOB": "MOB-F",
+        "FP": "FP-F",
+        "PRO": "PRO-F",
+        "COM": "COM-F",
+        "SA": "SA-F",
+        "ACC": "ACC-F"
+      },
+      "meshes": 1503,
+      "cameraChecks": 12
+    },
+    {
+      "mission": "TROOP",
+      "variant": "G",
+      "installed": {
+        "CAP": "CAP-G",
+        "MOB": "MOB-G",
+        "FP": "FP-G",
+        "PRO": "PRO-G",
+        "COM": "COM-G",
+        "SA": "SA-G",
+        "ACC": "ACC-G"
+      },
+      "meshes": 1421,
+      "cameraChecks": 12
+    },
+    {
+      "mission": "COMMAND",
+      "variant": "A",
+      "installed": {
+        "CAP": "CAP-A",
+        "MOB": "MOB-A",
+        "FP": "FP-A",
+        "PRO": "PRO-A",
+        "COM": "COM-A",
+        "SA": "SA-A",
+        "ACC": "ACC-A"
+      },
+      "meshes": 1501,
+      "cameraChecks": 12
+    },
+    {
+      "mission": "COMMAND",
+      "variant": "B",
+      "installed": {
+        "CAP": "CAP-B",
+        "MOB": "MOB-B",
+        "FP": "FP-B",
+        "PRO": "PRO-B",
+        "COM": "COM-B",
+        "SA": "SA-B",
+        "ACC": "ACC-B"
+      },
+      "meshes": 2012,
+      "cameraChecks": 12
+    },
+    {
+      "mission": "COMMAND",
+      "variant": "C",
+      "installed": {
+        "CAP": "CAP-C",
+        "MOB": "MOB-C",
+        "FP": "FP-C",
+        "PRO": "PRO-C",
+        "COM": "COM-C",
+        "SA": "SA-C",
+        "ACC": "ACC-C"
+      },
+      "meshes": 1687,
+      "cameraChecks": 12
+    },
+    {
+      "mission": "COMMAND",
+      "variant": "D",
+      "installed": {
+        "CAP": "CAP-D",
+        "MOB": "MOB-D",
+        "FP": "FP-D",
+        "PRO": "PRO-D",
+        "COM": "COM-D",
+        "SA": "SA-D",
+        "ACC": "ACC-D"
+      },
+      "meshes": 1434,
+      "cameraChecks": 12
+    },
+    {
+      "mission": "COMMAND",
+      "variant": "E",
+      "installed": {
+        "CAP": "CAP-E",
+        "MOB": "MOB-E",
+        "FP": "FP-E",
+        "PRO": "PRO-E",
+        "COM": "COM-E",
+        "SA": "SA-E",
+        "ACC": "ACC-E"
+      },
+      "meshes": 1473,
+      "cameraChecks": 12
+    },
+    {
+      "mission": "COMMAND",
+      "variant": "F",
+      "installed": {
+        "CAP": "CAP-F",
+        "MOB": "MOB-F",
+        "FP": "FP-F",
+        "PRO": "PRO-F",
+        "COM": "COM-F",
+        "SA": "SA-F",
+        "ACC": "ACC-F"
+      },
+      "meshes": 1500,
+      "cameraChecks": 12
+    },
+    {
+      "mission": "COMMAND",
+      "variant": "G",
+      "installed": {
+        "CAP": "CAP-G",
+        "MOB": "MOB-G",
+        "FP": "FP-G",
+        "PRO": "PRO-G",
+        "COM": "COM-G",
+        "SA": "SA-G",
+        "ACC": "ACC-G"
+      },
+      "meshes": 1418,
+      "cameraChecks": 12
+    },
+    {
+      "mission": "RECOVERY",
+      "variant": "A",
+      "installed": {
+        "CAP": "CAP-A",
+        "MOB": "MOB-A",
+        "FP": "FP-A",
+        "PRO": "PRO-A",
+        "COM": "COM-A",
+        "SA": "SA-A",
+        "ACC": "ACC-A"
+      },
+      "meshes": 1832,
+      "cameraChecks": 12
+    },
+    {
+      "mission": "RECOVERY",
+      "variant": "B",
+      "installed": {
+        "CAP": "CAP-B",
+        "MOB": "MOB-B",
+        "FP": "FP-B",
+        "PRO": "PRO-B",
+        "COM": "COM-B",
+        "SA": "SA-B",
+        "ACC": "ACC-B"
+      },
+      "meshes": 2423,
+      "cameraChecks": 12
+    },
+    {
+      "mission": "RECOVERY",
+      "variant": "C",
+      "installed": {
+        "CAP": "CAP-C",
+        "MOB": "MOB-C",
+        "FP": "FP-C",
+        "PRO": "PRO-C",
+        "COM": "COM-C",
+        "SA": "SA-C",
+        "ACC": "ACC-C"
+      },
+      "meshes": 2098,
+      "cameraChecks": 12
+    },
+    {
+      "mission": "RECOVERY",
+      "variant": "D",
+      "installed": {
+        "CAP": "CAP-D",
+        "MOB": "MOB-D",
+        "FP": "FP-D",
+        "PRO": "PRO-D",
+        "COM": "COM-D",
+        "SA": "SA-D",
+        "ACC": "ACC-D"
+      },
+      "meshes": 1845,
+      "cameraChecks": 12
+    },
+    {
+      "mission": "RECOVERY",
+      "variant": "E",
+      "installed": {
+        "CAP": "CAP-E",
+        "MOB": "MOB-E",
+        "FP": "FP-E",
+        "PRO": "PRO-E",
+        "COM": "COM-E",
+        "SA": "SA-E",
+        "ACC": "ACC-E"
+      },
+      "meshes": 1884,
+      "cameraChecks": 12
+    },
+    {
+      "mission": "RECOVERY",
+      "variant": "F",
+      "installed": {
+        "CAP": "CAP-F",
+        "MOB": "MOB-F",
+        "FP": "FP-F",
+        "PRO": "PRO-F",
+        "COM": "COM-F",
+        "SA": "SA-F",
+        "ACC": "ACC-F"
+      },
+      "meshes": 1831,
+      "cameraChecks": 12
+    },
+    {
+      "mission": "RECOVERY",
+      "variant": "G",
+      "installed": {
+        "CAP": "CAP-G",
+        "MOB": "MOB-G",
+        "FP": "FP-G",
+        "PRO": "PRO-G",
+        "COM": "COM-G",
+        "SA": "SA-G",
+        "ACC": "ACC-G"
+      },
+      "meshes": 1829,
+      "cameraChecks": 12
+    },
+    {
+      "mission": "MINE",
+      "variant": "A",
+      "installed": {
+        "CAP": "CAP-A",
+        "MOB": "MOB-A",
+        "FP": "FP-A",
+        "PRO": "PRO-A",
+        "COM": "COM-A",
+        "SA": "SA-A",
+        "ACC": "ACC-A"
+      },
+      "meshes": 1859,
+      "cameraChecks": 12
+    },
+    {
+      "mission": "MINE",
+      "variant": "B",
+      "installed": {
+        "CAP": "CAP-B",
+        "MOB": "MOB-B",
+        "FP": "FP-B",
+        "PRO": "PRO-B",
+        "COM": "COM-B",
+        "SA": "SA-B",
+        "ACC": "ACC-B"
+      },
+      "meshes": 2370,
+      "cameraChecks": 12
+    },
+    {
+      "mission": "MINE",
+      "variant": "C",
+      "installed": {
+        "CAP": "CAP-C",
+        "MOB": "MOB-C",
+        "FP": "FP-C",
+        "PRO": "PRO-C",
+        "COM": "COM-C",
+        "SA": "SA-C",
+        "ACC": "ACC-C"
+      },
+      "meshes": 1977,
+      "cameraChecks": 12
+    },
+    {
+      "mission": "MINE",
+      "variant": "D",
+      "installed": {
+        "CAP": "CAP-D",
+        "MOB": "MOB-D",
+        "FP": "FP-D",
+        "PRO": "PRO-D",
+        "COM": "COM-D",
+        "SA": "SA-D",
+        "ACC": "ACC-D"
+      },
+      "meshes": 1792,
+      "cameraChecks": 12
+    },
+    {
+      "mission": "MINE",
+      "variant": "E",
+      "installed": {
+        "CAP": "CAP-E",
+        "MOB": "MOB-E",
+        "FP": "FP-E",
+        "PRO": "PRO-E",
+        "COM": "COM-E",
+        "SA": "SA-E",
+        "ACC": "ACC-E"
+      },
+      "meshes": 1763,
+      "cameraChecks": 12
+    },
+    {
+      "mission": "MINE",
+      "variant": "F",
+      "installed": {
+        "CAP": "CAP-F",
+        "MOB": "MOB-F",
+        "FP": "FP-F",
+        "PRO": "PRO-F",
+        "COM": "COM-F",
+        "SA": "SA-F",
+        "ACC": "ACC-F"
+      },
+      "meshes": 1858,
+      "cameraChecks": 12
+    },
+    {
       "mission": "MINE",
       "variant": "G",
       "installed": {
@@ -2094,7 +2094,7 @@
         "SA": "SA-G",
         "ACC": "ACC-G"
       },
-      "meshes": 1740,
+      "meshes": 1776,
       "cameraChecks": 12
     }
   ]

@@ -108,5 +108,31 @@
       "doesNotProve": ["Canonical capacity acceptance", "Generic seats/hull component coverage complete", "Installed assembly compatibility", "Visual or product acceptance"]
     },
     "acceptanceStatus": "open"
+  }, {
+    "id": "GEN-protection-family-v1",
+    "inventoryIds": ["PRO-A", "PRO-B", "PRO-C", "PRO-D", "PRO-E", "PRO-F", "PRO-G"],
+    "status": "generated-exploratory",
+    "tool": "imagegen",
+    "date": "2026-10-09",
+    "artifact": "docs/game-design/concepts/protection-family-v1.png",
+    "sha256": "4fe49eb178da9240849deb3c87205ebbdec420236599e9420b57d199b4e27c05",
+    "nativeOutputPath": "C:/Users/user/.codex/generated_images/01a11d09-97df-7000-a3e7-a4b9bfcb4add/exec-62b0149b-dd5a-4a1b-b615-7bf638cae88b.png",
+    "promptFile": "docs/game-design/PROTECTION_PROMPT.md",
+    "panels": [
+      {"panel": 1, "inventoryId": "PRO-A"},
+      {"panel": 2, "inventoryId": "PRO-B"},
+      {"panel": 3, "inventoryId": "PRO-C"},
+      {"panel": 4, "inventoryId": "PRO-D"},
+      {"panel": 5, "inventoryId": "PRO-E"},
+      {"panel": 6, "inventoryId": "PRO-F"},
+      {"panel": 7, "inventoryId": "PRO-G"}
+    ],
+    "visualReview": {
+      "status": "exploratory-only; margins and reference/runtime acceptance open",
+      "usefulDirection": ["Seven legible identity headings", "Formed panel edges and fastener interfaces", "Two visible supported crew seats in D", "Sectioned layered/composite/V-underbody/shell construction"],
+      "knownMismatches": ["Main contextual vehicle crops touch panel borders in A/C/E/F; safe-margin criterion not passed", "Composite material and joints are illustrative, not dimensioned or verified", "B and C assembled silhouettes remain similar", "No matched Three.js render or physical clearance qualification"],
+      "doesNotProve": ["Visual acceptance", "Engineering performance", "Generic component or assembly coverage", "Product completion"]
+    },
+    "acceptanceStatus": "open"
   }]
 }

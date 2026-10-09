@@ -52,7 +52,7 @@ function sea3DStart(role){
  const host=document.getElementById('sea3dViewport');if(!host||typeof host.appendChild!=='function'||typeof requestAnimationFrame!=='function')return;
  const ui={en:{title:'Your vehicle',object:'Explore',team:'Team',vehicle:'Mission vehicle',configuration:'Your build',reset:'Overview',front:'Front',rear:'Rear',views:'Views',shadows:'Shadows',mode:'View',assembled:'Assembled',exploded:'Exploded',cutaway:'Cutaway',separation:'Separation',map:'Assembly map',fallback:'The scene could not start. Game controls remain available.',hint:'Drag to rotate · Scroll to zoom. Select fitted equipment to inspect.',waiting:'Choose your mission.',context:{setup:'Choose a vehicle for your mission.',practice:'Try a practice purchase. Your scored budget is unchanged.',planning:'Plan your build against the mission requirements.',auction:'Compare the equipment with your mission needs.',build:'Purchased equipment fitted. Use cutaway to inspect the interior.',submit:'Check your build, then choose your profit.',debrief:'Review the decisions that shaped your vehicle.',closed:'Your final vehicle and purchases.'}},fr:{title:'Votre véhicule',object:'Explorer',team:'Équipe',vehicle:'Véhicule de mission',configuration:'Votre configuration',reset:'Vue générale',front:'Avant',rear:'Arrière',views:'Vues',shadows:'Ombres',mode:'Vue',assembled:'Assemblé',exploded:'Éclaté',cutaway:'En coupe',separation:'Séparation',map:'Plan des assemblages',fallback:'La scène n’a pas démarré. Les commandes du jeu restent disponibles.',hint:'Glissez pour tourner · Défilez pour zoomer. Sélectionnez un équipement installé pour l’examiner.',waiting:'Choisissez votre mission.',context:{setup:'Choisissez un véhicule pour votre mission.',practice:'Essayez un achat d’entraînement sans modifier le budget coté.',planning:'Planifiez votre configuration selon les exigences.',auction:'Comparez l’équipement aux besoins de votre mission.',build:'Équipements achetés installés. Utilisez la coupe pour examiner l’intérieur.',submit:'Vérifiez votre configuration, puis choisissez votre profit.',debrief:'Examinez les décisions qui ont façonné votre véhicule.',closed:'Votre véhicule final et vos achats.'}}};
  let runtime=null,signature='',queued=false,failed=false,selection='',lastPhase='',lastCurrent='',selectedTeam='',inspectionMode='assembled';
- let scenePage=0,scenePhase='',sceneAlert='',sceneTargets=new Map(),editor=null,serial=0;const sceneKeys=new WeakMap();
+ let scenePage=0,scenePhase='',sceneAlert='',sceneDialog=null,sceneTargets=new Map(),editor=null,serial=0;const sceneKeys=new WeakMap();
  const keyFor=node=>{if(!sceneKeys.has(node))sceneKeys.set(node,'control-'+(++serial));return sceneKeys.get(node);};
  const get=id=>document.getElementById(id),objects=get('sea3dObject'),teams=get('sea3dTeam');
  function fail(){failed=true;document.body.classList.remove('sea3d-active','scene-game');editor?.remove();editor=null;get('sea3dStatus').textContent=ui[lang].fallback;host.hidden=true;}
@@ -69,10 +69,13 @@ function sea3DStart(role){
   if(['checkbox','radio'].includes(node.type)){node.checked=node.type==='radio'||!node.checked;node.dispatchEvent(new Event('input',{bubbles:true}));node.dispatchEvent(new Event('change',{bubbles:true}));queue();return;}
   editor?.remove();editor=document.createElement('section');editor.className='scene-editor';editor.setAttribute('role','dialog');editor.setAttribute('aria-modal','true');
   const title=document.createElement('label');title.textContent=Array.from(node.labels||[]).map(x=>seaSceneText(x,semanticVisible)).join(' ')||node.getAttribute('aria-label')||node.placeholder||'';
+  editor.setAttribute('aria-label',title.textContent|| (lang==='fr'?'Modifier la valeur':'Edit value'));
   const input=node.cloneNode(true);input.removeAttribute('id');input.removeAttribute('style');input.removeAttribute('aria-hidden');input.removeAttribute('tabindex');input.className='';input.value=node.value;title.appendChild(input);editor.appendChild(title);
   const done=document.createElement('button');done.type='button';done.className='btn primary';done.textContent=lang==='fr'?'Terminé':'Done';editor.appendChild(done);document.body.appendChild(editor);
   const close=()=>{editor?.remove();editor=null;host.querySelector('canvas')?.focus();queue();};
   const apply=type=>{if(!node.isConnected||node.disabled||!sceneTargets.has(key)||!semanticVisible(node)){close();return;}node.value=input.value;node.dispatchEvent(new Event(type,{bubbles:true}));queue();};
+  // Keep the editor hit surface alive until click: blur/change can replace its source.
+  done.addEventListener('pointerdown',e=>e.preventDefault());
   done.addEventListener('click',()=>{apply('change');close();});
   input.addEventListener('input',()=>apply('input'));input.addEventListener('change',()=>apply('change'));
   editor.addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();close();}else if(e.key==='Tab'){if(e.shiftKey&&document.activeElement===input){e.preventDefault();done.focus();}else if(!e.shiftKey&&document.activeElement===done){e.preventDefault();input.focus();}}});input.focus();
@@ -86,7 +89,7 @@ function sea3DStart(role){
   const projected=seaSceneProjection(roots,semanticVisible,keyFor);sceneTargets=projected.targets;
   // Task controls lead; the complete instructions/results remain paginated below.
   if(!dialog&&!alerts.length&&state.phase==='setup')projected.rows.sort((a,b)=>Number(b.kind!=='text')-Number(a.kind!=='text'));
-  if(dialog)scenePage=0;
+  if(dialog!==sceneDialog){scenePage=0;sceneDialog=dialog;}
   const result=runtime.interface({title:dialog?(lang==='fr'?'Confirmer':'Confirm'):t('phase.'+state.phase),subtitle:labels.context[state.phase],rows:projected.rows,page:scenePage,lang},sceneAction);if(result?.page!==undefined)scenePage=result.page;
   if(!document.body.classList.contains('scene-game'))document.body.classList.add('scene-game');
  }

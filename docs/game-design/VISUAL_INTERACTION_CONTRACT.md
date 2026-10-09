@@ -53,6 +53,8 @@ Current generated proposals: `DIRECTION-SCENE-UI` has one overview with document
 
 Each batch keeps its ID caption and inventory map. Concept sheets may be generated as grouped families to minimize inconsistent independent redesign. Each identity still needs an unambiguous panel/crop and a later implementation comparison. If image generation misses a subject or invents text, regenerate/correct the affected panel and leave its mapping open. Never mark an entire family generated merely because one image exists.
 
+`protection-family-v1.png` maps seven panels to PRO-A–G with section/mount insets. Formed edges, rails, shell ribs and the two visible crew seats in D provide useful direction. Contextual vehicle crops touch panel borders in A/C/E/F, so V08 safe margins are not accepted. Composite construction, mounting clearances and B/C silhouette distinction need further review. These are exploratory original concepts, not accepted runtime geometry or protection-performance claims; exact generation prompt is retained in `PROTECTION_PROMPT.md`.
+
 1. Vertical slice: RECOVERY vehicle assembled/exploded/cutaway; MOB-A engine and ACC-F winch close-ups; student build and instructor auction UI. Lead owns initial hero generation to avoid tool contention.
 2. VEHICLES: COMBAT, RECCE, TROOP, COMMAND, RECOVERY, MINE, each with matched silhouette and functional role equipment.
 3. CAPACITY: CAP-A–G and TRAIN-CAP. Preserve exact seat counts; do not assume baseline vehicle interior seats are counted as acquired ratings.

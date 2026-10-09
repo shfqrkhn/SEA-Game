@@ -3,8 +3,9 @@ import * as THREE from 'three';
 // Pixel-coordinate scene UI. Only copied presentation data crosses this boundary.
 export function interfaceLayout(width,height,count=0){
   width=Math.max(1,width);height=Math.max(1,height);
-  const wide=width>=850,panel=wide?{x:width-Math.min(420,width*.4),y:0,w:Math.min(420,width*.4),h:height}:{x:0,y:Math.round(height*.42),w:width,h:Math.round(height*.58)};
-  const model=wide?{x:0,y:0,w:panel.x,h:height}:{x:0,y:0,w:width,h:panel.y};
+  // Short portrait/keyboard viewports prioritize reachable controls over the model.
+  const wide=width>=850,short=!wide&&height<400,panel=wide?{x:width-Math.min(420,width*.4),y:0,w:Math.min(420,width*.4),h:height}:short?{x:0,y:0,w:width,h:height}:{x:0,y:Math.round(height*.42),w:width,h:Math.round(height*.58)};
+  const model=wide?{x:0,y:0,w:panel.x,h:height}:{x:0,y:0,w:width,h:short?height:panel.y};
   const rowHeight=54,capacity=Math.max(1,Math.floor((panel.h-140)/rowHeight));
   return {panel,model,rowHeight,capacity,pages:Math.max(1,Math.ceil(count/capacity))};
 }

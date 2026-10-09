@@ -5,4 +5,8 @@ for(const [w,h] of [[320,640],[850,700],[1440,900]]){
  const rows=Array.from({length:70},(_,i)=>({key:String(i),kind:'button'}));assert.equal(hitInterface(layout,p.x+30,p.y+105,rows,1),String(layout.capacity));rows[layout.capacity].disabled=true;assert.equal(hitInterface(layout,p.x+30,p.y+105,rows,1),'__panel');assert.equal(hitInterface(layout,-1,-1,rows),null);assert.equal(hitInterface(layout,p.x+10,p.y+p.h-10,rows),'__previous');assert.equal(hitInterface(layout,p.x+p.w-10,p.y+p.h-10,rows),'__next');
 }
 const longText=Array.from({length:150},(_,i)=>`word${i}`).join(' '),pages=paginateRows([{key:'long',kind:'text',label:longText}],320,360);assert.ok(pages.length>1);assert.equal(pages.flat().map(v=>v.row.label).join(' ').replace(/\s+/g,' '),longText);assert.ok(pages.flat().every(v=>v.h<=220));
+for(const [w,h] of [[640,300],[320,360]]){
+ const {panel}=interfaceLayout(w,h),pages=paginateRows([{key:'confirm',kind:'button',label:'Confirm'}],panel.w,panel.h);
+ assert.ok(88+pages[0][0].h<=panel.h-46,'Short-screen action must not overlap pagination targets');
+}
 console.log('PASS: responsive scene interface, pagination, hit boundaries and disabled actions');

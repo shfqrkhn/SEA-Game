@@ -16,6 +16,10 @@ function harness(){
  return {ctx,node,events,get editor(){return ctx.editor},input(){return ctx.editor.children[0].children[0]},done(){return ctx.editor.children[1]}};
 }
 const h=harness();h.ctx.act('profit');const input=h.input();
+let prevented=false;
+assert.equal(typeof h.done().listeners.pointerdown,'function','Done must retain focus until its click commits, avoiding blur/change removal before pointerup');
+h.done().listeners.pointerdown({preventDefault(){prevented=true}});
+assert.equal(prevented,true,'Pointer press must not blur the native editor before Done click');
 for(const value of ['1','12','125','1250','12500','125000']){input.value=value;input.listeners.input();assert(h.node.isConnected,'Input must not prematurely invoke change handler');assert(h.editor,'Multi-digit editor remains open');assert.equal(h.node.value,value)}
 assert.deepEqual(h.events,Array(6).fill('input'));h.done().listeners.click();assert.deepEqual(h.events,[...Array(6).fill('input'),'change']);assert.equal(h.editor,null,'Done closes editor after one final authoritative change');
 // A select or genuine native change can replace its target before Done; no retry.
@@ -24,4 +28,17 @@ for(const stale of ['hidden','disabled','disconnected','unmapped']){
  const s=harness();s.ctx.act('profit');const editorInput=s.input();if(stale==='hidden')s.node.hidden=true;if(stale==='disabled')s.node.disabled=true;if(stale==='disconnected')s.node.isConnected=false;if(stale==='unmapped')s.ctx.sceneTargets.delete('profit');editorInput.value='999999';editorInput.listeners.input();assert.equal(s.node.value,'','Stale target cannot receive edit: '+stale);assert.deepEqual(s.events,[]);assert.equal(s.editor,null);
 }
 const escape=harness();escape.ctx.act('profit');escape.editor.listeners.keydown({key:'Escape',preventDefault(){}});assert.deepEqual(escape.events,[]);assert.equal(escape.editor,null);
+// Execute the actual projection refresh: dialog pagination must survive redraws.
+const syncStart=code.indexOf(' function syncSceneInterface('),syncEnd=code.indexOf(' function option(',syncStart);
+assert(syncStart>=0&&syncEnd>syncStart);
+let currentDialog={};const pages=[];
+const syncContext=vm.createContext({state:{phase:'setup'},scenePhase:'setup',scenePage:2,sceneAlert:'',sceneDialog:null,editor:null,lang:'en',keyFor(){},semanticVisible(){return true},t:x=>x,
+ get:id=>id==='seaInlineConfirm'?currentDialog:null,sceneAction(){},
+ document:{querySelectorAll:()=>[],querySelector:()=>null,body:{classList:{contains:()=>true}}},
+ seaSceneProjection:()=>({rows:[],targets:new Map()}),runtime:{interface(snapshot){pages.push(snapshot.page);return {page:snapshot.page}}}});
+vm.runInContext(code.slice(syncStart,syncEnd)+'\nthis.sync=syncSceneInterface;',syncContext);
+syncContext.sync({}, {children:[]}, {context:{setup:'Setup'}});assert.equal(pages.at(-1),0,'A newly opened confirmation starts at page zero');
+syncContext.scenePage=2;syncContext.sync({}, {children:[]}, {context:{setup:'Setup'}});assert.equal(pages.at(-1),2,'Next confirmation page remains reachable after refresh');
+currentDialog={};syncContext.sync({}, {children:[]}, {context:{setup:'Setup'}});assert.equal(pages.at(-1),0,'A different confirmation cannot inherit the old page');
+currentDialog=null;syncContext.scenePage=2;syncContext.sync({}, {children:[]}, {context:{setup:'Setup'}});assert.equal(pages.at(-1),0,'Closing confirmation restores the task from page zero');
 console.log('Scene native editor multi-digit input, final change, stale/disconnected/hidden/disabled target and Escape characterization PASS; browser qualification still required');
