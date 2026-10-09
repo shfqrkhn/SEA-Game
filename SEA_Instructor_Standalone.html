@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-3xnad/EynReqV0NGMlu8rGEABYhfltVYGwv+NB5Q8yM='; script-src-attr 'none'; style-src 'unsafe-inline'; img-src 'none'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-k/qWz4ycFsjwFu+DJW3HQoxNLHq+1HXQKeq1xpt928E='; script-src-attr 'none'; style-src 'unsafe-inline'; img-src 'none'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#252a27">
 <title>Systems Engineering Awareness</title>
@@ -517,7 +517,7 @@ main{display:block;max-width:1420px;padding:18px 22px 30px}
   <div class="brand"><div class="mark">SE</div><div><h1 data-i18n="app.title">Systems Engineering Awareness</h1><small data-i18n="role"></small></div></div>
   <div class="top"><details class="save-menu"><summary data-i18n="backup.menu">Save & restore</summary><div><button id="exportBackupBtn" class="btn ghost" type="button" data-i18n="backup.export"></button><button id="importBackupBtn" class="btn ghost" type="button" data-i18n="backup.import"></button><button id="restorePreviousBtn" class="btn ghost" type="button" data-i18n="backup.restorePrevious" disabled></button><input id="backupFile" class="sr-only" type="file" accept="application/json,.json" tabindex="-1" aria-hidden="true"></div></details><button id="langBtn" class="btn ghost" type="button">FR</button></div>
 </header>
-<div id="storageNotice" class="notice bad hidden" role="status"></div><div id="backupStatus" class="notice info hidden" role="status" aria-live="polite"></div><div class="status"><span class="badge">v3.4.1</span><span id="phaseBadge" class="badge"></span><span id="sessionBadge" class="badge"></span></div>
+<div id="storageNotice" class="notice bad hidden" role="status"></div><div id="backupStatus" class="notice info hidden" role="status" aria-live="polite"></div><div class="status"><span class="badge">v3.4.2</span><span id="phaseBadge" class="badge"></span><span id="sessionBadge" class="badge"></span></div>
 <main id="mainContent">
 <section id="sea3dScene" class="sea3d-stage" aria-labelledby="sea3d-title" data-scene-priority="90" data-scene-section="inspect">
  <div class="sea3d-heading"><h2 id="sea3d-title">Your vehicle</h2><details class="view-controls"><summary id="sea3d-views">Views</summary><div class="inline"><button id="sea3d-reset" class="btn ghost" type="button">Reset view</button><button id="sea3d-front" class="btn ghost" type="button">Front</button><button id="sea3d-rear" class="btn ghost" type="button">Rear</button></div></details></div>
@@ -628,7 +628,7 @@ main{display:block;max-width:1420px;padding:18px 22px 30px}
 <p class="footer" data-scene-section="help" data-scene-priority="90"><span data-i18n="common.noBackend"></span> <span data-i18n="common.syntheticDeck"></span></p>
 </main>
 <script>// Shared pure rules. Bundled into each offline HTML with no runtime dependency.
-const APP=Object.freeze({version:"3.4.1",ruleset:"STANDARD",deck:"synthetic-v1",rounds:7,lotsPerRound:10,bidIncrementCents:5000000});
+const APP=Object.freeze({version:"3.4.2",ruleset:"STANDARD",deck:"synthetic-v1",rounds:7,lotsPerRound:10,bidIncrementCents:5000000});
 const PHASES=["setup","practice","planning","auction","build","submit","debrief","closed"];
 const MISSION_ARTWORK=Object.freeze({COMBAT:'combat',RECCE:'recce',TROOP:'troop-carrier',COMMAND:'command-post',RECOVERY:'recovery',MINE:'mine-clearing'});
 function artworkAssetPath(id){if(id==='TRAIN-CAP')return 'practice/TRAIN-CAP.webp';if(Object.values(MISSION_ARTWORK).includes(id))return 'vehicles/'+id+'.webp';if(CARD_INDEX.has(id))return 'cards/'+id+'.webp';return null}
@@ -5193,18 +5193,18 @@ function sea3DStart(role){
   editor.setAttribute('aria-label',title.textContent|| (lang==='fr'?'Modifier la valeur':'Edit value'));
   const input=node.cloneNode(true);input.removeAttribute('id');input.removeAttribute('style');input.removeAttribute('aria-hidden');input.removeAttribute('tabindex');input.className='';input.value=node.value;title.appendChild(input);editor.appendChild(title);
   const done=document.createElement('button');done.type='button';done.className='btn primary';done.textContent=lang==='fr'?'Terminé':'Done';editor.appendChild(done);document.body.appendChild(editor);
-  const activeEditor=editor;const close=()=>{if(editor!==activeEditor)return;editor.remove();editor=null;host.querySelector('canvas')?.focus();queue();};
-  const apply=type=>{if(binding!==fieldContext()||!node.isConnected||node.disabled||!sceneTargets.has(key)||!semanticVisible(node)){close();return false;}node.value=input.value;node.dispatchEvent(new Event(type,{bubbles:true}));queue();return true;};
+  const activeEditor=editor,editorGeneration=host._seaEditorGeneration=(host._seaEditorGeneration||0)+1;const close=()=>{if(editor!==activeEditor)return;editor.remove();editor=null;host.querySelector('canvas')?.focus();queue();};
+  const apply=type=>{if(!currentField()||!node.isConnected||node.disabled||!sceneTargets.has(key)||!semanticVisible(node)){close();return false;}node.value=input.value;node.dispatchEvent(new Event(type,{bubbles:true}));queue();return true;};
   // Keep the editor hit surface alive until click: blur/change can replace its source.
   done.addEventListener('pointerdown',e=>e.preventDefault());
   done.addEventListener('click',()=>{if(composing)return;apply('change');close();});
   input.addEventListener('input',()=>apply('input'));input.addEventListener('change',()=>apply('change'));
   let composing=false;input.addEventListener('compositionstart',()=>{composing=true});input.addEventListener('compositionend',()=>{composing=false});
-  const fieldContext=()=>JSON.stringify([typeof state==='undefined'?null:state.phase,typeof state==='undefined'?null:state.sessionCode,lang,sceneSection]),binding=fieldContext();
+  const boundState=typeof state==='undefined'?null:state,fieldContext=()=>JSON.stringify([typeof state==='undefined'?null:state.phase,typeof state==='undefined'?null:state.sessionCode,typeof state==='undefined'?null:state.round,typeof state==='undefined'?null:state.lot,lang,sceneSection]),binding=fieldContext(),currentScope=()=>boundState===(typeof state==='undefined'?null:state)&&binding===fieldContext(),currentField=()=>editor===activeEditor&&currentScope();
   const fieldKeys=typeof sceneFieldKeys==='undefined'?[]:sceneFieldKeys,index=fieldKeys.indexOf(key),navigation=[];
   for(const [step,label] of [[-1,lang==='fr'?'Champ précédent':'Previous field'],[1,lang==='fr'?'Champ suivant':'Next field']]){
    const button=document.createElement('button');button.type='button';button.className='btn';button.textContent=label;const targetKey=fieldKeys[index+step],target=sceneTargets.get(targetKey);button.disabled=index<0||!target;editor.appendChild(button);navigation.push(button);
-   button.addEventListener('pointerdown',event=>event.preventDefault());button.addEventListener('click',()=>{if(composing||button.disabled||binding!==fieldContext())return;const targetId=target.id;if(!apply('change'))return;close();requestAnimationFrame(()=>{if(binding!==fieldContext())return;const fresh=targetId?document.getElementById(targetId):target;const next=Array.from(sceneTargets).find(([candidate,n])=>n===fresh&&sceneFieldKeys.includes(candidate));if(next)sceneAction(next[0]);});});
+   button.addEventListener('pointerdown',event=>event.preventDefault());button.addEventListener('click',()=>{if(composing||button.disabled||!currentField())return;const targetId=target.id;if(!apply('change'))return;close();requestAnimationFrame(()=>{if(!currentScope()||editor!==null||host._seaEditorGeneration!==editorGeneration)return;const fresh=targetId?document.getElementById(targetId):target;const next=Array.from(sceneTargets).find(([candidate,n])=>n===fresh&&sceneFieldKeys.includes(candidate));if(next)sceneAction(next[0]);});});
   }
   editor.addEventListener('keydown',e=>{if(composing||e.isComposing)return;if(e.key==='Escape'){e.preventDefault();close();}else if(e.key==='Tab'){const focusables=[input,done,...navigation.filter(button=>!button.disabled)],position=focusables.indexOf(document.activeElement);e.preventDefault();focusables[(position+(e.shiftKey?-1:1)+focusables.length)%focusables.length].focus();}});input.focus();
  }

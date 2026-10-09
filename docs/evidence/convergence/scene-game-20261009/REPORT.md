@@ -1,5 +1,13 @@
 # Whole-game scene integration checkpoint
 
+## W67 exact published evidence and final safeguard
+
+Version 3.4.0 source1091d2b and previewc7475c5 pass source CI37959973367 and Pages37959973209. Version 3.4.1 sourced4a6708 and preview3d5c6a2 pass source CI37960936863, main CI37960937262 and Pages37960935870. hosted-c7475c5.json and hosted-3d5c6a2.json bind byte-identical role artifacts.
+
+Actual Codex browser checks on3.4.0 enter fresh student Setup/Practice/Planning, preserve plan/risks/maxWtp through Next/Previous, then enter Auction and record CAP-A300000 atR1/L1. Reload3.4.1 retainsR1/L2, the purchase and planning values. French direct views and the320×260 editor fit are checked; w67-short-native-editor.png records the editor. Actual GPU renders expose the new supported COMBAT/firepower construction. This is bounded mixed scene/native qualification, not two full language journeys, full model fidelity, selected Build browser acceptance or supported-device/assistive/classroom acceptance. Narrow auction pagination still costs extra activations.
+
+Version3.4.2 adds state-identity/round/lot and active-editor isolation, including deferred field navigation. Meaningful regressions retain normal Next/Previous and prevent old editor callbacks from dispatching into a new scope. Exact final publication/readback/browser evidence will be recorded separately. All genuine acceptance gates remain open; no full-material closure pass: OPEN0/3.
+
 ## W67 integrated workflow acceleration, version3.4.0
 
 W66 source01204c8 has successful four-job CI37958177358; Pages37958181928 succeeds, and hosted-18dc0db.json confirms both published role hashes match exactly. The pre-deployment stale-byte receipt is retained separately. Actual bounded3.3.0 browser checks resume both matched schema-3 sessions, exercise one-activation assembled/exploded/cutaway, two-activation Help/save export, shadow toggling and native exploded separation70→100. A completed320x640 French redraw is readable; the compact overview label and unpinned Closed action prompted the prepared3.4.0 corrections. See w66-browser-check.json and w66-direct-save-cutaway.png. This does not extend the older full journey to new bytes.

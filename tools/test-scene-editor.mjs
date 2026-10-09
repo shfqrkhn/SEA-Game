@@ -64,3 +64,28 @@ for(const stale of ['session','section','target']){
  app.ctx.act('profit');const next=app.editor.children[3];if(stale==='session')app.ctx.state.sessionCode='session-B';if(stale==='section')app.ctx.sceneSection='help';if(stale==='target')app.ctx.sceneTargets.delete('profit');next.listeners.click();while(frames.length)frames.shift()();assert.deepEqual(app.events,[],'Stale navigation cannot dispatch canonical input: '+stale);
 }
 console.log('PASS: editor Next/Previous field bounds, validated change, refreshed target focus, composition and stale scope guards');
+
+// A static decision/WTP node can survive a lot advance and receive replacement callbacks.
+for(const change of ['lot','round','object'])for(const action of ['input','change','done','next']){
+ const app=harness(),frames=[],writes=[];app.ctx.requestAnimationFrame=fn=>frames.push(fn);app.ctx.state={phase:'auction',sessionCode:'session-A',round:0,lot:0};app.node.id='decision';app.node.dispatchEvent=event=>{app.events.push(event.type);writes.push([app.ctx.state.round,app.ctx.state.lot])};
+ const target={...app.node,id:'wtp',isConnected:true};app.ctx.sceneTargets.set('next',target);app.ctx.sceneFieldKeys=['profit','next'];app.ctx.document.getElementById=()=>target;
+ app.ctx.act('profit');const input=app.input(),done=app.done(),next=app.editor.children[3];input.value='late scratch';
+ if(change==='lot')app.ctx.state.lot=1;if(change==='round')app.ctx.state.round=1;if(change==='object')app.ctx.state={...app.ctx.state};
+ assert.equal(app.node.isConnected,true);assert.equal(app.ctx.sceneTargets.get('profit'),app.node,'Original static semantic target and key remain live');
+ if(action==='input'||action==='change')input.listeners[action]();if(action==='done')done.listeners.click();if(action==='next')next.listeners.click();while(frames.length)frames.shift()();
+ assert.deepEqual(app.events,[],'Stale '+change+' editor '+action+' cannot dispatch into rebound canonical handler');assert.deepEqual(writes,[]);assert.equal(app.node.value,'','Stale editor cannot replace new-lot native draft');
+}
+console.log('PASS: all editor dispatch/navigation paths reject lot/round changes and same-session state-object replacement');
+
+for(const action of ['input','change','done','next']){
+ const app=harness(),frames=[];app.ctx.requestAnimationFrame=fn=>frames.push(fn);const target={...app.node,isConnected:true,id:'next'};app.ctx.sceneTargets.set('next',target);app.ctx.sceneFieldKeys=['profit','next'];app.ctx.state={phase:'planning',sessionCode:'same',round:0,lot:0};
+ app.ctx.act('profit');const oldInput=app.input(),oldDone=app.done(),oldNext=app.editor.children[3];oldInput.value='removed editor';app.ctx.act('profit');const newer=app.editor;
+ if(action==='input'||action==='change')oldInput.listeners[action]();if(action==='done')oldDone.listeners.click();if(action==='next')oldNext.listeners.click();while(frames.length)frames.shift()();assert.deepEqual(app.events,[],'Removed same-context editor '+action+' is inert');assert.equal(app.editor,newer,'Removed editor cannot close/replace new editor');
+}
+for(const change of ['state','editor']){
+ const app=harness(),frames=[];app.ctx.requestAnimationFrame=fn=>frames.push(fn);app.ctx.state={phase:'planning',sessionCode:'same',round:0,lot:0};const target={...app.node,id:'next',isConnected:true};target.dispatchEvent=()=>{};app.ctx.sceneTargets.set('next',target);app.ctx.sceneFieldKeys=['profit','next'];app.ctx.document.getElementById=()=>target;
+ app.ctx.act('profit');app.editor.children[3].listeners.click();assert.equal(app.editor,null);let newer=null;
+ if(change==='state')app.ctx.state={...app.ctx.state};else{app.ctx.act('next');newer=app.editor;}
+ while(frames.length)frames.shift()();assert.equal(app.editor,newer,'Deferred navigation rejects intervening '+change+' replacement');assert.deepEqual(app.events,['change'],'Deferred callback cannot repeat previous canonical change');
+}
+console.log('PASS: removed-editor isolation and deferred navigation rejects new state or editor');

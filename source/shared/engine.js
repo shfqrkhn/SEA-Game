@@ -1,5 +1,5 @@
 // Shared pure rules. Bundled into each offline HTML with no runtime dependency.
-const APP=Object.freeze({version:"3.4.1",ruleset:"STANDARD",deck:"synthetic-v1",rounds:7,lotsPerRound:10,bidIncrementCents:5000000});
+const APP=Object.freeze({version:"3.4.2",ruleset:"STANDARD",deck:"synthetic-v1",rounds:7,lotsPerRound:10,bidIncrementCents:5000000});
 const PHASES=["setup","practice","planning","auction","build","submit","debrief","closed"];
 const MISSION_ARTWORK=Object.freeze({COMBAT:'combat',RECCE:'recce',TROOP:'troop-carrier',COMMAND:'command-post',RECOVERY:'recovery',MINE:'mine-clearing'});
 function artworkAssetPath(id){if(id==='TRAIN-CAP')return 'practice/TRAIN-CAP.webp';if(Object.values(MISSION_ARTWORK).includes(id))return 'vehicles/'+id+'.webp';if(CARD_INDEX.has(id))return 'cards/'+id+'.webp';return null}
