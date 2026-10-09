@@ -10,13 +10,13 @@
 </head>
 <body>
 <a class="skip-link" href="#mainContent"><span data-i18n="common.skip"></span></a>
-<header>
+<header data-scene-priority="100">
   <div class="brand"><div class="mark">SE</div><div><h1 data-i18n="app.title">Systems Engineering Awareness</h1><small data-i18n="role"></small></div></div>
   <div class="top"><details class="save-menu"><summary data-i18n="backup.menu">Save & restore</summary><div><button id="exportBackupBtn" class="btn ghost" type="button" data-i18n="backup.export"></button><button id="importBackupBtn" class="btn ghost" type="button" data-i18n="backup.import"></button><button id="restorePreviousBtn" class="btn ghost" type="button" data-i18n="backup.restorePrevious" disabled></button><input id="backupFile" class="sr-only" type="file" accept="application/json,.json" tabindex="-1" aria-hidden="true"></div></details><button id="langBtn" class="btn ghost" type="button">FR</button></div>
 </header>
 <div id="storageNotice" class="notice bad hidden" role="status"></div><div id="backupStatus" class="notice info hidden" role="status" aria-live="polite"></div><div class="status"><span class="badge">v3.0.0-local</span><span id="phaseBadge" class="badge"></span><span id="sessionBadge" class="badge"></span></div>
 <main id="mainContent">
-<section id="sea3dScene" class="sea3d-stage" aria-labelledby="sea3d-title">
+<section id="sea3dScene" class="sea3d-stage" aria-labelledby="sea3d-title" data-scene-priority="90">
  <div class="sea3d-heading"><h2 id="sea3d-title">Your vehicle</h2><details class="view-controls"><summary id="sea3d-views">Views</summary><div class="inline"><button id="sea3d-reset" class="btn ghost" type="button">Reset view</button><button id="sea3d-front" class="btn ghost" type="button">Front</button><button id="sea3d-rear" class="btn ghost" type="button">Rear</button></div></details></div>
  <div class="sea3d-toolbar">
   <label><span id="sea3d-team">Team</span><select id="sea3dTeam"></select></label>
@@ -29,98 +29,98 @@
  <p id="sea3dStatus" role="status" aria-live="polite"></p><p id="sea3d-hint" class="muted"></p>
 </section>
 <section id="setup" class="section active">
-  <div class="hero"><div class="kicker" data-i18n="setup.kicker"></div><h2 data-i18n="setup.title"></h2><p data-i18n="setup.desc"></p></div>
+  <div class="hero" data-scene-priority="70"><div class="kicker" data-i18n="setup.kicker"></div><h2 data-i18n="setup.title"></h2><p data-i18n="setup.desc"></p></div>
   <div class="grid two">
     <div class="card">
-      <div class="field"><label for="teamCount" data-i18n="setup.teams"></label><select id="teamCount"></select></div>
-      <div class="callout-rule"><strong data-i18n="setup.reveal.round"></strong></div><details><summary><strong data-i18n="setup.otherReveal"></strong></summary><div class="field" style="margin-top:10px"><label for="revealMode" data-i18n="setup.reveal"></label><select id="revealMode"><option value="ROUND" data-i18n="setup.reveal.round"></option><option value="JIT" data-i18n="setup.reveal.jit"></option><option value="MANUAL" data-i18n="setup.reveal.manual"></option></select></div></details>
+      <div class="field"><label for="teamCount" data-i18n="setup.teams"></label><select id="teamCount" data-scene-priority="20"></select></div>
+      <div class="callout-rule"><strong data-i18n="setup.reveal.round"></strong></div><details><summary><strong data-i18n="setup.otherReveal"></strong></summary><div class="field" style="margin-top:10px"><label for="revealMode" data-i18n="setup.reveal"></label><select id="revealMode" data-scene-priority="20"><option value="ROUND" data-i18n="setup.reveal.round"></option><option value="JIT" data-i18n="setup.reveal.jit"></option><option value="MANUAL" data-i18n="setup.reveal.manual"></option></select></div></details>
       <div class="grid two">
-        <div class="field"><label for="timingMode" data-i18n="setup.timing"></label><select id="timingMode"><option value="TIMED" data-i18n="setup.timed"></option><option value="UNTIMED" data-i18n="setup.untimed"></option></select></div>
-        <div class="field"><label for="bidSeconds" data-i18n="setup.bidWindow"></label><input id="bidSeconds" type="number" min="10" max="120" step="5" value="30"></div>
+        <div class="field"><label for="timingMode" data-i18n="setup.timing"></label><select id="timingMode" data-scene-priority="20"><option value="TIMED" data-i18n="setup.timed"></option><option value="UNTIMED" data-i18n="setup.untimed"></option></select></div>
+        <div class="field"><label for="bidSeconds" data-i18n="setup.bidWindow"></label><input id="bidSeconds" type="number" min="10" max="120" step="5" value="30" data-scene-priority="20"></div>
       </div>
-      <p><button id="generateBtn" class="btn primary" type="button" data-i18n="setup.generate"></button></p>
-      <div id="setupStatus" class="notice info" role="status" aria-live="polite"></div>
+      <p><button id="generateBtn" class="btn primary" type="button" data-i18n="setup.generate" data-scene-priority="30"></button></p>
+      <div id="setupStatus" class="notice info" role="status" aria-live="polite" data-scene-priority="30"></div>
       <div id="recoveryStatus" class="notice info" role="status" aria-live="polite" data-i18n="setup.recovery"></div>
     </div>
     <div class="card subtle">
       <h3 data-i18n="setup.sessionCode"></h3>
-      <div id="sessionCode" class="metric"><div class="value code-box">-</div></div>
+      <div id="sessionCode" class="metric" data-scene-priority="35"><div class="value code-box">-</div></div>
       <p data-i18n="setup.assignmentNote"></p>
       <div class="callout-rule" data-i18n="setup.privateMarket"></div><p class="muted" data-i18n="setup.randomHonesty"></p>
-      <p data-i18n="vehicle.instructorHint"></p><div id="setupVehicleStatus" class="notice info" role="status"></div><div id="assignmentList" class="inventory" style="margin-top:12px"></div>
-      <p><button id="startTutorialBtn" class="btn good" type="button" disabled data-i18n="setup.startTutorial"></button></p>
+      <p data-i18n="vehicle.instructorHint"></p><div id="setupVehicleStatus" class="notice info" role="status" data-scene-priority="35"></div><div id="assignmentList" class="inventory" style="margin-top:12px" data-scene-priority="40"></div>
+      <p><button id="startTutorialBtn" class="btn good" type="button" disabled data-i18n="setup.startTutorial" data-scene-priority="50"></button></p>
     </div>
   </div>
 </section>
 
 <section id="practice" class="section">
-  <div class="hero"><div class="kicker" data-i18n="practice.kicker"></div><h2 data-i18n="practice.title"></h2><p data-i18n="practice.desc"></p></div>
+  <div class="hero" data-scene-priority="70"><div class="kicker" data-i18n="practice.kicker"></div><h2 data-i18n="practice.title"></h2><p data-i18n="practice.desc"></p></div>
   <div class="auction">
     <div class="gamecard"><div class="band"><span data-i18n="category.CAPACITY"></span><span>TRAIN-CAP</span></div><div class="body"><div class="art" id="practiceArt" aria-label="Training capacity illustration"></div><h3 data-i18n="practice.cardTitle"></h3><div class="effects"><div class="effect"><span data-i18n="practice.capacity"></span><strong>+4</strong><small data-i18n="practice.persons"></small></div><div class="effect"><span data-i18n="practice.mobility"></span><strong>-10</strong><small>km/h</small></div></div><div class="price" data-practice-price></div></div></div>
     <div class="card">
       <div id="practiceStatus" class="notice info" role="status" aria-atomic="true"></div>
       <p class="inline"><button id="practiceReveal" class="btn secondary" type="button" data-i18n="practice.reveal"></button><button id="practiceOpen" class="btn primary" type="button" data-i18n="practice.open"></button><button id="practiceAccept" class="btn" type="button" data-i18n="practice.accept"></button><button id="practiceClose" class="btn danger" type="button" data-i18n="practice.close"></button></p>
-      <p class="inline"><button id="practiceReset" class="btn" type="button" data-i18n="practice.reset"></button><button id="toPlanning" class="btn good" type="button" disabled data-i18n="practice.toPlanning"></button></p>
+      <p class="inline"><button id="practiceReset" class="btn" type="button" data-i18n="practice.reset" data-scene-priority="80"></button><button id="toPlanning" class="btn good" type="button" disabled data-i18n="practice.toPlanning"></button></p>
     </div>
   </div>
 </section>
 
 <section id="planning" class="section">
-  <div class="hero"><div class="kicker" data-i18n="planning.kicker"></div><h2 data-i18n="planning.title"></h2><p data-i18n="planning.desc"></p></div>
-  <div class="card"><p data-i18n="vehicle.instructorHint"></p><div id="planningVehicleStatus" class="notice info" role="status"></div><div id="vehicleMix" class="notice info"></div><div id="planningTeams" class="inventory"></div><p><button id="startAuctionBtn" class="btn primary" type="button" data-i18n="planning.startAuction"></button></p></div>
+  <div class="hero" data-scene-priority="70"><div class="kicker" data-i18n="planning.kicker"></div><h2 data-i18n="planning.title"></h2><p data-i18n="planning.desc"></p></div>
+  <div class="card"><p data-i18n="vehicle.instructorHint"></p><div id="planningVehicleStatus" class="notice info" role="status" data-scene-priority="20"></div><div id="vehicleMix" class="notice info" data-scene-priority="20"></div><div id="planningTeams" class="inventory" data-scene-priority="30"></div><p><button id="startAuctionBtn" class="btn primary" type="button" data-i18n="planning.startAuction" data-scene-priority="40"></button></p></div>
 </section>
 
 <section id="auction" class="section">
-  <div class="hero"><div class="kicker" data-i18n="auction.kicker"></div><h2 data-i18n="auction.title"></h2><p id="auctionRule"></p></div>
-  <div class="workflow" id="workflow"></div>
-  <div class="card"><div class="space"><h3 id="roundHeading"></h3><span id="lotBadge" class="badge"></span></div><div id="market" class="market"></div></div>
+  <div class="hero" data-scene-priority="70"><div class="kicker" data-i18n="auction.kicker"></div><h2 data-i18n="auction.title"></h2><p id="auctionRule"></p></div>
+  <div class="workflow" id="workflow" data-scene-priority="10"></div>
+  <div class="card"><div class="space"><h3 id="roundHeading" data-scene-priority="10"></h3><span id="lotBadge" class="badge" data-scene-priority="10"></span></div><div id="market" class="market" data-scene-priority="70"></div></div>
   <div class="auction">
-    <div class="gamecard"><div class="band"><span id="cardCat"></span><span id="cardId"></span></div><div class="body"><div class="art" id="cardArt"></div><h3 id="cardTitle"></h3><div id="cardEffects" class="effects"></div><div class="space"><strong id="startPrice"></strong><strong id="leaderText"></strong></div></div></div>
+    <div class="gamecard"><div class="band"><span id="cardCat" data-scene-priority="15"></span><span id="cardId" data-scene-priority="15"></span></div><div class="body"><div class="art" id="cardArt"></div><h3 id="cardTitle" data-scene-priority="15"></h3><div id="cardEffects" class="effects" data-scene-priority="15"></div><div class="space"><strong id="startPrice" data-scene-priority="15"></strong><strong id="leaderText" data-scene-priority="15"></strong></div></div></div>
     <div class="grid">
       <div class="card">
         <h3 data-i18n="auction.title"></h3>
         <div class="grid three">
-          <div class="metric"><div class="label" data-i18n="auction.currentLeader"></div><div class="value" id="leaderSummary">-</div></div>
-          <div class="metric"><div class="label" data-i18n="auction.nextLegal"></div><div class="value" id="nextBid">-</div></div>
-          <div class="metric"><div class="label" data-i18n="auction.time"></div><div class="value" id="timerValue">-</div></div>
+          <div class="metric"><div class="label" data-i18n="auction.currentLeader"></div><div class="value" id="leaderSummary" data-scene-priority="20">-</div></div>
+          <div class="metric"><div class="label" data-i18n="auction.nextLegal"></div><div class="value" id="nextBid" data-scene-priority="20">-</div></div>
+          <div class="metric"><div class="label" data-i18n="auction.time"></div><div class="value" id="timerValue" data-scene-priority="20">-</div></div>
         </div>
-        <p class="inline"><button id="revealBtn" class="btn secondary" type="button" data-i18n="auction.reveal"></button><button id="openBtn" class="btn primary" type="button" data-i18n="auction.open"></button><button id="pauseBtn" class="btn" type="button" data-i18n="auction.pause"></button><button id="extendBtn" class="btn" type="button" data-i18n="auction.extend"></button></p>
-        <h4 data-i18n="auction.acceptCaller"></h4><p class="muted" data-i18n="auction.acceptDesc"></p><div id="bidRoster" class="ledger"></div>
-        <hr><h4 data-i18n="auction.commitTitle"></h4><div id="commitSummary" class="notice info"></div>
-        <p class="inline"><button id="commitLeaderBtn" class="btn danger" type="button" data-i18n="auction.commitLeader"></button><button id="commitUnsoldBtn" class="btn" type="button" data-i18n="auction.commitUnsold"></button></p>
+        <p class="inline"><button id="revealBtn" class="btn secondary" type="button" data-i18n="auction.reveal" data-scene-priority="25"></button><button id="openBtn" class="btn primary" type="button" data-i18n="auction.open" data-scene-priority="25"></button><button id="pauseBtn" class="btn" type="button" data-i18n="auction.pause" data-scene-priority="25"></button><button id="extendBtn" class="btn" type="button" data-i18n="auction.extend" data-scene-priority="25"></button></p>
+        <h4 data-i18n="auction.acceptCaller"></h4><p class="muted" data-i18n="auction.acceptDesc"></p><div id="bidRoster" class="ledger" data-scene-priority="30"></div>
+        <hr><h4 data-i18n="auction.commitTitle"></h4><div id="commitSummary" class="notice info" data-scene-priority="35"></div>
+        <p class="inline"><button id="commitLeaderBtn" class="btn danger" type="button" data-i18n="auction.commitLeader" data-scene-priority="40"></button><button id="commitUnsoldBtn" class="btn" type="button" data-i18n="auction.commitUnsold" data-scene-priority="40"></button></p>
         <details><summary><strong data-i18n="auction.correct"></strong></summary><p class="muted" data-i18n="auction.correctDesc"></p><div class="grid two"><div class="field"><label for="winnerSelect" data-i18n="auction.winner"></label><select id="winnerSelect"></select></div><div class="field"><label for="finalPrice" data-i18n="auction.finalPrice"></label><input id="finalPrice" inputmode="numeric" maxlength="12"></div></div><div class="field"><label for="saleCorrectionReason" data-i18n="auction.correctionReason"></label><input id="saleCorrectionReason" maxlength="120"><small data-i18n="common.warningInfo"></small></div><button id="commitCorrectedBtn" class="btn danger" type="button" data-i18n="auction.commitCorrected"></button></details>
-        <div id="timerAnnouncement" class="sr-only" role="status" aria-live="polite"></div><div id="commitStatus" class="notice info" role="status" aria-live="polite"></div>
+        <div id="timerAnnouncement" class="sr-only" role="status" aria-live="polite"></div><div id="commitStatus" class="notice info" role="status" aria-live="polite" data-scene-priority="40"></div>
         <details><summary><strong data-i18n="auction.correction"></strong></summary><p class="muted" data-i18n="auction.correctionDesc"></p><div class="field"><label for="correctionReason" data-i18n="auction.correctionReason"></label><input id="correctionReason" maxlength="120"><small class="muted" data-i18n="common.warningInfo"></small></div><button id="voidCurrentBtn" class="btn danger" type="button" data-i18n="auction.void"></button></details>
-        <p><button id="advanceBtn" class="btn good" type="button" data-i18n="auction.advance"></button></p>
+        <p><button id="advanceBtn" class="btn good" type="button" data-i18n="auction.advance" data-scene-priority="50"></button></p>
       </div>
-      <details class="card"><summary><strong data-i18n="auction.ledger"></strong></summary><div id="ledger" class="ledger"></div></details>
+      <details class="card"><summary><strong data-i18n="auction.ledger"></strong></summary><div id="ledger" class="ledger" data-scene-priority="75"></div></details>
     </div>
   </div>
 </section>
 
 <section id="build" class="section">
-  <div class="hero"><div class="kicker" data-i18n="build.kicker"></div><h2 data-i18n="build.title"></h2><p data-i18n="build.desc"></p></div>
-  <div id="authoritativeBuild" class="grid two"></div>
-  <p><button id="openSubmissionsBtn" class="btn primary" type="button" data-i18n="build.openSubmissions"></button></p>
+  <div class="hero" data-scene-priority="70"><div class="kicker" data-i18n="build.kicker"></div><h2 data-i18n="build.title"></h2><p data-i18n="build.desc"></p></div>
+  <div id="authoritativeBuild" class="grid two" data-scene-priority="20"></div>
+  <p><button id="openSubmissionsBtn" class="btn primary" type="button" data-i18n="build.openSubmissions" data-scene-priority="40"></button></p>
 </section>
 
 <section id="submit" class="section">
-  <div class="hero"><div class="kicker" data-i18n="submit.kicker"></div><h2 data-i18n="submit.title"></h2><p data-i18n="submit.desc"></p></div>
+  <div class="hero" data-scene-priority="70"><div class="kicker" data-i18n="submit.kicker"></div><h2 data-i18n="submit.title"></h2><p data-i18n="submit.desc"></p></div>
   <div class="notice info" data-i18n="submit.incentive"></div>
-  <div id="privateSubmitGuard" class="notice info"><p data-i18n="submit.privateHint"></p><button id="privateSubmitBtn" class="btn" type="button" data-i18n="submit.privateOpen"></button></div><div id="submissionRows" class="card"></div>
-  <p><button id="closeSubmissionsBtn" class="btn primary" type="button" data-i18n="submit.close"></button></p>
+  <div id="privateSubmitGuard" class="notice info" data-scene-priority="15"><p data-i18n="submit.privateHint"></p><button id="privateSubmitBtn" class="btn" type="button" data-i18n="submit.privateOpen"></button></div><div id="submissionRows" class="card" data-scene-priority="20"></div>
+  <p><button id="closeSubmissionsBtn" class="btn primary" type="button" data-i18n="submit.close" data-scene-priority="50"></button></p>
 </section>
 
 <section id="debrief" class="section">
-  <div class="hero"><div class="kicker" data-i18n="debrief.kicker"></div><h2 data-i18n="debrief.title"></h2></div>
-  <div class="grid two"><div id="ranking" class="card"></div><div class="card"><h3 data-i18n="debrief.prompts"></h3><ol><li data-i18n="debrief.p1"></li><li data-i18n="debrief.p2"></li><li data-i18n="debrief.p3"></li><li data-i18n="debrief.p4"></li><li data-i18n="debrief.p5"></li><li data-i18n="debrief.p6"></li><li data-i18n="debrief.p7"></li><li data-i18n="debrief.p8"></li></ol><p><strong data-i18n="debrief.transfer"></strong></p></div></div>
-  <p><button id="closeRoomBtn" class="btn primary" type="button" data-i18n="debrief.close"></button></p>
+  <div class="hero" data-scene-priority="70"><div class="kicker" data-i18n="debrief.kicker"></div><h2 data-i18n="debrief.title"></h2></div>
+  <div class="grid two"><div id="ranking" class="card" data-scene-priority="20"></div><div class="card"><h3 data-i18n="debrief.prompts"></h3><ol><li data-i18n="debrief.p1"></li><li data-i18n="debrief.p2"></li><li data-i18n="debrief.p3"></li><li data-i18n="debrief.p4"></li><li data-i18n="debrief.p5"></li><li data-i18n="debrief.p6"></li><li data-i18n="debrief.p7"></li><li data-i18n="debrief.p8"></li></ol><p><strong data-i18n="debrief.transfer"></strong></p></div></div>
+  <p><button id="closeRoomBtn" class="btn primary" type="button" data-i18n="debrief.close" data-scene-priority="50"></button></p>
 </section>
 
 <section id="closed" class="section">
-  <div class="hero"><div class="kicker" data-i18n="closed.kicker"></div><h2 data-i18n="closed.title"></h2><p data-i18n="closed.note"></p></div>
-  <div class="card"><h3 data-i18n="closed.ledger"></h3><div id="closedLedger" class="ledger"></div></div>
-  <p><button id="startNewSessionBtn" class="btn" type="button" data-i18n="closed.newSession"></button></p>
+  <div class="hero" data-scene-priority="70"><div class="kicker" data-i18n="closed.kicker"></div><h2 data-i18n="closed.title"></h2><p data-i18n="closed.note"></p></div>
+  <div class="card"><h3 data-i18n="closed.ledger"></h3><div id="closedLedger" class="ledger" data-scene-priority="20"></div></div>
+  <p><button id="startNewSessionBtn" class="btn" type="button" data-i18n="closed.newSession" data-scene-priority="80"></button></p>
 </section>
 
 <p class="footer"><span data-i18n="common.noBackend"></span> <span data-i18n="common.syntheticDeck"></span></p>

@@ -134,5 +134,23 @@
       "doesNotProve": ["Visual acceptance", "Engineering performance", "Generic component or assembly coverage", "Product completion"]
     },
     "acceptanceStatus": "open"
+  }, {
+    "id": "GEN-firepower-family-v1",
+    "inventoryIds": ["FP-A","FP-B","FP-C","FP-D","FP-E","FP-F","FP-G"],
+    "status": "generated-exploratory",
+    "tool": "imagegen",
+    "date": "2026-10-09",
+    "artifact": "docs/game-design/concepts/firepower-family-v1.png",
+    "sha256": "119f0cb8f50315e33d6743cd5a68a85853a387c75e0a837d7079fc4305b273be",
+    "nativeOutputPath": "C:/Users/user/.codex/generated_images/01a11d09-97df-7000-a3e7-a4b9bfcb4add/exec-422252ba-f5d5-4d3b-8a62-76d39cbe9f39.png",
+    "promptFile": "docs/game-design/FIREPOWER_PROMPT.md",
+    "panels": [{"panel":1,"inventoryId":"FP-A"},{"panel":2,"inventoryId":"FP-B"},{"panel":3,"inventoryId":"FP-C"},{"panel":4,"inventoryId":"FP-D"},{"panel":5,"inventoryId":"FP-E"},{"panel":6,"inventoryId":"FP-F"},{"panel":7,"inventoryId":"FP-G"}],
+    "visualReview": {
+      "status": "exploratory-only; construction, margins and runtime acceptance open",
+      "usefulDirection": ["All seven canonical titles/IDs visible", "D/E/F have distinct remote/open-cradle/gimbal silhouettes", "Mount/control/housing external-interface insets", "Formed housing surfaces and restrained materials"],
+      "knownMismatches": ["Decorative dark serif frames and brown background differ from shared minimalist UI typography/palette", "A/B/C remain closely related turret silhouettes", "Eight-percent per-panel safe margin not established", "No dimensional, attachment-clearance or matched Three.js qualification"],
+      "doesNotProve": ["Visual acceptance", "Operational or mechanical specifications", "Generic component coverage", "Product release acceptance"]
+    },
+    "acceptanceStatus": "open"
   }]
 }

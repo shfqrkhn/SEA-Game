@@ -31,14 +31,16 @@ const escape=harness();escape.ctx.act('profit');escape.editor.listeners.keydown(
 // Execute the actual projection refresh: dialog pagination must survive redraws.
 const syncStart=code.indexOf(' function syncSceneInterface('),syncEnd=code.indexOf(' function option(',syncStart);
 assert(syncStart>=0&&syncEnd>syncStart);
-let currentDialog={};const pages=[];
+let currentDialog={};const pages=[],rendered=[],taskRows=[];
 const syncContext=vm.createContext({state:{phase:'setup'},scenePhase:'setup',scenePage:2,sceneAlert:'',sceneDialog:null,editor:null,lang:'en',keyFor(){},semanticVisible(){return true},t:x=>x,
  get:id=>id==='seaInlineConfirm'?currentDialog:null,sceneAction(){},
  document:{querySelectorAll:()=>[],querySelector:()=>null,body:{classList:{contains:()=>true}}},
- seaSceneProjection:()=>({rows:[],targets:new Map()}),runtime:{interface(snapshot){pages.push(snapshot.page);return {page:snapshot.page}}}});
+ seaSceneProjection:()=>({rows:[...taskRows],targets:new Map()}),runtime:{interface(snapshot){pages.push(snapshot.page);rendered.push(snapshot.rows.map(r=>r.label));return {page:snapshot.page}}}});
 vm.runInContext(code.slice(syncStart,syncEnd)+'\nthis.sync=syncSceneInterface;',syncContext);
 syncContext.sync({}, {children:[]}, {context:{setup:'Setup'}});assert.equal(pages.at(-1),0,'A newly opened confirmation starts at page zero');
 syncContext.scenePage=2;syncContext.sync({}, {children:[]}, {context:{setup:'Setup'}});assert.equal(pages.at(-1),2,'Next confirmation page remains reachable after refresh');
 currentDialog={};syncContext.sync({}, {children:[]}, {context:{setup:'Setup'}});assert.equal(pages.at(-1),0,'A different confirmation cannot inherit the old page');
 currentDialog=null;syncContext.scenePage=2;syncContext.sync({}, {children:[]}, {context:{setup:'Setup'}});assert.equal(pages.at(-1),0,'Closing confirmation restores the task from page zero');
+taskRows.push({label:'Finish',priority:80},{label:'Context',priority:20},{label:'Card ID',priority:20},{label:'Load',priority:30});
+syncContext.sync({}, {children:[]}, {context:{setup:'Setup'}});assert.deepEqual(rendered.at(-1),['Context','Card ID','Load','Finish'],'Stable task groups precede secondary actions without losing context');
 console.log('Scene native editor multi-digit input, final change, stale/disconnected/hidden/disabled target and Escape characterization PASS; browser qualification still required');

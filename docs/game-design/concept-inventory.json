@@ -975,8 +975,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/firepower-family-v1.png",
+            "sha256": "119f0cb8f50315e33d6743cd5a68a85853a387c75e0a837d7079fc4305b273be",
+            "receiptId": "GEN-firepower-family-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -1032,8 +1041,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/firepower-family-v1.png",
+            "sha256": "119f0cb8f50315e33d6743cd5a68a85853a387c75e0a837d7079fc4305b273be",
+            "receiptId": "GEN-firepower-family-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -1089,8 +1107,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/firepower-family-v1.png",
+            "sha256": "119f0cb8f50315e33d6743cd5a68a85853a387c75e0a837d7079fc4305b273be",
+            "receiptId": "GEN-firepower-family-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -1147,8 +1174,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/firepower-family-v1.png",
+            "sha256": "119f0cb8f50315e33d6743cd5a68a85853a387c75e0a837d7079fc4305b273be",
+            "receiptId": "GEN-firepower-family-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -1205,8 +1241,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/firepower-family-v1.png",
+            "sha256": "119f0cb8f50315e33d6743cd5a68a85853a387c75e0a837d7079fc4305b273be",
+            "receiptId": "GEN-firepower-family-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -1262,8 +1307,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/firepower-family-v1.png",
+            "sha256": "119f0cb8f50315e33d6743cd5a68a85853a387c75e0a837d7079fc4305b273be",
+            "receiptId": "GEN-firepower-family-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -1319,8 +1373,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/firepower-family-v1.png",
+            "sha256": "119f0cb8f50315e33d6743cd5a68a85853a387c75e0a837d7079fc4305b273be",
+            "receiptId": "GEN-firepower-family-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",

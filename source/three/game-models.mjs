@@ -1,18 +1,66 @@
 import * as THREE from 'three';
+import {RoundedBoxGeometry} from 'three/addons/geometries/RoundedBoxGeometry.js';
 import {createWinch,createWheel,box,cylinder,rod,tube,bolts} from '../../samples/threejs-recovery/models.mjs';
 import {materials,detailPart,missionBase,soften,formedCabPanel,roundedOpening} from './realism.mjs';
 export {materials};
 export const MISSION_IDS=Object.freeze(['COMBAT','RECCE','TROOP','COMMAND','RECOVERY','MINE']);
 export const MODEL_IDS=Object.freeze([...['ACC','CAP','COM','FP','MOB','PRO','SA'].flatMap(p=>'ABCDEFG'.split('').map(l=>`${p}-${l}`)),...'ABCDEFGHIJKLMNOPQRSTU'.split('').map(l=>`SE-${l}`),'TRAIN-CAP']);
 function group(name){const g=new THREE.Group();g.name=name;return g;}
-function seat(g,m,x,z){box(g,m.edge,[.48,.12,.48],[x,.40,z]);box(g,m.rubber,[.44,.13,.43],[x,.49,z],"crew seat cushion");box(g,m.rubber,[.12,.52,.44],[x-.19,.80,z]);rod(g,m.darkSteel,[x-.19,.93,z-.13],[x+.12,.49,z+.13],.013);for(const side of [-1,1])rod(g,m.steel,[x+side*.17,.06,z],[x+side*.17,.36,z],.018);}
+function seat(g,m,x,z){
+ // The inspection anchor is the seating datum, not the floor mounting datum.
+ const datum=.40,s=group('supported crew seat');s.position.set(x,datum,z);g.add(s);
+ const upholstery=m.rubber.clone();upholstery.color.set('#343a32');upholstery.bumpScale=.003;upholstery.name='woven seat upholstery';
+ const pad=(material,size,pos,radius,name)=>{const mesh=new THREE.Mesh(new RoundedBoxGeometry(...size,3,radius),material);mesh.position.set(...pos);mesh.name=name;s.add(mesh);return mesh;};
+ for(const side of [-1,1]){
+  box(s,m.darkSteel,[.49,.035,.035],[.01,.15,side*.15],'seat adjustment rail');
+  for(const px of [-.16,.19]){box(s,m.edge,[.065,.04,.09],[px,.105,side*.15],'seat floor foot');cylinder(s,m.steel,.009,.015,[px,.134,side*.15],'y',.009,6);rod(s,m.steel,[px,.17,side*.15],[px-.04,.35,side*.15],.018);}
+ }
+ box(s,m.edge,[.44,.045,.40],[0,.37,0],'seat suspension pan');
+ pad(upholstery,[.43,.11,.36],[.025,.45,0],.045,'crew seat cushion');
+ for(const side of [-1,1]){const bolster=new THREE.Mesh(new THREE.CapsuleGeometry(.038,.31,6,14),upholstery);bolster.rotation.z=Math.PI/2;bolster.position.set(.015,.505,side*.17);bolster.name='cushion side bolster';s.add(bolster);}
+ const shell=pad(m.edge,[.074,.49,.38],[-.215,.77,0],.025,'seat back shell');shell.rotation.z=.12;
+ const back=pad(upholstery,[.095,.46,.32],[-.16,.78,0],.035,'contoured back cushion');back.rotation.z=.12;
+ for(const side of [-1,1]){const bolster=pad(upholstery,[.10,.39,.075],[-.135,.77,side*.16],.030,'back side bolster');bolster.rotation.z=.12;rod(s,m.steel,[-.225,.99,side*.09],[-.225,1.08,side*.09],.009);}
+ pad(upholstery,[.115,.15,.28],[-.225,1.085,0],.040,'adjustable head restraint');
+ for(const y of [.66,.82])tube(s,m.edge,[[-.111-(y-.78)*.12,y,-.11],[-.108-(y-.78)*.12,y,0],[-.111-(y-.78)*.12,y,.11]],.003,16).name='back upholstery seam';
+ // Restraints follow the cushion faces rather than crossing unsupported air.
+ tube(s,m.darkSteel,[[-.14,.98,-.125],[-.095,.82,-.055],[-.075,.65,.05],[.005,.518,.10],[.10,.513,.115]],.012,24);
+ tube(s,m.darkSteel,[[.08,.515,-.19],[.10,.518,0],[.08,.515,.19]],.013,20);
+ pad(m.steel,[.035,.024,.042],[.10,.526,.065],.006,'restraint buckle');box(s,m.red,[.018,.007,.025],[.105,.542,.065],'restraint release');
+ for(const side of [-1,1]){rod(s,m.edge,[-.14,.38,side*.21],[-.14,.65,side*.21],.014);pad(upholstery,[.29,.050,.055],[.005,.65,side*.225],.018,'supported armrest');}
+ for(const child of s.children)child.position.y-=datum;
+ return s;
+}
 function crewBay(m,v){
  const g=group('crew bay'),count=[6,6,4,8,5,5,4][v],length=[2.65,3.05,2.05,3.25,2.2,2.5,2.1][v],width=v===6?1.26:1.47,rows=Math.ceil(count/2),pitch=(length-.65)/rows;
- box(g,m.paint,[length,.12,width],[0,.06,0]);
+ const end=length/2,half=width/2,open=v===4||v===6;
+ box(g,m.paint,[length,.10,width],[0,.055,0],'crew module floor');
+ for(const side of [-1,1]){box(g,m.edge,[length-.12,.055,.075],[0,.105,side*(half-.06)],'floor edge rail');box(g,m.darkSteel,[length-.12,.060,.080],[0,.035,side*(half-.13)],'module lower mounting rail');}
+ for(const px of [-end+.15,end-.15])for(const side of [-1,1]){box(g,m.edge,[.19,.055,.16],[px,.023,side*(half-.10)],'module chassis mounting foot');cylinder(g,m.steel,.015,.025,[px,.065,side*(half-.10)],'y',.015,6);}
+ for(let row=0;row<rows;row++){const px=(row-(rows-1)/2)*pitch;box(g,m.darkSteel,[.065,.040,width-.16],[px,.104,0],'seat row crossmember');}
  for(let i=0;i<count;i++){const row=Math.floor(i/2),single=i===count-1&&count%2;seat(g,m,(row-(rows-1)/2)*pitch,single?0:(i%2?1:-1)*width*.25);}
- if(v!==4){for(const side of [-1,1]){box(g,m.paint,[length,v===5?.93:.55,v===5?.10:.055],[0,v===5?.52:.34,side*(width/2+.035)]);for(const x of [-length/2+.08,length/2-.08])rod(g,m.edge,[x,.12,side*width/2],[x,1.24,side*width/2],v===5?.046:.032);}box(g,m.paint,[length+.10,.065,width+.10],[0,1.28,0],'crew roof');}
- if(v===5){for(const side of [-1,1])for(const x of [-.65,.25]){box(g,m.rubber,[.44,.2,.018],[x,.86,side*(width/2+.09)]);box(g,m.glass,[.38,.14,.020],[x,.86,side*(width/2+.103)]);}box(g,m.edge,[length,.07,width],[0,.10,0],'reinforced floor');}
- if(v===4){for(const side of [-1,1])rod(g,m.steel,[-length/2,.09,side*.5],[length/2,.09,side*.5],.018);}
+ if(v!==4){
+  for(const px of [-end+.05,end-.05]){
+   const outline=[[-half,.12],[half,.12],[half,1.12],[half-.13,1.30],[-half+.13,1.30],[-half,1.12]],hole=roundedOpening(-half+.07,.18,half-.07,1.23,.065);
+   formedCabPanel(g,m.paint,outline,[hole],(z,y,d)=>[px+d,y,z]).name='hull shell';
+   for(const side of [-1,1])rod(g,m.steel,[px,.24,side*(half-.04)],[px,.60,side*(half-.04)],.015).name='boarding grab handle';
+  }
+  for(const side of [-1,1]){
+   box(g,m.edge,[length-.12,.065,.075],[0,1.28,side*(half-.10)],'roof perimeter rail');
+   if(!open){
+    const high=v===5?1.10:.62,outline=[[-end,.13],[end,.13],[end-.06,high],[-end+.06,high]],holes=[];
+    if(v===5)for(const px of [-length*.25,length*.25])holes.push(roundedOpening(px-.23,.79,px+.23,1.00,.035));
+    formedCabPanel(g,m.paint,outline,holes,(x,y,d)=>[x,y,side*(half-d)]).name='hull shell';
+    if(v===5)for(const px of [-length*.25,length*.25]){box(g,m.rubber,[.48,.25,.016],[px,.895,side*(half+.008)],'window gasket');box(g,m.glass,[.43,.20,.017],[px,.895,side*(half+.018)],'protected crew glazing');}
+    for(const px of [-end+.12,end-.12])for(const y of [.22,high-.08])cylinder(g,m.steel,.009,.018,[px,y,side*(half+.028)],'z',.009,6);
+   }else rod(g,m.steel,[-end+.05,.56,side*half],[end-.05,.56,side*half],.019).name='open module side rail';
+  }
+  for(const px of [-end+.17,end-.17])box(g,m.edge,[.065,.055,width-.14],[px,1.28,0],'roof crossmember');
+  if(!open){for(const side of [-1,1])box(g,m.paint,[length-.16,.047,width*.22],[0,1.31,side*width*.34],'hull shell');box(g,m.paint,[length-.16,.045,width*.30],[0,1.32,0],'hull shell');}
+ }else{
+  for(const side of [-1,1])for(const px of [-end+.15,end-.15]){box(g,m.steel,[.08,.07,.075],[px,.13,side*(half-.10)],'removable pallet latch');rod(g,m.darkSteel,[px-.035,.18,side*(half-.10)],[px+.035,.18,side*(half-.10)],.012);}
+ }
+ box(g,m.edge,[.15,.05,width-.18],[end+.03,.09,0],'boarding threshold');
  return g;
 }
 function casing(g,m,profile,pos,axis='x',name='cast transmission casing'){

@@ -55,6 +55,8 @@ Each batch keeps its ID caption and inventory map. Concept sheets may be generat
 
 `protection-family-v1.png` maps seven panels to PRO-A–G with section/mount insets. Formed edges, rails, shell ribs and the two visible crew seats in D provide useful direction. Contextual vehicle crops touch panel borders in A/C/E/F, so V08 safe margins are not accepted. Composite construction, mounting clearances and B/C silhouette distinction need further review. These are exploratory original concepts, not accepted runtime geometry or protection-performance claims; exact generation prompt is retained in `PROTECTION_PROMPT.md`.
 
+`firepower-family-v1.png` maps seven panels to FP-A–G with external mount/control/housing insets. Distinct remote, open-cradle and supported-gimbal envelopes guide the D/E/F variants. Its dark serif ornamental frames and brown ground differ from the shared UI contract; A/B/C silhouette distinction and exact safe margins are unqualified. Treat only construction direction as exploratory. Retain `FIREPOWER_PROMPT.md`; no internal/operational specifications or performance are accepted from the image.
+
 1. Vertical slice: RECOVERY vehicle assembled/exploded/cutaway; MOB-A engine and ACC-F winch close-ups; student build and instructor auction UI. Lead owns initial hero generation to avoid tool contention.
 2. VEHICLES: COMBAT, RECCE, TROOP, COMMAND, RECOVERY, MINE, each with matched silhouette and functional role equipment.
 3. CAPACITY: CAP-A–G and TRAIN-CAP. Preserve exact seat counts; do not assume baseline vehicle interior seats are counted as acquired ratings.

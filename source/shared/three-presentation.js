@@ -10,7 +10,11 @@ function seaSceneProjection(roots,visible,keyFor){
  const rows=[],targets=new Map(),seen=new Set();
  const readable=(n,root=false)=>seaSceneText(n,visible,root);
  function add(node,kind,label,value=''){
-  if(!label&&!value)return;const key=keyFor(node);targets.set(key,node);rows.push({key,kind,label:String(label),value:String(value),disabled:!!node.disabled});
+  if(!label&&!value)return;const key=keyFor(node);targets.set(key,node);
+  const authored=node.closest?.('[data-scene-priority]')?.getAttribute?.('data-scene-priority');
+  const priority=/^\d{1,3}$/.test(authored||'')?Number(authored):50;
+  const emphasis=node.classList?.contains('danger')?'danger':node.classList?.contains('primary')||node.classList?.contains('good')?'primary':'';
+  rows.push({key,kind,label:String(label),value:String(value),disabled:!!node.disabled,priority,emphasis});
  }
  function walk(node){
   if(!node||seen.has(node)||!visible(node))return;seen.add(node);
@@ -87,8 +91,8 @@ function sea3DStart(role){
   const alertSignature=alerts.map(x=>x.textContent).join('|');if(alertSignature!==sceneAlert){sceneAlert=alertSignature;if(alertSignature)scenePage=0;}
   const dialog=get('seaInlineConfirm');const roots=dialog?[dialog]:[...alerts,...Array.from(active.children||[]).filter(x=>x!==stage),stage,document.querySelector('header'),...document.querySelectorAll('body>.notice'),document.querySelector('body>.status')].filter(Boolean);
   const projected=seaSceneProjection(roots,semanticVisible,keyFor);sceneTargets=projected.targets;
-  // Task controls lead; the complete instructions/results remain paginated below.
-  if(!dialog&&!alerts.length&&state.phase==='setup')projected.rows.sort((a,b)=>Number(b.kind!=='text')-Number(a.kind!=='text'));
+  // Stable authored groups retain context and dependencies, never button-first order.
+  if(!dialog&&!alerts.length)projected.rows.sort((a,b)=>(a.priority??50)-(b.priority??50));
   if(dialog!==sceneDialog){scenePage=0;sceneDialog=dialog;}
   const result=runtime.interface({title:dialog?(lang==='fr'?'Confirmer':'Confirm'):t('phase.'+state.phase),subtitle:labels.context[state.phase],rows:projected.rows,page:scenePage,lang},sceneAction);if(result?.page!==undefined)scenePage=result.page;
   if(!document.body.classList.contains('scene-game'))document.body.classList.add('scene-game');
