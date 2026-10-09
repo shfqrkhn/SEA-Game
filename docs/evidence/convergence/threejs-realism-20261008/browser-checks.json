@@ -1,0 +1,71 @@
+{
+  "browser": "Codex built-in browser",
+  "previewCommit": "b7d2189a4a24c4b8170f5f9727accc9d053ae9d1",
+  "verifiedAt": "2026-10-09T02:45:46.091Z",
+  "scope": "Synthetic single-device UI checks, not full release acceptance",
+  "student": {
+    "mission": "RECOVERY",
+    "purchases": [
+      "CAP-C",
+      "MOB-A",
+      "FP-D",
+      "PRO-B",
+      "COM-C",
+      "SA-D",
+      "ACC-F",
+      "SE-A"
+    ],
+    "phases": [
+      "setup",
+      "practice",
+      "planning",
+      "auction",
+      "build",
+      "submit",
+      "debrief",
+      "closed"
+    ],
+    "reloadPreservedPurchases": 8,
+    "fittedWinchRaycast": "Selected Recovery Winch Package",
+    "cameraControls": [
+      "overview",
+      "front",
+      "rear"
+    ],
+    "saveMenu": [
+      "export",
+      "import",
+      "previous restore retained and disabled without previous backup"
+    ],
+    "frenchLabels": true
+  },
+  "mobile": {
+    "requestedWidth": 320,
+    "documentWidth": 305,
+    "viewportWidth": 255.333,
+    "scenePhase": "build",
+    "canvasCount": 1,
+    "horizontalOverflow": false,
+    "screenshot": "Scaled capture; full-page capture failed"
+  },
+  "missions": [
+    "Combat",
+    "RECCE",
+    "Troop Carrier",
+    "Command Post",
+    "Recovery",
+    "Mine Clearing"
+  ],
+  "instructor": {
+    "practiceModelOptionsAfterReveal": [
+      "vehicle",
+      "part:TRAIN-CAP"
+    ]
+  },
+  "diagnostics": {
+    "finalReloadAndInstructorLogs": [],
+    "earlierNonfatal": "Windows ANGLE PMREM precision warnings",
+    "automation": "Two input-dispatch interruptions recovered using fresh control state"
+  },
+  "fullMaterialClosurePasses": 0
+}

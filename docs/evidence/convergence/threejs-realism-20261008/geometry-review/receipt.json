@@ -1,0 +1,415 @@
+{
+  "method": "Actual Three.js factory geometry, SVGRenderer projection and simplified Lambert lighting; no WebGL/PBR acceptance claim",
+  "models": [
+    {
+      "group": "vehicles",
+      "id": "COMBAT",
+      "title": "COMBAT"
+    },
+    {
+      "group": "vehicles",
+      "id": "RECCE",
+      "title": "RECCE"
+    },
+    {
+      "group": "vehicles",
+      "id": "TROOP",
+      "title": "TROOP"
+    },
+    {
+      "group": "vehicles",
+      "id": "COMMAND",
+      "title": "COMMAND"
+    },
+    {
+      "group": "vehicles",
+      "id": "RECOVERY",
+      "title": "RECOVERY"
+    },
+    {
+      "group": "vehicles",
+      "id": "MINE",
+      "title": "MINE"
+    },
+    {
+      "group": "CAP",
+      "id": "CAP-A",
+      "title": "Modular Crew Hull"
+    },
+    {
+      "group": "CAP",
+      "id": "CAP-B",
+      "title": "Extended Carrier Module"
+    },
+    {
+      "group": "CAP",
+      "id": "CAP-C",
+      "title": "Compact Passenger Bay"
+    },
+    {
+      "group": "CAP",
+      "id": "CAP-D",
+      "title": "High-Capacity Hull"
+    },
+    {
+      "group": "CAP",
+      "id": "CAP-E",
+      "title": "Crew Compartment Insert"
+    },
+    {
+      "group": "CAP",
+      "id": "CAP-F",
+      "title": "Protected Personnel Module"
+    },
+    {
+      "group": "CAP",
+      "id": "CAP-G",
+      "title": "Light Utility Hull"
+    },
+    {
+      "group": "MOB",
+      "id": "MOB-A",
+      "title": "Efficient Power Pack"
+    },
+    {
+      "group": "MOB",
+      "id": "MOB-B",
+      "title": "High-Torque Drivetrain"
+    },
+    {
+      "group": "MOB",
+      "id": "MOB-C",
+      "title": "Lightweight Running Gear"
+    },
+    {
+      "group": "MOB",
+      "id": "MOB-D",
+      "title": "Heavy-Duty Suspension"
+    },
+    {
+      "group": "MOB",
+      "id": "MOB-E",
+      "title": "Long-Range Propulsion"
+    },
+    {
+      "group": "MOB",
+      "id": "MOB-F",
+      "title": "Compact Engine Set"
+    },
+    {
+      "group": "MOB",
+      "id": "MOB-G",
+      "title": "Adaptive Traction Package"
+    },
+    {
+      "group": "FP",
+      "id": "FP-A",
+      "title": "Defensive Weapon Station"
+    },
+    {
+      "group": "FP",
+      "id": "FP-B",
+      "title": "Medium Weapon Station"
+    },
+    {
+      "group": "FP",
+      "id": "FP-C",
+      "title": "Heavy Weapon Station"
+    },
+    {
+      "group": "FP",
+      "id": "FP-D",
+      "title": "Remote Defensive Mount"
+    },
+    {
+      "group": "FP",
+      "id": "FP-E",
+      "title": "Light Weapon Mount"
+    },
+    {
+      "group": "FP",
+      "id": "FP-F",
+      "title": "Stabilized Weapon Suite"
+    },
+    {
+      "group": "FP",
+      "id": "FP-G",
+      "title": "Dual-Purpose Mount"
+    },
+    {
+      "group": "PRO",
+      "id": "PRO-A",
+      "title": "Layered Protection Kit"
+    },
+    {
+      "group": "PRO",
+      "id": "PRO-B",
+      "title": "Composite Armour Set"
+    },
+    {
+      "group": "PRO",
+      "id": "PRO-C",
+      "title": "Light Armour Panels"
+    },
+    {
+      "group": "PRO",
+      "id": "PRO-D",
+      "title": "Reinforced Crew Cell"
+    },
+    {
+      "group": "PRO",
+      "id": "PRO-E",
+      "title": "Modular Side Protection"
+    },
+    {
+      "group": "PRO",
+      "id": "PRO-F",
+      "title": "Blast Protection Kit"
+    },
+    {
+      "group": "PRO",
+      "id": "PRO-G",
+      "title": "Lightweight Protective Shell"
+    },
+    {
+      "group": "COM",
+      "id": "COM-A",
+      "title": "Convoy Radio Suite"
+    },
+    {
+      "group": "COM",
+      "id": "COM-B",
+      "title": "Extended Radio Network"
+    },
+    {
+      "group": "COM",
+      "id": "COM-C",
+      "title": "Compact Communications Set"
+    },
+    {
+      "group": "COM",
+      "id": "COM-D",
+      "title": "Relay Communications Suite"
+    },
+    {
+      "group": "COM",
+      "id": "COM-E",
+      "title": "Long-Range Radio Set"
+    },
+    {
+      "group": "COM",
+      "id": "COM-F",
+      "title": "Secure Tactical Radio"
+    },
+    {
+      "group": "COM",
+      "id": "COM-G",
+      "title": "Dual-Channel Radio Package"
+    },
+    {
+      "group": "SA",
+      "id": "SA-A",
+      "title": "Crew Observation Suite"
+    },
+    {
+      "group": "SA",
+      "id": "SA-B",
+      "title": "Multi-Sensor Awareness Suite"
+    },
+    {
+      "group": "SA",
+      "id": "SA-C",
+      "title": "Basic Observation Set"
+    },
+    {
+      "group": "SA",
+      "id": "SA-D",
+      "title": "Panoramic Sensor Mast"
+    },
+    {
+      "group": "SA",
+      "id": "SA-E",
+      "title": "Crew Vision Enhancement"
+    },
+    {
+      "group": "SA",
+      "id": "SA-F",
+      "title": "Integrated Detection Suite"
+    },
+    {
+      "group": "SA",
+      "id": "SA-G",
+      "title": "Distributed Observation Kit"
+    },
+    {
+      "group": "ACC",
+      "id": "ACC-A",
+      "title": "Recovery Accessory Pack"
+    },
+    {
+      "group": "ACC",
+      "id": "ACC-B",
+      "title": "Utility Trailer Module"
+    },
+    {
+      "group": "ACC",
+      "id": "ACC-C",
+      "title": "Mine-Route Accessory Kit"
+    },
+    {
+      "group": "ACC",
+      "id": "ACC-D",
+      "title": "Field Support Pack"
+    },
+    {
+      "group": "ACC",
+      "id": "ACC-E",
+      "title": "Engineer Support Module"
+    },
+    {
+      "group": "ACC",
+      "id": "ACC-F",
+      "title": "Recovery Winch Package"
+    },
+    {
+      "group": "ACC",
+      "id": "ACC-G",
+      "title": "Mission Equipment Rack"
+    },
+    {
+      "group": "SE",
+      "id": "SE-A",
+      "title": "Requirements Review"
+    },
+    {
+      "group": "SE",
+      "id": "SE-B",
+      "title": "Risk Review"
+    },
+    {
+      "group": "SE",
+      "id": "SE-C",
+      "title": "Interface Review"
+    },
+    {
+      "group": "SE",
+      "id": "SE-D",
+      "title": "Verification Planning"
+    },
+    {
+      "group": "SE",
+      "id": "SE-E",
+      "title": "Configuration Review"
+    },
+    {
+      "group": "SE",
+      "id": "SE-F",
+      "title": "Trade Study"
+    },
+    {
+      "group": "SE",
+      "id": "SE-G",
+      "title": "Validation Planning"
+    },
+    {
+      "group": "SE",
+      "id": "SE-H",
+      "title": "Architecture Review"
+    },
+    {
+      "group": "SE",
+      "id": "SE-I",
+      "title": "Risk Reduction Study"
+    },
+    {
+      "group": "SE",
+      "id": "SE-J",
+      "title": "Requirements Trace"
+    },
+    {
+      "group": "SE",
+      "id": "SE-K",
+      "title": "Integration Planning"
+    },
+    {
+      "group": "SE",
+      "id": "SE-L",
+      "title": "Test Readiness Review"
+    },
+    {
+      "group": "SE",
+      "id": "SE-M",
+      "title": "Design Review"
+    },
+    {
+      "group": "SE",
+      "id": "SE-N",
+      "title": "Supplier Risk Review"
+    },
+    {
+      "group": "SE",
+      "id": "SE-O",
+      "title": "Baseline Audit"
+    },
+    {
+      "group": "SE",
+      "id": "SE-P",
+      "title": "Change Control Review"
+    },
+    {
+      "group": "SE",
+      "id": "SE-Q",
+      "title": "Human Factors Review"
+    },
+    {
+      "group": "SE",
+      "id": "SE-R",
+      "title": "Supportability Review"
+    },
+    {
+      "group": "SE",
+      "id": "SE-S",
+      "title": "Mission Analysis"
+    },
+    {
+      "group": "SE",
+      "id": "SE-T",
+      "title": "Lessons Review"
+    },
+    {
+      "group": "SE",
+      "id": "SE-U",
+      "title": "Acceptance Review"
+    },
+    {
+      "group": "builds",
+      "id": "COMBAT",
+      "title": "COMBAT assembled"
+    },
+    {
+      "group": "builds",
+      "id": "RECCE",
+      "title": "RECCE assembled"
+    },
+    {
+      "group": "builds",
+      "id": "TROOP",
+      "title": "TROOP assembled"
+    },
+    {
+      "group": "builds",
+      "id": "COMMAND",
+      "title": "COMMAND assembled"
+    },
+    {
+      "group": "builds",
+      "id": "RECOVERY",
+      "title": "RECOVERY assembled"
+    },
+    {
+      "group": "builds",
+      "id": "MINE",
+      "title": "MINE assembled"
+    }
+  ]
+}

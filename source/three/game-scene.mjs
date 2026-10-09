@@ -12,11 +12,11 @@ export function mount(host,onFailure,onInspect){
   renderer.toneMappingExposure=.95;renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFShadowMap;
   host.appendChild(renderer.domElement);
   const scene=new THREE.Scene();scene.background=new THREE.Color('#f0f3f0');
-  const pmrem=new THREE.PMREMGenerator(renderer),room=new RoomEnvironment(),environment=pmrem.fromScene(room,.04);scene.environment=environment.texture;room.dispose();pmrem.dispose();
-  scene.add(new THREE.HemisphereLight(0xe6f1ff,0x716b5f,2));
-  const key=new THREE.DirectionalLight(0xfff1db,3);key.position.set(7,10,7);key.castShadow=true;
+  const pmrem=new THREE.PMREMGenerator(renderer),room=new RoomEnvironment(),environment=pmrem.fromScene(room,.04);scene.environment=environment.texture;scene.environmentIntensity=.45;room.dispose();pmrem.dispose();
+  scene.add(new THREE.HemisphereLight(0xe6f1ff,0x716b5f,.55));
+  const key=new THREE.DirectionalLight(0xfff1db,2);key.position.set(7,10,7);key.castShadow=true;
   key.shadow.mapSize.set(2048,2048);Object.assign(key.shadow.camera,{left:-12,right:12,top:12,bottom:-12,near:.1,far:50});key.shadow.normalBias=.015;key.shadow.bias=-.0001;key.shadow.radius=3;scene.add(key);
-  const fill=new THREE.DirectionalLight(0xe6efff,1.3);fill.position.set(-6,5,-7);scene.add(fill);
+  const fill=new THREE.DirectionalLight(0xe6efff,.5);fill.position.set(-6,5,-7);scene.add(fill);
   const camera=new THREE.OrthographicCamera(-1,1,1,-1,.01,100);
   const controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=false;controls.enablePan=false;controls.minZoom=.25;controls.maxZoom=5;
   controls.maxPolarAngle=Math.PI*.49;

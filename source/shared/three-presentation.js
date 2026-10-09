@@ -26,7 +26,7 @@ function sea3DStart(role){
    const unique=new Map();if(view.current)unique.set(view.current.id,view.current);view.owned.forEach(p=>unique.set(p.id,p));unique.forEach(p=>choices.push(['part:'+p.id,p.title]));
    if(view.phase!==lastPhase){selection=view.current?'part:'+view.current.id:['build','submit','debrief','closed'].includes(view.phase)?'configuration':'vehicle';lastPhase=view.phase;}
    if(view.current&&view.current.id!==lastCurrent)selection='part:'+view.current.id;lastCurrent=view.current?.id||'';
-   if(!choices.some(c=>c[0]===selection))selection='vehicle';objects.replaceChildren();choices.forEach(c=>option(objects,...c));objects.value=selection;
+   if(!choices.some(c=>c[0]===selection))selection='vehicle';objects.replaceChildren();choices.forEach(c=>option(objects,...c));objects.value=selection;objects.closest('label').hidden=choices.length<2;const toolbar=stage.querySelector?.('.sea3d-toolbar');if(toolbar)toolbar.hidden=choices.length<2&&teams.closest('label').hidden;
    const next=JSON.stringify([view,selection]);if(failed){fail();return;}
    if(!runtime){host.hidden=false;runtime=SEAThree.mount(host,fail,id=>{selection='part:'+id;queue();});}
    host.hidden=false;document.body.classList.add('sea3d-active');const selectedPart=unique.get(selection.slice(5));get('sea3d-title').textContent=selection.startsWith('part:')?selectedPart?.title||labels.title:selection==='configuration'?labels.configuration:MISSIONS[view.mission][lang];get('sea3dStatus').textContent=labels.context[view.phase]||labels.waiting;host.setAttribute('aria-label',get('sea3d-title').textContent);

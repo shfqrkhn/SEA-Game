@@ -30,6 +30,7 @@ export function detailPart(g,m,prefix,v){
    cylinder(g,m.paint,.07,.24,[.35,.5,.39]);tube(g,m.rubber,[[-.32,.53,.44],[-.3,.31,.4],[.3,.3,.4],[.35,.42,.39]],.018);
    cylinder(g,m.darkSteel,.21,.024,[.62,.48,0],'x');for(let i=0;i<8;i++){const a=i*Math.PI/4,b=box(g,m.darkSteel,[.02,.12,.055],[.64,.48+Math.cos(a)*.12,Math.sin(a)*.12]);b.rotation.x=a;}
   }else if(v!==3){for(const x of [-.65,.65]){bolts(g,m.steel,[x,.5,.145],.073,6,'z',.012);rod(g,m.darkSteel,[x,.5,0],[0,.5,0],.043);}box(g,m.paint,[.22,.1,.18],[0,.54,0],'traction controller');}
+  if(v===5)g.scale.setScalar(.82);
  }else if(prefix==='FP'){
   for(const s of [-1,1]){cylinder(g,m.steel,.075,.07,[0,.56,s*.30],'z');bolts(g,m.darkSteel,[0,.56,s*.345],.05,6,'z',.009);}
   panel(g,m,[.31,.25,.018],[-.15,.5,-.57]);rod(g,m.darkSteel,[-.26,.63,-.58],[-.04,.63,-.58],.014);
@@ -61,7 +62,7 @@ export function detailPart(g,m,prefix,v){
 
 function face(g,m,vertices){const a=[];for(let i=1;i<vertices.length-1;i++)a.push(...vertices[0],...vertices[i],...vertices[i+1]);const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.Float32BufferAttribute(a,3));geometry.computeVertexNormals();const mat=m.clone();mat.side=THREE.DoubleSide;const mesh=new THREE.Mesh(geometry,mat);mesh.name=m.metalness===.42?'cab glazing':'hull shell';g.add(mesh);return mesh;}
 export function missionBase(id,m){
- if(id==='RECOVERY'){const g=createVehicle(m);detailVehicle(g,m,6.25,2.3);return soften(g);}
+ if(id==='RECOVERY'){const g=createVehicle(m);g.traverse(o=>{if(o.isMesh&&o.geometry.type==='BufferGeometry'&&o.material.metalness!==.42)o.name='hull shell';});detailVehicle(g,m,6.25,2.3);return soften(g);}
  const spec={COMBAT:[6.8,2.65,4],RECCE:[5.5,2.3,2],TROOP:[6.9,2.6,3],COMMAND:[6.7,2.6,3],MINE:[6.8,2.65,4]}[id], [length,width,axles]=spec;
  const g=new THREE.Group();g.name=id;g.userData={units:'metres',concept:true,axles,roof:2.37,length,width};
  const front=length/2,rear=-front,half=width/2;

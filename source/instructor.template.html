@@ -17,11 +17,11 @@
 <div id="storageNotice" class="notice bad hidden" role="status"></div><div id="backupStatus" class="notice info hidden" role="status" aria-live="polite"></div><div class="status"><span class="badge">v3.0.0-local</span><span id="phaseBadge" class="badge"></span><span id="sessionBadge" class="badge"></span></div>
 <main id="mainContent">
 <section id="sea3dScene" class="sea3d-stage" aria-labelledby="sea3d-title">
- <div class="sea3d-heading"><h2 id="sea3d-title">Your vehicle</h2></div>
+ <div class="sea3d-heading"><h2 id="sea3d-title">Your vehicle</h2><details class="view-controls"><summary id="sea3d-views">Views</summary><div class="inline"><button id="sea3d-reset" class="btn ghost" type="button">Reset view</button><button id="sea3d-front" class="btn ghost" type="button">Front</button><button id="sea3d-rear" class="btn ghost" type="button">Rear</button></div></details></div>
  <div class="sea3d-toolbar">
   <label><span id="sea3d-team">Team</span><select id="sea3dTeam"></select></label>
   <label><span id="sea3d-object">Inspect</span><select id="sea3dObject"></select></label>
-  <details class="view-controls"><summary id="sea3d-views">Views</summary><div class="inline"><button id="sea3d-reset" class="btn ghost" type="button">Reset view</button><button id="sea3d-front" class="btn ghost" type="button">Front</button><button id="sea3d-rear" class="btn ghost" type="button">Rear</button></div></details>
+
  </div>
  <div id="sea3dViewport" role="img" aria-label="Vehicle and equipment" aria-describedby="sea3dStatus" hidden></div>
  <p id="sea3dStatus" role="status" aria-live="polite"></p><p id="sea3d-hint" class="muted"></p>
