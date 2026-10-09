@@ -1,7 +1,0 @@
-{
-  "identity": "cards/COM-E",
-  "inputSha256": "9b5ee56976daf881282b2597ee853c8438dacf89de098982954d1333152bc7d7",
-  "path": "C:\\Users\\user\\.codex\\generated_images\\01a11d09-97df-7000-a3e7-a4b9bfcb4add\\exec-f815c21a-560e-479c-b647-1b306fe75c02.png",
-  "prompt": "Precise artwork repair of SEA Game cards/COM-E. Findings: Mast extends beyond top boundary.; Right white divider/adjacent strip.. Remove unwanted white edge borders, grid dividers and fragments from neighboring panels. Restore any missing focal subject edges, antennas, barrels or equipment through coherent reconstruction. Preserve the original subject identity, recognizable geometry, component count, arrangement, colors, realistic detail and lighting. Show the complete standalone equipment/vehicle with all protrusions and cables visible. Blend the hard portrait-panel backdrop seamlessly into a continuous matching beige studio background. Use one opaque wide 3:1 landscape canvas with generous safe margins around all focal content. No grid sheet, no neighboring assets, no new objects or text. Do not crop tighter. Clean coherent realistic game artwork.",
-  "tool": "built-in image_gen"
-}

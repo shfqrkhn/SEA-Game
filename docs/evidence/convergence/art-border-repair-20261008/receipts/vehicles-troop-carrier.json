@@ -1,7 +1,0 @@
-{
-  "identity": "vehicles/troop-carrier",
-  "inputSha256": "18129f3489a5ac04fb1a36c03545c5d6a2891db8d823c7830a9a52babae3a970",
-  "path": "C:\\Users\\user\\.codex\\generated_images\\01a11d09-97df-7000-a3e7-a4b9bfcb4add\\exec-6aae028d-27b2-4b94-b063-48e24f393733.png",
-  "prompt": "Precise artwork repair of SEA Game vehicles/troop-carrier. Findings: Thin bottom white frame.. Remove unwanted white edge borders, grid dividers and fragments from neighboring panels. Restore any missing focal subject edges, antennas, barrels or equipment through coherent reconstruction. Preserve the original subject identity, recognizable geometry, component count, arrangement, colors, realistic detail and lighting. Show the complete standalone equipment/vehicle with all protrusions and cables visible. Blend the hard portrait-panel backdrop seamlessly into a continuous matching beige studio background. Use one opaque wide 3:1 landscape canvas with generous safe margins around all focal content. No grid sheet, no neighboring assets, no new objects or text. Do not crop tighter. Clean coherent realistic game artwork.",
-  "tool": "built-in image_gen"
-}

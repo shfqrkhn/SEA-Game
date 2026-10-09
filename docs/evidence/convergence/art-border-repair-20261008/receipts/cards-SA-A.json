@@ -1,7 +1,0 @@
-{
-  "identity": "cards/SA-A",
-  "inputSha256": "575b48db03775ea463416cdbdeef55b38c3e62c2564664e861de2db94626fee8",
-  "path": "C:\\Users\\user\\.codex\\generated_images\\01a11d09-97df-7000-a3e7-a4b9bfcb4add\\exec-114e5397-aece-4a3a-8f46-dae279dd22f5.png",
-  "prompt": "Precise artwork repair of SEA Game cards/SA-A. Findings: Thin rectangular white frame.. Remove unwanted white edge borders, grid dividers and fragments from neighboring panels. Restore any missing focal subject edges, antennas, barrels or equipment through coherent reconstruction. Preserve the original subject identity, recognizable geometry, component count, arrangement, colors, realistic detail and lighting. Show the complete standalone equipment/vehicle with all protrusions and cables visible. Blend the hard portrait-panel backdrop seamlessly into a continuous matching beige studio background. Use one opaque wide 3:1 landscape canvas with generous safe margins around all focal content. No grid sheet, no neighboring assets, no new objects or text. Do not crop tighter. Clean coherent realistic game artwork.",
-  "tool": "built-in image_gen"
-}

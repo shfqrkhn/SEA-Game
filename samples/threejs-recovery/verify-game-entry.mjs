@@ -30,5 +30,4 @@ for(const mission of MISSION_IDS)for(let variant=0;variant<7;variant++){
 for(const id of MISSION_IDS){const model=createMission(id,materials());let wheels=0;model.traverse(o=>{if(o.name==='run-flat wheel')wheels++;});assert.equal(wheels,model.userData.axles*2,id+' axle/wheel topology');}
 const build=createConfiguration('RECOVERY',[{id:'CAP-A'},{id:'CAP-C'},{id:'SE-A'}]);assert.equal(build.userData.installed.CAP,'CAP-C');assert.throws(()=>createConfiguration('COMBAT',[{id:'UNKNOWN'}]));
 assert.throws(()=>createPart('UNKNOWN'));assert.throws(()=>createMission('UNKNOWN'));
-fs.mkdirSync('docs/evidence/convergence/scene-game-20261009',{recursive:true});fs.writeFileSync('docs/evidence/convergence/scene-game-20261009/model-verification.json',JSON.stringify({status:'PASS',renderer:'geometry and camera projection; browser rendering separately checked',models:results,assemblies},null,2)+'\n');
 console.log('71 parts, 6 missions, 42 assembled builds; canonical capacity, axle topology and camera framing PASS');

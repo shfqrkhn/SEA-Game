@@ -1,7 +1,0 @@
-{
-  "identity": "cards/FP-D",
-  "inputSha256": "fa5ed1be08d055cf5749a6b6c6a77b577833be67fdb277b01c34e0f48b249c94",
-  "path": "C:\\Users\\user\\.codex\\generated_images\\01a11d09-97df-7000-a3e7-a4b9bfcb4add\\exec-e7a9bd3c-3afb-46bf-a068-0c6578c9e7ec.png",
-  "prompt": "Precise artwork repair of SEA Game cards/FP-D. Findings: Left and bottom grid seams.. Remove unwanted white edge borders, grid dividers and fragments from neighboring panels. Restore any missing focal subject edges, antennas, barrels or equipment through coherent reconstruction. Preserve the original subject identity, recognizable geometry, component count, arrangement, colors, realistic detail and lighting. Show the complete standalone equipment/vehicle with all protrusions and cables visible. Blend the hard portrait-panel backdrop seamlessly into a continuous matching beige studio background. Use one opaque wide 3:1 landscape canvas with generous safe margins around all focal content. No grid sheet, no neighboring assets, no new objects or text. Do not crop tighter. Clean coherent realistic game artwork.",
-  "tool": "built-in image_gen"
-}

@@ -1,12 +1,14 @@
 # SEA Game classroom quick start EN and FR
 
+Current delivery checkpoint: see [handover](HANDOVER.md). Primary next distribution is one dist/index.html with deliberate role selection; exports/imports remain matching-role private JSON. Published3.5 evidence is limited, built 3.6 candidate qualification is pending.
+
 Candidate instructions for the facilitator and students. Use a version approved for your classroom and tested on your devices. This local candidate still requires browser, French-language, rights and classroom acceptance; it is not the version currently hosted on Pages.
 
 ## English
 
 ### Before class
 
-The facilitator uses `SEA_Instructor_Standalone.html`; each team uses `SEA_Student_Standalone.html`. Obtain the exact approved files and version/checksums from your operator. Open each role on its intended device, test language switching and a backup export/import using synthetic data, and verify the saved download. Keep a manual instructor ledger available. Each HTML contains vector artwork; separate raster images are optional. Do not assume a mobile file-opening route or storage behavior works without testing it.
+Everyone uses the exact approved dist/index.html; the facilitator selects Instructor and each team selects Student in a separate context. Obtain the approved version/checksum from your operator. Open each role on its intended device, test language switching and a backup export/import using synthetic data, and verify the saved download. Keep a manual instructor ledger available. The HTML embeds all runtime models/resources and print vectors; no sibling assets or runtime network are needed. Do not assume a mobile file-opening route or storage behavior works without testing it.
 
 The apps do not synchronize. The instructor announces the session code, round, lot, card ID and official outcome through the classroom communication channel. The instructor ledger is authoritative. Student plans and backups stay private. Use fictional team identifiers; do not enter personal, Protected, Classified, operational or real-project information.
 
@@ -29,7 +31,7 @@ Pause the affected activity. Keep tabs, original files and backups open/intact; 
 
 ### Avant la séance
 
-L'instructeur utilise `SEA_Instructor_Standalone.html`; chaque équipe utilise `SEA_Student_Standalone.html`. Obtenez auprès du responsable les fichiers approuvés, leur version et leurs sommes de contrôle. Sur chaque appareil prévu, vérifiez l'ouverture, le changement de langue et l'exportation/importation d'une sauvegarde avec des données fictives. Vérifiez que le téléchargement a été enregistré. Préparez un registre manuel de l'instructeur. Chaque HTML contient des illustrations vectorielles; les images matricielles séparées sont facultatives. Vérifiez la méthode d'ouverture des fichiers et le stockage sur les appareils mobiles avant la séance.
+Tous utilisent le même dist/index.html approuvé : le facilitateur choisit Instructeur et chaque équipe choisit Étudiant dans un contexte distinct. Obtenez auprès du responsable la version et la somme de contrôle approuvées. Sur chaque appareil prévu, vérifiez l'ouverture, le changement de langue et l'exportation/importation d'une sauvegarde avec des données fictives. Vérifiez que le téléchargement a été enregistré. Préparez un registre manuel de l'instructeur. Le HTML intègre les modèles, ressources et illustrations vectorielles; aucun fichier voisin ni réseau ne sont nécessaires. Vérifiez la méthode d'ouverture des fichiers et le stockage sur les appareils mobiles avant la séance.
 
 Les applications ne se synchronisent pas. L'instructeur annonce le code de séance, la ronde, le lot, l'identifiant de carte et le résultat officiel par le canal de communication de la classe. Son registre fait autorité. Les plans et sauvegardes des équipes restent privés. Utilisez des identifiants fictifs; ne saisissez aucune information personnelle, protégée, classifiée, opérationnelle ou relative à un projet réel.
 

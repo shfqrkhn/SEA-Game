@@ -1,7 +1,0 @@
-{
-  "identity": "cards/SE-J",
-  "inputSha256": "72b45374a92dcbb4f5d7a9aa482488ed1c551d8916284617217d0271dd812c49",
-  "path": "C:\\Users\\user\\.codex\\generated_images\\01a11d09-97df-7000-a3e7-a4b9bfcb4add\\exec-2364b1a6-e501-42a5-b501-ea369e46346a.png",
-  "prompt": "Precise artwork repair of SEA Game cards/SE-J. Findings: Thin illustrative outline frame.. Remove unwanted white edge borders, grid dividers and fragments from neighboring panels. Restore any missing focal subject edges, antennas, barrels or equipment through coherent reconstruction. Preserve the original subject identity, recognizable geometry, component count, arrangement, colors, realistic detail and lighting. Preserve the meaning and relationships of this systems-engineering scene/diagram, its symbols, chart structure and intentional contextual composition. Keep all focal icons and equipment complete. Do not remove intentional diagram lines or add new labels. Use one opaque wide 3:1 landscape canvas with generous safe margins around all focal content. No grid sheet, no neighboring assets, no new objects or text. Do not crop tighter. Clean coherent realistic game artwork.",
-  "tool": "built-in image_gen"
-}

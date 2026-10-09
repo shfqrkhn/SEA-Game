@@ -1,4 +1,4 @@
-# Disposable audit execution outputs and LF reconstructions; never product inputs.
-docs/evidence/audit-runs/
+# Finite local verification/packaging outputs; never runtime dependencies.
+.artifacts/
 __pycache__/
 samples/threejs-recovery/node_modules/

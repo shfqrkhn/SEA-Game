@@ -4,7 +4,9 @@
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {runInNewContext} from 'node:vm';
-const read=path=>readFileSync(new URL('../'+path,import.meta.url),'utf8');
+import {generateArtifacts} from './build.mjs';
+const generated=generateArtifacts();
+const read=path=>generated.has(path)?generated.get(path):readFileSync(new URL('../'+path,import.meta.url),'utf8');
 const baseline=JSON.parse(read('docs/evidence/rules-baseline.json'));
 const cards=new Map(Object.values(baseline.pools).flat().map(row=>[row[0],row]));
 const missions=Object.keys(baseline.missions);

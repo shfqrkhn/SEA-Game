@@ -5,7 +5,9 @@ import {Script,runInNewContext} from 'node:vm';
 import {validateLocalization} from './localization.mjs';
 import {createHash} from 'node:crypto';
 import {embeddedArtworkSource} from './artwork-source.mjs';
-const read=p=>readFileSync(new URL('../'+p,import.meta.url),'utf8');
+import {generateArtifacts} from './build.mjs';
+const generated=generateArtifacts();
+const read=p=>generated.has(p)?generated.get(p):readFileSync(new URL('../'+p,import.meta.url),'utf8');
 const presentation=read('source/shared/presentation.js');
 new Script(presentation,{filename:'source/shared/presentation.js'});
 for(const name of ['instructor','student']){

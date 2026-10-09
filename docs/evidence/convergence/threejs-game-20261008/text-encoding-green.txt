@@ -1,1 +1,0 @@
-Both role dictionaries retain readable French accents and punctuation PASS

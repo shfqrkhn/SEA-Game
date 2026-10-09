@@ -1,5 +1,5 @@
 * text=auto eol=lf
 *.webp binary
-# Preserve dated receipts, reference inputs and frozen packet hashes byte-for-byte.
+# Preserve independent rules and current verification receipts byte-for-byte.
 docs/evidence/** -text
-docs/reference/** -text
+docs/verification/** -text

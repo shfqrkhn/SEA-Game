@@ -1,6 +1,0 @@
-{
-  "actualGitHubWorkflowValidation": "OPEN",
-  "reason": "Bundled Python lacks PyYAML and bundled Node lacks yaml/js-yaml; no new dependency installed",
-  "scope": "Local YAML parser validation",
-  "result": "NOT_RUN"
-}
