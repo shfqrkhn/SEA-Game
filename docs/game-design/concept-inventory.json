@@ -4,7 +4,7 @@
   "date": "2026-10-09",
   "canonicalSource": {
     "path": "source/shared/engine.js",
-    "sha256": "e0edea105fdb7ce53f431294909e7abc36614046d9746938b50300d28f6b73e1"
+    "sha256": "754d89d81f2f49dce1209000d213d6c516bac4ce1599aa02b47bfa6d5ee3a8fe"
   },
   "status": "Inventory/exploratory direction; canonical/model/UI acceptance open",
   "counts": {
@@ -8897,8 +8897,17 @@
         "evidence": []
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/ui-auction-v1.png",
+            "sha256": "ded388546c6baefc42551e5584576166525bbed15a5b5e913f0ba96b3e48164c",
+            "receiptId": "GEN-ui-auction-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "semantic-html-existing;scene-migration-open",
@@ -8942,8 +8951,17 @@
         "evidence": []
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/ui-auction-v1.png",
+            "sha256": "ded388546c6baefc42551e5584576166525bbed15a5b5e913f0ba96b3e48164c",
+            "receiptId": "GEN-ui-auction-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "semantic-html-existing;scene-migration-open",
@@ -9658,8 +9676,17 @@
         "evidence": []
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/ui-auction-v1.png",
+            "sha256": "ded388546c6baefc42551e5584576166525bbed15a5b5e913f0ba96b3e48164c",
+            "receiptId": "GEN-ui-auction-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "semantic-html-existing;scene-migration-open",
@@ -9879,8 +9906,17 @@
         "evidence": []
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/ui-auction-v1.png",
+            "sha256": "ded388546c6baefc42551e5584576166525bbed15a5b5e913f0ba96b3e48164c",
+            "receiptId": "GEN-ui-auction-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-or-required;unqualified",

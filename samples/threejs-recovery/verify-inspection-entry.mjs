@@ -21,7 +21,7 @@ for(const material of Object.values(finishes)){
  const originalSurface=material.surfaceProfile.wavelength;copy.surfaceProfile.wavelength*=2;assert.equal(material.surfaceProfile.wavelength,originalSurface);
  copy.dispose();
 }
-for(const profile of Object.values(SURFACE_PROFILES)){assert(profile.wavelength>=.03&&profile.wavelength<=.10);assert(profile.roughness>0&&profile.roughness<=.12);assert(profile.tone>=0&&profile.tone<=.045,'Visible colour response must remain restrained, not wear/camouflage');}
+for(const profile of Object.values(SURFACE_PROFILES)){assert(profile.wavelength>=.008&&profile.wavelength<=.020);assert(profile.roughness>0&&profile.roughness<=.025);assert(profile.tone>=0&&profile.tone<=.006,'Visible colour response must remain restrained, not wear/camouflage');}
 const finishShell=new THREE.Mesh(new THREE.BoxGeometry(),finishes.paint);finishShell.name='hull shell';const finishRoot=new THREE.Group();finishRoot.add(finishShell);const finishCutaway=prepareCutaway(finishRoot);
 finishCutaway.apply(true);assert(finishShell.material instanceof FinishMaterial);assert.deepEqual(finishShell.material.finishProfile,finishes.paint.finishProfile,'Cutaway must preserve the original finish shader');assert.deepEqual(finishShell.material.surfaceProfile,finishes.paint.surfaceProfile,'Cutaway preserves visible-scale finish');finishCutaway.dispose();assert.equal(finishShell.material,finishes.paint);finishShell.geometry.dispose();Object.values(finishes).forEach(m=>m.dispose());
 console.log('Material finish clone/cutaway isolation, scale/alias shader anchors and texture-free lifecycle PASS (actual GPU compile still requires browser)');
@@ -41,6 +41,49 @@ for(let cycle=0;cycle<12;cycle++){
  assert.equal(disposals,(cycle+1)*3,'All temporary materials are disposed exactly once');cutaway.dispose();assert.equal(disposals,(cycle+1)*3);
 }
 console.log('Cutaway shader state, shared-paint isolation, original translucency/shadow restoration and bounded temporary material disposal PASS');
+// Authored engine groups must separate functional assemblies instead of
+// scattering fasteners by position. Cutaway must reveal the internal mechanism
+// through marked casings without ghosting that mechanism or changing its paint.
+const engineFixture=new THREE.Group();engineFixture.userData.assetId='MOB-A';
+const engineHead=new THREE.Group(),engineSump=new THREE.Group(),engineMechanism=new THREE.Group();
+engineHead.userData.inspectionKey='engine:head';engineSump.userData.inspectionKey='engine:sump';engineMechanism.userData.inspectionKey='engine:rotating';
+const engineCasing=new THREE.Mesh(new THREE.BoxGeometry(1,.3,.5),shared);engineCasing.position.y=.9;engineCasing.userData.cutawayShell=true;engineCasing.castShadow=true;engineHead.add(engineCasing);
+const enginePan=new THREE.Mesh(new THREE.BoxGeometry(1,.2,.5),shared);enginePan.position.y=.2;enginePan.userData.cutawayShell=true;engineSump.add(enginePan);
+const engineCrank=new THREE.Mesh(new THREE.CylinderGeometry(.08,.08,.8),shared);engineCrank.position.y=.45;engineMechanism.add(engineCrank);engineFixture.add(engineHead,engineSump,engineMechanism);
+const engineInspection=prepareInspection(engineFixture);
+assert.deepEqual(new Set(engineInspection.parts.map(p=>p.key)),new Set(['engine:head','engine:sump','engine:rotating']),'Authored functional assemblies retain stable inspection identities');
+engineInspection.apply(1);engineFixture.updateMatrixWorld(true);
+assert(engineHead.getWorldPosition(new THREE.Vector3()).y>0&&engineSump.getWorldPosition(new THREE.Vector3()).y<0,'Head and sump separate above and below the mechanism');
+assert.equal(engineMechanism.getWorldPosition(new THREE.Vector3()).length(),0,'Rotating mechanism remains the central datum during separation');
+engineInspection.restore();for(const p of engineInspection.parts)assert.equal(p.object.position.length(),0);
+const engineCutaway=prepareCutaway(engineFixture);engineCutaway.apply(true);
+assert.notEqual(engineCasing.material,shared,'Marked engine casing must expose internals');assert.equal(engineCasing.material.opacity,.13);assert.equal(engineCrank.material,shared);assert.equal(engineCasing.castShadow,false);
+engineCutaway.dispose();assert.equal(engineCasing.material,shared);assert.equal(engineCasing.castShadow,true);engineFixture.traverse(o=>o.geometry?.dispose());
+console.log('Authored engine semantic separation, central mechanism datum and enclosure-only cutaway restoration PASS');
+for(const id of ['MOB-A','MOB-E','MOB-F']){
+ const root=createPart(id),scale=id==='MOB-F'?.78:1,meshes=[];root.updateMatrixWorld(true);root.traverse(o=>{if(o.isMesh)meshes.push(o);});
+ const named=name=>meshes.filter(o=>o.name===name);
+ const expected=['head','block','sump','rotating','transmission','intake','exhaust','cooling','services','skid'].map(k=>'engine:'+k);
+ assert.deepEqual(new Set(root.children.map(o=>o.userData.inspectionKey)),new Set(expected),id+' functional construction islands');
+ for(const name of ['engine cylinder liner','engine piston crown and skirt','engine connecting rod','crankshaft offset crankpin'])assert.equal(named(name).length,6,id+' inline-six anatomy: '+name);
+ assert.equal(named('head valve stem').length,12);
+ for(const piston of named('engine piston crown and skirt')){
+  const x=piston.position.x,y=piston.position.y,liner=named('engine cylinder liner').find(o=>Math.abs(new THREE.Box3().setFromObject(o,true).getCenter(new THREE.Vector3()).x/scale-x)<1e-5);
+  assert(liner,id+' piston requires its own hollow cylinder');
+  const hit=new THREE.Raycaster(new THREE.Vector3(x,y,0).multiplyScalar(scale),new THREE.Vector3(0,0,1),0,.1*scale).intersectObject(liner,false)[0];
+  assert(hit&&Math.abs(hit.point.z/scale-.058)<.0002,id+' actual liner bore face');
+  assert(piston.geometry.parameters.radiusTop<hit.point.z/scale,'Piston fits the physical bore without intersecting liner');
+ }
+ const crank=named('engine crankshaft main axis')[0],flywheel=named('engine crankshaft seated flywheel')[0],input=named('transmission connected input shaft')[0];
+ const center=o=>new THREE.Box3().setFromObject(o,true).getCenter(new THREE.Vector3());
+ assert(Math.abs(center(crank).y-center(flywheel).y)<1e-6&&Math.abs(center(crank).y-center(input).y)<1e-6,'Crank, flywheel and input share the physical axis');
+ assert(new THREE.Box3().setFromObject(crank,true).intersectsBox(new THREE.Box3().setFromObject(flywheel,true)),'Crank reaches flywheel');
+ assert(new THREE.Box3().setFromObject(input,true).intersectsBox(new THREE.Box3().setFromObject(flywheel,true)),'Input reaches flywheel');
+ const block=named('cast crankcase with tapered shoulders')[0],piston=named('engine piston crown and skirt')[0],blockPaint=block.material,pistonPaint=piston.material,casing=prepareCutaway(root);
+ casing.apply(true);assert.notEqual(block.material,blockPaint);assert.equal(piston.material,pistonPaint,'Cutaway leaves actual internal mechanism opaque');casing.dispose();assert.equal(block.material,blockPaint);
+ root.traverse(o=>{o.geometry?.dispose();if(o.material)(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>m.dispose());});
+}
+console.log('Three actual engine variants: six hollow bores/pistons/rods/crankpins, aligned seated input and enclosure-only cutaway PASS');
 const shadowLight=new THREE.DirectionalLight();shadowLight.position.set(-5,9,6);const fixedLight=shadowLight.position.clone(),fixedTarget=shadowLight.target.position.clone();
 shadowLight.shadow.mapSize.set(2048,2048);
 for(const dimensions of [[1.7,1.4,1.4],[6.25,3.5,2.3],[11,7,6]]){

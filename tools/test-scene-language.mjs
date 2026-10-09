@@ -25,10 +25,11 @@ function element(tag){
 body=element('body');body.className='scene-game';
 const header=body.appendChild(element('header')),language=header.appendChild(element('button'));language.id='langBtn';language.textContent='FR';
 const save=header.appendChild(element('button'));save.textContent='Export backup';
+const footer=body.appendChild(element('p'));footer.textContent='No automatic synchronization. Synthetic deck approval remains open.';footer.setAttribute('data-scene-section','help');footer.setAttribute('data-scene-priority','90');
 const active=body.appendChild(element('section')),task=active.appendChild(element('button'));task.textContent='Finish auction';
 const stage=active.appendChild(element('div')),canvas=stage.appendChild(element('canvas'));
 const findId=(n,id)=>n.id===id?n:n.children.map(c=>findId(c,id)).find(Boolean)||null;
-doc={body,activeElement:canvas,createElement:element,getElementById:id=>findId(body,id),querySelector:selector=>selector==='header'?header:null,querySelectorAll:()=>[]};
+doc={body,activeElement:canvas,createElement:element,getElementById:id=>findId(body,id),querySelector:selector=>selector==='header'?header:selector==='main>.footer'?footer:null,querySelectorAll:()=>[]};
 let latest,saveCalls=0,renderCalls=0,destructiveEffects=0;
 const ctx=vm.createContext({document:doc,Event:class{},host:stage,semanticVisible:n=>n.isConnected&&!n.hidden,get:id=>doc.getElementById(id),t:key=>key,queue(){},
  runtime:{interface(snapshot){latest=snapshot;return {page:snapshot.page}}},renderAll(){renderCalls++;language.textContent=ctx.api.lang==='en'?'FR':'EN'},saveState(){saveCalls++}});
@@ -40,7 +41,7 @@ for(const nextLocale of ['fr','en']){
  ctx.api.confirm();ctx.api.sync();
  const languageRow=latest.rows.find(r=>r.utility==='language'),confirmRow=latest.rows.find(r=>r.label==='Confirm'||r.label==='Confirmer');
  assert(languageRow&&confirmRow,'Language and current confirmation must share the actual scene projection');
- assert(!latest.rows.some(r=>r.label==='Finish auction'||r.label==='Export backup'),'Confirmation projection excludes underlying destructive and backup actions');
+ assert(!latest.rows.some(r=>r.label==='Finish auction'||r.label==='Export backup'||r.label===footer.textContent),'Confirmation projection excludes underlying actions and help disclosures');
  const staleConfirmKey=confirmRow.key;
  ctx.api.act(languageRow.key);
  assert.equal(ctx.api.lang,nextLocale);assert.equal(doc.getElementById('seaInlineConfirm'),null,'Actual setLang cancels the current confirmation');
@@ -49,6 +50,7 @@ for(const nextLocale of ['fr','en']){
  assert(latest.rows.some(r=>r.utility==='language'&&r.label===(nextLocale==='fr'?'EN':'FR')),'Header utility reflects the actual refreshed locale');
 }
 assert.equal(renderCalls,2);assert.equal(saveCalls,2);assert.equal(destructiveEffects,0);
+ctx.api.sync();assert(latest.rows.some(r=>r.label===footer.textContent&&r.section==='help'),'Actual scene sync retains existing product disclosures in Help/save');
 // Positive control: the same bridge still executes a current approved action once.
 ctx.api.confirm();ctx.api.sync();const currentConfirm=latest.rows.find(r=>r.label==='Confirm');
 ctx.api.act(currentConfirm.key);assert.equal(destructiveEffects,1,'Current confirmation remains actionable');

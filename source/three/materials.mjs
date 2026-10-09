@@ -12,15 +12,16 @@ export const FINISH_PROFILES=Object.freeze({
  upholstery:Object.freeze({wavelength:.0009,variation:.065,directional:2})
 });
 
-// Authored finish intent, not measured manufacturer texture data. Centimetre
-// response remains visible at game scale without faking dents or damaged paint.
+// Authored finish intent, not measured manufacturer texture data. Fine response
+// is deliberately subtle: the W62 centimetre-scale metal noise looked mottled
+// in the actual browser. Cast/machined metals get no random colour staining.
 export const SURFACE_PROFILES=Object.freeze({
- coated:Object.freeze({wavelength:.065,roughness:.055,tone:.018}),
- pressed:Object.freeze({wavelength:.095,roughness:.035,tone:.010}),
- cast:Object.freeze({wavelength:.030,roughness:.12,tone:.045}),
- machined:Object.freeze({wavelength:.055,roughness:.040,tone:.008}),
- rubber:Object.freeze({wavelength:.040,roughness:.050,tone:.012}),
- upholstery:Object.freeze({wavelength:.035,roughness:.065,tone:.025})
+ coated:Object.freeze({wavelength:.020,roughness:.012,tone:.003}),
+ pressed:Object.freeze({wavelength:.012,roughness:.012,tone:0}),
+ cast:Object.freeze({wavelength:.008,roughness:.020,tone:0}),
+ machined:Object.freeze({wavelength:.010,roughness:.010,tone:0}),
+ rubber:Object.freeze({wavelength:.012,roughness:.015,tone:.003}),
+ upholstery:Object.freeze({wavelength:.010,roughness:.025,tone:.006})
 });
 
 const finishFragment=/* glsl */`
@@ -73,7 +74,7 @@ export class FinishMaterial extends THREE.MeshPhysicalMaterial {
   this.surfaceProfile={...(source.surfaceProfile??SURFACE_PROFILES[this.finish])};
   return this;
  }
- customProgramCacheKey(){return 'sea-metres-finish-v2';}
+ customProgramCacheKey(){return 'sea-metres-finish-v3';}
  onBeforeCompile(shader){
   const vertexAnchor='#include <project_vertex>',fragmentAnchor='#include <roughnessmap_fragment>',colorAnchor='#include <color_fragment>';
   if(!shader.vertexShader.includes(vertexAnchor)||!shader.fragmentShader.includes(fragmentAnchor)||!shader.fragmentShader.includes(colorAnchor))throw new Error('SEA finish shader anchors changed');
@@ -106,7 +107,7 @@ export function materials(){
   paint:finished('#626e51',.53,0,'coated',{clearcoat:.10,clearcoatRoughness:.48}),
   edge:finished('#394136',.61,.08,'pressed'),
   steel:finished('#a0a7a5',.29,.92,'machined'),
-  darkSteel:finished('#41494a',.46,.86,'cast'),
+  darkSteel:finished('#41494a',.62,.86,'cast'),
   rubber:finished('#222622',.82,0,'rubber'),
   // Reflection-only glazing avoids transmission render targets in the shared
   // model/UI renderer. Cabin factories can retain their transparent variants.
@@ -115,7 +116,7 @@ export function materials(){
   lamp:plain('#e2e9db',.22,0,{clearcoat:.30,clearcoatRoughness:.14}),
   red:plain('#a94432',.39,0,{clearcoat:.16,clearcoatRoughness:.28}),
   pressedSteel:finished('#828c87',.40,.88,'pressed'),
-  castSteel:finished('#596160',.55,.84,'cast'),
+  castSteel:finished('#596160',.66,.84,'cast'),
   upholstery:finished('#343a32',.91,0,'upholstery',{sheen:.20,sheenColor:'#565d4d',sheenRoughness:.90})
  };
  const names={paint:'powder coated metal',edge:'coated frame metal',steel:'machined steel',darkSteel:'cast dark steel',rubber:'moulded rubber',glass:'optical glass',amber:'amber lamp lens',lamp:'clear lamp lens',red:'red lamp lens',pressedSteel:'pressed steel',castSteel:'cast steel',upholstery:'woven seat upholstery'};

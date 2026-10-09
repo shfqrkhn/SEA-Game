@@ -115,7 +115,7 @@ function phase(p){
 
 function saveState(){
  if(recoveryBlocked)return false;if(!state.sessionCode)return true;
- try{state.lang=lang;sessionStorage.setItem(STORE_KEY,JSON.stringify({...state,privateEntry:false}));return true}catch{storageFailed=true;storageNotice('common.refresh');return false}
+ try{state.lang=lang;const raw=JSON.stringify({...state,privateEntry:false});if(sessionStorage.getItem(STORE_KEY)!==raw)sessionStorage.setItem(STORE_KEY,raw);return true}catch{storageFailed=true;storageNotice('common.refresh');return false}
 }
 
 function restoreState(){
@@ -280,8 +280,11 @@ function acceptTeamBid(id,intended){
 }
 
 function renderBidRoster(){
- const next=nextOffer();$('#bidRoster').innerHTML=state.teams.map(tm=>{const used=tm.purchasesByRound[state.round],left=2-used,leader=state.leader===tm.id,eligible=biddingActive()&&SEA_AUCTION.canWin(used)&&!leader&&next!==null;
- return `<div class="ledger-row bid-row"><strong>${t('common.team',{n:tm.id})}</strong><span class="bid-team-meta">${esc(MISSIONS[tm.mission][lang])}<small>${t('common.wins',{used,left})}</small></span><button class="btn ${leader?'good':'primary'}" data-bid-team="${tm.id}" data-bid-amount="${next??''}" ${eligible?'':'disabled'}>${leader?t('auction.leading',{amount:money(state.currentBid)}):t('auction.accept',{amount:next===null?'-':money(next)})}</button></div>`}).join('');
+ const active=biddingActive(),next=active?nextOffer():null,entry=effectiveEntry();
+ const status=state.phase!=='auction'?t('phase.'+state.phase):entry?(entry.kind==='SALE'?t('auction.committed',{team:entry.team,amount:money(entry.price)}):t('auction.unsoldCommitted')):state.pausedRemaining!==null?timerText():timedOut()?t('auction.timeExpired'):t('common.ready');
+ $('#bidRoster').innerHTML=state.teams.map(tm=>{const used=tm.purchasesByRound[state.round],left=2-used,leader=state.leader===tm.id,eligible=active&&SEA_AUCTION.canWin(used)&&!leader&&next!==null;
+ const label=active&&next!==null?(leader?t('auction.leading',{amount:money(state.currentBid)}):t('auction.accept',{amount:money(next)})):status+(!entry&&leader?' · '+t('auction.leading',{amount:money(state.currentBid)}):'');
+ return `<div class="ledger-row bid-row"><strong>${t('common.team',{n:tm.id})}</strong><span class="bid-team-meta">${esc(MISSIONS[tm.mission][lang])}<small>${t('common.wins',{used,left})}</small></span><button class="btn ${leader?'good':'primary'}" data-bid-team="${tm.id}" data-bid-amount="${next??''}" ${eligible?'':'disabled'}>${label}</button></div>`}).join('');
  $$('[data-bid-team]').forEach(b=>b.onclick=()=>acceptTeamBid(Number(b.dataset.bidTeam),Number(b.dataset.bidAmount)));
 }
 

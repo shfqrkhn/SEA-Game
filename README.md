@@ -43,6 +43,8 @@ The [artwork provenance and acceptance record](docs/ARTWORK_PROVENANCE.md) disti
 
 ## Source and reproducible builds
 
+Game candidate version: **3.1.0**. The [version policy](docs/VERSIONING.md) increments patch/minor/major according to the largest published change. Both HTML badges and backup metadata derive from the single `APP.version`; save schema, rules and deck versions remain separate.
+
 The canonical development inputs are `source/shared/engine.js`, `source/shared/presentation.js`, `source/shared/styles.css`, `source/instructor.js`, `source/student.js`, the two `source/*.template.html` files and the 77 canonical SVGs under `assets/v1/`. Build-time `tools/artwork-source.mjs` embeds the canonical vectors into each application; controllers do not carry duplicated vector tables. Shared presentation supplies in-page confirmations, notifications, language switching and artwork rendering. The root HTML applications remain independently usable, self-contained distribution artifacts.
 
 - `node tools/build.mjs` regenerates both standalone applications with no dependencies.

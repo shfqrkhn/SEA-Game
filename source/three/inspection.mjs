@@ -2,7 +2,7 @@ import * as THREE from 'three';
 // Cutaway owns temporary materials. Original shared paints and configuration
 // translucency survive repeated mode changes, model replacement and disposal.
 export function prepareCutaway(root){
- const shells=[];root.traverse(mesh=>{if(mesh.isMesh&&mesh.name==='hull shell')shells.push({mesh,material:mesh.material,castShadow:mesh.castShadow,temporary:null});});
+ const shells=[];root.traverse(mesh=>{if(mesh.isMesh&&(mesh.name==='hull shell'||mesh.userData.cutawayShell===true))shells.push({mesh,material:mesh.material,castShadow:mesh.castShadow,temporary:null});});
  let enabled=false;
  function apply(next){
   if(enabled===!!next)return;enabled=!!next;
@@ -25,6 +25,7 @@ export function prepareInspection(root){
  const prefix=(root.userData.assetId||'').split('-')[0];let wheel=0;
  function classify(o){
   if(o.userData.mountedCard)return 'equipment:'+o.userData.mountedCard;
+  if(typeof o.userData.inspectionKey==='string'&&/^engine:(?:head|block|sump|rotating|transmission|intake|exhaust|cooling|services|skid)$/.test(o.userData.inspectionKey))return o.userData.inspectionKey;
   if(o.name==='run-flat wheel')return 'wheel:'+ ++wheel;
   if(/crane/.test(o.name))return 'crane';
   if(/driver controls/.test(o.name))return 'cockpit';
@@ -47,7 +48,16 @@ export function prepareInspection(root){
  for(const o of original){const key=classify(o);if(!buckets.has(key)){const g=new THREE.Group();g.name=key;root.add(g);buckets.set(key,g);}buckets.get(key).add(o);}
  root.updateWorldMatrix(true,true);const bounds=new THREE.Box3().setFromObject(root),center=bounds.getCenter(new THREE.Vector3()),size=bounds.getSize(new THREE.Vector3());
  const parts=[...buckets].map(([key,object],index)=>{const b=new THREE.Box3().setFromObject(object),c=b.getCenter(new THREE.Vector3()),d=c.clone().sub(center);let vector;
-  if(key.startsWith('wheel:'))vector=new THREE.Vector3(0,-.15,Math.sign(c.z)||1).multiplyScalar(size.z*.4);
+  if(key==='engine:rotating'||key==='engine:skid')vector=new THREE.Vector3();
+  else if(key==='engine:head')vector=new THREE.Vector3(0,size.y*.46,0);
+  else if(key==='engine:block')vector=new THREE.Vector3(0,size.y*.18,-size.z*.38);
+  else if(key==='engine:sump')vector=new THREE.Vector3(0,-size.y*.25,0);
+  else if(key==='engine:transmission')vector=new THREE.Vector3(-size.x*.28,0,0);
+  else if(key==='engine:cooling')vector=new THREE.Vector3(size.x*.25,0,0);
+  else if(key==='engine:intake')vector=new THREE.Vector3(0,size.y*.20,-size.z*.38);
+  else if(key==='engine:exhaust')vector=new THREE.Vector3(0,size.y*.15,size.z*.40);
+  else if(key==='engine:services')vector=new THREE.Vector3(0,0,-size.z*.30);
+  else if(key.startsWith('wheel:'))vector=new THREE.Vector3(0,-.15,Math.sign(c.z)||1).multiplyScalar(size.z*.4);
   else if(key==='body'||key==='roof')vector=new THREE.Vector3(0,size.y*.55,0);
   else if(key==='chassis'||key==='frame')vector=new THREE.Vector3(0,-size.y*.26,0);
   else if(key==='glass')vector=new THREE.Vector3(size.x*.18,size.y*.25,0);

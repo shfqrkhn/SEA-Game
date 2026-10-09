@@ -97,8 +97,9 @@ function casing(g,m,profile,pos,axis='x',name='cast transmission casing'){
 function engine(m,v){
  const g=group('inline diesel power pack'),compact=v===5,cast=m.castSteel||m.darkSteel,pressed=m.pressedSteel||m.steel;
  const rounded=(material,size,pos,radius,name)=>{const o=new THREE.Mesh(new RoundedBoxGeometry(...size,3,radius),material);o.position.set(...pos);o.name=name;o.castShadow=o.receiveShadow=true;g.add(o);return o;};
- const section=(outline,length,x,material,name)=>{
+ const section=(outline,length,x,material,name,holes=[])=>{
   const shape=new THREE.Shape();outline.forEach(([z,y],i)=>i?shape.lineTo(z,y):shape.moveTo(z,y));shape.closePath();
+  for(const outline of holes){const hole=new THREE.Path();outline.forEach(([z,y],i)=>i?hole.lineTo(z,y):hole.moveTo(z,y));hole.closePath();shape.holes.push(hole);}
   const geometry=new THREE.ExtrudeGeometry(shape,{depth:length,steps:1,bevelEnabled:true,bevelSize:.009,bevelThickness:.007,bevelSegments:3});
   const p=geometry.attributes.position;for(let i=0;i<p.count;i++)p.setXYZ(i,x+p.getZ(i),p.getY(i),p.getX(i));geometry.computeVertexNormals();
   const materialClone=material.clone();materialClone.side=THREE.DoubleSide;const o=new THREE.Mesh(geometry,materialClone);o.name=name;o.castShadow=o.receiveShadow=true;g.add(o);return o;
@@ -108,13 +109,17 @@ function engine(m,v){
  for(const z of [-.38,.38])box(g,m.edge,[2.17,.09,.085],[-.20,.11,z],'power pack skid rail');
  for(const x of [-1.08,.77])box(g,m.edge,[.10,.07,v===4?1.35:.85],[x,.13,v===4?-.24:0],'skid crossmember');
  // Original faceted foundry sections, with a bulged crankcase and sloping sump.
- section([[-.22,.31],[-.26,.40],[-.25,.58],[-.205,.70],[.205,.70],[.25,.58],[.26,.40],[.22,.31]],.96,-.48,m.paint,'cast crankcase with tapered shoulders');
- section([[-.215,.315],[-.215,.265],[-.145,.195],[.145,.195],[.215,.265],[.215,.315]],.85,-.425,cast,'pressed deep oil sump');
+ section([[-.22,.31],[-.26,.40],[-.25,.58],[-.205,.70],[.205,.70],[.25,.58],[.26,.40],[.22,.31]],.96,-.48,m.paint,'cast crankcase with tapered shoulders',[[[-.18,.345],[.18,.345],[.21,.41],[.20,.58],[.165,.677],[-.165,.677],[-.20,.58],[-.21,.41]]]);
+ section([[-.215,.315],[-.215,.265],[-.145,.195],[.145,.195],[.215,.265],[.215,.315]],.85,-.425,cast,'pressed deep oil sump',[[[-.185,.298],[.185,.298],[.128,.215],[-.128,.215]]]);
  rounded(pressed,[.91,.025,.46],[0,.317,0],.010,'continuous sump sealing flange');
  cylinder(g,m.steel,.018,.026,[.27,.198,0],'y',.018,6).name='seated sump drain plug';
  rounded(m.paint,[1.00,.175,.49],[0,.7875,0],.025,'cast cylinder head with port band');
  rounded(m.darkSteel,[1.018,.019,.455],[0,.881,0],.006,'rocker cover continuous gasket');
- section([[-.222,.885],[-.222,.935],[-.17,1.015],[.17,1.015],[.222,.935],[.222,.885]],.99,-.495,m.edge,'formed crowned rocker cover');
+ rounded(m.edge,[.99,.126,.438],[0,.948,0],.030,'formed crowned rocker cover');
+ for(const s of [-1,1])rounded(m.edge,[.92,.019,.020],[0,.976,s*.204],.007,'rocker cover pressed perimeter return');
+ for(const x of [-.40,-.24,-.08,.08,.24,.40])rounded(m.edge,[.055,.013,.31],[x,1.011,0],.006,'rocker cover pressed transverse stiffener');
+ cylinder(g,m.darkSteel,.037,.029,[.29,1.024,0],'y',.037,24).name='rocker cover seated oil filler cap';
+ for(const x of [-.31,.31]){const eye=new THREE.Mesh(new THREE.TorusGeometry(.024,.007,8,20),m.steel);eye.position.set(x,.983,.216);eye.name='head lifting eye seated tab';g.add(eye);box(g,m.edge,[.055,.035,.020],[x,.955,.211],'head lifting eye foot');}
  for(const x of [-.40,-.24,-.08,.08,.24,.40]){
   for(const s of [-1,1]){
    section([[s*.237,.365],[s*.272,.405],[s*.257,.62],[s*.218,.69],[s*.211,.69],[s*.237,.40]],.032,x-.016,m.paint,'cast crankcase buttress');
@@ -147,11 +152,24 @@ function engine(m,v){
  for(const x of [-.22,.055]){cylinder(g,m.steel,.125,.018,[x,1.18,-.39],'x',.125,32).name='air cleaner mounting band';rod(g,m.edge,[x,1.07,-.39],[x,.87,-.355],.018).name='air cleaner plenum bracket';}
  pipe(m.rubber,[[-.315,1.18,-.39],[-.59,1.16,-.37],[-.61,.96,.23],[-.52,.755,.49],[-.412,.755,.49]],.061,'air cleaner outlet to compressor inlet');
  pipe(m.steel,[[-.275,.745,.49],[-.27,.56,.34],[-.27,.39,.24]],.010,'turbo oil return into crankcase');
- // Flywheel face meets the block; the taper and longitudinal ribs belong to the casing.
- casing(g,cast,[[0,-.03],[.20,-.03],[.27,.025],[.29,.13],[.265,.26],[.175,.54],[.125,.69],[0,.69]],[-.48,.51,0],'x','cast flywheel and transmission casing');
- for(const x of [-.58,-.70,-.83,-.98])cylinder(g,m.darkSteel,x<-.80?.185:.275,.015,[x,.51,0],'x',x<-.80?.185:.275,32).name='transmission casting stiffening ring';
- for(let i=0;i<6;i++){const a=i*Math.PI/3;rod(g,cast,[-.61,.51+Math.cos(a)*.265,Math.sin(a)*.265],[-1.10,.51+Math.cos(a)*.130,Math.sin(a)*.130],.017).name='transmission longitudinal casting rib';}
- bolts(g,m.steel,[-.514,.51,0],.243,10,'x',.010);cylinder(g,m.steel,.083,.08,[-1.19,.51,0],'x').name='transmission output coupling';
+ // Short bell housing meets an irregular, serviceable gear case rather than a cone.
+ casing(g,cast,[[0,-.025],[.23,-.025],[.275,0],[.280,.09],[.260,.17],[.225,.24],[0,.24]],[-.48,.425,0],'x','cast flywheel and transmission casing');
+ rounded(cast,[.405,.36,.40],[-.915,.505,0],.045,'transmission main gear case');
+ rounded(cast,[.37,.10,.32],[-.895,.313,0],.025,'transmission lower oil pan');
+ rounded(pressed,[.33,.024,.34],[-.905,.699,0],.009,'transmission bolted top service closure');
+ for(const s of [-1,1]){
+  rounded(cast,[.33,.235,.026],[-.915,.507,s*.207],.025,'transmission removable side cover');
+  for(const x of [-1.065,-.905,-.765])for(const y of [.410,.610])cylinder(g,m.steel,.009,.023,[x,y,s*.224],'z',.009,6).name='transmission side cover seated fastener';
+  for(const y of [.370,.445,.535,.630])box(g,cast,[.36,.017,.026],[-.915,y,s*.197],'transmission longitudinal casting rib');
+ }
+ for(const x of [-1.085,-.965,-.845,-.745]){
+  box(g,cast,[.020,.34,.028],[x,.505,-.192],'transmission vertical casting web');box(g,cast,[.020,.34,.028],[x,.505,.192],'transmission vertical casting web');
+  for(const s of [-1,1])cylinder(g,m.steel,.008,.017,[x,.714,s*.125],'y',.008,6).name='transmission top cover seated fastener';
+ }
+ for(const x of [-.515,-.715,-1.115]){const y=x>-.74?.425:.51;cylinder(g,pressed,x>-.74?.275:.17,.020,[x,y,0],'x',x>-.74?.275:.17,40).name='transmission machined split flange';bolts(g,m.steel,[x-.015,y,0],x>-.74?.245:.145,8,'x',.009);}
+ cylinder(g,cast,.108,.090,[-1.14,.51,0],'x',.108,32).name='transmission rear output bearing housing';
+ cylinder(g,m.steel,.083,.08,[-1.19,.51,0],'x').name='transmission output coupling';
+ cylinder(g,m.steel,.012,.017,[-.89,.708,0],'y',.012,6).name='transmission service filler plug';
  // Cooling pack: fin passages, folded frame, an open fan shroud and driven hub.
  rounded(m.darkSteel,[.085,.82,.69],[.80,.665,0],.008,'radiator dark fin substrate');
  for(const z of [-.389,.389])rounded(pressed,[.135,.88,.075],[.80,.665,z],.018,'radiator formed side tank');
@@ -194,11 +212,79 @@ function engine(m,v){
   section([[s*.235,.36],[s*.42,.258],[s*.42,.25],[s*.33,.25],[s*.235,.29]],.115,x-.0575,m.paint,'cast engine mounting ear');
   cylinder(g,m.steel,.009,.043,[x,.266,s*.38],'y',.009,6).name='engine mount seated retaining bolt';
  }
+ // Original illustrative inline-six internals share the external bore pitch.
+ // They are static construction anatomy, not a simulated or certified engine.
+ const internalStart=g.children.length;
+ cylinder(g,m.steel,.023,1.025,[0,.425,0],'x',.023,32).name='engine crankshaft main axis';
+ for(let i=0;i<6;i++){
+  const x=-.40+i*.16,phase=[0,Math.PI*2/3,Math.PI*4/3,Math.PI*4/3,Math.PI*2/3,0][i],py=.425+Math.cos(phase)*.031,pz=Math.sin(phase)*.031,pistonY=.605+Math.cos(phase)*.031;
+  const bore=new THREE.Shape();bore.absarc(0,0,.065,0,Math.PI*2,false);const hole=new THREE.Path();hole.absarc(0,0,.058,0,Math.PI*2,true);bore.holes.push(hole);
+  const geometry=new THREE.ExtrudeGeometry(bore,{depth:.255,steps:1,bevelEnabled:false,curveSegments:24}),p=geometry.attributes.position;
+  for(let n=0;n<p.count;n++)p.setXYZ(n,x+p.getX(n),.448+p.getZ(n),p.getY(n));geometry.computeVertexNormals();
+  const finish=pressed.clone();finish.side=THREE.DoubleSide;const sleeve=new THREE.Mesh(geometry,finish);sleeve.name='engine cylinder liner';sleeve.userData.inspectionKey='engine:block';g.add(sleeve);
+  cylinder(g,m.steel,.054,.066,[x,pistonY,0],'y',.054,32).name='engine piston crown and skirt';
+  for(const y of [pistonY+.018,pistonY+.027])cylinder(g,m.darkSteel,.055,.004,[x,y,0],'y',.055,32).name='piston compression ring';
+  cylinder(g,m.steel,.014,.102,[x,pistonY-.014,0],'z',.014,24).name='piston seated wrist pin';
+  rod(g,pressed,[x,py,pz],[x,pistonY-.014,0],.013).name='engine connecting rod';
+  cylinder(g,m.steel,.019,.105,[x,py,pz],'x',.019,24).name='crankshaft offset crankpin';
+  for(const dx of [-.055,.055]){
+   rod(g,cast,[x+dx,.425,0],[x+dx,py,pz],.035).name='crankshaft connected web';
+   cylinder(g,cast,.049,.023,[x+dx,.425-.016*Math.cos(phase),-.016*Math.sin(phase)],'x',.049,24).name='crankshaft counterweight';
+  }
+ }
+ for(const x of [-.48,-.32,-.16,0,.16,.32,.48]){
+  cylinder(g,pressed,.036,.030,[x,.425,0],'x',.036,24).name='crankshaft main bearing journal';
+  box(g,cast,[.035,.055,.17],[x,.3815,0],'crankshaft bearing cap');
+ }
+ cylinder(g,m.steel,.215,.035,[-.525,.425,0],'x',.215,40).name='engine crankshaft seated flywheel';
+ cylinder(g,m.steel,.024,.59,[-.8175,.425,0],'x',.024,24).name='transmission connected input shaft';
+ cylinder(g,m.steel,.027,.405,[-.9875,.51,0],'x',.027,24).name='transmission connected output shaft';
+ for(const [y,phase]of [[.425,0],[.51,Math.PI/16]]){
+  cylinder(g,pressed,.034,.055,[-.885,y,0],'x',.034,32).name='transmission illustrative meshing gear';
+  for(let i=0;i<16;i++){const a=i*Math.PI/8+phase,o=box(g,pressed,[.055,.014,.011],[-.885,y+Math.cos(a)*.039,Math.sin(a)*.039],'transmission gear seated tooth');o.rotation.x=a;}
+ }
+ for(const o of g.children.slice(internalStart))o.userData.inspectionKey??='engine:rotating';
+ const headInternalStart=g.children.length;
+ rod(g,m.steel,[-.47,.933,0],[.47,.933,0],.012).name='head supported rocker shaft';
+ for(const x of [-.40,-.24,-.08,.08,.24,.40]){
+  box(g,cast,[.028,.041,.054],[x,.912,0],'rocker shaft seated pedestal');
+  for(const s of [-1,1]){
+   cylinder(g,m.steel,.007,.16,[x,.841,s*.080],'y',.007,16).name='head valve stem';
+   cylinder(g,m.steel,.025,.009,[x,.765,s*.080],'y',.025,24).name='head valve seated disc';
+   const spring=[];for(let i=0;i<=40;i++){const a=i/40*Math.PI*10;spring.push([x+Math.cos(a)*.013,.866+i/40*.040,s*.080+Math.sin(a)*.013]);}
+   pipe(m.darkSteel,spring,.003,'valve retained compression spring');
+   rod(g,pressed,[x,.934,0],[x,.923,s*.080],.012).name='rocker arm on shaft and valve';
+  }
+ }
+ for(const o of g.children.slice(headInternalStart))o.userData.inspectionKey='engine:head';
+ // Common rail mounts on the block. Each steel feed ends at a seated injector.
+ pipe(m.steel,[[-.42,.65,-.288],[.42,.65,-.288]],.012,'supported fuel common rail');
+ for(const x of [-.34,.31])rod(g,m.edge,[x,.65,-.288],[x,.60,-.240],.010).name='fuel rail block support';
+ rounded(cast,[.11,.14,.10],[.33,.583,-.265],.018,'seated fuel metering pump');
+ pipe(m.rubber,[[.11,.570,-.285],[.22,.565,-.30],[.33,.583,-.265]],.011,'filter housing to fuel metering pump');
+ pipe(m.steel,[[.33,.583,-.265],[.35,.65,-.288]],.011,'fuel metering pump to common rail');
+ for(const x of [-.40,-.24,-.08,.08,.24,.40]){
+  cylinder(g,cast,.016,.034,[x,.881,-.075],'y',.016,20).name='head seated fuel injector';
+  pipe(m.steel,[[x,.65,-.288],[x,.73,-.29],[x,.890,-.19],[x,.895,-.075]],.005,'common rail feed into injector');
+ }
  if(v===4){
   rounded(m.paint,[.76,.68,.40],[-.54,.535,-.78],.05,'long range fuel reservoir');
   for(const x of [-.79,-.29]){box(g,m.darkSteel,[.04,.70,.42],[x,.535,-.78],'fuel tank restraint');box(g,m.edge,[.18,.060,.45],[x,.170,-.78],'fuel tank supported saddle');}
   cylinder(g,m.steel,.045,.040,[-.54,.889,-.78],'y',.045,24).name='fuel reservoir filler cap';
   pipe(m.rubber,[[-.28,.25,-.62],[-.18,.33,-.50],[.11,.50,-.35],[.11,.57,-.285]],.014,'reservoir fuel supply seated at filter housing');
+ }
+ // Explicit semantic islands retain all authored coordinates. Inspection owns
+ // their temporary separation; renderer code cannot rewrite engine anatomy.
+ const islands=new Map(),enclosures=new Set(['cast crankcase with tapered shoulders','pressed deep oil sump','continuous sump sealing flange','cast cylinder head with port band','formed crowned rocker cover','cast flywheel and transmission casing','transmission main gear case','transmission lower oil pan','transmission removable side cover','transmission bolted top service closure','transmission machined split flange']);
+ for(const o of [...g.children]){
+  if(enclosures.has(o.name))o.userData.cutawayShell=true;
+  let key=o.userData.inspectionKey;
+  if(!key){
+   const n=o.name;
+   key=/transmission/.test(n)?'engine:transmission':/sump/.test(n)?'engine:sump':/rocker|head lifting|head seated fuel/.test(n)?'engine:head':/cylinder head|manifold seated port|intake runner|exhaust branch/.test(n)?'engine:head':/radiator|cooling fan|shroud|coolant|water pump/.test(n)?'engine:cooling':/air cleaner|compressor housing|compressor delivery|charge pipe/.test(n)?'engine:intake':/turbine|turbo|exhaust/.test(n)?'engine:exhaust':/skid|mounting shoe|mounting isolator|mount seated/.test(n)?'engine:skid':/fuel|filter|dipstick|reservoir|alternator|pulley|accessory|timing/.test(n)?'engine:services':'engine:block';
+  }
+  if(!islands.has(key)){const island=group(key);island.userData.inspectionKey=key;islands.set(key,island);g.add(island);}
+  islands.get(key).add(o);
  }
  if(compact)g.scale.setScalar(.78);return g;
 }

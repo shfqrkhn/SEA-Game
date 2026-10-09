@@ -52,10 +52,10 @@ for(const text of ['<label data-i18n="missing"></label>','<input data-i18n-place
 const source=read('source/instructor.js');
 const engine=read('source/shared/engine.js');
 new Script(engine,{filename:'source/shared/engine.js'});
-const backupApi=runInNewContext(engine+';({makeBackup,parseBackup})');
+const backupApi=runInNewContext(engine+';({makeBackup,parseBackup,APP})');
 const backupBody={schema:3,phase:'planning',lang:'en',sessionCode:'SEA3-T2-0123456789ABCDEF',marker:'fixture'};
 const studentBackup=backupApi.makeBackup('STUDENT',backupBody);
-assert.deepEqual(JSON.parse(studentBackup),{format:'SEA-GAME-BACKUP',version:1,appVersion:'3.0.0-local',ruleset:'STANDARD',deck:'synthetic-v1',schema:3,sessionCode:backupBody.sessionCode,role:'STUDENT',state:backupBody},'Backup envelopes bind role, app, ruleset, deck, schema and session identity');
+assert.deepEqual(JSON.parse(studentBackup),{format:'SEA-GAME-BACKUP',version:1,appVersion:backupApi.APP.version,ruleset:'STANDARD',deck:'synthetic-v1',schema:3,sessionCode:backupBody.sessionCode,role:'STUDENT',state:backupBody},'Backup envelopes bind role, app, ruleset, deck, schema and session identity');
 assert.deepEqual(JSON.parse(JSON.stringify(backupApi.parseBackup(studentBackup,'STUDENT',x=>({...x,validated:true})))),{...backupBody,validated:true},'A validated matching-role backup returns the validator reconstruction');
 let crossRoleValidated=false;
 assert.throws(()=>backupApi.parseBackup(studentBackup,'INSTRUCTOR',x=>{crossRoleValidated=true;return x}),/invalid-state/,'Cross-role backups are rejected before validation');
@@ -71,6 +71,11 @@ for(const [field,value] of [['ruleset','OTHER'],['deck','other-deck'],['schema',
 }
 const compatiblePatch=JSON.parse(studentBackup);compatiblePatch.appVersion='3.0.1-local';
 assert.ok(backupApi.parseBackup(JSON.stringify(compatiblePatch),'STUDENT',x=>x),'A later app patch with the same explicit rules, deck and schema remains importable');
+const legacyBackup={...JSON.parse(studentBackup),appVersion:'3.0.0-local'};
+const minorBackupApi=runInNewContext(engine.replace(/version:"[^"]+",ruleset/, 'version:"3.1.0",ruleset')+';({makeBackup,parseBackup,APP})');
+assert.equal(minorBackupApi.APP.version,'3.1.0');
+assert.deepEqual(JSON.parse(JSON.stringify(minorBackupApi.parseBackup(JSON.stringify(legacyBackup),'STUDENT',x=>x))),backupBody,'Legacy schema-3 backup survives an app-only minor bump');
+assert.equal(JSON.parse(minorBackupApi.makeBackup('STUDENT',backupBody)).appVersion,'3.1.0','New backup exports current minor version');
 console.log('Versioned, bounded, role-specific backup envelope examples PASS');
 for(const [wins,eligible] of [[0,true],[1,true],[2,false],[3,false],[-1,false],[1.5,false]]){
  const actual=runInNewContext(engine+';SEA_AUCTION.canWin('+wins+')');
@@ -225,7 +230,8 @@ for(const role of ['instructor','student']){
 }
 const canonicalRules=JSON.parse(runInNewContext(sharedEngineSource+'\nJSON.stringify({APP,SLOT_ORDER,LABELS,MISSIONS,POOLS,MISSION_IDS})',{}));
 const rulesBaseline=JSON.parse(read('docs/evidence/rules-baseline.json'));
-assert.deepEqual(canonicalRules.APP,rulesBaseline.app);assert.deepEqual(canonicalRules.SLOT_ORDER,rulesBaseline.slots);
+const {version:runtimeVersion,...runtimeRuleConstants}=canonicalRules.APP,{version:baselineVersion,...baselineRuleConstants}=rulesBaseline.app;
+assert.equal(runtimeVersion,backupApi.APP.version);assert.equal(typeof baselineVersion,'string');assert.deepEqual(runtimeRuleConstants,baselineRuleConstants,'An app-only version bump does not change approved rule constants');assert.deepEqual(canonicalRules.SLOT_ORDER,rulesBaseline.slots);
 assert.deepEqual(canonicalRules.MISSIONS,rulesBaseline.missions);assert.deepEqual(canonicalRules.POOLS,rulesBaseline.pools);
 assert.equal(canonicalRules.APP.rounds,7);assert.equal(canonicalRules.APP.lotsPerRound,10);
 assert.deepEqual(canonicalRules.MISSION_IDS,Object.keys(canonicalRules.MISSIONS));
@@ -829,6 +835,31 @@ for(const [id,label] of [['nextBidMetric','auction.nextLegal'],['preCommitCorrec
  const template=read('source/instructor.template.html');assert.match(template,new RegExp('<(?:div|details) id="'+id+'"[^>]*>[\\s\\S]*?data-i18n="'+label+'"'),'State visibility host retains native localized heading: '+id);
 }
 console.log('Instructor actual commit renderer gates next bid, precommit drafts and postcommit correction by canonical availability PASS');
+// Exercise the real roster with real EN/FR translations, not structural label checks.
+{
+ const i18n=runInNewContext(instructorSource.match(/const I18N=([^\n]+);/)[0]+';I18N',{});
+ for(const lang of ['en','fr'])for(const fixture of [
+  {name:'ready',open:false,key:'common.ready'},
+  {name:'paused',open:true,pausedRemaining:3000,key:'auction.paused'},
+  {name:'expired',open:true,expired:true,key:'auction.timeExpired'},
+  {name:'sale',open:false,entry:{kind:'SALE',team:1,price:40000000},key:'auction.committed'},
+  {name:'unsold',open:false,entry:{kind:'UNSOLD'},key:'auction.unsoldCommitted'},
+  {name:'build',phase:'build',open:false,key:'phase.build'},
+  {name:'live',open:true,live:true,key:'auction.accept'}
+ ]){
+  const state={phase:'auction',open:fixture.open,pausedRemaining:null,leader:1,currentBid:40000000,round:0,teams:[{id:1,mission:'COMBAT',purchasesByRound:[1]},{id:2,mission:'RECCE',purchasesByRound:[0]}],...fixture};
+  const roster={innerHTML:''},buttons=[];
+  const translate=(key,vars={})=>Object.entries(vars).reduce((text,[k,v])=>text.replaceAll('{'+k+'}',v),i18n[lang][key]);
+  const render=runInNewContext(extractFunction(instructorSource,'renderBidRoster')+';renderBidRoster',{state,lang,nextOffer:()=>45000000,biddingActive:()=>!!fixture.live,effectiveEntry:()=>fixture.entry||null,timedOut:()=>!!fixture.expired,timerText:()=>translate('auction.paused',{seconds:3}),t:translate,money:n=>String(n/100),esc:String,MISSIONS:{COMBAT:{en:'Combat',fr:'Combat'},RECCE:{en:'Recon',fr:'Reconnaissance'}},SEA_AUCTION:{canWin:n=>n<2},$:()=>roster,$$:()=>buttons,acceptTeamBid(){}});
+  render();const matches=[...roster.innerHTML.matchAll(/<button[^>]*data-bid-amount="([^"]*)"([^>]*)>([^<]*)<\/button>/g)];assert.equal(matches.length,2);
+  for(const match of matches){assert.equal(match[1],fixture.live?'45000000':'',lang+' '+fixture.name+' exposes offer dataset only during live bidding');if(!fixture.live)assert.match(match[2],/disabled/)}
+  const expected=translate(fixture.key,{seconds:3,team:1,amount:fixture.live?'450000':'400000'});
+  assert.ok(matches[1][3].includes(expected),lang+' '+fixture.name+' nonleader shows authoritative status');
+  if(!fixture.live)assert.ok(!roster.innerHTML.includes(translate('auction.accept',{amount:'450000'})),lang+' '+fixture.name+' does not advertise unavailable offer');
+  assert.ok(roster.innerHTML.includes(lang==='en'?'Recon':'Reconnaissance'),'Mission context retained');assert.match(roster.innerHTML,/bid-team-meta/);
+ }
+}
+console.log('Instructor actual bilingual roster distinguishes ready, paused, expired, committed and live bidding PASS');
 const bidNames=['effectiveEntry','committed','timedOut','biddingActive','currentCard','nextOffer','acceptTeamBid'];
 const bidSource=sharedEngineSource+'\n'+bidNames.map(name=>extractFunction(instructorSource,name)).join('\n')+'\n({biddingActive,currentCard,nextOffer,acceptTeamBid})';
 let bidNow=1000;
@@ -1119,6 +1150,11 @@ for(const role of ['INSTRUCTOR','STUDENT']){
  await reader({size:bytes+1,text:async()=>padded+' '});assert.equal(calls.commits,1,role+' rejects one extra text unit before staging');assert.deepEqual(calls.statuses,['backup.invalid']);assert.equal(context.pendingBackupImport,null);
  console.log(role+' exact character-bound read and UTF-8 boundary PASS: '+bytes+' bytes');
 }
+for(const [role,file,validator] of [['INSTRUCTOR',instructorFile,instructorValidator],['STUDENT',studentFile,studentValidator]]){
+ const legacy=JSON.parse(file);legacy.appVersion='3.0.0-local';
+ const restored=minorBackupApi.parseBackup(JSON.stringify(legacy),role,validator),current=backupApi.parseBackup(file,role,validator);
+ assert.deepEqual(JSON.parse(JSON.stringify(restored)),JSON.parse(JSON.stringify(current)),role+' real schema-3 validator preserves legacy backup after app-only minor version bump');
+}
 const studentRoundTrip=backupApi.parseBackup(studentFile,'STUDENT',studentValidator);
 assert.equal(studentRoundTrip.lang,'fr','Student backup preserves the selected language');
 assert.equal(studentRoundTrip.plan,'fixture plan','Student backup preserves private planning notes');
@@ -1181,6 +1217,9 @@ for(const [role,snapshot,limit]of [['INSTRUCTOR',instructorRoundTrip,500000],['S
  assert.equal(valid.stored.get('role-store'),raw);assert.equal(valid.context.recoveryBlocked,false);
  valid.context.lang='fr';assert.equal(valid.api.saveState(),true);
  const persisted=JSON.parse(valid.stored.get('role-store'));assert.equal(persisted.lang,'fr');
+ const stableWrites=valid.calls.writes.length;
+ for(let repeat=0;repeat<20;repeat++)assert.equal(valid.api.saveState(),true);
+ assert.equal(valid.calls.writes.length,stableWrites,'Unchanged rerenders must not rewrite session storage');
  if(role==='INSTRUCTOR'){valid.context.state.privateEntry=true;valid.api.saveState();assert.equal(JSON.parse(valid.stored.get('role-store')).privateEntry,false,'Private entry never persists as projected state')}
  valid.api.exportBackup();const exported=JSON.parse(valid.calls.downloads.at(-1).raw);
  assert.equal(exported.role,role);assert.equal(exported.state.lang,'fr');assert.equal(valid.calls.statuses.at(-1),'backup.exported');
@@ -1194,7 +1233,7 @@ for(const [role,snapshot,limit]of [['INSTRUCTOR',instructorRoundTrip,500000],['S
  }
  const missing=recoveryBoundaryHarness(role);assert.equal(missing.api.restoreState(),false);assert.equal(missing.context.recoveryBlocked,false);assert.equal(missing.api.saveState(),true);assert.equal(missing.calls.writes.length,0);missing.api.exportBackup();assert.deepEqual(missing.calls.statuses,['backup.noSession']);
  const denied=recoveryBoundaryHarness(role,raw,{getDenied:true});assert.equal(denied.api.restoreState(),false);assert.equal(denied.context.storageFailed,true);assert.equal(denied.context.recoveryBlocked,false);assert.equal(denied.context.state,denied.initial);assert.equal(denied.stored.get('role-store'),raw);
- const quota=recoveryBoundaryHarness(role,raw,{setDenied:true});assert.equal(quota.api.restoreState(),true);const active=quota.context.state;assert.equal(quota.api.saveState(),false);assert.equal(quota.context.state,active);assert.equal(quota.context.storageFailed,true);assert.deepEqual(quota.calls.notices,['common.refresh']);assert.equal(quota.stored.get('role-store'),raw);quota.api.exportBackup();assert.equal(quota.calls.downloads.length,1,'Denied persistence still permits a portable backup request');
+ const quota=recoveryBoundaryHarness(role,raw,{setDenied:true});assert.equal(quota.api.restoreState(),true);const active=quota.context.state;quota.context.lang=quota.context.lang==='en'?'fr':'en';assert.equal(quota.api.saveState(),false);assert.equal(quota.context.state,active);assert.equal(quota.context.storageFailed,true);assert.deepEqual(quota.calls.notices,['common.refresh']);assert.equal(quota.stored.get('role-store'),raw);quota.api.exportBackup();assert.equal(quota.calls.downloads.length,1,'Denied persistence still permits a portable backup request');
 }
 for(const [mode,deadline,remaining,expected]of [['TIMED',15000,null,5000],['TIMED',5000,null,0],['TIMED',15000,1234,1234],['UNTIMED',null,null,0]]){
  const snapshot={...currentAuctionSave(null,1,transactionCard.start),open:true,timingMode:mode,deadline,pausedRemaining:remaining,privateEntry:true};

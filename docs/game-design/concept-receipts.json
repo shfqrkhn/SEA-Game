@@ -1039,6 +1039,73 @@
         ]
       },
       "acceptanceStatus": "open"
+    },
+    {
+      "id": "GEN-ui-auction-v1",
+      "inventoryIds": [
+        "UI-instructor-auction",
+        "UI-student-auction",
+        "UI-student-build",
+        "UI-instructor-confirmation"
+      ],
+      "status": "generated-exploratory",
+      "tool": "imagegen",
+      "date": "2026-10-09",
+      "artifact": "docs/game-design/concepts/ui-auction-v1.png",
+      "sha256": "ded388546c6baefc42551e5584576166525bbed15a5b5e913f0ba96b3e48164c",
+      "nativeOutputPath": "C:/Users/user/.codex/generated_images/01a12050-c7b3-75a0-bd82-c4c1a405dc44/exec-81a201d9-77ca-4bc8-8cf4-32af68f212f5.png",
+      "promptFile": "docs/game-design/UI_AUCTION_PROMPT.md",
+      "panels": [
+        {
+          "panel": "A",
+          "inventoryId": "UI-instructor-auction",
+          "state": "active bidding"
+        },
+        {
+          "panel": "B",
+          "inventoryId": "UI-student-auction",
+          "state": "private decision"
+        },
+        {
+          "panel": "C",
+          "inventoryId": "UI-instructor-auction",
+          "state": "committed result"
+        },
+        {
+          "panel": "D",
+          "inventoryId": "UI-student-build",
+          "state": "reconciliation"
+        },
+        {
+          "panel": "E",
+          "inventoryId": "UI-instructor-auction",
+          "state": "correction"
+        },
+        {
+          "panel": "F",
+          "inventoryId": "UI-instructor-confirmation",
+          "state": "void confirmation"
+        }
+      ],
+      "visualReview": {
+        "status": "lead pixel inspected; exploratory only",
+        "usefulDirection": [
+          "Complete six panels/captions with approximately10%horizontal and12%vertical blank margins",
+          "Clear public/private role separation, primary progression and reason-required correction",
+          "Canonical ACC-F starting350000/recovery+2, bidincrement50000"
+        ],
+        "knownMismatches": [
+          "French copy/currency/glyphs not exact canonical localization",
+          "Committed panel retains obsolete disabled Accept price labels; runtime now uses inactive result labels",
+          "Some panel controls imply cross-section shortcuts; actual reachability is not established by pixels",
+          "Generated winch fidelity and runtime layout/material matching remain open"
+        ],
+        "doesNotProve": [
+          "Remaining36 UI state concepts or all228 element concepts",
+          "Pointer/keyboard/assistive/privacy/transaction or classroom acceptance"
+        ]
+      },
+      "acceptanceStatus": "open"
     }
   ]
 }
