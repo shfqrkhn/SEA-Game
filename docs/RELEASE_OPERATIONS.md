@@ -1,6 +1,6 @@
 # SEA Game release and operations — candidate procedure
 
-This procedure is prepared for R19/R20/R23/R25/R26 and T20/T21/T24/T26/T27. It is not owner acceptance, a published release or an installed autonomous service. Current HEAD remains baseline 1b80b348ac945987fbe11db77bd7a51f3dd553aa; local modifications are an uncommitted candidate. Follow [MPES](MPES.md) and [ledger](EXECUTION_LEDGER.md) for current gate status. Rights, content/classroom, supported browser/device/accessibility, candidate CI, independent review and operational handover remain OPEN.
+This procedure is prepared for R19/R20/R23/R25/R26 and T20/T21/T24/T26/T27. It is not owner acceptance, a published release or an installed autonomous service. Refresh actual HEAD and deployment before use; the original baseline is historical. Current standalone games embed runtime/visual assets and need no sibling assets. Follow [MPES](MPES.md), [scene work graph](SCENE_GAME_PLAN.md) and [ledger](EXECUTION_LEDGER.md) for current gates. Rights, content/classroom, device/accessibility and operational acceptance remain OPEN; CI must qualify each actual candidate.
 
 ## Prepare and retain a candidate packet
 

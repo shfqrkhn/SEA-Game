@@ -486,3 +486,18 @@ main{display:block;max-width:1420px;padding:18px 22px 30px}
 @media(max-width:520px){.sea3d-inspection{gap:10px}.sea3d-inspection input{width:115px}}
 
 .sea3d-inspection .sea3d-shadow input{width:auto;accent-color:#3e624c}
+
+/* One Three.js game surface; authoritative semantic controls stay in the tree. */
+@media screen{
+ body.scene-game{overflow:hidden;background:#eef2ed}
+ .scene-game main{padding:0;max-width:none}
+ .scene-game .section.active{display:block;margin:0}
+ .scene-game .sea3d-stage{position:fixed;inset:0;margin:0;padding:0;border:0;z-index:35;background:#eef2ed}
+ .scene-game #sea3dViewport{position:absolute;inset:0;width:100%;height:100dvh;margin:0}
+ .scene-game header,.scene-game body>.status,.scene-game>.status,.scene-game>.notice,.scene-game #seaInlineConfirm,.scene-game #seaNotice,
+ .scene-game .section.active>:not(.sea3d-stage),.scene-game .sea3d-stage>:not(#sea3dViewport){position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:0!important;overflow:hidden!important;clip-path:inset(50%);white-space:nowrap}
+ .scene-game.scene-keyboard header:focus-within,.scene-game.scene-keyboard #seaInlineConfirm:focus-within,
+ .scene-game.scene-keyboard .section.active>:not(.sea3d-stage):focus-within,.scene-game.scene-keyboard .sea3d-stage>:not(#sea3dViewport):focus-within{position:fixed!important;inset:12px 12px auto auto!important;width:min(520px,calc(100vw - 24px))!important;height:auto!important;max-height:calc(100dvh - 24px);overflow:auto!important;clip-path:none;white-space:normal;padding:18px!important;background:#f8faf7;z-index:100;border:2px solid #355e49}
+ .scene-editor{position:fixed;inset:auto 16px 16px auto;width:min(390px,calc(100vw - 32px));padding:20px;background:#f5f7f1;border:2px solid #355e49;z-index:120;box-shadow:0 12px 48px #12251a33}
+ .scene-editor label{display:grid;gap:10px;font-size:14px}.scene-editor input,.scene-editor select,.scene-editor textarea{box-sizing:border-box;width:100%;font:inherit;padding:12px;min-height:44px;border:1px solid #6a826f;background:#fff;color:#192a22}.scene-editor textarea{min-height:110px}.scene-editor button{margin-top:12px}
+}

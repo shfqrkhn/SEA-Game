@@ -1,0 +1,39 @@
+{
+  "schema": 1,
+  "policy": "External receipts are projected deterministically into inventory. Generation never implies acceptance.",
+  "receipts": [{
+    "id": "GEN-interface-direction-v1",
+    "inventoryIds": ["DIRECTION-SCENE-UI"],
+    "status": "generated-exploratory",
+    "tool": "imagegen",
+    "date": "2026-10-09",
+    "artifact": "docs/game-design/concepts/interface-direction-v1.png",
+    "sha256": "553d903dbfe8da7448628eba47175fb3b646e72383ae515065eac3d4b5d25a96",
+    "nativeOutputPath": "C:/Users/user/.codex/generated_images/01a11d09-97df-7000-a3e7-a4b9bfcb4add/exec-1b6e53fb-20d8-4b95-bd61-ed0bb8ad9f79.png",
+    "promptConstraintsBrief": "Explore integrated SEA scene interface with realistic recovery vehicle hero, equipment auction, engine exploded inspection and narrow-device layout; sage/ink/brass/limestone visual language. This is a constraints brief, not the exact original tool prompt.",
+    "visualReview": {
+      "status": "exploratory-only;canonical acceptance open",
+      "usefulDirection": ["Vehicle-led hierarchy", "Quiet material palette", "Detailed formed cab and equipment packaging", "Engine inspection panel"],
+      "knownMismatches": ["Invented phase sequence differs from canonical eight phases", "Invented card titles, coins and prices differ from deck", "Six-wheel recovery hero differs from current eight-wheel model", "Inset vehicle variant differs from hero", "Labels and mechanical paths need independent reference review"],
+      "doesNotProve": ["Any of 77 identities fully concepted", "Any primary phase/role screen accepted", "Functioning UI or Three.js model", "Reference-quality or project completion"]
+    },
+    "acceptanceStatus": "open"
+  }, {
+    "id": "GEN-recovery-assemblies-v1",
+    "inventoryIds": ["RECOVERY"],
+    "status": "generated-exploratory",
+    "tool": "imagegen",
+    "date": "2026-10-09",
+    "artifact": "docs/game-design/concepts/recovery-assemblies-v1.png",
+    "sha256": "56ec064032f9738d5dbd9ddec1589f687dbb2fef29b9cd3a8db837e7e365d909",
+    "nativeOutputPath": "C:/Users/user/.codex/generated_images/01a11d09-97df-7000-a3e7-a4b9bfcb4add/exec-7c7cd5cd-e829-4367-a016-bb32fe6f45f4.png",
+    "promptConstraintsBrief": "Original eight-wheel/four-axle recovery vehicle matching current axle metadata; neutral olive/ivory/steel/rubber palette; three-quarter, side and exploded assembly views plus crane/winch/engine/brake close-ups. Headings RECOVERY/Side/Assemblies/Details; no invented prices, phases or logos. This is a constraints brief, not the exact original tool prompt.",
+    "visualReview": {
+      "status": "exploratory-only; reference and implementation acceptance open",
+      "usefulDirection": ["Four axle positions are visible in hero and side views", "Formed cab/glazing and wheel guards", "Separated major chassis/powertrain/crane assemblies", "Mechanical close-up targets for engine, brake, crane cylinder and winch"],
+      "knownMismatches": ["Generated dimensions and mechanical paths are not independently verified against primary dimensional references", "Current Three.js implementation does not yet match this concept's geometric/material fidelity", "Detailed assembly views do not prove purchased-card variant interfaces or compatibility", "Full-frame margin and close-up framing need V08 qualification"],
+      "doesNotProve": ["Any component identity separately completed", "Every recovery category assembly concept complete", "A functioning exploded Three.js assembly", "Manufacturer-certified dimensions or construction", "Visual or product acceptance"]
+    },
+    "acceptanceStatus": "open"
+  }]
+}
