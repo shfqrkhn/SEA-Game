@@ -33,7 +33,7 @@ function bridgeHarness(mount){
  vm.runInContext(engine+'\n'+presentation+'\nsea3DStart("student");',c);const flush=()=>{while(frames.length)frames.shift()()};flush();assert.equal(JSON.stringify(st),before);
  return {nodes,classes,flush,windowEvents};
 }
-const unavailable=bridgeHarness(()=>{throw Error('WebGL unavailable')});assert.equal(unavailable.nodes.get('sea3dViewport').hidden,true);assert.match(unavailable.nodes.get('sea3dStatus').textContent,/3D could not start/);assert(!unavailable.classes.has('sea3d-active'));
+const unavailable=bridgeHarness(()=>{throw Error('WebGL unavailable')});assert.equal(unavailable.nodes.get('sea3dViewport').hidden,true);assert.match(unavailable.nodes.get('sea3dStatus').textContent,/scene could not start/);assert(!unavailable.classes.has('sea3d-active'));
 let failCallback,updates=0,disposed=false;
 const restored=bridgeHarness((host,fail)=>{failCallback=fail;return {update(){updates++},view(){},dispose(){disposed=true}}});
 assert(restored.classes.has('sea3d-active'));failCallback();assert(!restored.classes.has('sea3d-active'));

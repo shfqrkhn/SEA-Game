@@ -447,29 +447,35 @@ main{max-width:1440px;padding:12px 18px 24px}
 *,:before,:after{border-radius:0!important}
 @media(max-width:900px){.auction{grid-template-columns:1fr}main{padding:10px 12px}.hero{display:block}.market{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
-/* The primary scene replaces raster illustrations while retaining readable controls. */
-.sea3d-workshop{border:1px solid #cbc9bd;border-radius:12px;background:#f4f2eb;margin-bottom:22px;padding:14px}
-.sea3d-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.sea3d-heading h2{margin:0;font-size:21px}
-.sea3d-toolbar{display:flex;align-items:end;gap:8px;flex-wrap:wrap;margin:10px 0}.sea3d-toolbar label{display:grid;gap:3px;min-width:140px}.sea3d-toolbar select{max-width:min(350px,75vw)}
-.sea3d-mode{display:flex;gap:7px;align-items:center}.sea3d-mode input{width:auto}
-#sea3dViewport{height:clamp(240px,34vw,380px);width:100%;overflow:hidden;border-radius:8px;touch-action:none}#sea3dViewport canvas{display:block;width:100%;height:100%}
-#sea3dStatus,.sea3d-workshop .muted{font-size:13px;margin:7px 0}.sea3d-active .art{display:none}
-@media print{.sea3d-workshop{display:none}.sea3d-active .art{display:block}}
-
-.sea3d-workshop [hidden]{display:none!important}
-
-/* Keep the scene visible beside the current task on desktop. */
-@media(min-width:1100px){
- main{max-width:1480px;display:grid;grid-template-columns:minmax(0,1.12fr) minmax(380px,.88fr);gap:22px;align-items:start}
- .sea3d-workshop{grid-column:2;grid-row:1;position:sticky;top:100px;align-self:start;margin:0}
- main>.section{grid-column:1;grid-row:1;min-width:0}
- main>.section>.auction,#build>.grid.two{grid-template-columns:1fr}
- #sea3dViewport{height:clamp(330px,38vw,490px)}
- main>.foot{grid-column:1/-1}
+/* One game surface: the scene travels with the active phase. */
+.sea3d-stage{background:#f0f3f0;border:1px solid #d7dfd8;padding:16px;min-width:0;margin:0}
+.sea3d-heading h2{margin:0;font-size:22px;line-height:1.25;font-weight:600;letter-spacing:-.02em}
+.sea3d-toolbar{display:flex;align-items:end;gap:10px;flex-wrap:wrap;margin:12px 0 0}
+.sea3d-toolbar label{display:grid;gap:4px;font-size:12px;flex:1;min-width:110px}
+.sea3d-toolbar select{width:100%;min-height:36px;background:#fff;border:1px solid #c8d2ca;padding:6px}
+#sea3dViewport{height:clamp(250px,35vw,440px);width:100%;overflow:hidden;touch-action:none;margin-top:8px}
+#sea3dViewport canvas{display:block;width:100%;height:100%}
+#sea3dStatus{font-size:13px;line-height:1.5;color:#41554b;margin:8px 0 0}
+#sea3d-hint{font-size:11px;color:#617067;margin:6px 0 0}
+.sea3d-stage [hidden]{display:none!important}
+.view-controls,.save-menu{position:relative;margin:0}
+.view-controls summary,.save-menu summary{cursor:pointer;font-size:12px;list-style:none;padding:8px 10px;border:1px solid var(--line);background:#fff}
+.view-controls summary::after,.save-menu summary::after{content:' ▾'}
+.view-controls[open]>.inline,.save-menu[open]>div{position:absolute;right:0;top:100%;background:#fff;border:1px solid var(--line);padding:8px;z-index:40;min-width:220px;box-shadow:0 8px 24px #182a2715}
+.save-menu[open]>div{display:grid;gap:5px;min-width:250px}.save-menu .btn{text-align:left}
+.section.active>.grid.two,.section.active>.auction{grid-template-columns:1fr}
+.hero .kicker{font-size:10px;color:#52675c;letter-spacing:.1em}.hero{gap:5px;margin-bottom:8px}.hero h2{font-weight:600;font-size:26px;letter-spacing:-.025em}.hero p{font-size:13px;line-height:1.6}
+.card,.gamecard{background:#fff;border:1px solid #e0e6e1;padding:14px}.card.subtle{background:transparent;border:0;padding:8px 0}
+.section.active .btn.primary,.section.active .btn.good{background:#285f4c;color:#fff;border-color:#285f4c}.section.active .btn.primary:hover:not(:disabled),.section.active .btn.good:hover:not(:disabled){background:#1c4b3b}
+main{display:block;max-width:1420px;padding:18px 22px 30px}
+@media(min-width:1000px){
+ .section.active{display:grid;grid-template-columns:minmax(0,1fr) minmax(410px,1.06fr);gap:14px 24px;align-items:start}
+ .section.active>.hero{grid-column:1/-1;max-width:900px;margin:0}
+ .section.active>.sea3d-stage{grid-column:2;grid-row:2/span 16;position:sticky;top:88px;align-self:start}
+ .section.active>:not(.hero):not(.sea3d-stage){grid-column:1;margin-top:0;min-width:0}
+ #sea3dViewport{height:clamp(350px,39vw,490px)}
 }
-@media print{main{display:block}.sea3d-workshop{display:none!important}}
-
-/* Embedded vector illustrations are for print; the screen game is 3D only. */
+@media(max-width:999px){.sea3d-stage{margin:12px 0}.section.active>.grid.two{grid-template-columns:1fr}main{padding:14px 12px}#sea3dViewport{height:320px}}
+@media(max-width:520px){header{position:static;flex-direction:column;align-items:stretch;gap:10px;padding:10px 12px}.brand{width:100%}.top{width:100%;gap:6px}.top .btn{font-size:12px;padding:8px}.brand h1{overflow-wrap:anywhere}.sea3d-stage{padding:12px}#sea3dViewport{height:270px}.hero h2{font-size:24px}}
 @media screen{.art{display:none!important}}
-
-@media(max-width:520px){header{position:static;flex-direction:column;align-items:stretch;gap:10px;padding:10px 12px}.brand{width:100%}.top{width:100%;gap:6px}.top .btn{font-size:12px;padding:8px}.brand h1{overflow-wrap:anywhere}}
+@media print{.sea3d-stage,.save-menu{display:none!important}.section.active{display:block}.art{display:block}}

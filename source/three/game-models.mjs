@@ -1,13 +1,14 @@
 import * as THREE from 'three';
-import {materials,createVehicle,createWinch,createWheel,box,cylinder,rod,tube,bolts} from '../../samples/threejs-recovery/models.mjs';
+import {createWinch,createWheel,box,cylinder,rod,tube,bolts} from '../../samples/threejs-recovery/models.mjs';
+import {materials,detailPart,missionBase,soften} from './realism.mjs';
 export {materials};
 export const MISSION_IDS=Object.freeze(['COMBAT','RECCE','TROOP','COMMAND','RECOVERY','MINE']);
 export const MODEL_IDS=Object.freeze([...['ACC','CAP','COM','FP','MOB','PRO','SA'].flatMap(p=>'ABCDEFG'.split('').map(l=>`${p}-${l}`)),...'ABCDEFGHIJKLMNOPQRSTU'.split('').map(l=>`SE-${l}`),'TRAIN-CAP']);
 function group(name){const g=new THREE.Group();g.name=name;return g;}
-function seat(g,m,x,z){box(g,m.edge,[.48,.12,.48],[x,.40,z]);box(g,m.rubber,[.44,.13,.43],[x,.49,z],"crew seat cushion");box(g,m.rubber,[.44,.52,.12],[x,.80,z-.19]);for(const side of [-1,1])rod(g,m.steel,[x+side*.17,.06,z],[x+side*.17,.36,z],.018);}
-function crewBay(m,v){const g=group('crew bay');box(g,m.paint,[2.35,.12,1.35],[0,.06,0]);const count=[6,6,4,8,5,5,4][v],rows=Math.ceil(count/2);for(let i=0;i<count;i++){const row=Math.floor(i/2),single=i===count-1&&count%2;seat(g,m,(row-(rows-1)/2)*.55,single?0:(i%2?1:-1)*.37);}for(const s of [-1,1]){box(g,m.paint,[2.35,.55,.065],[0,.34,s*.71]);for(const x of [-1.12,1.12])rod(g,m.edge,[x,.12,s*.69],[x,1.24,s*.69],.035);}box(g,m.paint,[2.45,.065,1.47],[0,1.28,0]);if(v===6){g.scale.set(.9,.8,.85);}return g;}
+function seat(g,m,x,z){box(g,m.edge,[.48,.12,.48],[x,.40,z]);box(g,m.rubber,[.44,.13,.43],[x,.49,z],"crew seat cushion");box(g,m.rubber,[.12,.52,.44],[x-.19,.80,z]);rod(g,m.darkSteel,[x-.19,.93,z-.13],[x+.12,.49,z+.13],.013);for(const side of [-1,1])rod(g,m.steel,[x+side*.17,.06,z],[x+side*.17,.36,z],.018);}
+function crewBay(m,v){const g=group('crew bay');box(g,m.paint,[2.35,.12,1.35],[0,.06,0]);const count=[6,6,4,8,5,5,4][v],rows=Math.ceil(count/2);for(let i=0;i<count;i++){const row=Math.floor(i/2),single=i===count-1&&count%2;seat(g,m,(row-(rows-1)/2)*.55,single?0:(i%2?1:-1)*.37);}for(const s of [-1,1]){box(g,m.paint,[2.35,.55,.065],[0,.34,s*.71]);for(const x of [-1.12,1.12])rod(g,m.edge,[x,.12,s*.69],[x,1.24,s*.69],.035);}box(g,m.paint,[2.45,.065,1.47],[0,1.28,0],'crew roof');if(v===6){g.scale.set(.9,.8,.85);}return g;}
 function engine(m,v){const g=group('power pack');box(g,m.paint,[.95,.48,.58],[0,.48,0]);box(g,m.edge,[1.05,.10,.65],[0,.20,0]);box(g,m.darkSteel,[.10,.67,.66],[.53,.47,0]);for(let i=0;i<11;i++)box(g,m.steel,[.012,.54,.009],[.59,.48,-.27+i*.054]);for(let i=0;i<6;i++){cylinder(g,m.edge,.072,.12,[-.34+i*.13,.80,0]);rod(g,m.darkSteel,[-.34+i*.13,.66,.30],[-.34+i*.13,.25,.34],.019);}cylinder(g,m.steel,.12,.55,[0,.51,-.38],'x');tube(g,m.steel,[[-.39,.77,-.23],[-.50,.91,-.35],[.15,.91,-.37],[.31,.70,-.37]],.046);for(const x of [-.3,.3])bolts(g,m.steel,[x,.45,.32],.06,6);if(v===4){cylinder(g,m.paint,.20,.85,[0,.5,-.64],'x');}return g;}
-function runningGear(m,v){const g=group('running gear');for(const x of [-.65,.65]){cylinder(g,m.darkSteel,.045,1.4,[x,.50,0],'z');box(g,m.edge,[.24,.22,.26],[x,.50,0]);for(const s of [-1,1]){const w=createWheel(m);w.scale.setScalar(.68);w.position.set(x,.42,s*.7);g.add(w);rod(g,m.steel,[x-.1,.54,s*.4],[x+.1,.77,s*.45],.027);}}if(v===6){for(const s of [-1,1])for(let i=0;i<22;i++)box(g,m.rubber,[.095,.07,.31],[-.96+i*.09,.86,s*.70]);}return g;}
+function runningGear(m,v){const g=group('running gear');for(const x of [-.65,.65]){cylinder(g,m.darkSteel,.045,1.4,[x,.50,0],'z');box(g,m.edge,[.24,.22,.26],[x,.50,0]);for(const s of [-1,1]){const w=createWheel(m);w.scale.setScalar(.68);w.position.set(x,.42,s*.7);g.add(w);rod(g,m.steel,[x-.1,.54,s*.4],[x+.1,.77,s*.45],.027);}}if(v===6){for(const s of [-1,1])tube(g,m.rubber,[[-.65,.5,s*.5],[-.2,.75,s*.48],[.65,.5,s*.5]],.016);}return g;}
 function suspension(m){const g=group('spring and damper');for(const x of [-.21,.21]){rod(g,m.steel,[x,.12,0],[x,.88,0],.026);const points=[];for(let i=0;i<=150;i++){const u=i/150,t=u*Math.PI*2*9;points.push([x+Math.cos(t)*.11,.23+u*.55,Math.sin(t)*.11]);}tube(g,m.darkSteel,points,.019,180);}box(g,m.paint,[.72,.09,.36],[0,.10,0]);box(g,m.paint,[.72,.11,.36],[0,.93,0]);bolts(g,m.steel,[0,.95,.2],.23,6);return g;}
 function weapon(m,v){const g=group('weapon station');cylinder(g,m.edge,.37,.12,[0,.06,0]);cylinder(g,m.paint,.28,.27,[0,.25,0]);box(g,m.paint,[.60,.42,.50],[0,.49,0]);const length=[.68,1.05,1.60,.74,.65,1.14,1.04][v];const count=v===6?2:1;for(let i=0;i<count;i++){const z=count===2?(i-.5)*.44:0;box(g,m.edge,[.44,.17,.17],[.18,.70,z]);cylinder(g,m.darkSteel,v===2?.055:.032,length,[.45+length/2,.70,z],'x');cylinder(g,m.darkSteel,.07,.15,[.45+length,.70,z],'x');cylinder(g,m.rubber,.03,.003,[.53+length,.70,z],'x');}box(g,m.paint,[.34,.35,.34],[-.15,.51,-.39]);for(const x of [-.2,.2])bolts(g,m.steel,[x,.45,.27],.055,5);if([3,5].includes(v)){const sensor=createSensor(m,0);sensor.scale.setScalar(.42);sensor.position.set(-.1,.73,.29);g.add(sensor);}return g;}
 function protection(m,v){const g=group('protection kit');if([3,6].includes(v)){box(g,m.paint,[1.7,.95,1.15],[0,.53,0]);box(g,m.glass,[.014,.25,.52],[.857,.70,0]);}else{const layers=v===0?5:v===5?3:1;for(let i=0;i<layers;i++){const plate=box(g,i%2?m.darkSteel:m.paint,[1.25,.07,.84],[0,.13+i*.18,0]);plate.rotation.z=.035;}if([1,2,4].includes(v)){for(let i=0;i<3;i++)box(g,m.paint,[.43,.10,.55],[(i-1)*.49,.35,0]);}}for(const x of [-.52,.52])for(const z of [-.31,.31])cylinder(g,m.steel,.018,.024,[x,.14,z],'y',.018,6);return g;}
@@ -20,20 +21,47 @@ export function createPart(id,m=materials()){
   if(!MODEL_IDS.includes(id))throw new Error('Unknown 3D asset: '+id);
   const normalized=id==='TRAIN-CAP'?'CAP-C':id,[prefix,letter]=normalized.split('-'),v=letter.charCodeAt(0)-65;
   const factories={CAP:()=>crewBay(m,v),MOB:()=>v===3?suspension(m):[1,2,6].includes(v)?runningGear(m,v):engine(m,v),FP:()=>weapon(m,v),PRO:()=>protection(m,v),COM:()=>radio(m,v),SA:()=>createSensor(m,v),ACC:()=>accessories(m,v),SE:()=>process(m,v)};
-  const model=factories[prefix]();model.name=id;model.userData={assetId:id,illustrative:true,units:'metres'};return model;
+  const model=detailPart(factories[prefix](),m,prefix,v);model.name=id;model.userData={assetId:id,illustrative:true,units:'metres'};return model;
 }
 export function createMission(id,m=materials()){
   if(!MISSION_IDS.includes(id))throw new Error('Unknown 3D mission: '+id);
-  const vehicle=createVehicle(m);vehicle.name=id;vehicle.userData.mission=id;
-  if(id!=='RECOVERY'){
-    for(const name of ['recovery crane','recovery stowage','mounted WR-12']){const o=vehicle.getObjectByName(name);if(o)vehicle.remove(o);}
-    const rear=box(vehicle,m.paint,[3.3,.91,2.17],[-1.32,2.12,0],'mission compartment');
-    for(const s of [-1,1])for(let i=0;i<5;i++){box(vehicle,m.edge,[.50,.56,.05],[-2.60+i*.6,2.11,s*1.11]);bolts(vehicle,m.steel,[-2.6+i*.6,2.12,s*1.15],.18,4,'z');}
-    if(id==='COMBAT'){const turret=weapon(m,2);turret.scale.setScalar(1.05);turret.position.set(-1.22,2.60,0);vehicle.add(turret);}
-    if(id==='RECCE'){const sensor=createSensor(m,3);sensor.position.set(-1.6,2.61,0);vehicle.add(sensor);}
-    if(id==='COMMAND'){const comm=radio(m,4);comm.position.set(-1.8,2.61,0);vehicle.add(comm);}
-    if(id==='TROOP'){box(vehicle,m.edge,[.08,.71,1.50],[-3.02,1.98,0],'rear ramp');for(const s of [-1,1])rod(vehicle,m.steel,[-3.1,1.9,s*.58],[-3.1,2.4,s*.58],.015);}
-    if(id==='MINE'){const roller=clearance(m);roller.scale.setScalar(1.9);roller.rotation.y=Math.PI/2;roller.position.set(3.35,.15,0);vehicle.add(roller);const turret=weapon(m,1);turret.position.set(-1.2,2.60,0);vehicle.add(turret);}
+  const vehicle=missionBase(id,m);vehicle.name=id;vehicle.userData.mission=id;
+  const roof=vehicle.userData.roof||2.75;
+  if(id==='COMBAT'||id==='MINE'){const turret=weapon(m,id==='COMBAT'?2:1);turret.name='mission weapon';turret.position.set(-.35,roof,0);vehicle.add(turret);}
+  if(id==='RECCE'){const sensor=createSensor(m,3);sensor.name='mission sensor';sensor.position.set(-1.0,roof,-.48);vehicle.add(sensor);}
+  if(id==='COMMAND'){const comm=radio(m,4);comm.name='mission radio';comm.position.set(-1.5,roof,-.4);vehicle.add(comm);}
+  if(id==='TROOP'){box(vehicle,m.edge,[.055,.85,1.5],[-3.46,1.75,0],'rear ramp');for(const s of [-1,1])rod(vehicle,m.steel,[-3.5,1.45,s*.52],[-3.5,2.05,s*.52],.018);}
+  if(id==='MINE'){const roller=clearance(m);roller.name='mission roller';roller.scale.setScalar(1.9);roller.rotation.y=Math.PI/2;roller.position.set(4.45,.1,0);vehicle.add(roller);}
+  return soften(vehicle);
+}
+
+// Purchases occupy meaningful mounting zones; processes remain decisions, not bolted-on hardware.
+// A sectioned hull exposes seats/powertrain without claiming certified mechanical compatibility.
+export function createConfiguration(mission,owned,m=materials()){
+ const vehicle=createMission(mission,m),latest=new Map();owned.forEach(p=>{const id=typeof p==='string'?p:p.id;if(!MODEL_IDS.includes(id))throw new Error('Unknown 3D asset: '+id);if(!id.startsWith('SE-'))latest.set(id.split('-')[0],id);});
+ const length=vehicle.userData.length||6.25,width=vehicle.userData.width||2.3,roof=vehicle.userData.roof||2.75;
+ if(latest.has('CAP')||latest.has('MOB')){
+  const shells=[];vehicle.traverse(o=>{if(o.isMesh&&o.name==='hull shell')shells.push(o);});
+  for(const o of shells){o.material=o.material.clone();o.material.transparent=true;o.material.opacity=.16;o.material.depthWrite=false;}
+ }
+ for(const [prefix,id]of latest){
+  const part=createPart(id,m);part.userData.mountedCard=id;
+  if(prefix==='CAP'){part.position.set(-1.3,1.22,0);const lid=part.getObjectByName('crew roof');if(lid){lid.visible=false;}}
+  if(prefix==='MOB'){part.position.set(length/2-1.35,1.18,0);if(['MOB-B','MOB-C','MOB-G'].includes(id))part.position.set(0,.20,0);}
+  if(prefix==='FP'){vehicle.getObjectByName('mission weapon')?.removeFromParent();part.position.set(-.35,roof,0);}
+  if(prefix==='COM'){vehicle.getObjectByName('mission radio')?.removeFromParent();part.position.set(.1,1.45,-.65);}
+  if(prefix==='SA'){vehicle.getObjectByName('mission sensor')?.removeFromParent();part.position.set(-2.3,roof,.5);}
+  if(prefix==='PRO'){
+   if(['PRO-D','PRO-G'].includes(id)){part.position.set(.4,1.42,0);}
+   else{part.rotation.x=Math.PI/2;part.position.set(-1.8,1.82,width*.46);const mirror=part.clone();mirror.rotation.x=-Math.PI/2;mirror.position.z=-width*.46;vehicle.add(mirror);}
   }
-  return vehicle;
+  if(prefix==='ACC'){
+   if(id==='ACC-B'){part.position.set(-length/2-1.43,0,0);}
+   else if(['ACC-C','ACC-E'].includes(id)){vehicle.getObjectByName('mission roller')?.removeFromParent();part.scale.setScalar(1.9);part.rotation.y=Math.PI/2;part.position.set(length/2+1.05,.1,0);}
+   else if(['ACC-A','ACC-F'].includes(id)){vehicle.getObjectByName('mounted WR-12')?.removeFromParent();part.rotation.y=Math.PI/2;part.position.set(length/2+.15,1.15,0);}
+   else part.position.set(-length/2+.9,1.35,0);
+  }
+  vehicle.add(part);
+ }
+ vehicle.userData.configuration=true;vehicle.userData.installed=Object.fromEntries(latest);return vehicle;
 }

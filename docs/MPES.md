@@ -1,6 +1,6 @@
 # SEA Game MPES
 
-Version: 1.2.1. Issued: 2026-10-08. Status: autonomous SDD/TDD lifecycle specification; product acceptance outstanding. SDD means specification-driven development; TDD means test-driven development.
+Version: 1.2.2. Issued: 2026-10-08. Status: autonomous SDD/TDD lifecycle specification; product acceptance outstanding. SDD means specification-driven development; TDD means test-driven development.
 
 This is a standalone lifecycle execution specification for completing Systems Engineering Awareness (SEA Game). “MPES” follows the supplied Omni contract: a specification sufficient for an authorized engineering agent to carry the product through requirements, implementation, verification, release, operation, improvement and retirement without chat history. The supplied source does not establish an expanded form of the acronym; none is invented here.
 
@@ -102,7 +102,7 @@ Statuses at issue: PARTIAL means implementation exists without all evidence; GAP
 | R10 | Schema-3 compatible recovery, bounded import/export, corrupt-state preservation and storage-denied operation are demonstrated. | T08,T11 | M4 | GAP |
 | R11 | Student private state and future market order never leak through public UI, export, QA, logging or optional network requests. | T12 | M3,M4,M6 | PARTIAL |
 | R12 | Complete meaningful EN/FR strings, labels, units, errors, dynamic content and exports; preserve accents and ASCII UI hyphens. | T14 | M5,M7 | PARTIAL |
-| R13 | Responsive task-focused game with primary Three.js workshop, inspectable revealed/owned equipment and fully embedded runtime/visuals with WebGL error status; no QA controls in apps. | T13,T14,T16 | M5 | PARTIAL |
+| R13 | Responsive task-focused game with integrated phase-native Three.js scene, inspectable revealed/owned equipment and fully embedded runtime/visuals with WebGL error status; no QA controls in apps. | T13,T14,T16 | M5 | PARTIAL |
 | R14 | 77 identities have correct 3D mapping and embedded print illustration, valid authored raster/vector content and inspected rights/provenance. | T15,T18 | M5,M6 | PARTIAL |
 | R15 | Applicable WCAG 2.2 AA criteria and keyboard/touch/zoom/screen-reader critical journeys pass with evidence. | T13,T16 | M5,M7 | GAP |
 | R16 | Same approved inputs yield identical standalone bytes on supported Windows/Linux build environments. | T17 | M1,M2 | FAIL |
@@ -351,3 +351,9 @@ After `npm ci --prefix samples/threejs-recovery`, regenerate the bundle with `no
 ## Fully embedded presentation amendment — 2026-10-08
 
 The user's subsequent instruction says fallback methods are unnecessary when everything is embedded. It supersedes the earlier 2D/no-WebGL fallback design: remove the 2D selector and external WebP remote/local loading/failure chain. Each HTML embeds Three.js, all geometry/materials, translations, rules and native print illustrations. CSP denies image and connection loads. WebGL errors are reported, not routed through another rendering method; underlying game controls and recovery stay intact. Preserve old fallback receipts as historical evidence only. T15 now qualifies the embedded resources, all identities and absence of a resource-loading chain, while R17 and other game/privacy/recovery gates remain unchanged.
+
+## Accepted realism and game integration amendment — 2026-10-08
+
+The user requested credible real-life parts, components, assemblies and vehicles, and an intuitive, joyful, minimalist professional game interface. Supersede the earlier separate equipment-station presentation: mount the latest purchased hardware in coherent vehicle zones; expose interiors when needed and retain every purchase in the authoritative ledger and inspection menu. Engineering-process cards are inspectable review artefacts, not vehicle-mounted hardware. Never derive gameplay effects, certification or real manufacturer performance from these original concept models. Reference manufacturer platform families for visual construction only.
+
+The scene belongs inside the active phase, with mission/equipment titles rather than a separate workshop identity. Preserve reveal/privacy, all rules, EN/FR, accessible equivalent controls, schema-3 recovery and fully embedded HTML resources. Compact view and save menus must retain every existing action. Verify all 77 model identities, canonical crew-seat counts, axle topology, and 42 hardware-variant/mission assemblies with finite bounds, fitted cameras, latest-category selection and immutable public inputs. Browser checks must cover scene relocation, inspected equipment, both-role controls, mobile layout, readable materials, no external assets and exact published bytes. Prior browser receipts remain historical; these changes restart any candidate-wide closure streak. Full release acceptance remains open at 0/3.

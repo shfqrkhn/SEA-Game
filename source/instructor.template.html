@@ -12,18 +12,18 @@
 <a class="skip-link" href="#mainContent"><span data-i18n="common.skip"></span></a>
 <header>
   <div class="brand"><div class="mark">SE</div><div><h1 data-i18n="app.title">Systems Engineering Awareness</h1><small data-i18n="role"></small></div></div>
-  <div class="top"><button id="exportBackupBtn" class="btn ghost" type="button" data-i18n="backup.export"></button><button id="importBackupBtn" class="btn ghost" type="button" data-i18n="backup.import"></button><button id="restorePreviousBtn" class="btn ghost" type="button" data-i18n="backup.restorePrevious" disabled></button><input id="backupFile" class="sr-only" type="file" accept="application/json,.json" tabindex="-1" aria-hidden="true"><button id="langBtn" class="btn ghost" type="button">FR</button></div>
+  <div class="top"><details class="save-menu"><summary data-i18n="backup.menu">Save & restore</summary><div><button id="exportBackupBtn" class="btn ghost" type="button" data-i18n="backup.export"></button><button id="importBackupBtn" class="btn ghost" type="button" data-i18n="backup.import"></button><button id="restorePreviousBtn" class="btn ghost" type="button" data-i18n="backup.restorePrevious" disabled></button><input id="backupFile" class="sr-only" type="file" accept="application/json,.json" tabindex="-1" aria-hidden="true"></div></details><button id="langBtn" class="btn ghost" type="button">FR</button></div>
 </header>
-<div id="storageNotice" class="notice bad hidden" role="status"></div><div id="backupStatus" class="notice info hidden" role="status" aria-live="polite"></div><div class="status"><span class="badge">v3.0.0-local</span><span class="badge" data-i18n="role"></span><span id="phaseBadge" class="badge"></span><span id="sessionBadge" class="badge"></span></div>
+<div id="storageNotice" class="notice bad hidden" role="status"></div><div id="backupStatus" class="notice info hidden" role="status" aria-live="polite"></div><div class="status"><span class="badge">v3.0.0-local</span><span id="phaseBadge" class="badge"></span><span id="sessionBadge" class="badge"></span></div>
 <main id="mainContent">
-<section id="sea3dWorkshop" class="sea3d-workshop" aria-labelledby="sea3d-title">
- <div class="sea3d-heading"><h2 id="sea3d-title">3D vehicle workshop</h2></div>
+<section id="sea3dScene" class="sea3d-stage" aria-labelledby="sea3d-title">
+ <div class="sea3d-heading"><h2 id="sea3d-title">Your vehicle</h2></div>
  <div class="sea3d-toolbar">
   <label><span id="sea3d-team">Team</span><select id="sea3dTeam"></select></label>
   <label><span id="sea3d-object">Inspect</span><select id="sea3dObject"></select></label>
-  <button id="sea3d-reset" class="btn ghost" type="button">Reset view</button><button id="sea3d-front" class="btn ghost" type="button">Front</button><button id="sea3d-rear" class="btn ghost" type="button">Rear</button>
+  <details class="view-controls"><summary id="sea3d-views">Views</summary><div class="inline"><button id="sea3d-reset" class="btn ghost" type="button">Reset view</button><button id="sea3d-front" class="btn ghost" type="button">Front</button><button id="sea3d-rear" class="btn ghost" type="button">Rear</button></div></details>
  </div>
- <div id="sea3dViewport" role="img" aria-label="Interactive 3D vehicle and equipment" aria-describedby="sea3dStatus" hidden></div>
+ <div id="sea3dViewport" role="img" aria-label="Vehicle and equipment" aria-describedby="sea3dStatus" hidden></div>
  <p id="sea3dStatus" role="status" aria-live="polite"></p><p id="sea3d-hint" class="muted"></p>
 </section>
 <section id="setup" class="section active">
