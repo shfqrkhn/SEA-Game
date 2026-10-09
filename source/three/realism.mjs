@@ -32,8 +32,9 @@ export function detailPart(g,m,prefix,v){
   panel(g,m,[.31,.25,.018],[-.15,.5,-.57]);rod(g,m.darkSteel,[-.26,.63,-.58],[-.04,.63,-.58],.014);
   tube(g,m.rubber,[[-.13,.12,.22],[-.3,.28,.35],[-.27,.57,.36],[.08,.69,.32]],.017);
  }else if(prefix==='PRO'){
-  for(const x of [-.46,.46])for(const z of [-.27,.27]){cylinder(g,m.darkSteel,.025,.045,[x,.08,z]);cylinder(g,m.steel,.013,.035,[x,.13,z],'y',.013,6);}
-  if([3,6].includes(v)){for(const side of [-1,1]){box(g,m.rubber,[.49,.29,.018],[.23,.72,side*.585],'window seal');box(g,m.glass,[.43,.23,.023],[.23,.72,side*.597],'armoured glazing');rod(g,m.steel,[-.45,.43,side*.59],[-.25,.43,side*.59],.014);for(const y of [.35,.78])box(g,m.steel,[.05,.07,.026],[-.63,y,side*.594],'door hinge');}for(let i=0;i<5;i++)box(g,m.darkSteel,[.012,.17,.012],[-.44+i*.075,.83,.595],'protected vent');}
+  // The protection factory owns its formed layers, apertures and attachments;
+  // generic overlay fittings would no longer correspond to those surfaces.
+  return soften(g);
  }else if(prefix==='COM'){
   for(let i=0;i<(v===1?3:v===6?2:1);i++){const x=(i-((v===1?3:v===6?2:1)-1)/2)*.4;
    rod(g,m.darkSteel,[x-.13,.47,.17],[x+.13,.47,.17],.015);for(let j=0;j<7;j++)box(g,m.darkSteel,[.26,.012,.025],[x,.15+j*.042,-.13]);
@@ -57,10 +58,10 @@ export function detailPart(g,m,prefix,v){
 }
 
 function face(g,m,vertices){const a=[];for(let i=1;i<vertices.length-1;i++)a.push(...vertices[0],...vertices[i],...vertices[i+1]);const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.Float32BufferAttribute(a,3));geometry.computeVertexNormals();const mat=m.clone();mat.side=THREE.DoubleSide;const mesh=new THREE.Mesh(geometry,mat);mesh.name=m.name==='optical glass'?'cab glazing':'hull shell';g.add(mesh);return mesh;}
-function roundedOpening(x0,y0,x1,y1,r=.045){
+export function roundedOpening(x0,y0,x1,y1,r=.045){
  const p=new THREE.Path();p.moveTo(x0+r,y0);p.lineTo(x1-r,y0);p.quadraticCurveTo(x1,y0,x1,y0+r);p.lineTo(x1,y1-r);p.quadraticCurveTo(x1,y1,x1-r,y1);p.lineTo(x0+r,y1);p.quadraticCurveTo(x0,y1,x0,y1-r);p.lineTo(x0,y0+r);p.quadraticCurveTo(x0,y0,x0+r,y0);return p;
 }
-function formedCabPanel(g,m,outline,holes,place){
+export function formedCabPanel(g,m,outline,holes,place){
  const shape=new THREE.Shape();outline.forEach(([x,y],i)=>i?shape.lineTo(x,y):shape.moveTo(x,y));shape.closePath();shape.holes.push(...holes);
  const geometry=new THREE.ExtrudeGeometry(shape,{depth:.040,steps:1,curveSegments:6,bevelEnabled:true,bevelSize:.014,bevelThickness:.012,bevelSegments:3});
  const p=geometry.attributes.position;for(let i=0;i<p.count;i++)p.setXYZ(i,...place(p.getX(i),p.getY(i),p.getZ(i)));geometry.computeVertexNormals();

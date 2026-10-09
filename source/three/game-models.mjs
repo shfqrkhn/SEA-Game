@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import {createWinch,createWheel,box,cylinder,rod,tube,bolts} from '../../samples/threejs-recovery/models.mjs';
-import {materials,detailPart,missionBase,soften} from './realism.mjs';
+import {materials,detailPart,missionBase,soften,formedCabPanel,roundedOpening} from './realism.mjs';
 export {materials};
 export const MISSION_IDS=Object.freeze(['COMBAT','RECCE','TROOP','COMMAND','RECOVERY','MINE']);
 export const MODEL_IDS=Object.freeze([...['ACC','CAP','COM','FP','MOB','PRO','SA'].flatMap(p=>'ABCDEFG'.split('').map(l=>`${p}-${l}`)),...'ABCDEFGHIJKLMNOPQRSTU'.split('').map(l=>`SE-${l}`),'TRAIN-CAP']);
@@ -48,7 +48,54 @@ function axle(m,{wheels=false,light=false,adaptive=false,springs=false}={}){
 function runningGear(m,v){if(v!==2)return axle(m,{wheels:v===1,adaptive:v===6,springs:v===1});const g=axle(m,{wheels:true,light:true,springs:true});g.name='lightweight running gear';for(const x of [-.30,.30])box(g,m.paint,[.075,.09,.83],[x,.22,0],'lightweight cradle crossmember');for(const z of [-.40,.40])box(g,m.paint,[.67,.09,.07],[0,.22,z],'lightweight cradle side rail');return g;}
 function suspension(m){return axle(m,{springs:true});}
 function weapon(m,v){const g=group('weapon station');cylinder(g,m.edge,.37,.12,[0,.06,0]);cylinder(g,m.paint,.28,.27,[0,.25,0]);box(g,m.paint,[.60,.42,.50],[0,.49,0]);const length=[.68,1.05,1.60,.74,.65,1.14,1.04][v];const count=v===6?2:1;for(let i=0;i<count;i++){const z=count===2?(i-.5)*.44:0;box(g,m.edge,[.44,.17,.17],[.18,.70,z]);cylinder(g,m.darkSteel,v===2?.055:.032,length,[.45+length/2,.70,z],'x');cylinder(g,m.darkSteel,.07,.15,[.45+length,.70,z],'x');cylinder(g,m.rubber,.03,.003,[.53+length,.70,z],'x');}box(g,m.paint,[.34,.35,.34],[-.15,.51,-.39]);for(const x of [-.2,.2])bolts(g,m.steel,[x,.45,.27],.055,5);if([3,5].includes(v)){const sensor=createSensor(m,0);sensor.scale.setScalar(.42);sensor.position.set(-.1,.73,.29);g.add(sensor);}return g;}
-function protection(m,v){const g=group('protection kit');if([3,6].includes(v)){box(g,m.paint,[1.7,.95,1.15],[0,.53,0]);box(g,m.glass,[.014,.25,.52],[.857,.70,0]);}else{const layers=v===0?5:v===5?3:1;for(let i=0;i<layers;i++){const plate=box(g,i%2?m.darkSteel:m.paint,[1.25,.07,.84],[0,.13+i*.18,0]);plate.rotation.z=.035;}if([1,2,4].includes(v)){for(let i=0;i<3;i++)box(g,m.paint,[.43,.10,.55],[(i-1)*.49,.35,0]);}}for(const x of [-.52,.52])for(const z of [-.31,.31])cylinder(g,m.steel,.018,.024,[x,.14,z],'y',.018,6);return g;}
+function protection(m,v){
+ const g=group('protection kit');
+ const sheet=(outline,z,material=m.paint,name='formed protection panel')=>{const mesh=formedCabPanel(g,material,outline,[],(x,y,d)=>[x,y,z+d]);mesh.name=name;return mesh;};
+ const fasten=(x,y,z)=>{cylinder(g,m.steel,.016,.035,[x,y,z],'z',.016,6).name='protection attachment bolt';cylinder(g,m.darkSteel,.024,.008,[x,y,z-.015],'z').name='attachment washer';};
+ if([3,6].includes(v)){
+  const wide=v===3?.67:.77,length=v===3?1.70:2.30,back=-length/2,front=length/2,height=v===3?1.38:1.30;
+  box(g,m.edge,[length,.09,wide*2],[0,.045,0],'reinforced floor');
+  const optical=m.glass.clone();optical.transparent=true;optical.opacity=.58;optical.metalness=0;optical.depthWrite=false;
+  for(const s of [-1,1]){
+   const outline=[[back,.09],[front,.09],[front-.25,height-.08],[front-.42,height],[back+.07,height]];
+   const hole=roundedOpening(back+.20,.85,front-.48,height-.13,.045);
+   formedCabPanel(g,m.paint,outline,[hole],(x,y,d)=>[x,y,s*(wide-d)]);
+   const pane=formedCabPanel(g,optical,[[back+.22,.87],[front-.50,.87],[front-.50,height-.15],[back+.22,height-.15]],[],(x,y,d)=>[x,y,s*(wide+.008-d*.2)]);pane.name='protected glazing';
+   for(const x of [back+.13,0,front-.38])rod(g,m.edge,[x,.10,s*(wide-.08)],[x,height-.07,s*(wide-.08)],.026).name='interior shell rib';
+   for(const x of [back+.12,front-.20])fasten(x,.20,s*(wide+.02));
+  }
+  const slope=y=>front-(y-.09)*.25/(height-.17);
+  formedCabPanel(g,m.paint,[[-wide,.09],[wide,.09],[wide,height-.08],[-wide,height-.08]],[roundedOpening(-wide+.16,.85,wide-.16,height-.18)],(z,y,d)=>[slope(y)-d,y,z]);
+  const windshield=formedCabPanel(g,optical,[[-wide+.18,.87],[wide-.18,.87],[wide-.18,height-.20],[-wide+.18,height-.20]],[],(z,y,d)=>[slope(y)+.008-d*.2,y,z]);windshield.name='protected windshield';
+  box(g,m.paint,[length-.39,.07,wide*2],[back+(length-.39)/2,height-.02,0],'formed cell roof');
+  box(g,m.paint,[.18,.09,wide*2],[front-.33,height-.055,0],'folded windshield header');
+  // Rear aperture remains open for the two-seat inspection view and boarding.
+  formedCabPanel(g,m.paint,[[-wide,.09],[wide,.09],[wide,height],[-wide,height]],[roundedOpening(-wide+.10,.17,wide-.10,height-.11)],(z,y,d)=>[back+d,y,z]);
+  if(v===3){for(const s of [-1,1]){seat(g,m,-.10,s*.32);rod(g,m.darkSteel,[-.29,1.08,s*.48],[.02,.47,s*.20],.013).name='crew cell restraint';}box(g,m.edge,[.18,.055,1.10],[back-.08,.12,0],'boarding threshold');}
+  else for(const x of [back+.26,front-.48]){rod(g,m.edge,[x,height-.06,-wide+.07],[x,height-.06,wide-.07],.027).name='roof hoop';}
+  for(const s of [-1,1])for(const y of [.35,1.02])box(g,m.darkSteel,[.045,.10,.06],[back+.025,y,s*(wide-.055)],'rear aperture hinge');
+ }else if(v===5){
+  // Two joined inclined plates form the V; the deep centre is the underside.
+  for(const s of [-1,1]){
+   formedCabPanel(g,m.paint,[[-.92,.02],[.92,.02],[1.04,.18],[.90,.48],[-.90,.48],[-1.04,.18]],[],(x,a,d)=>[x,.12+a*.42+d,s*a*1.55]).name='V underbody plate';
+   box(g,m.edge,[1.82,.075,.08],[0,.39,s*.67],'underbody mounting rail');
+   for(const x of [-.65,.65]){rod(g,m.darkSteel,[x,.30,s*.58],[x,.44,s*.58],.032).name='energy absorbing mount';cylinder(g,m.rubber,.047,.075,[x,.41,s*.58]);cylinder(g,m.steel,.018,.055,[x,.455,s*.58],'y',.018,6).name='underbody attachment bolt';}
+  }
+  rod(g,m.edge,[-.94,.12,0],[.94,.12,0],.025).name='V keel joint';
+ }else{
+  const count=v===4?3:v===2?3:1,width=count===1?1.55:.57;
+  for(const y of [.18,.79])box(g,m.edge,[count===1?1.50:1.93,.055,.06],[0,y,-.10],'protection mounting rail');
+  for(let i=0;i<count;i++){
+   const x=(i-(count-1)/2)*.66,outline=[[x-width/2,.12],[x+width/2-.08,.12],[x+width/2,.23],[x+width/2,.77],[x+width/2-.10,.90],[x-width/2+.08,.90],[x-width/2,.80]];
+   if(v===0){sheet(outline,0,m.darkSteel,'inner support plate');sheet(outline,.18,m.paint,'outer spaced plate');}
+   else if(v===1){const ceramic=m.paint.clone();ceramic.color.set('#c5c0a9');ceramic.metalness=0;ceramic.roughness=.94;sheet(outline,0,m.darkSteel,'composite backing');sheet(outline,.045,ceramic,'ceramic core');sheet(outline,.09,m.paint,'composite outer plate');}
+   else{const panel=sheet(outline,.055,m.paint,v===2?'light formed panel':'replaceable side skirt');if(v===2){const pos=panel.geometry.attributes.position;for(let j=0;j<pos.count;j++)pos.setZ(j,pos.getZ(j)+.032*Math.sin((pos.getY(j)-.12)/.78*Math.PI));panel.geometry.computeVertexNormals();}}
+   const faceZ=v===0?.235:v===1?.145:.115;
+   for(const dx of [-width*.36,width*.36])for(const y of [.23,.77]){rod(g,m.darkSteel,[x+dx,y,-.09],[x+dx,y,faceZ],.015).name='panel standoff';fasten(x+dx,y,faceZ);}
+  }
+ }
+ return g;
+}
 function radio(m,v){const g=group('radio suite');const count=v===1?3:v===6?2:1;for(let i=0;i<count;i++){const x=(i-(count-1)/2)*.40;box(g,m.paint,[.35,.46,.23],[x,.29,0]);box(g,m.glass,[.20,.09,.014],[x,.40,.125]);for(let k=0;k<4;k++)cylinder(g,m.darkSteel,.026,.027,[x-.09+k*.06,.26,.135],'z');rod(g,m.darkSteel,[x+.1,.50,0],[x+.1,1.10+(v===4?.60:0)+i*.13,0],.009);tube(g,m.rubber,[[x-.08,.2,.12],[x-.20,.09,.22],[x-.15,.06,.35],[x+.17,.1,.3]],.012);}if([3,4].includes(v)){const mast=1.65+v*.12;rod(g,m.paint,[.42,.1,-.28],[.42,mast,-.28],.028);for(const s of [-1,1])rod(g,m.darkSteel,[.42,mast*.8,-.28],[.42+s*.55,.02,-.28+s*.45],.006);if(v===3){const dish=new THREE.Mesh(new THREE.SphereGeometry(.30,20,12,0,Math.PI*2,0,Math.PI/2),m.paint);dish.rotation.x=Math.PI/2;dish.position.set(.42,mast,-.28);g.add(dish);}}return g;}
 function createSensor(m,v){const g=group('sensor suite');cylinder(g,m.edge,.17,.1,[0,.05,0]);rod(g,m.paint,[0,.1,0],[0,v===3?1.65:.35,0],.05);const y=v===3?1.75:.43;box(g,m.paint,[.40,.24,.22],[0,y,0]);for(const x of [-.105,.105]){cylinder(g,m.darkSteel,.078,.05,[x,y,.14],'z');cylinder(g,m.glass,.058,.012,[x,y,.172],'z');}if(v===1||v===5){box(g,m.paint,[.26,.22,.22],[.26,y-.05,0]);cylinder(g,m.glass,.075,.025,[.26,y-.05,.13],'z');}if(v===3||v===6)for(const s of [-1,1])rod(g,m.darkSteel,[0,.37,0],[s*.35,0,.25],.017);if(v===4){const helmet=new THREE.Mesh(new THREE.SphereGeometry(.28,24,12,0,Math.PI*2,0,Math.PI*.64),m.paint);helmet.position.set(0,.40,-.20);g.add(helmet);}if(v===6){for(const x of [-.5,.5]){const s=createSensor(m,3);s.scale.setScalar(.54);s.position.set(x,0,-.25);g.add(s);}}return g;}
 function clearance(m){const g=group('clearance roller');box(g,m.paint,[1.1,.12,.35],[0,.48,-.1]);for(const x of [-.45,.45]){rod(g,m.edge,[x,.48,-.3],[x,.16,.32],.032);cylinder(g,m.darkSteel,.17,.13,[x,.17,.34],'x');}for(let i=0;i<7;i++){const x=-.45+i*.15;cylinder(g,m.paint,.14,.095,[x,.17,.34],'x');bolts(g,m.steel,[x+.05,.17,.34],.10,8,'x',.013);}return g;}
@@ -89,8 +136,10 @@ export function createConfiguration(mission,owned,m=materials()){
   if(prefix==='COM'){vehicle.getObjectByName('mission radio')?.removeFromParent();part.position.set(.1,1.45,-.65);}
   if(prefix==='SA'){vehicle.getObjectByName('mission sensor')?.removeFromParent();part.position.set(-2.3,roof,.5);}
   if(prefix==='PRO'){
-   if(['PRO-D','PRO-G'].includes(id)){part.position.set(.4,1.42,0);}
-   else{part.rotation.x=Math.PI/2;part.position.set(-1.8,1.82,width*.46);const mirror=part.clone();mirror.rotation.x=-Math.PI/2;mirror.position.z=-width*.46;vehicle.add(mirror);}
+   if(id==='PRO-D'){part.position.set(-length/2-.78,.94,0);box(vehicle,m.edge,[1.10,.12,1.16],[-length/2-.44,.92,0],'crew cell chassis extension');}
+   else if(id==='PRO-G'){part.position.set(-1.3,1.40,0);}
+   else if(id==='PRO-F'){part.position.set(0,.55,0);}
+   else{part.position.set(-1.60,1.36,width*.46);const mirror=part.clone();mirror.rotation.y=Math.PI;mirror.position.z=-width*.46;vehicle.add(mirror);}
   }
   if(prefix==='ACC'){
    if(id==='ACC-B'){part.position.set(-length/2-1.43,0,0);}

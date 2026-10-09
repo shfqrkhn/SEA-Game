@@ -20,3 +20,7 @@ Scope: source/DOM-bridge characterization at source HEAD `db620de667acc2e5b627aa
 - Read-only in-memory esbuild import of the actual `interface.mjs`: produced the exact pagination and overlap figures above. No source or generated bundle was changed by this experiment.
 
 These passing tests do not cover native blur/pointer ordering, full confirmation pagination, focus restoration, virtual keyboards, screen-reader behavior, complete role/phase browser journeys, or final visual conformity. Keep those gates OPEN until candidate-specific proof exists. The lead owns implementation repairs and browser follow-up; rerun this audit against the resulting source identity before treating any finding as resolved.
+
+## Subsequent bounded visual refinement
+
+At the lead's explicit delegation, this reviewer subsequently changed only `source/three/interface.mjs` presentation styling: pale limestone panel, ink text, muted informational groups, white fields, sage buttons, restrained olive action rails and neutral disabled rows. The lead's short-viewport layout changes were preserved; canonical rules, semantic projection, pagination content and hit geometry were not modified. The existing interface verifier passed again. No bundle was rebuilt by this reviewer. This supersedes the earlier statement of no implementation changes only for this later bounded refinement; the adversarial findings above remain a receipt of the earlier reviewed candidate. Actual browser readability and matched concept acceptance remain OPEN.
