@@ -2,11 +2,13 @@
 
 Status 2026-10-09: development candidate, full acceptance OPEN, 0/3. Exact delivery/checkpoint: [handover](HANDOVER.md). APP.version is separate from rulesSTANDARD/decksynthetic-v1/schema3/backup-envelope1; version labels do not identify exact bytes or establish acceptance.
 
-## Local clean rebuild 4.0.0-dev.1
+## Staged clean rebuild 4.0.0-dev.1
 
 Fresh measured Three.js interface corrects missing continuation pages/clipped text while retaining persistent task/view controls. New strict typed money/scoring functions are integrated in the actual role engine, reject arbitrary coercion hooks and unsafe score arithmetic, and retain compatible cents/BPS/save behavior. Shared wheel construction corrects inward-facing rims and floating fasteners, adds actual ventilated brake channels, and batches repeated tread/fastener geometry. Only one embedded HTML is built.
 
 Independent targeted regressions, strict checking, existing gameplay and six EN/FR/reveal VM journeys pass. This is a staged rebuild foundation, not the completed whole-game rewrite: old role/session/persistence adapters remain; actual new-candidate browser/offline/device/classroom/reference acceptance stays open. Published3.6.0 remains rollback until candidate publication is verified. All new work remains in the existing project root; local reference/concept/evidence outputs stay outside GitHub.
+
+PR4 was externally merged while its first balance fixture failed; PR5 corrected missing synthetic team fields without changing the zero-score oracle, four-job CI passed and merge9d9d4b2 is verified. HTTPS exact bytes and scoped built-in-browser roles/reselection/recovery views passed. FR switching exposed untranslated empty student setup status; it is fixed in local4.0.0-dev.2 with an actual-controller RED/GREEN regression. New bytes require fresh hosted qualification; full closure remains0/3.
 
 ## Previous baseline 3.5.0
 
