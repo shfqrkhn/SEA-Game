@@ -19,6 +19,7 @@ for(let cycle=0;cycle<12;cycle++){
 }
 console.log('Cutaway shader state, shared-paint isolation, original translucency/shadow restoration and bounded temporary material disposal PASS');
 const shadowLight=new THREE.DirectionalLight();shadowLight.position.set(-5,9,6);const fixedLight=shadowLight.position.clone(),fixedTarget=shadowLight.target.position.clone();
+shadowLight.shadow.mapSize.set(2048,2048);
 for(const dimensions of [[1.7,1.4,1.4],[6.25,3.5,2.3],[11,7,6]]){
  const caster=new THREE.Mesh(new THREE.BoxGeometry(...dimensions),shared);caster.position.y=dimensions[1]/2;
  for(const angle of [0,.7,2.1]){caster.rotation.y=angle;caster.updateWorldMatrix(true,false);const bounds=new THREE.Box3().setFromObject(caster,true),ground=bounds.min.y-.025;fitDirectionalShadow(shadowLight,caster,ground);
@@ -26,6 +27,8 @@ for(const dimensions of [[1.7,1.4,1.4],[6.25,3.5,2.3],[11,7,6]]){
    const point=new THREE.Vector3(x,y,z);for(const p of [point,point.clone().addScaledVector(direction,-(y-ground)/direction.y)]){p.project(shadowLight.shadow.camera);assert(Math.abs(p.x)<1&&Math.abs(p.y)<1&&Math.abs(p.z)<1,'Caster and projected ground shadow stay within shadow map');}
   }
   assert.deepEqual(shadowLight.position,fixedLight);assert.deepEqual(shadowLight.target.position,fixedTarget);assert(shadowLight.shadow.normalBias<=.006);
+  const c=shadowLight.shadow.camera,texel=Math.max((c.right-c.left)/shadowLight.shadow.mapSize.x,(c.top-c.bottom)/shadowLight.shadow.mapSize.y);
+  assert(Math.abs(shadowLight.shadow.radius*texel-.045)<1e-10,'Shadow softness scales with the fitted world-space texel size');
   if(dimensions[0]<2)assert(shadowLight.shadow.camera.right-shadowLight.shadow.camera.left<4,'Small parts use map resolution rather than a 24m frustum');
  }
  caster.geometry.dispose();

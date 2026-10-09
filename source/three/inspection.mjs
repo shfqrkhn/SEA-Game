@@ -81,5 +81,9 @@ export function fitDirectionalShadow(light,root,groundY,envelope=null){
  const bounds=new THREE.Box3().setFromPoints(points.map(p=>p.applyMatrix4(camera.matrixWorldInverse))),size=b.getSize(new THREE.Vector3()),margin=Math.max(.08,size.length()*.025);
  Object.assign(camera,{left:bounds.min.x-margin,right:bounds.max.x+margin,bottom:bounds.min.y-margin,top:bounds.max.y+margin,near:Math.max(.01,-bounds.max.z-margin),far:Math.max(.1,-bounds.min.z+margin)});
  light.shadow.normalBias=Math.min(.006,Math.max(.001,size.length()*.00065));
+ // A fixed pixel radius gets harsher as small subjects use more of the map.
+ // Keep a restrained studio softness in world units across size and rotation.
+ const texel=Math.max((camera.right-camera.left)/light.shadow.mapSize.x,(camera.top-camera.bottom)/light.shadow.mapSize.y);
+ light.shadow.radius=THREE.MathUtils.clamp(.045/texel,3,48);
  camera.updateProjectionMatrix();light.shadow.updateMatrices(light);
 }

@@ -1,13 +1,13 @@
 {
   "three": "0.186.1",
   "recipe": "node samples/threejs-recovery/build-game.mjs",
-  "sha256": "6f4850184cf78c6cd4acfa97275ba817599e33271918f0f168b3c3778874ca47",
+  "sha256": "161474b39ae9c223d3865e96052bfe22a31bae95f03351e2f37eaa65fa185a40",
   "inputs": {
     "source/three/game-scene.mjs": "6eda7411b5274a4af91dc51393063649c1accad2646018e1697b6afdd69eb05a",
     "source/three/interface.mjs": "270b1b66292ad4c0fd1f0f49ad76d38831e7b386ba519dbb95f14bc40b090ed5",
     "source/three/game-models.mjs": "9f22d3a497e9ffc29ec24134a8464915b4a1fa5fe2564bfc92e02be83ce7721a",
     "source/three/realism.mjs": "3202b930c0925875ee27354018a0f07d3b1f12687f6899e2510d975c90f045be",
-    "source/three/inspection.mjs": "37b1d3711398de061b2e95fc9b66527c2bd4335882a5ac4f32ab0a6f4d89906c",
+    "source/three/inspection.mjs": "fd983f7e0aa1b76f3a5c98d7f16ae506f852337825d64c76093ea2739ba1cb03",
     "samples/threejs-recovery/models.mjs": "90ec4cf8056e470d9a4acac97457a1a54a28407071e58c450f7cacbb83d0645e",
     "samples/threejs-recovery/package-lock.json": "ba260bb23c14756f172d615e7e7e168bb905772dbb56764365c4c4be3cae8b90"
   }
