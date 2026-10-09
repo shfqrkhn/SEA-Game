@@ -800,17 +800,35 @@ console.log('Instructor timer callback cadence, final-call, expiry and cleanup e
  const nodes=new Map(),node=id=>{if(!nodes.has(id))nodes.set(id,{textContent:'',value:'',disabled:false,innerHTML:''});return nodes.get(id);};
  const state={leader:2,currentBid:40000000,resultDraft:null,pausedRemaining:null,open:false,timingMode:'TIMED',phase:'auction',round:0,revealMode:'ROUND',revealed:true,teams:[{id:2,purchasesByRound:[1]}]};
  let entry={kind:'SALE',team:2,price:40000000};
- const render=runInNewContext(extractFunction(instructorSource,'renderCommitControls')+'\nrenderCommitControls',{state,visibleLot:()=>true,nextOffer:()=>45000000,effectiveEntry:()=>entry,amountInput:n=>String(n/100),money:n=>String(n/100),t:(key,values)=>key+JSON.stringify(values||{}),timerText:()=>'-',liveClosing:()=>!entry,committed:()=>!!entry,SEA_AUCTION:{canWin:n=>n<2},$:s=>node(s.slice(1)),document:{getElementById:node},saveState(){}});
+ const render=runInNewContext(extractFunction(instructorSource,'renderCommitControls')+'\nrenderCommitControls',{state,visibleLot:()=>true,nextOffer:()=>45000000,effectiveEntry:()=>entry,amountInput:n=>String(n/100),money:n=>String(n/100),t:(key,values)=>key+JSON.stringify(values||{}),timerText:()=>'-',liveClosing:()=>state.phase==='auction'&&state.open&&!entry&&state.pausedRemaining===null,biddingActive:()=>state.phase==='auction'&&state.open&&!entry&&state.pausedRemaining===null&&!state.expired,committed:()=>!!entry,SEA_AUCTION:{canWin:n=>n<2},$:s=>node(s.slice(1)),document:{getElementById:node},saveState(){}});
  node('timerAnnouncement').textContent='auction.windowEnded';render();
  assert.equal(node('timerAnnouncement').textContent,'','Committed lot clears stale expiry instruction');
  assert.equal(node('commitSummary').textContent,node('commitStatus').textContent,'Committed result replaces ready-to-commit summary');
  assert.match(node('commitSummary').textContent,/auction.committed/);
+ assert.equal(node('nextBid').textContent,'-','Committed result has no legal next bid');
+ assert.equal(node('nextBidMetric').hidden,true,'Committed result excludes next-bid metric');
+ assert.equal(node('preCommitCorrection').hidden,true,'Precommit correction instruction is absent after commitment');
+ assert.equal(node('postCommitCorrection').hidden,false,'Committed result retains facilitator void correction');assert.equal(node('correctionReason').disabled,false,'Committed void reason remains editable');assert.equal(node('voidCurrentBtn').disabled,false,'Validated postcommit void command remains reachable');
+ for(const id of ['winnerSelect','finalPrice','saleCorrectionReason'])assert.equal(node(id).disabled,true,'Committed draft input is disabled: '+id);
+ const committedBefore=JSON.stringify(state);node('finalPrice').value='999';node('finalPrice').oninput();assert.equal(JSON.stringify(state),committedBefore,'Stale draft input cannot mutate committed state');
  entry={kind:'UNSOLD'};render();assert.match(node('commitSummary').textContent,/auction.unsoldCommitted/);
  entry=null;state.open=true;node('timerAnnouncement').textContent='auction.finalCall';render();
  assert.equal(node('timerAnnouncement').textContent,'auction.finalCall','Active timer announcement remains available');
  assert.match(node('commitSummary').textContent,/auction.commitReady/);
+ assert.equal(node('nextBid').textContent,'450000','Live bidding shows exact next legal bid');assert.equal(node('nextBidMetric').hidden,false);
+ assert.equal(node('preCommitCorrection').hidden,false);assert.equal(node('postCommitCorrection').hidden,true);assert.equal(node('correctionReason').disabled,true);assert.equal(node('voidCurrentBtn').disabled,true);
+ for(const id of ['winnerSelect','finalPrice','saleCorrectionReason'])assert.equal(node(id).disabled,false);
+ node('finalPrice').value='410000';node('finalPrice').oninput();assert.equal(state.resultDraft.price,'410000','Live closing keeps editable native correction draft');
+ for(const closed of [{open:false},{open:true,pausedRemaining:1000},{open:true,pausedRemaining:null,expired:true}]){
+  Object.assign(state,{open:true,pausedRemaining:null,expired:false},closed);render();assert.equal(node('nextBidMetric').hidden,true,'Unavailable bidding omits next legal bid');
+  if(!state.open||state.pausedRemaining!==null){assert.equal(node('preCommitCorrection').hidden,true);const before=JSON.stringify(state);node('winnerSelect').oninput();assert.equal(JSON.stringify(state),before,'Unavailable closing rejects stale native draft callback')}
+ }
+ state.expired=false;state.open=true;state.pausedRemaining=null;state.phase='build';render();assert.equal(node('preCommitCorrection').hidden,true);assert.equal(node('postCommitCorrection').hidden,true);
 }
-console.log('Instructor actual commit renderer clears stale expiry/readiness messages and retains active timer announcements PASS');
+for(const [id,label] of [['nextBidMetric','auction.nextLegal'],['preCommitCorrection','auction.correct'],['postCommitCorrection','auction.correction']]){
+ const template=read('source/instructor.template.html');assert.match(template,new RegExp('<(?:div|details) id="'+id+'"[^>]*>[\\s\\S]*?data-i18n="'+label+'"'),'State visibility host retains native localized heading: '+id);
+}
+console.log('Instructor actual commit renderer gates next bid, precommit drafts and postcommit correction by canonical availability PASS');
 const bidNames=['effectiveEntry','committed','timedOut','biddingActive','currentCard','nextOffer','acceptTeamBid'];
 const bidSource=sharedEngineSource+'\n'+bidNames.map(name=>extractFunction(instructorSource,name)).join('\n')+'\n({biddingActive,currentCard,nextOffer,acceptTeamBid})';
 let bidNow=1000;

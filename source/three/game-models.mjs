@@ -95,19 +95,111 @@ function casing(g,m,profile,pos,axis='x',name='cast transmission casing'){
  const geometry=new THREE.LatheGeometry(profile.map(([r,a])=>new THREE.Vector2(r,a)),40),mesh=new THREE.Mesh(geometry,m);mesh.position.set(...pos);mesh.rotation[axis==='x'?'z':'x']=Math.PI/2;mesh.name=name;g.add(mesh);return mesh;
 }
 function engine(m,v){
- const g=group('inline diesel power pack'),compact=v===5;
- for(const z of [-.38,.38])box(g,m.edge,[2.05,.09,.085],[-.20,.11,z],'power pack skid rail');for(const x of [-1.05,.70])box(g,m.edge,[.08,.07,.84],[x,.13,0],'skid crossmember');
- box(g,m.paint,[.97,.42,.45],[0,.48,0],'cast inline engine block');box(g,m.darkSteel,[.86,.18,.36],[0,.25,0],'sump');box(g,m.paint,[1.01,.18,.47],[0,.82,0],'cylinder head');box(g,m.edge,[1.02,.12,.43],[0,.97,0],'single rocker cover');
- for(let i=0;i<6;i++){const x=-.40+i*.16;box(g,m.darkSteel,[.019,.34,.015],[x,.48,.237],'casting web');tube(g,m.steel,[[x,.78,.25],[x,.66,.36],[x+.04,.53,.42]],.023,18);tube(g,m.darkSteel,[[x,.86,-.22],[x,.76,-.31],[x,.62,-.34]],.026,18);}
- tube(g,m.darkSteel,[[-.42,.53,.42],[.40,.53,.42],[.48,.68,.38]],.046,28);
- casing(g,m.steel,[[0,-.04],[.11,-.04],[.23,.03],[.27,.13],[.23,.26],[.17,.52],[.12,.68],[0,.68]],[-.48,.52,0]);for(const x of [-.69,-.82,-.95])cylinder(g,m.darkSteel,.20,.025,[x,.52,0],'x',.20,40);cylinder(g,m.steel,.10,.10,[-1.20,.52,0],'x');
- box(g,m.darkSteel,[.10,.88,.76],[.68,.61,0],'radiator core');for(const z of [-.40,.40])box(g,m.paint,[.14,.93,.06],[.68,.61,z],'radiator side tank');for(const y of [.17,1.05])box(g,m.steel,[.14,.045,.83],[.68,y,0],'radiator header');for(let i=0;i<22;i++)box(g,m.steel,[.013,.77,.009],[.743,.61,-.35+i*.033],'radiator fin');
- cylinder(g,m.edge,.25,.07,[.57,.62,0],'x',.25,40);for(let i=0;i<7;i++){const a=i*Math.PI*2/7,blade=box(g,m.darkSteel,[.025,.24,.075],[.535,.62+Math.cos(a)*.13,Math.sin(a)*.13],'cooling fan blade');blade.rotation.x=a;}
- tube(g,m.rubber,[[.40,.85,-.20],[.45,1.06,-.24],[.64,1.06,-.24]],.045,28);tube(g,m.rubber,[[.35,.33,-.23],[.48,.20,-.29],[.64,.20,-.29]],.039,28);
- cylinder(g,m.darkSteel,.11,.45,[-.04,1.13,-.34],'x',.11,32);tube(g,m.rubber,[[.20,1.13,-.34],[.36,1.13,-.34],[.39,.88,-.26]],.062,30);cylinder(g,m.steel,.085,.12,[.20,.52,.36],'x',.085,32);for(let i=0;i<8;i++)box(g,m.steel,[.012,.14,.05],[.15+i*.018,.52,.37],'alternator cooling rib');
- for(const [y,z,r]of [[.41,0,.11],[.68,.17,.067]])cylinder(g,m.darkSteel,r,.035,[.50,y,z],'x',r,32);tube(g,m.rubber,[[.525,.32,0],[.525,.48,-.09],[.525,.74,.12],[.525,.69,.23],[.525,.33,.06],[.525,.32,0]],.012,40);
- for(const x of [-.35,.32])for(const z of [-.25,.25]){cylinder(g,m.rubber,.04,.09,[x,.20,z]);rod(g,m.steel,[x,.22,z],[x,.38,z],.022);}
- if(v===4){box(g,m.paint,[.72,.75,.42],[-.52,.56,-.74],'long range fuel reservoir');for(const x of [-.78,-.28])box(g,m.darkSteel,[.036,.77,.45],[x,.56,-.74],'fuel tank restraint');cylinder(g,m.steel,.048,.045,[-.52,.96,-.74]);tube(g,m.rubber,[[-.30,.29,-.72],[-.09,.30,-.58],[.04,.55,-.26]],.016,30);}
+ const g=group('inline diesel power pack'),compact=v===5,cast=m.castSteel||m.darkSteel,pressed=m.pressedSteel||m.steel;
+ const rounded=(material,size,pos,radius,name)=>{const o=new THREE.Mesh(new RoundedBoxGeometry(...size,3,radius),material);o.position.set(...pos);o.name=name;o.castShadow=o.receiveShadow=true;g.add(o);return o;};
+ const section=(outline,length,x,material,name)=>{
+  const shape=new THREE.Shape();outline.forEach(([z,y],i)=>i?shape.lineTo(z,y):shape.moveTo(z,y));shape.closePath();
+  const geometry=new THREE.ExtrudeGeometry(shape,{depth:length,steps:1,bevelEnabled:true,bevelSize:.009,bevelThickness:.007,bevelSegments:3});
+  const p=geometry.attributes.position;for(let i=0;i<p.count;i++)p.setXYZ(i,x+p.getZ(i),p.getY(i),p.getX(i));geometry.computeVertexNormals();
+  const materialClone=material.clone();materialClone.side=THREE.DoubleSide;const o=new THREE.Mesh(geometry,materialClone);o.name=name;o.castShadow=o.receiveShadow=true;g.add(o);return o;
+ };
+ const pipe=(material,points,r,name)=>{const o=tube(g,material,points,r,32);o.name=name;return o;};
+ const flange=(x,y,z,axis='z',radius=.042)=>{cylinder(g,cast,radius,.020,[x,y,z],axis,radius,24).name='manifold seated port flange';};
+ for(const z of [-.38,.38])box(g,m.edge,[2.17,.09,.085],[-.20,.11,z],'power pack skid rail');
+ for(const x of [-1.08,.77])box(g,m.edge,[.10,.07,v===4?1.35:.85],[x,.13,v===4?-.24:0],'skid crossmember');
+ // Original faceted foundry sections, with a bulged crankcase and sloping sump.
+ section([[-.22,.31],[-.26,.40],[-.25,.58],[-.205,.70],[.205,.70],[.25,.58],[.26,.40],[.22,.31]],.96,-.48,m.paint,'cast crankcase with tapered shoulders');
+ section([[-.215,.315],[-.215,.265],[-.145,.195],[.145,.195],[.215,.265],[.215,.315]],.85,-.425,cast,'pressed deep oil sump');
+ rounded(pressed,[.91,.025,.46],[0,.317,0],.010,'continuous sump sealing flange');
+ cylinder(g,m.steel,.018,.026,[.27,.198,0],'y',.018,6).name='seated sump drain plug';
+ rounded(m.paint,[1.00,.175,.49],[0,.7875,0],.025,'cast cylinder head with port band');
+ rounded(m.darkSteel,[1.018,.019,.455],[0,.881,0],.006,'rocker cover continuous gasket');
+ section([[-.222,.885],[-.222,.935],[-.17,1.015],[.17,1.015],[.222,.935],[.222,.885]],.99,-.495,m.edge,'formed crowned rocker cover');
+ for(const x of [-.40,-.24,-.08,.08,.24,.40]){
+  for(const s of [-1,1]){
+   section([[s*.237,.365],[s*.272,.405],[s*.257,.62],[s*.218,.69],[s*.211,.69],[s*.237,.40]],.032,x-.016,m.paint,'cast crankcase buttress');
+   rounded(cast,[.122,.16,.024],[x,.535,s*.254],.018,'recessed crankcase service cover');
+   for(const y of [.480,.590])cylinder(g,m.steel,.007,.012,[x,y,s*.272],'z',.007,6).name='service cover captive fastener';
+   cylinder(g,m.darkSteel,.009,.022,[x,.902,s*.19],'y',.009,6).name='rocker cover seated fastener';
+  }
+  flange(x,.790,.255);flange(x,.800,-.255);
+  pipe(cast,[[x,.790,.25],[x,.775,.305],[x+.028,.735,.375]],.033,'exhaust branch into collector');
+  pipe(m.paint,[[x,.800,-.25],[x,.815,-.300],[x,.825,-.345]],.036,'intake runner into plenum');
+ }
+ rounded(m.paint,[.98,.115,.105],[0,.835,-.355],.045,'continuous intake plenum');
+ pipe(cast,[[-.44,.735,.375],[0,.735,.375],[.43,.735,.375]],.046,'continuous cast exhaust collector');
+ // Turbo housings have cast scroll volumes, a centre bearing and connected ports.
+ const scroll=(x,material,name)=>{
+  cylinder(g,material,.104,.09,[x,.755,.49],'x',.117,32).name=name+' backing';
+  const points=[];for(let i=0;i<=40;i++){const a=i/40*Math.PI*2;const r=.094+.026*i/40;points.push([x,.755+Math.cos(a)*r,.49+Math.sin(a)*r]);}
+  pipe(material,points,.037,name+' scroll');
+ };
+ scroll(-.205,cast,'turbine housing');scroll(-.365,pressed,'compressor housing');
+ cylinder(g,m.steel,.057,.12,[-.285,.755,.49],'x',.057,24).name='turbo centre bearing';
+ pipe(cast,[[-.06,.735,.375],[-.16,.790,.398],[-.205,.848,.46]],.043,'collector to turbine inlet');
+ pipe(cast,[[-.205,.760,.612],[-.205,.91,.65],[-.205,1.075,.65]],.046,'supported exhaust riser');
+ cylinder(g,m.steel,.053,.012,[-.205,1.052,.65],'y',.053,24).name='exhaust riser seated clamp';
+ rod(g,m.edge,[-.205,.89,.65],[-.205,.85,.25],.013).name='exhaust riser support bracket';
+ pipe(m.steel,[[-.365,.895,.49],[-.10,1.10,.44],[.32,1.09,.30],[.40,1.02,-.16],[.35,.835,-.355]],.055,'compressor delivery to intake plenum');
+ for(const [x,y,z]of [[-.10,1.10,.44],[.32,1.09,.30]])cylinder(g,m.darkSteel,.063,.043,[x,y,z],'x',.063,24).name='charge pipe coupling';
+ cylinder(g,m.darkSteel,.122,.44,[-.085,1.18,-.39],'x',.122,32).name='air cleaner cylindrical shell';
+ for(const x of [-.315,.145])cylinder(g,m.edge,.130,.018,[x,1.18,-.39],'x',.130,32).name='air cleaner retained end cap';
+ for(const x of [-.22,.055]){cylinder(g,m.steel,.125,.018,[x,1.18,-.39],'x',.125,32).name='air cleaner mounting band';rod(g,m.edge,[x,1.07,-.39],[x,.87,-.355],.018).name='air cleaner plenum bracket';}
+ pipe(m.rubber,[[-.315,1.18,-.39],[-.59,1.16,-.37],[-.61,.96,.23],[-.52,.755,.49],[-.412,.755,.49]],.061,'air cleaner outlet to compressor inlet');
+ pipe(m.steel,[[-.275,.745,.49],[-.27,.56,.34],[-.27,.39,.24]],.010,'turbo oil return into crankcase');
+ // Flywheel face meets the block; the taper and longitudinal ribs belong to the casing.
+ casing(g,cast,[[0,-.03],[.20,-.03],[.27,.025],[.29,.13],[.265,.26],[.175,.54],[.125,.69],[0,.69]],[-.48,.51,0],'x','cast flywheel and transmission casing');
+ for(const x of [-.58,-.70,-.83,-.98])cylinder(g,m.darkSteel,x<-.80?.185:.275,.015,[x,.51,0],'x',x<-.80?.185:.275,32).name='transmission casting stiffening ring';
+ for(let i=0;i<6;i++){const a=i*Math.PI/3;rod(g,cast,[-.61,.51+Math.cos(a)*.265,Math.sin(a)*.265],[-1.10,.51+Math.cos(a)*.130,Math.sin(a)*.130],.017).name='transmission longitudinal casting rib';}
+ bolts(g,m.steel,[-.514,.51,0],.243,10,'x',.010);cylinder(g,m.steel,.083,.08,[-1.19,.51,0],'x').name='transmission output coupling';
+ // Cooling pack: fin passages, folded frame, an open fan shroud and driven hub.
+ rounded(m.darkSteel,[.085,.82,.69],[.80,.665,0],.008,'radiator dark fin substrate');
+ for(const z of [-.389,.389])rounded(pressed,[.135,.88,.075],[.80,.665,z],.018,'radiator formed side tank');
+ for(const y of [.215,1.115])rounded(pressed,[.135,.080,.84],[.80,y,0],.017,'radiator folded header');
+ for(let i=0;i<36;i++)box(g,pressed,[.012,.80,.005],[.849,.665,-.333+i*.019],'radiator vertical cooling passage');
+ for(let i=0;i<28;i++)box(g,cast,[.008,.005,.68],[.856,.273+i*.029,0],'radiator transverse fin fold');
+ for(const z of [-.388,.388]){box(g,m.edge,[.17,.070,.13],[.80,.178,z],'radiator bolted skid foot');for(const y of [.30,1.04])cylinder(g,m.steel,.010,.019,[.879,y,z],'x',.010,6).name='radiator frame fastener';}
+ const shroud=new THREE.Mesh(new THREE.TorusGeometry(.291,.019,8,48),m.darkSteel);shroud.rotation.y=Math.PI/2;shroud.position.set(.691,.665,0);shroud.name='open circular cooling fan shroud';g.add(shroud);
+ for(const s of [-1,1])rod(g,m.darkSteel,[.70,.665,s*.291],[.754,.665,s*.34],.023).name='shroud to radiator support';
+ cylinder(g,m.darkSteel,.063,.10,[.651,.665,0],'x',.063,32).name='cooling fan driven hub';
+ for(let i=0;i<7;i++){
+  const a=i*Math.PI*2/7,shape=new THREE.Shape();shape.moveTo(.045,-.025);shape.quadraticCurveTo(.17,-.055,.267,-.01);shape.lineTo(.26,.040);shape.quadraticCurveTo(.16,.023,.045,.025);shape.closePath();
+  const geo=new THREE.ExtrudeGeometry(shape,{depth:.013,bevelEnabled:true,bevelSize:.003,bevelThickness:.002,bevelSegments:2});const p=geo.attributes.position;
+  for(let j=0;j<p.count;j++){const r=p.getX(j),t=p.getY(j),d=p.getZ(j);p.setXYZ(j,.647+d+r*.035,.665+Math.cos(a)*r-Math.sin(a)*t,Math.sin(a)*r+Math.cos(a)*t);}geo.computeVertexNormals();
+  const material=m.darkSteel.clone();material.side=THREE.DoubleSide;const blade=new THREE.Mesh(geo,material);blade.name='swept cooling fan blade';blade.castShadow=true;g.add(blade);
+ }
+ rounded(m.paint,[.075,.38,.34],[.516,.515,0],.035,'front timing gear housing');
+ rod(g,cast,[.516,.665,0],[.652,.665,0],.041).name='water pump and fan shaft';
+ // Both hoses terminate on the tank's actual inlet axis. A metal neck crosses
+ // the tank face, with the clamp outside it on the straight hose segment.
+ pipe(m.rubber,[[.43,.84,.19],[.59,.96,.29],[.64,.965,.389],[.72,.965,.389],[.80,.965,.389]],.040,'upper coolant hose seated into side tank');
+ pipe(m.rubber,[[.48,.40,.16],[.60,.26,.29],[.64,.285,.389],[.72,.285,.389],[.80,.285,.389]],.037,'lower coolant hose seated into side tank');
+ for(const y of [.965,.285]){
+  cylinder(g,pressed,.047,.090,[.7275,y,.389],'x',.047,24).name='radiator coolant inlet neck';
+  cylinder(g,m.steel,.049,.024,[.705,y,.389],'x',.049,24).name='coolant hose seated clamp';
+ }
+ cylinder(g,pressed,.080,.135,[.493,.462,-.245],'x',.080,28).name='alternator ventilated body';
+ for(let i=0;i<10;i++){const a=i*Math.PI/5;rod(g,cast,[.44,.462+Math.cos(a)*.078,-.245+Math.sin(a)*.078],[.546,.462+Math.cos(a)*.078,-.245+Math.sin(a)*.078],.008).name='alternator longitudinal cooling rib';}
+ box(g,m.edge,[.16,.05,.16],[.435,.365,-.205],'alternator seated mounting bracket');
+ const pulley=(y,z,r)=>{cylinder(g,m.darkSteel,r,.029,[.575,y,z],'x',r,32).name='accessory drive pulley';cylinder(g,m.steel,r*.34,.034,[.579,y,z],'x',r*.34,24).name='pulley seated hub';};
+ rod(g,cast,[.540,.425,0],[.580,.425,0],.043).name='crank pulley shaft into timing housing';
+ pulley(.425,0,.106);pulley(.665,0,.075);pulley(.462,-.245,.064);
+ pipe(m.rubber,[[.595,.322,0],[.595,.340,-.195],[.595,.430,-.310],[.595,.515,-.272],[.595,.739,-.024],[.595,.714,.056],[.595,.431,.106],[.595,.322,0]],.009,'continuous accessory drive belt');
+ rounded(cast,[.16,.09,.17],[.11,.57,-.285],.020,'oil filter connected housing');
+ cylinder(g,m.lamp,.059,.19,[.11,.434,-.285],'y',.059,28).name='replaceable oil filter canister';
+ cylinder(g,m.steel,.062,.017,[.11,.529,-.285],'y',.062,24).name='oil filter sealing rim';
+ rod(g,m.steel,[.34,.39,.24],[.34,.68,.32],.005).name='oil dipstick seated guide';cylinder(g,m.amber,.020,.009,[.34,.690,.325],'z',.020,16).name='dipstick service handle';
+ for(const x of [-.34,.31])for(const s of [-1,1]){
+  box(g,m.edge,[.14,.030,.13],[x,.166,s*.38],'engine skid mounting shoe');cylinder(g,m.rubber,.048,.072,[x,.217,s*.38],'y',.048,24).name='engine mounting isolator';
+  section([[s*.235,.36],[s*.42,.258],[s*.42,.25],[s*.33,.25],[s*.235,.29]],.115,x-.0575,m.paint,'cast engine mounting ear');
+  cylinder(g,m.steel,.009,.043,[x,.266,s*.38],'y',.009,6).name='engine mount seated retaining bolt';
+ }
+ if(v===4){
+  rounded(m.paint,[.76,.68,.40],[-.54,.535,-.78],.05,'long range fuel reservoir');
+  for(const x of [-.79,-.29]){box(g,m.darkSteel,[.04,.70,.42],[x,.535,-.78],'fuel tank restraint');box(g,m.edge,[.18,.060,.45],[x,.170,-.78],'fuel tank supported saddle');}
+  cylinder(g,m.steel,.045,.040,[-.54,.889,-.78],'y',.045,24).name='fuel reservoir filler cap';
+  pipe(m.rubber,[[-.28,.25,-.62],[-.18,.33,-.50],[.11,.50,-.35],[.11,.57,-.285]],.014,'reservoir fuel supply seated at filter housing');
+ }
  if(compact)g.scale.setScalar(.78);return g;
 }
 function axle(m,{wheels=false,light=false,adaptive=false,springs=false}={}){

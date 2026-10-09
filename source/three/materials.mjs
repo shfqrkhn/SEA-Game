@@ -12,9 +12,36 @@ export const FINISH_PROFILES=Object.freeze({
  upholstery:Object.freeze({wavelength:.0009,variation:.065,directional:2})
 });
 
+// Authored finish intent, not measured manufacturer texture data. Centimetre
+// response remains visible at game scale without faking dents or damaged paint.
+export const SURFACE_PROFILES=Object.freeze({
+ coated:Object.freeze({wavelength:.065,roughness:.055,tone:.018}),
+ pressed:Object.freeze({wavelength:.095,roughness:.035,tone:.010}),
+ cast:Object.freeze({wavelength:.030,roughness:.12,tone:.045}),
+ machined:Object.freeze({wavelength:.055,roughness:.040,tone:.008}),
+ rubber:Object.freeze({wavelength:.040,roughness:.050,tone:.012}),
+ upholstery:Object.freeze({wavelength:.035,roughness:.065,tone:.025})
+});
+
 const finishFragment=/* glsl */`
 varying vec3 vSeaFinishPosition;
 uniform vec3 seaFinish;
+uniform vec3 seaSurface;
+float seaFinishHash(vec3 p) {
+ p=fract(p*0.1031);p+=dot(p,p.yzx+33.33);
+ return fract((p.x+p.y)*p.z);
+}
+float seaFinishNoise(vec3 p) {
+ vec3 cell=floor(p),f=fract(p);f=f*f*(3.0-2.0*f);
+ float low=mix(mix(seaFinishHash(cell),seaFinishHash(cell+vec3(1,0,0)),f.x),mix(seaFinishHash(cell+vec3(0,1,0)),seaFinishHash(cell+vec3(1,1,0)),f.x),f.y);
+ float high=mix(mix(seaFinishHash(cell+vec3(0,0,1)),seaFinishHash(cell+vec3(1,0,1)),f.x),mix(seaFinishHash(cell+vec3(0,1,1)),seaFinishHash(cell+vec3(1,1,1)),f.x),f.y);
+ return mix(low,high,f.z)*2.0-1.0;
+}
+float seaVisibleSurface() {
+ vec3 p=vSeaFinishPosition/max(seaSurface.x,0.00001);
+ float footprint=max(length(dFdx(p)),length(dFdy(p)));
+ return seaFinishNoise(p)*(1.0-smoothstep(0.35,1.0,footprint));
+}
 float seaSurfaceFinish() {
  // Object anchoring keeps the finish attached during inspection rotation.
  // Suppress frequencies below the pixel footprint instead of letting distant
@@ -37,26 +64,30 @@ export class FinishMaterial extends THREE.MeshPhysicalMaterial {
   super(parameters);
   this.finish=finish;
   this.finishProfile={...profileFor(finish)};
+  this.surfaceProfile={...SURFACE_PROFILES[finish]};
  }
  copy(source){
   super.copy(source);
   this.finish=source.finish??'coated';
   this.finishProfile={...(source.finishProfile??profileFor(this.finish))};
+  this.surfaceProfile={...(source.surfaceProfile??SURFACE_PROFILES[this.finish])};
   return this;
  }
- customProgramCacheKey(){return 'sea-metres-finish-v1';}
+ customProgramCacheKey(){return 'sea-metres-finish-v2';}
  onBeforeCompile(shader){
-  const vertexAnchor='#include <project_vertex>',fragmentAnchor='#include <roughnessmap_fragment>';
-  if(!shader.vertexShader.includes(vertexAnchor)||!shader.fragmentShader.includes(fragmentAnchor))throw new Error('SEA finish shader anchors changed');
+  const vertexAnchor='#include <project_vertex>',fragmentAnchor='#include <roughnessmap_fragment>',colorAnchor='#include <color_fragment>';
+  if(!shader.vertexShader.includes(vertexAnchor)||!shader.fragmentShader.includes(fragmentAnchor)||!shader.fragmentShader.includes(colorAnchor))throw new Error('SEA finish shader anchors changed');
   const p=this.finishProfile;
   shader.uniforms.seaFinish={value:new THREE.Vector3(p.wavelength,p.variation,p.directional)};
+  const s=this.surfaceProfile;shader.uniforms.seaSurface={value:new THREE.Vector3(s.wavelength,s.roughness,s.tone)};
   shader.vertexShader='varying vec3 vSeaFinishPosition;\n'+shader.vertexShader;
   shader.vertexShader=shader.vertexShader.replace(vertexAnchor,/* glsl */`
    vSeaFinishPosition=transformed*vec3(length(modelMatrix[0].xyz),length(modelMatrix[1].xyz),length(modelMatrix[2].xyz));
    ${vertexAnchor}
   `);
   shader.fragmentShader=finishFragment+shader.fragmentShader;
-  shader.fragmentShader=shader.fragmentShader.replace(fragmentAnchor,`${fragmentAnchor}\nroughnessFactor=clamp(roughnessFactor+seaSurfaceFinish(),0.04,1.0);`);
+  shader.fragmentShader=shader.fragmentShader.replace(colorAnchor,`${colorAnchor}\nfloat seaSurfaceResponse=seaVisibleSurface();\ndiffuseColor.rgb*=1.0+seaSurfaceResponse*seaSurface.z;`);
+  shader.fragmentShader=shader.fragmentShader.replace(fragmentAnchor,`${fragmentAnchor}\nroughnessFactor=clamp(roughnessFactor+seaSurfaceFinish()+seaSurfaceResponse*seaSurface.y,0.04,1.0);`);
  }
 }
 

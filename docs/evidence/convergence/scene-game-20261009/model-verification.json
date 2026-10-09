@@ -537,18 +537,18 @@
     {
       "id": "MOB-A",
       "kind": "part",
-      "meshes": 91,
-      "triangles": 10080,
+      "meshes": 275,
+      "triangles": 40288,
       "bounds": {
         "min": [
-          -1.250000000745058,
+          -1.2850000381469726,
           0.06499999821186066,
-          -0.4499999994039536
+          -0.5199999952316284
         ],
         "max": [
-          0.8249999761581421,
-          1.2399999994039534,
-          0.47478505969047546
+          0.8884999996945262,
+          1.3099999952316284,
+          0.7029999993741513
         ]
       },
       "cameraChecks": 12
@@ -613,18 +613,18 @@
     {
       "id": "MOB-E",
       "kind": "part",
-      "meshes": 96,
-      "triangles": 10772,
+      "meshes": 282,
+      "triangles": 41724,
       "bounds": {
         "min": [
-          -1.250000000745058,
+          -1.2850000381469726,
           0.06499999821186066,
-          -0.9649999940395355
+          -1.0049999940395355
         ],
         "max": [
-          0.8249999761581421,
-          1.2399999994039534,
-          0.47478505969047546
+          0.8884999996945262,
+          1.3099999952316284,
+          0.7029999993741513
         ]
       },
       "cameraChecks": 12
@@ -632,18 +632,18 @@
     {
       "id": "MOB-F",
       "kind": "part",
-      "meshes": 91,
-      "triangles": 10080,
+      "meshes": 275,
+      "triangles": 40288,
       "bounds": {
         "min": [
-          -0.9750000005811452,
+          -1.0023000297546387,
           0.05069999860525131,
-          -0.3509999995350838
+          -0.4055999962806702
         ],
         "max": [
-          0.6434999814033509,
-          0.9671999995350837,
-          0.3703323465585709
+          0.6930299997617304,
+          1.02179999628067,
+          0.548339999511838
         ]
       },
       "cameraChecks": 12
@@ -993,8 +993,8 @@
     {
       "id": "SE-D",
       "kind": "part",
-      "meshes": 157,
-      "triangles": 11472,
+      "meshes": 341,
+      "triangles": 41680,
       "bounds": {
         "min": [
           -0.6499999761581421,
@@ -1145,8 +1145,8 @@
     {
       "id": "SE-L",
       "kind": "part",
-      "meshes": 157,
-      "triangles": 11472,
+      "meshes": 341,
+      "triangles": 41680,
       "bounds": {
         "min": [
           -0.6499999761581421,
@@ -1240,8 +1240,8 @@
     {
       "id": "SE-Q",
       "kind": "part",
-      "meshes": 157,
-      "triangles": 11472,
+      "meshes": 341,
+      "triangles": 41680,
       "bounds": {
         "min": [
           -0.6499999761581421,
@@ -1259,8 +1259,8 @@
     {
       "id": "SE-R",
       "kind": "part",
-      "meshes": 157,
-      "triangles": 11472,
+      "meshes": 341,
+      "triangles": 41680,
       "bounds": {
         "min": [
           -0.6499999761581421,
@@ -1316,8 +1316,8 @@
     {
       "id": "SE-U",
       "kind": "part",
-      "meshes": 157,
-      "triangles": 11472,
+      "meshes": 341,
+      "triangles": 41680,
       "bounds": {
         "min": [
           -0.6499999761581421,
@@ -1479,7 +1479,7 @@
         "SA": "SA-A",
         "ACC": "ACC-A"
       },
-      "meshes": 1590,
+      "meshes": 1774,
       "cameraChecks": 12
     },
     {
@@ -1539,7 +1539,7 @@
         "SA": "SA-E",
         "ACC": "ACC-E"
       },
-      "meshes": 1584,
+      "meshes": 1770,
       "cameraChecks": 12
     },
     {
@@ -1554,7 +1554,7 @@
         "SA": "SA-F",
         "ACC": "ACC-F"
       },
-      "meshes": 1557,
+      "meshes": 1741,
       "cameraChecks": 12
     },
     {
@@ -1584,7 +1584,7 @@
         "SA": "SA-A",
         "ACC": "ACC-A"
       },
-      "meshes": 1178,
+      "meshes": 1362,
       "cameraChecks": 12
     },
     {
@@ -1644,7 +1644,7 @@
         "SA": "SA-E",
         "ACC": "ACC-E"
       },
-      "meshes": 1172,
+      "meshes": 1358,
       "cameraChecks": 12
     },
     {
@@ -1659,7 +1659,7 @@
         "SA": "SA-F",
         "ACC": "ACC-F"
       },
-      "meshes": 1145,
+      "meshes": 1329,
       "cameraChecks": 12
     },
     {
@@ -1689,7 +1689,7 @@
         "SA": "SA-A",
         "ACC": "ACC-A"
       },
-      "meshes": 1387,
+      "meshes": 1571,
       "cameraChecks": 12
     },
     {
@@ -1749,7 +1749,7 @@
         "SA": "SA-E",
         "ACC": "ACC-E"
       },
-      "meshes": 1381,
+      "meshes": 1567,
       "cameraChecks": 12
     },
     {
@@ -1764,7 +1764,7 @@
         "SA": "SA-F",
         "ACC": "ACC-F"
       },
-      "meshes": 1354,
+      "meshes": 1538,
       "cameraChecks": 12
     },
     {
@@ -1794,7 +1794,7 @@
         "SA": "SA-A",
         "ACC": "ACC-A"
       },
-      "meshes": 1384,
+      "meshes": 1568,
       "cameraChecks": 12
     },
     {
@@ -1854,7 +1854,7 @@
         "SA": "SA-E",
         "ACC": "ACC-E"
       },
-      "meshes": 1378,
+      "meshes": 1564,
       "cameraChecks": 12
     },
     {
@@ -1869,7 +1869,7 @@
         "SA": "SA-F",
         "ACC": "ACC-F"
       },
-      "meshes": 1351,
+      "meshes": 1535,
       "cameraChecks": 12
     },
     {
@@ -1899,7 +1899,7 @@
         "SA": "SA-A",
         "ACC": "ACC-A"
       },
-      "meshes": 1837,
+      "meshes": 2021,
       "cameraChecks": 12
     },
     {
@@ -1959,7 +1959,7 @@
         "SA": "SA-E",
         "ACC": "ACC-E"
       },
-      "meshes": 1911,
+      "meshes": 2097,
       "cameraChecks": 12
     },
     {
@@ -1974,7 +1974,7 @@
         "SA": "SA-F",
         "ACC": "ACC-F"
       },
-      "meshes": 1804,
+      "meshes": 1988,
       "cameraChecks": 12
     },
     {
@@ -2004,7 +2004,7 @@
         "SA": "SA-A",
         "ACC": "ACC-A"
       },
-      "meshes": 1658,
+      "meshes": 1842,
       "cameraChecks": 12
     },
     {
@@ -2064,7 +2064,7 @@
         "SA": "SA-E",
         "ACC": "ACC-E"
       },
-      "meshes": 1584,
+      "meshes": 1770,
       "cameraChecks": 12
     },
     {
@@ -2079,7 +2079,7 @@
         "SA": "SA-F",
         "ACC": "ACC-F"
       },
-      "meshes": 1625,
+      "meshes": 1809,
       "cameraChecks": 12
     },
     {

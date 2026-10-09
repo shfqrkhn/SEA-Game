@@ -286,12 +286,13 @@ function renderBidRoster(){
 }
 
 function renderCommitControls(){
- const vis=visibleLot(state.lot),amount=nextOffer(),entry=effectiveEntry(),draft=state.resultDraft||{team:state.leader,price:state.currentBid===null?'':amountInput(state.currentBid),reason:''};
- $('#leaderSummary').textContent=state.leader?t('common.team',{n:state.leader})+' · '+money(state.currentBid):'-';$('#nextBid').textContent=vis&&amount!==null?money(amount):'-';$('#timerValue').textContent=timerText();
+ const vis=visibleLot(state.lot),amount=nextOffer(),entry=effectiveEntry(),closing=liveClosing(),bidding=biddingActive(),draft=state.resultDraft||{team:state.leader,price:state.currentBid===null?'':amountInput(state.currentBid),reason:''};
+ $('#leaderSummary').textContent=state.leader?t('common.team',{n:state.leader})+' · '+money(state.currentBid):'-';$('#nextBid').textContent=vis&&bidding&&amount!==null?money(amount):'-';$('#nextBidMetric').hidden=!vis||!bidding;$('#timerValue').textContent=timerText();
  $('#pauseBtn').textContent=state.pausedRemaining===null?t('auction.pause'):t('auction.resume');$('#pauseBtn').disabled=!state.open||committed();$('#extendBtn').disabled=!state.open||state.timingMode!=='TIMED'||committed();
  $('#winnerSelect').innerHTML=`<option value="">${t('common.selectTeam')}</option>`+state.teams.map(tm=>`<option value="${tm.id}" ${Number(draft.team)===tm.id?'selected':''} ${!SEA_AUCTION.canWin(tm.purchasesByRound[state.round])?'disabled':''}>${t('common.team',{n:tm.id})}</option>`).join('');
  $('#finalPrice').value=draft.price;$('#saleCorrectionReason').value=draft.reason;
- const storeDraft=()=>{state.resultDraft={team:$('#winnerSelect').value,price:$('#finalPrice').value,reason:$('#saleCorrectionReason').value};saveState()};['winnerSelect','finalPrice','saleCorrectionReason'].forEach(id=>document.getElementById(id).oninput=storeDraft);
+ $('#preCommitCorrection').hidden=!closing;$('#postCommitCorrection').hidden=state.phase!=='auction'||!entry;$('#correctionReason').disabled=state.phase!=='auction'||!entry;
+ const storeDraft=()=>{if(!liveClosing())return;state.resultDraft={team:$('#winnerSelect').value,price:$('#finalPrice').value,reason:$('#saleCorrectionReason').value};saveState()};['winnerSelect','finalPrice','saleCorrectionReason'].forEach(id=>{const input=document.getElementById(id);input.disabled=!closing;input.oninput=storeDraft});
  const resultText=entry?(entry.kind==='SALE'?t('auction.committed',{team:entry.team,amount:money(entry.price)}):t('auction.unsoldCommitted')):null;
  $('#commitSummary').textContent=resultText||(state.leader?t('auction.commitReady',{team:state.leader,amount:money(state.currentBid)}):t('auction.noAccepted'));
  $('#commitStatus').textContent=resultText||t('auction.notCommitted');

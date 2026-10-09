@@ -964,6 +964,81 @@
         ]
       },
       "acceptanceStatus": "open"
+    },
+    {
+      "id": "GEN-component-powertrain-v1",
+      "inventoryIds": [
+        "COMP-powerpack",
+        "COMP-crankcase",
+        "COMP-cooling",
+        "COMP-intake",
+        "COMP-exhaust",
+        "COMP-transmission",
+        "COMP-connections",
+        "COMP-fuel"
+      ],
+      "status": "generated-exploratory",
+      "tool": "imagegen",
+      "date": "2026-10-09",
+      "artifact": "docs/game-design/concepts/component-powertrain-v1.png",
+      "sha256": "a6027294b562f612f338bc8ea783922b7fc2342f1b907a6a7d3b765e1566ac8f",
+      "nativeOutputPath": "C:/Users/user/.codex/generated_images/01a12112-3dbe-7a60-8d40-d78b3c5fdba2/exec-1de5ffa5-1759-462f-9983-c2faffe716dd.png",
+      "promptFile": "docs/game-design/COMPONENT_POWERTRAIN_PROMPT.md",
+      "panels": [
+        {
+          "panel": 1,
+          "inventoryId": "COMP-powerpack"
+        },
+        {
+          "panel": 2,
+          "inventoryId": "COMP-crankcase"
+        },
+        {
+          "panel": 3,
+          "inventoryId": "COMP-cooling"
+        },
+        {
+          "panel": 4,
+          "inventoryId": "COMP-intake"
+        },
+        {
+          "panel": 5,
+          "inventoryId": "COMP-exhaust"
+        },
+        {
+          "panel": 6,
+          "inventoryId": "COMP-transmission"
+        },
+        {
+          "panel": 7,
+          "inventoryId": "COMP-connections"
+        },
+        {
+          "panel": 8,
+          "inventoryId": "COMP-fuel"
+        }
+      ],
+      "visualReview": {
+        "status": "lead pixel inspected; exploratory only",
+        "usefulDirection": [
+          "Eight exact readable component IDs",
+          "Cast/folded/machined surfaces and assembled/exploded interface direction",
+          "Selected overall subject/caption margins exceed8% by visual estimate"
+        ],
+        "knownMismatches": [
+          "Cylinder/internal topology and fan support unqualified",
+          "Turbo air/exhaust and transmission flange correspondence synthetic",
+          "Fuel lacks clear high-pressure pump; illustrated injectors are not seated in a head",
+          "Generated margin edits alter details rather than exact rescaling",
+          "No matched runtime or dimension qualification"
+        ],
+        "doesNotProve": [
+          "Other27 component concepts",
+          "Mission assembly/UI/material concepts",
+          "Physical performance, rights, classroom or product acceptance"
+        ]
+      },
+      "acceptanceStatus": "open"
     }
   ]
 }

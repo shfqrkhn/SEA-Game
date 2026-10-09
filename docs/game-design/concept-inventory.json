@@ -15,7 +15,7 @@
     "components": 35,
     "assemblyRelationships": 48,
     "uiStates": 40,
-    "uiElements": 225,
+    "uiElements": 228,
     "materials": 12,
     "exploratoryDirections": 1
   },
@@ -5547,8 +5547,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/component-powertrain-v1.png",
+            "sha256": "a6027294b562f612f338bc8ea783922b7fc2342f1b907a6a7d3b765e1566ac8f",
+            "receiptId": "GEN-component-powertrain-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -5592,8 +5601,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/component-powertrain-v1.png",
+            "sha256": "a6027294b562f612f338bc8ea783922b7fc2342f1b907a6a7d3b765e1566ac8f",
+            "receiptId": "GEN-component-powertrain-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -5637,8 +5655,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/component-powertrain-v1.png",
+            "sha256": "a6027294b562f612f338bc8ea783922b7fc2342f1b907a6a7d3b765e1566ac8f",
+            "receiptId": "GEN-component-powertrain-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -5682,8 +5709,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/component-powertrain-v1.png",
+            "sha256": "a6027294b562f612f338bc8ea783922b7fc2342f1b907a6a7d3b765e1566ac8f",
+            "receiptId": "GEN-component-powertrain-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -5727,8 +5763,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/component-powertrain-v1.png",
+            "sha256": "a6027294b562f612f338bc8ea783922b7fc2342f1b907a6a7d3b765e1566ac8f",
+            "receiptId": "GEN-component-powertrain-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -5772,8 +5817,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/component-powertrain-v1.png",
+            "sha256": "a6027294b562f612f338bc8ea783922b7fc2342f1b907a6a7d3b765e1566ac8f",
+            "receiptId": "GEN-component-powertrain-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -5817,8 +5871,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/component-powertrain-v1.png",
+            "sha256": "a6027294b562f612f338bc8ea783922b7fc2342f1b907a6a7d3b765e1566ac8f",
+            "receiptId": "GEN-component-powertrain-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -5862,8 +5925,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/component-powertrain-v1.png",
+            "sha256": "a6027294b562f612f338bc8ea783922b7fc2342f1b907a6a7d3b765e1566ac8f",
+            "receiptId": "GEN-component-powertrain-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -17061,6 +17133,43 @@
       "conceptBatch": "UI-instructor-auction"
     },
     {
+      "id": "UI-ELEMENT-instructor-nextBidMetric",
+      "kind": "interface-element",
+      "label": {
+        "en": "nextBidMetric"
+      },
+      "reference": {
+        "status": "canonical-or-design-contract;visual-reference-open",
+        "evidence": []
+      },
+      "concept": {
+        "status": "planned",
+        "artifacts": []
+      },
+      "implementation": {
+        "status": "semantic-html-existing;scene-migration-open",
+        "path": "source/instructor.template.html#nextBidMetric",
+        "evidence": []
+      },
+      "acceptance": {
+        "status": "open",
+        "criteria": [
+          "U01",
+          "U02",
+          "U03",
+          "U04",
+          "U05",
+          "U06"
+        ],
+        "evidence": []
+      },
+      "role": "instructor",
+      "phase": "auction",
+      "source": "source/instructor.template.html#nextBidMetric",
+      "htmlTag": "div",
+      "conceptBatch": "UI-instructor-auction"
+    },
+    {
       "id": "UI-ELEMENT-instructor-nextBid",
       "kind": "interface-element",
       "label": {
@@ -17431,6 +17540,43 @@
       "conceptBatch": "UI-instructor-auction"
     },
     {
+      "id": "UI-ELEMENT-instructor-preCommitCorrection",
+      "kind": "interface-element",
+      "label": {
+        "en": "preCommitCorrection"
+      },
+      "reference": {
+        "status": "canonical-or-design-contract;visual-reference-open",
+        "evidence": []
+      },
+      "concept": {
+        "status": "planned",
+        "artifacts": []
+      },
+      "implementation": {
+        "status": "semantic-html-existing;scene-migration-open",
+        "path": "source/instructor.template.html#preCommitCorrection",
+        "evidence": []
+      },
+      "acceptance": {
+        "status": "open",
+        "criteria": [
+          "U01",
+          "U02",
+          "U03",
+          "U04",
+          "U05",
+          "U06"
+        ],
+        "evidence": []
+      },
+      "role": "instructor",
+      "phase": "auction",
+      "source": "source/instructor.template.html#preCommitCorrection",
+      "htmlTag": "details",
+      "conceptBatch": "UI-instructor-auction"
+    },
+    {
       "id": "UI-ELEMENT-instructor-winnerSelect",
       "kind": "interface-element",
       "label": {
@@ -17650,6 +17796,43 @@
       "phase": "auction",
       "source": "source/instructor.template.html#commitStatus",
       "htmlTag": "div",
+      "conceptBatch": "UI-instructor-auction"
+    },
+    {
+      "id": "UI-ELEMENT-instructor-postCommitCorrection",
+      "kind": "interface-element",
+      "label": {
+        "en": "postCommitCorrection"
+      },
+      "reference": {
+        "status": "canonical-or-design-contract;visual-reference-open",
+        "evidence": []
+      },
+      "concept": {
+        "status": "planned",
+        "artifacts": []
+      },
+      "implementation": {
+        "status": "semantic-html-existing;scene-migration-open",
+        "path": "source/instructor.template.html#postCommitCorrection",
+        "evidence": []
+      },
+      "acceptance": {
+        "status": "open",
+        "criteria": [
+          "U01",
+          "U02",
+          "U03",
+          "U04",
+          "U05",
+          "U06"
+        ],
+        "evidence": []
+      },
+      "role": "instructor",
+      "phase": "auction",
+      "source": "source/instructor.template.html#postCommitCorrection",
+      "htmlTag": "details",
       "conceptBatch": "UI-instructor-auction"
     },
     {

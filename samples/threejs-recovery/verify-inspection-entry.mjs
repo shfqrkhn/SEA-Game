@@ -2,23 +2,28 @@ import assert from 'node:assert/strict';
 import * as THREE from 'three';
 import {prepareInspection,prepareCutaway,fitPerspective,fitDirectionalShadow} from '../../source/three/inspection.mjs';
 import {createMission,createPart,createConfiguration,MISSION_IDS,MODEL_IDS} from '../../source/three/game-models.mjs';
-import {materials,FinishMaterial} from '../../source/three/materials.mjs';
+import {materials,FinishMaterial,SURFACE_PROFILES} from '../../source/three/materials.mjs';
 const finishes=materials();
 for(const material of Object.values(finishes)){
  assert.equal(material.bumpMap,null,'Microscopic finishes cannot retain exaggerated bump textures');
  assert.equal(Object.values(material).filter(v=>v?.isTexture).length,0,'Finish lifecycle needs no external or orphan textures');
  if(!(material instanceof FinishMaterial))continue;
  const copy=material.clone();assert.deepEqual(copy.finishProfile,material.finishProfile);assert.notEqual(copy.finishProfile,material.finishProfile);
+ assert.deepEqual(copy.surfaceProfile,material.surfaceProfile);assert.notEqual(copy.surfaceProfile,material.surfaceProfile,'Visible-scale finish clones must not share mutable profiles');
  const compile=()=>({vertexShader:THREE.ShaderLib.physical.vertexShader,fragmentShader:THREE.ShaderLib.physical.fragmentShader,uniforms:{}});
  const shader=compile(),cloneShader=compile();material.onBeforeCompile(shader);copy.onBeforeCompile(cloneShader);
  assert.equal(shader.vertexShader,cloneShader.vertexShader);assert.equal(shader.fragmentShader,cloneShader.fragmentShader);assert.deepEqual(shader.uniforms.seaFinish.value,cloneShader.uniforms.seaFinish.value);
  assert.notEqual(shader.uniforms.seaFinish.value,cloneShader.uniforms.seaFinish.value,'Compiled clones cannot share mutable finish uniforms');
+ assert.deepEqual(shader.uniforms.seaSurface.value,cloneShader.uniforms.seaSurface.value);assert.notEqual(shader.uniforms.seaSurface.value,cloneShader.uniforms.seaSurface.value);
+ assert(shader.fragmentShader.includes('float seaSurfaceResponse=seaVisibleSurface()'),'Coarse response is sampled once, shared by colour and roughness');
  assert(shader.vertexShader.includes('length(modelMatrix[0].xyz)'),'Finish scale follows actual mesh scale');assert(shader.fragmentShader.includes('dFdx(p)'),'Subpixel finish must suppress aliasing');
  const original=copy.finishProfile.wavelength;copy.finishProfile.wavelength*=2;assert.equal(material.finishProfile.wavelength,original);
+ const originalSurface=material.surfaceProfile.wavelength;copy.surfaceProfile.wavelength*=2;assert.equal(material.surfaceProfile.wavelength,originalSurface);
  copy.dispose();
 }
+for(const profile of Object.values(SURFACE_PROFILES)){assert(profile.wavelength>=.03&&profile.wavelength<=.10);assert(profile.roughness>0&&profile.roughness<=.12);assert(profile.tone>=0&&profile.tone<=.045,'Visible colour response must remain restrained, not wear/camouflage');}
 const finishShell=new THREE.Mesh(new THREE.BoxGeometry(),finishes.paint);finishShell.name='hull shell';const finishRoot=new THREE.Group();finishRoot.add(finishShell);const finishCutaway=prepareCutaway(finishRoot);
-finishCutaway.apply(true);assert(finishShell.material instanceof FinishMaterial);assert.deepEqual(finishShell.material.finishProfile,finishes.paint.finishProfile,'Cutaway must preserve the original finish shader');finishCutaway.dispose();assert.equal(finishShell.material,finishes.paint);finishShell.geometry.dispose();Object.values(finishes).forEach(m=>m.dispose());
+finishCutaway.apply(true);assert(finishShell.material instanceof FinishMaterial);assert.deepEqual(finishShell.material.finishProfile,finishes.paint.finishProfile,'Cutaway must preserve the original finish shader');assert.deepEqual(finishShell.material.surfaceProfile,finishes.paint.surfaceProfile,'Cutaway preserves visible-scale finish');finishCutaway.dispose();assert.equal(finishShell.material,finishes.paint);finishShell.geometry.dispose();Object.values(finishes).forEach(m=>m.dispose());
 console.log('Material finish clone/cutaway isolation, scale/alias shader anchors and texture-free lifecycle PASS (actual GPU compile still requires browser)');
 const shared=new THREE.MeshStandardMaterial(),originalGhost=new THREE.MeshStandardMaterial({transparent:true,opacity:.16,depthWrite:false}),fixture=new THREE.Group();
 const shell=new THREE.Mesh(new THREE.BoxGeometry(),shared),equipment=new THREE.Mesh(new THREE.BoxGeometry(),shared),ghost=new THREE.Mesh(new THREE.BoxGeometry(),[originalGhost,shared]);
@@ -97,6 +102,33 @@ for(const mission of MISSION_IDS){
 }
 assert.equal(bearingFaces,24);
 console.log('All six purchased PRO-D carriers: 24 actual shoe bearing-face contacts PASS');
+
+// Follow-up source review found millimetre gaps at the actual coolant tank and
+// manifold flanges. Probe individual physical faces in all engine variants.
+for(const id of ['MOB-A','MOB-E','MOB-F']){
+ const root=createPart(id);root.updateMatrixWorld(true);const scale=id==='MOB-F'?.78:1,meshes=[];root.traverse(o=>{if(o.isMesh)meshes.push(o);});
+ const named=name=>meshes.filter(o=>o.name===name);
+ const ray=(mesh,point,direction)=>new THREE.Raycaster(new THREE.Vector3(...point).multiplyScalar(scale),new THREE.Vector3(...direction),0,2*scale).intersectObject(mesh,false);
+ const tank=named('radiator formed side tank').find(o=>o.position.z>0),necks=named('radiator coolant inlet neck'),clamps=named('coolant hose seated clamp');
+ assert.equal(necks.length,2);assert.equal(clamps.length,2);
+ for(const y of [.965,.285]){
+  const tankFace=ray(tank,[.65,y,.389],[1,0,0])[0];assert(tankFace,id+' requires actual inlet face');assert(Math.abs(tankFace.point.x/scale-.7325)<1e-5);
+  const neck=necks.find(o=>Math.abs(o.position.y-y)<1e-6),clamp=clamps.find(o=>Math.abs(o.position.y-y)<1e-6);
+  const neckFace=ray(neck,[.65,y,.389],[1,0,0])[0],clampFace=ray(clamp,[.65,y,.389],[1,0,0])[0];assert(neckFace&&clampFace,id+' inlet neck and clamp must share actual hose axis');
+  assert(new THREE.Box3().setFromObject(neck).max.x>tankFace.point.x,id+' inlet neck must cross tank face');
+  assert(new THREE.Box3().setFromObject(clamp).max.x<tankFace.point.x,id+' clamp must remain outside tank');
+  const hose=named(y>.5?'upper coolant hose seated into side tank':'lower coolant hose seated into side tank')[0],end=hose.geometry.parameters.path.getPoint(1);
+  assert.deepEqual(end.toArray(),[.80,y,.389]);
+  // Approach each outward face from outside; interior-origin rays would be
+  // discarded by the real tank's front-sided material, regardless of contact.
+  for(const sign of [-1,1]){const origin=end.clone();origin.x+=sign*.30;const hit=ray(tank,origin.toArray(),[-sign,0,0])[0];assert(hit&&sign*(hit.point.x-end.x*scale)>0&&Math.abs(hit.point.x-end.x*scale)<.10*scale,id+' hose endpoint must lie between actual tank faces');}
+ }
+ const head=named('cast cylinder head with port band')[0],flanges=named('manifold seated port flange');assert.equal(flanges.length,12);
+ for(const flange of flanges){const sign=Math.sign(flange.position.z),x=flange.position.x,y=flange.position.y,headFace=ray(head,[x,y,sign*.40],[0,0,-sign])[0],flangeFace=ray(flange,[x,y,0],[0,0,sign])[0];assert(headFace&&flangeFace);assert(Math.abs(headFace.point.z-flangeFace.point.z)<2e-5*scale,id+' manifold flange must seat on head');}
+ const isolators=named('engine mounting isolator'),shoes=named('engine skid mounting shoe');assert.equal(isolators.length,4);assert.equal(shoes.length,4);
+ for(const isolator of isolators){const shoe=shoes.find(o=>Math.abs(o.position.x-isolator.position.x)<1e-6&&Math.abs(o.position.z-isolator.position.z)<1e-6);assert(shoe);const x=shoe.position.x,z=shoe.position.z,shoeFace=ray(shoe,[x,.19,z],[0,-1,0])[0],rubberFace=ray(isolator,[x,.16,z],[0,1,0])[0];assert(shoeFace&&rubberFace);assert(Math.abs(shoeFace.point.y-rubberFace.point.y)<1e-6,id+' engine isolator must bear on skid shoe');}
+}
+console.log('Three power packs: physical coolant inlet/clamp/tank paths, 36 seated manifold faces and 12 skid bearing contacts PASS');
 
 // Maximum separation alone is not a containing envelope: some groups translate
 // inward across an assembled extremum. Replay the actual runtime endpoint union.
