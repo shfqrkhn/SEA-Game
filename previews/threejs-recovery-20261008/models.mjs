@@ -11,17 +11,17 @@ function mesh(parent,geometry,material,position=[0,0,0],name='') {
   const object=new THREE.Mesh(geometry,material);object.position.set(...position);
   object.name=name;object.castShadow=true;object.receiveShadow=true;parent.add(object);return object;
 }
-function box(p,m,size,position,name=''){return mesh(p,new THREE.BoxGeometry(...size),m,position,name);}
-function cylinder(p,m,r,h,position,axis='y',rTop=r,segments=20) {
+export function box(p,m,size,position,name=''){return mesh(p,new THREE.BoxGeometry(...size),m,position,name);}
+export function cylinder(p,m,r,h,position,axis='y',rTop=r,segments=20) {
   const o=mesh(p,new THREE.CylinderGeometry(rTop,r,h,segments),m,position);
   if(axis==='x')o.rotation.z=Math.PI/2;if(axis==='z')o.rotation.x=Math.PI/2;return o;
 }
-function rod(p,m,a,b,r=.018) {
+export function rod(p,m,a,b,r=.018) {
   const start=new THREE.Vector3(...a),end=new THREE.Vector3(...b),dir=end.clone().sub(start);
   const o=cylinder(p,m,r,dir.length(),start.clone().add(end).multiplyScalar(.5).toArray());
   o.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),dir.normalize());return o;
 }
-function tube(p,m,points,r=.018,segments=40) {
+export function tube(p,m,points,r=.018,segments=40) {
   const curve=new THREE.CatmullRomCurve3(points.map(v=>new THREE.Vector3(...v)));
   return mesh(p,new THREE.TubeGeometry(curve,segments,r,8,false),m);
 }
@@ -31,7 +31,7 @@ function polygon(p,m,points) {
   g.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));g.computeVertexNormals();
   const material=m.clone();material.side=THREE.DoubleSide;return mesh(p,g,material);
 }
-function bolts(p,m,center,r,count=8,axis='z',size=.014) {
+export function bolts(p,m,center,r,count=8,axis='z',size=.014) {
   for(let i=0;i<count;i++){const t=i/count*Math.PI*2;const pos=[...center];
     if(axis==='z'){pos[0]+=Math.cos(t)*r;pos[1]+=Math.sin(t)*r;}
     else{pos[1]+=Math.cos(t)*r;pos[2]+=Math.sin(t)*r;}
@@ -67,7 +67,7 @@ export function createWinch(m=materials()) {
   return g;
 }
 
-function createWheel(m) {
+export function createWheel(m) {
   const g=new THREE.Group();g.name='run-flat wheel';
   const tire=cylinder(g,m.rubber,.585,.37,[0,0,0],'z');
   for(const z of [-.196,.196]){
@@ -129,28 +129,30 @@ export function createVehicle(m=materials()) {
   // Shared part, exactly the same geometry and physical scale as the part sample.
   const winch=createWinch(m);winch.name='mounted WR-12';winch.rotation.y=Math.PI/2;
   winch.position.set(2.98,1.00,0);g.add(winch);
+  const stowage=new THREE.Group();stowage.name='recovery stowage';g.add(stowage);
   for(const s of [-1,1]){
-    box(g,m.paint,[2.6,.51,.43],[-1.56,1.99,s*.97],'tool locker');
+    box(stowage,m.paint,[2.6,.51,.43],[-1.56,1.99,s*.97],'tool locker');
     for(const x of [-2.3,-1.55,-.8]){
-      box(g,m.edge,[.014,.36,.017],[x,1.99,s*1.197]);
-      box(g,m.steel,[.07,.018,.025],[x+.12,2.05,s*1.207]);
+      box(stowage,m.edge,[.014,.36,.017],[x,1.99,s*1.197]);
+      box(stowage,m.steel,[.07,.018,.025],[x+.12,2.05,s*1.207]);
     }
-    rod(g,m.darkSteel,[-2.60,2.30,s*.80],[-.59,2.30,s*.80],.025);
+    rod(stowage,m.darkSteel,[-2.60,2.30,s*.80],[-.59,2.30,s*.80],.025);
   }
   // Crane slewing pedestal, nested boom and hydraulic cylinder with real connections.
-  cylinder(g,m.darkSteel,.44,.14,[-.85,1.84,0]);
-  cylinder(g,m.paint,.33,.36,[-.85,2.04,0]);
-  box(g,m.edge,[.48,.40,.48],[-.85,2.32,0],'crane pivot');
+  const crane=new THREE.Group();crane.name='recovery crane';g.add(crane);
+  cylinder(crane,m.darkSteel,.44,.14,[-.85,1.84,0]);
+  cylinder(crane,m.paint,.33,.36,[-.85,2.04,0]);
+  box(crane,m.edge,[.48,.40,.48],[-.85,2.32,0],'crane pivot');
   const boomA=[-.85,2.49,0],boomB=[-2.51,3.13,0],boomDir=new THREE.Vector3(...boomB).sub(new THREE.Vector3(...boomA));
-  const boom=box(g,m.paint,[.34,boomDir.length(),.34],new THREE.Vector3(...boomA).add(new THREE.Vector3(...boomB)).multiplyScalar(.5).toArray(),'main crane boom');
+  const boom=box(crane,m.paint,[.34,boomDir.length(),.34],new THREE.Vector3(...boomA).add(new THREE.Vector3(...boomB)).multiplyScalar(.5).toArray(),'main crane boom');
   boom.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),boomDir.clone().normalize());
-  rod(g,m.darkSteel,[-2.47,3.115,0],[-3.0,3.32,0],.112);
-  rod(g,m.paint,[-.84,2.10,.24],[-1.74,2.78,.24],.078);
-  rod(g,m.steel,[-1.74,2.78,.24],[-2.13,2.99,.24],.035);
-  cylinder(g,m.darkSteel,.105,.15,[-3.03,3.31,0],'z');
-  rod(g,m.darkSteel,[-3.06,3.26,0],[-3.06,2.55,0],.012);
-  tube(g,m.steel,[[-3.06,2.56,0],[-3.13,2.47,0],[-3.1,2.37,0],[-3.0,2.37,0],[-2.98,2.45,0]],.028);
-  tube(g,m.rubber,[[-.67,2.09,.28],[-.54,2.49,.27],[-.94,2.66,.25],[-1.7,2.95,.22]],.018);
+  rod(crane,m.darkSteel,[-2.47,3.115,0],[-3.0,3.32,0],.112);
+  rod(crane,m.paint,[-.84,2.10,.24],[-1.74,2.78,.24],.078);
+  rod(crane,m.steel,[-1.74,2.78,.24],[-2.13,2.99,.24],.035);
+  cylinder(crane,m.darkSteel,.105,.15,[-3.03,3.31,0],'z');
+  rod(crane,m.darkSteel,[-3.06,3.26,0],[-3.06,2.55,0],.012);
+  tube(crane,m.steel,[[-3.06,2.56,0],[-3.13,2.47,0],[-3.1,2.37,0],[-3.0,2.37,0],[-2.98,2.45,0]],.028);
+  tube(crane,m.rubber,[[-.67,2.09,.28],[-.54,2.49,.27],[-.94,2.66,.25],[-1.7,2.95,.22]],.018);
   cylinder(g,m.paint,.29,.05,[1.04,2.80,0],'y');
   cylinder(g,m.amber,.065,.14,[.60,2.90,-.72]);
   rod(g,m.darkSteel,[.37,2.8,.73],[.37,3.69,.73],.012);
