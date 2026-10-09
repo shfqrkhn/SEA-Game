@@ -793,6 +793,24 @@ intervalNow=20000;tick();assert.deepEqual(intervalCalls.cleared,[1],'Expiry clea
 intervalState.open=true;intervalState.phase='auction';intervalNow=30000;intervalFns.startTimer(5000);const staleTick=[...intervals.values()][0].fn;intervalState.open=false;staleTick();assert.equal(intervals.size,0,'A callback after lot closure clears itself');assert.deepEqual(intervalCalls.cleared,[1,2]);
 intervalState.open=true;intervalState.timingMode='TIMED';intervalFns.startTimer(4000);assert.equal(intervals.size,1);intervalState.timingMode='UNTIMED';intervalFns.startTimer(9000);assert.equal(intervals.size,0,'Untimed mode creates no timer interval');assert.equal(intervalCalls.cleared.at(-1),3,'Switching away from timed mode clears a prior handle');
 console.log('Instructor timer callback cadence, final-call, expiry and cleanup examples PASS');
+
+// A real hosted commit left the expired-window instruction and ready-to-commit
+// message visible after the ledger result. Exercise the actual renderer.
+{
+ const nodes=new Map(),node=id=>{if(!nodes.has(id))nodes.set(id,{textContent:'',value:'',disabled:false,innerHTML:''});return nodes.get(id);};
+ const state={leader:2,currentBid:40000000,resultDraft:null,pausedRemaining:null,open:false,timingMode:'TIMED',phase:'auction',round:0,revealMode:'ROUND',revealed:true,teams:[{id:2,purchasesByRound:[1]}]};
+ let entry={kind:'SALE',team:2,price:40000000};
+ const render=runInNewContext(extractFunction(instructorSource,'renderCommitControls')+'\nrenderCommitControls',{state,visibleLot:()=>true,nextOffer:()=>45000000,effectiveEntry:()=>entry,amountInput:n=>String(n/100),money:n=>String(n/100),t:(key,values)=>key+JSON.stringify(values||{}),timerText:()=>'-',liveClosing:()=>!entry,committed:()=>!!entry,SEA_AUCTION:{canWin:n=>n<2},$:s=>node(s.slice(1)),document:{getElementById:node},saveState(){}});
+ node('timerAnnouncement').textContent='auction.windowEnded';render();
+ assert.equal(node('timerAnnouncement').textContent,'','Committed lot clears stale expiry instruction');
+ assert.equal(node('commitSummary').textContent,node('commitStatus').textContent,'Committed result replaces ready-to-commit summary');
+ assert.match(node('commitSummary').textContent,/auction.committed/);
+ entry={kind:'UNSOLD'};render();assert.match(node('commitSummary').textContent,/auction.unsoldCommitted/);
+ entry=null;state.open=true;node('timerAnnouncement').textContent='auction.finalCall';render();
+ assert.equal(node('timerAnnouncement').textContent,'auction.finalCall','Active timer announcement remains available');
+ assert.match(node('commitSummary').textContent,/auction.commitReady/);
+}
+console.log('Instructor actual commit renderer clears stale expiry/readiness messages and retains active timer announcements PASS');
 const bidNames=['effectiveEntry','committed','timedOut','biddingActive','currentCard','nextOffer','acceptTeamBid'];
 const bidSource=sharedEngineSource+'\n'+bidNames.map(name=>extractFunction(instructorSource,name)).join('\n')+'\n({biddingActive,currentCard,nextOffer,acceptTeamBid})';
 let bidNow=1000;

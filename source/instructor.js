@@ -292,8 +292,10 @@ function renderCommitControls(){
  $('#winnerSelect').innerHTML=`<option value="">${t('common.selectTeam')}</option>`+state.teams.map(tm=>`<option value="${tm.id}" ${Number(draft.team)===tm.id?'selected':''} ${!SEA_AUCTION.canWin(tm.purchasesByRound[state.round])?'disabled':''}>${t('common.team',{n:tm.id})}</option>`).join('');
  $('#finalPrice').value=draft.price;$('#saleCorrectionReason').value=draft.reason;
  const storeDraft=()=>{state.resultDraft={team:$('#winnerSelect').value,price:$('#finalPrice').value,reason:$('#saleCorrectionReason').value};saveState()};['winnerSelect','finalPrice','saleCorrectionReason'].forEach(id=>document.getElementById(id).oninput=storeDraft);
- $('#commitSummary').textContent=state.leader?t('auction.commitReady',{team:state.leader,amount:money(state.currentBid)}):t('auction.noAccepted');
- $('#commitStatus').textContent=entry?(entry.kind==='SALE'?t('auction.committed',{team:entry.team,amount:money(entry.price)}):t('auction.unsoldCommitted')):t('auction.notCommitted');
+ const resultText=entry?(entry.kind==='SALE'?t('auction.committed',{team:entry.team,amount:money(entry.price)}):t('auction.unsoldCommitted')):null;
+ $('#commitSummary').textContent=resultText||(state.leader?t('auction.commitReady',{team:state.leader,amount:money(state.currentBid)}):t('auction.noAccepted'));
+ $('#commitStatus').textContent=resultText||t('auction.notCommitted');
+ if(!state.open)$('#timerAnnouncement').textContent='';
  $('#commitLeaderBtn').disabled=!liveClosing()||state.leader===null;$('#commitUnsoldBtn').disabled=!liveClosing();$('#commitCorrectedBtn').disabled=!liveClosing();$('#voidCurrentBtn').disabled=state.phase!=='auction'||!entry;$('#advanceBtn').disabled=!entry;
  $('#revealBtn').disabled=state.revealMode!=='MANUAL'||state.revealed||committed();$('#openBtn').disabled=state.open||committed();
 }
