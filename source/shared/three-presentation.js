@@ -1,9 +1,14 @@
 // Strict projection: no market order, seed, bids, private plans or submission drafts.
 let sea3DQueue=null;
+function seaSceneText(node,visible,root=true){
+ if(!node)return '';if(node.nodeType===3)return node.textContent||'';
+ if(!visible(node)||(!root&&['button','input','select','textarea','svg'].includes(node.tagName?.toLowerCase())))return '';
+ return Array.from(node.childNodes||[]).map(x=>seaSceneText(x,visible,false)).join(' ').replace(/\s+/g,' ').trim();
+}
 // Scene controls reuse the authoritative semantic controls, not copied game rules.
 function seaSceneProjection(roots,visible,keyFor){
  const rows=[],targets=new Map(),seen=new Set();
- const readable=(n,root=false)=>{if(n.nodeType===3)return n.textContent||'';if(!visible(n)||(!root&&['button','input','select','textarea','svg'].includes(n.tagName?.toLowerCase())))return '';return Array.from(n.childNodes||[]).map(x=>readable(x)).join(' ');};
+ const readable=(n,root=false)=>seaSceneText(n,visible,root);
  function add(node,kind,label,value=''){
   if(!label&&!value)return;const key=keyFor(node);targets.set(key,node);rows.push({key,kind,label:String(label),value:String(value),disabled:!!node.disabled});
  }
@@ -12,7 +17,7 @@ function seaSceneProjection(roots,visible,keyFor){
   const tag=node.tagName?.toLowerCase();
   if(['script','style','svg','canvas','img'].includes(tag)||node.id==='sea3dViewport')return;
   const text=()=>String(readable(node,true)).replace(/\s+/g,' ').trim();
-  const name=()=>node.getAttribute?.('aria-label')||Array.from(node.labels||[]).map(x=>x.textContent.trim()).join(' ')||node.closest?.('.field')?.querySelector('label')?.textContent||node.getAttribute?.('placeholder')||text();
+  const name=()=>node.getAttribute?.('aria-label')||Array.from(node.labels||[]).map(x=>readable(x,true)).join(' ')||readable(node.closest?.('.field')?.querySelector('label'),true)||node.getAttribute?.('placeholder')||text();
   if(tag==='button'){add(node,'button',name());return;}
   if(tag==='input'||tag==='textarea'||tag==='select'){
    if(['file','hidden'].includes(node.type))return;
@@ -63,7 +68,7 @@ function sea3DStart(role){
   if(tag==='summary'){node.parentElement.open=!node.parentElement.open;queue();return;}
   if(['checkbox','radio'].includes(node.type)){node.checked=node.type==='radio'||!node.checked;node.dispatchEvent(new Event('input',{bubbles:true}));node.dispatchEvent(new Event('change',{bubbles:true}));queue();return;}
   editor?.remove();editor=document.createElement('section');editor.className='scene-editor';editor.setAttribute('role','dialog');editor.setAttribute('aria-modal','true');
-  const title=document.createElement('label');title.textContent=Array.from(node.labels||[]).map(x=>x.textContent.trim()).join(' ')||node.getAttribute('aria-label')||node.placeholder||'';
+  const title=document.createElement('label');title.textContent=Array.from(node.labels||[]).map(x=>seaSceneText(x,semanticVisible)).join(' ')||node.getAttribute('aria-label')||node.placeholder||'';
   const input=node.cloneNode(true);input.removeAttribute('id');input.removeAttribute('style');input.removeAttribute('aria-hidden');input.removeAttribute('tabindex');input.className='';input.value=node.value;title.appendChild(input);editor.appendChild(title);
   const done=document.createElement('button');done.type='button';done.className='btn primary';done.textContent=lang==='fr'?'Terminé':'Done';editor.appendChild(done);document.body.appendChild(editor);
   const close=()=>{editor?.remove();editor=null;host.querySelector('canvas')?.focus();queue();};

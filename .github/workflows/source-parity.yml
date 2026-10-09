@@ -26,6 +26,7 @@ jobs:
       - run: node tools/test-artwork-host.mjs
       - run: node tools/test-three-presentation.mjs
       - run: node tools/test-scene-projection.mjs
+      - run: node tools/test-scene-editor.mjs
       - run: node tools/test-balance.mjs
       - run: node tools/test-text-encoding.mjs
       - run: npm ci --prefix samples/threejs-recovery

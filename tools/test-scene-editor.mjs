@@ -1,0 +1,27 @@
+#!/usr/bin/env node
+// Real bridge function in a small DOM event model. Not browser/IME/focus proof.
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import vm from 'node:vm';
+const code=fs.readFileSync(new URL('../source/shared/three-presentation.js',import.meta.url),'utf8');
+const start=code.indexOf(' function sceneAction('),end=code.indexOf(' function syncSceneInterface(',start);
+assert(start>=0&&end>start,'Actual editor bridge boundary exists');
+function harness(){
+ const bodyChildren=[],events=[],node={tagName:'INPUT',type:'text',value:'',isConnected:true,disabled:false,hidden:false,labels:[{tagName:'LABEL',nodeType:1,childNodes:[{nodeType:3,textContent:'Profit'}]}],getAttribute:()=>null};
+ function element(tag){return {tagName:tag.toUpperCase(),children:[],listeners:{},value:'',isConnected:true,setAttribute(){},removeAttribute(){},appendChild(child){this.children.push(child)},addEventListener(type,fn){this.listeners[type]=fn},focus(){doc.activeElement=this},remove(){this.isConnected=false},cloneNode(){return element(tag)}}}
+ node.cloneNode=()=>element('input');node.dispatchEvent=e=>{events.push(e.type);if(e.type==='change')node.isConnected=false};
+ const doc={activeElement:null,createElement:element,body:{appendChild:child=>bodyChildren.push(child)}};
+ const ctx=vm.createContext({document:doc,Event:class{constructor(type){this.type=type}},host:{querySelector:()=>({focus(){}})},lang:'en',queue(){},semanticVisible:n=>!n.hidden,sceneTargets:new Map([['profit',node]]),scenePage:0,editor:null});
+ vm.runInContext(code.slice(0,code.indexOf('function seaSceneProjection('))+code.slice(start,end)+'\nthis.act=sceneAction;',ctx);
+ return {ctx,node,events,get editor(){return ctx.editor},input(){return ctx.editor.children[0].children[0]},done(){return ctx.editor.children[1]}};
+}
+const h=harness();h.ctx.act('profit');const input=h.input();
+for(const value of ['1','12','125','1250','12500','125000']){input.value=value;input.listeners.input();assert(h.node.isConnected,'Input must not prematurely invoke change handler');assert(h.editor,'Multi-digit editor remains open');assert.equal(h.node.value,value)}
+assert.deepEqual(h.events,Array(6).fill('input'));h.done().listeners.click();assert.deepEqual(h.events,[...Array(6).fill('input'),'change']);assert.equal(h.editor,null,'Done closes editor after one final authoritative change');
+// A select or genuine native change can replace its target before Done; no retry.
+const native=harness();native.ctx.act('profit');native.input().value='250000';native.input().listeners.change();native.done().listeners.click();assert.deepEqual(native.events,['change']);assert.equal(native.editor,null);
+for(const stale of ['hidden','disabled','disconnected','unmapped']){
+ const s=harness();s.ctx.act('profit');const editorInput=s.input();if(stale==='hidden')s.node.hidden=true;if(stale==='disabled')s.node.disabled=true;if(stale==='disconnected')s.node.isConnected=false;if(stale==='unmapped')s.ctx.sceneTargets.delete('profit');editorInput.value='999999';editorInput.listeners.input();assert.equal(s.node.value,'','Stale target cannot receive edit: '+stale);assert.deepEqual(s.events,[]);assert.equal(s.editor,null);
+}
+const escape=harness();escape.ctx.act('profit');escape.editor.listeners.keydown({key:'Escape',preventDefault(){}});assert.deepEqual(escape.events,[]);assert.equal(escape.editor,null);
+console.log('Scene native editor multi-digit input, final change, stale/disconnected/hidden/disabled target and Escape characterization PASS; browser qualification still required');

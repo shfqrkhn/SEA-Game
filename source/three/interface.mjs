@@ -26,7 +26,7 @@ export function createInterface(){
   let snapshot={rows:[]},action=null,layout=interfaceLayout(1,1),page=0,lastSize=null;
   const resources=[];
   function clear(){for(const r of resources)r.dispose();resources.length=0;scene.clear();}
-  function plane(x,y,w,h,color,z=0){const g=new THREE.PlaneGeometry(w,h),m=new THREE.MeshBasicMaterial({color,depthTest:false,depthWrite:false});resources.push(g,m);const mesh=new THREE.Mesh(g,m);mesh.position.set(x+w/2,y+h/2,z);scene.add(mesh);}
+  function plane(x,y,w,h,color,z=0){const g=new THREE.PlaneGeometry(w,h),m=new THREE.MeshBasicMaterial({color,side:THREE.DoubleSide,toneMapped:false,depthTest:false,depthWrite:false});resources.push(g,m);const mesh=new THREE.Mesh(g,m);mesh.position.set(x+w/2,y+h/2,z);scene.add(mesh);}
   function text(value,x,y,w,h,size=14,color='#edf4ee'){
     const canvas=document.createElement('canvas'),scale=2;canvas.width=Math.max(2,Math.ceil(w*scale));canvas.height=Math.max(2,Math.ceil(h*scale));const ctx=canvas.getContext('2d');ctx.scale(scale,scale);ctx.font=`${size>=20?'600':'400'} ${size}px system-ui, sans-serif`;ctx.fillStyle=color;ctx.textBaseline='middle';
     const lines=[];for(const paragraph of String(value??'').split('\n')){const words=paragraph.split(/\s+/);let line='';for(const word of words){const next=line?line+' '+word:word;if(ctx.measureText(next).width>w-4&&line){lines.push(line);line=word;}else line=next;}if(line)lines.push(line);}lines.forEach((v,i)=>ctx.fillText(v,2,(i+.5)*size*1.25,w-4));

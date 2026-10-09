@@ -33,6 +33,13 @@ assert(!projection.rows.some(r=>r.label==='Export'),'Closed details content is n
 assert(projection.rows.some(r=>r.label==='Remove'),'Table actions remain actionable');
 assert.equal(input.value,before,'Projection cannot mutate native inputs');
 for(const value of ['$250,000','CAP-A','Capacity +4 persons','R1 / L2','MOB-A','$350,000'])assert(projection.rows.some(r=>r.label===value),'Production price/effect/purchase text omitted: '+value);
+const ranking=node('div','',[node('strong','1. Team 1'),node('div','$4,000,000 · 80 points · $50,000.00')],{classes:['inv']});
+const prompts=node('ol','',[node('li','Explain the cost tradeoff.'),node('li','Identify the mission shortfall.')]);
+const info=ctx.project([ranking,prompts],visible,keyFor).rows.map(r=>r.label);
+for(const value of ['1. Team 1','$4,000,000 · 80 points · $50,000.00','Explain the cost tradeoff.','Identify the mission shortfall.'])assert(info.includes(value),'Ranking/debrief information must survive: '+value);
+const inlineLabel=node('label','Profit',[node('span',secret,[],{hidden:true})]);
+const privateLabelInput=node('input','',[],{value:'250000',labels:[inlineLabel]});
+assert(!JSON.stringify(ctx.project([privateLabelInput],visible,keyFor).rows).includes(secret),'Hidden label descendants must not enter GPU control names');
 closed.open=true;assert(ctx.project([root],visible,keyFor).rows.some(r=>r.label==='Export'));
 hidden.hidden=false;assert(JSON.stringify(ctx.project([root],visible,keyFor).rows).includes(secret),'Visible content must not be accidentally omitted');
 console.log('Scene projection hidden-content privacy, identity, disabled controls, summaries, table actions and immutability PASS');
