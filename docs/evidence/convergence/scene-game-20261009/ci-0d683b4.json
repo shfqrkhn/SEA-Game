@@ -1,0 +1,34 @@
+{
+  "time": "2026-10-09T12:44:02.9398627Z",
+  "run": 37931266850,
+  "headSha": "0d683b462e664e5784d50d79ee4d5454ea0ff257",
+  "status": "completed",
+  "conclusion": "success",
+  "jobs": [
+    {
+      "name": "verify (windows-latest, 22)",
+      "status": "completed",
+      "conclusion": "success",
+      "completedAt": "2026-10-09T12:39:26Z"
+    },
+    {
+      "name": "verify (ubuntu-latest, 24)",
+      "status": "completed",
+      "conclusion": "success",
+      "completedAt": "2026-10-09T12:38:17Z"
+    },
+    {
+      "name": "verify (windows-latest, 24)",
+      "status": "completed",
+      "conclusion": "success",
+      "completedAt": "2026-10-09T12:38:57Z"
+    },
+    {
+      "name": "verify (ubuntu-latest, 22)",
+      "status": "completed",
+      "conclusion": "success",
+      "completedAt": "2026-10-09T12:38:14Z"
+    }
+  ],
+  "scope": "Exact source CI only; not visual or product release acceptance"
+}
