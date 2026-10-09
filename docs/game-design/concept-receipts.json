@@ -35,5 +35,78 @@
       "doesNotProve": ["Any component identity separately completed", "Every recovery category assembly concept complete", "A functioning exploded Three.js assembly", "Manufacturer-certified dimensions or construction", "Visual or product acceptance"]
     },
     "acceptanceStatus": "open"
+  }, {
+    "id": "GEN-mobility-family-v1",
+    "inventoryIds": ["MOB-A", "MOB-B", "MOB-C", "MOB-D", "MOB-E", "MOB-F", "MOB-G"],
+    "status": "generated-exploratory",
+    "tool": "imagegen",
+    "date": "2026-10-09",
+    "artifact": "docs/game-design/concepts/mobility-family-v1.png",
+    "sha256": "66615f24cfd621c2ea3863df65a75c3a680896cd833d118a641cbe6f07b20cc5",
+    "nativeOutputPath": "C:/Users/user/.codex/generated_images/01a11d09-97df-7000-a3e7-a4b9bfcb4add/exec-edab1e86-8f22-4f8a-9537-65703c6bdb1b.png",
+    "promptConstraintsBrief": "Seven distinct mobility variants, each with assembled and exploded views: A efficient inline power pack; B all-terrain axle; C high-output V-engine; D heavy axle/suspension; E long-range fuel/engine; F compact engine; G traction differential/electronics. Neutral shared material palette. Only exact MOB-A through MOB-G labels; no prices/effects text. This is a constraints brief, not the exact original tool prompt. Requested C subject conflicts with canonical Lightweight Running Gear and must be corrected before acceptance.",
+    "panelMap": [
+      {"panel": 1, "inventoryId": "MOB-A", "position": "top row, first", "views": ["assembled-upper", "exploded-lower"]},
+      {"panel": 2, "inventoryId": "MOB-B", "position": "top row, second", "views": ["assembled-upper", "exploded-lower"]},
+      {"panel": 3, "inventoryId": "MOB-C", "position": "top row, third", "views": ["assembled-upper", "exploded-lower"], "canonicalMismatch": "V-engine instead of Lightweight Running Gear"},
+      {"panel": 4, "inventoryId": "MOB-D", "position": "top row, fourth", "views": ["assembled-upper", "exploded-lower"]},
+      {"panel": 5, "inventoryId": "MOB-E", "position": "bottom row, first", "views": ["assembled-upper", "exploded-lower"]},
+      {"panel": 6, "inventoryId": "MOB-F", "position": "bottom row, second", "views": ["assembled-upper", "exploded-lower"]},
+      {"panel": 7, "inventoryId": "MOB-G", "position": "bottom row, third", "views": ["assembled-upper", "exploded-lower"]}
+    ],
+    "visualReview": {
+      "status": "exploratory-only; canonical and implementation acceptance open",
+      "usefulDirection": ["All seven ID headings present", "Each panel contains assembled/exploded forms", "Distinct power-pack, axle, suspension, fuel and traction packaging", "Shared paint/metal/rubber palette"],
+      "knownMismatches": ["MOB-C is canonically Lightweight Running Gear; V-engine concept conflicts with its identity", "Dimensions and hydraulic/electrical paths are generated, not verified primary references", "Three.js renders have not been matched against the sheet", "Panel safe margins, tiny parts and exploded clearances require qualification"],
+      "doesNotProve": ["Canonical MOB-C concept acceptance", "All mobility component concepts completed", "Mechanically certified hardware", "Functional exploded Three.js models", "Visual or product acceptance"]
+    },
+    "acceptanceStatus": "open"
+  }, {
+    "id": "GEN-mob-c-running-gear-v2",
+    "inventoryIds": ["MOB-C"],
+    "status": "generated-exploratory",
+    "preferredDirection": true,
+    "supersedesDirection": "GEN-mobility-family-v1#panel-3",
+    "tool": "imagegen",
+    "date": "2026-10-09",
+    "artifact": "docs/game-design/concepts/mob-c-running-gear-v2.png",
+    "sha256": "58d42d56cd384098eb567ab1664c1ad07bb9eb1891ed13a08a62ed05dc532b20",
+    "nativeOutputPath": "C:/Users/user/.codex/generated_images/01a11d09-97df-7000-a3e7-a4b9bfcb4add/exec-42a8e295-9043-401a-b8d3-bbdfe5b4fb64.png",
+    "promptConstraintsBrief": "Correct MOB-C to canonical Lightweight Running Gear, not an engine. Two lighter wheels with connected axle/differential/half-shafts/cradle/steering/springs; assembled and matched exploded views, exact identity label, no effects or prices. This is a constraints brief, not the exact original tool prompt.",
+    "panelMap": [{"panel": 1, "inventoryId": "MOB-C", "position": "upper", "view": "assembled"}, {"panel": 2, "inventoryId": "MOB-C", "position": "lower", "view": "exploded"}],
+    "visualReview": {
+      "status": "corrected category direction only; physical plausibility and matched implementation acceptance open",
+      "usefulDirection": ["Correct identity/title and running-gear category", "Two wheels, differential, half-shafts, cradle, springs and steering packaging", "Assembled/exploded comparative layout"],
+      "knownMismatches": ["Generated joints, clearances and connections cannot establish actual mechanical correctness", "Real dimensional and primary-source qualification pending", "Exploded wheel proximity to image edges requires V08 review", "No matching Three.js render or implementation acceptance"],
+      "doesNotProve": ["Any generic component concept separately complete", "Certified lightweight construction", "Mechanically compatible running gear", "Visual or product acceptance"]
+    },
+    "acceptanceStatus": "open"
+  }, {
+    "id": "GEN-capacity-family-v1",
+    "inventoryIds": ["CAP-A", "CAP-B", "CAP-C", "CAP-D", "CAP-E", "CAP-F", "CAP-G", "TRAIN-CAP"],
+    "status": "generated-exploratory",
+    "tool": "imagegen",
+    "date": "2026-10-09",
+    "artifact": "docs/game-design/concepts/capacity-family-v1.png",
+    "sha256": "20773043127a378916d49b66c3e020dad0927f67fffbd3e06abd6f470708c828",
+    "nativeOutputPath": "C:/Users/user/.codex/generated_images/01a11d09-97df-7000-a3e7-a4b9bfcb4add/exec-44140f9d-4094-47fa-bd6d-a1b3df4c2f77.png",
+    "promptConstraintsBrief": "Eight panels with exact CAP-A through CAP-G and TRAIN-CAP IDs, requested seat counts 6/6/4/8/5/5/4/4. Coherent formed hull cutaways, restrained seats and connected mounts; protected F, light-frame G, removable E; shared sage/ink/brass material language. This is a constraints brief, not the exact original tool prompt. Requested counts are not visually certified by the generated image.",
+    "panelMap": [
+      {"panel": 1, "inventoryId": "CAP-A", "position": "top row, first", "requestedSeats": 6, "countReview": "open; occlusion/count ambiguity"},
+      {"panel": 2, "inventoryId": "CAP-B", "position": "top row, second", "requestedSeats": 6, "countReview": "open; six-seat direction appears legible, not qualified"},
+      {"panel": 3, "inventoryId": "CAP-C", "position": "top row, third", "requestedSeats": 4, "countReview": "open; occlusion/count ambiguity"},
+      {"panel": 4, "inventoryId": "CAP-D", "position": "top row, fourth", "requestedSeats": 8, "countReview": "open; occlusion/count ambiguity"},
+      {"panel": 5, "inventoryId": "CAP-E", "position": "bottom row, first", "requestedSeats": 5, "countReview": "open; five-seat direction appears legible, not qualified"},
+      {"panel": 6, "inventoryId": "CAP-F", "position": "bottom row, second", "requestedSeats": 5, "countReview": "open; occlusion/count ambiguity"},
+      {"panel": 7, "inventoryId": "CAP-G", "position": "bottom row, third", "requestedSeats": 4, "countReview": "open; four-seat direction appears legible, not qualified"},
+      {"panel": 8, "inventoryId": "TRAIN-CAP", "position": "bottom row, fourth", "requestedSeats": 4, "countReview": "open; occlusion/count ambiguity"}
+    ],
+    "visualReview": {
+      "status": "exploratory-only; exact capacities and runtime match acceptance open",
+      "usefulDirection": ["All eight ID headings visible", "Formed hull/enclosure panels and restrained seats", "Removable E, protective F and open light G are distinct", "Shared framing and material palette"],
+      "knownMismatches": ["Exact requested seat counts are not proved by single oblique views, especially A/C/D/F/TRAIN", "Actual mounts, wall thickness, clearances and dimensional references unverified", "No matched Three.js render acceptance", "No side, rear, exploded or service-interface qualification for each identity"],
+      "doesNotProve": ["Canonical capacity acceptance", "Generic seats/hull component coverage complete", "Installed assembly compatibility", "Visual or product acceptance"]
+    },
+    "acceptanceStatus": "open"
   }]
 }

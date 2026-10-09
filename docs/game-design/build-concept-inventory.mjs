@@ -43,7 +43,7 @@ for(const record of all)record.reference={status:record.referenceIds?.some(id=>i
 const receipts=JSON.parse(read('docs/game-design/concept-receipts.json')).receipts;
 for(const receipt of receipts){
  const actual=crypto.createHash('sha256').update(fs.readFileSync(path.join(root,receipt.artifact))).digest('hex');if(actual!==receipt.sha256)throw Error('Concept artifact hash mismatch: '+receipt.id);
- for(const id of receipt.inventoryIds){const record=all.find(r=>r.id===id);if(!record)throw Error('Unknown receipt inventory ID: '+id);record.concept={status:receipt.status,artifacts:[...record.concept.artifacts,{path:receipt.artifact,sha256:actual,receiptId:receipt.id}],receipts:['docs/game-design/concept-receipts.json']};}
+ for(const id of receipt.inventoryIds){const record=all.find(r=>r.id===id);if(!record)throw Error('Unknown receipt inventory ID: '+id);record.concept={...record.concept,status:receipt.status,artifacts:[...record.concept.artifacts,{path:receipt.artifact,sha256:actual,receiptId:receipt.id}],receipts:['docs/game-design/concept-receipts.json']};if(receipt.preferredDirection)record.concept.preferredDirection={path:receipt.artifact,receiptId:receipt.id,supersedes:receipt.supersedesDirection,acceptance:'open'};}
 }
 fs.writeFileSync(path.join(root,'docs/game-design/concept-inventory.json'),JSON.stringify(inventory,null,2)+'\n');
 const promptDoc=['# Canonical identity concept prompts','', 'Generated directly from source; these are prompts, not generated or accepted visuals. Combine each prompt below with VISUAL_INTERACTION_CONTRACT.md. Use stable numbered panels and retain the exact ID-to-panel map. Labels and effects must be checked against source after generation.',''];

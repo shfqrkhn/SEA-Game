@@ -34,8 +34,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/capacity-family-v1.png",
+            "sha256": "20773043127a378916d49b66c3e020dad0927f67fffbd3e06abd6f470708c828",
+            "receiptId": "GEN-capacity-family-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -92,8 +101,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/capacity-family-v1.png",
+            "sha256": "20773043127a378916d49b66c3e020dad0927f67fffbd3e06abd6f470708c828",
+            "receiptId": "GEN-capacity-family-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -149,8 +167,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/capacity-family-v1.png",
+            "sha256": "20773043127a378916d49b66c3e020dad0927f67fffbd3e06abd6f470708c828",
+            "receiptId": "GEN-capacity-family-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -207,8 +234,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/capacity-family-v1.png",
+            "sha256": "20773043127a378916d49b66c3e020dad0927f67fffbd3e06abd6f470708c828",
+            "receiptId": "GEN-capacity-family-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -265,8 +301,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/capacity-family-v1.png",
+            "sha256": "20773043127a378916d49b66c3e020dad0927f67fffbd3e06abd6f470708c828",
+            "receiptId": "GEN-capacity-family-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -322,8 +367,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/capacity-family-v1.png",
+            "sha256": "20773043127a378916d49b66c3e020dad0927f67fffbd3e06abd6f470708c828",
+            "receiptId": "GEN-capacity-family-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -380,8 +434,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/capacity-family-v1.png",
+            "sha256": "20773043127a378916d49b66c3e020dad0927f67fffbd3e06abd6f470708c828",
+            "receiptId": "GEN-capacity-family-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -438,8 +501,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/mobility-family-v1.png",
+            "sha256": "66615f24cfd621c2ea3863df65a75c3a680896cd833d118a641cbe6f07b20cc5",
+            "receiptId": "GEN-mobility-family-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -495,8 +567,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/mobility-family-v1.png",
+            "sha256": "66615f24cfd621c2ea3863df65a75c3a680896cd833d118a641cbe6f07b20cc5",
+            "receiptId": "GEN-mobility-family-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -552,8 +633,28 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/mobility-family-v1.png",
+            "sha256": "66615f24cfd621c2ea3863df65a75c3a680896cd833d118a641cbe6f07b20cc5",
+            "receiptId": "GEN-mobility-family-v1"
+          },
+          {
+            "path": "docs/game-design/concepts/mob-c-running-gear-v2.png",
+            "sha256": "58d42d56cd384098eb567ab1664c1ad07bb9eb1891ed13a08a62ed05dc532b20",
+            "receiptId": "GEN-mob-c-running-gear-v2"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ],
+        "preferredDirection": {
+          "path": "docs/game-design/concepts/mob-c-running-gear-v2.png",
+          "receiptId": "GEN-mob-c-running-gear-v2",
+          "supersedes": "GEN-mobility-family-v1#panel-3",
+          "acceptance": "open"
+        }
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -609,8 +710,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/mobility-family-v1.png",
+            "sha256": "66615f24cfd621c2ea3863df65a75c3a680896cd833d118a641cbe6f07b20cc5",
+            "receiptId": "GEN-mobility-family-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -667,8 +777,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/mobility-family-v1.png",
+            "sha256": "66615f24cfd621c2ea3863df65a75c3a680896cd833d118a641cbe6f07b20cc5",
+            "receiptId": "GEN-mobility-family-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -724,8 +843,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/mobility-family-v1.png",
+            "sha256": "66615f24cfd621c2ea3863df65a75c3a680896cd833d118a641cbe6f07b20cc5",
+            "receiptId": "GEN-mobility-family-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -781,8 +909,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/mobility-family-v1.png",
+            "sha256": "66615f24cfd621c2ea3863df65a75c3a680896cd833d118a641cbe6f07b20cc5",
+            "receiptId": "GEN-mobility-family-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",
@@ -4310,8 +4447,17 @@
         ]
       },
       "concept": {
-        "status": "planned",
-        "artifacts": []
+        "status": "generated-exploratory",
+        "artifacts": [
+          {
+            "path": "docs/game-design/concepts/capacity-family-v1.png",
+            "sha256": "20773043127a378916d49b66c3e020dad0927f67fffbd3e06abd6f470708c828",
+            "receiptId": "GEN-capacity-family-v1"
+          }
+        ],
+        "receipts": [
+          "docs/game-design/concept-receipts.json"
+        ]
       },
       "implementation": {
         "status": "existing-unqualified",

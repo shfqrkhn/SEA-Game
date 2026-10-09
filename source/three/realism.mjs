@@ -21,17 +21,12 @@ export function panel(g,m,size,pos,axis='z'){
  return p;
 }
 export function detailPart(g,m,prefix,v){
+ // Mobility factories author complete connected systems; legacy overlay fittings
+ // assumed a different block layout and would float on the new assemblies.
+ if(prefix==='MOB'){refineWheels(g,m);return soften(g);}
  if(prefix==='CAP'){
   for(const s of [-1,1]){rod(g,m.darkSteel,[-1.12,.15,s*.59],[1.12,.15,s*.59],.018);panel(g,m,[.62,.36,.018],[-.65,.38,s*.75]);rod(g,m.steel,[.75,.25,s*.74],[.75,.6,s*.74],.016);}
   box(g,m.darkSteel,[.48,.04,.28],[1.25,.12,0],'boarding step');
- }else if(prefix==='MOB'){
-  if([0,4,5].includes(v)){
-   for(const s of [-1,1]){box(g,m.edge,[.78,.13,.19],[0,.78,s*.2],'rocker cover');for(let i=0;i<5;i++)box(g,m.darkSteel,[.64,.011,.015],[0,.852,s*.2+(i-2)*.027]);}
-   cylinder(g,m.steel,.10,.13,[-.43,.54,.39],'z');cylinder(g,m.darkSteel,.08,.075,[-.43,.54,.49],'z');
-   cylinder(g,m.paint,.07,.24,[.35,.5,.39]);tube(g,m.rubber,[[-.32,.53,.44],[-.3,.31,.4],[.3,.3,.4],[.35,.42,.39]],.018);
-   cylinder(g,m.darkSteel,.21,.024,[.62,.48,0],'x');for(let i=0;i<8;i++){const a=i*Math.PI/4,b=box(g,m.darkSteel,[.02,.12,.055],[.64,.48+Math.cos(a)*.12,Math.sin(a)*.12]);b.rotation.x=a;}
-  }else if(v!==3){for(const x of [-.65,.65]){bolts(g,m.steel,[x,.5,.145],.073,6,'z',.012);rod(g,m.darkSteel,[x,.5,0],[0,.5,0],.043);}box(g,m.paint,[.22,.1,.18],[0,.54,0],'traction controller');}
-  if(v===5)g.scale.setScalar(.82);
  }else if(prefix==='FP'){
   for(const s of [-1,1]){cylinder(g,m.steel,.075,.07,[0,.56,s*.30],'z');bolts(g,m.darkSteel,[0,.56,s*.345],.05,6,'z',.009);}
   panel(g,m,[.31,.25,.018],[-.15,.5,-.57]);rod(g,m.darkSteel,[-.26,.63,-.58],[-.04,.63,-.58],.014);
@@ -148,13 +143,7 @@ function refineWheels(g,m){
 }
 
 function highDetail(g,m,prefix,v){
- if(prefix==='MOB'&&[0,4,5].includes(v)){
-  for(const side of [-1,1]){for(let i=0;i<4;i++){const x=-.29+i*.18;tube(g,m.steel,[[x,.76,side*.24],[x,.61,side*.35],[x+.07,.42,side*.4]],.021,20);cylinder(g,m.steel,.012,.026,[x,.85,side*.2],'y',.012,6);}tube(g,m.darkSteel,[[-.39,.36,side*.38],[.3,.36,side*.38],[.4,.49,side*.4]],.037,30);}
-  const turbo=new THREE.Mesh(new THREE.TorusGeometry(.08,.031,12,32),m.steel);turbo.position.set(-.43,.71,-.4);g.add(turbo);tube(g,m.rubber,[[-.43,.72,-.42],[-.38,.93,-.42],[.28,.94,-.39],[.44,.65,-.28]],.042,36);
-  for(const [x,y,r]of [[-.40,.35,.075],[-.40,.62,.05],[-.20,.46,.042]]){cylinder(g,m.darkSteel,r,.025,[x,y,.36],'z',r,32);cylinder(g,m.steel,r*.52,.029,[x,y,.38],'z');}tube(g,m.rubber,[[-.46,.35,.385],[-.46,.60,.385],[-.39,.67,.385],[-.18,.51,.385],[-.17,.43,.385],[-.40,.28,.385],[-.46,.35,.385]],.010,48);
-  cylinder(g,m.paint,.060,.22,[-.23,.55,.37],'x',.06,28);for(let i=0;i<9;i++)box(g,m.steel,[.009,.09,.055],[-.32+i*.02,.55,.38],'alternator fin');
-  for(const side of [-1,1])tube(g,m.rubber,[[-.36,.85,side*.2],[-.26,.92,side*.22],[.19,.92,side*.22],[.38,.67,side*.32]],.008,30);
- }else if(prefix==='CAP'){
+ if(prefix==='CAP'){
   const seats=[];g.traverse(o=>{if(o.name==='crew seat cushion')seats.push(o);});for(const seat of seats){const {x,z}=seat.position;box(g,m.rubber,[.12,.15,.28],[x-.19,1.06,z],'head restraint');for(const side of [-1,1]){rod(g,m.darkSteel,[x-.16,.73,z+side*.25],[x+.18,.73,z+side*.25],.021);cylinder(g,m.steel,.023,.025,[x-.18,.28,z+side*.17],'z');}box(g,m.amber,[.035,.045,.028],[x+.13,.51,z+.22],'belt buckle');for(let i=0;i<3;i++)box(g,m.edge,[.31,.005,.009],[x,.56,z+(i-1)*.08],'seat seam');}
  }else if(prefix==='FP'){
   box(g,m.darkSteel,[.39,.12,.14],[.12,.73,0],'breech cover');for(let i=0;i<7;i++)box(g,m.edge,[.018,.04,.13],[-.06+i*.045,.81,0],'receiver cooling fin');for(const side of [-1,1]){box(g,m.paint,[.055,.27,.30],[-.1,.55,side*.31],'mount cheek');cylinder(g,m.steel,.045,.038,[-.1,.57,side*.35],'z',.045,32);}

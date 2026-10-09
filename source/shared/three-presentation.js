@@ -32,7 +32,7 @@ function seaSceneProjection(roots,visible,keyFor){
    add(node,'text',readable(node).replace(/\s+/g,' ').trim());
    for(const x of node.querySelectorAll('button,input,select,textarea'))walk(x);return;
   }
-  if(tag==='label'){for(const child of node.children||[])walk(child);return;}
+  if(tag==='label'){for(const control of node.querySelectorAll('input,select,textarea'))walk(control);return;}
   const own=Array.from(node.childNodes||[]).filter(x=>x.nodeType===3).map(x=>x.textContent||'').join(' ').replace(/\s+/g,' ').trim();if(own)add(node,'text',own);
   for(const child of node.children||[])walk(child);
  }
@@ -52,7 +52,7 @@ function sea3DStart(role){
  const host=document.getElementById('sea3dViewport');if(!host||typeof host.appendChild!=='function'||typeof requestAnimationFrame!=='function')return;
  const ui={en:{title:'Your vehicle',object:'Explore',team:'Team',vehicle:'Mission vehicle',configuration:'Your build',reset:'Overview',front:'Front',rear:'Rear',views:'Views',shadows:'Shadows',mode:'View',assembled:'Assembled',exploded:'Exploded',cutaway:'Cutaway',separation:'Separation',map:'Assembly map',fallback:'The scene could not start. Game controls remain available.',hint:'Drag to rotate · Scroll to zoom. Select fitted equipment to inspect.',waiting:'Choose your mission.',context:{setup:'Choose a vehicle for your mission.',practice:'Try a practice purchase. Your scored budget is unchanged.',planning:'Plan your build against the mission requirements.',auction:'Compare the equipment with your mission needs.',build:'Purchased equipment fitted. Use cutaway to inspect the interior.',submit:'Check your build, then choose your profit.',debrief:'Review the decisions that shaped your vehicle.',closed:'Your final vehicle and purchases.'}},fr:{title:'Votre véhicule',object:'Explorer',team:'Équipe',vehicle:'Véhicule de mission',configuration:'Votre configuration',reset:'Vue générale',front:'Avant',rear:'Arrière',views:'Vues',shadows:'Ombres',mode:'Vue',assembled:'Assemblé',exploded:'Éclaté',cutaway:'En coupe',separation:'Séparation',map:'Plan des assemblages',fallback:'La scène n’a pas démarré. Les commandes du jeu restent disponibles.',hint:'Glissez pour tourner · Défilez pour zoomer. Sélectionnez un équipement installé pour l’examiner.',waiting:'Choisissez votre mission.',context:{setup:'Choisissez un véhicule pour votre mission.',practice:'Essayez un achat d’entraînement sans modifier le budget coté.',planning:'Planifiez votre configuration selon les exigences.',auction:'Comparez l’équipement aux besoins de votre mission.',build:'Équipements achetés installés. Utilisez la coupe pour examiner l’intérieur.',submit:'Vérifiez votre configuration, puis choisissez votre profit.',debrief:'Examinez les décisions qui ont façonné votre véhicule.',closed:'Votre véhicule final et vos achats.'}}};
  let runtime=null,signature='',queued=false,failed=false,selection='',lastPhase='',lastCurrent='',selectedTeam='',inspectionMode='assembled';
- let scenePage=0,scenePhase='',sceneTargets=new Map(),editor=null,serial=0;const sceneKeys=new WeakMap();
+ let scenePage=0,scenePhase='',sceneAlert='',sceneTargets=new Map(),editor=null,serial=0;const sceneKeys=new WeakMap();
  const keyFor=node=>{if(!sceneKeys.has(node))sceneKeys.set(node,'control-'+(++serial));return sceneKeys.get(node);};
  const get=id=>document.getElementById(id),objects=get('sea3dObject'),teams=get('sea3dTeam');
  function fail(){failed=true;document.body.classList.remove('sea3d-active','scene-game');editor?.remove();editor=null;get('sea3dStatus').textContent=ui[lang].fallback;host.hidden=true;}
@@ -80,10 +80,12 @@ function sea3DStart(role){
  function syncSceneInterface(stage,active,labels){
   if(!runtime.interface||!active||!document.querySelectorAll)return;
   if(scenePhase!==state.phase){scenePage=0;scenePhase=state.phase;editor?.remove();editor=null;}
-  const dialog=get('seaInlineConfirm');const roots=dialog?[dialog]:[...Array.from(active.children||[]).filter(x=>x!==stage),stage,document.querySelector('header'),...document.querySelectorAll('body>.notice'),document.querySelector('body>.status')].filter(Boolean);
+  const alerts=[get('seaNotice'),get('storageNotice'),get('joinStatus')].filter(x=>x&&semanticVisible(x)&&x.classList.contains('bad')&&x.textContent.trim());
+  const alertSignature=alerts.map(x=>x.textContent).join('|');if(alertSignature!==sceneAlert){sceneAlert=alertSignature;if(alertSignature)scenePage=0;}
+  const dialog=get('seaInlineConfirm');const roots=dialog?[dialog]:[...alerts,...Array.from(active.children||[]).filter(x=>x!==stage),stage,document.querySelector('header'),...document.querySelectorAll('body>.notice'),document.querySelector('body>.status')].filter(Boolean);
   const projected=seaSceneProjection(roots,semanticVisible,keyFor);sceneTargets=projected.targets;
   // Task controls lead; the complete instructions/results remain paginated below.
-  if(!dialog&&state.phase==='setup')projected.rows.sort((a,b)=>Number(b.kind!=='text')-Number(a.kind!=='text'));
+  if(!dialog&&!alerts.length&&state.phase==='setup')projected.rows.sort((a,b)=>Number(b.kind!=='text')-Number(a.kind!=='text'));
   if(dialog)scenePage=0;
   const result=runtime.interface({title:dialog?(lang==='fr'?'Confirmer':'Confirm'):t('phase.'+state.phase),subtitle:labels.context[state.phase],rows:projected.rows,page:scenePage,lang},sceneAction);if(result?.page!==undefined)scenePage=result.page;
   if(!document.body.classList.contains('scene-game'))document.body.classList.add('scene-game');

@@ -492,7 +492,7 @@ main{display:block;max-width:1420px;padding:18px 22px 30px}
  body.scene-game{overflow:hidden;background:#eef2ed}
  .scene-game main{padding:0;max-width:none}
  .scene-game .section.active{display:block;margin:0}
- .scene-game .sea3d-stage{position:fixed;inset:0;margin:0;padding:0;border:0;z-index:35;background:#eef2ed}
+ .scene-game .sea3d-stage,.scene-game .section.active>.sea3d-stage{position:fixed;inset:0;margin:0;padding:0;border:0;z-index:35;background:#eef2ed}
  .scene-game #sea3dViewport{position:absolute;inset:0;width:100%;height:100dvh;margin:0}
  .scene-game header,.scene-game body>.status,.scene-game>.status,.scene-game>.notice,.scene-game #seaInlineConfirm,.scene-game #seaNotice,
  .scene-game .section.active>:not(.sea3d-stage),.scene-game .sea3d-stage>:not(#sea3dViewport){position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:0!important;overflow:hidden!important;clip-path:inset(50%);white-space:nowrap}
