@@ -2,6 +2,8 @@
 
 ## Completion specification
 
+- [Current maintainer/Claude handover: exact state and next actions](docs/HANDOVER.md)
+- [Architecture v1.1.0 gap assessment and sequence](docs/ARCHITECTURE_V1_1_ASSESSMENT.md)
 - [Project analysis and verified baseline](docs/PROJECT_ANALYSIS.md)
 - [MPES: requirements, milestones, acceptance and lifecycle](docs/MPES.md)
 - [Execution ledger](docs/EXECUTION_LEDGER.md)
