@@ -4,8 +4,8 @@
   "sha256": "e0c27b0293e8eee47f0fb6ce3591f764be80e440ed1ee5e086bd02999cb395ea",
   "inputs": {
     "source/three/game-scene.mjs": "dfc42990827e8de8cb2608d08ba2c2a061eb1941626f060595c09054dbcc12e3",
-    "source/three/interface.mjs": "e14e2ae6f55621ff65feba39068b008ffb22d2a73c69e8874cec9c0b05f2bee8",
-    "source/three/game-models.mjs": "9a241f22e93de41283b8d0166eb7e27bfc92bef1d0beaa746fc36e1a4502296d",
+    "source/three/interface.mjs": "45eff733e61f19df852905b5e4bc3e343b2e4c123d37e7fc60c423129a8000ed",
+    "source/three/game-models.mjs": "008db5640c5b15fb554f42ffe1063188f8035a025e671c1b5407626b9ed45ed1",
     "source/three/realism.mjs": "58a9b594edc8e7ed36510268a29e653a82f2b75865b4a0623fbc9e22b9c13709",
     "source/three/materials.mjs": "7b60da6db5c27170186f160968152e1a2455271d144606af615b4c414579eb6d",
     "source/three/inspection.mjs": "fd983f7e0aa1b76f3a5c98d7f16ae506f852337825d64c76093ea2739ba1cb03",
