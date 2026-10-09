@@ -7,6 +7,7 @@ import {fitCamera} from './models.mjs';
 const engine=fs.readFileSync('source/shared/engine.js','utf8');const ids=vm.runInNewContext(engine+'\n[...CARD_INDEX.keys(),"TRAIN-CAP"]');assert.deepEqual([...MODEL_IDS].sort(),Array.from(ids).sort());
 const results=[];for(const [kind,list,factory]of [['part',MODEL_IDS,createPart],['mission',MISSION_IDS,createMission]])for(const id of list){
  const model=factory(id,materials());model.updateWorldMatrix(true,true);const bounds=new THREE.Box3().setFromObject(model);assert(!bounds.isEmpty(),id);assert([...bounds.min.toArray(),...bounds.max.toArray()].every(Number.isFinite),id);
+ if(id.startsWith('CAP-')||id==='TRAIN-CAP'){const expected=id==='TRAIN-CAP'?4:vm.runInNewContext(engine+'\nCARD_INDEX.get('+JSON.stringify(id)+').e.CAP');let seats=0;model.traverse(o=>{if(o.name==='crew seat cushion')seats++;});assert.equal(seats,expected,id+' capacity seats');}
  let meshes=0,triangles=0;model.traverse(o=>{if(o.isMesh){meshes++;const pos=o.geometry.attributes.position;assert(pos?.count>0,id);triangles+=(o.geometry.index?.count||pos.count)/3;}});assert(meshes>5,id);
  for(const aspect of [.5,1,1.6,3])for(const angle of [[7,4.5,7],[-7,4.5,-7],[7,2.7,0]]){
   const camera=new THREE.OrthographicCamera();fitCamera(camera,model,aspect,angle);

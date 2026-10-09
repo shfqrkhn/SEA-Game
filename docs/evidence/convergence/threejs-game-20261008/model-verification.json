@@ -176,8 +176,8 @@
     {
       "id": "CAP-C",
       "kind": "part",
-      "meshes": 38,
-      "triangles": 1544,
+      "meshes": 28,
+      "triangles": 1152,
       "bounds": {
         "min": [
           -1.225000023841858,
@@ -214,8 +214,8 @@
     {
       "id": "CAP-E",
       "kind": "part",
-      "meshes": 38,
-      "triangles": 1544,
+      "meshes": 33,
+      "triangles": 1348,
       "bounds": {
         "min": [
           -1.225000023841858,
@@ -233,8 +233,8 @@
     {
       "id": "CAP-F",
       "kind": "part",
-      "meshes": 38,
-      "triangles": 1544,
+      "meshes": 33,
+      "triangles": 1348,
       "bounds": {
         "min": [
           -1.225000023841858,
@@ -252,8 +252,8 @@
     {
       "id": "CAP-G",
       "kind": "part",
-      "meshes": 38,
-      "triangles": 1544,
+      "meshes": 28,
+      "triangles": 1152,
       "bounds": {
         "min": [
           -1.1025000214576721,
@@ -1335,8 +1335,8 @@
     {
       "id": "TRAIN-CAP",
       "kind": "part",
-      "meshes": 38,
-      "triangles": 1544,
+      "meshes": 28,
+      "triangles": 1152,
       "bounds": {
         "min": [
           -1.225000023841858,

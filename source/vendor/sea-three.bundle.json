@@ -1,10 +1,10 @@
 {
   "three": "0.186.1",
   "recipe": "node samples/threejs-recovery/build-game.mjs",
-  "sha256": "271f8be15fed1e928b576699171fafa4d2f9a47717b1c5566b26d0fe58975cba",
+  "sha256": "ab667065821f4bd894ef495e25493f291c23e0dee5f5667c17b08da67f100fa5",
   "inputs": {
     "source/three/workshop.mjs": "b46d47f41fa83cccb67ea201f0e0ad8a7b5ec8e12a007cf894c41f018bead4a9",
-    "source/three/game-models.mjs": "297ea52695ccc2ca7b802af51287993d2b6fbc20298d872fe1ebc979dd653558",
+    "source/three/game-models.mjs": "9aa79cbcb6c9458430626ae42b4dcb65dfa3b77f34ad7238123b39833cc88756",
     "samples/threejs-recovery/models.mjs": "90ec4cf8056e470d9a4acac97457a1a54a28407071e58c450f7cacbb83d0645e",
     "samples/threejs-recovery/package-lock.json": "ba260bb23c14756f172d615e7e7e168bb905772dbb56764365c4c4be3cae8b90"
   }
