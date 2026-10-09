@@ -1,10 +1,10 @@
 {
   "three": "0.186.1",
   "recipe": "node samples/threejs-recovery/build-game.mjs",
-  "sha256": "4594df840d0be8a1932b74f421113f4825839a1630456b42e9566572fd2418f9",
+  "sha256": "4fc43ba2bd4de4b163bd4abd81102d1464da615181ed02e3867ec32d5c6129ae",
   "inputs": {
     "source/three/game-scene.mjs": "dfc42990827e8de8cb2608d08ba2c2a061eb1941626f060595c09054dbcc12e3",
-    "source/three/interface.mjs": "45eff733e61f19df852905b5e4bc3e343b2e4c123d37e7fc60c423129a8000ed",
+    "source/three/interface.mjs": "3932a48f44784e0d3ccc7273bb4503c41c6905ef8b3dfc91885b836de2b6b7e2",
     "source/three/game-models.mjs": "ac5be85bc6bb5a389f4fa6ad03bf9ea89858ab2d091ad5d9583293e82d8936a9",
     "source/three/realism.mjs": "e243552944205225bc175fabd7d7364cd42e32421e8bc2e892af3871e4e05f09",
     "source/three/materials.mjs": "84b8216754efbbefa66e600fb7bcc5ad7a8e4bcd478a7bfb51c9b5ac7c480dcb",

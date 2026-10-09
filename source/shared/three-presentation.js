@@ -10,18 +10,19 @@ function seaSceneProjection(roots,visible,keyFor){
  const rows=[],targets=new Map(),seen=new Set();
  const readable=(n,root=false)=>seaSceneText(n,visible,root);
  function add(node,kind,label,value=''){
-  if(!label&&!value)return;const key=keyFor(node);targets.set(key,node);
+  if(!label&&!value)return;const key=keyFor(node)+(node.getAttribute?.('data-scene-utility')==='inspection'?':'+node.getAttribute('data-scene-command-context'):'');targets.set(key,node);
   const authored=node.closest?.('[data-scene-priority]')?.getAttribute?.('data-scene-priority');
   const priority=/^\d{1,3}$/.test(authored||'')?Number(authored):50;
   const emphasis=node.classList?.contains('danger')?'danger':node.classList?.contains('primary')||node.classList?.contains('good')?'primary':'';
   const group=node.closest?.('[data-scene-section]')?.getAttribute?.('data-scene-section');
   const section=['task','teams','market','tools','inspect','help'].includes(group)?group:priority>=70?'help':'task';
-  const currentAction=node.getAttribute?.('data-scene-current-action')==='true';
-  rows.push({section:currentAction?(node.disabled?'tools':'task'):section,key,kind,label:String(label),value:String(value),disabled:!!node.disabled,priority,emphasis,utility:node.id==='langBtn'?'language':''});
+  const currentAction=node.getAttribute?.('data-scene-current-action')==='true',caller=Number(node.getAttribute?.('data-bid-team')),bid=Number.isInteger(caller)&&caller>=1&&caller<=10;
+  rows.push({section:bid?(node.disabled?'teams':'task'):currentAction?(node.disabled?'tools':'task'):section,compact:bid?'bid':'',teamId:bid?caller:null,key,kind,label:String(label),value:String(value),disabled:!!node.disabled,priority,emphasis,utility:node.id==='langBtn'?'language':node.getAttribute?.('data-scene-utility')||'',selected:node.getAttribute?.('aria-pressed')==='true',currentAction});
  }
  function walk(node){
   if(!node||seen.has(node)||!visible(node))return;seen.add(node);
   const tag=node.tagName?.toLowerCase();
+  if(node.getAttribute?.('data-scene-skip')==='true')return;
   if(['script','style','svg','canvas','img'].includes(tag)||['sea3dViewport','sea3dNavigation'].includes(node.id))return;
   const text=()=>String(readable(node,true)).replace(/\s+/g,' ').trim();
   const name=()=>node.getAttribute?.('aria-label')||Array.from(node.labels||[]).map(x=>readable(x,true)).join(' ')||readable(node.closest?.('.field')?.querySelector('label'),true)||node.getAttribute?.('placeholder')||text();
@@ -73,6 +74,35 @@ function seaSceneNavigation(stage,sections,selected,language,epoch,onSelect,curr
  }
  return nav;
 }
+// Persistent semantic controls for the scene's common inspection commands.
+function seaSceneInspection(stage,labels,mode,context,onSelect,currentContext,blocked=false){
+ if(!stage?.appendChild)return;
+ let nav=Array.from(stage.children||[]).find(node=>node.id==='sea3dInspection');
+ if(!nav){nav=document.createElement('nav');nav.id='sea3dInspection';nav.className='inline';nav.setAttribute('aria-label',labels.views);stage.appendChild(nav);}
+ nav.hidden=blocked;nav.setAttribute('aria-label',labels.views);
+ for(const id of ['assembled','exploded','cutaway','front','rear','reset']){
+  let button=document.getElementById('sea3d-'+id);
+  if(!button){button=document.createElement('button');button.id='sea3d-'+id;button.type='button';button.className='btn ghost';}
+  if(button.parentElement!==nav)nav.appendChild(button);
+  button.textContent=labels[id];button.setAttribute('data-scene-utility','inspection');button.setAttribute('data-scene-section','inspect');button.setAttribute('data-scene-command-context',context);
+  button.setAttribute('aria-label',labels[id]);button.setAttribute('aria-pressed',String(['assembled','exploded','cutaway'].includes(id)&&mode===id));
+  button.onclick=()=>{if(!nav.hidden&&button.isConnected&&context===currentContext())onSelect(id);};
+ }
+ return nav;
+}
+function seaSceneSaveControls(stage,label){
+ const menu=document.querySelector?.('details.save-menu');if(!stage?.appendChild||!menu)return;
+ let group=Array.from(stage.children||[]).find(node=>node.id==='sea3dSaveControls');
+ if(!group){group=document.createElement('section');group.id='sea3dSaveControls';group.setAttribute('role','group');group.setAttribute('data-scene-section','help');group.setAttribute('data-scene-priority','20');stage.appendChild(group);}
+ group.setAttribute('aria-label',label);
+ const content=Array.from(menu.children||[]).find(node=>node.tagName?.toLowerCase()==='div');if(content)group.appendChild(content);
+ menu.hidden=true;return group;
+}
+function seaSceneBuildTeam(summary,s){
+ const detail=summary?.parentElement,host=summary?.closest?.('#authoritativeBuild');
+ if(!summary?.isConnected||summary.tagName?.toLowerCase()!=='summary'||detail?.tagName?.toLowerCase()!=='details'||detail.open||s.phase!=='build'||host?._buildSession!==s.sessionCode)return null;
+ const id=Number(detail.dataset?.buildTeam);return s.teams?.some(team=>team.id===id)?String(id):null;
+}
 function sea3DView(s,role,selected,language,setupMission){
  const teams=role==='instructor'?(s.teams||[]):s.team?[s.team]:[];
  const team=teams.find(x=>String(x.id)===String(selected))||teams[0];
@@ -95,13 +125,18 @@ function sea3DStart(role){
   for(let n=node;n&&n!==document.body;n=n.parentElement){if(n.hidden||n.getAttribute?.('aria-hidden')==='true'||n.classList?.contains('hidden'))return false;const style=window.getComputedStyle(n);if(style.display==='none'||style.visibility==='hidden')return false;if(n.parentElement?.tagName==='DETAILS'&&!n.parentElement.open&&n.tagName!=='SUMMARY')return false;}
   return true;
  }
+ function selectBuildSummary(summary){
+  if(get('seaInlineConfirm')||!semanticVisible(summary))return;
+  const team=seaSceneBuildTeam(summary,state);if(team===null)return;
+  selectedTeam=team;selection='configuration';signature='';
+ }
  function sceneAction(key,nextPage){
   if(key==='__section'){if(typeof nextPage!=='string'||!sceneSections.has(nextPage))return;sceneSection=nextPage;scenePage=0;editor?.remove();editor=null;queue();return;}
   if(key==='__previous'||key==='__next'){scenePage=Math.max(0,nextPage??scenePage+(key==='__next'?1:-1));queue();return;}
   const node=sceneTargets.get(key);if(!node?.isConnected||node.disabled||!semanticVisible(node))return;
   const tag=node.tagName.toLowerCase();
   if(tag==='button'){node.click();queue();return;}
-  if(tag==='summary'){node.parentElement.open=!node.parentElement.open;queue();return;}
+  if(tag==='summary'){selectBuildSummary(node);node.parentElement.open=!node.parentElement.open;queue();return;}
   if(['checkbox','radio'].includes(node.type)){node.checked=node.type==='radio'||!node.checked;node.dispatchEvent(new Event('input',{bubbles:true}));node.dispatchEvent(new Event('change',{bubbles:true}));queue();return;}
   editor?.remove();editor=document.createElement('section');editor.className='scene-editor';editor.setAttribute('role','dialog');editor.setAttribute('aria-modal','true');
   const title=document.createElement('label');title.textContent=Array.from(node.labels||[]).map(x=>seaSceneText(x,semanticVisible)).join(' ')||node.getAttribute('aria-label')||node.placeholder||'';
@@ -116,13 +151,16 @@ function sea3DStart(role){
   input.addEventListener('input',()=>apply('input'));input.addEventListener('change',()=>apply('change'));
   editor.addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();close();}else if(e.key==='Tab'){if(e.shiftKey&&document.activeElement===input){e.preventDefault();done.focus();}else if(!e.shiftKey&&document.activeElement===done){e.preventDefault();input.focus();}}});input.focus();
  }
- function syncSceneInterface(stage,active,labels){
+ function syncSceneInterface(stage,active,labels,context=null){
   if(!runtime.interface||!active||!document.querySelectorAll)return;
   if(scenePhase!==state.phase){sceneSection='task';sceneSectionEpoch++;scenePage=0;scenePhase=state.phase;editor?.remove();editor=null;}
   const alerts=[get('seaNotice'),get('storageNotice'),get('joinStatus')].filter(x=>x&&semanticVisible(x)&&x.classList.contains('bad')&&x.textContent.trim());
   const alertSignature=alerts.map(x=>x.textContent).join('|');if(alertSignature!==sceneAlert){sceneAlert=alertSignature;if(alertSignature){scenePage=0;sceneSection='task';editor?.remove();editor=null;}}
   const dialog=get('seaInlineConfirm');const roots=dialog?[dialog,get('langBtn')].filter(Boolean):[...alerts,...Array.from(active.children||[]).filter(x=>x!==stage),stage,document.querySelector('header'),...document.querySelectorAll('body>.notice'),document.querySelector('body>.status'),document.querySelector('main>.footer')].filter(Boolean);
   const projected=seaSceneProjection(roots,semanticVisible,keyFor);sceneTargets=projected.targets;
+  if(context&&!dialog){projected.rows=projected.rows.filter(row=>{const node=projected.targets.get(row.key);return !(node?.id==='phaseBadge'&&row.label===context.phase)&&!(node?.id==='sessionBadge'&&row.label===context.session)&&!(node?.classList?.contains('badge')&&row.label==='v'+context.version);});}
+  const primary=projected.rows.find(row=>row.kind==='button'&&!row.disabled&&row.currentAction&&!row.utility)||projected.rows.find(row=>row.kind==='button'&&!row.disabled&&row.section==='task'&&row.emphasis==='primary'&&!row.utility);
+  if(primary){primary.primary=true;primary.emphasis='primary';primary.priority=Math.min(primary.priority,49);}
   // Stable authored groups retain context and dependencies, never button-first order.
   if(!dialog&&!alerts.length)projected.rows.sort((a,b)=>(a.priority??50)-(b.priority??50));
   if(dialog!==sceneDialog){scenePage=0;sceneSection='task';sceneSectionEpoch++;sceneDialog=dialog;editor?.remove();editor=null;}
@@ -131,7 +169,7 @@ function sea3DStart(role){
   sceneSections=new Set(projected.rows.filter(row=>!row.utility).map(row=>row.section));
   if(sceneSections.size&&!sceneSections.has(sceneSection)){sceneSection='task';scenePage=0;}
   seaSceneNavigation(stage,sceneSections,sceneSection,lang,sceneSectionEpoch,sceneAction,()=>get('seaInlineConfirm')||scenePhase!==state.phase||sceneSectionLanguage!==lang?-1:sceneSectionEpoch,!!dialog||!!alerts.length);
-  const result=runtime.interface({title:dialog?(lang==='fr'?'Confirmer':'Confirm'):t('phase.'+state.phase),subtitle:labels.context[state.phase],rows:projected.rows,page:scenePage,section:sceneSection,sectionEpoch:sceneSectionEpoch,lang},sceneAction);if(result?.page!==undefined)scenePage=result.page;
+  const result=runtime.interface({title:dialog?(lang==='fr'?'Confirmer':'Confirm'):t('phase.'+state.phase),subtitle:labels.context[state.phase],context,rows:projected.rows,page:scenePage,section:sceneSection,sectionEpoch:sceneSectionEpoch,lang},sceneAction);if(result?.page!==undefined)scenePage=result.page;
   if(!document.body.classList.contains('scene-game'))document.body.classList.add('scene-game');
  }
  function option(select,value,label){const e=document.createElement('option');e.value=value;e.textContent=label;select.appendChild(e);}
@@ -153,14 +191,20 @@ function sea3DStart(role){
    const names={en:{body:'Body panels',chassis:'Chassis',cockpit:'Driver controls',glass:'Glazing',crane:'Recovery crane',wheel:'Wheel',roof:'Roof',seating:'Seats',frame:'Frame',cooling:'Cooling',heads:'Cylinder heads',connections:'Connections',powertrain:'Powertrain',barrel:'Barrel',mount:'Mount',controls:'Controls',optics:'Optics & antennae',protection:'Protection',mechanism:'Mechanism',display:'Display',documents:'Review documents',front:'Front equipment'},fr:{body:'Panneaux de carrosserie',chassis:'Châssis',cockpit:'Commandes du conducteur',glass:'Vitrage',crane:'Grue de dépannage',wheel:'Roue',roof:'Toit',seating:'Sièges',frame:'Cadre',cooling:'Refroidissement',heads:'Culasses',connections:'Raccordements',powertrain:'Groupe motopropulseur',barrel:'Canon',mount:'Support',controls:'Commandes',optics:'Optiques et antennes',protection:'Protection',mechanism:'Mécanisme',display:'Écran',documents:'Documents de revue',front:'Équipements avant'}};
    const engineNames={en:{head:'Cylinder head and rocker cover',block:'Cylinder block and liners',sump:'Oil sump',rotating:'Crankshaft, rods and pistons',transmission:'Transmission',intake:'Air intake',exhaust:'Exhaust and turbo',cooling:'Cooling pack',services:'Service fittings',skid:'Mounting skid'},fr:{head:'Culasse et cache-culbuteurs',block:'Bloc-cylindres et chemises',sump:'Carter d’huile',rotating:'Vilebrequin, bielles et pistons',transmission:'Transmission',intake:'Admission d’air',exhaust:'Échappement et turbo',cooling:'Refroidissement',services:'Raccords de service',skid:'Châssis de montage'}};
    const parts=get('sea3dParts');parts.replaceChildren();for(const key of runtime.parts?.()||[]){const [kind,id]=key.split(':'),b=document.createElement('button');b.type='button';b.textContent=kind==='equipment'?unique.get(id)?.title||id:kind==='engine'?(engineNames[lang]?.[id]||id):(names[lang]?.[kind]||kind)+(id?' '+id:'');b.addEventListener('click',()=>runtime.focus?.(key));parts.appendChild(b);}
-   syncSceneInterface(stage,active,labels);
+   seaSceneSaveControls(stage,t('backup.menu'));
+   const commandContext=JSON.stringify([state.phase,state.sessionCode,lang]);
+   seaSceneInspection(stage,labels,inspectionMode,commandContext,id=>{if(['assembled','exploded','cutaway'].includes(id)){inspectionMode=id;queue();}else runtime?.view(id);},()=>get('seaInlineConfirm')?'':JSON.stringify([state.phase,state.sessionCode,lang]),!!get('seaInlineConfirm'));
+   get('sea3dMode').closest('label').setAttribute('data-scene-skip','true');
+   get('sea3d-views').closest('details').hidden=true;
+   let sessionContext=get('sea3dSessionContext');if(!sessionContext){sessionContext=document.createElement('p');sessionContext.id='sea3dSessionContext';sessionContext.setAttribute('data-scene-section','help');sessionContext.setAttribute('data-scene-priority','90');stage.appendChild(sessionContext);}
+   sessionContext.textContent=state.sessionCode?(lang==='fr'?'Séance : ':'Session: ')+state.sessionCode:'';
+   syncSceneInterface(stage,active,labels,{role:t('role'),version:APP.version,phase:t('phase.'+state.phase),mission:MISSIONS[view.mission][lang],session:state.sessionCode||''});
  }catch{fail();}}
  function queue(){if(!queued){queued=true;requestAnimationFrame(sync);}}
  get('sea3dMode').addEventListener('change',()=>{inspectionMode=get('sea3dMode').value;queue();});get('sea3dAmount').addEventListener('input',queue);
  objects.addEventListener('change',()=>{selection=objects.value;queue();});teams.addEventListener('change',()=>{selectedTeam=teams.value;signature='';queue();});
- for(const key of ['reset','front','rear'])get('sea3d-'+key).addEventListener('click',()=>runtime?.view(key));
  host.addEventListener('sea3drestored',()=>{failed=false;signature='';queue();});
- document.addEventListener('click',queue);document.addEventListener('change',queue);document.addEventListener('input',queue);
+ document.addEventListener('click',e=>{const summary=e.target.closest?.('summary');if(summary)selectBuildSummary(summary);queue();});document.addEventListener('change',queue);document.addEventListener('input',queue);
  document.addEventListener('keydown',e=>{if(e.key==='Tab')document.body.classList.add('scene-keyboard');});document.addEventListener('pointerdown',()=>document.body.classList.remove('scene-keyboard'));
  if(typeof MutationObserver==='function'){const observer=new MutationObserver(records=>{if(records.some(r=>!(r.target.nodeType===3?r.target.parentElement:r.target).closest?.('#sea3dScene,.scene-editor')))queue();});observer.observe(document.body,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:['class','hidden','disabled','open']});window.addEventListener('pagehide',()=>observer.disconnect(),{once:true});}
  window.addEventListener('pagehide',()=>runtime?.dispose(),{once:true});

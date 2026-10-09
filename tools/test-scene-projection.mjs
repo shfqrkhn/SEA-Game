@@ -63,17 +63,17 @@ for(const language of ['en','fr']){
   const mission=language==='fr'?'Récupération':'Recovery';
   const wins=language==='fr'?`${i%3} achats · ${2-i%3} restants`:`${i%3} wins · ${2-i%3} remaining`;
   const action=language==='fr'?'Accepter 700 000 $':'Accept $700,000';
-  const button=node('button',action,[],{disabled:i===4,classes:['primary']});buttons.push(button);
+  const button=node('button',action,[],{disabled:i===4,classes:['primary'],attrs:{'data-bid-team':String(i+1)}});buttons.push(button);
   expected.push({team,mission,wins,action});
   return node('div','',[node('strong',team),node('span',mission,[node('small',wins),node('small',secret,[],{hidden:true})]),button],{classes:['bid-row']});
- }),{attrs:{'data-scene-priority':'30'}});
+ }),{attrs:{'data-scene-priority':'30','data-scene-section':'teams'}});
  const result=ctx.project([roster,roster,...buttons],visible,keyFor);
  assert.equal(result.rows.length,10,'Each bidder must have one contextual action, including repeated roots');
  result.rows.forEach((row,i)=>{
   const context=expected[i];
   for(const word of [context.team,context.mission,context.wins])assert(row.label.includes(word),'Public bidder context missing: '+word);
   assert.equal(row.value,context.action,'Original localized button label must survive');
-  assert.equal(row.kind,'button');assert.equal(row.disabled,i===4);assert.equal(row.priority,30);
+  assert.equal(row.kind,'button');assert.equal(row.disabled,i===4);assert.equal(row.priority,30);assert.equal(row.section,i===4?'teams':'task','Enabled canonical caller is directly in Current; unavailable caller remains Teams');assert.equal(row.compact,'bid');assert.equal(row.teamId,i+1);
   assert.equal(result.targets.get(row.key),buttons[i],'GPU action must route to the actual semantic button');
  });
  assert(!JSON.stringify(result.rows).includes(secret),'Private or hidden bidder content must remain excluded');

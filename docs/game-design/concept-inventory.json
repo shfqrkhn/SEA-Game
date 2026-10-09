@@ -4,7 +4,7 @@
   "date": "2026-10-09",
   "canonicalSource": {
     "path": "source/shared/engine.js",
-    "sha256": "11302d36fca01ff66f7f2b8bf34ea219128ec0ccb2a73ec61819ef3d06c378e9"
+    "sha256": "71aeb2b2e84983178c4b2f1a0656c56acdf644aa5f7f3557b64ad9c1927ffcd7"
   },
   "status": "Inventory/exploratory direction; canonical/model/UI acceptance open",
   "counts": {
@@ -15,7 +15,7 @@
     "components": 35,
     "assemblyRelationships": 48,
     "uiStates": 40,
-    "uiElements": 228,
+    "uiElements": 238,
     "materials": 12,
     "exploratoryDirections": 1
   },
@@ -14280,6 +14280,201 @@
       "conceptBatch": "UI-student-closed"
     },
     {
+      "id": "UI-ELEMENT-student-scene-save",
+      "kind": "interface-element",
+      "label": {
+        "en": "Help / save",
+        "fr": "Aide / sauvegarde"
+      },
+      "reference": {
+        "status": "canonical-or-design-contract;visual-reference-open",
+        "evidence": []
+      },
+      "concept": {
+        "status": "planned",
+        "artifacts": []
+      },
+      "implementation": {
+        "status": "original-native-controls-directly-exposed;qualification-open",
+        "evidence": []
+      },
+      "acceptance": {
+        "status": "open",
+        "criteria": [
+          "U01",
+          "U02",
+          "U03",
+          "U04",
+          "U05",
+          "U06"
+        ],
+        "evidence": []
+      },
+      "role": "student",
+      "phase": "cross-phase",
+      "source": "source/shared/three-presentation.js#seaSceneSaveControls",
+      "htmlTag": "div",
+      "conceptBatch": "UI-RECOVERY"
+    },
+    {
+      "id": "UI-ELEMENT-student-scene-inspection",
+      "kind": "interface-element",
+      "label": {
+        "en": "Model views",
+        "fr": "Vues du modèle"
+      },
+      "reference": {
+        "status": "canonical-or-design-contract;visual-reference-open",
+        "evidence": []
+      },
+      "concept": {
+        "status": "planned",
+        "artifacts": []
+      },
+      "implementation": {
+        "status": "scene-native-synchronized;qualification-open",
+        "evidence": []
+      },
+      "acceptance": {
+        "status": "open",
+        "criteria": [
+          "U01",
+          "U02",
+          "U03",
+          "U04",
+          "U05",
+          "U06"
+        ],
+        "evidence": []
+      },
+      "role": "student",
+      "phase": "cross-phase",
+      "source": "source/shared/three-presentation.js#seaSceneInspection",
+      "htmlTag": "nav",
+      "sceneCommand": null,
+      "conceptBatch": "UI-INSPECTION"
+    },
+    {
+      "id": "UI-ELEMENT-student-scene-assembled",
+      "kind": "interface-element",
+      "label": {
+        "en": "Assembled",
+        "fr": "Assemblé"
+      },
+      "reference": {
+        "status": "canonical-or-design-contract;visual-reference-open",
+        "evidence": []
+      },
+      "concept": {
+        "status": "planned",
+        "artifacts": []
+      },
+      "implementation": {
+        "status": "scene-native-synchronized;qualification-open",
+        "evidence": []
+      },
+      "acceptance": {
+        "status": "open",
+        "criteria": [
+          "U01",
+          "U02",
+          "U03",
+          "U04",
+          "U05",
+          "U06"
+        ],
+        "evidence": []
+      },
+      "role": "student",
+      "phase": "cross-phase",
+      "source": "source/shared/three-presentation.js#seaSceneInspection",
+      "htmlTag": "button",
+      "sceneCommand": {
+        "mode": "assembled"
+      },
+      "conceptBatch": "UI-INSPECTION"
+    },
+    {
+      "id": "UI-ELEMENT-student-scene-exploded",
+      "kind": "interface-element",
+      "label": {
+        "en": "Exploded",
+        "fr": "Éclaté"
+      },
+      "reference": {
+        "status": "canonical-or-design-contract;visual-reference-open",
+        "evidence": []
+      },
+      "concept": {
+        "status": "planned",
+        "artifacts": []
+      },
+      "implementation": {
+        "status": "scene-native-synchronized;qualification-open",
+        "evidence": []
+      },
+      "acceptance": {
+        "status": "open",
+        "criteria": [
+          "U01",
+          "U02",
+          "U03",
+          "U04",
+          "U05",
+          "U06"
+        ],
+        "evidence": []
+      },
+      "role": "student",
+      "phase": "cross-phase",
+      "source": "source/shared/three-presentation.js#seaSceneInspection",
+      "htmlTag": "button",
+      "sceneCommand": {
+        "mode": "exploded"
+      },
+      "conceptBatch": "UI-INSPECTION"
+    },
+    {
+      "id": "UI-ELEMENT-student-scene-cutaway",
+      "kind": "interface-element",
+      "label": {
+        "en": "Cutaway",
+        "fr": "En coupe"
+      },
+      "reference": {
+        "status": "canonical-or-design-contract;visual-reference-open",
+        "evidence": []
+      },
+      "concept": {
+        "status": "planned",
+        "artifacts": []
+      },
+      "implementation": {
+        "status": "scene-native-synchronized;qualification-open",
+        "evidence": []
+      },
+      "acceptance": {
+        "status": "open",
+        "criteria": [
+          "U01",
+          "U02",
+          "U03",
+          "U04",
+          "U05",
+          "U06"
+        ],
+        "evidence": []
+      },
+      "role": "student",
+      "phase": "cross-phase",
+      "source": "source/shared/three-presentation.js#seaSceneInspection",
+      "htmlTag": "button",
+      "sceneCommand": {
+        "mode": "cutaway"
+      },
+      "conceptBatch": "UI-INSPECTION"
+    },
+    {
       "id": "UI-ELEMENT-student-scene-navigation",
       "kind": "interface-element",
       "label": {
@@ -18690,6 +18885,201 @@
       "source": "source/instructor.template.html#startNewSessionBtn",
       "htmlTag": "button",
       "conceptBatch": "UI-instructor-closed"
+    },
+    {
+      "id": "UI-ELEMENT-instructor-scene-save",
+      "kind": "interface-element",
+      "label": {
+        "en": "Help / save",
+        "fr": "Aide / sauvegarde"
+      },
+      "reference": {
+        "status": "canonical-or-design-contract;visual-reference-open",
+        "evidence": []
+      },
+      "concept": {
+        "status": "planned",
+        "artifacts": []
+      },
+      "implementation": {
+        "status": "original-native-controls-directly-exposed;qualification-open",
+        "evidence": []
+      },
+      "acceptance": {
+        "status": "open",
+        "criteria": [
+          "U01",
+          "U02",
+          "U03",
+          "U04",
+          "U05",
+          "U06"
+        ],
+        "evidence": []
+      },
+      "role": "instructor",
+      "phase": "cross-phase",
+      "source": "source/shared/three-presentation.js#seaSceneSaveControls",
+      "htmlTag": "div",
+      "conceptBatch": "UI-RECOVERY"
+    },
+    {
+      "id": "UI-ELEMENT-instructor-scene-inspection",
+      "kind": "interface-element",
+      "label": {
+        "en": "Model views",
+        "fr": "Vues du modèle"
+      },
+      "reference": {
+        "status": "canonical-or-design-contract;visual-reference-open",
+        "evidence": []
+      },
+      "concept": {
+        "status": "planned",
+        "artifacts": []
+      },
+      "implementation": {
+        "status": "scene-native-synchronized;qualification-open",
+        "evidence": []
+      },
+      "acceptance": {
+        "status": "open",
+        "criteria": [
+          "U01",
+          "U02",
+          "U03",
+          "U04",
+          "U05",
+          "U06"
+        ],
+        "evidence": []
+      },
+      "role": "instructor",
+      "phase": "cross-phase",
+      "source": "source/shared/three-presentation.js#seaSceneInspection",
+      "htmlTag": "nav",
+      "sceneCommand": null,
+      "conceptBatch": "UI-INSPECTION"
+    },
+    {
+      "id": "UI-ELEMENT-instructor-scene-assembled",
+      "kind": "interface-element",
+      "label": {
+        "en": "Assembled",
+        "fr": "Assemblé"
+      },
+      "reference": {
+        "status": "canonical-or-design-contract;visual-reference-open",
+        "evidence": []
+      },
+      "concept": {
+        "status": "planned",
+        "artifacts": []
+      },
+      "implementation": {
+        "status": "scene-native-synchronized;qualification-open",
+        "evidence": []
+      },
+      "acceptance": {
+        "status": "open",
+        "criteria": [
+          "U01",
+          "U02",
+          "U03",
+          "U04",
+          "U05",
+          "U06"
+        ],
+        "evidence": []
+      },
+      "role": "instructor",
+      "phase": "cross-phase",
+      "source": "source/shared/three-presentation.js#seaSceneInspection",
+      "htmlTag": "button",
+      "sceneCommand": {
+        "mode": "assembled"
+      },
+      "conceptBatch": "UI-INSPECTION"
+    },
+    {
+      "id": "UI-ELEMENT-instructor-scene-exploded",
+      "kind": "interface-element",
+      "label": {
+        "en": "Exploded",
+        "fr": "Éclaté"
+      },
+      "reference": {
+        "status": "canonical-or-design-contract;visual-reference-open",
+        "evidence": []
+      },
+      "concept": {
+        "status": "planned",
+        "artifacts": []
+      },
+      "implementation": {
+        "status": "scene-native-synchronized;qualification-open",
+        "evidence": []
+      },
+      "acceptance": {
+        "status": "open",
+        "criteria": [
+          "U01",
+          "U02",
+          "U03",
+          "U04",
+          "U05",
+          "U06"
+        ],
+        "evidence": []
+      },
+      "role": "instructor",
+      "phase": "cross-phase",
+      "source": "source/shared/three-presentation.js#seaSceneInspection",
+      "htmlTag": "button",
+      "sceneCommand": {
+        "mode": "exploded"
+      },
+      "conceptBatch": "UI-INSPECTION"
+    },
+    {
+      "id": "UI-ELEMENT-instructor-scene-cutaway",
+      "kind": "interface-element",
+      "label": {
+        "en": "Cutaway",
+        "fr": "En coupe"
+      },
+      "reference": {
+        "status": "canonical-or-design-contract;visual-reference-open",
+        "evidence": []
+      },
+      "concept": {
+        "status": "planned",
+        "artifacts": []
+      },
+      "implementation": {
+        "status": "scene-native-synchronized;qualification-open",
+        "evidence": []
+      },
+      "acceptance": {
+        "status": "open",
+        "criteria": [
+          "U01",
+          "U02",
+          "U03",
+          "U04",
+          "U05",
+          "U06"
+        ],
+        "evidence": []
+      },
+      "role": "instructor",
+      "phase": "cross-phase",
+      "source": "source/shared/three-presentation.js#seaSceneInspection",
+      "htmlTag": "button",
+      "sceneCommand": {
+        "mode": "cutaway"
+      },
+      "conceptBatch": "UI-INSPECTION"
     },
     {
       "id": "UI-ELEMENT-instructor-scene-navigation",

@@ -25,11 +25,11 @@ assert.equal(ctx.view({...student,phase:'practice'},'student',1,'en').current.id
 // Browser-independent failure/recovery contract: a missing GPU must not change game state.
 function bridgeHarness(mount){
  const nodes=new Map(),frames=[],classes=new Set(),windowEvents={};
- const element=id=>({id,hidden:false,value:'',textContent:'',children:[],events:{},attrs:{},appendChild(x){this.children.push(x)},replaceChildren(){this.children=[]},addEventListener(k,f){this.events[k]=f},setAttribute(k,v){this.attrs[k]=v},closest(){return this.parent||(this.parent={hidden:false})}});
+ const element=id=>({id,hidden:false,value:'',textContent:'',children:[],events:{},attrs:{},appendChild(x){this.children.push(x)},replaceChildren(){this.children=[]},addEventListener(k,f){this.events[k]=f},setAttribute(k,v){this.attrs[k]=v},closest(){return this.parent||(this.parent={hidden:false,attrs:{},setAttribute(k,v){this.attrs[k]=v}})}});
  const get=id=>{if(!nodes.has(id))nodes.set(id,element(id));return nodes.get(id)};
  const doc={getElementById:get,createElement:()=>element('option'),addEventListener(){},body:{classList:{add:c=>classes.add(c),remove:c=>classes.delete(c)}}};
  const st=structuredClone(student),before=JSON.stringify(st);
- const c=vm.createContext({document:doc,window:{addEventListener(k,f){windowEvents[k]=f}},requestAnimationFrame:f=>frames.push(f),state:st,lang:'en',SEAThree:{mount}});
+ const c=vm.createContext({document:doc,window:{addEventListener(k,f){windowEvents[k]=f}},requestAnimationFrame:f=>frames.push(f),state:st,lang:'en',t:key=>key,SEAThree:{mount}});
  vm.runInContext(engine+'\n'+presentation+'\nsea3DStart("student");',c);const flush=()=>{while(frames.length)frames.shift()()};flush();assert.equal(JSON.stringify(st),before);
  return {nodes,classes,flush,windowEvents};
 }

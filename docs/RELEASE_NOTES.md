@@ -1,10 +1,12 @@
 # SEA Game candidate release notes EN and FR
 
-Status: unaccepted development candidate, revised 2026-10-09. Current source app identity is `3.2.1`, ruleset `STANDARD`, deck `synthetic-v1`, save schema 3 and backup envelope version 1. The version label does not identify exact bytes or establish release acceptance. Use the source/preview identities and role hashes in the [current qualification report](evidence/convergence/scene-game-20261009/REPORT.md), plus the externally retained packet key at accepted release. Root deployment, rights/content/classroom acceptance and operator handover remain open.
+Status: unaccepted development candidate, revised 2026-10-09. Current source app identity is `3.3.0`, ruleset `STANDARD`, deck `synthetic-v1`, save schema 3 and backup envelope version 1. The version label does not identify exact bytes or establish release acceptance. Use the source/preview identities and role hashes in the [current qualification report](evidence/convergence/scene-game-20261009/REPORT.md), plus the externally retained packet key at accepted release. Root deployment, rights/content/classroom acceptance and operator handover remain open.
 
 ## English
 
 ### Changes in the candidate
+
+- Version 3.3.0 rebuilds the scene interface around the current task: an enabled next action stays visible across sections, six model views are directly accessible, live callers share the Current auction surface and opening a Build team selects its inspected configuration. Rounded surfaces, restrained hierarchy and direct compact navigation use original code informed by public usability and MIT Three.js/uikit patterns. No additional UI library, copied example assets or game-rule changes were introduced. See the [XY analysis and licence record](game-design/UI_CLEANROOM_REBUILD.md).
 
 - Version 3.2.1 connects the mine roller to chassis bearings and continuous draw arms; the troop carrier gains an actual rear opening, sloped ramp, seals and bearing hinges. Static illustrative construction remains subject to browser/reference qualification.
 
@@ -31,6 +33,9 @@ Local command, rules, persistence, build, artwork and integrity evidence does no
 ## Français
 
 ### Changements de la version candidate
+
+- La version 3.3.0 organise l’interface Three.js autour de la tâche en cours : l’action suivante disponible reste visible, six vues du modèle sont directement accessibles, les enchérisseurs admissibles sont regroupés dans « En cours » et l’ouverture du résumé d’une équipe sélectionne sa configuration. Les commandes natives, les calculs et les règles existantes sont conservés. Aucun code de bibliothèque ni aucune ressource d’exemple supplémentaire n’a été intégré.
+- La construction intermédiaire 3.2.1 relie le rouleau de déminage aux appuis du châssis et aux bras de traction; le transporteur possède une véritable ouverture arrière, une rampe inclinée, des joints et des charnières sur appuis. Cette géométrie illustrative doit encore être comparée aux références dans le navigateur.
 
 - Three.js constitue l’interface principale des deux rôles et des huit phases, avec commandes sémantiques et saisie native synchronisées, sections bilingues, vues assemblée/éclatée/en coupe et ombres sous un éclairage fixe. Chaque HTML contient le moteur, les règles, les modèles et les matériaux; aucune chaîne de chargement d’images externes n’est utilisée. La fidélité des modèles et la validation complète des appareils et de l’accessibilité restent ouvertes.
 - La version 3.2.0 ajoute des résumés de conception dépliables par équipe, la mise à jour immédiate du statut Soumis et une commande de nouvelle séance dans la phase Fermé. Cinq véhicules disposent d’ouvertures réelles pour le vitrage, de supports de phares et de marches reliés à la coque, et de postes de conduite mieux construits. La géométrie originale demeure illustrative, sans certification du fabricant.

@@ -19,6 +19,7 @@ Use the largest change in the publication batch. Evidence-only documentation cha
 | 3.2.0 | Accessible per-team Build disclosure and synchronized submission status; real generic carrier glazing apertures, supported cab hardware and contoured cockpit construction | Compatible interface capability; rules/deck/schema/storage keys unchanged. Exact-candidate qualification and broader acceptance remain required. |
 
 | 3.2.1 | Chassis-connected mine roller pivots/draw arms and sloped troop ramp with actual aperture and bearing hinges | Compatible geometry refinement; canonical rules/deck/schema/storage unchanged. Actual new-candidate visual qualification remains required. |
+| 3.3.0 | Task-centered scene interface with pinned next action, six direct inspection views, direct sections, paired current auction callers and Build-summary model selection | Compatible interface capability; includes intermediate 3.2.1 geometry. Rules/deck/schema/storage unchanged. Exact browser and full device/accessibility acceptance remain required. |
 
 For each next publication, add its version, concrete change, exact source/preview identity and affected checks to the execution ledger/release notes. Bilingual badges use the same version; teaching and support evidence must bind the exact published artifacts.
 
