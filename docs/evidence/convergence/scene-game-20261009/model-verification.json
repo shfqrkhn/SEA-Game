@@ -727,17 +727,17 @@
     {
       "id": "PRO-D",
       "kind": "part",
-      "meshes": 101,
-      "triangles": 19932,
+      "meshes": 133,
+      "triangles": 29644,
       "bounds": {
         "min": [
-          -1.0200000035762786,
+          -1.991371864903602,
           -1.7881393449270533e-9,
-          -0.7090000001899899
+          -0.8043143297602928
         ],
         "max": [
           0.865351140499115,
-          1.3950000001490115,
+          1.4013999700546265,
           0.7075000000745059
         ]
       },
@@ -784,17 +784,17 @@
     {
       "id": "PRO-G",
       "kind": "part",
-      "meshes": 30,
-      "triangles": 3688,
+      "meshes": 54,
+      "triangles": 12152,
       "bounds": {
         "min": [
-          -1.1643985509872437,
+          -1.2807197570800781,
           -1.7881393449270533e-9,
           -0.8090000001899899
         ],
         "max": [
           1.165438175201416,
-          1.3150000001490116,
+          1.3214000463485718,
           0.8075000000745058
         ]
       },
@@ -1430,8 +1430,8 @@
     {
       "id": "RECOVERY",
       "kind": "mission",
-      "meshes": 1197,
-      "triangles": 144092,
+      "meshes": 1307,
+      "triangles": 172348,
       "bounds": {
         "min": [
           -3.26259446144104,
@@ -1524,7 +1524,7 @@
         "SA": "SA-D",
         "ACC": "ACC-D"
       },
-      "meshes": 1639,
+      "meshes": 1671,
       "cameraChecks": 12
     },
     {
@@ -1569,7 +1569,7 @@
         "SA": "SA-G",
         "ACC": "ACC-G"
       },
-      "meshes": 1458,
+      "meshes": 1482,
       "cameraChecks": 12
     },
     {
@@ -1629,7 +1629,7 @@
         "SA": "SA-D",
         "ACC": "ACC-D"
       },
-      "meshes": 1227,
+      "meshes": 1259,
       "cameraChecks": 12
     },
     {
@@ -1674,7 +1674,7 @@
         "SA": "SA-G",
         "ACC": "ACC-G"
       },
-      "meshes": 1046,
+      "meshes": 1070,
       "cameraChecks": 12
     },
     {
@@ -1734,7 +1734,7 @@
         "SA": "SA-D",
         "ACC": "ACC-D"
       },
-      "meshes": 1436,
+      "meshes": 1468,
       "cameraChecks": 12
     },
     {
@@ -1779,7 +1779,7 @@
         "SA": "SA-G",
         "ACC": "ACC-G"
       },
-      "meshes": 1255,
+      "meshes": 1279,
       "cameraChecks": 12
     },
     {
@@ -1839,7 +1839,7 @@
         "SA": "SA-D",
         "ACC": "ACC-D"
       },
-      "meshes": 1433,
+      "meshes": 1465,
       "cameraChecks": 12
     },
     {
@@ -1884,7 +1884,7 @@
         "SA": "SA-G",
         "ACC": "ACC-G"
       },
-      "meshes": 1252,
+      "meshes": 1276,
       "cameraChecks": 12
     },
     {
@@ -1899,7 +1899,7 @@
         "SA": "SA-A",
         "ACC": "ACC-A"
       },
-      "meshes": 1649,
+      "meshes": 1725,
       "cameraChecks": 12
     },
     {
@@ -1914,7 +1914,7 @@
         "SA": "SA-B",
         "ACC": "ACC-B"
       },
-      "meshes": 2076,
+      "meshes": 2152,
       "cameraChecks": 12
     },
     {
@@ -1929,7 +1929,7 @@
         "SA": "SA-C",
         "ACC": "ACC-C"
       },
-      "meshes": 1842,
+      "meshes": 1918,
       "cameraChecks": 12
     },
     {
@@ -1944,7 +1944,7 @@
         "SA": "SA-D",
         "ACC": "ACC-D"
       },
-      "meshes": 1778,
+      "meshes": 1886,
       "cameraChecks": 12
     },
     {
@@ -1959,7 +1959,7 @@
         "SA": "SA-E",
         "ACC": "ACC-E"
       },
-      "meshes": 1723,
+      "meshes": 1799,
       "cameraChecks": 12
     },
     {
@@ -1974,7 +1974,7 @@
         "SA": "SA-F",
         "ACC": "ACC-F"
       },
-      "meshes": 1616,
+      "meshes": 1692,
       "cameraChecks": 12
     },
     {
@@ -1989,7 +1989,7 @@
         "SA": "SA-G",
         "ACC": "ACC-G"
       },
-      "meshes": 1597,
+      "meshes": 1697,
       "cameraChecks": 12
     },
     {
@@ -2049,7 +2049,7 @@
         "SA": "SA-D",
         "ACC": "ACC-D"
       },
-      "meshes": 1707,
+      "meshes": 1739,
       "cameraChecks": 12
     },
     {
@@ -2094,7 +2094,7 @@
         "SA": "SA-G",
         "ACC": "ACC-G"
       },
-      "meshes": 1526,
+      "meshes": 1550,
       "cameraChecks": 12
     }
   ]

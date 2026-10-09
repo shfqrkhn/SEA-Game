@@ -14,7 +14,7 @@ function seaSceneProjection(roots,visible,keyFor){
   const authored=node.closest?.('[data-scene-priority]')?.getAttribute?.('data-scene-priority');
   const priority=/^\d{1,3}$/.test(authored||'')?Number(authored):50;
   const emphasis=node.classList?.contains('danger')?'danger':node.classList?.contains('primary')||node.classList?.contains('good')?'primary':'';
-  rows.push({key,kind,label:String(label),value:String(value),disabled:!!node.disabled,priority,emphasis});
+  rows.push({key,kind,label:String(label),value:String(value),disabled:!!node.disabled,priority,emphasis,utility:node.id==='langBtn'?'language':''});
  }
  function walk(node){
   if(!node||seen.has(node)||!visible(node))return;seen.add(node);
@@ -89,7 +89,7 @@ function sea3DStart(role){
   if(scenePhase!==state.phase){scenePage=0;scenePhase=state.phase;editor?.remove();editor=null;}
   const alerts=[get('seaNotice'),get('storageNotice'),get('joinStatus')].filter(x=>x&&semanticVisible(x)&&x.classList.contains('bad')&&x.textContent.trim());
   const alertSignature=alerts.map(x=>x.textContent).join('|');if(alertSignature!==sceneAlert){sceneAlert=alertSignature;if(alertSignature)scenePage=0;}
-  const dialog=get('seaInlineConfirm');const roots=dialog?[dialog]:[...alerts,...Array.from(active.children||[]).filter(x=>x!==stage),stage,document.querySelector('header'),...document.querySelectorAll('body>.notice'),document.querySelector('body>.status')].filter(Boolean);
+  const dialog=get('seaInlineConfirm');const roots=dialog?[dialog,get('langBtn')].filter(Boolean):[...alerts,...Array.from(active.children||[]).filter(x=>x!==stage),stage,document.querySelector('header'),...document.querySelectorAll('body>.notice'),document.querySelector('body>.status')].filter(Boolean);
   const projected=seaSceneProjection(roots,semanticVisible,keyFor);sceneTargets=projected.targets;
   // Stable authored groups retain context and dependencies, never button-first order.
   if(!dialog&&!alerts.length)projected.rows.sort((a,b)=>(a.priority??50)-(b.priority??50));

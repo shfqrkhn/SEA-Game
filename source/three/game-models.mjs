@@ -103,25 +103,69 @@ function protection(m,v){
  if([3,6].includes(v)){
   const wide=v===3?.67:.77,length=v===3?1.70:2.30,back=-length/2,front=length/2,height=v===3?1.38:1.30;
   box(g,m.edge,[length,.09,wide*2],[0,.045,0],'reinforced floor');
+  // Inward inclined walls and a chamfered rear frame replace the box silhouette.
+  const shoulder=height-.22,roofWide=wide-.13;
+  const shellZ=y=>wide-(y-.09)/(height-.09)*.13;
+  const liner=m.paint.clone();liner.color.set('#a0a58e');liner.metalness=.04;liner.roughness=.86;liner.name='crew cell interior lining';
+  const frame=m.edge.clone();frame.color.set('#414b3e');frame.roughness=.70;
+  const enclosure=(mesh,component)=>{mesh.name='hull shell';mesh.userData.component=component;return mesh;};
   const optical=m.glass.clone();optical.transparent=true;optical.opacity=.58;optical.metalness=0;optical.depthWrite=false;
   for(const s of [-1,1]){
    const outline=[[back,.09],[front,.09],[front-.25,height-.08],[front-.42,height],[back+.07,height]];
    const hole=roundedOpening(back+.20,.85,front-.48,height-.13,.045);
-   formedCabPanel(g,m.paint,outline,[hole],(x,y,d)=>[x,y,s*(wide-d)]);
-   const pane=formedCabPanel(g,optical,[[back+.22,.87],[front-.50,.87],[front-.50,height-.15],[back+.22,height-.15]],[],(x,y,d)=>[x,y,s*(wide+.008-d*.2)]);pane.name='protected glazing';
-   for(const x of [back+.13,0,front-.38])rod(g,m.edge,[x,.10,s*(wide-.08)],[x,height-.07,s*(wide-.08)],.026).name='interior shell rib';
+   formedCabPanel(g,m.paint,outline,[hole],(x,y,d)=>[x,y,s*(shellZ(y)-d)]);
+   enclosure(formedCabPanel(g,liner,[[back+.09,.17],[front-.07,.17],[front-.30,height-.13],[back+.09,height-.09]],[hole],(x,y,d)=>[x,y,s*(shellZ(y)-.067-d*.25)]),'interior liner');
+   const pane=formedCabPanel(g,optical,[[back+.22,.87],[front-.50,.87],[front-.50,height-.15],[back+.22,height-.15]],[],(x,y,d)=>[x,y,s*(shellZ(y)+.008-d*.2)]);pane.name='protected glazing';
+   const seal=hole.getPoints(8).map(p=>[p.x,p.y,s*(shellZ(p.y)+.011)]);seal.push(seal[0]);tube(g,m.rubber,seal,.017,64).name='glazing compression seal';
+   for(const x of [back+.13,front-.38])tube(g,frame,[[x,.13,s*(shellZ(.13)-.065)],[x,shoulder,s*(shellZ(shoulder)-.065)],[x,height-.065,s*(shellZ(height-.065)-.065)]],.025,16).name='interior shell rib';
+   // Broad access plates establish panel construction before small fittings.
+   enclosure(formedCabPanel(g,frame,[[back+.20,.23],[front-.20,.23],[front-.25,.71],[back+.20,.71]],[],(x,y,d)=>[x,y,s*(shellZ(y)+.014+d*.20)]),'lower service panel recess');
+   enclosure(formedCabPanel(g,m.paint,[[back+.23,.26],[front-.24,.26],[front-.28,.68],[back+.23,.68]],[],(x,y,d)=>[x,y,s*(shellZ(y)+.030+d*.20)]),'lower formed service panel');
+   tube(g,m.darkSteel,[[back+.14,.17,s*(shellZ(.17)-.09)],[back+.14,.72,s*(shellZ(.72)-.09)],[front-.32,.72,s*(shellZ(.72)-.09)]],.012,24).name='secured interior cable conduit';
+   for(const x of [back+.26,front-.36])formedCabPanel(g,liner,[[x-.05,.30],[x+.05,.30],[x+.05,.60],[x-.05,.60]],[],(px,y,d)=>[px,y,s*(shellZ(y)-.08+d*.25)]).name='interior panel retaining strip';
    for(const x of [back+.12,front-.20])fasten(x,.20,s*(wide+.02));
   }
   const slope=y=>front-(y-.09)*.25/(height-.17);
-  formedCabPanel(g,m.paint,[[-wide,.09],[wide,.09],[wide,height-.08],[-wide,height-.08]],[roundedOpening(-wide+.16,.85,wide-.16,height-.18)],(z,y,d)=>[slope(y)-d,y,z]);
-  const windshield=formedCabPanel(g,optical,[[-wide+.18,.87],[wide-.18,.87],[wide-.18,height-.20],[-wide+.18,height-.20]],[],(z,y,d)=>[slope(y)+.008-d*.2,y,z]);windshield.name='protected windshield';
-  box(g,m.paint,[length-.39,.07,wide*2],[back+(length-.39)/2,height-.02,0],'formed cell roof');
-  box(g,m.paint,[.18,.09,wide*2],[front-.33,height-.055,0],'folded windshield header');
-  // Rear aperture remains open for the two-seat inspection view and boarding.
-  formedCabPanel(g,m.paint,[[-wide,.09],[wide,.09],[wide,height],[-wide,height]],[roundedOpening(-wide+.10,.17,wide-.10,height-.11)],(z,y,d)=>[back+d,y,z]);
+  const frontHole=roundedOpening(-wide+.16,.85,wide-.16,height-.18);
+  formedCabPanel(g,m.paint,[[-wide,.09],[wide,.09],[wide,height-.08],[-wide,height-.08]],[frontHole],(z,y,d)=>[slope(y)-d,y,z*shellZ(y)/wide]);
+  const windshield=formedCabPanel(g,optical,[[-wide+.18,.87],[wide-.18,.87],[wide-.18,height-.20],[-wide+.18,height-.20]],[],(z,y,d)=>[slope(y)+.008-d*.2,y,z*shellZ(y)/wide]);windshield.name='protected windshield';
+  const frontSeal=frontHole.getPoints(8).map(p=>[slope(p.y)+.012,p.y,p.x*shellZ(p.y)/wide]);frontSeal.push(frontSeal[0]);tube(g,m.rubber,frontSeal,.017,64).name='windshield compression seal';
+  const roofOutline=[[back+.07,-roofWide],[front-.42,-roofWide],[front-.32,-roofWide+.10],[front-.32,roofWide-.10],[front-.42,roofWide],[back+.07,roofWide],[back,roofWide-.075],[back,-roofWide+.075]];
+  enclosure(formedCabPanel(g,m.paint,roofOutline,[],(x,z,d)=>[x,height-.015+d*.7,z]),'formed cell roof');
+  enclosure(formedCabPanel(g,liner,roofOutline,[],(x,z,d)=>[x,height-.061-d*.25,z]),'insulated roof liner');
+  for(const s of [-1,1])rod(g,frame,[back+.09,height-.085,s*(roofWide-.06)],[front-.41,height-.085,s*(roofWide-.06)],.022).name='roof perimeter stiffener';
+  box(g,m.paint,[.18,.09,roofWide*2],[front-.33,height-.055,0],'folded windshield header');
+  // The rear boarding aperture has its door stowed open clear of the seats.
+  const aperture=[[-wide+.105,.18],[wide-.105,.18],[wide-.105,height-.31],[roofWide-.075,height-.13],[-roofWide+.075,height-.13],[-wide+.105,height-.31]];
+  const doorHole=new THREE.Path();aperture.forEach(([z,y],i)=>i?doorHole.lineTo(z,y):doorHole.moveTo(z,y));doorHole.closePath();
+  formedCabPanel(g,m.paint,[[-wide,.09],[wide,.09],[wide,height-.26],[roofWide,height],[-roofWide,height],[-wide,height-.26]],[doorHole],(z,y,d)=>[back+d,y,z]);
+  const rearSeal=aperture.map(([z,y])=>[back-.007,y,z]);rearSeal.push(rearSeal[0]);tube(g,m.rubber,rearSeal,.018,64).name='rear aperture weather seal';
+  for(const s of [-1,1]){
+   tube(g,frame,[[back+.059,.15,s*(wide-.065)],[back+.059,height-.29,s*(wide-.065)],[back+.059,height-.065,s*(roofWide-.045)]],.027,24).name='rear door jamb reinforcement';
+   tube(g,m.steel,[[back-.022,.46,s*(wide-.04)],[back-.09,.46,s*(wide-.04)],[back-.09,.77,s*(wide-.04)],[back-.022,.77,s*(wide-.04)]],.016,24).name='connected boarding grab handle';
+  }
+  for(const z of [-.25,.25])box(g,m.lamp,[.17,.024,.075],[back+.24,height-.087,z],'interior overhead light');
+  box(g,m.darkSteel,[length-.20,.026,wide*2-.17],[0,.108,0],'non slip crew floor insert');
+  if(v===3){
+   const door=group('open crew cell boarding door'),doorWidth=2*(wide-.105),hingeZ=-wide+.105;
+   door.position.set(back-.014,0,hingeZ);door.rotation.y=-Math.PI*.56;g.add(door);
+   const doorOutline=[[0,.19],[doorWidth,.19],[doorWidth,height-.32],[doorWidth-.105,height-.14],[.105,height-.14],[0,height-.32]];
+   enclosure(formedCabPanel(door,m.paint,doorOutline,[],(z,y,d)=>[-.017+d*.7,y,z]),'open boarding door outer skin');
+   enclosure(formedCabPanel(door,liner,[[.065,.26],[doorWidth-.065,.26],[doorWidth-.065,height-.35],[doorWidth-.15,height-.21],[.15,height-.21],[.065,height-.35]],[],(z,y,d)=>[.024+d*.25,y,z]),'open boarding door interior liner');
+   for(const y of [.38,.96]){
+    cylinder(g,m.steel,.029,.13,[back-.016,y,hingeZ],'y',.029,20).name='boarding door hinge pin';
+    box(g,frame,[.08,.10,.065],[back+.007,y,hingeZ-.025],'boarding hinge fixed leaf');
+    box(door,frame,[.05,.10,.09],[.012,y,.035],'boarding hinge moving leaf');
+   }
+   tube(door,m.steel,[[.061,.64,doorWidth-.14],[.105,.64,doorWidth-.14],[.105,.80,doorWidth-.14],[.061,.80,doorWidth-.14]],.013,20).name='door interior pull handle';
+   box(door,m.darkSteel,[.046,.105,.070],[.055,.70,doorWidth-.08],'boarding door latch housing');
+   const restraintEnd=new THREE.Vector3(.035,.42,.24).applyEuler(door.rotation).add(door.position);
+   rod(g,frame,[back+.015,.42,hingeZ+.10],restraintEnd.toArray(),.013).name='open door restraint arm';
+   box(g,m.darkSteel,[.07,.11,.045],[back+.025,.70,wide-.105],'boarding latch keeper');
+  }
   if(v===3){for(const s of [-1,1]){seat(g,m,-.10,s*.32);rod(g,m.darkSteel,[-.29,1.08,s*.48],[.02,.47,s*.20],.013).name='crew cell restraint';}box(g,m.edge,[.18,.055,1.10],[back-.08,.12,0],'boarding threshold');}
-  else for(const x of [back+.26,front-.48]){rod(g,m.edge,[x,height-.06,-wide+.07],[x,height-.06,wide-.07],.027).name='roof hoop';}
-  for(const s of [-1,1])for(const y of [.35,1.02])box(g,m.darkSteel,[.045,.10,.06],[back+.025,y,s*(wide-.055)],'rear aperture hinge');
+  else for(const x of [back+.26,front-.48]){rod(g,m.edge,[x,height-.06,-roofWide+.07],[x,height-.06,roofWide-.07],.027).name='roof hoop';}
+  if(v!==3)for(const s of [-1,1])for(const y of [.35,1.02])box(g,m.darkSteel,[.045,.10,.06],[back+.025,y,s*(wide-.055)],'rear aperture hinge');
  }else if(v===5){
   // Two joined inclined plates form the V; the deep centre is the underside.
   for(const s of [-1,1]){

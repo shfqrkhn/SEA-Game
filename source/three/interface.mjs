@@ -11,6 +11,7 @@ export function interfaceLayout(width,height,count=0){
 }
 export function hitInterface(layout,x,y,rows,page=0){
   const p=layout.panel;if(x<p.x||x>p.x+p.w||y<p.y||y>p.y+p.h)return null;
+  const utility=layout.headerButtons?.find(b=>x>=b.x&&x<b.x+b.w&&y>=b.y&&y<b.y+b.h);if(utility)return utility.row.disabled?'__panel':utility.row.key;
   if(y>=p.y+p.h-46){if(x<p.x+p.w/2)return '__previous';return '__next';}
   const placed=layout.placed?.find(r=>y>=r.y&&y<r.y+r.h);const index=Math.floor((y-p.y-88)/layout.rowHeight);if(!layout.placed&&(index<0||index>=layout.capacity))return '__panel';
   const row=layout.placed?placed?.row:rows[page*layout.capacity+index];return row&&row.kind!=='text'&&!row.disabled?row.key:'__panel';
@@ -36,9 +37,10 @@ export function createInterface(){
     const t=new THREE.CanvasTexture(canvas);t.colorSpace=THREE.SRGBColorSpace;const m=new THREE.MeshBasicMaterial({map:t,transparent:true,depthTest:false,depthWrite:false,toneMapped:false,side:THREE.DoubleSide}),g=new THREE.PlaneGeometry(w,h);resources.push(t,m,g);const mesh=new THREE.Mesh(g,m);mesh.scale.y=-1;mesh.position.set(x+w/2,y+h/2,2);scene.add(mesh);
   }
   function render(width,height){
-    lastSize=[width,height];clear();layout=interfaceLayout(width,height,snapshot.rows.length);const pages=paginateRows(snapshot.rows,layout.panel.w,layout.panel.h);layout.pages=pages.length;page=Math.min(Math.max(0,Number(snapshot.page)||0),layout.pages-1);camera.left=0;camera.right=width;camera.top=0;camera.bottom=height;camera.updateProjectionMatrix();
+    lastSize=[width,height];clear();const language=snapshot.rows.find(r=>r.utility==='language'),content=snapshot.rows.filter(r=>r.utility!=='language');layout=interfaceLayout(width,height,content.length);const pages=paginateRows(content,layout.panel.w,layout.panel.h);layout.pages=pages.length;page=Math.min(Math.max(0,Number(snapshot.page)||0),layout.pages-1);camera.left=0;camera.right=width;camera.top=0;camera.bottom=height;camera.updateProjectionMatrix();
     const p=layout.panel;plane(p.x,p.y,p.w,p.h,palette.panel);plane(p.x,p.y,1,p.h,palette.line,1);
-    text(snapshot.title,p.x+20,p.y+14,p.w-40,30,22);text(snapshot.subtitle,p.x+20,p.y+48,p.w-40,36,12,palette.muted);plane(p.x+20,p.y+84,p.w-40,1,palette.line,1);
+    layout.headerButtons=[];if(language){const b={row:language,x:p.x+p.w-62,y:p.y+10,w:48,h:44};layout.headerButtons.push(b);plane(b.x,b.y,b.w,b.h,palette.field,1);text(language.label,b.x+8,b.y+12,b.w-16,28,14,palette.accent);}
+    text(snapshot.title,p.x+20,p.y+14,p.w-(language?100:40),30,22);text(snapshot.subtitle,p.x+20,p.y+48,p.w-40,36,12,palette.muted);plane(p.x+20,p.y+84,p.w-40,1,palette.line,1);
     let y=p.y+88;layout.placed=[];for(const item of pages[page]){const {row,h}=item;layout.placed.push({row,y,h});const informational=row.kind==='text',actionable=!informational&&!row.disabled;
       const tone=row.emphasis==='danger'?'#eee0d8':row.emphasis==='primary'?'#cfddca':palette.action;
       plane(p.x+14,y,p.w-28,h-6,informational?palette.info:row.disabled?palette.disabled:row.kind==='button'?tone:palette.field,1);

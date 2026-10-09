@@ -31,13 +31,15 @@ const escape=harness();escape.ctx.act('profit');escape.editor.listeners.keydown(
 // Execute the actual projection refresh: dialog pagination must survive redraws.
 const syncStart=code.indexOf(' function syncSceneInterface('),syncEnd=code.indexOf(' function option(',syncStart);
 assert(syncStart>=0&&syncEnd>syncStart);
-let currentDialog={};const pages=[],rendered=[],taskRows=[];
+let currentDialog={};const pages=[],rendered=[],taskRows=[],projectedRoots=[],languageControl={id:'langBtn'};
 const syncContext=vm.createContext({state:{phase:'setup'},scenePhase:'setup',scenePage:2,sceneAlert:'',sceneDialog:null,editor:null,lang:'en',keyFor(){},semanticVisible(){return true},t:x=>x,
- get:id=>id==='seaInlineConfirm'?currentDialog:null,sceneAction(){},
+ get:id=>id==='seaInlineConfirm'?currentDialog:id==='langBtn'?languageControl:null,sceneAction(){},
  document:{querySelectorAll:()=>[],querySelector:()=>null,body:{classList:{contains:()=>true}}},
- seaSceneProjection:()=>({rows:[...taskRows],targets:new Map()}),runtime:{interface(snapshot){pages.push(snapshot.page);rendered.push(snapshot.rows.map(r=>r.label));return {page:snapshot.page}}}});
+ seaSceneProjection:roots=>{projectedRoots.push(roots);return {rows:[...taskRows],targets:new Map()}},runtime:{interface(snapshot){pages.push(snapshot.page);rendered.push(snapshot.rows.map(r=>r.label));return {page:snapshot.page}}}});
 vm.runInContext(code.slice(syncStart,syncEnd)+'\nthis.sync=syncSceneInterface;',syncContext);
 syncContext.sync({}, {children:[]}, {context:{setup:'Setup'}});assert.equal(pages.at(-1),0,'A newly opened confirmation starts at page zero');
+assert.equal(projectedRoots.at(-1).length,2,'Confirmation projection exposes only the dialog and language control');
+assert.equal(projectedRoots.at(-1)[0],currentDialog);assert.equal(projectedRoots.at(-1)[1],languageControl,'Language cancellation remains reachable during a confirmation');
 syncContext.scenePage=2;syncContext.sync({}, {children:[]}, {context:{setup:'Setup'}});assert.equal(pages.at(-1),2,'Next confirmation page remains reachable after refresh');
 currentDialog={};syncContext.sync({}, {children:[]}, {context:{setup:'Setup'}});assert.equal(pages.at(-1),0,'A different confirmation cannot inherit the old page');
 currentDialog=null;syncContext.scenePage=2;syncContext.sync({}, {children:[]}, {context:{setup:'Setup'}});assert.equal(pages.at(-1),0,'Closing confirmation restores the task from page zero');

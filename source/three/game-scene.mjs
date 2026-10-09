@@ -15,15 +15,17 @@ export function mount(host,onFailure,onInspect){
   host.appendChild(renderer.domElement);
   const ui=createInterface();let uiEnabled=false;
   const scene=new THREE.Scene();scene.background=new THREE.Color('#f0f3f0');
-  const pmrem=new THREE.PMREMGenerator(renderer),room=new RoomEnvironment(),environment=pmrem.fromScene(room,.04);scene.environment=environment.texture;scene.environmentIntensity=.35;room.dispose();pmrem.dispose();
-  scene.add(new THREE.HemisphereLight(0xe6f1ff,0x716b5f,.4));
-  const key=new THREE.DirectionalLight(0xfff1db,2.5);key.position.set(-5,9,6);key.castShadow=true;
-  key.shadow.mapSize.set(2048,2048);Object.assign(key.shadow.camera,{left:-12,right:12,top:12,bottom:-12,near:.1,far:50});key.shadow.normalBias=.015;key.shadow.bias=-.0001;key.shadow.radius=3;scene.add(key);
-  const fill=new THREE.DirectionalLight(0xe6efff,.32);fill.position.set(-6,5,-7);scene.add(fill);
+  const pmrem=new THREE.PMREMGenerator(renderer),room=new RoomEnvironment(),environment=pmrem.fromScene(room,.04);scene.environment=environment.texture;scene.environmentIntensity=.65;room.dispose();pmrem.dispose();
+  scene.add(new THREE.HemisphereLight(0xe6f1ff,0x716b5f,.6));
+  // Fixed studio lights reveal recesses and material response without a dark,
+  // hard-edged cast silhouette dominating the equipment. No baked shadow.
+  const key=new THREE.DirectionalLight(0xfff1db,1.8);key.position.set(-5,9,6);key.castShadow=true;
+  key.shadow.mapSize.set(2048,2048);Object.assign(key.shadow.camera,{left:-12,right:12,top:12,bottom:-12,near:.1,far:50});key.shadow.normalBias=.015;key.shadow.bias=-.0001;key.shadow.radius=5;scene.add(key);
+  const fill=new THREE.DirectionalLight(0xe6efff,.5);fill.position.set(-6,5,-7);scene.add(fill);
   const camera=new THREE.PerspectiveCamera(38,1,.01,100);
   const controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=false;controls.enablePan=false;controls.enableRotate=false;controls.minZoom=.25;controls.maxZoom=5;
   controls.maxPolarAngle=Math.PI*.49;
-  const ground=new THREE.Mesh(new THREE.PlaneGeometry(100,100),new THREE.ShadowMaterial({opacity:.27}));ground.rotation.x=-Math.PI/2;ground.receiveShadow=true;scene.add(ground);
+  const ground=new THREE.Mesh(new THREE.PlaneGeometry(100,100),new THREE.ShadowMaterial({opacity:.17}));ground.rotation.x=-Math.PI/2;ground.receiveShadow=true;scene.add(ground);
   let dragging=null,dragged=false;
   let model=null,pending=0,active=true,last=null,angle=[7,4.5,7],inspection=null,mode='assembled',amount=.7,leaders=null,highlight=null;
   function draw(){pending=0;if(!active)return;const w=Math.max(host.clientWidth,1),h=Math.max(host.clientHeight,1);renderer.setViewport(0,0,w,h);renderer.setScissorTest(false);renderer.clear();if(model){const v=uiEnabled?ui.layout.model:{x:0,y:0,w,h};renderer.setViewport(v.x,h-v.y-v.h,v.w,v.h);renderer.setScissor(v.x,h-v.y-v.h,v.w,v.h);renderer.setScissorTest(true);renderer.render(scene,camera);}if(uiEnabled){renderer.setScissorTest(false);renderer.setViewport(0,0,w,h);renderer.autoClear=false;renderer.clearDepth();renderer.render(ui.scene,ui.camera);renderer.autoClear=true;}}
@@ -34,7 +36,7 @@ export function mount(host,onFailure,onInspect){
   function update(view,selection){last=[view,selection];clearInspection();release();const m=materials();model=new THREE.Group();
     if(selection.startsWith('part:')){const id=selection.slice(5);if(![view.current?.id,...view.owned.map(p=>p.id)].includes(id))throw Error('Part is not visible');model.add(createPart(id,m));}
     else model.add(selection==='configuration'?createConfiguration(view.mission,view.owned,m):createMission(view.mission,m));
-    const actual=model.children[0],pivot=new THREE.Box3().setFromObject(actual).getCenter(new THREE.Vector3());actual.position.sub(pivot);model.position.copy(pivot);inspection=prepareInspection(actual);for(const p of inspection.parts)p.anchorLocal=model.worldToLocal(p.center.clone());model.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});scene.add(model);const b=new THREE.Box3().setFromObject(model);ground.position.y=b.min.y-.025;camera.zoom=1;angle=[7,4.5,7];fit();
+    const actual=model.children[0],pivot=new THREE.Box3().setFromObject(actual).getCenter(new THREE.Vector3());actual.position.sub(pivot);model.position.copy(pivot);inspection=prepareInspection(actual);for(const p of inspection.parts)p.anchorLocal=model.worldToLocal(p.center.clone());model.traverse(o=>{if(o.isMesh){const optical=(Array.isArray(o.material)?o.material:[o.material]).some(mat=>mat.name==='optical glass');o.castShadow=!optical;o.receiveShadow=true;}});scene.add(model);const b=new THREE.Box3().setFromObject(model);ground.position.y=b.min.y-.025;camera.zoom=1;angle=[7,4.5,7];fit();
     // Materials unused by a particular factory still need disposal.
     const used=new Set();model.traverse(o=>{if(o.material)used.add(o.material);});Object.values(m).forEach(mat=>{if(!used.has(mat))mat.dispose();});
   }
