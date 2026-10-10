@@ -51,13 +51,10 @@ for (const mission of ['COMBAT', 'RECCE', 'TROOP', 'COMMAND', 'RECOVERY', 'MINE'
     await page.check('#plan-confirm');
     await page.click('#student-start-auction');
     await confirmDialog(page);
-    // One part in each of seven slots, so every vehicle shows a representative build.
-    for (const [lot, card, paid] of [[1, 'CAP-E', 350000], [3, 'FP-B', 500000], [6, 'SA-B', 600000]] as const) {
-      await page.selectOption('#pos-lot', String(lot));
-      await page.fill('#card-id', card); await page.click('#load-card'); await page.fill('#paid', String(paid));
-      await page.click('#record-win');
-    }
-    for (const [round, lot, card, paid] of [[2, 4, 'PRO-C', 350000], [2, 5, 'COM-B', 450000], [3, 2, 'MOB-D', 500000], [3, 7, 'ACC-G', 400000]] as const) {
+    // One part in each of seven slots, so every vehicle shows a representative build (at most two wins a round).
+    const wins = [[1, 1, 'CAP-E', 350000], [1, 3, 'FP-B', 500000], [2, 6, 'SA-B', 600000], [2, 4, 'PRO-C', 350000],
+      [3, 5, 'COM-B', 450000], [3, 2, 'MOB-D', 500000], [4, 7, 'ACC-G', 400000]] as const;
+    for (const [round, lot, card, paid] of wins) {
       await page.selectOption('#pos-round', String(round));
       await page.selectOption('#pos-lot', String(lot));
       await page.fill('#card-id', card); await page.click('#load-card'); await page.fill('#paid', String(paid));
