@@ -62,6 +62,23 @@ export class RoleView<S extends RoleState> {
     return result;
   }
 
+  /**
+   * Field that saves as you type: valid values commit silently on input; leaving the field only reports
+   * an invalid value. Nothing re-renders on blur, so a click on the next control is never lost.
+   */
+  savingInput(id: string, current: string, command: (state: S, value: string) => S, props: Record<string, unknown> = {}): HTMLInputElement {
+    const commit = (value: string, report: boolean) => {
+      if (value === current) return;
+      const result = this.config.controller.dispatch(state => command(state, value));
+      if (result.ok) { this.drafts.delete(id); current = value; this.render(); }
+      else if (report) this.say(this.t(`error.${result.code}` as StringKey), 'bad');
+    };
+    const input = h('input', { id, ...props, value: this.draft(id, current) });
+    input.addEventListener('input', () => { this.drafts.set(id, input.value); commit(input.value, false); });
+    input.addEventListener('change', () => { if (this.drafts.has(id)) commit(input.value, true); });
+    return input;
+  }
+
   /** Ask first; refuse if anything changed while the dialog was open (MPES §7.5). */
   async confirm(options: { title: string; body: Child; confirm: string; danger?: boolean; opener?: HTMLElement | null }, command: (state: S) => S, success?: () => void): Promise<void> {
     const revision = this.config.controller.revision;
@@ -85,7 +102,8 @@ export class RoleView<S extends RoleState> {
   }
   input(id: string, props: Record<string, unknown> & { value?: string }): HTMLInputElement {
     const { value, ...rest } = props;
-    return h('input', { id, ...rest, value: this.draft(id, value ?? ''), on: { input: e => this.drafts.set(id, (e.target as HTMLInputElement).value) } });
+    const extra = (rest.on ?? {}) as Record<string, (event: Event) => void>;
+    return h('input', { id, ...rest, value: this.draft(id, value ?? ''), on: { ...extra, input: e => this.drafts.set(id, (e.target as HTMLInputElement).value) } });
   }
 
   // ---- Rendering ----
@@ -102,6 +120,14 @@ export class RoleView<S extends RoleState> {
       replaceChildren(this.#content, this.shell());
       this.#statusLine.className = `page status-line ${this.#status?.tone === 'bad' ? 'error' : this.#status?.tone === 'ok' ? 'ok' : ''}`;
       if (this.#statusLine.textContent !== (this.#status?.text ?? '')) this.#statusLine.textContent = this.#status?.text ?? '';
+      // Tables wider than the screen become labelled, focusable regions so they can be scrolled by keyboard (WCAG 2.1.1).
+      for (const wrap of this.#content.querySelectorAll<HTMLElement>('.table-wrap')) {
+        if (wrap.scrollWidth > wrap.clientWidth + 1) {
+          wrap.tabIndex = 0;
+          wrap.setAttribute('role', 'region');
+          wrap.setAttribute('aria-label', wrap.querySelector('caption')?.textContent || wrap.closest('section')?.querySelector('h1, h2, h3')?.textContent || this.t('common.purchases'));
+        }
+      }
       if (focusId) {
         const next = document.getElementById(focusId) as (HTMLElement & Partial<HTMLInputElement>) | null;
         if (next && next !== document.activeElement) {

@@ -170,11 +170,7 @@
   "setup.codeTitle": "Code de séance",
   "setup.codeHint": "Écrivez ce code au tableau. Chaque équipe l’entre avec son numéro et sa mission.",
   "setup.summary": "{teams} équipes · {reveal} · {timing}",
-  "setup.regenerate": "Générer un autre code",
-  "setup.regenerateTitle": "Générer un nouveau code ?",
-  "setup.regenerateBody": "Les équipes déjà inscrites avec l’ancien code devront s’inscrire de nouveau.",
   "setup.startPractice": "Commencer la pratique",
-  "setup.next": "Étape suivante : un lot de pratique pour que tout le monde apprenne les étapes.",
   "practice.title": "Lot de pratique (non compté)",
   "practice.desc": "Faites un lot avec la carte d’entraînement. Rien ici ne compte.",
   "practice.reveal": "1. Révéler la carte",
@@ -338,5 +334,10 @@
   "bay.unavailable": "Vue 3D indisponible sur cet appareil. Le jeu fonctionne sans elle.",
   "bay.summary": "{mission} avec {n} pièces installées",
   "auction.keys": "Clavier : 1 à 9 et 0 acceptent une offre des équipes 1 à 10 · S vendre · U pas de vente · O ouvrir · R révéler · N lot suivant · P pause ou reprise · E ajouter 30 s.",
-  "app.unsupported": "Ce navigateur est trop ancien pour ce jeu. Utilisez une version récente de Chrome, Edge, Firefox ou Safari."
+  "app.unsupported": "Ce navigateur est trop ancien pour ce jeu. Utilisez une version récente de Chrome, Edge, Firefox ou Safari.",
+  "value.points": "Score apporté",
+  "value.needed": "nécessaire pour un minimum",
+  "value.hint": "Score apporté = votre score moins votre score sans cette carte. Une carte peut apporter 0 point et rester nécessaire pour un minimum.",
+  "bay.hint": "Faites glisser, ou utilisez les flèches, pour tourner le véhicule. Défilez ou appuyez sur plus et moins pour zoomer. Double-cliquez pour réinitialiser.",
+  "chooser.heroLabel": "Véhicule de dépannage avec treuil, blindage, radio, capteurs et suspension renforcée"
 }

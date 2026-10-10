@@ -170,11 +170,7 @@
   "setup.codeTitle": "Session code",
   "setup.codeHint": "Write this code on the board. Each team enters it with its team number and mission.",
   "setup.summary": "{teams} teams · {reveal} · {timing}",
-  "setup.regenerate": "Generate a different code",
-  "setup.regenerateTitle": "Generate a new code?",
-  "setup.regenerateBody": "Teams that already joined with the old code must join again.",
   "setup.startPractice": "Start practice",
-  "setup.next": "Next: run a practice lot so everyone learns the steps.",
   "practice.title": "Practice lot (not scored)",
   "practice.desc": "Walk through one lot with the training card. Nothing here counts.",
   "practice.reveal": "1. Reveal the card",
@@ -338,5 +334,10 @@
   "bay.unavailable": "3D view unavailable on this device. The game works without it.",
   "bay.summary": "{mission} with {n} installed parts",
   "auction.keys": "Keyboard: 1–9 and 0 accept a bid from Teams 1–10 · S sell · U no sale · O open · R reveal · N next lot · P pause or resume · E add 30 s.",
-  "app.unsupported": "This browser is too old for this game. Use a current version of Chrome, Edge, Firefox or Safari."
+  "app.unsupported": "This browser is too old for this game. Use a current version of Chrome, Edge, Firefox or Safari.",
+  "value.points": "Score it adds",
+  "value.needed": "needed for a minimum",
+  "value.hint": "Score it adds = your score minus your score without that card. A card can add 0 points and still be needed for a minimum.",
+  "bay.hint": "Drag, or use the arrow keys, to turn the vehicle. Scroll or press plus and minus to zoom. Double-click to reset.",
+  "chooser.heroLabel": "Recovery vehicle with winch, armour, radio, sensors and heavy-duty suspension"
 }

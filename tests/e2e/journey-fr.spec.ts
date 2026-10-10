@@ -86,7 +86,7 @@ test('J2: French 10-team MANUAL untimed session with a shared award', async ({ p
     const team = teams[id]!;
     team.profitCents = id <= 2 ? target - team.paidCents : 0;
     await page.fill(`#profit-${id}`, (team.profitCents / 100).toFixed(2).replace('.', ','));
-    await page.click(`#save-profit-${id}`);
+    await page.locator(`#profit-${id}`).blur();
     await page.check(`#submitted-${id}`);
     team.submitted = true;
   }

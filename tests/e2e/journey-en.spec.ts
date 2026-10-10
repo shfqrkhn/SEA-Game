@@ -165,7 +165,7 @@ test('J1/J3: full English timed session with every correction path', async ({ br
   await expect(ip.getByRole('alert')).toHaveText('Private: do not project');
   for (const [id, profit] of [[1, '100000.25'], [2, '50000']] as const) {
     await ip.fill(`#profit-${id}`, profit);
-    await ip.click(`#save-profit-${id}`);
+    await ip.locator(`#profit-${id}`).blur();
     await ip.check(`#submitted-${id}`);
     teams[id]!.profitCents = Math.round(Number(profit) * 100);
     teams[id]!.submitted = true;

@@ -26,14 +26,7 @@ function setupView(v: View): Child {
       h('p', { class: 'session-code mono', text: s.sessionCode }),
       h('p', { text: t('setup.codeHint') }),
       h('p', { class: 'muted', text: t('setup.summary', { teams: s.teamCount, reveal: t(`setup.reveal.${s.revealMode}` as StringKey), timing: s.timingMode === 'TIMED' ? `${t('setup.timing.TIMED')} (${s.bidSeconds} s)` : t('setup.timing.UNTIMED') }) }),
-      h('p', { text: t('setup.next') }),
-      h('div', { class: 'cluster' },
-        h('button', { type: 'button', class: 'btn primary', id: 'start-practice', text: t('setup.startPractice'), on: { click: () => v.run(I.startPractice) } }),
-        h('button', { type: 'button', class: 'btn', id: 'regenerate', text: t('setup.regenerate'), on: {
-          click: e => void v.confirm({ title: t('setup.regenerateTitle'), body: h('p', { text: t('setup.regenerateBody') }), confirm: t('setup.regenerate'), opener: e.currentTarget as HTMLElement },
-            state => I.generateSession(I.newSession(state), sessionOptions(v, state.teamCount, state.revealMode, state.timingMode, state.bidSeconds))),
-        } }),
-      ),
+      h('button', { type: 'button', class: 'btn primary', id: 'start-practice', text: t('setup.startPractice'), on: { click: () => v.run(I.startPractice) } }),
     );
   }
   const teams = v.draft('setup-teams', String(s.teamCount));
@@ -156,8 +149,7 @@ function liveLot(v: View, clock: Clock): Child {
           : h('button', { type: 'button', class: 'btn', id: 'pause', text: t('auction.pause'), on: { click: () => v.run(state => I.pause(state, clock())) } }),
         h('button', { type: 'button', class: 'btn', id: 'extend', text: t('auction.extend'), on: { click: () => v.run(state => I.extend(state, clock())) } }),
       ) : null,
-      h('p', { class: 'muted small', text: t('auction.bidHint') }),
-      h('p', { class: 'muted small', id: 'auction-keys', text: t('auction.keys') }),
+      h('p', { class: 'muted small', id: 'auction-keys', text: `${t('auction.bidHint')} ${t('auction.keys')}` }),
       h('div', { class: 'bid-grid' }, s.teams.map(team => {
         const atLimit = (team.purchasesByRound[s.round] ?? 0) >= 2;
         const leading = s.leader === team.id;
@@ -315,7 +307,7 @@ function resultsTable(v: View, withMoney: boolean): Child {
 function teamPurchases(v: View): Child {
   return v.state.teams.map(team => h('details', { class: 'panel' },
     h('summary', { text: `${v.t('common.team', { n: team.id })} · ${v.t('common.purchases')} (${team.purchases.length})` }),
-    purchasesTable(team.purchases, v.lang)));
+    purchasesTable(team.purchases, v.lang, team.lockedMission ? { mission: team.lockedMission } : {})));
 }
 
 function buildView(v: View): Child {
@@ -366,10 +358,7 @@ function submitView(v: View): Child {
           h('td', { class: 'num', text: money(team.cost, v.lang) }),
           h('td', {},
             h('label', { for: id, class: 'visually-hidden', text: t('submit.profitLabel', { n: team.id }) }),
-            v.input(id, { inputmode: 'decimal', autocomplete: 'off', size: '12', value: String(team.profit / 100) }),
-            h('button', { type: 'button', class: 'btn', id: `save-profit-${team.id}`, text: '✓', 'aria-label': t('submit.profitLabel', { n: team.id }), on: {
-              click: () => v.run(state => I.setProfit(state, team.id, v.draft(id, String(team.profit / 100))), () => v.drafts.delete(id)),
-            } }),
+            v.savingInput(id, String(team.profit / 100), (state, value) => I.setProfit(state, team.id, value), { inputmode: 'decimal', autocomplete: 'off', size: '12' }),
           ),
           h('td', { class: 'num', text: money(standing(team).bid, v.lang, true) }),
           h('td', {}, h('label', { class: 'choice' },
