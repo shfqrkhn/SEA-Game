@@ -192,6 +192,8 @@ summary { cursor: pointer; font-weight: 600; min-height: 32px; }
 .bay { margin: 0; display: grid; gap: .5rem; }
 .bay-canvas { width: 100%; aspect-ratio: 16 / 9; background: linear-gradient(var(--sunken), var(--surface)); border-radius: var(--radius); overflow: hidden; }
 .bay-canvas canvas { display: block; width: 100%; height: 100%; }
+.bay-canvas canvas[hidden] { display: none; }
+.bay-fallback { display: grid; gap: .5rem; place-items: center; width: 100%; }
 .bay-canvas.unavailable { display: grid; place-items: center; padding: 1rem; color: var(--muted); text-align: center; }
 
 /* Illustrations (MPES §11): colours follow the theme */

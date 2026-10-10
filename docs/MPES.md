@@ -3,7 +3,7 @@
 | Field | Value |
 |---|---|
 | Document | Master Product and Engineering Specification (MPES) for the clean-room rebuild of **Systems Engineering Awareness (SEA Game)** |
-| Version | 2.2.1 |
+| Version | 2.3.0 |
 | Date | 2026-10-09 (America/Toronto) |
 | Status | **ACCEPTED**. Owner delegated all remaining decisions and gates to the implementing agent on 2026-10-09 (§22) |
 | Supersedes | MPES 1.5.2 and every earlier handover, ledger, prompt and evidence packet for implementation purposes |
@@ -89,6 +89,7 @@ The previous project often optimised the mechanism ("X") instead of the outcome 
 - Physics simulation, driving, combat or animation beyond what explains the build.
 - Alternative rule sets, deck editors, or rule balancing. Rules are frozen (§6); changing them needs a new MPES version.
 - Native mobile/desktop app packaging.
+- Support or testing on any operating system other than Windows 11 (for example macOS, ChromeOS, iPadOS, iOS, Android or Linux), and Safari. The file may open elsewhere, but nothing is claimed or tested there (§4.3).
 
 ---
 
@@ -120,8 +121,8 @@ The previous project often optimised the mechanism ("X") instead of the outcome 
 
 | Role | Who | Device | Sees |
 |---|---|---|---|
-| Instructor | Facilitator; usually projects their screen | Laptop/desktop, 1280×720 or larger, keyboard and mouse | Everything authoritative: market (current lot only on projected views), ledger, all teams' public results; private submission entry only in private mode |
-| Student | One device per team, 2–10 teams | Laptop, Chromebook, tablet or phone | Own team only: mission, plan, purchases, totals, notes, profit |
+| Instructor | Facilitator; usually projects their screen | Windows 11 laptop or desktop, 1280×720 or larger, keyboard and mouse | Everything authoritative: market (current lot only on projected views), ledger, all teams' public results; private submission entry only in private mode |
+| Student | One device per team, 2–10 teams | Windows 11 laptop, desktop or touch device | Own team only: mission, plan, purchases, totals, notes, profit |
 
 ### 4.2 Projection safety
 
@@ -130,17 +131,15 @@ The instructor screen is assumed to be projected. Therefore:
 - The instructor UI **MUST NOT** display future lots beyond what the reveal mode permits (§6.5) on the main auction view.
 - Private submission entry (§6.11) is a separate, explicit mode with a visible "Private – do not project" banner; leaving it requires an action.
 
-### 4.3 Provisional support matrix
+### 4.3 Support matrix
 
-Declared at M0 and frozen at M6. Initial proposal:
+Owner decision 2026-10-10 (D-03): **Windows 11 only**, for both roles. Frozen at M6.
 
 | Tier | Platform | Delivery |
 |---|---|---|
-| Tier 1 (fully tested) | Windows 11: current Chrome, Edge, Firefox | `file://` and HTTPS |
-| Tier 1 | ChromeOS: current Chrome | HTTPS (and `file://` where the device allows) |
-| Tier 1 | iPadOS: current Safari (student role) | HTTPS |
-| Tier 2 (smoke-tested) | macOS: current Safari, Chrome | `file://` and HTTPS |
-| Tier 2 | Android: current Chrome; iOS: current Safari (student role on phones) | HTTPS |
+| Tier 1 (fully tested) | Windows 11: current Chrome, Edge and Firefox | `file://` and HTTPS |
+
+There is no Tier 2. Other operating systems and Safari are out of scope (§2.2); the unsupported-browser notice (§9) names only the supported browsers.
 
 HTTPS delivery (for example GitHub Pages) serves the identical file; the app still makes no network requests after loading.
 
@@ -195,7 +194,7 @@ Rules:
 | Bundling | esbuild | Bundle to one IIFE script, then inline into the HTML template with a deterministic build script. |
 | Unit tests | Vitest | Domain, app and port tests. |
 | Property tests | fast-check (optional) | Money, ledger replay and invariants. |
-| Browser tests | Playwright (Chromium, Firefox, WebKit) | Run against `dist/index.html` over `file://`. |
+| Browser tests | Playwright (Chromium, Firefox, and the Microsoft Edge installed with Windows) | Run against `dist/index.html` over `file://`. |
 | Accessibility scan | axe-core via Playwright | Automated part only; manual checks still needed (§12). |
 | 3D | three.js (single runtime dependency) | Tree-shaken import; embedded. |
 
@@ -204,7 +203,7 @@ A different tool is acceptable only if it is qualified in M1 against the same ta
 ### 5.5 Build
 
 - `npm ci` then `npm run build` produces `dist/index.html` and nothing else in `dist/`.
-- Builds are **deterministic**. The same inputs give byte-identical output on Windows and Linux. Line endings are LF, enforced by `.gitattributes`.
+- Builds are **deterministic**. The same inputs give byte-identical output on every Windows 11 machine and CI run, whatever the checkout's line-ending settings. Line endings are LF, enforced by `.gitattributes`.
 - The build computes SHA-256 hashes for the inline script and style and writes the Content-Security-Policy meta tag (§13.1).
 - The build fails if a required licence notice, illustration, string key or card is missing.
 - `npm run build -- --check` rebuilds in memory and fails if the committed `dist/index.html` differs.
@@ -669,7 +668,7 @@ Geometry is generated procedurally in code or embedded as compact glTF/binary co
   - every chart and the 3D bay paired with a text or table equivalent;
   - `lang` attributes switch with language.
 - Timer: TIMED mode is controlled by the instructor (pause/extend). Students are never subject to a time limit in their own app.
-- Small screens: dialogs stay within the visual viewport, accounting for the virtual keyboard and safe areas.
+- Narrow windows and high zoom: dialogs stay within the visual viewport, including when the Windows touch keyboard is shown.
 
 ---
 
@@ -733,11 +732,11 @@ Each requirement must be **accepted** for a release (§21). Acceptance evidence 
 | RQ-18 | Confirmations bound to state; no native dialogs (§7.5). | E |
 | RQ-19 | Complete EN/FR; switching keeps input; French typography. | U, M |
 | RQ-20 | WCAG 2.2 AA for the declared scope (§12). | E (axe), M |
-| RQ-21 | Phone, tablet and desktop layouts; 320 px reflow; 400% zoom. | E, M |
+| RQ-21 | Desktop and narrow-window layouts on Windows 11; 320 px reflow; 400% zoom. | E, M |
 | RQ-22 | Vehicle bay requirements and budgets; WebGL fallback (§10, §9). | E, M |
 | RQ-23 | 77 illustrations embedded, sanitised, mapped and alt-texted (§11). | U, M |
 | RQ-24 | CSP and code-safety rules (§13); no unsafe sinks (lint rule). | U |
-| RQ-25 | Deterministic, reproducible build on Windows and Linux (§5.5). | CI |
+| RQ-25 | Deterministic, reproducible build on Windows (§5.5). | CI |
 | RQ-26 | Performance budgets (§14). | M |
 | RQ-27 | Third-party notices complete and visible in-app. | U, M |
 | RQ-28 | Degraded states (§9). | E |
@@ -771,34 +770,34 @@ Gates outside the code:
   - the visible-lot set is monotonic.
 - Persistence: schema-3 validators accept fixtures and reject each mutated invariant (one test per invariant).
 
-### 16.3 Browser (Playwright, built file, `file://`, three engines)
+### 16.3 Browser (Playwright, built file, `file://`, Chromium, Firefox and Edge on Windows 11)
 
 - **J1**: full English session, 2 teams, TIMED, JIT: all 70 lots, including a correction, a void and replacement, unsold-with-leader, the two-win limit, pause/extend, submissions, award and close. Totals must match the oracle.
 - **J2**: full French session, 10 teams, UNTIMED, MANUAL, including tied awards.
 - **J3**: student journey in parallel with J1 (separate context): join, practice, planning, tracking, missed purchase, reconciliation, submit.
 - **J4**: recovery: reload at each phase; export, close context, import into an empty context; corrupted, oversized and wrong-role files; storage denied (stubbed port).
 - **J5**: privacy: inspect the student DOM, accessibility tree, exports and console at each phase for forbidden data.
-- **J6**: accessibility: axe on every view at 1280×720 and 375×812 in both languages; keyboard-only run of J3.
+- **J6**: accessibility: axe on every view at 1280×720 and in a narrow 375 px window in both languages; keyboard-only run of J3.
 - **J7**: network: every journey runs with all requests failed. The test fails if any request is attempted.
 
 ### 16.4 Manual checks (recorded in `docs/verification/<version>.md`)
 
 - OS-level egress observation while running J1 offline (for example Windows `pktmon` or an outbound-deny firewall profile): zero outbound connections from the browser process attributable to the page.
-- Screen-reader and device substitute (owner-delegated): accessibility-tree snapshots of every view, axe scans, keyboard-only journeys, and Playwright device/engine emulation for the §4.3 matrix. Real screen-reader and physical-device runs are residual risk.
+- Screen-reader and device substitute (owner-delegated): accessibility-tree snapshots of every view, axe scans, keyboard-only journeys, and Playwright runs in Chrome (Chromium), Edge and Firefox on Windows 11 for the §4.3 matrix. Real screen-reader (Narrator, NVDA) and physical-device runs are residual risk.
 - OS-level egress: observe with tools already present on the machine and usable without installation; if none is usable, record BLOCKED.
 - Performance measurements (§14).
 - Visual review of all 77 illustrations and the six vehicles with every category installed.
 
 ### 16.5 CI
 
-GitHub Actions on Ubuntu and Windows, Node current and previous LTS:
+GitHub Actions on Windows (hosted runners are Windows Server, the closest available image; Windows 11 evidence comes from local runs), Node current and previous LTS:
 
 1. `npm ci`
 2. typecheck
 3. lint
 4. unit tests
 5. build `--check`
-6. Playwright (Chromium on both OSes; Firefox and WebKit on Ubuntu)
+6. Playwright (Chromium, Firefox and Edge on current LTS; Chromium on previous LTS)
 7. bundle-size check
 8. notice check
 
@@ -961,7 +960,7 @@ Announce, keep the last version downloadable with its guides for at least one sc
 |---|---|---|
 | D-01 | Interface technology | Semantic HTML/CSS for all tasks plus a Three.js vehicle bay (§5, §7, §10). |
 | D-02 | Illustrations | New original agent-authored SVGs, MIT, one style shared with the bay (§11). The rights gate is closed. |
-| D-03 | Support matrix | As in §4.3. |
+| D-03 | Support matrix | Windows 11 only: current Chrome, Edge and Firefox, both roles (owner decision 2026-10-10; §4.3). |
 | D-04 | GitHub Pages hosting | Yes, in addition to download. |
 | D-05 | Pilot | Owner-delegated scripted classroom rehearsal (§16.6). |
 | D-06 | Projector view | Not in 5.0; private entry mode covers projection safety. |
@@ -989,6 +988,7 @@ Announce, keep the last version downloadable with its guides for at least one sc
 
 | Version | Date | Change |
 |---|---|---|
+| 2.3.0 | 2026-10-10 | Owner decision: scope limited to Windows 11 (current Chrome, Edge, Firefox) for both roles. Other platforms and Safari moved to non-goals (§2.2, §4.1, §4.3, D-03); browser tests, CI, RQ-21, RQ-25 and §12 aligned (§5.4, §5.5, §16.3–16.5). |
 | 2.2.1 | 2026-10-09 | Owner decision: exploded view removed from the vehicle bay (§10.2). |
 | 2.2.0 | 2026-10-09 | Owner direction: the vehicle bay approaches the archived concept renders in quality (§1.3, §10.2); budgets revised for physically based rendering, soft shadows and ambient occlusion (§10.3). |
 | 2.1.1 | 2026-10-09 | §6.5: corrected the ROUND reveal row to the original game's behaviour (whole current round visible, later rounds never), verified against the 4.1 instructor source. |

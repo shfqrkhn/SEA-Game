@@ -60,7 +60,7 @@ export class VehicleBay {
   setText(text: BayText): void {
     this.#text = text;
     if (this.#renderer) this.#renderer.domElement.title = text.hint;
-    if (this.#available === false && !text.fallback) this.#canvasHolder.textContent = text.unavailable;
+    if (this.#fallback) this.#showUnavailable();
   }
 
   #init(): boolean {
@@ -94,8 +94,9 @@ export class VehicleBay {
       composer.addPass(new OutputPass());
       this.#composer = composer;
       this.#bindControls(canvas);
+      // Context loss keeps the canvas (hidden) so the restored context can draw again (MPES §9).
       canvas.addEventListener('webglcontextlost', event => { event.preventDefault(); this.#showUnavailable(); });
-      canvas.addEventListener('webglcontextrestored', () => { this.#canvasHolder.classList.remove('unavailable'); this.#key = ''; });
+      canvas.addEventListener('webglcontextrestored', () => this.#restore());
       new ResizeObserver(() => this.#resize()).observe(this.#canvasHolder);
       this.#available = true;
     } catch {
@@ -105,12 +106,18 @@ export class VehicleBay {
     return this.#available;
   }
 
-  /** Studio: room environment for reflections, key + sky light, shadow catcher and contact shadow. */
-  #stage(renderer: WebGLRenderer): void {
+  /** Image-based room lighting. It lives in a GPU render target, so it is rebuilt after a context restore. */
+  #environment(renderer: WebGLRenderer): void {
     const pmrem = new PMREMGenerator(renderer);
+    this.#scene.environment?.dispose();
     this.#scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.035).texture;
     this.#scene.environmentIntensity = 0.55;
     pmrem.dispose();
+  }
+
+  /** Studio: room environment for reflections, key + sky light, shadow catcher and contact shadow. */
+  #stage(renderer: WebGLRenderer): void {
+    this.#environment(renderer);
     this.#scene.add(new HemisphereLight(0xf4f1e8, 0x5b5a50, 0.55));
     const sun = new DirectionalLight(0xfff3e0, 3.2);
     sun.position.set(4, 14, 5);
@@ -174,9 +181,26 @@ export class VehicleBay {
   }
 
   #showUnavailable(): void {
+    const canvas = this.#renderer?.domElement;
+    if (canvas) canvas.hidden = true;
+    this.#fallback?.remove();
+    this.#fallback = this.#text.fallback
+      ? h('div', { class: 'bay-fallback' }, this.#text.fallback(), h('span', { class: 'small muted', text: this.#text.unavailable }))
+      : h('span', { class: 'bay-fallback', text: this.#text.unavailable });
     this.#canvasHolder.classList.add('unavailable');
-    this.#canvasHolder.textContent = this.#text.unavailable;
-    if (this.#text.fallback) { this.#canvasHolder.textContent = ''; this.#canvasHolder.classList.add('with-art'); this.#canvasHolder.append(this.#text.fallback(), h('span', { class: 'small muted', text: this.#text.unavailable })); }
+    if (this.#text.fallback) this.#canvasHolder.classList.add('with-art');
+    this.#canvasHolder.append(this.#fallback);
+  }
+  #fallback: HTMLElement | null = null;
+
+  #restore(): void {
+    if (!this.#renderer) return;
+    this.#fallback?.remove();
+    this.#fallback = null;
+    this.#canvasHolder.classList.remove('unavailable', 'with-art');
+    this.#renderer.domElement.hidden = false;
+    this.#environment(this.#renderer);
+    this.#draw();
   }
 
   rotate(delta: number): void { this.#view.yaw += delta; this.#draw(); }

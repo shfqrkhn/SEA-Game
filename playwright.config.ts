@@ -6,12 +6,20 @@ if (!process.env.CI && !process.env.PLAYWRIGHT_BROWSERS_PATH) {
   process.env.PLAYWRIGHT_BROWSERS_PATH = path.resolve('.artifacts/ms-playwright');
 }
 
-const engines = (process.env.SEA_ENGINES ?? 'chromium,firefox,webkit').split(',');
+// Support is Windows 11 only (MPES §4.3): Chrome and Edge (Chromium) and Firefox. `msedge` drives the
+// Edge installed with Windows rather than a downloaded build.
+const engines = (process.env.SEA_ENGINES ?? 'chromium,firefox,msedge').split(',');
 const all = [
   { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
   { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
-  { name: 'webkit', use: { ...devices['Desktop Safari'] } },
+  { name: 'msedge', use: { ...devices['Desktop Edge'], channel: 'msedge' } },
 ];
+
+const browsers = all.filter(project => engines.includes(project.name)).map(project => ({ ...project, testIgnore: /perf\.spec\.ts/ }));
+// RQ-26 budgets are measured in Chromium, alone, after every other project has finished.
+const perf = engines.includes('chromium')
+  ? [{ name: 'perf', use: { ...devices['Desktop Chrome'] }, testMatch: /perf\.spec\.ts/, dependencies: browsers.map(project => project.name) }]
+  : [];
 
 export default defineConfig({
   testDir: 'tests/e2e',
@@ -22,5 +30,5 @@ export default defineConfig({
   reporter: process.env.CI ? [['list'], ['github']] : [['list']],
   timeout: 120_000,
   use: { viewport: { width: 1280, height: 720 }, trace: 'retain-on-failure' },
-  projects: all.filter(project => engines.includes(project.name)),
+  projects: [...browsers, ...perf],
 });

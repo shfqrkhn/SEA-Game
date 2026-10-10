@@ -19,11 +19,14 @@ export class Controller<S> {
   #revision = 0;
   #listeners = new Set<() => void>();
   #saveFailed = false;
+  /** True once storage holds a save written for this role, so a reset may clear it (never foreign data). */
+  #persisted: boolean;
   readonly options: ControllerOptions<S>;
 
   constructor(initial: S, options: ControllerOptions<S>) {
     this.#state = initial;
     this.options = options;
+    this.#persisted = options.serialize(initial) !== null;
   }
 
   get state(): S { return this.#state; }
@@ -61,7 +64,12 @@ export class Controller<S> {
 
   save(): void {
     const raw = this.options.serialize(this.#state);
-    if (raw === null) return;
+    if (raw === null) {
+      // A deliberate reset or an undone import: clear our save so a reload does not bring the old game back.
+      if (this.#persisted) { this.#saveFailed = !this.options.storage.remove(this.options.key); this.#persisted = this.#saveFailed; }
+      return;
+    }
     this.#saveFailed = !this.options.storage.write(this.options.key, raw);
+    this.#persisted = true;
   }
 }
