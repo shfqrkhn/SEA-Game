@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import en from '../../content/strings.en.json';
-import fr from '../../content/strings.fr.json';
+import en from '../../content/strings.en.json' with { type: 'json' };
+import fr from '../../content/strings.fr.json' with { type: 'json' };
 import { detectLanguage, translate } from '../../source/ui/i18n.ts';
 
 describe('strings (RQ-19)', () => {

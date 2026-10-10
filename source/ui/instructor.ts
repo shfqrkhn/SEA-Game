@@ -60,8 +60,11 @@ function setupView(v: View): Child {
       h('span', { class: 'hint', id: 'setup-seconds-hint', text: t('setup.secondsHint') }),
     ) : null,
     h('button', { type: 'button', class: 'btn primary', id: 'generate', text: t('setup.generate'), on: { click: () => {
-      const secondsValue = Number(v.draft('setup-seconds', String(s.bidSeconds)));
-      v.run(state => I.generateSession(state, sessionOptions(v, Number(teams), reveal, timing, Number.isInteger(secondsValue) ? secondsValue : NaN)));
+      // Read the inputs at click time: drafts change without re-rendering.
+      const secondsValue = Number(v.draft('setup-seconds', String(v.state.bidSeconds)));
+      v.run(state => I.generateSession(state, sessionOptions(v, Number(v.draft('setup-teams', String(state.teamCount))),
+        v.draft('setup-reveal', state.revealMode) as RevealMode, v.draft('setup-timing', state.timingMode) as TimingMode,
+        Number.isInteger(secondsValue) ? secondsValue : NaN)));
     } } }),
   );
 }
@@ -154,6 +157,7 @@ function liveLot(v: View, clock: Clock): Child {
         h('button', { type: 'button', class: 'btn', id: 'extend', text: t('auction.extend'), on: { click: () => v.run(state => I.extend(state, clock())) } }),
       ) : null,
       h('p', { class: 'muted small', text: t('auction.bidHint') }),
+      h('p', { class: 'muted small', id: 'auction-keys', text: t('auction.keys') }),
       h('div', { class: 'bid-grid' }, s.teams.map(team => {
         const atLimit = (team.purchasesByRound[s.round] ?? 0) >= 2;
         const leading = s.leader === team.id;
@@ -487,7 +491,24 @@ export function startInstructor(root: HTMLElement, lang: Language, storage: Stor
   });
   view.render();
   startTimer(view, clock);
+  document.addEventListener('keydown', auctionKeys);
   return view;
+}
+
+/** Live-auction shortcuts (MPES §7.1): each key presses the matching visible, enabled button. */
+const KEY_TARGETS: Record<string, string[]> = {
+  s: ['#sell'], u: ['#unsold'], o: ['#open-bidding'], r: ['#reveal'], n: ['#next-lot'], p: ['#pause', '#resume'], e: ['#extend'],
+};
+function auctionKeys(event: KeyboardEvent): void {
+  if (event.ctrlKey || event.metaKey || event.altKey || event.repeat) return;
+  const target = event.target as HTMLElement | null;
+  if (target?.closest('input, textarea, select, [contenteditable], dialog') || document.querySelector('dialog[open]')) return;
+  const key = event.key.toLowerCase();
+  const ids = /^[0-9]$/.test(key) ? [`#bid-${key === '0' ? 10 : key}`] : KEY_TARGETS[key];
+  for (const id of ids ?? []) {
+    const button = document.querySelector<HTMLButtonElement>(id);
+    if (button && !button.disabled) { event.preventDefault(); button.click(); return; }
+  }
 }
 
 /** Updates only the countdown text while a timed lot is open; re-renders once when time runs out. */

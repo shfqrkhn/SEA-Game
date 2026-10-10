@@ -1,7 +1,7 @@
 // Canonical data (MPES §6.3, §6.6, Appendix A). Content files are generated from the MPES tables
 // and verified against them by tests/unit/data.test.ts.
-import cardData from '../../content/cards.json';
-import missionData from '../../content/missions.json';
+import cardData from '../../content/cards.json' with { type: 'json' };
+import missionData from '../../content/missions.json' with { type: 'json' };
 
 export const RULESET = 'STANDARD';
 export const DECK = 'synthetic-v1';

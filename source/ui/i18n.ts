@@ -1,5 +1,5 @@
-import en from '../../content/strings.en.json';
-import fr from '../../content/strings.fr.json';
+import en from '../../content/strings.en.json' with { type: 'json' };
+import fr from '../../content/strings.fr.json' with { type: 'json' };
 
 export type Language = 'en' | 'fr';
 export type StringKey = keyof typeof en;
