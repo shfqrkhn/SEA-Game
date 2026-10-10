@@ -2,7 +2,7 @@
 import { Controller } from '../app/controller.ts';
 import type { StoragePort } from '../app/ports.ts';
 import { costPerPointCents } from '../domain/award.ts';
-import { CARDS, CATEGORIES, CAPABILITIES, LOTS, MISSIONS, ROUNDS, isMissionId, type Category, type MissionId } from '../domain/data.ts';
+import { CARDS, CATEGORIES, CAPABILITIES, LOTS, MISSIONS, ROUND_SLOTS, ROUNDS, isMissionId, type Category, type MissionId } from '../domain/data.ts';
 import { DomainError } from '../domain/errors.ts';
 import { compliant, score, sumEffects } from '../domain/missions.ts';
 import { add } from '../domain/money.ts';
@@ -171,7 +171,9 @@ function auctionView(v: View): Child {
         h('label', { for: 'card-id', text: t('strack.cardId') }),
         h('div', { class: 'cluster' },
           v.input('card-id', { autocomplete: 'off', autocapitalize: 'characters', spellcheck: 'false', maxlength: '20', class: 'mono', size: '8',
-            value: card?.id ?? '' }),
+            value: card?.id ?? '', list: 'card-options' }),
+          // Suggest only the cards this lot's category can hold, with their names (fewer typing mistakes).
+          h('datalist', { id: 'card-options' }, CARDS.filter(c => c.category === ROUND_SLOTS[s.lot]).map(c => h('option', { value: c.id, label: c.title[lang] }))),
           h('button', { type: 'button', class: 'btn', id: 'load-card', text: t('strack.load'), on: { click: () => v.run(state => S.loadCard(state, v.draft('card-id', card?.id ?? ''))) } }),
         ),
       ),
