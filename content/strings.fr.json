@@ -369,5 +369,7 @@
   "debrief.q6": "Quels sont vos trois plus grands risques de conception ?",
   "debrief.q7": "À quoi sert un processus d’ingénierie des systèmes que vous avez acheté ?",
   "setup.increment": "Palier d’enchère",
-  "setup.incrementHint": "Chaque offre acceptée augmente le prix de ce montant. Les équipes enregistrent les prix de la même façon, quel que soit votre choix."
+  "setup.incrementHint": "Chaque offre acceptée augmente le prix de ce montant. Les équipes enregistrent les prix de la même façon, quel que soit votre choix.",
+  "setup.more": "Plus d’options",
+  "setup.risesBy": "offres par paliers de {increment}"
 }

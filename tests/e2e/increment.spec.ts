@@ -2,7 +2,7 @@
 // resulting prices without knowing the choice.
 import { expect, test } from '@playwright/test';
 import { gameUrl, guardNetwork } from './helpers.ts';
-import { act, confirmDialog, studentJoin } from './roles.ts';
+import { act, confirmDialog, moreOptions, studentJoin } from './roles.ts';
 
 test('a $100,000 bid increment raises each offer by $100,000 and the student records the price', async ({ browser }) => {
   const ip = await (await browser.newContext()).newPage();
@@ -10,10 +10,14 @@ test('a $100,000 bid increment raises each offer by $100,000 and the student rec
   guardNetwork(ip); guardNetwork(sp);
   await ip.goto(gameUrl('?role=instructor&lang=en'));
   await ip.selectOption('#setup-teams', '2');
+  // Collapsed by default, with the current choices summarised on one line.
+  await expect(ip.locator('#setup-choices')).toHaveText('One lot at a time · Timed (30 s) · bids rise by $50,000');
+  await moreOptions(ip);
   await ip.check('#setup-reveal-JIT');
   await ip.check('#setup-timing-UNTIMED');
   await expect(ip.locator('#setup-increment')).toHaveValue('5000000');
   await ip.selectOption('#setup-increment', '10000000');
+  await expect(ip.locator('#setup-choices')).toHaveText('One lot at a time · No timer · bids rise by $100,000');
   await ip.click('#generate');
   await expect(ip.locator('main')).toContainText('bids rise by $100,000');
   const code = (await ip.locator('.session-code').textContent())!.trim();

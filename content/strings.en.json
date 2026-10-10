@@ -369,5 +369,7 @@
   "debrief.q6": "What are your three biggest design risks?",
   "debrief.q7": "What is the purpose of one systems engineering process you bought?",
   "setup.increment": "Bid increment",
-  "setup.incrementHint": "Each accepted bid raises the offer by this amount. Students record prices the same way whatever you choose."
+  "setup.incrementHint": "Each accepted bid raises the offer by this amount. Students record prices the same way whatever you choose.",
+  "setup.more": "More options",
+  "setup.risesBy": "bids rise by {increment}"
 }
