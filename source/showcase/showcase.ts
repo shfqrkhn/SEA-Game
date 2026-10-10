@@ -5,7 +5,7 @@
 import type { Group } from 'three';
 import type { MissionId } from '../domain/data.ts';
 import { h } from '../ui/dom.ts';
-import { loadLibrary, ModelStage, partSlots, webglAvailable } from './model.ts';
+import { loadVehicle, ModelStage, partSlots, webglAvailable } from './model.ts';
 import { renders, VEHICLE, type Render } from './renders.ts';
 
 export type ShowcaseView = 'front' | 'rear' | 'turntable';
@@ -73,7 +73,7 @@ export class Showcase {
   #view: ShowcaseView = 'front';
   #frame = 0;
   #mode: 'pending' | '3d' | 'stills' = 'pending';
-  #model: { stage: ModelStage; library: Group; element: HTMLElement } | null = null;
+  #model: { stage: ModelStage; libraries: Map<string, Group>; element: HTMLElement } | null = null;
   #last: (() => void) | null = null;
 
   constructor() {
@@ -82,29 +82,41 @@ export class Showcase {
 
   update(mission: MissionId, parts: readonly ShowcasePart[], label: string, text: ShowcaseText): HTMLElement {
     this.#last = () => this.update(mission, parts, label, text);
-    if (this.#mode === 'pending') this.#start();
+    if (this.#mode === 'pending') this.#start(VEHICLE[mission]);
     return this.#mode === '3d' ? this.#update3d(mission, parts, label, text) : this.#updateStills(mission, parts, label, text);
   }
 
-  /** Decides the mode once: stills at first, then 3D once WebGL is confirmed and the embedded model has loaded. */
-  #start(): void {
+  /**
+   * Decides the mode once: stills at first, then 3D once WebGL is confirmed and the team's vehicle model has
+   * loaded. Only that vehicle is decoded (MPES §14 model-ready budget); another is decoded if the mission changes.
+   */
+  #start(vehicle: string): void {
     this.#mode = 'stills';
     if (!webglAvailable()) return;
-    void loadLibrary().then(library => {
+    void loadVehicle(vehicle).then(library => {
       if (!library) return;
       const stage = new ModelStage();
       const element = h('div', { class: 'showcase-stage showcase-3d', role: 'img', 'data-mode': '3d', 'data-ready': 'false' });
       element.appendChild(stage.canvas);
       stage.onTurn = azimuth => element.setAttribute('data-azimuth', azimuth.toFixed(3));
-      this.#model = { stage, library, element };
+      this.#model = { stage, libraries: new Map([[vehicle, library]]), element };
       this.#mode = '3d';
       if (this.element.isConnected) this.#last?.();
     });
   }
 
   #update3d(mission: MissionId, parts: readonly ShowcasePart[], label: string, text: ShowcaseText): HTMLElement {
-    const { stage, library, element } = this.#model!;
+    const { stage, libraries, element } = this.#model!;
     const vehicle = VEHICLE[mission];
+    const library = libraries.get(vehicle);
+    if (!library) {
+      // A different mission: show its stills while its model decodes, then redraw (stills for good if it cannot load).
+      void loadVehicle(vehicle).then(loaded => {
+        if (loaded) libraries.set(vehicle, loaded); else this.#mode = 'stills';
+        if (this.element.isConnected) this.#last?.();
+      });
+      return this.#updateStills(mission, parts, label, text);
+    }
     const group = library.getObjectByName(vehicle);
     const slots = group ? partSlots(group) : new Map<string, string>();
     const physical = parts.filter(p => p.category !== 'SE_PROCESS');

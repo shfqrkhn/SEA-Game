@@ -1,6 +1,6 @@
 # Handover
 
-Updated 2026-10-10 (America/Toronto). Specification: [MPES](MPES.md) 4.0.0. Evidence: [verification/5.0.0-dev.md](verification/5.0.0-dev.md), [verification/spike-visual.md](verification/spike-visual.md).
+Updated 2026-10-10 (America/Toronto). Specification: [MPES](MPES.md) 4.0.1. Evidence: [verification/5.0.0-dev.md](verification/5.0.0-dev.md), [verification/spike-visual.md](verification/spike-visual.md).
 
 ## 1. Version and milestone
 
@@ -16,12 +16,12 @@ Version 5.0.0-dev.0. M0–M4 and V1 (visual spike) are complete and on `main`. *
   - debrief class chart and presentation questions; French spacing; stricter save invariants;
   - `dist/` no longer committed; `npm run check` compares two builds; CI deploys `main` to Pages for QA only.
 - **Imagery** (`content/renders/`, 821 AVIF, 6.2 MB): 6 vehicles (hero, 24-frame turntable, front and rear build layers for all 49 parts) and 71 cards, from the Blender pipeline in [art/README.md](../art/README.md).
-- **Interactive 3D showcase** (MPES 4.0.0 §10, owner request): on the student tracker the team's vehicle turns slowly by itself, can be dragged or turned with buttons, pauses on request and under reduced motion, and gains each part as it is recorded. The model is `content/models/showcase.glb` (all bases and parts, about 570,000 triangles, 4.2 MB deflated), embedded once. Without WebGL 2, on a software renderer, or if the model fails to load, the showcase shows the stills. three.js 0.186.1 is bundled for the showcase only.
+- **Interactive 3D showcase** (MPES 4.0.0 §10, owner request): on the student tracker the team's vehicle turns slowly by itself, can be dragged or turned with buttons, pauses on request and under reduced motion, and gains each part as it is recorded. The model is `content/models/showcase.glb` (all six vehicles with every part, 1.82 million unique triangles, 8.5 MB deflated), embedded once; the game parses only the team's vehicle (about 400,000 triangles, `source/showcase/glb.ts`), which brought 3D ready from 3.2 s to 1.9 s. Without WebGL 2, on a software renderer, or if the model fails to load, the showcase shows the stills. three.js 0.186.1 is bundled for the showcase only.
 - **Tests:** `npm run verify` (typecheck, lint, unit, build check, Playwright in Chromium, Firefox and Edge, then perf alone). 3D tests spoof a hardware renderer with `withGpu()` (`tests/e2e/helpers.ts`), because test browsers render WebGL in software, which the product treats as no GPU.
 
 ## 3. Not done
 
-- **AI-assisted art upgrade (D-14), running:** the owner rated the models at a third to half of the wanted quality. Concept images for every part, vehicle, the UI and the process badges were generated with the owner's Codex subscription (`node art/tools/concepts.ts`; local only, in `.artifacts/concepts-v3/`). Eight Codex jobs are upgrading `hull8.py` and the seven part modules in copies under `.artifacts/codex-prod/<job>/` (briefs in each `task.md`, budgets checked by `art/blender/tris.py`). Next: review each job's renders and notes, merge the owned files, `tris.py` PASS, export and pack the model, re-render the stills and cards, rerun `npm run verify`.
+- **AI-assisted art upgrade (D-14), finishing:** the owner rated the models at a third to half of the wanted quality. Concept images for every part, vehicle, the UI and the process badges were generated with the owner's Codex subscription (`node art/tools/concepts.ts`; local only, in `.artifacts/concepts-v3/`). Eight Codex jobs upgraded `hull8.py` and the seven part modules, and a ninth ("fit") resolved the collisions between slots; all are merged (briefs and notes in `.artifacts/codex-prod/<job>/`). `overlap.py` and `tris.py` PASS on all six vehicles with all 49 parts; the model is exported and packed. Running: the full re-render of stills and cards (`.artifacts/renders/v3`). Next: encode, review the contact sheets, `npm run verify`.
 - **Firefox and Edge** runs of the 3D showcase tests on this branch: NOT_RUN since the 3D change.
 - **Push, PR, CI, merge** of `goal2/art`.
 - **M6 and M7:** MPES §17, including the handoff package (RQ-32).
@@ -29,7 +29,7 @@ Version 5.0.0-dev.0. M0–M4 and V1 (visual spike) are complete and on `main`. *
 
 ## 4. In-progress work
 
-The Codex art upgrade above. Each job may edit only its own file; anything else it changes is discarded at merge. `.artifacts/codex3d/combat/` holds the earlier single-vehicle trial used as the quality reference.
+The Codex art upgrade above. Each job may edit only its own files; anything else it changes is discarded at merge. Run only one Blender process at a time, Codex jobs included: the owner uses this PC. `.artifacts/codex3d/combat/` holds the earlier single-vehicle trial used as the quality reference.
 
 ## 5. Next action
 

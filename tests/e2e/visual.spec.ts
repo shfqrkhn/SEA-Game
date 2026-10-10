@@ -6,7 +6,8 @@ import { readFileSync } from 'node:fs';
 import { gameUrl, guardNetwork, withoutWebgl } from './helpers.ts';
 import { confirmDialog, studentJoin } from './roles.ts';
 
-test.skip(({ browserName }) => browserName !== 'chromium', 'pixel baselines are recorded in Chromium');
+// Edge reports browserName 'chromium' too; its channel tells it apart.
+test.skip(({ browserName, channel }) => browserName !== 'chromium' || !!channel, 'pixel baselines are recorded in Chromium');
 
 const SHOT = { maxDiffPixelRatio: 0.01, animations: 'disabled', caret: 'hide' } as const;
 const fixture = (name: string) => JSON.stringify(JSON.parse(readFileSync(`tests/fixtures/legacy/${name}.json`, 'utf8')).state);

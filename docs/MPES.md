@@ -3,7 +3,7 @@
 | Field | Value |
 |---|---|
 | Document | Master Product and Engineering Specification (MPES) for the clean-room rebuild of **Systems Engineering Awareness (SEA Game)** |
-| Version | 4.0.0 |
+| Version | 4.0.1 |
 | Date | 2026-10-10 (America/Toronto) |
 | Status | **ACCEPTED**. Owner delegated all remaining decisions and gates to the implementing agent on 2026-10-09 (§22) |
 | Supersedes | MPES 1.5.2 and every earlier handover, ledger, prompt and evidence packet for implementation purposes |
@@ -638,7 +638,7 @@ Make the build tangible: the selected mission's base vehicle visibly gains parts
 - Each of the 70 cards has a recognisable part, a photoreal card render and a layer for every vehicle and build angle.
 - Controls, 3D mode: drag to turn, plus Pause turning, Turn left and Turn right buttons usable by keyboard. Under `prefers-reduced-motion` the model does not turn by itself. The animation loop stops while the showcase is off screen or the tab is hidden.
 - Controls, stills mode: change angle and scrub the turntable by pointer, touch and keyboard. No autoplay; under `prefers-reduced-motion` the turntable does not animate.
-- 3D model content: one glTF binary (`content/models/showcase.glb`, SHA-256 in its manifest) holding every vehicle base and every part as named nodes, plain metallic-roughness materials, ambient occlusion baked into vertex colours, no image textures. Exported by `art/blender/export.py` at real-time detail and packed by `art/tools/pack-models.ts`. Triangle budgets at export: a vehicle base ≤ 90,000, a part ≤ 8,000, a running-gear set ≤ 32,000 (`art/blender/tris.py`).
+- 3D model content: one glTF binary (`content/models/showcase.glb`, SHA-256 in its manifest) holding every vehicle base and every part as named nodes, plain metallic-roughness materials, ambient occlusion baked into vertex colours, no image textures. Exported by `art/blender/export.py` at real-time detail and packed by `art/tools/pack-models.ts`. The game parses only the vehicle it shows. Parts in different mount slots must not intersect (`art/blender/overlap.py`). Triangle budgets at export: a vehicle base ≤ 90,000, a part ≤ 8,000, a running-gear set ≤ 32,000 (`art/blender/tris.py`).
 - A text list of installed parts is always available. The composed image has `role="img"` and an accessible name summarising the build.
 
 ### 10.3 Budgets (set at the visual spike, V1)
@@ -1026,6 +1026,7 @@ Announce, keep the last package and its guides available for at least one school
 
 | Version | Date | Change |
 |---|---|---|
+| 4.0.1 | 2026-10-10 | §10: the game parses only the vehicle it shows; cross-slot collisions checked by `art/blender/overlap.py`. |
 | 4.0.0 | 2026-10-10 | Owner request: interactive 3D showcase that turns slowly by itself (D-08 revised, D-01, R-ARCH-4, §1.3, §2, §5, §10, §11); stills become the fallback without hardware WebGL; 3D budgets (§10.3); AI-assisted concepts and modelling (D-14). |
 | 3.3.0 | 2026-10-10 | Owner request: the instructor chooses the bid increment at setup ($50,000 to $250,000 in $50,000 steps); prices stay on the $50,000 grid (§6.4, §6.5, §8.3, Appendix A constants). |
 | 3.2.0 | 2026-10-10 | V2 production: mount slots, hidden layers and SE badges (§10.2); debrief class chart and presentation questions (§6.13, from the owner-supplied course source); projector theme in the URL (§7.1); stricter save invariants and compatibility-only fields (§8.3, §8.4). |

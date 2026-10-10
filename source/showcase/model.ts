@@ -9,24 +9,44 @@ import {
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
+import { vehicleGlb } from './glb.ts';
 
 /** Seconds per full turn when the stage turns by itself. */
 export const TURN_SECONDS = 40;
 const FRAME_MS = 1000 / 30;
 const UP = new Vector3(0, 1, 0);
 
-let library: Promise<Group | null> | null = null;
+let packed: Promise<ArrayBuffer | null> | null = null;
+const libraries = new Map<string, Promise<Group | null>>();
 
-/** The embedded model library: base64 of a raw-deflated GLB in an inert script block, decoded once. */
-export function loadLibrary(): Promise<Group | null> {
-  library ??= (async () => {
+/** The embedded model file (every vehicle): base64 of a raw-deflated GLB in an inert script block, inflated once. */
+function embedded(): Promise<ArrayBuffer | null> {
+  packed ??= (async () => {
     const text = document.getElementById('sea-models')?.textContent?.trim();
     if (!text) return null;
-    const packed = Uint8Array.from(atob(text), c => c.charCodeAt(0));
-    const glb = await new Response(new Blob([packed]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).arrayBuffer();
-    const gltf = await new GLTFLoader().parseAsync(glb, '');
-    return gltf.scene;
+    const binary = atob(text);
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+    return new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).arrayBuffer();
   })().catch(() => null);
+  return packed;
+}
+
+/**
+ * One vehicle's model: the group named by its file stem, holding its base and every part. Only that vehicle's
+ * geometry is parsed (vehicleGlb), the first time it is shown; it is then reused.
+ */
+export function loadVehicle(vehicle: string): Promise<Group | null> {
+  let library = libraries.get(vehicle);
+  if (!library) {
+    library = (async () => {
+      const file = await embedded();
+      const glb = file && vehicleGlb(file, vehicle);
+      if (!glb) return null;
+      return (await new GLTFLoader().parseAsync(glb, '')).scene;
+    })().catch(() => null);
+    libraries.set(vehicle, library);
+  }
   return library;
 }
 
