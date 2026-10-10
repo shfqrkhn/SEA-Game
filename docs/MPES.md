@@ -3,8 +3,8 @@
 | Field | Value |
 |---|---|
 | Document | Master Product and Engineering Specification (MPES) for the clean-room rebuild of **Systems Engineering Awareness (SEA Game)** |
-| Version | 2.3.0 |
-| Date | 2026-10-09 (America/Toronto) |
+| Version | 3.0.0 |
+| Date | 2026-10-10 (America/Toronto) |
 | Status | **ACCEPTED**. Owner delegated all remaining decisions and gates to the implementing agent on 2026-10-09 (§22) |
 | Supersedes | MPES 1.5.2 and every earlier handover, ledger, prompt and evidence packet for implementation purposes |
 | Owner | Repository owner (`shfqrkhn`) |
@@ -50,6 +50,7 @@ The product succeeds when, in a real classroom session:
 - **S4** No authoritative result is lost through a browser crash, reload or device swap when the documented backup procedure is followed.
 - **S5** Students never see another team's private plan or the hidden order of future lots through the application.
 - **S6** The game runs from one HTML file with no network.
+- **S7** The game looks and feels like a credible, immersive war-room simulation: a tactical HUD and photoreal vehicles and parts, without losing S1 to S6, accessibility (§12) or smooth play on integrated-graphics laptops (§14). Judged by the owner at the visual gates (§17). (Owner direction, 2026-10-10.)
 
 ### 1.3 Problem-versus-mechanism decisions (XY analysis)
 
@@ -61,8 +62,9 @@ The previous project often optimised the mechanism ("X") instead of the outcome 
 | Manual classroom handoffs; no backend, sync or accounts | FIT | Keep. |
 | Exact integer-cents money, canonical card data, independent rules oracle | FIT | Keep; re-implement cleanly (§6, Appendix A). |
 | Schema-3 saves and backup envelope | FIT | Keep import compatibility (§8). |
-| Entire interface (menus, forms, text editing) drawn inside a WebGL canvas | MISFRAMED | **Replace** with semantic HTML/CSS for every task. Subject to user confirmation, decision D-01 (§22). |
-| Mechanically realistic vehicle meshes (brake rotors, wipers, fasteners) | PROXY | **Replace** with a readable 3D "vehicle bay" that shows how each purchase changes the vehicle (§10). On 2026-10-09 the owner directed that the bay approach the archived concept renders in visual quality; fidelity serves recognisability of each part and never replaces the HTML task interface. |
+| Entire interface (menus, forms, text editing) drawn inside a WebGL canvas | MISFRAMED | **Replace** with semantic HTML/CSS for every task (D-01). The war-room HUD look (D-07) is styling on that HTML, never a canvas. |
+| Mechanically realistic real-time vehicle meshes (brake rotors, wipers, fasteners) | PROXY | **Replace** with **pre-rendered** photoreal images authored offline in Blender (D-08, D-09). Realism serves immersion (S7) and part recognition at no runtime GPU cost, so play stays smooth on integrated-graphics laptops. There is no runtime 3D. |
+| Hosting, CI and releases on GitHub | PARTIAL | GitHub is temporary human-QA space and will be deleted (D-13). The product is a local, hash-verified handoff package (§19.3) that depends on nothing hosted. |
 | Very large assurance apparatus (dozens of bespoke test scripts, dense evidence prose) | PARTIAL | Keep the rigour, cut the volume: standard test runners, plain-language handover, one requirement-to-test map (§15, §16). |
 | Classroom pilot with real learners | MISSING | **Add early** (milestone M4), before visual polish. |
 
@@ -76,9 +78,10 @@ The previous project often optimised the mechanism ("X") instead of the outcome 
 - Student companion: join, practice, private planning, per-lot tracking, own-purchase recording, build reconciliation, profit calculation, debrief view.
 - English and French throughout, switchable at any time without losing input.
 - Local persistence per browser tab, explicit JSON backup export/import, recovery from interruption.
-- A 3D vehicle bay that visualises each team's (or the selected) build.
-- 77 print-quality illustrations (70 cards, 6 vehicles, 1 practice card), embedded.
-- Build, test and release tooling; classroom quick-start and recovery guides (EN/FR).
+- A vehicle showcase of pre-rendered photoreal images that visualises each team's build (§10).
+- 77 photoreal subjects (70 cards, 6 vehicles, 1 practice card), embedded (§11).
+- A war-room HUD presentation for both roles (§7.1).
+- Build, test, render and packaging tooling; classroom quick-start and recovery guides (EN/FR); the handoff package (§19.3).
 
 ### 2.2 Out of scope (non-goals)
 
@@ -87,6 +90,8 @@ The previous project often optimised the mechanism ("X") instead of the outcome 
 - Enforcing a total team budget (willingness-to-pay is advisory, §6.7).
 - Any real, operational, classified or manufacturer-certified equipment data. All values are instructional.
 - Physics simulation, driving, combat or animation beyond what explains the build.
+- Real-time 3D rendering in the runtime (D-08).
+- Any dependency on GitHub (Pages, Releases, Actions, links) in the delivered product or its documentation (D-13).
 - Alternative rule sets, deck editors, or rule balancing. Rules are frozen (§6); changing them needs a new MPES version.
 - Native mobile/desktop app packaging.
 - Support or testing on any operating system other than Windows 11 (for example macOS, ChromeOS, iPadOS, iOS, Android or Linux), and Safari. The file may open elsewhere, but nothing is claimed or tested there (§4.3).
@@ -97,7 +102,7 @@ The previous project often optimised the mechanism ("X") instead of the outcome 
 
 | ID | Constraint |
 |---|---|
-| C-01 | The runtime distribution is **exactly one file**, `dist/index.html`, containing all code, styles, data, fonts (if any), illustrations and 3D assets. |
+| C-01 | The runtime distribution is **exactly one file**, `dist/index.html`, containing all code, styles, data, fonts (if any) and images. It is at most 50 MB (§14). |
 | C-02 | **STRICT_OFFLINE**: every supported journey works when the file is opened via `file://` with networking disabled. The runtime makes **no** network request of any kind (HTTP(S), WebSocket, WebRTC, beacons, prefetch, remote fonts/images). |
 | C-03 | Both roles (Instructor, Student) and both languages (EN, FR) live in the same file. One role runs per browser tab. |
 | C-04 | No backend, synchronisation, account, secret or credential. |
@@ -141,7 +146,7 @@ Owner decision 2026-10-10 (D-03): **Windows 11 only**, for both roles. Frozen at
 
 There is no Tier 2. Other operating systems and Safari are out of scope (§2.2); the unsupported-browser notice (§9) names only the supported browsers.
 
-HTTPS delivery (for example GitHub Pages) serves the identical file; the app still makes no network requests after loading.
+HTTPS delivery (any static host the school chooses; GitHub Pages is temporary QA only, D-13) serves the identical file; the app still makes no network requests after loading.
 
 ---
 
@@ -150,7 +155,7 @@ HTTPS delivery (for example GitHub Pages) serves the identical file; the app sti
 ### 5.1 Profile and class
 
 - **Runtime profile:** STRICT_OFFLINE (C-02).
-- **Delivery class:** Engineered. It is justified by two roles, money, an audit ledger, persistent state, bilingual content and 3D rendering. Keep it **lean**: standard tools, few files and no bespoke frameworks.
+- **Delivery class:** Engineered. It is justified by two roles, money, an audit ledger, persistent state, bilingual content and embedded photoreal imagery. Keep it **lean**: standard tools, few files and no bespoke frameworks.
 
 ### 5.2 Layering
 
@@ -160,9 +165,11 @@ source/
   app/           Role controllers: apply domain commands, own state, call ports.
   ports/         Clock, entropy, storage, file download/upload, renderer. Thin adapters.
   ui/            Semantic HTML/CSS views per role and phase; i18n; dialogs.
-  bay/           Three.js vehicle bay (optional enhancement; §10).
+  showcase/      Vehicle showcase: stacked pre-rendered image layers (§10). No runtime 3D.
   content/       Canonical data (Appendix A), strings EN/FR, illustration manifest.
-  build/         Build script that inlines everything into dist/index.html.
+  build/         Build script that inlines everything into dist/index.html, and the packager (§19.3).
+art/
+  blender/       Blender scripts that author and render all imagery offline (§11). Never shipped.
 tests/
   unit/          Domain and app tests (Vitest).
   e2e/           Browser journeys against the built file (Playwright).
@@ -174,7 +181,7 @@ Rules:
 - **R-ARCH-1** `domain/` is pure: given the same inputs it returns the same outputs and performs no effects. Time and entropy enter only as arguments.
 - **R-ARCH-2** Every state change is a **command** that validates the whole current state, computes the complete next state, and only then lets the controller commit, save and render. A rejected command changes nothing.
 - **R-ARCH-3** One state owner per role. The UI renders from state; it never holds the only copy of a value.
-- **R-ARCH-4** One renderer for the 3D bay, created lazily, disposed on role exit. It never owns or changes game state.
+- **R-ARCH-4** The vehicle showcase only composes embedded images. It never owns or changes game state. There is no runtime 3D renderer (D-08).
 - **R-ARCH-5** All source is TypeScript under `strict`, `noUncheckedIndexedAccess` and `exactOptionalPropertyTypes`. There is no unchecked JavaScript source.
 - **R-ARCH-6** Text entered by users is set with `textContent` or `value`, never parsed as HTML (C-11).
 
@@ -196,17 +203,18 @@ Rules:
 | Property tests | fast-check (optional) | Money, ledger replay and invariants. |
 | Browser tests | Playwright (Chromium, Firefox, and the Microsoft Edge installed with Windows) | Run against `dist/index.html` over `file://`. |
 | Accessibility scan | axe-core via Playwright | Automated part only; manual checks still needed (§12). |
-| 3D | three.js (single runtime dependency) | Tree-shaken import; embedded. |
+| Imagery | Blender LTS (exact version pinned, portable, verified SHA-256) and an AVIF/WebP encoder | Offline authoring and rendering only (§11), never a runtime dependency. Scripts in `art/blender/`; outputs committed in `content/renders/`. The runtime has no third-party dependency. |
 
 A different tool is acceptable only if it is qualified in M1 against the same tasks, and the reason is recorded in the handover.
 
 ### 5.5 Build
 
-- `npm ci` then `npm run build` produces `dist/index.html` and nothing else in `dist/`.
-- Builds are **deterministic**. The same inputs give byte-identical output on every Windows 11 machine and CI run, whatever the checkout's line-ending settings. Line endings are LF, enforced by `.gitattributes`.
-- The build computes SHA-256 hashes for the inline script and style and writes the Content-Security-Policy meta tag (§13.1).
-- The build fails if a required licence notice, illustration, string key or card is missing.
-- `npm run build -- --check` rebuilds in memory and fails if the committed `dist/index.html` differs.
+- `npm ci` then `npm run build` produces `dist/index.html` and nothing else in `dist/`. `dist/` is not committed (D-12).
+- Builds are **deterministic**. The same inputs give byte-identical output on every Windows 11 machine and CI run, whatever the checkout's line-ending settings. Line endings are LF, enforced by `.gitattributes`; images are binary.
+- The build embeds each image once as a `data:` URI, computes SHA-256 hashes for the inline script and style and writes the Content-Security-Policy meta tag (§13.1).
+- The build fails if a required licence notice, image, manifest entry, string key or card is missing, or if a manifest hash does not match its file.
+- `npm run check` builds twice and fails unless the two outputs are byte-identical.
+- `npm run package` assembles the handoff package (§19.3).
 
 ---
 
@@ -410,8 +418,8 @@ Team 1, mission TROOP, with effective purchases totalling CAP 18, MOB 180, FP 4,
 - **Progressive depth.** *Immediate*: phase, position, next action. *Working*: the controls and data for the current task. *Deep*: rules, history, settings, recovery, notices.
 - **Minimal clicks** for the live auction: one keystroke or click per bid acceptance; keyboard shortcuts shown on screen.
 - **Plain HTML/CSS** for all controls and text, with native form elements, `<dialog>` for confirmations, and one `aria-live` status region per view.
-- **Content-native visual design.** Typography, alignment and subject imagery come first. Avoid decorative KPI cards, gradients, glass effects, pill overload and identical card grids.
-- **One design system** shared by both roles: colour tokens, type scale, spacing, focus style, and light/dark that follows the system with a manual override.
+- **War-room HUD design language (D-07).** A dark, tactical command-centre look (framed panels, grid and map textures, monospaced numeric readouts, restrained glow accents and photoreal imagery) applied as CSS on semantic HTML. Decoration never carries information on its own, never lowers contrast below §12 and never animates under `prefers-reduced-motion`. Visual references are inspiration only; nothing is copied.
+- **One design system** shared by both roles: colour tokens, type scale, spacing, focus style, a dark HUD theme and a projector-safe light theme with a manual override.
 
 ### 7.2 Instructor console
 
@@ -598,7 +606,7 @@ Each of these has a designed, localised, accessible state. Core play never depen
 
 | Condition | Behaviour |
 |---|---|
-| WebGL unavailable or context lost | The bay shows a static illustration of the vehicle and a text summary; it retries on context restore. No game impact. |
+| Showcase image not yet decoded | A placeholder frame of the same size and the text list of installed parts; no layout shift. No game impact. |
 | Storage denied, throwing or full | Persistent warning, play continues in memory, export emphasised. |
 | Download blocked | Explain; offer copy-to-clipboard of the backup JSON as a fallback. |
 | Invalid, oversized, wrong-role or other-session import | Specific message; no change. |
@@ -609,46 +617,44 @@ Each of these has a designed, localised, accessible state. Core play never depen
 
 ---
 
-## 10. Vehicle bay (3D)
+## 10. Vehicle showcase (pre-rendered)
 
 ### 10.1 Purpose
 
-Make the build tangible: the selected mission's base vehicle visibly gains or changes parts as purchases are recorded. A learner can tell at a glance "we have a weapon station, light armour and a radio mast". The bay is a teaching aid, not the interface.
+Make the build tangible: the selected mission's base vehicle visibly gains parts as purchases are recorded. A learner can tell at a glance "we have a weapon station, light armour and a radio mast". The showcase is a teaching aid and the centrepiece of the war-room look (S7); it is not the interface.
 
 ### 10.2 Requirements
 
-- Six base vehicles, one per mission, in one high-fidelity art direction inspired by the archived concept renders (owner direction, 2026-10-09; inspiration only, nothing copied): matte olive drab with physically based materials (paint with subtle wear variation, rubber, gunmetal, steel, glass, emissive lamps), bevelled/chamfered hulls, treaded off-road tyres with dished rims, visible detail (lamps with guards, grilles, mirrors, rails, hatches, bolts, cables), studio image-based lighting with filmic tone mapping, one soft-shadowed key light, a contact shadow and ambient occlusion. Silhouettes stay readable at 320 px wide.
-- Each card category maps to visible attachment points (CAPACITY → hull modules; MOBILITY → running gear/powerpack; FIREPOWER → mounts; PROTECTION → armour panels; COMMS → antennas; SA → sensor masts/optics; ACCESSORIES → kits/trailer/winch/plough; SE_PROCESS → no geometry, shown as process badges beside the vehicle).
-- Each of the 70 cards has a recognisable but simple part or a defined variant of a category part. Parts fit their mount points without visible intersection.
-- Controls: orbit, zoom and reset view by pointer, touch and keyboard. There is no free camera and no exploded view (owner decision 2026-10-09: the purchases list already names every part).
-- Rendering on demand only: render when state, view or size changes. There is no continuous loop.
-- Fixed lighting, one shadow-casting light. Shadows must be correct. Quality is progressive: a fast frame is drawn immediately; ambient occlusion is added once the view settles (one deferred frame, no loop).
-- Labels and a text list of installed parts are always available outside the canvas.
-- The canvas has `role="img"` with an accessible name summarising the build.
+- Six original, fictional base vehicles, one per mission, rendered offline in Blender (D-08, D-09) in one photoreal art direction: matte olive drab, physically based materials with wear, studio lighting suited to a HUD backdrop. Silhouettes stay readable at 320 px wide. No real equipment is depicted.
+- Per vehicle: one hero still, a turntable of evenly spaced frames, and a small fixed set of build angles. The spike (§17, V1) fixes the counts; the starting point is 24 frames and 2 angles.
+- **Build composition.** For each build angle the showcase stacks the base vehicle image and one transparent layer per installed part. Every layer is rendered from the same camera, with the hull held out and a shadow and ambient-occlusion catcher, so stacked layers occlude correctly and cast contact shadows. Draw order comes from the manifest (§11).
+- Each card category maps to visible attachment points (CAPACITY → hull modules; MOBILITY → running gear/powerpack; FIREPOWER → mounts; PROTECTION → armour panels; COMMS → antennas; SA → sensor masts/optics; ACCESSORIES → kits/trailer/winch/plough; SE_PROCESS → no geometry, shown as HUD process badges).
+- Each of the 70 cards has a recognisable part, a photoreal card render and a layer for every vehicle and build angle.
+- Controls: change angle and scrub the turntable by pointer, touch and keyboard. No autoplay; under `prefers-reduced-motion` the turntable does not animate.
+- No runtime 3D, WebGL, canvas drawing or animation loop.
+- A text list of installed parts is always available. The composed image has `role="img"` and an accessible name summarising the build.
 
-### 10.3 Budgets (revised 2026-10-09 for the high-fidelity direction)
+### 10.3 Budgets (set at the visual spike, V1)
 
 | Metric | Budget |
 |---|---|
-| Triangles per fully equipped vehicle | ≤ 250,000 |
-| Meshes (draw calls) per vehicle | ≤ 150 (parts are merged per material) |
-| Bay first render after open, hardware GPU | ≤ 1,000 ms on the Tier 1 reference machine |
-| Bay first render, software rendering (no GPU) | recorded, not enforced; residual risk on GPU-less devices |
-| Memory added by the bay | ≤ 150 MB |
-| Bay code + geometry in HTML | ≤ 1.5 MB |
+| All embedded imagery | ≤ 40 MB of the 50 MB file (§14) |
+| Showcase update after a purchase is recorded | ≤ 100 ms (p95), reference profile (§14) |
+| Turntable or angle change | ≤ 50 ms, reference profile |
+| Memory added by decoded images | ≤ 250 MB |
 
-Geometry is generated procedurally in code or embedded as compact glTF/binary converted to base64 at build. No external model fetch.
+Renders are reproducible: pinned Blender version, fixed seeds, sample counts and cameras. Renders are committed with their SHA-256 in the manifest; a re-render that changes bytes is a deliberate, reviewed change.
 
 ---
 
-## 11. Content and illustrations
+## 11. Content and imagery
 
-- 77 illustrations: 70 cards (Appendix A IDs), 6 vehicles (`combat`, `recce`, `troop-carrier`, `command-post`, `recovery`, `mine-clearing`) and 1 practice card (`TRAIN-CAP`).
-- Format: SVG, sanitised (no scripts, no external references, no `foreignObject`), embedded once in the HTML and reused. Each has localised alt text derived from the card title.
-- Source (decision D-02): **new original illustrations authored for this rebuild** by the implementing agent, released under the project MIT licence, in one visual style shared with the vehicle bay (§10). The previous illustrations are not reused, so no third-party or unresolved rights apply to the art.
-- Size budget for all embedded illustrations: target ≤ 4 MB (the previous pack was ~7 MB; optimise paths and precision).
-- Illustrations never drive rules. A mismatch between art and data is a content defect.
-- All content stays fictional and instructional (no real equipment names, manufacturers, ratings or operational data).
+- 77 subjects: 70 cards (Appendix A IDs), 6 vehicles (`combat`, `recce`, `troop-carrier`, `command-post`, `recovery`, `mine-clearing`) and 1 practice card (`TRAIN-CAP`). Each card has a photoreal card render; each vehicle has the showcase set of §10.
+- Format: AVIF or WebP, chosen at the spike by measured quality and size, embedded once as `data:` URIs and reused. `content/renders/manifest.json` lists every file with id, kind, vehicle, angle, draw order, bytes, SHA-256 and EN/FR alt text derived from the card or mission title.
+- Source (D-09, superseding the SVG art of D-02): **original imagery authored by the implementing agent** with Blender scripts in `art/blender/`, released under the project MIT licence. Blender's own licence does not extend to its renders. Third-party models or textures are used only if their licence allows embedding and redistribution, and they are listed in THIRD_PARTY_NOTICES.md; procedural or CC0 material is preferred.
+- Size budget for all embedded imagery: ≤ 40 MB.
+- Imagery never drives rules. A mismatch between imagery and data is a content defect.
+- All content stays fictional and instructional (no real equipment names, manufacturers, ratings or operational data). Visual references are inspiration only.
 
 ---
 
@@ -665,7 +671,7 @@ Geometry is generated procedurally in code or embedded as compact glTF/binary co
   - target size of at least 24×24 px (44×44 preferred for live auction controls);
   - `prefers-reduced-motion` respected;
   - status and error messages via live regions;
-  - every chart and the 3D bay paired with a text or table equivalent;
+  - every chart and the vehicle showcase paired with a text or table equivalent;
   - `lang` attributes switch with language.
 - Timer: TIMED mode is controlled by the instructor (pause/extend). Students are never subject to a time limit in their own app.
 - Narrow windows and high zoom: dialogs stay within the visual viewport, including when the Windows touch keyboard is shown.
@@ -678,31 +684,33 @@ Geometry is generated procedurally in code or embedded as compact glTF/binary co
 
 ```
 default-src 'none'; script-src 'sha256-<hash>'; style-src 'sha256-<hash>';
-img-src data: blob:; font-src data:; connect-src 'none'; object-src 'none';
+img-src data: blob:; font-src 'none'; connect-src 'none'; object-src 'none';
 frame-src 'none'; worker-src 'none'; base-uri 'none'; form-action 'none'
 ```
 
-Add only what is demonstrated necessary, for example `worker-src blob:` if a worker is qualified. Record the reason in the handover. Note that meta CSP cannot enforce `frame-ancestors` or reporting; do not claim them.
+Add only what is demonstrated necessary: `font-src data:` only if an embedded OFL font is used (D-07), `worker-src blob:` only if a worker is qualified. Record the reason in the handover. Note that meta CSP cannot enforce `frame-ancestors` or reporting; do not claim them.
 
 ### 13.2 Rules
 
 - Imported and typed text is inert data (C-11). Unicode is preserved exactly; no normalisation that changes stored text.
-- External links (for example to the licence text) use `rel="noopener noreferrer"` and are optional references, never runtime dependencies.
+- External links (for example to the licence text) use `rel="noopener noreferrer"` and are optional references, never runtime dependencies. Nothing in the app, guides or handoff package links to GitHub (D-13).
 - No `localStorage`, cookies or IndexedDB. Only `sessionStorage` (§8.1).
 - The privacy notice in Help states plainly what is stored, where and for how long, and what an export contains.
 - A public static HTML file is inspectable by anyone. Do not describe the market seed as secret from a technically skilled student; the guarantee is that the **student UI and exports** never show it (C-08).
 
 ---
 
-## 14. Performance budgets (provisional; calibrated at M5 on the reference laptop)
+## 14. Performance budgets (calibrated at the visual spike, V1)
+
+**Reference profile (D-11):** a Windows 11 laptop with integrated graphics running current Chrome. In automation, Chromium with 4× CPU throttling stands in for it, and a WARP (software-rendered) run is recorded. Measurements on a physical integrated-graphics laptop are residual risk until made.
 
 | Metric | Target |
 |---|---|
-| `dist/index.html` size | ≤ 8 MB hard limit; target ≤ 6 MB |
-| Time to interactive, chooser | ≤ 1.5 s |
-| Time to interactive, role with maximum saved state | ≤ 3 s |
+| HTML file size | ≤ 50 MB hard limit; target ≤ 40 MB |
+| Time to interactive, chooser | ≤ 2 s, reference profile (confirmed or revised at V1 from measurements) |
+| Time to interactive, role with maximum saved state | ≤ 3 s, reference profile |
 | Command response (click to rendered result) | ≤ 100 ms (p95) |
-| Memory after a full 70-lot, 10-team session | ≤ 300 MB, no growth across 10 phase cycles |
+| Memory after a full 70-lot, 10-team session | ≤ 400 MB including decoded images, no growth across 10 phase cycles |
 
 ---
 
@@ -712,7 +720,7 @@ Each requirement must be **accepted** for a release (§21). Acceptance evidence 
 
 | ID | Requirement | Evidence |
 |---|---|---|
-| RQ-01 | Single `dist/index.html`; works via `file://` offline in Tier 1 browsers for both roles. | E, M |
+| RQ-01 | Single HTML file (≤ 50 MB); works via `file://` offline in Tier 1 browsers for both roles. | E, M |
 | RQ-02 | No runtime network egress, observed at the OS level (not only browser interception). | M |
 | RQ-03 | All eight phases with exact guards (§6.1) for both roles. | U, E |
 | RQ-04 | Canonical data equals Appendix A; deal equals Appendix B vectors. | U |
@@ -733,19 +741,21 @@ Each requirement must be **accepted** for a release (§21). Acceptance evidence 
 | RQ-19 | Complete EN/FR; switching keeps input; French typography. | U, M |
 | RQ-20 | WCAG 2.2 AA for the declared scope (§12). | E (axe), M |
 | RQ-21 | Desktop and narrow-window layouts on Windows 11; 320 px reflow; 400% zoom. | E, M |
-| RQ-22 | Vehicle bay requirements and budgets; WebGL fallback (§10, §9). | E, M |
-| RQ-23 | 77 illustrations embedded, sanitised, mapped and alt-texted (§11). | U, M |
+| RQ-22 | Vehicle showcase requirements and budgets; correct layer composition (§10). | E, M |
+| RQ-23 | 77 photoreal subjects embedded, mapped by a hashed manifest and alt-texted (§11). | U, M |
 | RQ-24 | CSP and code-safety rules (§13); no unsafe sinks (lint rule). | U |
-| RQ-25 | Deterministic, reproducible build on Windows (§5.5). | CI |
+| RQ-25 | Deterministic, reproducible build: two builds byte-identical (§5.5). | U, CI |
 | RQ-26 | Performance budgets (§14). | M |
 | RQ-27 | Third-party notices complete and visible in-app. | U, M |
 | RQ-28 | Degraded states (§9). | E |
 | RQ-29 | Classroom pilot meets S1 to S5 (§16.6). | P |
 | RQ-30 | Operator documentation: quick start, recovery, release/rollback (§19). | M |
+| RQ-31 | Immersive war-room presentation (S7): HUD on every view; owner GO at the visual gates (§17). | E, M |
+| RQ-32 | Handoff package complete, hash-verified and self-sufficient without GitHub (§19.3). | U, M |
 
 Gates outside the code:
 
-- **G-RIGHTS**: closed by D-02. All code and art are original MIT work; bundled third-party code is covered by RQ-27.
+- **G-RIGHTS**: closed by D-09. All code and imagery are original MIT work; any third-party material is covered by RQ-27.
 - **G-CONTENT**: full EN/FR language and suitability review performed by the implementing agent (owner-delegated substitute for a human review), recorded in `docs/verification/<version>.md`.
 - **G-PILOT**: RQ-29, met by the owner-delegated substitute in §16.6.
 
@@ -779,6 +789,7 @@ Gates outside the code:
 - **J5**: privacy: inspect the student DOM, accessibility tree, exports and console at each phase for forbidden data.
 - **J6**: accessibility: axe on every view at 1280×720 and in a narrow 375 px window in both languages; keyboard-only run of J3.
 - **J7**: network: every journey runs with all requests failed. The test fails if any request is attempted.
+- **J8**: visual: screenshot baselines of every phase view in both roles and of every vehicle angle (Chromium, Windows).
 
 ### 16.4 Manual checks (recorded in `docs/verification/<version>.md`)
 
@@ -786,22 +797,21 @@ Gates outside the code:
 - Screen-reader and device substitute (owner-delegated): accessibility-tree snapshots of every view, axe scans, keyboard-only journeys, and Playwright runs in Chrome (Chromium), Edge and Firefox on Windows 11 for the §4.3 matrix. Real screen-reader (Narrator, NVDA) and physical-device runs are residual risk.
 - OS-level egress: observe with tools already present on the machine and usable without installation; if none is usable, record BLOCKED.
 - Performance measurements (§14).
-- Visual review of all 77 illustrations and the six vehicles with every category installed.
+- Visual review of all 77 subjects and the six vehicles with every category installed.
 
-### 16.5 CI
+### 16.5 CI (temporary, D-13)
 
-GitHub Actions on Windows (hosted runners are Windows Server, the closest available image; Windows 11 evidence comes from local runs), Node current and previous LTS:
+While the GitHub repository exists, GitHub Actions on Windows (hosted runners are Windows Server; Windows 11 evidence comes from local runs), Node current and previous LTS:
 
 1. `npm ci`
 2. typecheck
 3. lint
 4. unit tests
-5. build `--check`
+5. build twice and compare (`npm run check`), including the size and notice checks
 6. Playwright (Chromium, Firefox and Edge on current LTS; Chromium on previous LTS)
-7. bundle-size check
-8. notice check
+7. on `main`: deploy the built file to GitHub Pages for human QA
 
-Actions are pinned by commit SHA, with read-only permissions.
+Actions are pinned by commit SHA, with read-only permissions except the Pages deployment. Local `npm run verify` is authoritative and is the only verification once the repository is deleted. Evidence is recorded in `docs/verification/` as text, never as links to CI runs.
 
 ### 16.6 Classroom pilot (G-PILOT)
 
@@ -821,20 +831,21 @@ Actions are pinned by commit SHA, with read-only permissions.
 
 ## 17. Delivery plan
 
-Each milestone ends with a tagged commit, green CI and an updated handover.
+Each milestone ends with a tagged commit, green CI (while GitHub exists) and an updated handover. M0 to M4 are complete. The 2.x milestone M5 (WebGL bay and SVG art) is superseded by V1 and V2.
 
 | Milestone | Content | Exit criteria |
 |---|---|---|
-| **M0 Bootstrap** | Repository skeleton (§18), tooling pinned, CI, licence, `.gitattributes`, empty chooser page built into `dist/index.html`, CSP generation, size check. Support matrix confirmed. | CI green on both OSes; `file://` chooser opens offline in the three engines. |
-| **M1 Domain** | All of §6 in `domain/`, Appendix A/B data, schema-3 validators, backup envelope, fixtures cross-checked against the previous app. | RQ-04, 05, 08, 09, 17 unit-accepted; coverage ≥ 95% lines for `domain/`. |
-| **M2 Vertical slice** | Instructor and student roles end-to-end in plain HTML for **one round** (10 lots), persistence, export/import, EN/FR, one confirmation dialog, a placeholder bay showing one vehicle. | Slice journey passes in three engines via `file://`; offline; no requests; axe clean on slice views. Record go/no-go for architecture. |
-| **M3 Full game** | All 70 lots, all phases, all commands, all confirmations, private entry, debrief, award, all degraded states, teaching aids. | J1 to J5, J7 green; RQ-03, 06, 07, 10 to 16, 18, 28 accepted. |
-| **M4 Pilot** | Classroom quick start (EN/FR), recovery guide; pilot session (§16.6). | G-PILOT pass or backlog created and scheduled; RQ-29 status recorded. |
-| **M5 Bay and art** | Full vehicle bay (§10), all illustrations integrated and optimised, budgets measured. | RQ-22, 23, 26 accepted. |
-| **M6 Hardening** | Accessibility manual passes, device matrix, egress observation, notices, security review, content review. | RQ-01, 02, 19, 20, 21, 24, 25, 27 accepted; G-CONTENT pass. |
-| **M7 Release** | Freeze, three release passes (§21), publish, docs (RQ-30). | §21 satisfied; release recorded. |
+| **M0 Bootstrap** | Repository skeleton (§18), tooling pinned, CI, licence, `.gitattributes`, empty chooser page built into `dist/index.html`, CSP generation, size check. Support matrix confirmed. | Done. |
+| **M1 Domain** | All of §6 in `domain/`, Appendix A/B data, schema-3 validators, backup envelope, fixtures cross-checked against the previous app. | Done. |
+| **M2 Vertical slice** | Both roles end-to-end in plain HTML for one round, persistence, export/import, EN/FR. | Done. |
+| **M3 Full game** | All 70 lots, all phases, all commands, all confirmations, private entry, debrief, award, all degraded states, teaching aids. | Done. |
+| **M4 Pilot** | Classroom quick start (EN/FR), recovery guide; pilot substitute (§16.6). | Done (substitute). |
+| **V1 Visual spike** | MPES 3.0.0; pinned Blender toolchain; RECOVERY vehicle and 3 parts (hero still, turntable, 2 build angles with layers, card renders); AVIF vs WebP; HUD prototype of the instructor live lot and student tracker; size and speed measurements. | Spike on Pages for QA; `docs/verification/spike-visual.md`; **owner GO or NO-GO**. |
+| **V2 Visual production** | All 77 subjects, the showcase, the HUD on every view, three.js removed, `dist/` no longer committed, Pages deployed by CI. | RQ-22, 23, 26, 31 accepted. |
+| **M6 Hardening** | Accessibility manual passes, Windows 11 matrix, egress observation, notices, security review, content review, packager. | RQ-01, 02, 19 to 21, 24, 25, 27, 32 accepted; G-CONTENT pass. |
+| **M7 Release** | Freeze, three release passes on the package (§21), docs (RQ-30), handoff. | §21 satisfied; package delivered to the owner. |
 
-The previous application (3.6.0) remains the **rollback** until the rebuild reaches M7.
+4.1.0-dev.1 (tag `v4.1.0-dev.1`) remains the rollback until M7 and ships in the package's `rollback/` folder.
 
 ---
 
@@ -842,19 +853,21 @@ The previous application (3.6.0) remains the **rollback** until the rebuild reac
 
 ```
 /                      repository root = D:\VSCode\SEA-Game
-  .github/workflows/ci.yml
+  .github/workflows/ci.yml   temporary CI and Pages QA deployment (D-13)
   .gitattributes       LF everywhere; binary for images
-  .gitignore           node_modules/, .artifacts/, test-results/
+  .gitignore           node_modules/, .artifacts/, test-results/, dist/, handoff/
   LICENSE              MIT, original code
   THIRD_PARTY_NOTICES.md
-  README.md            what it is, play link, build/test commands, links to docs
+  README.md            what it is, how to open it, build/test/package commands, links to docs
   AGENTS.md            agent working rules (§20), short
   CLAUDE.md            one line pointing to AGENTS.md and docs/HANDOVER.md
   package.json, package-lock.json, tsconfig.json, eslint config, playwright config, vitest config
   source/              §5.2
-  content/             cards.json (Appendix A), missions.json, strings.en.json, strings.fr.json, illustrations/*.svg, manifest.json
+  content/             cards.json (Appendix A), missions.json, strings.en.json, strings.fr.json, renders/ (images and manifest.json)
+  art/blender/         Blender scripts for all imagery (§11)
   tests/               unit/, e2e/, fixtures/
-  dist/index.html      generated, committed for Pages and download
+  dist/index.html      generated, not committed (D-12)
+  handoff/             generated handoff packages (§19.3), not committed
   docs/
     MPES.md            this file
     HANDOVER.md        current state and next actions (§19)
@@ -892,25 +905,30 @@ Update it at each milestone, on a failed gate, before stopping work, and before 
 - Patch: fixes with no behaviour change to rules or saves. Minor: compatible features. Major: interface or architecture change, or any save-format change (which also requires a migration and a new schema number).
 - The version is shown in the app (Help → About) and embedded in exports as `appVersion`.
 
-### 19.3 Release
+### 19.3 Release (local handoff package, D-13)
 
 1. Freeze (§21).
-2. Tag `v<version>`.
-3. Publish `dist/index.html` to GitHub Pages and as a release asset with its SHA-256.
-4. Verify that the published bytes match.
-5. Record the evidence in `docs/verification/<version>.md`.
+2. Tag `v<version>` in the local repository.
+3. `npm run package` builds `handoff/SEA-Game-<version>/`:
+   - `SEA-Game-<version>.html` and `SHA256SUMS.txt`;
+   - `START-HERE.md` (EN/FR: open the file, verify the hash, back up a session);
+   - `guides/` (quick start and recovery, EN/FR), `LICENSE`, `THIRD_PARTY_NOTICES.md`;
+   - `rollback/` (the previous accepted release HTML);
+   - `maintenance/`: a git bundle with full history, a source snapshot, this MPES, HANDOVER, RELEASE and verification documents, and `toolchain.md` (Node, npm, Blender and browser versions with download URLs and SHA-256).
+4. Verify `SHA256SUMS.txt`, open the HTML offline from the package, and confirm nothing in the package links to GitHub.
+5. Record the evidence as text in `docs/verification/<version>.md`.
 
-Publishing requires the owner's standing authorisation for this repository (§20).
+GitHub Pages and GitHub Releases are not part of a release. Deleting the GitHub repository is the owner's action.
 
 ### 19.4 Rollback and support
 
-- Keep the previous accepted release downloadable.
-- Rollback is a re-publish of that file; saves stay compatible within schema 3.
-- Support path: the user reports → reproduce with the reporter's backup (with consent; synthetic if possible) → regression test → fix → requalify affected gates → release.
+- The package keeps the previous accepted release in `rollback/`.
+- Rollback means distributing that file; saves stay compatible within schema 3.
+- Support path: the user reports → reproduce with the reporter's backup (with consent; synthetic if possible) → regression test → fix → requalify affected gates → new package.
 
 ### 19.5 Retirement
 
-Announce, keep the last version downloadable with its guides for at least one school year, keep the import path documented, then archive the repository read-only.
+Announce, keep the last package and its guides available for at least one school year, keep the import path documented, then archive the package (including its git bundle) read-only.
 
 ---
 
@@ -918,7 +936,7 @@ Announce, keep the last version downloadable with its guides for at least one sc
 
 - Begin every session with `docs/HANDOVER.md`, `git status` and `git log -5`. Reconcile actual state before editing.
 - If another writer has uncommitted changes, do not overwrite them; coordinate or wait.
-- Standing authority (from the owner) covers: editing within this repository, running local builds and tests, commits, pushes to feature branches, pull requests, and merges/publication **after green CI**. It does not cover: anything outside `D:\VSCode\SEA-Game`, other repositories or services, deleting history, force-pushing `main`, spending money, or sharing private data.
+- Standing authority (from the owner) covers: editing within this repository, running local builds and tests, commits, pushes to feature branches, pull requests, and merges/publication **after green CI**. It does not cover: anything outside `D:\VSCode\SEA-Game`, other repositories or services, deleting history, force-pushing `main`, spending money, sharing private data, or deleting the GitHub repository or `_archive/` (owner actions only).
 - Use subagents only with explicit, non-overlapping file ownership. The integrating agent owns `dist/`, docs and merges.
 - Keep writes finite: no watchers or servers left running (C-14). Scratch output goes to `.artifacts/` only (C-13).
 - Report honestly: say what ran, what passed, what failed, and what was not run (`NOT_RUN`) or could not be run (`BLOCKED`). Never claim acceptance without evidence.
@@ -946,7 +964,8 @@ Announce, keep the last version downloadable with its guides for at least one sc
    - build parameters;
    - tool and browser versions;
    - device list;
-   - `dist/index.html` SHA-256.
+   - render manifest hash and Blender version;
+   - built HTML and handoff package SHA-256 (`SHA256SUMS.txt`).
 2. Run **three consecutive fresh full passes** on that same key. Each pass reruns all automated suites and the manual checks that depend on the bytes (egress, a screen-reader smoke test, device smoke), with no changes in between.
 3. Any change to a key input, a failure, a flaky result or a skipped mandatory check resets the count to 0 of 3.
 4. Record each pass (date, environment, results) in `docs/verification/<version>.md`.
@@ -954,16 +973,23 @@ Announce, keep the last version downloadable with its guides for at least one sc
 
 ---
 
-## 22. Decisions (decided 2026-10-09 under owner delegation)
+## 22. Decisions (decided 2026-10-09 under owner delegation; amended by the owner 2026-10-10)
 
 | ID | Decision | Outcome |
 |---|---|---|
-| D-01 | Interface technology | Semantic HTML/CSS for all tasks plus a Three.js vehicle bay (§5, §7, §10). |
-| D-02 | Illustrations | New original agent-authored SVGs, MIT, one style shared with the bay (§11). The rights gate is closed. |
+| D-01 | Interface technology | Semantic HTML/CSS for all tasks; vehicles shown by pre-rendered images (D-08). Three.js removed. |
+| D-02 | Illustrations | Superseded by D-09 (2026-10-10). |
 | D-03 | Support matrix | Windows 11 only: current Chrome, Edge and Firefox, both roles (owner decision 2026-10-10; §4.3). |
-| D-04 | GitHub Pages hosting | Yes, in addition to download. |
+| D-04 | GitHub Pages hosting | Temporary human QA only (D-13). |
 | D-05 | Pilot | Owner-delegated scripted classroom rehearsal (§16.6). |
 | D-06 | Projector view | Not in 5.0; private entry mode covers projection safety. |
+| D-07 | Visual language | War-room HUD as CSS on semantic HTML, never UI drawn in a canvas (§7.1). Owner, 2026-10-10. |
+| D-08 | 3D realism | Photoreal, pre-rendered only; no runtime WebGL; Three.js removed (§10). Owner, 2026-10-10. |
+| D-09 | Imagery source | Agent-built in a pinned Blender LTS: original, fictional, MIT (§11). Owner, 2026-10-10. |
+| D-10 | File size | Single HTML ≤ 50 MB hard limit, ≤ 40 MB target (§14). Owner, 2026-10-10. |
+| D-11 | Minimum hardware | Smooth on integrated-graphics Windows 11 laptops (§14). Owner, 2026-10-10. |
+| D-12 | Build outputs | `dist/` not committed; `npm run check` compares two builds; CI deploys Pages for QA (§5.5, §18). |
+| D-13 | GitHub | Temporary human-QA space, deleted by the owner at the end. The product is a local handoff package; nothing shipped or documented depends on GitHub (§19.3). Owner, 2026-10-10. |
 
 ---
 
@@ -979,7 +1005,8 @@ Announce, keep the last version downloadable with its guides for at least one sc
 | Compliance | All mission minimums met |
 | Score | Mission-specific excess-capability points (§6.7) |
 | Private entry mode | Instructor mode for recording submissions, not to be projected |
-| Vehicle bay | The 3D view of a team's build |
+| Vehicle showcase | Layered pre-rendered images of a team's build (§10) |
+| Handoff package | The delivered release folder: HTML, hashes, guides, rollback and maintenance material (§19.3) |
 | Key (convergence key) | The frozen set of inputs that identifies a release candidate |
 
 ---
@@ -988,6 +1015,7 @@ Announce, keep the last version downloadable with its guides for at least one sc
 
 | Version | Date | Change |
 |---|---|---|
+| 3.0.0 | 2026-10-10 | Owner decisions D-07 to D-13: war-room HUD (S7, §7.1); photoreal pre-rendered imagery authored in Blender replaces the WebGL bay and SVG art (§1.3, §2, §5, §9 to §11, D-01, D-02, D-08, D-09); 50 MB file and integrated-graphics reference profile (§3, §14, D-10, D-11); `dist/` no longer committed (§5.5, §18, D-12); GitHub becomes temporary QA space and the release becomes a local handoff package (§16.5, §19, §21, D-04, D-13); milestones V1 and V2 replace M5 (§17); RQ-31 and RQ-32 added. |
 | 2.3.0 | 2026-10-10 | Owner decision: scope limited to Windows 11 (current Chrome, Edge, Firefox) for both roles. Other platforms and Safari moved to non-goals (§2.2, §4.1, §4.3, D-03); browser tests, CI, RQ-21, RQ-25 and §12 aligned (§5.4, §5.5, §16.3–16.5). |
 | 2.2.1 | 2026-10-09 | Owner decision: exploded view removed from the vehicle bay (§10.2). |
 | 2.2.0 | 2026-10-09 | Owner direction: the vehicle bay approaches the archived concept renders in quality (§1.3, §10.2); budgets revised for physically based rendering, soft shadows and ambient occlusion (§10.3). |
@@ -1168,7 +1196,7 @@ These vectors were produced on 2026-10-09 by the previous typed implementation (
 
 ## Appendix C: Recovery sources (read-only references)
 
-Until release, all pre-rebuild material (the old repository with full history and its uncommitted work, local archives, the generator prompt and evidence) is also present locally in the git-ignored, read-only `_archive/` folder, which the owner deletes after release. Nothing in the repository, build, tests or CI may depend on it. The following remain recoverable from the GitHub repository `https://github.com/shfqrkhn/SEA-Game` history. They are **evidence, not requirements**; this MPES governs.
+Until release, all pre-rebuild material (the old repository with full history and its uncommitted work, local archives, the generator prompt and evidence) is also present locally in the git-ignored, read-only `_archive/` folder, which the owner deletes after release. Nothing in the repository, build, tests or CI may depend on it. The following remain recoverable from the local git history (and its bundle in the handoff package); the GitHub repository is temporary (D-13). They are **evidence, not requirements**; this MPES governs.
 
 | What | Where |
 |---|---|
@@ -1180,4 +1208,4 @@ Until release, all pre-rebuild material (the old repository with full history an
 | Independent rules baseline | `docs/evidence/rules-baseline.json` at `1f211fc` |
 | Previous MPES 1.5.2 and guides | `docs/` at `1f211fc` |
 
-To use them, read files from `_archive/` while it exists, or with `git show <commit>:<path>`, or on GitHub. Inputs the rebuild needs are copied into the repository; scratch copies go into `.artifacts/` (C-13). This MPES restates every obligation from the old material that the rebuild needs.
+To use them, read files from `_archive/` while it exists, or with `git show <commit>:<path>`. Inputs the rebuild needs are copied into the repository; scratch copies go into `.artifacts/` (C-13). This MPES restates every obligation from the old material that the rebuild needs.
