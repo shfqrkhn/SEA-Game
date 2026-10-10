@@ -1,12 +1,12 @@
 /* SEA Game design system (MPES §7.1): one set of tokens for both roles. */
 :root {
-  --paper: #f6f4ee;
-  --surface: #ffffff;
-  --sunken: #ecE9e0;
+  --paper: #efece5;
+  --surface: #faf9f6;
+  --sunken: #e6e2d8;
   --ink: #1d2420;
   --muted: #555e58;
   --line: #cfcabd;
-  --accent: #a8401a;
+  --accent: #2c4a35;
   --accent-ink: #ffffff;
   --ok: #2c6634;
   --warn: #7d5200;
@@ -22,13 +22,13 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --paper: #131715; --surface: #1b201d; --sunken: #232925; --ink: #ecebe5; --muted: #a8b0a9;
-    --line: #3a423d; --accent: #ec8456; --accent-ink: #1b1209; --ok: #79c886; --warn: #e6b656;
+    --line: #3a423d; --accent: #9fc8a8; --accent-ink: #10201a; --ok: #79c886; --warn: #e6b656;
     --bad: #f28b7c; --focus: #8db6ff; --bar-track: #2c332f; color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
   --paper: #131715; --surface: #1b201d; --sunken: #232925; --ink: #ecebe5; --muted: #a8b0a9;
-  --line: #3a423d; --accent: #ec8456; --accent-ink: #1b1209; --ok: #79c886; --warn: #e6b656;
+  --line: #3a423d; --accent: #9fc8a8; --accent-ink: #10201a; --ok: #79c886; --warn: #e6b656;
   --bad: #f28b7c; --focus: #8db6ff; --bar-track: #2c332f; color-scheme: dark;
 }
 
@@ -74,7 +74,7 @@ a { color: var(--accent); }
   display: inline-flex; align-items: center; justify-content: center; gap: .4rem;
   min-height: 44px; min-width: 44px; padding: .5rem 1rem; border: 1px solid var(--ink);
   border-radius: var(--radius); background: var(--surface); color: var(--ink);
-  font: inherit; font-weight: 600; cursor: pointer; text-align: center;
+  font: inherit; font-weight: 600; cursor: pointer; text-align: center; text-decoration: none;
 }
 .btn:hover { background: var(--sunken); }
 .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
@@ -142,10 +142,15 @@ dialog pre { white-space: pre-wrap; font-size: .8rem; background: var(--sunken);
 /* Progress stepper */
 .progress { background: var(--surface); border-bottom: 1px solid var(--line); overflow-x: auto; }
 .progress ol { display: flex; gap: .25rem; margin: 0 auto; padding: .4rem 1rem; list-style: none; max-width: 76rem; counter-reset: step; }
-.progress li { counter-increment: step; white-space: nowrap; font-size: .85rem; color: var(--muted); padding: .15rem .5rem; border-radius: var(--radius); }
-.progress li::before { content: counter(step) ". "; }
+.progress ol { justify-content: space-between; }
+.progress li { counter-increment: step; white-space: nowrap; font-size: .8rem; color: var(--muted); display: grid; justify-items: center; gap: .15rem; position: relative; flex: 1; min-width: 4.5rem; }
+.progress li::before { content: counter(step); display: grid; place-items: center; width: 1.7rem; height: 1.7rem; border-radius: 50%; border: 1.5px solid var(--muted); background: var(--surface); font-weight: 700; z-index: 1; }
+.progress li::after { content: ""; position: absolute; top: .85rem; left: calc(50% + .85rem); right: calc(-50% + .85rem); height: 1.5px; background: var(--line); }
+.progress li:last-child::after { display: none; }
 .progress li.done { color: var(--ink); }
-.progress li.current { background: var(--ink); color: var(--paper); font-weight: 700; }
+.progress li.done::before { background: var(--sunken); border-color: var(--accent); color: var(--accent); }
+.progress li.current { color: var(--ink); font-weight: 700; }
+.progress li.current::before { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
 
 /* Forms */
 fieldset { border: 1px solid var(--line); border-radius: var(--radius); padding: .75rem 1rem; margin: 0; }
@@ -220,3 +225,21 @@ summary { cursor: pointer; font-weight: 600; min-height: 32px; }
 .cat-PROTECTION { fill: var(--cat-PROTECTION); } .cat-COMMS { fill: var(--cat-COMMS); } .cat-SA { fill: var(--cat-SA); }
 .cat-ACCESSORIES { fill: var(--cat-ACCESSORIES); } .cat-SE_PROCESS { fill: var(--cat-SE_PROCESS); } .cat-PRACTICE { fill: var(--cat-PRACTICE); }
 .mission-COMBAT, .mission-RECCE, .mission-TROOP, .mission-COMMAND, .mission-RECOVERY, .mission-MINE { fill: var(--accent); }
+
+/* Wordmark and hero landing (inspired by the archived interface direction) */
+.topbar .brand::before { content: "SEA"; font-weight: 900; letter-spacing: .02em; color: var(--accent); margin-right: .6rem; font-size: 1.25rem; }
+.wordmark { display: flex; align-items: center; gap: 1rem; }
+.wordmark-sea { font-size: clamp(3rem, 2rem + 4vw, 5rem); font-weight: 900; letter-spacing: -.02em; color: var(--accent); line-height: .9; }
+.wordmark-title { font-size: clamp(1.1rem, .9rem + .8vw, 1.6rem); font-weight: 500; max-width: 12ch; margin: 0; line-height: 1.15; }
+.hero { display: grid; grid-template-columns: minmax(0, 1fr); min-height: 100dvh; }
+@media (min-width: 64rem) { .hero { grid-template-columns: minmax(0, 1.6fr) minmax(22rem, 1fr); } }
+.hero-stage { display: grid; align-content: center; padding: 1rem; background: radial-gradient(ellipse at 50% 70%, var(--surface), var(--paper)); }
+.hero-stage .bay-canvas { aspect-ratio: 16 / 10; background: transparent; }
+.hero-stage figcaption { text-align: center; }
+.hero-panel { background: var(--surface); padding: clamp(1.25rem, 1rem + 2vw, 2.5rem); border-left: 1px solid var(--line); }
+.hero-panel .roles { display: grid; gap: .75rem; }
+.role-card { display: grid; gap: .35rem; }
+.role-card .btn { width: 100%; justify-content: flex-start; }
+.bay-canvas { background: radial-gradient(ellipse at 50% 75%, var(--surface), var(--sunken)); }
+.bay-canvas.with-art { display: grid; gap: .5rem; place-items: center; }
+.bay-canvas.with-art svg { width: 100%; height: auto; }

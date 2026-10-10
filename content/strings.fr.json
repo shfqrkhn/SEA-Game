@@ -170,11 +170,7 @@
   "setup.codeTitle": "Code de séance",
   "setup.codeHint": "Écrivez ce code au tableau. Chaque équipe l’entre avec son numéro et sa mission.",
   "setup.summary": "{teams} équipes · {reveal} · {timing}",
-  "setup.regenerate": "Générer un autre code",
-  "setup.regenerateTitle": "Générer un nouveau code ?",
-  "setup.regenerateBody": "Les équipes déjà inscrites avec l’ancien code devront s’inscrire de nouveau.",
   "setup.startPractice": "Commencer la pratique",
-  "setup.next": "Étape suivante : un lot de pratique pour que tout le monde apprenne les étapes.",
   "practice.title": "Lot de pratique (non compté)",
   "practice.desc": "Faites un lot avec la carte d’entraînement. Rien ici ne compte.",
   "practice.reveal": "1. Révéler la carte",
@@ -342,9 +338,6 @@
   "value.points": "Score apporté",
   "value.needed": "nécessaire pour un minimum",
   "value.hint": "Score apporté = votre score moins votre score sans cette carte. Une carte peut apporter 0 point et rester nécessaire pour un minimum.",
-  "bay.left": "Tourner à gauche",
-  "bay.right": "Tourner à droite",
-  "bay.exploded": "Vue éclatée",
-  "bay.reset": "Réinitialiser la vue",
-  "bay.hint": "Faites glisser, ou utilisez les flèches, pour tourner. Plus et moins pour zoomer."
+  "bay.hint": "Faites glisser, ou utilisez les flèches, pour tourner le véhicule. Défilez ou appuyez sur plus et moins pour zoomer. Double-cliquez pour réinitialiser.",
+  "chooser.heroLabel": "Véhicule de dépannage avec treuil, blindage, radio, capteurs et suspension renforcée"
 }

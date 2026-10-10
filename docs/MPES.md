@@ -3,7 +3,7 @@
 | Field | Value |
 |---|---|
 | Document | Master Product and Engineering Specification (MPES) for the clean-room rebuild of **Systems Engineering Awareness (SEA Game)** |
-| Version | 2.1.1 |
+| Version | 2.2.1 |
 | Date | 2026-10-09 (America/Toronto) |
 | Status | **ACCEPTED**. Owner delegated all remaining decisions and gates to the implementing agent on 2026-10-09 (§22) |
 | Supersedes | MPES 1.5.2 and every earlier handover, ledger, prompt and evidence packet for implementation purposes |
@@ -62,7 +62,7 @@ The previous project often optimised the mechanism ("X") instead of the outcome 
 | Exact integer-cents money, canonical card data, independent rules oracle | FIT | Keep; re-implement cleanly (§6, Appendix A). |
 | Schema-3 saves and backup envelope | FIT | Keep import compatibility (§8). |
 | Entire interface (menus, forms, text editing) drawn inside a WebGL canvas | MISFRAMED | **Replace** with semantic HTML/CSS for every task. Subject to user confirmation, decision D-01 (§22). |
-| Mechanically realistic vehicle meshes (brake rotors, wipers, fasteners) | PROXY | **Replace** with a stylised, readable 3D "vehicle bay" that shows how each purchase changes the vehicle (§10). |
+| Mechanically realistic vehicle meshes (brake rotors, wipers, fasteners) | PROXY | **Replace** with a readable 3D "vehicle bay" that shows how each purchase changes the vehicle (§10). On 2026-10-09 the owner directed that the bay approach the archived concept renders in visual quality; fidelity serves recognisability of each part and never replaces the HTML task interface. |
 | Very large assurance apparatus (dozens of bespoke test scripts, dense evidence prose) | PARTIAL | Keep the rigour, cut the volume: standard test runners, plain-language handover, one requirement-to-test map (§15, §16). |
 | Classroom pilot with real learners | MISSING | **Add early** (milestone M4), before visual polish. |
 
@@ -618,22 +618,23 @@ Make the build tangible: the selected mission's base vehicle visibly gains or ch
 
 ### 10.2 Requirements
 
-- Six base vehicles, one per mission, sharing a consistent stylised art direction: clean low-to-medium polygon forms, flat or lightly shaded materials, clear silhouettes and readable at 320 px wide.
+- Six base vehicles, one per mission, in one high-fidelity art direction inspired by the archived concept renders (owner direction, 2026-10-09; inspiration only, nothing copied): matte olive drab with physically based materials (paint with subtle wear variation, rubber, gunmetal, steel, glass, emissive lamps), bevelled/chamfered hulls, treaded off-road tyres with dished rims, visible detail (lamps with guards, grilles, mirrors, rails, hatches, bolts, cables), studio image-based lighting with filmic tone mapping, one soft-shadowed key light, a contact shadow and ambient occlusion. Silhouettes stay readable at 320 px wide.
 - Each card category maps to visible attachment points (CAPACITY → hull modules; MOBILITY → running gear/powerpack; FIREPOWER → mounts; PROTECTION → armour panels; COMMS → antennas; SA → sensor masts/optics; ACCESSORIES → kits/trailer/winch/plough; SE_PROCESS → no geometry, shown as process badges beside the vehicle).
 - Each of the 70 cards has a recognisable but simple part or a defined variant of a category part. Parts fit their mount points without visible intersection.
-- Controls: orbit, zoom and reset view by pointer, touch and keyboard. "Exploded" toggle separates parts with labels. There is no free camera.
+- Controls: orbit, zoom and reset view by pointer, touch and keyboard. There is no free camera and no exploded view (owner decision 2026-10-09: the purchases list already names every part).
 - Rendering on demand only: render when state, view or size changes. There is no continuous loop.
-- Fixed lighting, one shadow-casting light or none. Shadows must be correct when enabled.
+- Fixed lighting, one shadow-casting light. Shadows must be correct. Quality is progressive: a fast frame is drawn immediately; ambient occlusion is added once the view settles (one deferred frame, no loop).
 - Labels and a text list of installed parts are always available outside the canvas.
 - The canvas has `role="img"` with an accessible name summarising the build.
 
-### 10.3 Budgets (provisional; measured at M5)
+### 10.3 Budgets (revised 2026-10-09 for the high-fidelity direction)
 
 | Metric | Budget |
 |---|---|
-| Triangles per full vehicle | ≤ 60,000 |
-| Draw calls per view | ≤ 150 |
-| Bay first render after open | ≤ 500 ms on the Tier 1 reference laptop |
+| Triangles per fully equipped vehicle | ≤ 250,000 |
+| Meshes (draw calls) per vehicle | ≤ 150 (parts are merged per material) |
+| Bay first render after open, hardware GPU | ≤ 1,000 ms on the Tier 1 reference machine |
+| Bay first render, software rendering (no GPU) | recorded, not enforced; residual risk on GPU-less devices |
 | Memory added by the bay | ≤ 150 MB |
 | Bay code + geometry in HTML | ≤ 1.5 MB |
 
@@ -988,6 +989,8 @@ Announce, keep the last version downloadable with its guides for at least one sc
 
 | Version | Date | Change |
 |---|---|---|
+| 2.2.1 | 2026-10-09 | Owner decision: exploded view removed from the vehicle bay (§10.2). |
+| 2.2.0 | 2026-10-09 | Owner direction: the vehicle bay approaches the archived concept renders in quality (§1.3, §10.2); budgets revised for physically based rendering, soft shadows and ambient occlusion (§10.3). |
 | 2.1.1 | 2026-10-09 | §6.5: corrected the ROUND reveal row to the original game's behaviour (whole current round visible, later rounds never), verified against the 4.1 instructor source. |
 | 2.1.0 | 2026-10-09 | Accepted. Owner delegated all decisions and gates: §22 decided; art replaced by original illustrations (G-RIGHTS closed); substitutes defined for G-PILOT, G-CONTENT, screen-reader/device and egress checks with the residual-risk rule (§15, §16); `_archive/` recorded as a temporary local source and recycle bin (C-13, §18, Appendix C). |
 | 2.0.0-draft.1 | 2026-10-09 | First clean-room rebuild specification. Rules, data and save formats carried over from MPES 1.5.2 and the typed domain at commit `1f211fc`; interface direction, vehicle bay, tooling, milestones and lean documentation are new. |

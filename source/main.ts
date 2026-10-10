@@ -1,6 +1,8 @@
 // Entry point: route to the role chooser or a single role (MPES §5.3).
 import { sessionStoragePort } from './app/ports.ts';
+import { VehicleBay } from './bay/bay.ts';
 import { showAbout } from './ui/about.ts';
+import { vehicleArt } from './ui/art.ts';
 import { startInstructor } from './ui/instructor.ts';
 import { startStudent } from './ui/student.ts';
 import { h, replaceChildren } from './ui/dom.ts';
@@ -21,32 +23,45 @@ export function roleHref(role: Role | null, lang: Language): string {
   return `?${params.toString()}`;
 }
 
+let hero: VehicleBay | null = null;
+/** Hero: the fully equipped recovery vehicle in the studio bay, as on the concept's landing page. */
+function heroBay(lang: Language): HTMLElement {
+  const t = (key: StringKey) => translate(lang, key);
+  const text = { unavailable: t('bay.unavailable'), hint: t('bay.hint'), fallback: () => vehicleArt('RECOVERY', t('chooser.heroLabel')) };
+  if (hero) hero.setText(text); else hero = new VehicleBay(text);
+  hero.update({ mission: 'RECOVERY', parts: [
+    { id: 'ACC-F', category: 'ACCESSORIES' }, { id: 'PRO-C', category: 'PROTECTION' }, { id: 'PRO-G', category: 'PROTECTION' },
+    { id: 'COM-B', category: 'COMMS' }, { id: 'SA-B', category: 'SA' }, { id: 'MOB-D', category: 'MOBILITY' },
+  ] }, t('chooser.heroLabel'));
+  return hero.element;
+}
+
 function renderChooser(root: HTMLElement, lang: Language, unknownRole: boolean): void {
   const t = (key: StringKey, vars?: Record<string, string>) => translate(lang, key, vars);
   document.documentElement.lang = lang;
   document.title = t('app.title');
-  const roleCard = (role: Role, label: StringKey, description: StringKey) => h('section', { class: 'panel role-card' },
+  const roleCard = (role: Role, label: StringKey, description: StringKey) => h('section', { class: 'role-card' },
     h('a', { class: 'btn primary big', href: roleHref(role, lang), 'data-role': role, text: t(label) }),
     h('p', { class: 'muted', text: t(description) }),
   );
-  replaceChildren(root, h('main', { class: 'chooser', id: 'main' },
-    h('div', { class: 'cluster' },
-      h('h1', { text: t('app.title') }),
+  replaceChildren(root, h('main', { class: 'hero', id: 'main' },
+    h('div', { class: 'hero-stage' }, heroBay(lang)),
+    h('div', { class: 'hero-panel stack' },
+      h('div', { class: 'wordmark' }, h('span', { class: 'wordmark-sea', 'aria-hidden': 'true', text: 'SEA' }), h('h1', { class: 'wordmark-title', text: t('app.title') })),
+      h('p', { class: 'lead', text: t('app.tagline') }),
+      unknownRole ? h('p', { class: 'notice bad', role: 'alert', text: t('chooser.unknownRole') }) : null,
+      h('h2', { text: t('chooser.heading') }),
+      h('div', { class: 'roles' },
+        roleCard('instructor', 'chooser.instructor', 'chooser.instructorDesc'),
+        roleCard('student', 'chooser.student', 'chooser.studentDesc'),
+      ),
+      h('p', { class: 'small', text: `${t('chooser.handoff')} ${t('chooser.privacy')}` }),
+      h('div', { class: 'cluster' },
+        h('a', { class: 'btn', href: roleHref(null, otherLanguage(lang)), lang: otherLanguage(lang), 'aria-label': t('lang.switchLabel'), text: t('lang.switch') }),
+        h('button', { type: 'button', class: 'btn ghost', text: t('about.open'), on: { click: event => void showAbout(lang, event.currentTarget as HTMLElement) } }),
+      ),
+      h('p', { class: 'muted small', text: t('chooser.version', { version: __SEA_VERSION__ }) }),
     ),
-    h('p', { text: t('app.tagline') }),
-    unknownRole ? h('p', { class: 'notice bad', role: 'alert', text: t('chooser.unknownRole') }) : null,
-    h('h2', { text: t('chooser.heading') }),
-    h('div', { class: 'roles' },
-      roleCard('instructor', 'chooser.instructor', 'chooser.instructorDesc'),
-      roleCard('student', 'chooser.student', 'chooser.studentDesc'),
-    ),
-    h('p', { text: t('chooser.handoff') }),
-    h('p', { text: t('chooser.privacy') }),
-    h('div', { class: 'cluster' },
-      h('a', { class: 'btn', href: roleHref(null, otherLanguage(lang)), lang: otherLanguage(lang), 'aria-label': t('lang.switchLabel'), text: t('lang.switch') }),
-      h('button', { type: 'button', class: 'btn ghost', text: t('about.open'), on: { click: event => void showAbout(lang, event.currentTarget as HTMLElement) } }),
-    ),
-    h('p', { class: 'muted small', text: t('chooser.version', { version: __SEA_VERSION__ }) }),
   ));
 }
 

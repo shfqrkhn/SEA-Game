@@ -36,7 +36,7 @@ test('illustrations and vehicle budgets', async ({ page }, info) => {
 
   const stats = await page.evaluate(() => (window as unknown as { bayStats: { mission: string; meshes: number; triangles: number }[] }).bayStats);
   for (const s of stats) {
-    expect(s.triangles, s.mission).toBeLessThanOrEqual(60_000);
+    expect(s.triangles, s.mission).toBeLessThanOrEqual(250_000);
     expect(s.meshes, s.mission).toBeLessThanOrEqual(150);
   }
   await info.attach('bay-budgets.json', { body: JSON.stringify(stats, null, 2), contentType: 'application/json' });

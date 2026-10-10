@@ -170,11 +170,7 @@
   "setup.codeTitle": "Session code",
   "setup.codeHint": "Write this code on the board. Each team enters it with its team number and mission.",
   "setup.summary": "{teams} teams · {reveal} · {timing}",
-  "setup.regenerate": "Generate a different code",
-  "setup.regenerateTitle": "Generate a new code?",
-  "setup.regenerateBody": "Teams that already joined with the old code must join again.",
   "setup.startPractice": "Start practice",
-  "setup.next": "Next: run a practice lot so everyone learns the steps.",
   "practice.title": "Practice lot (not scored)",
   "practice.desc": "Walk through one lot with the training card. Nothing here counts.",
   "practice.reveal": "1. Reveal the card",
@@ -342,9 +338,6 @@
   "value.points": "Score it adds",
   "value.needed": "needed for a minimum",
   "value.hint": "Score it adds = your score minus your score without that card. A card can add 0 points and still be needed for a minimum.",
-  "bay.left": "Rotate left",
-  "bay.right": "Rotate right",
-  "bay.exploded": "Exploded view",
-  "bay.reset": "Reset view",
-  "bay.hint": "Drag, or use the arrow keys, to rotate. Plus and minus zoom."
+  "bay.hint": "Drag, or use the arrow keys, to turn the vehicle. Scroll or press plus and minus to zoom. Double-click to reset.",
+  "chooser.heroLabel": "Recovery vehicle with winch, armour, radio, sensors and heavy-duty suspension"
 }

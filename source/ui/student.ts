@@ -15,12 +15,13 @@ import type { Language, StringKey } from './i18n.ts';
 import { practiceCard } from './instructor.ts';
 import { RoleView } from './view.ts';
 import { VehicleBay } from '../bay/bay.ts';
+import { vehicleArt } from './art.ts';
 
 let bay: VehicleBay | null = null;
 /** One persistent bay per page; re-attached on every render so its WebGL context survives. */
 function bayFor(v: View, mission: MissionId): Child {
   const s = joined(v);
-  const text = { unavailable: v.t('bay.unavailable'), rotateLeft: v.t('bay.left'), rotateRight: v.t('bay.right'), exploded: v.t('bay.exploded'), reset: v.t('bay.reset'), hint: v.t('bay.hint') };
+  const text = { unavailable: v.t('bay.unavailable'), hint: v.t('bay.hint'), fallback: () => vehicleArt(mission, missionName(mission, v.lang)) };
   if (bay) bay.setText(text); else bay = new VehicleBay(text);
   bay.update({ mission, parts: s.team.purchases.map(p => ({ id: p.id, category: p.cat })) },
     v.t('bay.summary', { mission: missionName(mission, v.lang), n: s.team.purchases.length }));
@@ -123,10 +124,7 @@ function planningView(v: View): Child {
       h('div', { class: 'field' },
         h('label', { for: 'plan-wtp', text: t('splan.wtp') }),
         h('span', { class: 'hint', id: 'plan-wtp-hint', text: t('splan.wtpHint') }),
-        h('div', { class: 'cluster' },
-          v.input('plan-wtp', { inputmode: 'numeric', autocomplete: 'off', 'aria-describedby': 'plan-wtp-hint', value: String(s.maxWtpCents / 100) }),
-          h('button', { type: 'button', class: 'btn', id: 'plan-wtp-save', text: '✓', 'aria-label': t('splan.wtp'), on: { click: () => v.run(state => S.setMaxWtp(state, v.draft('plan-wtp', String(s.maxWtpCents / 100))), () => v.drafts.delete('plan-wtp')) } }),
-        ),
+        v.savingInput('plan-wtp', String(s.maxWtpCents / 100), S.setMaxWtp, { inputmode: 'numeric', autocomplete: 'off', 'aria-describedby': 'plan-wtp-hint' }),
       ),
       h('button', { type: 'button', class: 'btn primary', id: 'student-start-auction', disabled: !s.vehicleConfirmed, text: t('splan.started'), on: {
         click: e => void v.confirm({ title: t('splan.startedTitle'), body: h('p', { text: t('splan.startedBody') }), confirm: t('splan.started'), opener: e.currentTarget as HTMLElement }, S.startAuction),
@@ -192,7 +190,7 @@ function auctionView(v: View): Child {
       ),
       h('details', { class: 'stack' }, h('summary', { text: t('strack.notes') }),
         h('div', { class: 'field' }, h('label', { for: 'scratch-wtp', text: t('strack.wtp') }),
-          h('input', { id: 'scratch-wtp', inputmode: 'numeric', autocomplete: 'off', value: scratch.wtp, on: { change: e => v.run(state => S.editScratch(state, 'wtp', (e.target as HTMLInputElement).value)) } })),
+          v.savingInput('scratch-wtp', scratch.wtp, (state, value) => S.editScratch(state, 'wtp', value), { inputmode: 'numeric', autocomplete: 'off' })),
         h('div', { class: 'field' }, h('label', { for: 'scratch-note', text: t('strack.notes') }),
           h('textarea', { id: 'scratch-note', maxlength: String(S.NOTE_MAX), value: scratch.note, on: { input: e => v.run(state => S.editScratch(state, 'note', (e.target as HTMLTextAreaElement).value)) } })),
       ),

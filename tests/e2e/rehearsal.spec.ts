@@ -176,7 +176,7 @@ test('G-PILOT substitute: French classroom rehearsal, 10 teams, three student ta
   for (let id = 1; id <= 10; id++) {
     if (id === 9) continue; // Team 9 never reports
     await ip.fill(`#profit-${id}`, '50000');
-    await ip.click(`#save-profit-${id}`);
+    await ip.locator(`#profit-${id}`).blur();
     await ip.check(`#submitted-${id}`);
     teams[id]!.profitCents = 5_000_000;
     teams[id]!.submitted = true;
