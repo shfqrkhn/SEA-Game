@@ -19,10 +19,18 @@ function frames(vehicle: string): string[] {
   return [...renders().keys()].filter(k => k.startsWith(`${vehicle}-turntable-`)).sort();
 }
 
-/** Parts with a layer at this vehicle and angle, farthest from the camera first (MPES §10.2). */
+/**
+ * Parts drawn at this vehicle and angle, farthest from the camera first (MPES §10.2). Parts share mount
+ * slots; only the most recently recorded part of each slot is drawn (`parts` is in purchase order).
+ * The slot is read from either angle, so a part hidden behind the hull at one angle still replaces the
+ * older part in its slot there.
+ */
 export function stackOrder<P extends ShowcasePart>(table: ReadonlyMap<string, Render>, vehicle: string, angle: string, parts: readonly P[]): P[] {
+  const slot = (p: P) => table.get(`${vehicle}-front-${p.id}`)?.slot ?? table.get(`${vehicle}-rear-${p.id}`)?.slot ?? p.id;
+  const latest = new Map<string, P>();
+  for (const p of parts) latest.set(slot(p), p);
   const depth = (p: P) => table.get(`${vehicle}-${angle}-${p.id}`)?.depth ?? 0;
-  return parts.filter(p => table.has(`${vehicle}-${angle}-${p.id}`)).sort((a, b) => depth(b) - depth(a));
+  return [...latest.values()].filter(p => table.has(`${vehicle}-${angle}-${p.id}`)).sort((a, b) => depth(b) - depth(a));
 }
 
 /** True when the embedded renders include this mission's vehicle. */

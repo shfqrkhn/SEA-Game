@@ -80,7 +80,7 @@ def _road_dust(nodes, links, color_out, height=1.25, color=(0.23, 0.19, 0.13), a
     return mix.outputs[2], sharp.outputs['Color']
 
 
-def paint(name='olive', base=(0.07, 0.085, 0.033), wear=0.35):
+def paint(name='olive', base=(0.07, 0.085, 0.033), wear=0.35, dust_height=1.25):
     """Matte military paint: colour variation, dust in crevices (AO), worn edges (pointiness), fine orange peel."""
     if name in _cache:
         return _cache[name]
@@ -110,7 +110,7 @@ def paint(name='olive', base=(0.07, 0.085, 0.033), wear=0.35):
     links.new(edge_mask.outputs['Color'], mix_edge.inputs['Factor'])
     links.new(mix_dust.outputs[2], mix_edge.inputs[6])
     mix_edge.inputs[7].default_value = (0.32, 0.31, 0.26, 1)
-    dusty, dust_mask = _road_dust(nodes, links, mix_edge.outputs[2])
+    dusty, dust_mask = _road_dust(nodes, links, mix_edge.outputs[2], height=dust_height)
     links.new(dusty, bsdf.inputs['Base Color'])
     rough = _ramp(nodes, links, var.outputs['Fac'], [(0.0, (0.52, 0.52, 0.52, 1)), (1.0, (0.7, 0.7, 0.7, 1))])
     rough_mix = nodes.new('ShaderNodeMix')
@@ -195,11 +195,17 @@ def emissive(name, color, strength):
     return mat
 
 
-def palette():
-    """The shared material set for every vehicle and part."""
+def palette(dust_height=1.25):
+    """The shared material set for every vehicle and part. A scene reset frees the old materials.
+
+    Road dust rises from the ground to `dust_height` (world Z); card renders pass a negative height,
+    because a part alone sits near the ground and would otherwise look dust-covered.
+    """
+    _cache.clear()
     return {
-        'paint': paint(),
-        'paint_dark': paint('olive-dark', (0.04, 0.048, 0.024)),
+        'paint': paint(dust_height=dust_height),
+        'paint_dark': paint('olive-dark', (0.04, 0.048, 0.024), dust_height=dust_height),
+        'paint_light': paint('olive-light', (0.1, 0.11, 0.052), wear=0.45, dust_height=dust_height),
         'rubber': dielectric('rubber', (0.018, 0.018, 0.018), 0.86, 0.006, bump_scale=60, dust=True),
         'gunmetal': metal('gunmetal', (0.11, 0.115, 0.12), 0.42),
         'steel': metal('steel', (0.56, 0.56, 0.55), 0.28),

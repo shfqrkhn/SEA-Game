@@ -6,6 +6,8 @@ export interface Render {
   readonly kind: string;
   /** Camera distance of a build layer: the draw order, farthest first (MPES §10.2). */
   readonly depth?: number | null;
+  /** Mount slot of a build layer: one part per slot is drawn (MPES §10.2). */
+  readonly slot?: string;
   readonly frame: { readonly width: number; readonly height: number };
   readonly offset: { readonly left: number; readonly top: number };
   readonly size: { readonly width: number; readonly height: number };

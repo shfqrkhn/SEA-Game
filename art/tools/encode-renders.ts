@@ -20,6 +20,12 @@ function classify(file: string): Master {
   return { file, kind: name.endsWith('-base') ? 'build-base' : 'build-layer', id: name };
 }
 
+/** True when a layer has no visible pixel (a part fully hidden behind the hull at this angle). */
+async function empty(path: string): Promise<boolean> {
+  const stats = await sharp(path).stats();
+  return (stats.channels[3]?.max ?? 255) === 0;
+}
+
 async function trimmed(path: string): Promise<{ data: Buffer; info: OutputInfo; left: number; top: number; frameWidth: number; frameHeight: number }> {
   const meta = await sharp(path).metadata();
   const image = sharp(path).toColourspace('srgb');
@@ -66,22 +72,33 @@ async function measure(dir: string, report: string): Promise<void> {
 
 async function encodeAll(dir: string, out: string, format: Format, quality: number): Promise<void> {
   mkdirSync(out, { recursive: true });
-  const renders = JSON.parse(readFileSync(join(dir, 'renders.json'), 'utf8')) as { blender: string; seed: number; outputs: { file: string; depth: number }[] };
-  const depth = new Map(renders.outputs.map(o => [o.file, o.depth]));
-  const entries = [];
-  for (const m of readdirSync(dir).filter(f => f.endsWith('.png')).sort().map(classify)) {
-    const t = await trimmed(join(dir, m.file));
-    const data = await encode(t.data, format, quality);
-    const file = basename(m.file, '.png') + '.' + format;
-    writeFileSync(join(out, file), data);
-    entries.push({
-      file, kind: m.kind, id: m.id, depth: depth.get(m.file) ?? null, bytes: data.length, sha256: createHash('sha256').update(data).digest('hex'),
-      frame: { width: t.frameWidth, height: t.frameHeight }, offset: { left: t.left, top: t.top }, size: { width: t.info.width, height: t.info.height },
-    });
-  }
-  const total = entries.reduce((n, e) => n + e.bytes, 0);
-  writeFileSync(join(out, 'manifest.json'), JSON.stringify({ blender: renders.blender, seed: renders.seed, format, quality, totalBytes: total, entries }, null, 2) + '\n');
-  console.log(`${entries.length} files, ${total} bytes -> ${out}`);
+  const renders = JSON.parse(readFileSync(join(dir, 'renders.json'), 'utf8')) as { blender: string; seed: number; outputs: { file: string; depth: number; slot?: string }[] };
+  const meta = new Map(renders.outputs.map(o => [o.file, o]));
+  const masters = readdirSync(dir).filter(f => f.endsWith('.png') && meta.has(f)).sort().map(classify);
+  const entries: Record<string, unknown>[] = [], hidden: string[] = [];
+  // Encode in parallel; results are sorted by file afterwards so the manifest does not depend on timing.
+  let next = 0;
+  const work = async () => {
+    while (next < masters.length) {
+      const m = masters[next++]!;
+      if (m.kind === 'build-layer' && await empty(join(dir, m.file))) { hidden.push(m.id); continue; }
+      const t = await trimmed(join(dir, m.file));
+      const data = await encode(t.data, format, quality);
+      const file = basename(m.file, '.png') + '.' + format;
+      writeFileSync(join(out, file), data);
+      const o = meta.get(m.file)!;
+      entries.push({
+        file, kind: m.kind, id: m.id, depth: o.depth ?? null, ...(o.slot ? { slot: o.slot } : {}), bytes: data.length, sha256: createHash('sha256').update(data).digest('hex'),
+        frame: { width: t.frameWidth, height: t.frameHeight }, offset: { left: t.left, top: t.top }, size: { width: t.info.width, height: t.info.height },
+      });
+    }
+  };
+  await Promise.all(Array.from({ length: 8 }, work));
+  entries.sort((x, y) => String(x.file).localeCompare(String(y.file)));
+  hidden.sort();
+  const total = entries.reduce((n, e) => n + (e.bytes as number), 0);
+  writeFileSync(join(out, 'manifest.json'), JSON.stringify({ blender: renders.blender, seed: renders.seed, format, quality, totalBytes: total, hidden, entries }, null, 2) + '\n');
+  console.log(`${entries.length} files (${hidden.length} hidden layers), ${total} bytes -> ${out}`);
 }
 
 const [mode, a, b, format, quality] = process.argv.slice(2);

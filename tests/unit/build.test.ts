@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { MAX_BYTES, OUT, render, sha256 } from '../../build/render.ts';
+import { MAX_BYTES, OUT, RENDERS_DIR, render, sha256 } from '../../build/render.ts';
 
 describe('single-file build (RQ-01, RQ-24, RQ-25, RQ-27)', async () => {
   const html = await render();
@@ -32,6 +32,9 @@ describe('single-file build (RQ-01, RQ-24, RQ-25, RQ-27)', async () => {
     expect(html).not.toMatch(/<(link|img|iframe|object|embed)\b/i);
     expect(html).not.toMatch(/\b(src|href)="(https?:)?\/\//i);
   });
+  it('caps the file at 50 MB (MPES §14)', () => {
+    expect(MAX_BYTES).toBe(50 * 1024 * 1024);
+  });
   it('embeds the licence and third-party notices and stays within the size limit', () => {
     expect(html).toContain('three.js authors');
     expect(html).toContain('SEA Game contributors');
@@ -41,10 +44,10 @@ describe('single-file build (RQ-01, RQ-24, RQ-25, RQ-27)', async () => {
     const block = /<script type="application\/json" id="sea-renders">([^<]*)<\/script>/.exec(html)?.[1];
     expect(block).toBeDefined();
     const embedded = JSON.parse(block!) as Record<string, { src: string; kind: string; depth?: unknown }>;
-    const manifest = JSON.parse(readFileSync('content/renders/spike/manifest.json', 'utf8')) as { entries: { id: string; file: string }[] };
+    const manifest = JSON.parse(readFileSync(`${RENDERS_DIR}/manifest.json`, 'utf8')) as { entries: { id: string; file: string }[] };
     expect(Object.keys(embedded).sort()).toEqual(manifest.entries.map(e => e.id).sort());
     for (const e of manifest.entries) {
-      expect(embedded[e.id]!.src).toBe('data:image/avif;base64,' + readFileSync('content/renders/spike/' + e.file).toString('base64'));
+      expect(embedded[e.id]!.src).toBe('data:image/avif;base64,' + readFileSync(`${RENDERS_DIR}/${e.file}`).toString('base64'));
     }
     // Every build layer carries its camera distance, the draw order of MPES §10.2.
     const layers = Object.values(embedded).filter(r => r.kind === 'build-layer');

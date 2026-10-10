@@ -5,7 +5,7 @@ import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-export const MAX_BYTES = 8 * 1024 * 1024;
+export const MAX_BYTES = 50 * 1024 * 1024; // MPES §14
 export const ROOT = fileURLToPath(new URL('..', import.meta.url));
 export const OUT = join(ROOT, 'dist', 'index.html');
 const REQUIRED_NOTICES = ['three.js', 'Copyright © 2010-2026 three.js authors'];
@@ -30,10 +30,10 @@ export function sha256(text: string): string {
 }
 
 interface RenderEntry {
-  readonly file: string; readonly id: string; readonly kind: string; readonly sha256: string; readonly depth: number | null;
+  readonly file: string; readonly id: string; readonly kind: string; readonly sha256: string; readonly depth: number | null; readonly slot?: string;
   readonly frame: { width: number; height: number }; readonly offset: { left: number; top: number }; readonly size: { width: number; height: number };
 }
-export const RENDERS_DIR = 'content/renders/spike';
+export const RENDERS_DIR = 'content/renders';
 
 /** Committed renders (MPES §11) as one inert JSON object: id -> data URI and placement. Hashes are checked. */
 function renders(): string {
@@ -42,7 +42,7 @@ function renders(): string {
   for (const e of manifest.entries) {
     const bytes = readFileSync(join(ROOT, RENDERS_DIR, e.file));
     if (createHash('sha256').update(bytes).digest('hex') !== e.sha256) throw new Error(`Render hash mismatch: ${e.file}`);
-    out[e.id] = { src: `data:image/${manifest.format};base64,${bytes.toString('base64')}`, kind: e.kind, depth: e.depth, frame: e.frame, offset: e.offset, size: e.size };
+    out[e.id] = { src: `data:image/${manifest.format};base64,${bytes.toString('base64')}`, kind: e.kind, depth: e.depth, ...(e.slot ? { slot: e.slot } : {}), frame: e.frame, offset: e.offset, size: e.size };
   }
   const json = JSON.stringify(out);
   if (json.includes('<')) throw new Error('Unsafe renders content');
