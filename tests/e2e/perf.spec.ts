@@ -83,7 +83,7 @@ test('performance budgets', async ({ page }, info) => {
   await student.click('#student-start-auction');
   const t2 = Date.now();
   await student.locator('dialog button[data-value="ok"]').click();
-  await student.locator('#vehicle-bay canvas').waitFor();
+  await student.locator('#vehicle-bay canvas').waitFor({ timeout: 30_000 }); // readiness only; the budget below is the check
   results.bayFirstRenderMs = Date.now() - t2;
   const renderer = await student.evaluate(() => { const gl = document.createElement('canvas').getContext('webgl2'); const ext = gl?.getExtension('WEBGL_debug_renderer_info'); return ext ? String(gl!.getParameter(ext.UNMASKED_RENDERER_WEBGL)) : 'unknown'; });
   // Software rasterisers: SwiftShader (Chromium), llvmpipe (Mesa), and WARP, the "Basic Render Driver" of GPU-less Windows machines.

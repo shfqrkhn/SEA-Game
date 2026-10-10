@@ -3,7 +3,7 @@
 | Field | Value |
 |---|---|
 | Document | Master Product and Engineering Specification (MPES) for the clean-room rebuild of **Systems Engineering Awareness (SEA Game)** |
-| Version | 3.0.1 |
+| Version | 3.1.0 |
 | Date | 2026-10-10 (America/Toronto) |
 | Status | **ACCEPTED**. Owner delegated all remaining decisions and gates to the implementing agent on 2026-10-09 (§22) |
 | Supersedes | MPES 1.5.2 and every earlier handover, ledger, prompt and evidence packet for implementation purposes |
@@ -416,7 +416,7 @@ Team 1, mission TROOP, with effective purchases totalling CAP 18, MOB 180, FP 4,
 
 - **Task-first.** Each screen answers: *where are we, what is the next valid action, what has changed?* The next valid action is always the most prominent control. Invalid actions are hidden or disabled with a reason.
 - **Progressive depth.** *Immediate*: phase, position, next action. *Working*: the controls and data for the current task. *Deep*: rules, history, settings, recovery, notices.
-- **Minimal clicks** for the live auction: one keystroke or click per bid acceptance; keyboard shortcuts shown on screen.
+- **Minimal clicks** for the live auction: one keystroke or click per bid acceptance; keyboard shortcuts shown on screen. At 1280×720 (100% zoom) the live lot's bid buttons, Sell, No sale and Next lot are fully visible without scrolling, because Firefox loses a click on a half-hidden button when it scrolls it into view (CI run 38064762108).
 - **Plain HTML/CSS** for all controls and text, with native form elements, `<dialog>` for confirmations, and one `aria-live` status region per view.
 - **War-room HUD design language (D-07).** A dark, tactical command-centre look (framed panels, grid and map textures, monospaced numeric readouts, restrained glow accents and photoreal imagery) applied as CSS on semantic HTML. Decoration never carries information on its own, never lowers contrast below §12 and never animates under `prefers-reduced-motion`. Visual references are inspiration only; nothing is copied.
 - **One design system** shared by both roles: colour tokens, type scale, spacing, focus style, a dark HUD theme and a projector-safe light theme with a manual override.
@@ -1015,6 +1015,7 @@ Announce, keep the last package and its guides available for at least one school
 
 | Version | Date | Change |
 |---|---|---|
+| 3.1.0 | 2026-10-10 | §7.1: the live lot's auction actions must be fully visible at 1280×720 without scrolling (V2 layout requirement; found from a Firefox lost-click CI failure). |
 | 3.0.1 | 2026-10-10 | §10.2 and §11 aligned with the V1 implementation: draw order is the recorded camera distance; manifest fields named; alt text derived at runtime from canonical titles instead of stored. No change to requirements. |
 | 3.0.0 | 2026-10-10 | Owner decisions D-07 to D-13: war-room HUD (S7, §7.1); photoreal pre-rendered imagery authored in Blender replaces the WebGL bay and SVG art (§1.3, §2, §5, §9 to §11, D-01, D-02, D-08, D-09); 50 MB file and integrated-graphics reference profile (§3, §14, D-10, D-11); `dist/` no longer committed (§5.5, §18, D-12); GitHub becomes temporary QA space and the release becomes a local handoff package (§16.5, §19, §21, D-04, D-13); milestones V1 and V2 replace M5 (§17); RQ-31 and RQ-32 added. |
 | 2.3.0 | 2026-10-10 | Owner decision: scope limited to Windows 11 (current Chrome, Edge, Firefox) for both roles. Other platforms and Safari moved to non-goals (§2.2, §4.1, §4.3, D-03); browser tests, CI, RQ-21, RQ-25 and §12 aligned (§5.4, §5.5, §16.3–16.5). |

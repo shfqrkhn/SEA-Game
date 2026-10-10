@@ -3,7 +3,7 @@
 import { expect, test } from '@playwright/test';
 import { writeFileSync } from 'node:fs';
 import { collectConsoleErrors, expectAccessible, gameUrl, guardNetwork } from './helpers.ts';
-import { confirmDialog, instructorLot, instructorSetup, studentJoin, studentRecord } from './roles.ts';
+import { act, confirmDialog, instructorLot, instructorSetup, studentJoin, studentRecord } from './roles.ts';
 
 test('one-round slice: instructor and student, corrections, backup round trip', async ({ browser }, info) => {
   const instructorContext = await browser.newContext();
@@ -66,7 +66,7 @@ test('one-round slice: instructor and student, corrections, backup round trip', 
     const ours = final && final[1] === '1';
     if (ours) studentCost += Number(final![2]!.replace(/,/g, ''));
     await studentRecord(sp, cardId, ours ? Number(final![2]!.replace(/,/g, '')) : null);
-    await ip.click('#next-lot');
+    await act(ip, '#next-lot');
   }
   await expect(ip.locator('#lot-heading')).toHaveText('Round 2 · Lot 1 of 10');
   await expect(sp.locator('#track-heading')).toHaveText('Round 2 · Lot 1 of 10');

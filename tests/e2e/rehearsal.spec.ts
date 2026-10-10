@@ -6,7 +6,7 @@
 import { expect, test, type Browser, type Page } from '@playwright/test';
 import { collectConsoleErrors, gameUrl, guardNetwork } from './helpers.ts';
 import { startCents, winners, type OracleTeam } from './oracle.ts';
-import { confirmDialog, instructorSetup } from './roles.ts';
+import { act, confirmDialog, instructorSetup } from './roles.ts';
 
 test.setTimeout(1_200_000);
 const MISSIONS = ['TROOP', 'RECCE', 'COMBAT', 'COMMAND', 'RECOVERY', 'MINE', 'TROOP', 'RECCE', 'COMBAT', 'COMMAND'];
@@ -96,17 +96,17 @@ test('G-PILOT substitute: French classroom rehearsal, 10 teams, three student ta
         await confirmDialog(ip);
       } else if (winner) {
         await ip.click(`#bid-${winner}`);
-        await ip.click('#sell');
+        await act(ip, '#sell');
         if (round === 3 && lot === 5) {
           await ip.click('#void');
           await ip.fill('#void-reason', 'Vendu trop tôt');
           await confirmDialog(ip);
           await ip.click('#open-bidding');
           await ip.click(`#bid-${winner}`);
-          await ip.click('#sell');
+          await act(ip, '#sell');
         }
       } else {
-        await ip.click('#unsold');
+        await act(ip, '#unsold');
       }
       const result = await outcome(ip);
       expect(result?.team ?? 0).toBe(winner);
@@ -136,7 +136,7 @@ test('G-PILOT substitute: French classroom rehearsal, 10 teams, three student ta
           await sp.click('#not-ours');
         }
       }
-      await ip.click('#next-lot');
+      await act(ip, '#next-lot');
     }
   }
 

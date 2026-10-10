@@ -8,7 +8,7 @@ import * as I from '../../source/domain/instructor.ts';
 import { instructorForSave } from '../../source/domain/saves.ts';
 import { collectConsoleErrors, expectAccessible, gameUrl, guardNetwork } from './helpers.ts';
 import { score, totals, winners, type OracleTeam } from './oracle.ts';
-import { confirmDialog } from './roles.ts';
+import { act, confirmDialog } from './roles.ts';
 
 test.setTimeout(900_000);
 const PLAN = JSON.parse(readFileSync(new URL('../fixtures/j2-plan.json', import.meta.url), 'utf8')) as
@@ -63,15 +63,15 @@ test('J2: French 10-team MANUAL untimed session with a shared award', async ({ p
       await page.click('#open-bidding');
       if (buyer) {
         await page.click(`#bid-${buyer}`);
-        await page.click('#sell');
+        await act(page, '#sell');
         winsThisRound.set(buyer, (winsThisRound.get(buyer) ?? 0) + 1);
       } else {
-        await page.click('#unsold');
+        await act(page, '#unsold');
       }
       const result = await outcome(page);
       expect(result?.team ?? 0).toBe(buyer);
       if (result) { teams[result.team]!.cards.push(card); teams[result.team]!.paidCents += result.cents; }
-      await page.click('#next-lot');
+      await act(page, '#next-lot');
     }
   }
 
