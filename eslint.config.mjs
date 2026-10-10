@@ -20,6 +20,11 @@ export default tseslint.config(
     },
   },
   {
+    // Tamper fixtures mutate untyped JSON on purpose.
+    files: ['tests/**/*.ts'],
+    rules: { '@typescript-eslint/no-explicit-any': 'off' },
+  },
+  {
     files: ['source/**/*.ts'],
     rules: {
       'no-restricted-globals': ['error',

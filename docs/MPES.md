@@ -3,7 +3,7 @@
 | Field | Value |
 |---|---|
 | Document | Master Product and Engineering Specification (MPES) for the clean-room rebuild of **Systems Engineering Awareness (SEA Game)** |
-| Version | 2.1.0 |
+| Version | 2.1.1 |
 | Date | 2026-10-09 (America/Toronto) |
 | Status | **ACCEPTED**. Owner delegated all remaining decisions and gates to the implementing agent on 2026-10-09 (§22) |
 | Supersedes | MPES 1.5.2 and every earlier handover, ledger, prompt and evidence packet for implementation purposes |
@@ -274,11 +274,11 @@ Exactly eight phases, in this order:
 
 **Reveal modes** (chosen at setup):
 
-| Mode | Current lot visible | Earlier lots in this session | Later lots |
-|---|---|---|---|
-| ROUND | Yes | Yes | All lots are visible on the instructor's market view |
-| JIT (just in time) | Yes, automatically when reached | Yes | No |
-| MANUAL | Only after the instructor selects Reveal | Yes | No |
+| Mode | Current lot visible | Earlier lots | Later lots of the current round | Later rounds |
+|---|---|---|---|---|
+| ROUND | Yes | Yes | Yes (the whole round is shown when it starts) | No |
+| JIT (just in time) | Yes, automatically when reached | Yes | No | No |
+| MANUAL | Only after the instructor selects Reveal | Yes | No | No |
 
 A lot once revealed stays visible. The set of visible lots never shrinks. Reload, void and language change never reveal anything new.
 
@@ -988,6 +988,7 @@ Announce, keep the last version downloadable with its guides for at least one sc
 
 | Version | Date | Change |
 |---|---|---|
+| 2.1.1 | 2026-10-09 | §6.5: corrected the ROUND reveal row to the original game's behaviour (whole current round visible, later rounds never), verified against the 4.1 instructor source. |
 | 2.1.0 | 2026-10-09 | Accepted. Owner delegated all decisions and gates: §22 decided; art replaced by original illustrations (G-RIGHTS closed); substitutes defined for G-PILOT, G-CONTENT, screen-reader/device and egress checks with the residual-risk rule (§15, §16); `_archive/` recorded as a temporary local source and recycle bin (C-13, §18, Appendix C). |
 | 2.0.0-draft.1 | 2026-10-09 | First clean-room rebuild specification. Rules, data and save formats carried over from MPES 1.5.2 and the typed domain at commit `1f211fc`; interface direction, vehicle bay, tooling, milestones and lean documentation are new. |
 

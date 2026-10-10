@@ -1,0 +1,82 @@
+[
+  {
+    "id": "COMBAT",
+    "en": "Combat",
+    "fr": "Combat",
+    "minimums": {
+      "CAP": 4,
+      "MOB": 80,
+      "FP": 10,
+      "PRO": 10,
+      "COM": 25,
+      "SA": 1
+    }
+  },
+  {
+    "id": "RECCE",
+    "en": "RECCE",
+    "fr": "Reconnaissance",
+    "minimums": {
+      "CAP": 3,
+      "MOB": 120,
+      "FP": 4,
+      "PRO": 2,
+      "COM": 75,
+      "SA": 5
+    }
+  },
+  {
+    "id": "TROOP",
+    "en": "Troop Carrier",
+    "fr": "Transport de troupes",
+    "minimums": {
+      "CAP": 10,
+      "MOB": 100,
+      "FP": 2,
+      "PRO": 4,
+      "COM": 25,
+      "SA": 2
+    }
+  },
+  {
+    "id": "COMMAND",
+    "en": "Command Post",
+    "fr": "Poste de commandement",
+    "minimums": {
+      "CAP": 5,
+      "MOB": 60,
+      "FP": 2,
+      "PRO": 4,
+      "COM": 125,
+      "SA": 4
+    }
+  },
+  {
+    "id": "RECOVERY",
+    "en": "Recovery",
+    "fr": "Dépannage",
+    "minimums": {
+      "CAP": 3,
+      "MOB": 80,
+      "FP": 4,
+      "PRO": 6,
+      "COM": 75,
+      "SA": 2,
+      "REC": 3
+    }
+  },
+  {
+    "id": "MINE",
+    "en": "Mine Clearing",
+    "fr": "Déminage",
+    "minimums": {
+      "CAP": 4,
+      "MOB": 40,
+      "FP": 8,
+      "PRO": 10,
+      "COM": 25,
+      "SA": 1,
+      "MC": 3
+    }
+  }
+]
