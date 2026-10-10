@@ -68,12 +68,16 @@ test('HUD prototype: the live lot shows the photoreal card render when one exist
   await expect(page.locator('figure[data-card="CAP-A"] svg')).toBeVisible(); // no render yet: SVG fallback
 });
 
-test('HUD chooser: the hero still is described truthfully (only the parts it shows)', async ({ page }) => {
-  guardNetwork(page);
-  await page.goto(gameUrl('?lang=en&hud=1'));
-  await expect(page.locator('img.hero-still')).toHaveAttribute('alt', 'Recovery vehicle with a carrier module, long-range radios and a recovery winch');
-  await expect(page.locator('a[data-role="student"]')).toHaveAttribute('href', /hud=1/);
-});
+for (const query of ['?lang=en', '?lang=en&hud=1']) {
+  test(`chooser ${query}: pre-rendered hero still, truthfully described, and no WebGL on the first screen (D-08)`, async ({ page }) => {
+    guardNetwork(page);
+    await page.goto(gameUrl(query));
+    await expect(page.locator('img.hero-still')).toHaveAttribute('alt', 'Recovery vehicle with a carrier module, long-range radios and a recovery winch');
+    await page.waitForTimeout(300); // longer than any deferred start
+    await expect(page.locator('canvas')).toHaveCount(0);
+    if (query.includes('hud')) await expect(page.locator('a[data-role="student"]')).toHaveAttribute('href', /hud=1/);
+  });
+}
 
 test('without the flag, the current interface is unchanged', async ({ page }) => {
   guardNetwork(page);

@@ -43,11 +43,11 @@ Pass absolute or project-relative output paths. `render.py` makes them absolute,
 
 For each build angle, every layer uses the same camera. The base layer renders the vehicle alone. Each part layer renders that part with the base vehicle set as a **shadow catcher**: the hull hides the part where it is in front, and the part's shadows fall on the hull. Stacking base and part layers in manifest order then occludes correctly. The encoder trims each layer to its visible pixels and records the offset.
 
-## Sizes (V1 balance of look and weight)
+## Sizes (performance over looks, owner 2026-10-10)
 
 | Output | Size | Notes |
 |---|---|---|
-| Hero still | 1920×1080 | chooser |
-| Build angles (base and part layers) | 1920×1080 | the showcase; screen resolution |
-| Turntable | 1280×720 × 24 frames | base vehicle only |
-| Card render | 768×768 | shown at about 256 CSS px |
+| Hero still | 1600×900 | chooser (always; keeps WebGL off the first screen) |
+| Build angles (base and part layers) | 1280×720 | showcase panel; enough for about 640 CSS px at 2× |
+| Turntable | 960×540 × 24 frames | base vehicle only; neighbouring frames are pre-decoded |
+| Card render | 512×512 | shown at about 256 CSS px |

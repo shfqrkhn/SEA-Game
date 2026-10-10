@@ -117,7 +117,13 @@ test('a refused download falls back to copyable backup text', async ({ page }) =
 
 test('WebGL context loss: the bay falls back, then returns when the context is restored (MPES §9)', async ({ page }) => {
   guardNetwork(page);
-  await page.goto(gameUrl('?lang=en'));
+  // The WebGL bay remains on the student tracker until V2 replaces it with the pre-rendered showcase.
+  await page.goto(gameUrl('?role=student&lang=en'));
+  await page.fill('#join-code', 'SEA3-T2-0123456789ABCDEF');
+  await page.selectOption('#join-mission', 'COMBAT');
+  await page.click('#join'); await page.click('#record-practice'); await page.click('#student-planning');
+  await page.check('#plan-confirm'); await page.click('#student-start-auction');
+  await confirmDialog(page);
   const canvas = page.locator('#vehicle-bay canvas');
   const holder = page.locator('#vehicle-bay .bay-canvas');
   // Wait for the bay to choose WebGL or the fallback; engines without WebGL are covered by the next test.

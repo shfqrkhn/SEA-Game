@@ -13,16 +13,16 @@ Version 5.0.0-dev.0. M0–M4 are complete. MPES 3.0.0 (owner decisions D-07 to D
   - Blender 5.2.2 LTS, pinned and hash-verified, unzipped into `.artifacts/tools`;
   - procedural vehicle and part scripts in `art/blender/`;
   - AVIF q65 encoder with a hashed manifest, preview compositor and measurement tool in `art/tools/`.
-- **Spike assets** (`content/renders/spike/`, 748 KB): the RECOVERY vehicle (hero still, 24-frame turntable, front and rear build angles) and parts CAP-B, COM-E and ACC-F (card renders and build layers).
+- **Spike assets** (`content/renders/spike/`, 543 KB; sizes favour performance over looks: hero 1600×900, build angles 1280×720, turntable 960×540, cards 512², see art/README.md): the RECOVERY vehicle (hero still, 24-frame turntable, front and rear build angles) and parts CAP-B, COM-E and ACC-F (card renders and build layers).
 - **HUD prototype behind `?hud=1`:**
   - war-room theme (`source/ui/styles.css`, `data-hud`);
-  - photoreal hero on the chooser;
   - card renders on lots;
   - the pre-rendered showcase (`source/showcase/`) on the student tracker, stacking the layers of the team's real purchases, with front, rear and turntable views.
   The build embeds the renders once as an inert JSON block. The CSP is unchanged.
 - **Measurements** (4× CPU throttling, also with the GPU disabled):
-  - all budgets PASS, including on a 42 MB stress file: chooser at most 1.03 s, showcase update at most 46 ms, turntable scrub at most 10 ms;
-  - projected full HTML file about 18 MB.
+  - all budgets PASS, including on a 42 MB stress file: chooser at most 0.77 s, showcase update at most 31 ms, turntable scrub at most 8 ms;
+  - projected full HTML file about 13 MB.
+- **Chooser:** always shows the embedded hero still (with or without `?hud=1`), so no WebGL runs on the first screen. The WebGL bay remains only on the student tracker outside the HUD until V2.
 - **Tests:** `npm run verify` (typecheck, lint, unit, build check, Playwright in Chromium, Firefox and Edge, then perf alone), including `tests/e2e/hud.spec.ts` and `tests/unit/build.test.ts` render-embedding checks.
 
 ## 3. Not done
