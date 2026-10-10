@@ -14,33 +14,19 @@ import { labelled, money, signed } from './format.ts';
 import type { Language, StringKey } from './i18n.ts';
 import { practiceCard } from './instructor.ts';
 import { RoleView } from './view.ts';
-import { VehicleBay } from '../bay/bay.ts';
-import { hasShowcase, Showcase } from '../showcase/showcase.ts';
-import { hudEnabled } from './hud.ts';
-import { vehicleArt } from './art.ts';
-
-let bay: VehicleBay | null = null;
-/** One persistent bay per page; re-attached on every render so its WebGL context survives. */
-function bayFor(v: View, mission: MissionId): Child {
-  const s = joined(v);
-  const text = { unavailable: v.t('bay.unavailable'), hint: v.t('bay.hint'), fallback: () => vehicleArt(mission, missionName(mission, v.lang)) };
-  if (bay) bay.setText(text); else bay = new VehicleBay(text);
-  bay.update({ mission, parts: s.team.purchases.map(p => ({ id: p.id, category: p.cat })) },
-    v.t('bay.summary', { mission: missionName(mission, v.lang), n: s.team.purchases.length }));
-  return h('section', { class: 'panel stack', 'aria-labelledby': 'bay-heading' }, h('h2', { id: 'bay-heading', text: v.t('bay.title') }), bay.element);
-}
+import { Showcase } from '../showcase/showcase.ts';
 
 let showcase: Showcase | null = null;
-/** HUD prototype (MPES §17 V1): the pre-rendered showcase replaces the bay where renders exist. */
-function showcaseFor(v: View, mission: MissionId): Child | null {
-  if (!hudEnabled() || !hasShowcase(mission)) return null;
+/** The pre-rendered vehicle showcase (MPES §10): one per page, so its view and turntable frame persist. */
+function showcaseFor(v: View, mission: MissionId): Child {
   const s = joined(v), t = v.t;
   showcase ??= new Showcase();
-  return showcase.update(mission, s.team.purchases.map(p => ({ id: p.id, title: p.title[v.lang] })),
+  return showcase.update(mission, s.team.purchases.map(p => ({ id: p.id, title: p.title[v.lang], category: p.cat })),
     t('showcase.summary', { mission: missionName(mission, v.lang), n: s.team.purchases.length }), {
       title: t('showcase.title'), view: t('showcase.view'), front: t('showcase.front'), rear: t('showcase.rear'),
       turntable: t('showcase.turntable'), rotate: t('showcase.rotate'), installed: t('showcase.installed'), none: t('showcase.none'),
       turntableLabel: `${t('showcase.vehicle', { mission: missionName(mission, v.lang) })} ${t('showcase.turntableNote')}`, turntableNote: t('showcase.turntableNote'),
+      process: t('showcase.process'), slotNote: t('showcase.slotNote'),
     });
 }
 
@@ -217,7 +203,7 @@ function auctionView(v: View): Child {
         gapMeter(mission, s.team.totals, lang, preview),
         h('p', { text: t('strack.spent', { amount: money(s.team.cost, lang) }) }),
       ),
-      showcaseFor(v, mission) ?? bayFor(v, mission),
+      showcaseFor(v, mission),
       h('section', { class: 'panel' }, h('h2', { text: t('common.purchases') }), purchasesTable(s.team.purchases, lang)),
     ),
   );

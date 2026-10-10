@@ -27,6 +27,9 @@ describe('single-file build (RQ-01, RQ-24, RQ-25, RQ-27)', async () => {
     }
     expect(csp).not.toMatch(/unsafe-(inline|eval)/);
     expect(csp).not.toMatch(/https?:/);
+    // Imagery is embedded data only; nothing creates blob: URLs, workers or WebGL contexts any more.
+    expect(csp).toContain('img-src data:;');
+    expect(csp).not.toContain('blob:');
   });
   it('references no external resources', () => {
     expect(html).not.toMatch(/<(link|img|iframe|object|embed)\b/i);
@@ -36,7 +39,8 @@ describe('single-file build (RQ-01, RQ-24, RQ-25, RQ-27)', async () => {
     expect(MAX_BYTES).toBe(50 * 1024 * 1024);
   });
   it('embeds the licence and third-party notices and stays within the size limit', () => {
-    expect(html).toContain('three.js authors');
+    expect(html).toContain('bundles no third-party software');
+    expect(html).not.toContain('three.js');
     expect(html).toContain('SEA Game contributors');
     expect(Buffer.byteLength(html)).toBeLessThanOrEqual(MAX_BYTES);
   });

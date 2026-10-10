@@ -5,12 +5,14 @@ import { h } from '../ui/dom.ts';
 import { renders, VEHICLE, type Render } from './renders.ts';
 
 export type ShowcaseView = 'front' | 'rear' | 'turntable';
-export interface ShowcasePart { readonly id: string; readonly title: string }
+export interface ShowcasePart { readonly id: string; readonly title: string; readonly category?: string }
 export interface ShowcaseText {
   readonly title: string; readonly view: string; readonly front: string; readonly rear: string;
   readonly turntable: string; readonly rotate: string; readonly installed: string; readonly none: string;
   /** Text alternative and visible note for the turntable, which shows the base vehicle only. */
   readonly turntableLabel: string; readonly turntableNote: string;
+  /** Heading of the SE_PROCESS badges, and the note shown when a mount holds more than one part. */
+  readonly process: string; readonly slotNote: string;
 }
 
 const VIEWS: readonly ShowcaseView[] = ['front', 'rear', 'turntable'];
@@ -26,16 +28,19 @@ function frames(vehicle: string): string[] {
  * older part in its slot there.
  */
 export function stackOrder<P extends ShowcasePart>(table: ReadonlyMap<string, Render>, vehicle: string, angle: string, parts: readonly P[]): P[] {
-  const slot = (p: P) => table.get(`${vehicle}-front-${p.id}`)?.slot ?? table.get(`${vehicle}-rear-${p.id}`)?.slot ?? p.id;
-  const latest = new Map<string, P>();
-  for (const p of parts) latest.set(slot(p), p);
   const depth = (p: P) => table.get(`${vehicle}-${angle}-${p.id}`)?.depth ?? 0;
-  return [...latest.values()].filter(p => table.has(`${vehicle}-${angle}-${p.id}`)).sort((a, b) => depth(b) - depth(a));
+  return latestPerSlot(table, vehicle, parts).filter(p => table.has(`${vehicle}-${angle}-${p.id}`)).sort((a, b) => depth(b) - depth(a));
 }
 
-/** True when the embedded renders include this mission's vehicle. */
-export function hasShowcase(mission: MissionId): boolean {
-  return renders().has(`${VEHICLE[mission]}-front-base`);
+/** The most recently recorded part of each mount slot, in purchase order (parts without a layer are dropped). */
+export function latestPerSlot<P extends ShowcasePart>(table: ReadonlyMap<string, Render>, vehicle: string, parts: readonly P[]): P[] {
+  const latest = new Map<string, P>();
+  for (const p of parts) {
+    const front = table.get(`${vehicle}-front-${p.id}`), rear = table.get(`${vehicle}-rear-${p.id}`);
+    const slot = front || rear ? front?.slot ?? rear?.slot ?? p.id : undefined;
+    if (slot) { latest.delete(slot); latest.set(slot, p); }
+  }
+  return [...latest.values()];
 }
 
 function layer(render: Render, attrs: Record<string, string>): HTMLImageElement {
@@ -89,13 +94,19 @@ export class Showcase {
         h('input', { type: 'range', id: 'showcase-turn', min: '0', max: String(turntable.length - 1), step: '1', value: String(this.#frame),
           on: { input: e => { this.#frame = Number((e.target as HTMLInputElement).value); this.#swapFrame(stage, turntable); } } }))
       : null;
+    // SE_PROCESS cards have no geometry: they show as HUD badges (MPES §10.2).
+    const process = parts.filter(p => p.category === 'SE_PROCESS');
+    const badges = process.length ? h('div', { class: 'stack' }, h('h3', { class: 'small', text: text.process }),
+      h('ul', { class: 'badges' }, process.map(p => h('li', { class: 'badge' }, h('span', { class: 'mono', text: p.id }), ' ', p.title)))) : '';
+    const physical = parts.filter(p => p.category !== 'SE_PROCESS');
+    const slotNote = !turning && latestPerSlot(table, vehicle, physical).length < physical.length ? h('p', { class: 'muted small', text: text.slotNote }) : '';
     const installed = h('div', {}, h('h3', { class: 'small', text: text.installed }),
       parts.length ? h('ul', { class: 'installed' }, parts.map(p => h('li', {}, h('span', { class: 'mono small', text: p.id }), ' ', p.title)))
         : h('p', { class: 'muted small', text: text.none }));
     if (this.#view === 'turntable') this.#warm(turntable);
     const focused = document.activeElement?.id;
     const note = turning ? h('p', { class: 'muted small', text: text.turntableNote }) : '';
-    this.element.replaceChildren(h('h2', { id: 'showcase-heading', text: text.title }), stage, note, views, scrub ?? '', installed);
+    this.element.replaceChildren(h('h2', { id: 'showcase-heading', text: text.title }), stage, note, slotNote, views, scrub ?? '', badges, installed);
     if (focused?.startsWith('showcase-')) document.getElementById(focused)?.focus();
     return this.element;
   }

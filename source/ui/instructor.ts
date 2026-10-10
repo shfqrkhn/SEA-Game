@@ -8,8 +8,7 @@ import { lotIndex } from '../domain/ledger.ts';
 import { parseAmount } from '../domain/money.ts';
 import { instructorForSave, validateInstructor } from '../domain/saves.ts';
 import { lotVisible, REVEAL_MODES, MIN_BID_SECONDS, MAX_BID_SECONDS, type RevealMode, type TimingMode } from '../domain/session.ts';
-import { cardArt } from './art.ts';
-import { cardDetails, complianceText, missionName, missionTable, purchasesTable } from './components.ts';
+import { cardDetails, complianceText, missionName, missionTable, purchasesTable, cardImage } from './components.ts';
 import { h, type Child } from './dom.ts';
 import { labelled, money, seconds } from './format.ts';
 import type { Language, StringKey } from './i18n.ts';
@@ -92,8 +91,8 @@ function practiceView(v: View): Child {
 }
 
 export function practiceCard(lang: Language): Child {
-  return h('figure', { class: 'card-figure' },
-    cardArt(PRACTICE_CARD.id, 'PRACTICE', PRACTICE_CARD.title[lang]),
+  return h('figure', { class: 'card-figure', 'data-card': PRACTICE_CARD.id },
+    cardImage(PRACTICE_CARD.id, `${PRACTICE_CARD.id} · ${PRACTICE_CARD.title[lang]}`),
     h('figcaption', {}, h('h2', { text: PRACTICE_CARD.title[lang] }), h('p', { class: 'mono small', text: PRACTICE_CARD.id })));
 }
 
@@ -383,7 +382,9 @@ export function awardSection(v: View): Child {
   return h('section', { class: 'stack' },
     h('p', { class: 'award', id: 'award', text: headline }),
     h('p', { class: 'muted', text: t('debrief.why') }),
-    h('div', { class: 'table-wrap' }, h('table', {},
+    classChart(v, result.winners),
+    h('div', { class: 'table-wrap' }, h('table', { id: 'debrief-table' },
+      h('caption', { class: 'visually-hidden', text: t('debrief.tableCaption') }),
       h('thead', {}, h('tr', {},
         h('th', { scope: 'col', text: t('debrief.rank') }), h('th', { scope: 'col', text: t('common.teams') }), h('th', { scope: 'col', text: t('common.mission') }),
         h('th', { scope: 'col', text: t('common.status') }), h('th', { scope: 'col', class: 'num', text: t('common.score') }),
@@ -405,6 +406,27 @@ export function awardSection(v: View): Child {
         );
       })),
     )),
+  );
+}
+
+/**
+ * Class comparison (MPES §6.13): one bar per team, scaled to the best score. Bars are HTML sized through the
+ * CSSOM (no canvas); the ranking table below is the text equivalent, and each bar is labelled in words.
+ */
+function classChart(v: View, winners: readonly number[]): Child {
+  const s = v.state, t = v.t, lang = v.lang;
+  const rows = s.teams.map(team => ({ team, st: standing(team) }));
+  const best = Math.max(1, ...rows.map(r => r.st.score));
+  return h('figure', { class: 'class-chart', 'aria-labelledby': 'class-chart-title', 'aria-describedby': 'class-chart-note' },
+    h('figcaption', { class: 'stack' }, h('h2', { id: 'class-chart-title', text: t('debrief.chart') }), h('p', { class: 'muted small', id: 'class-chart-note', text: t('debrief.chartNote') })),
+    h('ul', { class: 'bars' }, rows.map(({ team, st }) => {
+      const bar = h('span', { class: `bar ${winners.includes(team.id) ? 'winner' : ''} ${st.eligible ? '' : 'ineligible'}` });
+      bar.style.width = `${(st.score / best) * 100}%`;
+      const words = [t('common.team', { n: team.id }), missionName(team.lockedMission as MissionId, lang), t('debrief.chartScore', { n: st.score })];
+      if (winners.includes(team.id)) words.push(t('debrief.chartWinner'));
+      if (!st.eligible) words.push(t('debrief.chartIneligible'));
+      return h('li', { class: 'bar-row' }, h('span', { class: 'bar-label', text: words.join(' · ') }), h('span', { class: 'bar-track' }, bar));
+    })),
   );
 }
 

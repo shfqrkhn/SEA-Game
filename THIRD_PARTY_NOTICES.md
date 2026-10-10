@@ -1,31 +1,7 @@
 # Third-party notices
 
-The distributed game file `dist/index.html` bundles the following third-party software. These notices are also shown in the game under Help > About.
+The distributed game file bundles no third-party software, fonts or assets. These notices are also shown in the game under Help > About.
 
-## three.js 0.186.1
+All imagery in the game is original. It was modelled procedurally and rendered by the project's own scripts in `art/blender/` with Blender 5.2.2 (GNU GPL). Blender's licence does not extend to the images it renders; the renders are released with the game under its MIT licence.
 
-Source: https://github.com/mrdoob/three.js (npm package `three`)
-
-```text
-The MIT License
-
-Copyright © 2010-2026 three.js authors
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
-```
+Build and test tools (esbuild, sharp, TypeScript, Vitest, Playwright, axe-core and others in `package.json`) run only on the maintainer's machine and are not included in the game file.

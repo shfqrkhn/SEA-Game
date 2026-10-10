@@ -8,7 +8,7 @@ import { fileURLToPath } from 'node:url';
 export const MAX_BYTES = 50 * 1024 * 1024; // MPES §14
 export const ROOT = fileURLToPath(new URL('..', import.meta.url));
 export const OUT = join(ROOT, 'dist', 'index.html');
-const REQUIRED_NOTICES = ['three.js', 'Copyright © 2010-2026 three.js authors'];
+const REQUIRED_NOTICES = ['bundles no third-party software', 'Blender'];
 
 function read(path: string): string {
   return readFileSync(join(ROOT, path), 'utf8');
@@ -77,7 +77,7 @@ export async function render(): Promise<string> {
     "default-src 'none'",
     `script-src 'sha256-${sha256(js)}'`,
     `style-src 'sha256-${sha256(css)}'`,
-    "img-src data: blob:",
+    "img-src data:",
     "font-src 'none'",
     "connect-src 'none'",
     "media-src 'none'",
