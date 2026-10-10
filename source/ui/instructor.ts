@@ -148,7 +148,6 @@ function liveLot(v: View, clock: Clock): Child {
           : h('button', { type: 'button', class: 'btn', id: 'pause', text: t('auction.pause'), on: { click: () => v.run(state => I.pause(state, clock())) } }),
         h('button', { type: 'button', class: 'btn', id: 'extend', text: t('auction.extend'), on: { click: () => v.run(state => I.extend(state, clock())) } }),
       ) : null,
-      h('p', { class: 'muted small', id: 'auction-keys', text: `${t('auction.bidHint')} ${t('auction.keys')}` }),
       h('div', { class: 'bid-grid' }, s.teams.map(team => {
         const atLimit = (team.purchasesByRound[s.round] ?? 0) >= 2;
         const leading = s.leader === team.id;
@@ -179,11 +178,15 @@ function liveLot(v: View, clock: Clock): Child {
       ),
     );
   }
+  // Two columns on wide screens (card | controls) keep every lot action visible at 1280×720 (MPES §7.1).
   return h('section', { class: 'panel stack', 'aria-labelledby': 'lot-heading' },
     h('h1', { id: 'lot-heading', text: t('common.roundLot', { round: s.round + 1, lot: s.lot + 1 }) }),
-    visible || outcome ? [cardDetails(card, v.lang, 'h2'), h('p', { class: 'muted small', text: t('auction.announce', { round: s.round + 1, lot: s.lot + 1, id: card.id }) })]
-      : h('p', { class: 'hidden-card', text: t('auction.hidden') }),
-    controls,
+    h('div', { class: 'lot-layout' },
+      visible || outcome ? h('div', { class: 'stack' }, cardDetails(card, v.lang, 'h2'), h('p', { class: 'muted small', text: t('auction.announce', { round: s.round + 1, lot: s.lot + 1, id: card.id }) }))
+        : h('p', { class: 'hidden-card', text: t('auction.hidden') }),
+      h('div', { class: 'stack lot-controls' }, controls),
+    ),
+    s.open && !outcome ? h('p', { class: 'muted small', id: 'auction-keys', text: `${t('auction.bidHint')} ${t('auction.keys')}` }) : null,
   );
 }
 

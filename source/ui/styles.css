@@ -265,3 +265,12 @@ th { white-space: nowrap; font-size: .75rem; }
 .badges { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: .4rem; }
 .badge { border: 1px solid var(--accent); border-radius: var(--radius); padding: .15rem .5rem; font-size: .85rem; }
 .mission-hero { margin: 0; border: 1px solid var(--line); background: var(--stage); }
+/* Live lot (MPES §7.1): card and controls side by side on wide screens, so every action fits 1280×720. */
+.lot-layout { display: grid; gap: var(--gap); grid-template-columns: minmax(0, 1fr); align-items: start; }
+@media (min-width: 64rem) {
+  .lot-layout { grid-template-columns: minmax(11rem, 2fr) minmax(0, 3fr); }
+  .lot-layout .card-figure { grid-template-columns: minmax(0, 1fr); }
+  .lot-layout .card-render { max-width: 13rem; }
+  .lot-controls .bid-grid { grid-template-columns: repeat(auto-fill, minmax(5.25rem, 1fr)); }
+  .lot-controls .bid-grid .btn { min-height: 2.9rem; padding: .3rem .4rem; }
+}
