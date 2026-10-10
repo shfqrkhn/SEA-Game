@@ -17,6 +17,12 @@ function frames(vehicle: string): string[] {
   return [...renders().keys()].filter(k => k.startsWith(`${vehicle}-turntable-`)).sort();
 }
 
+/** Parts with a layer at this vehicle and angle, farthest from the camera first (MPES §10.2). */
+export function stackOrder<P extends ShowcasePart>(table: ReadonlyMap<string, Render>, vehicle: string, angle: string, parts: readonly P[]): P[] {
+  const depth = (p: P) => table.get(`${vehicle}-${angle}-${p.id}`)?.depth ?? 0;
+  return parts.filter(p => table.has(`${vehicle}-${angle}-${p.id}`)).sort((a, b) => depth(b) - depth(a));
+}
+
 /** True when the embedded renders include this mission's vehicle. */
 export function hasShowcase(mission: MissionId): boolean {
   return renders().has(`${VEHICLE[mission]}-front-base`);
@@ -58,9 +64,8 @@ export class Showcase {
         stage.style.aspectRatio = `${base.frame.width} / ${base.frame.height}`;
         stage.appendChild(layer(base, { 'data-layer': 'base', 'data-angle': this.#view }));
       }
-      for (const part of parts) {
-        const render = table.get(`${vehicle}-${this.#view}-${part.id}`);
-        if (render) stage.appendChild(layer(render, { 'data-layer': part.id, 'data-angle': this.#view }));
+      for (const part of stackOrder(table, vehicle, this.#view, parts)) {
+        stage.appendChild(layer(table.get(`${vehicle}-${this.#view}-${part.id}`)!, { 'data-layer': part.id, 'data-angle': this.#view }));
       }
     }
     const views = h('fieldset', { class: 'cluster showcase-views' }, h('legend', { class: 'visually-hidden', text: text.view }),

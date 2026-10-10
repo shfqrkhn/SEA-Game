@@ -30,7 +30,7 @@ export function sha256(text: string): string {
 }
 
 interface RenderEntry {
-  readonly file: string; readonly id: string; readonly kind: string; readonly sha256: string;
+  readonly file: string; readonly id: string; readonly kind: string; readonly sha256: string; readonly depth: number | null;
   readonly frame: { width: number; height: number }; readonly offset: { left: number; top: number }; readonly size: { width: number; height: number };
 }
 export const RENDERS_DIR = 'content/renders/spike';
@@ -42,7 +42,7 @@ function renders(): string {
   for (const e of manifest.entries) {
     const bytes = readFileSync(join(ROOT, RENDERS_DIR, e.file));
     if (createHash('sha256').update(bytes).digest('hex') !== e.sha256) throw new Error(`Render hash mismatch: ${e.file}`);
-    out[e.id] = { src: `data:image/${manifest.format};base64,${bytes.toString('base64')}`, kind: e.kind, frame: e.frame, offset: e.offset, size: e.size };
+    out[e.id] = { src: `data:image/${manifest.format};base64,${bytes.toString('base64')}`, kind: e.kind, depth: e.depth, frame: e.frame, offset: e.offset, size: e.size };
   }
   const json = JSON.stringify(out);
   if (json.includes('<')) throw new Error('Unsafe renders content');

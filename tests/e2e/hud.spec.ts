@@ -4,7 +4,7 @@ import { expect, test } from '@playwright/test';
 import { expectAccessible, gameUrl, guardNetwork } from './helpers.ts';
 import { confirmDialog, instructorSetup, studentJoin } from './roles.ts';
 
-test('HUD prototype: showcase layers follow recorded purchases, card renders on the live lot', async ({ browser }) => {
+test('HUD prototype: showcase layers follow recorded purchases', async ({ browser }) => {
   const ip = await (await browser.newContext()).newPage();
   const sp = await (await browser.newContext()).newPage();
   guardNetwork(ip); guardNetwork(sp);
@@ -22,7 +22,7 @@ test('HUD prototype: showcase layers follow recorded purchases, card renders on 
   await expect(showcase).toBeVisible();
   await expect(showcase.locator('img[data-layer="base"]')).toHaveCount(1);
   await expect(showcase.locator('img[data-layer="ACC-F"]')).toHaveCount(0);
-  await expect(showcase.locator('[role="img"]')).toHaveAttribute('aria-label', /Recovery.*0/);
+  await expect(showcase.locator('[role="img"]')).toHaveAttribute('aria-label', 'Recovery vehicle. Installed parts: 0');
 
   // Record the winch at round 1, lot 7 (ACCESSORIES slot).
   await sp.selectOption('#pos-lot', '7');
@@ -31,7 +31,7 @@ test('HUD prototype: showcase layers follow recorded purchases, card renders on 
   await sp.fill('#paid', '350000');
   await sp.click('#record-win');
   await expect(showcase.locator('img[data-layer="ACC-F"]')).toHaveCount(1);
-  await expect(showcase.locator('[role="img"]')).toHaveAttribute('aria-label', /Recovery.*1/);
+  await expect(showcase.locator('[role="img"]')).toHaveAttribute('aria-label', 'Recovery vehicle. Installed parts: 1');
   await expect(showcase).toContainText('Recovery Winch Package');
 
   // Rear angle and turntable.
@@ -45,7 +45,6 @@ test('HUD prototype: showcase layers follow recorded purchases, card renders on 
   await expect(showcase.locator('img[data-frame="1"]')).toHaveCount(1);
   await expectAccessible(sp, 'HUD tracker');
 
-  // Instructor live lot of a card that has a render: lot 7 of round 1 must be reached, so use the card test instead.
   await expectAccessible(ip, 'HUD auction');
 });
 
@@ -64,6 +63,13 @@ test('HUD prototype: the live lot shows the photoreal card render when one exist
   await page.fill('#card-id', 'CAP-A');
   await page.click('#load-card');
   await expect(page.locator('figure[data-card="CAP-A"] svg')).toBeVisible(); // no render yet: SVG fallback
+});
+
+test('HUD chooser: the hero still is described truthfully (only the parts it shows)', async ({ page }) => {
+  guardNetwork(page);
+  await page.goto(gameUrl('?lang=en&hud=1'));
+  await expect(page.locator('img.hero-still')).toHaveAttribute('alt', 'Recovery vehicle with a carrier module, long-range radios and a recovery winch');
+  await expect(page.locator('a[data-role="student"]')).toHaveAttribute('href', /hud=1/);
 });
 
 test('without the flag, the current interface is unchanged', async ({ page }) => {

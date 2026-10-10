@@ -4,6 +4,8 @@ import type { MissionId } from '../domain/data.ts';
 export interface Render {
   readonly src: string;
   readonly kind: string;
+  /** Camera distance of a build layer: the draw order, farthest first (MPES §10.2). */
+  readonly depth?: number | null;
   readonly frame: { readonly width: number; readonly height: number };
   readonly offset: { readonly left: number; readonly top: number };
   readonly size: { readonly width: number; readonly height: number };

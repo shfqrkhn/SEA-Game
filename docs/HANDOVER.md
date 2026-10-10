@@ -1,6 +1,6 @@
 # Handover
 
-Updated 2026-10-10 (America/Toronto). Specification: [MPES](MPES.md) 3.0.0. Evidence: [verification/5.0.0-dev.md](verification/5.0.0-dev.md), [verification/spike-visual.md](verification/spike-visual.md).
+Updated 2026-10-10 (America/Toronto). Specification: [MPES](MPES.md) 3.0.1. Evidence: [verification/5.0.0-dev.md](verification/5.0.0-dev.md), [verification/spike-visual.md](verification/spike-visual.md).
 
 ## 1. Version and milestone
 

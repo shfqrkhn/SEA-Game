@@ -3,7 +3,7 @@
 | Field | Value |
 |---|---|
 | Document | Master Product and Engineering Specification (MPES) for the clean-room rebuild of **Systems Engineering Awareness (SEA Game)** |
-| Version | 3.0.0 |
+| Version | 3.0.1 |
 | Date | 2026-10-10 (America/Toronto) |
 | Status | **ACCEPTED**. Owner delegated all remaining decisions and gates to the implementing agent on 2026-10-09 (§22) |
 | Supersedes | MPES 1.5.2 and every earlier handover, ledger, prompt and evidence packet for implementation purposes |
@@ -627,7 +627,7 @@ Make the build tangible: the selected mission's base vehicle visibly gains parts
 
 - Six original, fictional base vehicles, one per mission, rendered offline in Blender (D-08, D-09) in one photoreal art direction: matte olive drab, physically based materials with wear, studio lighting suited to a HUD backdrop. Silhouettes stay readable at 320 px wide. No real equipment is depicted.
 - Per vehicle: one hero still, a turntable of evenly spaced frames, and a small fixed set of build angles. The spike (§17, V1) fixes the counts; the starting point is 24 frames and 2 angles.
-- **Build composition.** For each build angle the showcase stacks the base vehicle image and one transparent layer per installed part. Every layer is rendered from the same camera, with the hull held out and a shadow and ambient-occlusion catcher, so stacked layers occlude correctly and cast contact shadows. Draw order comes from the manifest (§11).
+- **Build composition.** For each build angle the showcase stacks the base vehicle image and one transparent layer per installed part. Every layer is rendered from the same camera, with the hull held out and a shadow and ambient-occlusion catcher, so stacked layers occlude correctly and cast contact shadows. Draw order is each layer's camera distance, recorded in the manifest (§11): the farthest layer is drawn first.
 - Each card category maps to visible attachment points (CAPACITY → hull modules; MOBILITY → running gear/powerpack; FIREPOWER → mounts; PROTECTION → armour panels; COMMS → antennas; SA → sensor masts/optics; ACCESSORIES → kits/trailer/winch/plough; SE_PROCESS → no geometry, shown as HUD process badges).
 - Each of the 70 cards has a recognisable part, a photoreal card render and a layer for every vehicle and build angle.
 - Controls: change angle and scrub the turntable by pointer, touch and keyboard. No autoplay; under `prefers-reduced-motion` the turntable does not animate.
@@ -650,7 +650,7 @@ Renders are reproducible: pinned Blender version, fixed seeds, sample counts and
 ## 11. Content and imagery
 
 - 77 subjects: 70 cards (Appendix A IDs), 6 vehicles (`combat`, `recce`, `troop-carrier`, `command-post`, `recovery`, `mine-clearing`) and 1 practice card (`TRAIN-CAP`). Each card has a photoreal card render; each vehicle has the showcase set of §10.
-- Format: AVIF or WebP, chosen at the spike by measured quality and size, embedded once as `data:` URIs and reused. `content/renders/manifest.json` lists every file with id, kind, vehicle, angle, draw order, bytes, SHA-256 and EN/FR alt text derived from the card or mission title.
+- Format: AVIF or WebP, chosen at the spike by measured quality and size, embedded once as `data:` URIs and reused. `content/renders/manifest.json` lists every file with id (the file stem, which names the vehicle and angle), kind, frame, trimmed offset and size, draw order (camera distance), bytes and SHA-256. Alt text is not stored: the app derives it at runtime from the canonical EN/FR card and mission titles (Appendix A), so imagery and text cannot drift apart.
 - Source (D-09, superseding the SVG art of D-02): **original imagery authored by the implementing agent** with Blender scripts in `art/blender/`, released under the project MIT licence. Blender's own licence does not extend to its renders. Third-party models or textures are used only if their licence allows embedding and redistribution, and they are listed in THIRD_PARTY_NOTICES.md; procedural or CC0 material is preferred.
 - Size budget for all embedded imagery: ≤ 40 MB.
 - Imagery never drives rules. A mismatch between imagery and data is a content defect.
@@ -1015,6 +1015,7 @@ Announce, keep the last package and its guides available for at least one school
 
 | Version | Date | Change |
 |---|---|---|
+| 3.0.1 | 2026-10-10 | §10.2 and §11 aligned with the V1 implementation: draw order is the recorded camera distance; manifest fields named; alt text derived at runtime from canonical titles instead of stored. No change to requirements. |
 | 3.0.0 | 2026-10-10 | Owner decisions D-07 to D-13: war-room HUD (S7, §7.1); photoreal pre-rendered imagery authored in Blender replaces the WebGL bay and SVG art (§1.3, §2, §5, §9 to §11, D-01, D-02, D-08, D-09); 50 MB file and integrated-graphics reference profile (§3, §14, D-10, D-11); `dist/` no longer committed (§5.5, §18, D-12); GitHub becomes temporary QA space and the release becomes a local handoff package (§16.5, §19, §21, D-04, D-13); milestones V1 and V2 replace M5 (§17); RQ-31 and RQ-32 added. |
 | 2.3.0 | 2026-10-10 | Owner decision: scope limited to Windows 11 (current Chrome, Edge, Firefox) for both roles. Other platforms and Safari moved to non-goals (§2.2, §4.1, §4.3, D-03); browser tests, CI, RQ-21, RQ-25 and §12 aligned (§5.4, §5.5, §16.3–16.5). |
 | 2.2.1 | 2026-10-09 | Owner decision: exploded view removed from the vehicle bay (§10.2). |

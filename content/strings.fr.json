@@ -348,5 +348,6 @@
   "showcase.rotate": "Faire pivoter le véhicule",
   "showcase.installed": "Pièces installées",
   "showcase.none": "Aucune pièce installée pour l’instant.",
-  "showcase.summary": "Véhicule {mission} avec {n} pièces installées"
+  "showcase.summary": "Véhicule {mission}. Pièces installées : {n}",
+  "chooser.heroStill": "Véhicule de dépannage avec module de transport, radios longue portée et treuil de dépannage"
 }

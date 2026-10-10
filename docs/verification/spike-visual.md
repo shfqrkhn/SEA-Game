@@ -38,7 +38,7 @@ Date: 2026-10-10. Machine: Windows 11, NVIDIA GeForce RTX 5060 Ti (16 GB), Node 
 
 PSNR compares each encoded image with its 16-bit master, both flattened onto the HUD panel colour. Above about 45 dB the difference is not visible.
 
-Decision: **AVIF, quality 65, 4:4:4**. It is 4–8× smaller than WebP at equal or better quality, and Chrome, Edge and Firefox on Windows 11 all decode it.
+Decision: **AVIF, quality 65, 4:4:4**. At the final sizes it is 3–6× smaller than WebP at quality 85 with equal or better quality (3.0–6.1× by subject kind), and Chrome, Edge and Firefox on Windows 11 all decode it.
 
 ## Size projection for all 77 subjects
 

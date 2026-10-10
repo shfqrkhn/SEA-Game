@@ -66,7 +66,8 @@ async function measure(dir: string, report: string): Promise<void> {
 
 async function encodeAll(dir: string, out: string, format: Format, quality: number): Promise<void> {
   mkdirSync(out, { recursive: true });
-  const renders = JSON.parse(readFileSync(join(dir, 'renders.json'), 'utf8')) as { blender: string; seed: number };
+  const renders = JSON.parse(readFileSync(join(dir, 'renders.json'), 'utf8')) as { blender: string; seed: number; outputs: { file: string; depth: number }[] };
+  const depth = new Map(renders.outputs.map(o => [o.file, o.depth]));
   const entries = [];
   for (const m of readdirSync(dir).filter(f => f.endsWith('.png')).sort().map(classify)) {
     const t = await trimmed(join(dir, m.file));
@@ -74,7 +75,7 @@ async function encodeAll(dir: string, out: string, format: Format, quality: numb
     const file = basename(m.file, '.png') + '.' + format;
     writeFileSync(join(out, file), data);
     entries.push({
-      file, kind: m.kind, id: m.id, bytes: data.length, sha256: createHash('sha256').update(data).digest('hex'),
+      file, kind: m.kind, id: m.id, depth: depth.get(m.file) ?? null, bytes: data.length, sha256: createHash('sha256').update(data).digest('hex'),
       frame: { width: t.frameWidth, height: t.frameHeight }, offset: { left: t.left, top: t.top }, size: { width: t.info.width, height: t.info.height },
     });
   }

@@ -9,6 +9,7 @@
       "file": "card-ACC-F.avif",
       "kind": "card",
       "id": "card-ACC-F",
+      "depth": 2.379,
       "bytes": 12799,
       "sha256": "44cd8337c70519a13a55f86e7d1fcdf15af5ead3993b566d4053ac36e3b200b3",
       "frame": {
@@ -28,6 +29,7 @@
       "file": "card-CAP-B.avif",
       "kind": "card",
       "id": "card-CAP-B",
+      "depth": 7.016,
       "bytes": 11663,
       "sha256": "7bf54a7e37b264577c76fa2c6cc6f08e1353b9189172206d47df92a4ff4de060",
       "frame": {
@@ -47,6 +49,7 @@
       "file": "card-COM-E.avif",
       "kind": "card",
       "id": "card-COM-E",
+      "depth": 7.29,
       "bytes": 8808,
       "sha256": "04c7bae4772f1b248b1ec662ec52cb063774e29f900d14627cedd1111acf3a9e",
       "frame": {
@@ -66,6 +69,7 @@
       "file": "recovery-front-ACC-F.avif",
       "kind": "build-layer",
       "id": "recovery-front-ACC-F",
+      "depth": 20.939,
       "bytes": 6566,
       "sha256": "05c68201de0057b9f45f1f43eecf676f1abee0f3eac2226f6f1e151fe423474d",
       "frame": {
@@ -85,6 +89,7 @@
       "file": "recovery-front-CAP-B.avif",
       "kind": "build-layer",
       "id": "recovery-front-CAP-B",
+      "depth": 23.384,
       "bytes": 8668,
       "sha256": "048ea2460eede346a6fe2d61db92884a1e1e471cf4a1c3c78f97e56914f23f99",
       "frame": {
@@ -104,6 +109,7 @@
       "file": "recovery-front-COM-E.avif",
       "kind": "build-layer",
       "id": "recovery-front-COM-E",
+      "depth": 21.506,
       "bytes": 7024,
       "sha256": "4a79a39a6fac2cae93ea69762e2d2cedb99788959efdf7ee6c583556c673cc9f",
       "frame": {
@@ -123,6 +129,7 @@
       "file": "recovery-front-base.avif",
       "kind": "build-base",
       "id": "recovery-front-base",
+      "depth": 23.825,
       "bytes": 28025,
       "sha256": "97bf677f7d14420303db19092394dcc717b396ef8fe030c8dfac01c3cc25ab27",
       "frame": {
@@ -142,6 +149,7 @@
       "file": "recovery-hero.avif",
       "kind": "hero",
       "id": "recovery-hero",
+      "depth": 23.11,
       "bytes": 36620,
       "sha256": "9857390419f8af5d381b05564c30d1b1e652b9ef11ec2330fcdbddec915c4f04",
       "frame": {
@@ -161,6 +169,7 @@
       "file": "recovery-rear-ACC-F.avif",
       "kind": "build-layer",
       "id": "recovery-rear-ACC-F",
+      "depth": 26.148,
       "bytes": 1430,
       "sha256": "1b4dcab9ba56565240975dbae1ec07e6cf8728afa5dc0373f4a2f6225c60070a",
       "frame": {
@@ -180,6 +189,7 @@
       "file": "recovery-rear-CAP-B.avif",
       "kind": "build-layer",
       "id": "recovery-rear-CAP-B",
+      "depth": 22.577,
       "bytes": 11719,
       "sha256": "e7440e0c5a84d304a12ec80a32f84ec9b5df8b8f9d5582f727d26b6d31ad4d33",
       "frame": {
@@ -199,6 +209,7 @@
       "file": "recovery-rear-COM-E.avif",
       "kind": "build-layer",
       "id": "recovery-rear-COM-E",
+      "depth": 23.695,
       "bytes": 6819,
       "sha256": "b66bb20890348117f34697b87ecabc996dcb94e941cca83be79792392620aef6",
       "frame": {
@@ -218,6 +229,7 @@
       "file": "recovery-rear-base.avif",
       "kind": "build-base",
       "id": "recovery-rear-base",
+      "depth": 22.126,
       "bytes": 29987,
       "sha256": "ca1ff0c0bb0767199f1f1214b7d7548306b17186fed57d4b904d2457528523b3",
       "frame": {
@@ -237,6 +249,7 @@
       "file": "recovery-turntable-00.avif",
       "kind": "turntable",
       "id": "recovery-turntable-00",
+      "depth": 17.479,
       "bytes": 24675,
       "sha256": "b673c5e3eff9890c37d8e4788bc92df5783711fae39e33ed7e902d10d9cf6dd6",
       "frame": {
@@ -256,6 +269,7 @@
       "file": "recovery-turntable-01.avif",
       "kind": "turntable",
       "id": "recovery-turntable-01",
+      "depth": 16.295,
       "bytes": 27418,
       "sha256": "5ea392716995e40b79d578898f6017affe3908684799c7f66287b2717eed430a",
       "frame": {
@@ -275,6 +289,7 @@
       "file": "recovery-turntable-02.avif",
       "kind": "turntable",
       "id": "recovery-turntable-02",
+      "depth": 16.244,
       "bytes": 28337,
       "sha256": "5ac7ef196eaac872943cbec946d7aa0073f9891df3f3b77afd55e338f507445a",
       "frame": {
@@ -294,6 +309,7 @@
       "file": "recovery-turntable-03.avif",
       "kind": "turntable",
       "id": "recovery-turntable-03",
+      "depth": 16.923,
       "bytes": 25879,
       "sha256": "cbd0a99a2fcc239a97fa77ede2622edf2e3df61811e8fc7f234b4a86987e90b5",
       "frame": {
@@ -313,6 +329,7 @@
       "file": "recovery-turntable-04.avif",
       "kind": "turntable",
       "id": "recovery-turntable-04",
+      "depth": 17.338,
       "bytes": 22468,
       "sha256": "8408db7407e0d8139ad42d9fdaa13bb7deef56c42c6cb4fce2777804ebfac624",
       "frame": {
@@ -332,6 +349,7 @@
       "file": "recovery-turntable-05.avif",
       "kind": "turntable",
       "id": "recovery-turntable-05",
+      "depth": 17.408,
       "bytes": 16951,
       "sha256": "7058872a71fe70d5b426ebc70adc1e6a1746419a80eaa0b5cc11294361c338c7",
       "frame": {
@@ -351,6 +369,7 @@
       "file": "recovery-turntable-06.avif",
       "kind": "turntable",
       "id": "recovery-turntable-06",
+      "depth": 17.195,
       "bytes": 13359,
       "sha256": "3e78216dcb7d826140904fb537ed74f5b1cf11afe0545cacb87b63d453844f1d",
       "frame": {
@@ -370,6 +389,7 @@
       "file": "recovery-turntable-07.avif",
       "kind": "turntable",
       "id": "recovery-turntable-07",
+      "depth": 17.407,
       "bytes": 17457,
       "sha256": "a5b3e2a0218a96a6f1d6db5cec4109b937f0c0a9e7e1e754b6504b871cac7373",
       "frame": {
@@ -389,6 +409,7 @@
       "file": "recovery-turntable-08.avif",
       "kind": "turntable",
       "id": "recovery-turntable-08",
+      "depth": 17.338,
       "bytes": 24031,
       "sha256": "6a4c03eb83fade8ed2dd50294712e11d87aba8480f9dd2b5c3328955b8245844",
       "frame": {
@@ -408,6 +429,7 @@
       "file": "recovery-turntable-09.avif",
       "kind": "turntable",
       "id": "recovery-turntable-09",
+      "depth": 16.923,
       "bytes": 27905,
       "sha256": "9b320e8dc899cfc46669782f72790ab4288f127d8382e94f29b4b051b7bf962f",
       "frame": {
@@ -427,6 +449,7 @@
       "file": "recovery-turntable-10.avif",
       "kind": "turntable",
       "id": "recovery-turntable-10",
+      "depth": 16.244,
       "bytes": 30613,
       "sha256": "d44d2132d7b9478bd9cf7ef22c7379e77aaae3be3986e80fa629cb75c3bc7bcd",
       "frame": {
@@ -446,6 +469,7 @@
       "file": "recovery-turntable-11.avif",
       "kind": "turntable",
       "id": "recovery-turntable-11",
+      "depth": 16.295,
       "bytes": 29478,
       "sha256": "5b0af15f3560ed3672a44cfb8ddf98c155f63bf270d152e4a2e67e56509bb3ac",
       "frame": {
@@ -465,6 +489,7 @@
       "file": "recovery-turntable-12.avif",
       "kind": "turntable",
       "id": "recovery-turntable-12",
+      "depth": 17.479,
       "bytes": 25622,
       "sha256": "709e2e8eece7b9ab313dbc1cd3de8f62694fbdedcc2d1511e5e94cbaaaf5c13a",
       "frame": {
@@ -484,6 +509,7 @@
       "file": "recovery-turntable-13.avif",
       "kind": "turntable",
       "id": "recovery-turntable-13",
+      "depth": 17.607,
       "bytes": 26172,
       "sha256": "ee853e40bbe4548f5055166320a1dd448accbffbe560983398b2c544271c2403",
       "frame": {
@@ -503,6 +529,7 @@
       "file": "recovery-turntable-14.avif",
       "kind": "turntable",
       "id": "recovery-turntable-14",
+      "depth": 16.599,
       "bytes": 27716,
       "sha256": "e2ff18414ea9a7a5349e9e616c471bf5e8daab3ad3fd909f03b052634538b4a3",
       "frame": {
@@ -522,6 +549,7 @@
       "file": "recovery-turntable-15.avif",
       "kind": "turntable",
       "id": "recovery-turntable-15",
+      "depth": 15.268,
       "bytes": 29044,
       "sha256": "2945733d239716f61e7b70f959f774e2d64ec8e22029f0af62942803e7ae4591",
       "frame": {
@@ -541,6 +569,7 @@
       "file": "recovery-turntable-16.avif",
       "kind": "turntable",
       "id": "recovery-turntable-16",
+      "depth": 15.441,
       "bytes": 25243,
       "sha256": "3b66644563e6c2839e318a71742c6f105395e670f240c9f86620095c127794dd",
       "frame": {
@@ -560,6 +589,7 @@
       "file": "recovery-turntable-17.avif",
       "kind": "turntable",
       "id": "recovery-turntable-17",
+      "depth": 15.419,
       "bytes": 17769,
       "sha256": "ec29a230a19ded5250a8cce26eabda78bdbb5760be2c4f40b3e29411deb39834",
       "frame": {
@@ -579,6 +609,7 @@
       "file": "recovery-turntable-18.avif",
       "kind": "turntable",
       "id": "recovery-turntable-18",
+      "depth": 15.174,
       "bytes": 13002,
       "sha256": "ca7a45b6d0e48e9f85f49aa1bdd02ca3db7ba160640b84907a81de8a90c5a59d",
       "frame": {
@@ -598,6 +629,7 @@
       "file": "recovery-turntable-19.avif",
       "kind": "turntable",
       "id": "recovery-turntable-19",
+      "depth": 15.419,
       "bytes": 18055,
       "sha256": "405f668f312aadc0e761c540cdfd9d9bc7e716b0e9c5b02c28880b5f9379ff89",
       "frame": {
@@ -617,6 +649,7 @@
       "file": "recovery-turntable-20.avif",
       "kind": "turntable",
       "id": "recovery-turntable-20",
+      "depth": 15.442,
       "bytes": 24668,
       "sha256": "b30064411d7d2edc2772e55cb7973b013d29636813901dc31981ee61a06804c5",
       "frame": {
@@ -636,6 +669,7 @@
       "file": "recovery-turntable-21.avif",
       "kind": "turntable",
       "id": "recovery-turntable-21",
+      "depth": 15.268,
       "bytes": 28304,
       "sha256": "d23c2b99b1e7d5e630700c13a5da0ea67883739c0d746ffd3b2460c9637d0c43",
       "frame": {
@@ -655,6 +689,7 @@
       "file": "recovery-turntable-22.avif",
       "kind": "turntable",
       "id": "recovery-turntable-22",
+      "depth": 16.599,
       "bytes": 27413,
       "sha256": "bd1e552c5901504e5ce5140503248cfe6ea03792c3012de551be4b30f4726c89",
       "frame": {
@@ -674,6 +709,7 @@
       "file": "recovery-turntable-23.avif",
       "kind": "turntable",
       "id": "recovery-turntable-23",
+      "depth": 17.607,
       "bytes": 25818,
       "sha256": "039863ac6bea8b53fcf622d55e8b89effbfac17678c003b7e878f6903961ef51",
       "frame": {

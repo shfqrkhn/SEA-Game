@@ -6,7 +6,6 @@ Writes 16-bit RGBA PNG masters; tools/encode-renders.ts encodes them and writes 
 """
 import argparse
 import json
-import math
 import os
 import sys
 
@@ -32,6 +31,7 @@ def args():
     p.add_argument('--out', required=True)
     p.add_argument('--preview', action='store_true', help='low samples and size, hero only')
     p.add_argument('--only', default='', help='comma list of outputs: hero,turntable,build,cards')
+    p.add_argument('--metadata-only', action='store_true', help='frame every shot and write renders.json without rendering')
     return p.parse_args(argv)
 
 
@@ -68,9 +68,13 @@ def main():
         framed = [o for layer in (framing_layers or layers) for o in scene.layer_objects(layer)]
         lo, hi = scene.bounds(framed)
         scene.fit(cam, (lo + hi) / 2, yaw, pitch, framed, margin)
-        path = os.path.join(a.out, name + '.png')
-        scene.render(path)
-        outputs.append({'file': name + '.png', 'width': w, 'height': h, 'layers': list(layers), 'yaw': yaw, 'pitch': pitch})
+        # Draw order of stacked layers (MPES §10.2): camera distance to the visible subject, farthest first.
+        shown = [o for layer in layers for o in scene.layer_objects(layer)]
+        slo, shi = scene.bounds(shown)
+        depth = round((cam.location - (slo + shi) / 2).length, 3)
+        if not a.metadata_only:
+            scene.render(os.path.join(a.out, name + '.png'))
+        outputs.append({'file': name + '.png', 'width': w, 'height': h, 'layers': list(layers), 'yaw': yaw, 'pitch': pitch, 'depth': depth})
 
     if a.preview:
         shot('preview-hero', (960, 540), 48, everything, [], 32, 8)

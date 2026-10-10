@@ -348,5 +348,6 @@
   "showcase.rotate": "Rotate the vehicle",
   "showcase.installed": "Installed parts",
   "showcase.none": "No parts installed yet.",
-  "showcase.summary": "{mission} vehicle with {n} installed parts"
+  "showcase.summary": "{mission} vehicle. Installed parts: {n}",
+  "chooser.heroStill": "Recovery vehicle with a carrier module, long-range radios and a recovery winch"
 }

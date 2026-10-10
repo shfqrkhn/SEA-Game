@@ -31,7 +31,7 @@ function heroBay(lang: Language): HTMLElement {
   const t = (key: StringKey) => translate(lang, key);
   // HUD prototype: the pre-rendered hero still replaces the WebGL hero (MPES §17 V1).
   const still = hudEnabled() ? renders().get('recovery-hero') : undefined;
-  if (still) return h('img', { class: 'hero-still', src: still.src, alt: t('chooser.heroLabel'), decoding: 'async', width: String(still.size.width), height: String(still.size.height) });
+  if (still) return h('img', { class: 'hero-still', src: still.src, alt: t('chooser.heroStill'), decoding: 'async', width: String(still.size.width), height: String(still.size.height) });
   const text = { unavailable: t('bay.unavailable'), hint: t('bay.hint'), fallback: () => vehicleArt('RECOVERY', t('chooser.heroLabel')) };
   if (hero) hero.setText(text); else hero = new VehicleBay(text);
   hero.update({ mission: 'RECOVERY', parts: [
