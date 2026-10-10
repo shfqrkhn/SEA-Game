@@ -115,6 +115,32 @@ test('a refused download falls back to copyable backup text', async ({ page }) =
   expect(JSON.parse(text)).toMatchObject({ format: 'SEA-GAME-BACKUP', role: 'INSTRUCTOR' });
 });
 
+test('WebGL context loss: the bay falls back, then returns when the context is restored (MPES §9)', async ({ page }) => {
+  guardNetwork(page);
+  await page.goto(gameUrl('?lang=en'));
+  const canvas = page.locator('#vehicle-bay canvas');
+  const holder = page.locator('#vehicle-bay .bay-canvas');
+  // Wait for the bay to choose WebGL or the fallback; engines without WebGL are covered by the next test.
+  await expect(holder.locator('canvas, svg').first()).toBeAttached();
+  test.skip(await canvas.count() === 0, 'No WebGL in this engine.');
+  // Keep the extension handle on window: the bay must not depend on the test finding the canvas again.
+  const lose = (restore: boolean) => page.evaluate(restore => {
+    const w = window as unknown as { seaLose?: WEBGL_lose_context };
+    if (!w.seaLose) {
+      const gl = document.querySelector<HTMLCanvasElement>('#vehicle-bay canvas')!.getContext('webgl2') ?? document.querySelector<HTMLCanvasElement>('#vehicle-bay canvas')!.getContext('webgl');
+      w.seaLose = gl!.getExtension('WEBGL_lose_context')!;
+    }
+    if (restore) w.seaLose.restoreContext(); else w.seaLose.loseContext();
+  }, restore);
+  await lose(false);
+  await expect(holder).toHaveClass(/unavailable/);
+  await expect(page.locator('#vehicle-bay svg')).toBeVisible();
+  await lose(true);
+  await expect(holder).not.toHaveClass(/unavailable/);
+  await expect(canvas).toBeVisible();
+  await expect(page.locator('#vehicle-bay svg')).toHaveCount(0);
+});
+
 test('no WebGL: the vehicle bay shows a message and the game keeps working', async ({ page }) => {
   guardNetwork(page);
   const errors = collectConsoleErrors(page);
