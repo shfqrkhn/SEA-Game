@@ -1,0 +1,40 @@
+{
+  "name": "sea-game",
+  "version": "5.0.0-dev.0",
+  "private": true,
+  "description": "Systems Engineering Awareness: offline single-file classroom auction game (EN/FR)",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "coverage": "vitest run --coverage",
+    "build": "node build/build.ts",
+    "check": "node build/build.ts --check",
+    "e2e": "playwright test",
+    "verify": "npm run typecheck && npm run lint && npm run test && npm run check && npm run e2e"
+  },
+  "dependencies": {
+    "three": "0.186.1"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.13.0",
+    "@playwright/test": "1.63.0",
+    "@types/node": "24.19.0",
+    "@types/three": "0.186.0",
+    "@vitest/coverage-v8": "5.0.1",
+    "esbuild": "0.28.2",
+    "eslint": "10.10.0",
+    "fast-check": "4.10.1",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.70.1",
+    "vitest": "5.0.1"
+  },
+  "overrides": {
+    "playwright-core": "1.63.0"
+  }
+}

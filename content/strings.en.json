@@ -1,0 +1,21 @@
+{
+  "app.title": "Systems Engineering Awareness",
+  "app.tagline": "A classroom auction game about building the right vehicle for the mission.",
+  "lang.switch": "Français",
+  "lang.switchLabel": "Passer en français",
+  "chooser.heading": "Choose your role",
+  "chooser.instructor": "Instructor",
+  "chooser.instructorDesc": "Run the session: setup, auction, official results and debrief.",
+  "chooser.student": "Student team",
+  "chooser.studentDesc": "Plan your vehicle, track the auction and prepare your bid privately.",
+  "chooser.handoff": "Each role keeps its own saved work in this browser tab. The apps do not connect: the instructor announces results aloud.",
+  "chooser.privacy": "Use fictional team names only. Do not enter personal or operational information.",
+  "chooser.unknownRole": "That link asked for an unknown role. Choose a role below.",
+  "chooser.version": "Version {version}. One file, works offline.",
+  "about.open": "About and licences",
+  "about.title": "About this game",
+  "about.body": "SEA Game {version}. Original code and illustrations are MIT licensed. All values are instructional, not real equipment data. The game makes no network connections.",
+  "about.licence": "Licence",
+  "about.notices": "Third-party notices",
+  "about.close": "Close"
+}

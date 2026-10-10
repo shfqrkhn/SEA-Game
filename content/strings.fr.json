@@ -1,0 +1,21 @@
+{
+  "app.title": "Sensibilisation à l’ingénierie des systèmes",
+  "app.tagline": "Un jeu d’enchères en classe pour bâtir le bon véhicule pour la mission.",
+  "lang.switch": "English",
+  "lang.switchLabel": "Switch to English",
+  "chooser.heading": "Choisissez votre rôle",
+  "chooser.instructor": "Instructeur",
+  "chooser.instructorDesc": "Animez la séance : configuration, enchère, résultats officiels et bilan.",
+  "chooser.student": "Équipe étudiante",
+  "chooser.studentDesc": "Planifiez votre véhicule, suivez l’enchère et préparez votre offre en privé.",
+  "chooser.handoff": "Chaque rôle conserve son travail dans cet onglet du navigateur. Les applications ne sont pas reliées : l’instructeur annonce les résultats à voix haute.",
+  "chooser.privacy": "Utilisez uniquement des noms d’équipe fictifs. N’inscrivez aucune information personnelle ou opérationnelle.",
+  "chooser.unknownRole": "Ce lien demandait un rôle inconnu. Choisissez un rôle ci-dessous.",
+  "chooser.version": "Version {version}. Un seul fichier, fonctionne hors ligne.",
+  "about.open": "À propos et licences",
+  "about.title": "À propos de ce jeu",
+  "about.body": "SEA Game {version}. Le code et les illustrations originaux sont sous licence MIT. Toutes les valeurs sont pédagogiques et ne décrivent aucun équipement réel. Le jeu n’établit aucune connexion réseau.",
+  "about.licence": "Licence",
+  "about.notices": "Avis de tiers",
+  "about.close": "Fermer"
+}
