@@ -37,8 +37,12 @@ export class VehicleBay {
   #init(): boolean {
     if (this.#available !== null) return this.#available;
     try {
+      // Probe quietly first: a missing WebGL must not log errors (MPES §9).
       const canvas = document.createElement('canvas');
-      const renderer = new WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'low-power' });
+      const attributes = { antialias: true, alpha: true, powerPreference: 'low-power' } as const;
+      const context = (canvas.getContext('webgl2', attributes) ?? canvas.getContext('webgl', attributes)) as WebGLRenderingContext | null;
+      if (!context) throw new Error('no WebGL');
+      const renderer = new WebGLRenderer({ canvas, context, ...attributes });
       renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
       canvas.setAttribute('role', 'img');
       this.#canvasHolder.appendChild(canvas);

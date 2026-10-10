@@ -1,0 +1,178 @@
+{
+  "seed": "5EA00000000000000000000000000002",
+  "missions": {
+    "1": "TROOP",
+    "2": "RECCE"
+  },
+  "score": 20,
+  "lots": [
+    {
+      "round": 1,
+      "lot": 1,
+      "card": "CAP-G",
+      "team": 2
+    },
+    {
+      "round": 1,
+      "lot": 3,
+      "card": "FP-F",
+      "team": 1
+    },
+    {
+      "round": 1,
+      "lot": 4,
+      "card": "PRO-A",
+      "team": 2
+    },
+    {
+      "round": 1,
+      "lot": 5,
+      "card": "COM-E",
+      "team": 1
+    },
+    {
+      "round": 2,
+      "lot": 2,
+      "card": "MOB-A",
+      "team": 2
+    },
+    {
+      "round": 2,
+      "lot": 4,
+      "card": "PRO-D",
+      "team": 1
+    },
+    {
+      "round": 2,
+      "lot": 5,
+      "card": "COM-B",
+      "team": 2
+    },
+    {
+      "round": 2,
+      "lot": 6,
+      "card": "SA-E",
+      "team": 1
+    },
+    {
+      "round": 3,
+      "lot": 2,
+      "card": "MOB-F",
+      "team": 1
+    },
+    {
+      "round": 3,
+      "lot": 3,
+      "card": "FP-D",
+      "team": 2
+    },
+    {
+      "round": 3,
+      "lot": 4,
+      "card": "PRO-G",
+      "team": 2
+    },
+    {
+      "round": 3,
+      "lot": 6,
+      "card": "SA-G",
+      "team": 1
+    },
+    {
+      "round": 4,
+      "lot": 2,
+      "card": "MOB-B",
+      "team": 1
+    },
+    {
+      "round": 4,
+      "lot": 5,
+      "card": "COM-A",
+      "team": 1
+    },
+    {
+      "round": 4,
+      "lot": 7,
+      "card": "ACC-B",
+      "team": 2
+    },
+    {
+      "round": 4,
+      "lot": 8,
+      "card": "SE-J",
+      "team": 2
+    },
+    {
+      "round": 5,
+      "lot": 2,
+      "card": "MOB-D",
+      "team": 1
+    },
+    {
+      "round": 5,
+      "lot": 4,
+      "card": "PRO-B",
+      "team": 2
+    },
+    {
+      "round": 5,
+      "lot": 6,
+      "card": "SA-D",
+      "team": 2
+    },
+    {
+      "round": 5,
+      "lot": 7,
+      "card": "ACC-D",
+      "team": 1
+    },
+    {
+      "round": 6,
+      "lot": 2,
+      "card": "MOB-C",
+      "team": 2
+    },
+    {
+      "round": 6,
+      "lot": 3,
+      "card": "FP-C",
+      "team": 1
+    },
+    {
+      "round": 6,
+      "lot": 6,
+      "card": "SA-B",
+      "team": 1
+    },
+    {
+      "round": 6,
+      "lot": 8,
+      "card": "SE-F",
+      "team": 2
+    },
+    {
+      "round": 7,
+      "lot": 1,
+      "card": "CAP-B",
+      "team": 1
+    },
+    {
+      "round": 7,
+      "lot": 3,
+      "card": "FP-B",
+      "team": 2
+    },
+    {
+      "round": 7,
+      "lot": 5,
+      "card": "COM-D",
+      "team": 1
+    },
+    {
+      "round": 7,
+      "lot": 9,
+      "card": "SE-N",
+      "team": 2
+    }
+  ]
+}

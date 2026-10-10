@@ -336,5 +336,7 @@
   "sdebrief.closeBody": "Faites-le après l’annonce des résultats par l’instructeur.",
   "bay.title": "Atelier du véhicule",
   "bay.unavailable": "Vue 3D indisponible sur cet appareil. Le jeu fonctionne sans elle.",
-  "bay.summary": "{mission} avec {n} pièces installées"
+  "bay.summary": "{mission} avec {n} pièces installées",
+  "auction.keys": "Clavier : 1 à 9 et 0 acceptent une offre des équipes 1 à 10 · S vendre · U pas de vente · O ouvrir · R révéler · N lot suivant · P pause ou reprise · E ajouter 30 s.",
+  "app.unsupported": "Ce navigateur est trop ancien pour ce jeu. Utilisez une version récente de Chrome, Edge, Firefox ou Safari."
 }

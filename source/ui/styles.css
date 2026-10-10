@@ -188,3 +188,35 @@ summary { cursor: pointer; font-weight: 600; min-height: 32px; }
 .bay-canvas { width: 100%; aspect-ratio: 16 / 9; background: linear-gradient(var(--sunken), var(--surface)); border-radius: var(--radius); overflow: hidden; }
 .bay-canvas canvas { display: block; width: 100%; height: 100%; }
 .bay-canvas.unavailable { display: grid; place-items: center; padding: 1rem; color: var(--muted); text-align: center; }
+
+/* Illustrations (MPES §11): colours follow the theme */
+:root { --art-plate: #f3f0e8; --art-grid: #e2ddd0; --art-fill: #cfc8b4; --art-fill-strong: #a9a58d; --art-metal: #8f9890; --art-glass: #b9d0d6; --art-person: #7d6f5a;
+  --cat-CAPACITY: #b9773b; --cat-MOBILITY: #3f6f8f; --cat-FIREPOWER: #9b3d2e; --cat-PROTECTION: #4f7a4a; --cat-COMMS: #6a5a9a; --cat-SA: #b08a1e; --cat-ACCESSORIES: #8a4f7a; --cat-SE_PROCESS: #3f7f78; --cat-PRACTICE: #707070; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --art-plate: #1f2521; --art-grid: #2a312c; --art-fill: #4b544d; --art-fill-strong: #66705f; --art-metal: #7f8a82; --art-glass: #4f6f78; --art-person: #a8977b; } }
+:root[data-theme="dark"] { --art-plate: #1f2521; --art-grid: #2a312c; --art-fill: #4b544d; --art-fill-strong: #66705f; --art-metal: #7f8a82; --art-glass: #4f6f78; --art-person: #a8977b; }
+.art-plate { fill: var(--art-plate); }
+.art-grid { stroke: var(--art-grid); stroke-width: 1; }
+.art-frame { fill: none; stroke: var(--line); stroke-width: 1.5; }
+.art-ink, .art-ground { stroke: var(--ink); stroke-width: 2.5; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.art-ground { stroke-width: 1.5; stroke-dasharray: 6 5; }
+.art-ink-fill { fill: var(--ink); }
+.art-fill, .art-fill-strong, .art-metal, .art-window, .art-lens, .art-person, .art-tyre { stroke: var(--ink); stroke-width: 2.5; stroke-linejoin: round; }
+.art-fill { fill: var(--art-fill); }
+.art-fill-strong { fill: var(--art-fill-strong); }
+.art-metal { fill: var(--art-metal); }
+.art-window, .art-lens { fill: var(--art-glass); }
+.art-person { fill: var(--art-person); stroke-width: 1.5; }
+.art-tyre { fill: var(--ink); }
+.art-thick { stroke: var(--ink); stroke-width: 9; stroke-linecap: round; fill: none; }
+.art-chain { stroke: var(--ink); stroke-width: 3; stroke-dasharray: 4 3; fill: none; }
+.art-wave, .art-ray, .art-motion { fill: none; stroke-width: 3; stroke-linecap: round; }
+.art-wave { stroke: var(--cat-COMMS); }
+.art-ray { stroke: var(--cat-SA); }
+.art-motion { stroke: var(--cat-MOBILITY); }
+.art-tick { fill: none; stroke: var(--ok); stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
+.art-penalty-stroke { fill: none; stroke: var(--bad); stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
+.art-accent { stroke: var(--ink); stroke-width: 1.5; }
+.cat-CAPACITY { fill: var(--cat-CAPACITY); } .cat-MOBILITY { fill: var(--cat-MOBILITY); } .cat-FIREPOWER { fill: var(--cat-FIREPOWER); }
+.cat-PROTECTION { fill: var(--cat-PROTECTION); } .cat-COMMS { fill: var(--cat-COMMS); } .cat-SA { fill: var(--cat-SA); }
+.cat-ACCESSORIES { fill: var(--cat-ACCESSORIES); } .cat-SE_PROCESS { fill: var(--cat-SE_PROCESS); } .cat-PRACTICE { fill: var(--cat-PRACTICE); }
+.mission-COMBAT, .mission-RECCE, .mission-TROOP, .mission-COMMAND, .mission-RECOVERY, .mission-MINE { fill: var(--accent); }

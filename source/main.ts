@@ -50,8 +50,18 @@ function renderChooser(root: HTMLElement, lang: Language, unknownRole: boolean):
   ));
 }
 
+/** Features every journey needs (MPES §9). */
+export function supported(): boolean {
+  return typeof HTMLDialogElement === 'function' && 'showModal' in HTMLDialogElement.prototype
+    && typeof crypto === 'object' && typeof crypto.getRandomValues === 'function' && typeof BigInt === 'function';
+}
+
 export function start(root: HTMLElement): void {
   const lang = detectLanguage(location.search, navigator.language);
+  if (!supported()) {
+    replaceChildren(root, h('main', { class: 'chooser', id: 'main' }, h('h1', { text: translate(lang, 'app.title') }), h('p', { class: 'notice bad', role: 'alert', text: translate(lang, 'app.unsupported') })));
+    return;
+  }
   const route = parseRole(location.search);
   if (route === 'chooser' || route === 'unknown') renderChooser(root, lang, route === 'unknown');
   else if (route === 'instructor') startInstructor(root, lang, sessionStoragePort());

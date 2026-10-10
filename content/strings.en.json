@@ -336,5 +336,7 @@
   "sdebrief.closeBody": "Do this after the instructor announces the results.",
   "bay.title": "Vehicle bay",
   "bay.unavailable": "3D view unavailable on this device. The game works without it.",
-  "bay.summary": "{mission} with {n} installed parts"
+  "bay.summary": "{mission} with {n} installed parts",
+  "auction.keys": "Keyboard: 1–9 and 0 accept a bid from Teams 1–10 · S sell · U no sale · O open · R reveal · N next lot · P pause or resume · E add 30 s.",
+  "app.unsupported": "This browser is too old for this game. Use a current version of Chrome, Edge, Firefox or Safari."
 }
