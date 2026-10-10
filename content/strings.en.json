@@ -339,5 +339,14 @@
   "value.needed": "needed for a minimum",
   "value.hint": "Score it adds = your score minus your score without that card. A card can add 0 points and still be needed for a minimum.",
   "bay.hint": "Drag, or use the arrow keys, to turn the vehicle. Scroll or press plus and minus to zoom. Double-click to reset.",
-  "chooser.heroLabel": "Recovery vehicle with winch, armour, radio, sensors and heavy-duty suspension"
+  "chooser.heroLabel": "Recovery vehicle with winch, armour, radio, sensors and heavy-duty suspension",
+  "showcase.title": "Vehicle showcase",
+  "showcase.view": "View",
+  "showcase.front": "Front",
+  "showcase.rear": "Rear",
+  "showcase.turntable": "Turntable",
+  "showcase.rotate": "Rotate the vehicle",
+  "showcase.installed": "Installed parts",
+  "showcase.none": "No parts installed yet.",
+  "showcase.summary": "{mission} vehicle with {n} installed parts"
 }

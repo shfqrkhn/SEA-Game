@@ -3,7 +3,9 @@ import { CAPABILITIES, MISSIONS, mission as missionDef, type Capability, type Mi
 import type { MarketCard } from '../domain/market.ts';
 import { compliant, score, shortfalls, sumEffects } from '../domain/missions.ts';
 import type { Purchase } from '../domain/team.ts';
+import { cardRender } from '../showcase/renders.ts';
 import { cardArt } from './art.ts';
+import { hudEnabled } from './hud.ts';
 import { h, type Child } from './dom.ts';
 import { labelled, list, money, signed } from './format.ts';
 import { translate, type Language, type StringKey } from './i18n.ts';
@@ -23,8 +25,11 @@ export function effectsList(effects: Effects, lang: Language): Child {
 
 export function cardDetails(card: MarketCard, lang: Language, headingLevel: 'h2' | 'h3' = 'h3'): HTMLElement {
   const t = tr(lang);
+  const render = hudEnabled() ? cardRender(card.id) : undefined;
+  const label = `${card.id} · ${card.title[lang]}`;
   return h('figure', { class: 'card-figure', 'data-card': card.id },
-    cardArt(card.id, card.cat, `${card.id} · ${card.title[lang]}`),
+    render ? h('img', { class: 'card-render', src: render.src, alt: label, decoding: 'async', width: String(render.size.width), height: String(render.size.height) })
+      : cardArt(card.id, card.cat, label),
     h('figcaption', { class: 'stack' },
       h('p', { class: 'muted small', text: `${t(`cat.${card.cat}` as StringKey)} · ${card.id}` }),
       h(headingLevel, { text: card.title[lang] }),

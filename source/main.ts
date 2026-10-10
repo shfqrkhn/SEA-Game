@@ -3,6 +3,8 @@ import { sessionStoragePort } from './app/ports.ts';
 import { VehicleBay } from './bay/bay.ts';
 import { showAbout } from './ui/about.ts';
 import { vehicleArt } from './ui/art.ts';
+import { applyHud, hudEnabled, withHud } from './ui/hud.ts';
+import { renders } from './showcase/renders.ts';
 import { startInstructor } from './ui/instructor.ts';
 import { startStudent } from './ui/student.ts';
 import { h, replaceChildren } from './ui/dom.ts';
@@ -20,13 +22,16 @@ export function roleHref(role: Role | null, lang: Language): string {
   const params = new URLSearchParams();
   if (role) params.set('role', role);
   params.set('lang', lang);
-  return `?${params.toString()}`;
+  return `?${withHud(params).toString()}`;
 }
 
 let hero: VehicleBay | null = null;
 /** Hero: the fully equipped recovery vehicle in the studio bay, as on the concept's landing page. */
 function heroBay(lang: Language): HTMLElement {
   const t = (key: StringKey) => translate(lang, key);
+  // HUD prototype: the pre-rendered hero still replaces the WebGL hero (MPES §17 V1).
+  const still = hudEnabled() ? renders().get('recovery-hero') : undefined;
+  if (still) return h('img', { class: 'hero-still', src: still.src, alt: t('chooser.heroLabel'), decoding: 'async', width: String(still.size.width), height: String(still.size.height) });
   const text = { unavailable: t('bay.unavailable'), hint: t('bay.hint'), fallback: () => vehicleArt('RECOVERY', t('chooser.heroLabel')) };
   if (hero) hero.setText(text); else hero = new VehicleBay(text);
   hero.update({ mission: 'RECOVERY', parts: [
@@ -72,6 +77,7 @@ export function supported(): boolean {
 }
 
 export function start(root: HTMLElement): void {
+  applyHud();
   const lang = detectLanguage(location.search, navigator.language);
   if (!supported()) {
     replaceChildren(root, h('main', { class: 'chooser', id: 'main' }, h('h1', { text: translate(lang, 'app.title') }), h('p', { class: 'notice bad', role: 'alert', text: translate(lang, 'app.unsupported') })));

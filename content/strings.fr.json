@@ -339,5 +339,14 @@
   "value.needed": "nécessaire pour un minimum",
   "value.hint": "Score apporté = votre score moins votre score sans cette carte. Une carte peut apporter 0 point et rester nécessaire pour un minimum.",
   "bay.hint": "Faites glisser, ou utilisez les flèches, pour tourner le véhicule. Défilez ou appuyez sur plus et moins pour zoomer. Double-cliquez pour réinitialiser.",
-  "chooser.heroLabel": "Véhicule de dépannage avec treuil, blindage, radio, capteurs et suspension renforcée"
+  "chooser.heroLabel": "Véhicule de dépannage avec treuil, blindage, radio, capteurs et suspension renforcée",
+  "showcase.title": "Présentation du véhicule",
+  "showcase.view": "Vue",
+  "showcase.front": "Avant",
+  "showcase.rear": "Arrière",
+  "showcase.turntable": "Plateau tournant",
+  "showcase.rotate": "Faire pivoter le véhicule",
+  "showcase.installed": "Pièces installées",
+  "showcase.none": "Aucune pièce installée pour l’instant.",
+  "showcase.summary": "Véhicule {mission} avec {n} pièces installées"
 }

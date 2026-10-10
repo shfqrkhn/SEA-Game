@@ -9,6 +9,7 @@ import { showDialog } from './dialog.ts';
 import { h, replaceChildren, type Child } from './dom.ts';
 import { otherLanguage, translate, type Language, type StringKey } from './i18n.ts';
 import { showAbout } from './about.ts';
+import { withHud } from './hud.ts';
 
 export interface RoleState { readonly phase: Phase; readonly lang: Language; readonly sessionCode: string | null; readonly round: number; readonly lot: number }
 
@@ -196,7 +197,7 @@ export class RoleView<S extends RoleState> {
     if (choice === 'export') this.exportBackup();
     else if (choice === 'import') this.chooseImport();
     else if (choice === 'new') await this.confirm({ title: t('newSession.title'), body: h('p', { text: t('newSession.body') }), confirm: t('newSession.confirm'), danger: true, opener }, state => this.config.newSession(state), () => this.drafts.clear());
-    else if (choice === 'role') location.search = `?lang=${this.lang}`;
+    else if (choice === 'role') location.search = `?${withHud(new URLSearchParams({ lang: this.lang })).toString()}`;
     else if (choice === 'about') void showAbout(this.lang, opener);
   }
 

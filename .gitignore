@@ -5,4 +5,4 @@ node_modules/
 test-results/
 playwright-report/
 coverage/
-docs/Omni_5.1.1.md
+__pycache__/

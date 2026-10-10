@@ -255,3 +255,58 @@ summary { cursor: pointer; font-weight: 600; min-height: 32px; }
   .progress li::after { top: .75rem; left: calc(50% + .75rem); right: calc(-50% + .75rem); }
   .progress li.current { font-size: .7rem; }
 }
+
+/* ---- War-room HUD (MPES §7.1, D-07). Prototype behind ?hud=1; V2 makes it the default theme. ---- */
+:root[data-hud="on"] {
+  --paper: #0b100e; --surface: #121a17; --sunken: #18221e; --ink: #e3ece6; --muted: #a3b8ad;
+  --line: #2f4339; --accent: #8fe0b8; --accent-ink: #04130c; --ok: #82dd9d; --warn: #f2b84b; --bad: #ff9184;
+  --focus: #ffd166; --bar-track: #22302a; --radius: 2px; --hud-glow: 0 0 0 1px rgb(143 224 184 / .18), 0 0 18px rgb(143 224 184 / .08);
+  --art-plate: #141d19; --art-grid: #22302a; --art-fill: #4a574f; --art-fill-strong: #66705f; --art-metal: #7f8a82; --art-glass: #4f6f78; --art-person: #a8977b;
+  color-scheme: dark;
+}
+:root[data-hud="on"] body {
+  background-color: var(--paper);
+  background-image:
+    radial-gradient(ellipse at 50% 0%, rgb(143 224 184 / .07), transparent 60%),
+    repeating-linear-gradient(0deg, rgb(143 224 184 / .045) 0 1px, transparent 1px 48px),
+    repeating-linear-gradient(90deg, rgb(143 224 184 / .045) 0 1px, transparent 1px 48px);
+  background-attachment: fixed;
+}
+:root[data-hud="on"] h1, :root[data-hud="on"] h2, :root[data-hud="on"] h3, :root[data-hud="on"] legend, :root[data-hud="on"] th {
+  text-transform: uppercase; letter-spacing: .08em; font-family: var(--mono); font-weight: 600;
+}
+:root[data-hud="on"] h1 { font-size: clamp(1.2rem, 1rem + 1vw, 1.7rem); color: var(--accent); }
+:root[data-hud="on"] h2 { font-size: 1rem; }
+:root[data-hud="on"] .num, :root[data-hud="on"] .big-number, :root[data-hud="on"] .session-code { font-family: var(--mono); }
+:root[data-hud="on"] .topbar, :root[data-hud="on"] .progress { background: rgb(10 15 13 / .92); border-color: var(--line); }
+:root[data-hud="on"] .topbar .brand { font-family: var(--mono); letter-spacing: .12em; text-transform: uppercase; }
+:root[data-hud="on"] .panel { position: relative; background: rgb(18 26 23 / .9); border-color: var(--line); box-shadow: var(--hud-glow); }
+/* Corner brackets: decoration only, carries no information. */
+:root[data-hud="on"] .panel::before, :root[data-hud="on"] .panel::after {
+  content: ""; position: absolute; width: 14px; height: 14px; pointer-events: none; border: 2px solid var(--accent);
+}
+:root[data-hud="on"] .panel::before { top: -1px; left: -1px; border-right: 0; border-bottom: 0; }
+:root[data-hud="on"] .panel::after { bottom: -1px; right: -1px; border-left: 0; border-top: 0; }
+:root[data-hud="on"] .btn { border-color: var(--line); background: var(--sunken); text-transform: uppercase; letter-spacing: .06em; font-size: .9rem; }
+:root[data-hud="on"] .btn:hover { border-color: var(--accent); background: #1d2a25; }
+:root[data-hud="on"] .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); box-shadow: 0 0 14px rgb(143 224 184 / .25); }
+:root[data-hud="on"] input, :root[data-hud="on"] select, :root[data-hud="on"] textarea { background: #0d1412; border-color: #5d7468; color: var(--ink); }
+:root[data-hud="on"] :focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+:root[data-hud="on"] .meter .mark { background: var(--warn); }
+:root[data-hud="on"] .card-figure { background: radial-gradient(ellipse at 50% 70%, #1c2823, #0d1412 70%); border: 1px solid var(--line); padding: .75rem; }
+.card-render { display: block; width: 100%; height: auto; }
+:root[data-hud="on"] .hero-stage { background: radial-gradient(ellipse at 50% 70%, #1c2823, #0b100e 70%); }
+:root[data-hud="on"] .hero-panel { background: rgb(18 26 23 / .92); border-color: var(--line); }
+.hero-still { display: block; width: 100%; height: auto; }
+
+/* Vehicle showcase (MPES §10): stacked pre-rendered layers. */
+.showcase-stage { position: relative; width: 100%; aspect-ratio: 16 / 9; overflow: hidden; border-radius: var(--radius);
+  background: radial-gradient(ellipse at 50% 72%, #1c2823, #0d1412 72%); }
+.showcase-stage img { position: absolute; height: auto; user-select: none; pointer-events: none; }
+.showcase-views { border: 0; padding: 0; gap: 1rem; }
+.showcase input[type="range"] { width: 100%; accent-color: var(--accent); }
+.installed { margin: 0; padding-left: 1.1rem; display: grid; gap: .15rem; }
+/* HUD typography: uppercase monospace labels must never break inside a word. */
+:root[data-hud="on"] th, :root[data-hud="on"] td, :root[data-hud="on"] h1, :root[data-hud="on"] h2, :root[data-hud="on"] h3, :root[data-hud="on"] .btn { overflow-wrap: normal; word-break: normal; hyphens: manual; }
+:root[data-hud="on"] th { white-space: nowrap; font-size: .75rem; }
+:root[data-hud="on"] .wordmark-title { text-transform: none; letter-spacing: 0; font-family: var(--font); font-weight: 500; color: var(--ink); max-width: 14ch; }

@@ -14,8 +14,9 @@ describe('single-file build (RQ-01, RQ-24, RQ-25, RQ-27)', async () => {
   it('matches the committed dist/index.html', () => {
     expect(readFileSync(OUT, 'utf8')).toBe(html);
   });
-  it('has one inline script and one inline style, both hash-pinned in the CSP', () => {
-    expect(html.match(/<script/g)).toHaveLength(1);
+  it('has one executable inline script and one inline style, both hash-pinned in the CSP', () => {
+    expect(html.match(/<script>/g)).toHaveLength(1);
+    expect(html.match(/<script\b/g)).toHaveLength(2); // plus the inert renders data block
     expect(html.match(/<style/g)).toHaveLength(1);
     expect(csp).toContain(`'sha256-${sha256(script)}'`);
     expect(csp).toContain(`'sha256-${sha256(style)}'`);
@@ -35,6 +36,16 @@ describe('single-file build (RQ-01, RQ-24, RQ-25, RQ-27)', async () => {
     expect(html).toContain('three.js authors');
     expect(html).toContain('SEA Game contributors');
     expect(Buffer.byteLength(html)).toBeLessThanOrEqual(MAX_BYTES);
+  });
+  it('embeds the committed renders once, as an inert JSON block of AVIF data URIs matching the manifest (MPES §11)', () => {
+    const block = /<script type="application\/json" id="sea-renders">([^<]*)<\/script>/.exec(html)?.[1];
+    expect(block).toBeDefined();
+    const embedded = JSON.parse(block!) as Record<string, { src: string }>;
+    const manifest = JSON.parse(readFileSync('content/renders/spike/manifest.json', 'utf8')) as { entries: { id: string; file: string }[] };
+    expect(Object.keys(embedded).sort()).toEqual(manifest.entries.map(e => e.id).sort());
+    for (const e of manifest.entries) {
+      expect(embedded[e.id]!.src).toBe('data:image/avif;base64,' + readFileSync('content/renders/spike/' + e.file).toString('base64'));
+    }
   });
   it('has no duplicate static ids', () => {
     const ids = [...html.matchAll(/\sid="([^"]+)"/g)].map(match => match[1]);
