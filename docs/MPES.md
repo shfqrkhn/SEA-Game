@@ -3,7 +3,7 @@
 | Field | Value |
 |---|---|
 | Document | Master Product and Engineering Specification (MPES) for the clean-room rebuild of **Systems Engineering Awareness (SEA Game)** |
-| Version | 3.3.0 |
+| Version | 4.0.0 |
 | Date | 2026-10-10 (America/Toronto) |
 | Status | **ACCEPTED**. Owner delegated all remaining decisions and gates to the implementing agent on 2026-10-09 (§22) |
 | Supersedes | MPES 1.5.2 and every earlier handover, ledger, prompt and evidence packet for implementation purposes |
@@ -63,7 +63,7 @@ The previous project often optimised the mechanism ("X") instead of the outcome 
 | Exact integer-cents money, canonical card data, independent rules oracle | FIT | Keep; re-implement cleanly (§6, Appendix A). |
 | Schema-3 saves and backup envelope | FIT | Keep import compatibility (§8). |
 | Entire interface (menus, forms, text editing) drawn inside a WebGL canvas | MISFRAMED | **Replace** with semantic HTML/CSS for every task (D-01). The war-room HUD look (D-07) is styling on that HTML, never a canvas. |
-| Mechanically realistic real-time vehicle meshes (brake rotors, wipers, fasteners) | PROXY | **Replace** with **pre-rendered** photoreal images authored offline in Blender (D-08, D-09). Realism serves immersion (S7) and part recognition at no runtime GPU cost, so play stays smooth on integrated-graphics laptops. There is no runtime 3D. |
+| Mechanically realistic real-time vehicle meshes (brake rotors, wipers, fasteners) | PROXY | **Replace** with one set of Blender-authored models (D-08, D-09) shown two ways: an embedded real-time model that turns slowly and can be dragged, on a hardware GPU, and pre-rendered photoreal stills otherwise. Realism serves immersion (S7) and part recognition; performance comes first on integrated-graphics laptops. |
 | Hosting, CI and releases on GitHub | PARTIAL | GitHub is temporary human-QA space and will be deleted (D-13). The product is a local, hash-verified handoff package (§19.3) that depends on nothing hosted. |
 | Very large assurance apparatus (dozens of bespoke test scripts, dense evidence prose) | PARTIAL | Keep the rigour, cut the volume: standard test runners, plain-language handover, one requirement-to-test map (§15, §16). |
 | Classroom pilot with real learners | MISSING | **Add early** (milestone M4), before visual polish. |
@@ -78,7 +78,7 @@ The previous project often optimised the mechanism ("X") instead of the outcome 
 - Student companion: join, practice, private planning, per-lot tracking, own-purchase recording, build reconciliation, profit calculation, debrief view.
 - English and French throughout, switchable at any time without losing input.
 - Local persistence per browser tab, explicit JSON backup export/import, recovery from interruption.
-- A vehicle showcase of pre-rendered photoreal images that visualises each team's build (§10).
+- A vehicle showcase that visualises each team's build: an interactive real-time 3D model, with pre-rendered photoreal stills as the fallback (§10).
 - 77 photoreal subjects (70 cards, 6 vehicles, 1 practice card), embedded (§11).
 - A war-room HUD presentation for both roles (§7.1).
 - Build, test, render and packaging tooling; classroom quick-start and recovery guides (EN/FR); the handoff package (§19.3).
@@ -90,7 +90,7 @@ The previous project often optimised the mechanism ("X") instead of the outcome 
 - Enforcing a total team budget (willingness-to-pay is advisory, §6.7).
 - Any real, operational, classified or manufacturer-certified equipment data. All values are instructional.
 - Physics simulation, driving, combat or animation beyond what explains the build.
-- Real-time 3D rendering in the runtime (D-08).
+- Real-time 3D beyond the vehicle showcase: no 3D interface, scenes, physics or effects (D-01, D-08).
 - Any dependency on GitHub (Pages, Releases, Actions, links) in the delivered product or its documentation (D-13).
 - Alternative rule sets, deck editors, or rule balancing. Rules are frozen (§6); changing them needs a new MPES version.
 - Native mobile/desktop app packaging.
@@ -165,7 +165,7 @@ source/
   app/           Role controllers: apply domain commands, own state, call ports.
   ports/         Clock, entropy, storage, file download/upload, renderer. Thin adapters.
   ui/            Semantic HTML/CSS views per role and phase; i18n; dialogs.
-  showcase/      Vehicle showcase: stacked pre-rendered image layers (§10). No runtime 3D.
+  showcase/      Vehicle showcase: the embedded 3D model, or stacked pre-rendered image layers (§10).
   content/       Canonical data (Appendix A), strings EN/FR, illustration manifest.
   build/         Build script that inlines everything into dist/index.html, and the packager (§19.3).
 art/
@@ -181,7 +181,7 @@ Rules:
 - **R-ARCH-1** `domain/` is pure: given the same inputs it returns the same outputs and performs no effects. Time and entropy enter only as arguments.
 - **R-ARCH-2** Every state change is a **command** that validates the whole current state, computes the complete next state, and only then lets the controller commit, save and render. A rejected command changes nothing.
 - **R-ARCH-3** One state owner per role. The UI renders from state; it never holds the only copy of a value.
-- **R-ARCH-4** The vehicle showcase only composes embedded images. It never owns or changes game state. There is no runtime 3D renderer (D-08).
+- **R-ARCH-4** The vehicle showcase only displays embedded content (the 3D model or the still images). It never owns or changes game state. three.js (MIT, THIRD_PARTY_NOTICES.md) is the only runtime library and is used only by the showcase (D-08).
 - **R-ARCH-5** All source is TypeScript under `strict`, `noUncheckedIndexedAccess` and `exactOptionalPropertyTypes`. There is no unchecked JavaScript source.
 - **R-ARCH-6** Text entered by users is set with `textContent` or `value`, never parsed as HTML (C-11).
 
@@ -203,7 +203,8 @@ Rules:
 | Property tests | fast-check (optional) | Money, ledger replay and invariants. |
 | Browser tests | Playwright (Chromium, Firefox, and the Microsoft Edge installed with Windows) | Run against `dist/index.html` over `file://`. |
 | Accessibility scan | axe-core via Playwright | Automated part only; manual checks still needed (§12). |
-| Imagery | Blender LTS (exact version pinned, portable, verified SHA-256) and an AVIF/WebP encoder | Offline authoring and rendering only (§11), never a runtime dependency. Scripts in `art/blender/`; outputs committed in `content/renders/`. The runtime has no third-party dependency. |
+| Imagery and models | Blender LTS (exact version pinned, portable, verified SHA-256) and an AVIF/WebP encoder | Offline authoring, rendering and model export only (§11), never a runtime dependency. Scripts in `art/blender/`; outputs committed in `content/renders/` and `content/models/`. |
+| Showcase 3D | three.js (exact version pinned) | The only runtime library (D-08), bundled into the file. |
 
 A different tool is acceptable only if it is qualified in M1 against the same tasks, and the reason is recorded in the handover.
 
@@ -211,7 +212,7 @@ A different tool is acceptable only if it is qualified in M1 against the same ta
 
 - `npm ci` then `npm run build` produces `dist/index.html` and nothing else in `dist/`. `dist/` is not committed (D-12).
 - Builds are **deterministic**. The same inputs give byte-identical output on every Windows 11 machine and CI run, whatever the checkout's line-ending settings. Line endings are LF, enforced by `.gitattributes`; images are binary.
-- The build embeds each image once as a `data:` URI, computes SHA-256 hashes for the inline script and style and writes the Content-Security-Policy meta tag (§13.1).
+- The build embeds each image once as a `data:` URI and the packed vehicle models once as raw-deflated base64 in a non-executable `<script type="application/octet-stream">` block, computes SHA-256 hashes for the inline script and style and writes the Content-Security-Policy meta tag (§13.1).
 - The build fails if a required licence notice, image, manifest entry, string key or card is missing, or if a manifest hash does not match its file.
 - `npm run check` builds twice and fails unless the two outputs are byte-identical.
 - `npm run package` assembles the handoff package (§19.3).
@@ -620,7 +621,7 @@ Each of these has a designed, localised, accessible state. Core play never depen
 
 ---
 
-## 10. Vehicle showcase (pre-rendered)
+## 10. Vehicle showcase
 
 ### 10.1 Purpose
 
@@ -628,14 +629,16 @@ Make the build tangible: the selected mission's base vehicle visibly gains parts
 
 ### 10.2 Requirements
 
-- Six original, fictional base vehicles, one per mission, rendered offline in Blender (D-08, D-09) in one photoreal art direction: matte olive drab, physically based materials with wear, studio lighting suited to a HUD backdrop. Silhouettes stay readable at 320 px wide. No real equipment is depicted.
+- **Two modes from one set of models.** On a hardware GPU with WebGL 2 the showcase shows the team's vehicle as an embedded real-time 3D model that turns slowly by itself and can be dragged or turned with buttons; installed parts appear on it as they are recorded. Without WebGL 2, on a software renderer (for example SwiftShader, llvmpipe or Microsoft Basic Render), or if the model fails to load, it shows the pre-rendered stills described below. Both modes are built from the same Blender scripts, so they show the same parts in the same places.
+- Six original, fictional base vehicles, one per mission, authored in Blender (D-08, D-09) in one photoreal art direction: matte olive drab, physically based materials with wear, studio lighting suited to a HUD backdrop. Silhouettes stay readable at 320 px wide. No real equipment is depicted.
 - Per vehicle: one hero still, a turntable of evenly spaced frames, and a small fixed set of build angles. The spike (§17, V1) fixes the counts; the starting point is 24 frames and 2 angles.
 - **Build composition.** For each build angle the showcase stacks the base vehicle image and one transparent layer per installed part. Every layer is rendered from the same camera, with the hull held out and a shadow and ambient-occlusion catcher, so stacked layers occlude correctly and cast contact shadows. Draw order is each layer's camera distance, recorded in the manifest (§11): the farthest layer is drawn first.
 - Each card category maps to visible attachment points (CAPACITY → hull modules; MOBILITY → running gear/powerpack; FIREPOWER → mounts; PROTECTION → armour panels; COMMS → antennas; SA → sensor masts/optics; ACCESSORIES → kits/trailer/winch/plough; SE_PROCESS → no geometry, shown as HUD process badges).
 - **Mount slots.** Every physical card belongs to one mount slot (`art/blender/sea/mounts.py`; recorded per layer in the manifest). Parts in different slots are placed not to collide. When a team installs several parts in one slot, the showcase draws the most recently recorded one, says so, and lists every installed part. A layer fully hidden behind the hull at one angle is recorded in the manifest's `hidden` list instead of being embedded; a part is never hidden at both angles.
 - Each of the 70 cards has a recognisable part, a photoreal card render and a layer for every vehicle and build angle.
-- Controls: change angle and scrub the turntable by pointer, touch and keyboard. No autoplay; under `prefers-reduced-motion` the turntable does not animate.
-- No runtime 3D, WebGL, canvas drawing or animation loop.
+- Controls, 3D mode: drag to turn, plus Pause turning, Turn left and Turn right buttons usable by keyboard. Under `prefers-reduced-motion` the model does not turn by itself. The animation loop stops while the showcase is off screen or the tab is hidden.
+- Controls, stills mode: change angle and scrub the turntable by pointer, touch and keyboard. No autoplay; under `prefers-reduced-motion` the turntable does not animate.
+- 3D model content: one glTF binary (`content/models/showcase.glb`, SHA-256 in its manifest) holding every vehicle base and every part as named nodes, plain metallic-roughness materials, ambient occlusion baked into vertex colours, no image textures. Exported by `art/blender/export.py` at real-time detail and packed by `art/tools/pack-models.ts`. Triangle budgets at export: a vehicle base ≤ 90,000, a part ≤ 8,000, a running-gear set ≤ 32,000 (`art/blender/tris.py`).
 - A text list of installed parts is always available. The composed image has `role="img"` and an accessible name summarising the build.
 
 ### 10.3 Budgets (set at the visual spike, V1)
@@ -646,6 +649,9 @@ Make the build tangible: the selected mission's base vehicle visibly gains parts
 | Showcase update after a purchase is recorded | ≤ 100 ms (p95), reference profile (§14) |
 | Turntable or angle change | ≤ 50 ms, reference profile |
 | Memory added by decoded images | ≤ 250 MB |
+| 3D model ready (opening the tracker to the first drawn model) | ≤ 3 s, reference profile |
+| 3D model update after a purchase is recorded | ≤ 100 ms, reference profile |
+| Memory added by the 3D showcase | ≤ 400 MB |
 
 Renders are reproducible: pinned Blender version, fixed seeds, sample counts and cameras. Renders are committed with their SHA-256 in the manifest; a re-render that changes bytes is a deliberate, reviewed change.
 
@@ -655,7 +661,7 @@ Renders are reproducible: pinned Blender version, fixed seeds, sample counts and
 
 - 77 subjects: 70 cards (Appendix A IDs), 6 vehicles (`combat`, `recce`, `troop-carrier`, `command-post`, `recovery`, `mine-clearing`) and 1 practice card (`TRAIN-CAP`). Each card has a photoreal card render; each vehicle has the showcase set of §10.
 - Format: AVIF or WebP, chosen at the spike by measured quality and size, embedded once as `data:` URIs and reused. `content/renders/manifest.json` lists every file with id (the file stem, which names the vehicle and angle), kind, frame, trimmed offset and size, draw order (camera distance), bytes and SHA-256. Alt text is not stored: the app derives it at runtime from the canonical EN/FR card and mission titles (Appendix A), so imagery and text cannot drift apart.
-- Source (D-09, superseding the SVG art of D-02): **original imagery authored by the implementing agent** with Blender scripts in `art/blender/`, released under the project MIT licence. Blender's own licence does not extend to its renders. Third-party models or textures are used only if their licence allows embedding and redistribution, and they are listed in THIRD_PARTY_NOTICES.md; procedural or CC0 material is preferred.
+- Source (D-09, superseding the SVG art of D-02): **original imagery and models authored by the implementing agent** with Blender scripts in `art/blender/`, released under the project MIT licence. AI-generated concept images and AI-assisted modelling (D-14) are used as references and to write those scripts; concept images are never shipped. Blender's own licence does not extend to its renders. Third-party models or textures are used only if their licence allows embedding and redistribution, and they are listed in THIRD_PARTY_NOTICES.md; procedural or CC0 material is preferred.
 - Size budget for all embedded imagery: ≤ 40 MB.
 - Imagery never drives rules. A mismatch between imagery and data is a content defect.
 - All content stays fictional and instructional (no real equipment names, manufacturers, ratings or operational data). Visual references are inspiration only.
@@ -981,19 +987,20 @@ Announce, keep the last package and its guides available for at least one school
 
 | ID | Decision | Outcome |
 |---|---|---|
-| D-01 | Interface technology | Semantic HTML/CSS for all tasks; vehicles shown by pre-rendered images (D-08). Three.js removed. |
+| D-01 | Interface technology | Semantic HTML/CSS for all tasks; the vehicle showcase alone uses 3D (D-08). |
 | D-02 | Illustrations | Superseded by D-09 (2026-10-10). |
 | D-03 | Support matrix | Windows 11 only: current Chrome, Edge and Firefox, both roles (owner decision 2026-10-10; §4.3). |
 | D-04 | GitHub Pages hosting | Temporary human QA only (D-13). |
 | D-05 | Pilot | Owner-delegated scripted classroom rehearsal (§16.6). |
 | D-06 | Projector view | Not in 5.0; private entry mode covers projection safety. |
 | D-07 | Visual language | War-room HUD as CSS on semantic HTML, never UI drawn in a canvas (§7.1). Owner, 2026-10-10. |
-| D-08 | 3D realism | Photoreal, pre-rendered only; no runtime WebGL; Three.js removed (§10). Owner, 2026-10-10. |
+| D-08 | 3D realism | Interactive real-time 3D showcase that turns slowly by itself, on a hardware GPU; pre-rendered photoreal stills without one (§10). three.js restored for the showcase only. Owner, 2026-10-10 (revises the earlier same-day pre-rendered-only decision). |
 | D-09 | Imagery source | Agent-built in a pinned Blender LTS: original, fictional, MIT (§11). Owner, 2026-10-10. |
 | D-10 | File size | Single HTML ≤ 50 MB hard limit, ≤ 40 MB target (§14). Owner, 2026-10-10. |
 | D-11 | Minimum hardware | Smooth on integrated-graphics Windows 11 laptops (§14). Owner, 2026-10-10. |
 | D-12 | Build outputs | `dist/` not committed; `npm run check` compares two builds; CI deploys Pages for QA (§5.5, §18). |
 | D-13 | GitHub | Temporary human-QA space, deleted by the owner at the end. The product is a local handoff package; nothing shipped or documented depends on GitHub (§19.3). Owner, 2026-10-10. |
+| D-14 | AI-assisted art | The owner's ChatGPT Codex subscription generates concept images (references only, kept out of the product) and upgrades the procedural Blender scripts under the budgets of §10.2. Fidelity is the owner's judgement. Owner, 2026-10-10. |
 
 ---
 
@@ -1019,6 +1026,7 @@ Announce, keep the last package and its guides available for at least one school
 
 | Version | Date | Change |
 |---|---|---|
+| 4.0.0 | 2026-10-10 | Owner request: interactive 3D showcase that turns slowly by itself (D-08 revised, D-01, R-ARCH-4, §1.3, §2, §5, §10, §11); stills become the fallback without hardware WebGL; 3D budgets (§10.3); AI-assisted concepts and modelling (D-14). |
 | 3.3.0 | 2026-10-10 | Owner request: the instructor chooses the bid increment at setup ($50,000 to $250,000 in $50,000 steps); prices stay on the $50,000 grid (§6.4, §6.5, §8.3, Appendix A constants). |
 | 3.2.0 | 2026-10-10 | V2 production: mount slots, hidden layers and SE badges (§10.2); debrief class chart and presentation questions (§6.13, from the owner-supplied course source); projector theme in the URL (§7.1); stricter save invariants and compatibility-only fields (§8.3, §8.4). |
 | 3.1.0 | 2026-10-10 | §7.1: the live lot's auction actions must be fully visible at 1280×720 without scrolling (V2 layout requirement; found from a Firefox lost-click CI failure). |

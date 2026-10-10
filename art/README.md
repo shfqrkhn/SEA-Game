@@ -1,6 +1,8 @@
 # Art pipeline (MPES §10, §11)
 
-All vehicle, part and card imagery is original, procedural and authored by script: no image textures, HDRIs, scans or downloaded models. Renders are made offline; the game embeds only the encoded results (`content/renders/`).
+All vehicle, part and card imagery and the 3D showcase model are original, procedural and authored by script: no image textures, HDRIs, scans or downloaded models. The same scripts make both outputs offline; the game embeds only the results: encoded stills (`content/renders/`) and one packed glTF model (`content/models/`).
+
+AI assistance (MPES D-14): `tools/concepts.ts` generates concept images with the owner's Codex subscription, and Codex jobs may upgrade the Blender scripts. Concept images are references only: they live in `.artifacts/` and are never embedded.
 
 ## Toolchain
 
@@ -31,22 +33,32 @@ node art/tools/encode-renders.ts encode .artifacts/renders/v2 content/renders av
 node art/tools/encode-renders.ts measure .artifacts/renders/v2 .artifacts/renders/encoding.json
 # Performance on the built file (needs npm run build): reference profile and GPU-less.
 node art/tools/measure-spike.ts .artifacts/perf/measure.json
+# 3D showcase model: triangle budgets at real-time detail (base 90,000, part 8,000, running gear 32,000).
+$B -b --factory-startup -P art/blender/tris.py -- --vehicles all --parts all
+# Export one GLB per vehicle (real-time detail, AO baked into vertex colours), then merge, weld, quantise and pack.
+$B -b --factory-startup -P art/blender/export.py -- --out .artifacts/models
+node art/tools/pack-models.ts .artifacts/models .artifacts/packed/models.glb
+# Then copy the packed file to content/models/showcase.glb and update its SHA-256 in content/models/manifest.json.
+# Concept images (Codex): every subject, or --only FP-C,CAP-A. Written to .artifacts/concepts-v3/.
+node art/tools/concepts.ts
 ```
 
 Pass absolute or project-relative output paths. `render.py` makes them absolute, because Blender resolves relative render paths against the drive root.
 
 ## Layout
 
+- `blender/export.py`: the 3D showcase export: one GLB per vehicle with a `base` node and one node per part card (its mount slot in the node's extras), at real-time detail (`geo.REALTIME`: one bevel segment, half the round vertices), ambient occlusion baked into vertex colours.
+- `blender/tris.py`: triangle budgets of the 3D model, per vehicle and part.
 - `blender/render.py`: the job: which shots, sizes, samples and cameras; writes `renders.json` with each shot's draw order (camera distance) and, for part layers, its mount slot.
 - `blender/sea/scene.py`: render settings, studio lights and reflection cards, shadow-catcher ground, camera framing, layer visibility.
-- `blender/sea/materials.py`: procedural physically based materials (olive paints with edge wear, crevice dust and road dust; rubber; metals; glass; lamps). Card renders turn road dust off.
+- `blender/sea/materials.py`: procedural physically based materials for stills, and `realtime_palette()`, the same keys as plain glTF constants for the 3D model (olive paints with edge wear, crevice dust and road dust; rubber; metals; glass; lamps). Card renders turn road dust off.
 - `blender/sea/geo.py`: mesh and curve builders; the `Builder` tags every object with its layer (`base` or a card ID).
-- `blender/sea/vehicles/`: `truck.py` (shared 6x6 chassis and cab), `recovery.py`, `boxbody.py` (troop carrier, command post) and `armoured.py` (combat 8x8, recce 4x4, mine-clearing 6x6 V-hull). Each returns its `Mounts`.
+- `blender/sea/vehicles/hull8.py`: the one 8x8 hull family behind all six mission vehicles; mission differences (troop ramp and compartment, armoured windscreens, recovery crane) are in the base, everything else is a part. Returns the `Mounts`.
 - `blender/sea/mounts.py`: the `Mounts` geometry every vehicle provides, the card-to-slot map (`SLOTS`) and the compact card mount used for card renders.
-- `blender/sea/parts/library.py`: one builder per physical card (49), placed only through `Mounts`, so each fits all six vehicles and the card mount.
+- `blender/sea/parts/`: one builder per physical card (49), placed only through `Mounts`, so each fits all six vehicles and the card mount. One module per category (`cap`, `mob`, `fp`, `pro`, `com`, `sa`, `acc`), shared helpers in `common.py`, and `library.py` mapping card IDs to builders.
 - `blender/sea/parts/tokens.py`: the 21 SE_PROCESS process tokens (outline = attribute improved, relief icon = the review) and the practice card TRAIN-CAP.
 - `blender/sea/fleet.py`: vehicle file stems (MPES §11) and each hero still's loadout.
-- `tools/`: encoder, contact sheet, spike preview compositor and performance measurement (TypeScript, run by Node).
+- `tools/`: encoder, model packer (`pack-models.ts`), concept generator (`concepts.ts`), contact sheet, spike preview compositor and performance measurement (TypeScript, run by Node).
 
 ## Build layers and mount slots
 
@@ -56,9 +68,10 @@ Every physical card has one slot (`SLOTS` in `mounts.py`): for example all seven
 
 ## Adding or changing a part
 
-1. Edit its builder in `parts/library.py` (or its slot in `mounts.py`). Keep it fictional and recognisable at 512 px, and size it from the card's effects (Appendix A).
+1. Edit its builder in its category module under `parts/` (or its slot in `mounts.py`). Keep it fictional and recognisable at 512 px, and size it from the card's effects (Appendix A).
 2. Preview (`--preview`) and check the kit stills and the card on a contact sheet.
-3. Render its layers on all six vehicles and its card (`--parts <ID>`), encode, then `npm test` (the render manifest tests check completeness, slots, hashes and the 40 MB budget).
+3. Check its budget with `tris.py --parts <ID>`.
+4. Render its layers on all six vehicles and its card (`--parts <ID>`), encode, export and pack the 3D model, then `npm test` (the render and model manifest tests check completeness, slots, hashes and the 40 MB budget).
 
 ## Sizes (performance over looks, owner 2026-10-10)
 

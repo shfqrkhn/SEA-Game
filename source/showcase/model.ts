@@ -87,7 +87,8 @@ export class ModelStage {
     this.#renderer.shadowMap.enabled = true;
     this.#renderer.shadowMap.type = PCFShadowMap;
     const pmrem = new PMREMGenerator(this.#renderer);
-    this.#scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+    // A 64 px environment lights matte paint as well as the default 256 px, with a sixteenth of the pixels to render and blur.
+    this.#scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04, 0.1, 100, { size: 64 }).texture;
     pmrem.dispose();
     this.#scene.background = null;
     const sun = new DirectionalLight(new Color(1, 0.97, 0.92), 1.6);

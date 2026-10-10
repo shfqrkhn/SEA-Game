@@ -220,6 +220,9 @@ def palette(dust_height=1.25):
         'interior': dielectric('interior', (0.35, 0.37, 0.33), 0.7),
         'interior_dark': dielectric('interior-floor', (0.06, 0.065, 0.06), 0.8, bump_scale=120),
         'lamp_soft': emissive('lamp-soft', (1.0, 0.95, 0.85), 3.0),
+        'tread': dielectric('worn-tread', (0.043, 0.047, 0.043), 0.88, 0.006, bump_scale=60, dust=True),
+        'wood': dielectric('tool-wood', (0.19, 0.16, 0.10), 0.88, 0.004, bump_scale=120),
+        'chrome': metal('chrome', (0.65, 0.70, 0.71), 0.22),
     }
 
 
@@ -255,4 +258,7 @@ def realtime_palette():
         'interior': flat('interior', (0.35, 0.37, 0.33), 0.7),
         'interior_dark': flat('interior_dark', (0.06, 0.065, 0.06), 0.8),
         'lamp_soft': flat('lamp_soft', (1.0, 0.95, 0.85), 0.2, emission=2.5),
+        'tread': flat('tread', (0.043, 0.047, 0.043), 0.88),
+        'wood': flat('wood', (0.19, 0.16, 0.10), 0.88),
+        'chrome': flat('chrome', (0.65, 0.70, 0.71), 0.22, 0.65),
     }
