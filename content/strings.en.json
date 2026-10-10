@@ -358,5 +358,14 @@
   "debrief.chartScore": "score {n}",
   "debrief.chartWinner": "award",
   "debrief.chartIneligible": "not eligible",
-  "debrief.tableCaption": "Ranking, scores, costs and bids by team"
+  "debrief.tableCaption": "Ranking, scores, costs and bids by team",
+  "debrief.questions": "Presentation questions",
+  "debrief.questionsHint": "Each team presents its vehicle by answering these questions.",
+  "debrief.q1": "Did your design meet every mandatory requirement? If not, what assumptions or actions caused the failure?",
+  "debrief.q2": "How did you prioritise the requirements?",
+  "debrief.q3": "How easy or difficult were the trade-offs?",
+  "debrief.q4": "How did you decide your profit?",
+  "debrief.q5": "What is your cost per point?",
+  "debrief.q6": "What are your three biggest design risks?",
+  "debrief.q7": "What is the purpose of one systems engineering process you bought?"
 }

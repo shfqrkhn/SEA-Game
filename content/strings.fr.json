@@ -358,5 +358,14 @@
   "debrief.chartScore": "score {n}",
   "debrief.chartWinner": "prix",
   "debrief.chartIneligible": "non admissible",
-  "debrief.tableCaption": "Classement, scores, coûts et offres par équipe"
+  "debrief.tableCaption": "Classement, scores, coûts et offres par équipe",
+  "debrief.questions": "Questions de présentation",
+  "debrief.questionsHint": "Chaque équipe présente son véhicule en répondant à ces questions.",
+  "debrief.q1": "Votre conception respecte-t-elle toutes les exigences obligatoires ? Sinon, quelles hypothèses ou décisions ont causé l’écart ?",
+  "debrief.q2": "Comment avez-vous priorisé les exigences ?",
+  "debrief.q3": "Les compromis ont-ils été faciles ou difficiles ?",
+  "debrief.q4": "Comment avez-vous fixé votre profit ?",
+  "debrief.q5": "Quel est votre coût par point ?",
+  "debrief.q6": "Quels sont vos trois plus grands risques de conception ?",
+  "debrief.q7": "À quoi sert un processus d’ingénierie des systèmes que vous avez acheté ?"
 }

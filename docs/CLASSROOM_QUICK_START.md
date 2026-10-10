@@ -14,6 +14,7 @@ Supported: Windows 11 with a current Chrome, Edge or Firefox, for the instructor
 2. On each device, open the file and check that the role chooser appears. Try **Français / English** once. On a projector or a bright room, choose **Projector theme** (first screen, or **Menu → Projector theme**); **War-room theme** switches back.
 3. Instructor: open **Instructor**. Students: open **Student team**. Use one tab per role; keep the tab open for the whole session.
 4. Use fictional team names only. Do not enter personal or operational information.
+5. Each team shares four roles: a planner (fills in the plan), a bidder (the only voice in the auction), a card tracker (records wins in the team's tab) and a presenter (answers the presentation questions at the debrief).
 
 ### Run the session
 
@@ -51,6 +52,7 @@ Configuration prise en charge : Windows 11 avec une version récente de Chrome, 
 2. Sur chaque appareil, ouvrez le fichier et vérifiez que le choix du rôle s’affiche. Essayez une fois **Français / English**. Avec un projecteur ou dans une salle claire, choisissez **Thème projecteur** (premier écran, ou **Menu → Thème projecteur**) ; **Thème salle de crise** revient au thème sombre.
 3. Instructeur : **Instructeur**. Équipes : **Équipe étudiante**. Un onglet par rôle, gardé ouvert toute la séance.
 4. Utilisez seulement des noms d’équipe fictifs. N’inscrivez aucune information personnelle ou opérationnelle.
+5. Chaque équipe se partage quatre rôles : un planificateur (remplit le plan), un enchérisseur (seule voix pendant l’enchère), un responsable des cartes (enregistre les gains dans l’onglet de l’équipe) et un présentateur (répond aux questions de présentation au bilan).
 
 ### Déroulement
 

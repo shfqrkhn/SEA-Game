@@ -124,3 +124,12 @@ export function complianceText(id: MissionId, totals: Totals, lang: Language): s
   if (compliant(id, totals)) return t('common.compliant');
   return t('common.notCompliant', { list: list(shortfalls(id, totals).map(s => t(`cap.${s.capability}` as StringKey)), lang) });
 }
+
+/** The original game's presentation questions (course source §18.18), asked of every team at the debrief. */
+export function presentationQuestions(lang: Language): HTMLElement {
+  const t = tr(lang);
+  return h('section', { class: 'panel stack', 'aria-labelledby': 'questions-heading' },
+    h('h2', { id: 'questions-heading', text: t('debrief.questions') }),
+    h('p', { class: 'muted small', text: t('debrief.questionsHint') }),
+    h('ol', { class: 'questions' }, ([1, 2, 3, 4, 5, 6, 7] as const).map(n => h('li', { text: t(`debrief.q${n}`) }))));
+}

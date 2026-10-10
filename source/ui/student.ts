@@ -8,7 +8,7 @@ import { compliant, score, sumEffects } from '../domain/missions.ts';
 import { add } from '../domain/money.ts';
 import { validateStudent } from '../domain/saves.ts';
 import * as S from '../domain/student.ts';
-import { cardDetails, complianceText, gapMeter, missionName, missionTable, purchasesTable } from './components.ts';
+import { cardDetails, complianceText, gapMeter, missionName, missionTable, purchasesTable, presentationQuestions } from './components.ts';
 import { h, type Child } from './dom.ts';
 import { labelled, money, signed } from './format.ts';
 import type { Language, StringKey } from './i18n.ts';
@@ -282,6 +282,7 @@ function debriefView(v: View, closed: boolean): Child {
       h('section', { class: 'panel stack' }, h('h2', { text: t('sdebrief.plan') }),
         s.planBaseline ? h('p', { class: 'prewrap', text: s.planBaseline }) : h('p', { class: 'muted', text: t('sdebrief.noPlan') })),
       h('section', { class: 'panel stack' }, h('h2', { text: t('sdebrief.spend') }), spendingByCategory(s, lang, t)),
+      presentationQuestions(lang),
       closed ? h('button', { type: 'button', class: 'btn primary', id: 'export-final', text: t('shell.export'), on: { click: () => v.exportBackup() } })
         : h('button', { type: 'button', class: 'btn primary', id: 'student-close', text: t('sdebrief.close'), on: {
           click: e => void v.confirm({ title: t('sdebrief.closeTitle'), body: h('p', { text: t('sdebrief.closeBody') }), confirm: t('sdebrief.close'), opener: e.currentTarget as HTMLElement }, S.closeStudent),

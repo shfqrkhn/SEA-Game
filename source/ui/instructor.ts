@@ -8,7 +8,7 @@ import { lotIndex } from '../domain/ledger.ts';
 import { parseAmount } from '../domain/money.ts';
 import { instructorForSave, validateInstructor } from '../domain/saves.ts';
 import { lotVisible, REVEAL_MODES, MIN_BID_SECONDS, MAX_BID_SECONDS, type RevealMode, type TimingMode } from '../domain/session.ts';
-import { cardDetails, complianceText, missionName, missionTable, purchasesTable, cardImage } from './components.ts';
+import { cardDetails, complianceText, missionName, missionTable, purchasesTable, cardImage, presentationQuestions } from './components.ts';
 import { h, type Child } from './dom.ts';
 import { labelled, money, seconds } from './format.ts';
 import type { Language, StringKey } from './i18n.ts';
@@ -435,6 +435,7 @@ function debriefView(v: View): Child {
   return h('section', { class: 'stack' },
     h('h1', { text: t('debrief.title') }),
     awardSection(v),
+    presentationQuestions(v.lang),
     teamPurchases(v),
     h('button', { type: 'button', class: 'btn primary', id: 'close-room', text: t('debrief.closeRoom'), on: {
       click: e => void v.confirm({ title: t('debrief.closeTitle'), body: h('p', { text: t('debrief.closeBody') }), confirm: t('debrief.closeRoom'), opener: e.currentTarget as HTMLElement }, I.closeRoom),
