@@ -36,6 +36,8 @@ function apply(element: Element, props: Props): void {
   if (props.on) for (const [type, handler] of Object.entries(props.on)) element.addEventListener(type, handler);
   if (element instanceof HTMLInputElement || element instanceof HTMLTextAreaElement || element instanceof HTMLSelectElement) {
     if (props.value !== undefined) element.value = props.value;
+  } else if (props.value !== undefined) {
+    element.setAttribute('value', props.value);
   }
   if (element instanceof HTMLInputElement && props.checked !== undefined) element.checked = props.checked;
   if ('disabled' in element && props.disabled !== undefined) (element as HTMLButtonElement).disabled = props.disabled;

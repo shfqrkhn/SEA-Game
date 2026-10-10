@@ -1,5 +1,8 @@
 // Entry point: route to the role chooser or a single role (MPES §5.3).
-import { showDialog } from './ui/dialog.ts';
+import { sessionStoragePort } from './app/ports.ts';
+import { showAbout } from './ui/about.ts';
+import { startInstructor } from './ui/instructor.ts';
+import { startStudent } from './ui/student.ts';
 import { h, replaceChildren } from './ui/dom.ts';
 import { detectLanguage, otherLanguage, translate, type Language, type StringKey } from './ui/i18n.ts';
 
@@ -16,21 +19,6 @@ export function roleHref(role: Role | null, lang: Language): string {
   if (role) params.set('role', role);
   params.set('lang', lang);
   return `?${params.toString()}`;
-}
-
-export function showAbout(lang: Language, opener: HTMLElement | null = null): Promise<string> {
-  const t = (key: StringKey, vars?: Record<string, string>) => translate(lang, key, vars);
-  return showDialog({
-    title: t('about.title'),
-    body: [
-      h('p', { text: t('about.body', { version: __SEA_VERSION__ }) }),
-      h('details', {}, h('summary', { text: t('about.licence') }), h('pre', { text: __SEA_LICENSE__ })),
-      h('details', {}, h('summary', { text: t('about.notices') }), h('pre', { text: __SEA_NOTICES__ })),
-    ],
-    actions: [{ label: t('about.close'), value: 'close', kind: 'primary' }],
-    cancelValue: 'close',
-    opener,
-  });
 }
 
 function renderChooser(root: HTMLElement, lang: Language, unknownRole: boolean): void {
@@ -66,7 +54,8 @@ export function start(root: HTMLElement): void {
   const lang = detectLanguage(location.search, navigator.language);
   const route = parseRole(location.search);
   if (route === 'chooser' || route === 'unknown') renderChooser(root, lang, route === 'unknown');
-  else renderChooser(root, lang, false); // Role apps arrive in M2.
+  else if (route === 'instructor') startInstructor(root, lang, sessionStoragePort());
+  else startStudent(root, lang, sessionStoragePort());
 }
 
 const root = document.getElementById('app');
