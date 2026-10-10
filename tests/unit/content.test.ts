@@ -21,6 +21,12 @@ describe('strings (RQ-19)', () => {
   it('French puts a space before high punctuation', () => {
     for (const [key, value] of Object.entries(fr)) expect(value, key).not.toMatch(/\S[:;!?](\s|$)/);
   });
+  it('the unsupported-browser notice names exactly the supported Windows 11 browsers (MPES §4.3)', () => {
+    for (const text of [en['app.unsupported'], fr['app.unsupported']]) {
+      for (const name of ['Windows 11', 'Chrome', 'Edge', 'Firefox']) expect(text).toContain(name);
+      expect(text).not.toMatch(/Safari|macOS|iPad|iOS|Android|ChromeOS|Linux/);
+    }
+  });
   it('substitutes placeholders and detects language', () => {
     expect(translate('en', 'chooser.version', { version: '9.9.9' })).toContain('9.9.9');
     expect(detectLanguage('?lang=fr', 'en-CA')).toBe('fr');

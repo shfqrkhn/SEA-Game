@@ -6,11 +6,13 @@ if (!process.env.CI && !process.env.PLAYWRIGHT_BROWSERS_PATH) {
   process.env.PLAYWRIGHT_BROWSERS_PATH = path.resolve('.artifacts/ms-playwright');
 }
 
-const engines = (process.env.SEA_ENGINES ?? 'chromium,firefox,webkit').split(',');
+// Support is Windows 11 only (MPES §4.3): Chrome and Edge (Chromium) and Firefox. `msedge` drives the
+// Edge installed with Windows rather than a downloaded build.
+const engines = (process.env.SEA_ENGINES ?? 'chromium,firefox,msedge').split(',');
 const all = [
   { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
   { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
-  { name: 'webkit', use: { ...devices['Desktop Safari'] } },
+  { name: 'msedge', use: { ...devices['Desktop Edge'], channel: 'msedge' } },
 ];
 
 export default defineConfig({

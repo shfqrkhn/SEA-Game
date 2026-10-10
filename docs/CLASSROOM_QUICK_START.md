@@ -6,6 +6,8 @@
 
 SEA Game is one file, `index.html`. It works offline and needs no installation or account. The instructor and the student teams each open the same file in their own browser tab. **The apps do not connect to each other**: the instructor announces everything aloud, and the instructor's screen is the official record.
 
+Supported: Windows 11 with a current Chrome, Edge or Firefox, for the instructor and every team. Other systems and Safari are not supported.
+
 ### Before class (10 minutes)
 
 1. Give every device the same `index.html` (USB key, shared drive, email) or the web link your school uses.
@@ -40,6 +42,8 @@ Export a backup from **Menu → Export backup** after setup, after each round an
 ## Français
 
 SEA Game tient en un seul fichier, `index.html`. Il fonctionne hors ligne, sans installation ni compte. L’instructeur et les équipes ouvrent le même fichier, chacun dans son onglet. **Les applications ne sont pas reliées** : l’instructeur annonce tout à voix haute et son écran fait foi.
+
+Configuration prise en charge : Windows 11 avec une version récente de Chrome, Edge ou Firefox, pour l’instructeur et chaque équipe. Les autres systèmes et Safari ne sont pas pris en charge.
 
 ### Avant la séance (10 minutes)
 

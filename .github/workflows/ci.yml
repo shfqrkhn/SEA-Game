@@ -10,12 +10,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest]
         node: ['22', '24']
-    runs-on: ${{ matrix.os }}
+    # Support is Windows 11 only (MPES §4.3). Hosted runners are Windows Server, the closest available;
+    # Windows 11 evidence comes from local runs (MPES §16.5).
+    runs-on: windows-latest
     env:
-      # Full engine set once; Chromium elsewhere (MPES §16.5).
-      SEA_ENGINES: ${{ matrix.os == 'ubuntu-latest' && matrix.node == '24' && 'chromium,firefox,webkit' || 'chromium' }}
+      # Full engine set on current LTS; Chromium on the previous LTS (MPES §16.5). Edge is preinstalled on the runner.
+      SEA_ENGINES: ${{ matrix.node == '24' && 'chromium,firefox,msedge' || 'chromium' }}
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
@@ -28,11 +29,11 @@ jobs:
       - run: npm run lint
       - run: npm test
       - run: npm run check
-      - run: npx playwright install --with-deps ${{ env.SEA_ENGINES == 'chromium' && 'chromium' || 'chromium firefox webkit' }}
+      - run: npx playwright install ${{ env.SEA_ENGINES == 'chromium' && 'chromium' || 'chromium firefox' }}
       - run: npx playwright test
       - if: failure()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: playwright-${{ matrix.os }}-${{ matrix.node }}
+          name: playwright-windows-${{ matrix.node }}
           path: .artifacts/test-results
           retention-days: 7
