@@ -9,6 +9,8 @@ export interface ShowcasePart { readonly id: string; readonly title: string }
 export interface ShowcaseText {
   readonly title: string; readonly view: string; readonly front: string; readonly rear: string;
   readonly turntable: string; readonly rotate: string; readonly installed: string; readonly none: string;
+  /** Text alternative and visible note for the turntable, which shows the base vehicle only. */
+  readonly turntableLabel: string; readonly turntableNote: string;
 }
 
 const VIEWS: readonly ShowcaseView[] = ['front', 'rear', 'turntable'];
@@ -50,7 +52,8 @@ export class Showcase {
     const vehicle = VEHICLE[mission], table = renders();
     const turntable = frames(vehicle);
     if (this.#frame >= turntable.length) this.#frame = 0;
-    const stage = h('div', { class: 'showcase-stage', role: 'img', 'aria-label': label });
+    const turning = this.#view === 'turntable';
+    const stage = h('div', { class: 'showcase-stage', role: 'img', 'aria-label': turning ? text.turntableLabel : label });
     if (this.#view === 'turntable') {
       const key = turntable[this.#frame];
       const render = key ? table.get(key) : undefined;
@@ -83,7 +86,8 @@ export class Showcase {
         : h('p', { class: 'muted small', text: text.none }));
     if (this.#view === 'turntable') this.#warm(turntable);
     const focused = document.activeElement?.id;
-    this.element.replaceChildren(h('h2', { id: 'showcase-heading', text: text.title }), stage, views, scrub ?? '', installed);
+    const note = turning ? h('p', { class: 'muted small', text: text.turntableNote }) : '';
+    this.element.replaceChildren(h('h2', { id: 'showcase-heading', text: text.title }), stage, note, views, scrub ?? '', installed);
     if (focused?.startsWith('showcase-')) document.getElementById(focused)?.focus();
     return this.element;
   }

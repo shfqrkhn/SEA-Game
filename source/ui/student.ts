@@ -40,6 +40,7 @@ function showcaseFor(v: View, mission: MissionId): Child | null {
     t('showcase.summary', { mission: missionName(mission, v.lang), n: s.team.purchases.length }), {
       title: t('showcase.title'), view: t('showcase.view'), front: t('showcase.front'), rear: t('showcase.rear'),
       turntable: t('showcase.turntable'), rotate: t('showcase.rotate'), installed: t('showcase.installed'), none: t('showcase.none'),
+      turntableLabel: `${t('showcase.vehicle', { mission: missionName(mission, v.lang) })} ${t('showcase.turntableNote')}`, turntableNote: t('showcase.turntableNote'),
     });
 }
 

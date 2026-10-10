@@ -349,5 +349,7 @@
   "showcase.installed": "Installed parts",
   "showcase.none": "No parts installed yet.",
   "showcase.summary": "{mission} vehicle. Installed parts: {n}",
-  "chooser.heroStill": "Recovery vehicle with a carrier module, long-range radios and a recovery winch"
+  "chooser.heroStill": "Recovery vehicle with a carrier module, long-range radios and a recovery winch",
+  "showcase.vehicle": "{mission} vehicle.",
+  "showcase.turntableNote": "Turntable: base vehicle without installed parts."
 }

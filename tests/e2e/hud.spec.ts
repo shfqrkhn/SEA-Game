@@ -38,6 +38,9 @@ test('HUD prototype: showcase layers follow recorded purchases', async ({ browse
   await showcase.getByRole('radio', { name: 'Rear' }).check();
   await expect(showcase.locator('img[data-layer="base"]')).toHaveAttribute('data-angle', 'rear');
   await showcase.getByRole('radio', { name: 'Turntable' }).check();
+  // The turntable shows the base vehicle only: its text alternative and a visible note must say so.
+  await expect(showcase.locator('[role="img"]')).toHaveAttribute('aria-label', 'Recovery vehicle. Turntable: base vehicle without installed parts.');
+  await expect(showcase).toContainText('Turntable: base vehicle without installed parts.');
   const scrub = showcase.getByRole('slider');
   await scrub.focus();
   await sp.keyboard.press('ArrowRight');
