@@ -15,6 +15,7 @@ import type { Language, StringKey } from './i18n.ts';
 import { practiceCard } from './instructor.ts';
 import { RoleView } from './view.ts';
 import { Showcase } from '../showcase/showcase.ts';
+import { renders, VEHICLE } from '../showcase/renders.ts';
 
 let showcase: Showcase | null = null;
 /** The pre-rendered vehicle showcase (MPES §10): one per page, so its view and turntable frame persist. */
@@ -101,6 +102,13 @@ function categoryGuide(lang: Language, t: View['t']): Child {
     h('tbody', {}, rows)));
 }
 
+/** The mission's base vehicle as a pre-rendered hero still, so the team sees what it is designing (MPES §10.2). */
+function missionHero(mission: MissionId, lang: Language, t: View['t']): Child {
+  const still = renders().get(`${VEHICLE[mission]}-hero`);
+  return still ? h('figure', { class: 'mission-hero' },
+    h('img', { class: 'hero-still', src: still.src, alt: t('showcase.vehicle', { mission: missionName(mission, lang) }), decoding: 'async', width: String(still.size.width), height: String(still.size.height) })) : null;
+}
+
 function planningView(v: View): Child {
   const s = joined(v), t = v.t, mission = s.team.mission as MissionId;
   const area = (field: 'plan' | 'risks', label: StringKey, hint: StringKey) => h('div', { class: 'field' },
@@ -133,6 +141,7 @@ function planningView(v: View): Child {
       } }),
     ),
     h('div', { class: 'stack' },
+      missionHero(mission, v.lang, t),
       h('section', { class: 'panel stack' }, h('h2', { text: t('splan.minimums', { mission: missionName(mission, v.lang) }) }), gapMeter(mission, s.team.totals, v.lang)),
       h('details', { class: 'panel' }, h('summary', { text: t('splan.guide') }), categoryGuide(v.lang, t)),
       h('details', { class: 'panel' }, h('summary', { text: t('planning.requirements') }), missionTable(v.lang, mission)),

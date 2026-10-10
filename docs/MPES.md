@@ -3,7 +3,7 @@
 | Field | Value |
 |---|---|
 | Document | Master Product and Engineering Specification (MPES) for the clean-room rebuild of **Systems Engineering Awareness (SEA Game)** |
-| Version | 3.1.0 |
+| Version | 3.2.0 |
 | Date | 2026-10-10 (America/Toronto) |
 | Status | **ACCEPTED**. Owner delegated all remaining decisions and gates to the implementing agent on 2026-10-09 (§22) |
 | Supersedes | MPES 1.5.2 and every earlier handover, ledger, prompt and evidence packet for implementation purposes |
@@ -397,7 +397,8 @@ The student app does not know the market. During the auction the student:
 ### 6.13 Debrief and close
 
 - The debrief shows, per team: mission, compliance with each shortfall, totals vs minimums, score, cost, profit, bid, cost-per-point, rank and award.
-- It also shows the class-level comparison and, for the student, its own plan baseline vs outcome.
+- It also shows the class-level comparison (a bar chart of scores with the ranking table as its text equivalent) and, for the student, its own plan baseline vs outcome.
+- Both roles see the original game's presentation questions (compliance, priorities, trade-offs, profit, cost per point, three biggest risks, the purpose of one purchased SE process), so the debrief stays a discussion rather than an automatic optimisation (course source §18.18; see `docs/verification/source-fidelity.md`).
 - `debrief → closed` is deliberate. A closed room is read-only except for export and starting a new session.
 
 ### 6.14 Worked example (mandatory oracle test)
@@ -419,7 +420,7 @@ Team 1, mission TROOP, with effective purchases totalling CAP 18, MOB 180, FP 4,
 - **Minimal clicks** for the live auction: one keystroke or click per bid acceptance; keyboard shortcuts shown on screen. At 1280×720 (100% zoom) the live lot's bid buttons, Sell, No sale and Next lot are fully visible without scrolling, because Firefox loses a click on a half-hidden button when it scrolls it into view (CI run 38064762108).
 - **Plain HTML/CSS** for all controls and text, with native form elements, `<dialog>` for confirmations, and one `aria-live` status region per view.
 - **War-room HUD design language (D-07).** A dark, tactical command-centre look (framed panels, grid and map textures, monospaced numeric readouts, restrained glow accents and photoreal imagery) applied as CSS on semantic HTML. Decoration never carries information on its own, never lowers contrast below §12 and never animates under `prefers-reduced-motion`. Visual references are inspiration only; nothing is copied.
-- **One design system** shared by both roles: colour tokens, type scale, spacing, focus style, a dark HUD theme and a projector-safe light theme with a manual override.
+- **One design system** shared by both roles: colour tokens, type scale, spacing, focus style, a dark HUD theme (the default) and a projector-safe light theme chosen by hand on the first screen or in the menu and kept in the URL (`theme=light`).
 
 ### 7.2 Instructor console
 
@@ -629,6 +630,7 @@ Make the build tangible: the selected mission's base vehicle visibly gains parts
 - Per vehicle: one hero still, a turntable of evenly spaced frames, and a small fixed set of build angles. The spike (§17, V1) fixes the counts; the starting point is 24 frames and 2 angles.
 - **Build composition.** For each build angle the showcase stacks the base vehicle image and one transparent layer per installed part. Every layer is rendered from the same camera, with the hull held out and a shadow and ambient-occlusion catcher, so stacked layers occlude correctly and cast contact shadows. Draw order is each layer's camera distance, recorded in the manifest (§11): the farthest layer is drawn first.
 - Each card category maps to visible attachment points (CAPACITY → hull modules; MOBILITY → running gear/powerpack; FIREPOWER → mounts; PROTECTION → armour panels; COMMS → antennas; SA → sensor masts/optics; ACCESSORIES → kits/trailer/winch/plough; SE_PROCESS → no geometry, shown as HUD process badges).
+- **Mount slots.** Every physical card belongs to one mount slot (`art/blender/sea/mounts.py`; recorded per layer in the manifest). Parts in different slots are placed not to collide. When a team installs several parts in one slot, the showcase draws the most recently recorded one, says so, and lists every installed part. A layer fully hidden behind the hull at one angle is recorded in the manifest's `hidden` list instead of being embedded; a part is never hidden at both angles.
 - Each of the 70 cards has a recognisable part, a photoreal card render and a layer for every vehicle and build angle.
 - Controls: change angle and scrub the turntable by pointer, touch and keyboard. No autoplay; under `prefers-reduced-motion` the turntable does not animate.
 - No runtime 3D, WebGL, canvas drawing or animation loop.
@@ -1015,6 +1017,7 @@ Announce, keep the last package and its guides available for at least one school
 
 | Version | Date | Change |
 |---|---|---|
+| 3.2.0 | 2026-10-10 | V2 production: mount slots, hidden layers and SE badges (§10.2); debrief class chart and presentation questions (§6.13, from the owner-supplied course source); projector theme in the URL (§7.1); stricter save invariants and compatibility-only fields (§8.3, §8.4). |
 | 3.1.0 | 2026-10-10 | §7.1: the live lot's auction actions must be fully visible at 1280×720 without scrolling (V2 layout requirement; found from a Firefox lost-click CI failure). |
 | 3.0.1 | 2026-10-10 | §10.2 and §11 aligned with the V1 implementation: draw order is the recorded camera distance; manifest fields named; alt text derived at runtime from canonical titles instead of stored. No change to requirements. |
 | 3.0.0 | 2026-10-10 | Owner decisions D-07 to D-13: war-room HUD (S7, §7.1); photoreal pre-rendered imagery authored in Blender replaces the WebGL bay and SVG art (§1.3, §2, §5, §9 to §11, D-01, D-02, D-08, D-09); 50 MB file and integrated-graphics reference profile (§3, §14, D-10, D-11); `dist/` no longer committed (§5.5, §18, D-12); GitHub becomes temporary QA space and the release becomes a local handoff package (§16.5, §19, §21, D-04, D-13); milestones V1 and V2 replace M5 (§17); RQ-31 and RQ-32 added. |
