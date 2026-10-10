@@ -29,6 +29,26 @@ export function sha256(text: string): string {
   return createHash('sha256').update(text, 'utf8').digest('base64');
 }
 
+interface RenderEntry {
+  readonly file: string; readonly id: string; readonly kind: string; readonly sha256: string; readonly depth: number | null;
+  readonly frame: { width: number; height: number }; readonly offset: { left: number; top: number }; readonly size: { width: number; height: number };
+}
+export const RENDERS_DIR = 'content/renders/spike';
+
+/** Committed renders (MPES §11) as one inert JSON object: id -> data URI and placement. Hashes are checked. */
+function renders(): string {
+  const manifest = JSON.parse(read(`${RENDERS_DIR}/manifest.json`)) as { format: string; entries: RenderEntry[] };
+  const out: Record<string, unknown> = {};
+  for (const e of manifest.entries) {
+    const bytes = readFileSync(join(ROOT, RENDERS_DIR, e.file));
+    if (createHash('sha256').update(bytes).digest('hex') !== e.sha256) throw new Error(`Render hash mismatch: ${e.file}`);
+    out[e.id] = { src: `data:image/${manifest.format};base64,${bytes.toString('base64')}`, kind: e.kind, depth: e.depth, frame: e.frame, offset: e.offset, size: e.size };
+  }
+  const json = JSON.stringify(out);
+  if (json.includes('<')) throw new Error('Unsafe renders content');
+  return json;
+}
+
 export async function render(): Promise<string> {
   for (const dir of ['source', 'content', 'build']) assertLf(dir);
   for (const file of ['LICENSE', 'THIRD_PARTY_NOTICES.md']) if (read(file).includes('\r')) throw new Error(`CRLF in ${file}`);
@@ -73,6 +93,7 @@ export async function render(): Promise<string> {
     .replace('{{CSP}}', () => csp)
     .replace('{{VERSION}}', () => version)
     .replace('{{STYLE}}', () => css)
+    .replace('{{RENDERS}}', () => renders())
     .replace('{{SCRIPT}}', () => js);
   if (/\{\{[A-Z]+\}\}/.test(html)) throw new Error('Unfilled template placeholder');
   const bytes = Buffer.byteLength(html, 'utf8');
