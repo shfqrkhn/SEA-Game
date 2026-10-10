@@ -1,9 +1,10 @@
-# Project continuity contract
+# Working rules for agents and maintainers
 
-- Begin with `docs/HANDOVER.md`, actual Git status/HEAD and relevant canonical source/specification. User instructions take precedence.
-- Maintain handover at material milestones, failed gates, ownership changes, publication and before stopping/context/usage limits. Include unfinished edits, exact check outcomes and next action. Use finite event-based updates, no autosave service/watcher/polling logger.
-- Normative requirements belong in `docs/MPES.md`, durable results in `docs/EXECUTION_LEDGER.md`, implementation in modular sources. Do not edit generated HTML. Separate delivered state/pending requirements and bounded tests/full acceptance.
-- Agents need explicit non-overlapping ownership. Preserve other writers' work; stage named files. Wait for stable inputs before integration/evidence-key capture. User requested bounded subagents; avoid unnecessary delegation or repeated checks.
-- Preserve approved gameplay/money/privacy/recovery/schema/storage. Increment game version by change scale. Embed runtime assets; retain authoring sources/rights notices.
-- Keep project writes finite and skip unchanged outputs/saves. Do not start project servers/watchers/schedulers without concrete user need. Continue available engineering while documenting unavailable acceptance environments.
-- All new work stays under D:\VSCode\SEA-Game. Reuse current for maintained source and current/.artifacts for local references/concepts/evidence/package cache. Do not create additional checkouts, external archives or exploratory published folders. Preserve .artifacts/preserved-references; it contains the user-requested generator reference, not disposable run output.
+1. Start with `docs/HANDOVER.md`, then `git status` and `git log -5`. `docs/MPES.md` is the specification and outranks old code, old docs, memory and chat.
+2. Do not overwrite anyone's uncommitted work. Stage named files only.
+3. Work inside `D:\VSCode\SEA-Game` only. Scratch, caches and screenshots go in `.artifacts/` (git-ignored). Never delete permanently: move unwanted files to `_archive/recycle/<date>/`. `_archive/` is read-only old material and will be deleted after release; nothing may depend on it.
+4. Test first: a failing test, the minimal fix, green, then refactor. Never weaken a test or oracle to pass.
+5. Never edit `dist/index.html` by hand. Run `npm run verify` before committing a milestone.
+6. Report every check as PASS, FAIL, NOT_RUN or BLOCKED, with the command. No claim without executed evidence.
+7. Update `docs/HANDOVER.md` at milestones, failures and before stopping.
+8. Authority and limits: MPES §20.

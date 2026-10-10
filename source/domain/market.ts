@@ -1,79 +1,79 @@
-import { CARDS, ROUND_SLOTS, ROUNDS, type CardCategory, type CardDefinition } from './catalog';
-import { type Effects } from './capabilities';
-import { type Cents } from './money';
+// Deterministic market deal (MPES §6.3). Bit-exact with schema-3 saves; do not "improve".
+import { CARDS, LOTS, ROUND_SLOTS, ROUNDS, card as cardDef, categoryOfLot, type Category, type CardDef, type Effects, type Bilingual } from './data.ts';
+import { fail } from './errors.ts';
 
-/** Schema-3 role-facing card shape; shared canonical catalog supplies all metadata. */
+/** Schema-3 card shape stored in saves. */
 export interface MarketCard {
   readonly id: string;
-  readonly title: Readonly<{ en: string; fr: string }>;
-  readonly start: Cents;
+  readonly title: Bilingual;
+  readonly start: number;
   readonly e: Effects;
-  readonly cat: CardCategory;
+  readonly cat: Category;
   readonly round: number;
   readonly lot: number;
   readonly instance: string;
 }
 
-// Retain the established UTF-16 hash and 32-bit PRNG sequence. In particular,
-// category order consumes the random stream before round/lot placement.
-function hashWords(text: string): () => number {
-  let hash = 1779033703 ^ text.length;
-  for (let index=0;index<text.length;index++) {
-    hash = Math.imul(hash ^ text.charCodeAt(index),3432918353);
-    hash = hash << 13 | hash >>> 19;
-  }
-  return () => {
-    hash = Math.imul(hash ^ hash >>> 16,2246822507);
-    hash = Math.imul(hash ^ hash >>> 13,3266489909);
-    return (hash ^ hash >>> 16) >>> 0;
-  };
-}
-function randomStream(text: string): () => number {
-  const next = hashWords(text);
-  let a=next(), b=next(), c=next(), d=next();
-  return () => {
-    const result = (a+b | 0)+d | 0;
-    d=d+1 | 0;
-    a=b ^ b >>> 9;
-    b=c+(c << 3) | 0;
-    c=c << 21 | c >>> 11;
-    c=c+result | 0;
-    return (result >>> 0)/4294967296;
-  };
-}
-function shuffled(pool: readonly CardDefinition[], random: () => number): CardDefinition[] {
-  const result=[...pool];
-  for (let index=result.length-1;index>0;index--) {
-    const selected=Math.floor(random()*(index+1));
-    const current=result[index], replacement=result[selected];
-    if (!current || !replacement) throw new Error('invalid-state');
-    result[index]=replacement;
-    result[selected]=current;
-  }
-  return result;
+export function instanceId(round: number, lot: number, id: string): string {
+  return `R${round}-L${lot}-${id}`;
 }
 
-/** Pure deterministic deal. Import validators separately enforce 32 uppercase hex seeds. */
-export function marketFromSeed(seed: unknown): MarketCard[][] {
-  // No coercion hooks, allocations from unbounded input, or normalization that
-  // would silently change the accepted seed's established sequence.
-  if (typeof seed !== 'string' || seed.length > 256) throw new Error('invalid-state');
-  const random=randomStream('MARKET|'+seed);
-  const pools=new Map<CardCategory,CardDefinition[]>();
-  for (const category of new Set(ROUND_SLOTS)) {
-    pools.set(category,shuffled(CARDS.filter(card=>card.category===category),random));
+/** The card as it appears in a given slot; rejects a card whose category does not fit the slot. */
+export function slotCard(id: string, round: number, lot: number): MarketCard {
+  const def = cardDef(id);
+  if (!def || !Number.isInteger(round) || round < 1 || round > ROUNDS || !Number.isInteger(lot) || lot < 1 || lot > LOTS
+    || def.category !== categoryOfLot(lot)) fail('card');
+  return {
+    id: def.id, title: { en: def.title.en, fr: def.title.fr }, start: def.startCents, e: { ...def.effects },
+    cat: def.category, round, lot, instance: instanceId(round, lot, def.id),
+  };
+}
+
+function hashStream(text: string): () => number {
+  let h = 1779033703 ^ text.length;
+  for (let i = 0; i < text.length; i++) {
+    h = Math.imul(h ^ text.charCodeAt(i), 3432918353);
+    h = (h << 13) | (h >>> 19);
   }
-  const used=new Map<CardCategory,number>();
-  return Array.from({length:ROUNDS},(_,roundIndex)=>ROUND_SLOTS.map((category,lotIndex)=>{
-    const index=used.get(category) ?? 0;
-    const card=pools.get(category)?.[index];
-    if (!card) throw new Error('invalid-state');
-    used.set(category,index+1);
-    const round=roundIndex+1, lot=lotIndex+1;
-    return {
-      id:card.id, title:{...card.title}, start:card.startCents,
-      e:{...card.effects}, cat:category, round, lot,
-      instance:'R'+round+'-L'+lot+'-'+card.id,
-    };
+  return () => {
+    h = Math.imul(h ^ (h >>> 16), 2246822507);
+    h = Math.imul(h ^ (h >>> 13), 3266489909);
+    return (h ^ (h >>> 16)) >>> 0;
+  };
+}
+
+function sfc32(text: string): () => number {
+  const next = hashStream(text);
+  let a = next(), b = next(), c = next(), d = next();
+  return () => {
+    const t = (((a + b) | 0) + d) | 0;
+    d = (d + 1) | 0;
+    a = b ^ (b >>> 9);
+    b = (c + (c << 3)) | 0;
+    c = (c << 21) | (c >>> 11);
+    c = (c + t) | 0;
+    return (t >>> 0) / 4294967296;
+  };
+}
+
+export const SEED_PATTERN = /^[0-9A-F]{32}$/;
+
+export function deal(seed: string): MarketCard[][] {
+  if (!SEED_PATTERN.test(seed)) fail('invalid-state', 'seed');
+  const random = sfc32('MARKET|' + seed);
+  const pools = new Map<Category, CardDef[]>();
+  for (const category of new Set(ROUND_SLOTS)) {
+    const pool = CARDS.filter(c => c.category === category);
+    for (let i = pool.length - 1; i > 0; i--) {
+      const j = Math.floor(random() * (i + 1));
+      [pool[i], pool[j]] = [pool[j]!, pool[i]!];
+    }
+    pools.set(category, pool);
+  }
+  const used = new Map<Category, number>();
+  return Array.from({ length: ROUNDS }, (_, r) => ROUND_SLOTS.map((category, l) => {
+    const index = used.get(category) ?? 0;
+    used.set(category, index + 1);
+    return slotCard(pools.get(category)![index]!.id, r + 1, l + 1);
   }));
 }

@@ -1,11 +1,12 @@
 # Third-party notices
 
-The project LICENSE applies to original authored project code. Third-party code retains its terms. node_modules is not redistributed. Asset provenance and outstanding acceptance are recorded in docs/ARTWORK_PROVENANCE.md.
+The distributed game file `dist/index.html` bundles the following third-party software. These notices are also shown in the game under Help > About.
 
-## Runtime: Three.js 0.186.1
+## three.js 0.186.1
 
-Includes bundled OrbitControls and RoomEnvironment addons.
+Source: https://github.com/mrdoob/three.js (npm package `three`)
 
+```text
 The MIT License
 
 Copyright © 2010-2026 three.js authors
@@ -27,49 +28,4 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
-
-## Build tool: esbuild 0.25.12
-
-MIT License
-
-Copyright (c) 2020 Evan Wallace
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
-## Test tool: linkedom 0.18.12
-
-ISC License
-
-Copyright (c) 2021, Andrea Giammarchi, @WebReflection
-
-Permission to use, copy, modify, and/or distribute this software for any
-purpose with or without fee is hereby granted, provided that the above
-copyright notice and this permission notice appear in all copies.
-
-THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
-REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
-AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
-INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
-LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE
-OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
-PERFORMANCE OF THIS SOFTWARE.
-
-Development-only transitive packages are pinned with licence metadata in samples/threejs-recovery/package-lock.json. They are installed for testing/building and are not bundled into the runtime. The unused three-mesh-bvh dependency has been removed.
-
-Development-only type checker: TypeScript 5.9.3, Microsoft Corporation, Apache-2.0. The pinned package retains its LICENSE.txt and ThirdPartyNoticeText.txt when installed; its compiler and standard library are not redistributed in the HTML runtime. Installation scripts are disabled for the bounded local install. The dependency-free JS compiler is selected for the Node 22/24 toolchain; latest-version marketing does not determine project suitability.
+```

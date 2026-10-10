@@ -1,43 +1,38 @@
-# SEA Game — Systems Engineering Awareness
+# SEA Game: Systems Engineering Awareness
 
-[Play the game](https://shfqrkhn.github.io/SEA-Game/dist/) · [Download the single HTML](dist/index.html)
+A bilingual (English/French) classroom auction game. Teams plan a vehicle for a mission, bid for components in a facilitator-led auction, reconcile their build and submit a value-for-money bid. The whole game is one offline HTML file: `dist/index.html`.
 
-Both EN/FR roles, eight classroom phases, a 70-card auction and six mission vehicles run from one embedded Three.js HTML. Classroom handoffs remain manual; no backend, synchronization or account. Export important work as role-specific JSON. Do not enter sensitive or operational information.
+- **Play:** https://shfqrkhn.github.io/SEA-Game/dist/ or download `dist/index.html` and open it in a current browser. No installation, no network, no account.
+- **Status:** 5.0 clean-room rebuild in progress on branch `rebuild/5`. The published 4.1.0-dev.1 on `main` remains the rollback until 5.0.0 is released.
+- **Specification:** [docs/MPES.md](docs/MPES.md). **Current state and next steps:** [docs/HANDOVER.md](docs/HANDOVER.md).
 
-Published staged rebuild: **4.1.0-dev.1**; rollback: **3.6.0**. Full offline/device/accessibility/rights/classroom acceptance and three-pass release closure remain open. Start maintenance with [current handover](docs/HANDOVER.md).
+## Build and test
 
-## Operate and maintain
-
-- [Classroom instructions](docs/CLASSROOM_QUICK_START.md)
-- [Recovery](docs/RECOVERY_GUIDE.md) and [release/rollback/support](docs/RELEASE_OPERATIONS.md)
-- [Canonical completion specification](docs/MPES.md) and [execution ledger](docs/EXECUTION_LEDGER.md)
-- [Version policy](docs/VERSIONING.md) and [release notes](docs/RELEASE_NOTES.md)
-- [Models and limits](docs/THREE_JS_GAME.md) and [asset provenance](docs/ARTWORK_PROVENANCE.md)
-
-Repository content is limited to the game, canonical authoring assets, necessary build/regression tools, licences and current maintenance documentation. Concepts, prompts, demo viewers, duplicated snapshots and obsolete previews are excluded. Historical Git commits provide recovery. All new local reference/concept/evidence/test outputs stay in the existing ignored current/.artifacts under D:\VSCode\SEA-Game.
-
-## Build and verify
-
-Node 22/24 are covered by CI; local integration uses Node 24.20.0. Dependencies are pinned in samples/threejs-recovery/package-lock.json. Despite its historical directory name, that directory contains production geometry helpers and required build/model regressions.
+Requires Node.js 22 or 24.
 
 ```sh
-npm ci --prefix samples/threejs-recovery --cache .artifacts/npm-cache
-node samples/threejs-recovery/node_modules/typescript/bin/tsc -p tsconfig.json
-node tools/build-domain.mjs
-node samples/threejs-recovery/build-game.mjs
-node tools/build.mjs
-node tools/build.mjs --check
-node tools/test.mjs
-node tools/test-journey.mjs
-node tools/test-single-html.mjs
+npm ci
+npm run typecheck
+npm run lint
+npm test
+npm run build          # writes dist/index.html (skips if unchanged)
+npm run check          # fails if dist/index.html differs from source
+npx playwright install chromium firefox webkit
+npm run e2e            # browser tests against the built file over file://
 ```
 
-The full check list is .github/workflows/source-parity.yml. Generators skip unchanged outputs; no project server/watcher or continuously writing job is needed. CLI emits only dist/index.html. Isolated role compositions are in-memory regression fixtures, not extra distribution files. Do not edit generated HTML.
+Locally, keep caches inside the project: set `npm_config_cache=.artifacts/npm-cache`. Playwright browsers default to `.artifacts/ms-playwright` (see `playwright.config.ts`).
 
-Use modular source/ for rules, controllers, presentation and geometry. Canonical assets/v1/ SVGs are embedded. Preserve rules/prices/schema-3 saves. One renderer owner and native/semantic equivalents support accessibility and editing.
+Never edit `dist/index.html` by hand; change `source/` or `content/` and rebuild.
 
-The clean rebuild is a 4.1.0 development candidate; 3.6.0 remains the rollback baseline. Fresh strict TypeScript domain source in source/domain drives canonical rules, immutable team transactions, session/phase policies and bounded backup/storage contracts; tools/build-domain.mjs updates only the marked payload in the actual role engine. Whole-role command/ledger/save validators and release qualification remain open. All new work remains within D:\VSCode\SEA-Game; local preserved references and scratch outputs share ignored current/.artifacts rather than additional folders.
+## Layout
 
-Finite optional source/evidence packets use ignored .artifacts/: node tools/package.mjs --output .artifacts/NEW_NAME. Retain the printed integrity key; a packet is not accepted release evidence. Actual browser/file/offline/egress/device checks differ from Node/VM fixtures.
+- `source/domain/`: pure game rules (TypeScript, no DOM).
+- `source/app/`, `source/ui/`, `source/bay/`: role controllers, HTML interface, 3D vehicle bay.
+- `content/`: canonical card/mission data and EN/FR strings.
+- `build/`: the single-file builder.
+- `tests/unit/`, `tests/e2e/`: Vitest and Playwright suites.
 
-Original authored code is [MIT licensed](LICENSE); [third-party notices](THIRD_PARTY_NOTICES.md) are embedded. Asset/reference acceptance remains separate. Claude starts at CLAUDE.md; maintainers use AGENTS.md and the handover.
+## Licence
+
+Original code and illustrations: [MIT](LICENSE). Bundled third-party software: [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md), also shown in the game under About.
