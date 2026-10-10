@@ -14,23 +14,23 @@ Version 5.0.0-dev.0. PRs #13 (M0–M2), #14 (M3) and #15 (M4, M5, visual pass, f
 - **Art and bay** (`source/ui/art.ts`, `source/bay/`): 77 original SVG illustrations (decision D-02, MIT); high-fidelity procedural vehicles (MPES 2.2.x: physically based olive paint, treaded tyres, detail, studio lighting, soft shadows, ambient occlusion), one part per card, drag/keys to rotate, double-click to reset, WebGL started after first paint, 2D illustration fallback.
 - **Visual direction:** olive-green primary on warm stone, SEA wordmark, numbered phase stepper, chooser with a live 3D hero vehicle (inspired by the archived concepts; nothing copied).
 - **Streamlining (owner request):** removed the exploded view, bay rotate/reset buttons, the duplicate setup "generate a different code" button and redundant hint lines; profit and price-limit fields save as you type (no ✓ buttons) without re-rendering on blur.
-- **Journeys:** `journey-en` (J1/J3/J5), `journey-fr` (J2, shared award), `recovery` (J4), `rehearsal` (G-PILOT substitute, S1–S5 all PASS), `art` (RQ-22/23), `perf` (RQ-26), `slice`, `chooser`. Every page runs with a network guard (J7). Amounts are checked against the independent oracle in `tests/e2e/oracle.ts`. `a11y` (J6 keyboard-only, axe at 375 and 1280 px in EN/FR). Last full run, 2026-10-10 on Windows 11 (`npm run verify`): 135 unit PASS; browser 50 PASS, 12 skipped (engine-independent tests run in Chromium only), 1 FAIL: `perf.spec.ts` command p95 118.7 ms against 100 ms. Run alone, `perf.spec.ts` PASSES twice (p95 about 5 ms, bay first render about 200 ms), so it is load-sensitive under parallel runs.
+- **Journeys:** `journey-en` (J1/J3/J5), `journey-fr` (J2, shared award), `recovery` (J4), `rehearsal` (G-PILOT substitute, S1–S5 all PASS), `art` (RQ-22/23), `perf` (RQ-26), `slice`, `chooser`. Every page runs with a network guard (J7). Amounts are checked against the independent oracle in `tests/e2e/oracle.ts`. `a11y` (J6 keyboard-only, axe at 375 and 1280 px in EN/FR). Last full run, 2026-10-10 on Windows 11 (`npm run verify`): 140 unit PASS; browser 57 PASS, 10 skipped (engine-independent tests run in Chromium only). `perf.spec.ts` runs in its own `perf` project after every other project, so parallel work no longer skews it; it logs the WebGL renderer, and Windows software rendering (WARP, "Basic Render Driver") counts as software (bay budget recorded, not enforced, per MPES §10.3).
 - **Docs:** classroom quick start and recovery guide (EN/FR); `tests/unit/docs.test.ts` keeps the guide's control names in step with the interface.
 
 ## 3. Not done or untested
 
-- **Known defects (2026-10-10 analysis, not yet fixed):** (1) New session, and Undo import into an empty tab, do not persist: the empty state is never written, so a reload restores the old session (`Controller.save` skips `null`; reproduced by script). (2) The bay does not recover after WebGL context restore: the fallback detaches the canvas and the restore handler neither re-attaches nor redraws it. (3) `perf.spec.ts` is flaky under parallel load, and CI on `main` is red. (4) Two French strings (`chooser.instructorDesc`, `chooser.handoff`) use a normal space before `:`; the typography test does not require a non-breaking space.
+- **Fixed 2026-10-10 on `scope/windows-11` (PR #16), tests first:** New session and Undo import now persist across reloads (`tests/unit/controller.test.ts`, `recovery.spec.ts`); the bay recovers after a WebGL context restore (`recovery.spec.ts`); the perf test is isolated. **Still open:** two French strings (`chooser.instructorDesc`, `chooser.handoff`) use a normal space before `:`, and the typography test does not require a non-breaking space. CI on `main` stays red until PR #16 merges green.
 - **M6:** device coverage now means Chrome, Edge and Firefox on Windows 11; OS-level egress observation, full EN/FR content review (G-CONTENT substitute), security review, notices check against the lockfile.
 - **M7:** RELEASE.md, three release passes on a frozen key, 5.0.0 tag and publication, final check that nothing depends on `_archive/`.
 - Residual risks: real learners (S3), real assistive technology (Narrator, NVDA) and physical Windows 11 devices. CI cannot run Windows 11 itself.
 
 ## 4. In-progress work
 
-Branch `scope/windows-11` (Windows 11 scope change), owned by the current agent; not yet pushed.
+PR #16 (`scope/windows-11`): Windows 11 scope, persistence fix, bay recovery and perf isolation. Owned by the current agent; awaiting CI.
 
 ## 5. Next action
 
-Get the owner's go-ahead to push `scope/windows-11` and open its PR. Then make CI green: fix the perf test's flakiness and Windows bay budget (test-first, without weakening budgets), and fix known defects 1 and 2 test-first. Then the remaining M6 work: OS-level egress observation, G-CONTENT review, security review and the notices check.
+Merge PR #16 once CI is green (first check the renderer the perf test logs on Windows CI: the bay-budget fix assumes the runner renders with WARP, which is not yet confirmed). Then fix the French spacing test-first, and do the remaining M6 work: OS-level egress observation, G-CONTENT review, security review and the notices check.
 
 ## 6. Rollback
 

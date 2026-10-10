@@ -1,5 +1,6 @@
 // RQ-26 (MPES §14): startup, command response and memory budgets, measured in Chromium on this machine.
-// Numbers are attached to the report and copied into docs/verification for the release.
+// Numbers are attached to the report and copied into docs/verification for the release. This file runs in its
+// own project after every other suite has finished (playwright.config.ts), so timings are not skewed by parallel work.
 import { expect, test } from '@playwright/test';
 import { readFileSync, statSync } from 'node:fs';
 import { gameUrl, guardNetwork } from './helpers.ts';
@@ -9,7 +10,6 @@ import { instructorSetup } from './roles.ts';
 test.use({ launchOptions: { args: ['--js-flags=--expose-gc', ...(process.platform === 'win32' ? ['--enable-gpu', '--use-angle=d3d11', '--ignore-gpu-blocklist'] : [])] } });
 
 test('performance budgets', async ({ page }, info) => {
-  test.skip(info.project.name !== 'chromium', 'Budgets are calibrated in Chromium.');
   guardNetwork(page);
   const results: Record<string, number> = {};
   results.htmlBytes = statSync('dist/index.html').size;
@@ -86,11 +86,12 @@ test('performance budgets', async ({ page }, info) => {
   await student.locator('#vehicle-bay canvas').waitFor();
   results.bayFirstRenderMs = Date.now() - t2;
   const renderer = await student.evaluate(() => { const gl = document.createElement('canvas').getContext('webgl2'); const ext = gl?.getExtension('WEBGL_debug_renderer_info'); return ext ? String(gl!.getParameter(ext.UNMASKED_RENDERER_WEBGL)) : 'unknown'; });
-  const hardware = !/SwiftShader|llvmpipe|software/i.test(renderer);
+  // Software rasterisers: SwiftShader (Chromium), llvmpipe (Mesa), and WARP, the "Basic Render Driver" of GPU-less Windows machines.
+  const hardware = !/SwiftShader|llvmpipe|software|Basic Render Driver|WARP/i.test(renderer);
   info.annotations.push({ type: 'renderer', description: renderer });
 
   await info.attach('performance.json', { body: JSON.stringify(results, null, 2), contentType: 'application/json' });
-  console.log(JSON.stringify(results));
+  console.log(JSON.stringify({ ...results, renderer, hardware }));
   expect(results.htmlBytes).toBeLessThanOrEqual(6 * 1024 * 1024);
   expect(results.chooserMs).toBeLessThanOrEqual(1500);
   expect(results.maxStateStartMs).toBeLessThanOrEqual(3000);
