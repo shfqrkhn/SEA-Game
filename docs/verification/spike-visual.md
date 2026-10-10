@@ -15,54 +15,60 @@ Date: 2026-10-10. Machine: Windows 11, NVIDIA GeForce RTX 5060 Ti (16 GB), Node 
 
 | Format, quality | Kind | Files | Average bytes | Average PSNR (dB) |
 |---|---|---|---|---|
-| AVIF 55 | card | 3 | 9,205 | 48.75 |
-| AVIF 55 | build-layer | 6 | 5,838 | 59.01 |
-| AVIF 55 | build-base | 2 | 23,685 | 48.94 |
-| AVIF 55 | hero | 1 | 29,832 | 47.96 |
-| AVIF 55 | turntable | 24 | 19,747 | 46.68 |
-| AVIF 65 | card | 3 | 11,090 | 50.49 |
-| AVIF 65 | build-layer | 6 | 7,038 | 60.47 |
-| AVIF 65 | build-base | 2 | 29,006 | 50.51 |
-| AVIF 65 | hero | 1 | 36,620 | 49.61 |
-| AVIF 65 | turntable | 24 | 24,058 | 48.27 |
-| WEBP 85 | card | 3 | 33,427 | 49.63 |
-| WEBP 85 | build-layer | 6 | 43,110 | 66.08 |
-| WEBP 85 | build-base | 2 | 106,623 | 49.18 |
-| WEBP 85 | hero | 1 | 123,120 | 48.56 |
-| WEBP 85 | turntable | 24 | 74,807 | 46.82 |
-| WEBP 92 | card | 3 | 37,987 | 52.29 |
-| WEBP 92 | build-layer | 6 | 45,121 | 68.61 |
-| WEBP 92 | build-base | 2 | 121,619 | 51.65 |
-| WEBP 92 | hero | 1 | 140,716 | 50.94 |
-| WEBP 92 | turntable | 24 | 85,942 | 49.25 |
+| AVIF 55 | card | 3 | 6,408 | 47.71 |
+| AVIF 55 | build-layer | 6 | 3,980 | 58.6 |
+| AVIF 55 | build-base | 2 | 15,287 | 47.69 |
+| AVIF 55 | hero | 1 | 24,319 | 47.27 |
+| AVIF 55 | turntable | 24 | 14,494 | 45.65 |
+| AVIF 65 | card | 3 | 7,590 | 49.39 |
+| AVIF 65 | build-layer | 6 | 4,734 | 60.03 |
+| AVIF 65 | build-base | 2 | 18,733 | 49.27 |
+| AVIF 65 | hero | 1 | 30,008 | 48.93 |
+| AVIF 65 | turntable | 24 | 17,661 | 47.36 |
+| WEBP 85 | card | 3 | 19,998 | 48.45 |
+| WEBP 85 | build-layer | 6 | 23,389 | 64.65 |
+| WEBP 85 | build-base | 2 | 62,048 | 47.85 |
+| WEBP 85 | hero | 1 | 94,994 | 46.7 |
+| WEBP 85 | turntable | 24 | 50,560 | 45.91 |
+| WEBP 92 | card | 3 | 22,796 | 51.54 |
+| WEBP 92 | build-layer | 6 | 24,609 | 67.16 |
+| WEBP 92 | build-base | 2 | 70,267 | 50.61 |
+| WEBP 92 | hero | 1 | 109,630 | 50.43 |
+| WEBP 92 | turntable | 24 | 58,038 | 48.38 |
 
 PSNR compares each encoded image with its 16-bit master, both flattened onto the HUD panel colour. Above about 45 dB the difference is not visible.
 
-Decision: **AVIF, quality 65, 4:4:4**. At the final sizes it is 3–6× smaller than WebP at quality 85 with equal or better quality (3.0–6.1× by subject kind), and Chrome, Edge and Firefox on Windows 11 all decode it.
+Decision: **AVIF, quality 65, 4:4:4**. It is 2.6–4.9× smaller than WebP at quality 85, depending on subject kind, at equal or better quality. Chrome, Edge and Firefox on Windows 11 all decode it.
+
+## Sizes: performance over looks (owner, 2026-10-10)
+
+The hero is 1600×900, the build angles 1280×720, the turntable 24 × 960×540 and the card renders 512×512 (art/README.md). These are enough pixels for the panels they fill and no more. Compared with a 1920×1080 / 1280×720 / 768² variant measured earlier the same day, the spike set fell from 748 KB to 543 KB, and the chooser became faster (below).
+
+The chooser always shows the embedded hero still, so no WebGL runs on the first screen. Background: one CI run on a GPU-less runner measured the chooser at 2,121 ms while the WebGL hero was starting; three earlier runs measured 90–125 ms. The pre-rendered hero removes that risk. Everything stays embedded in the single HTML file; nothing is fetched.
 
 ## Size projection for all 77 subjects
 
 | Item | Count | Estimate |
 |---|---|---|
-| Vehicle set (hero 1920×1080, turntable 24 × 1280×720, 2 build bases 1920×1080) | 6 | 4.0 MB |
-| Card renders (768×768) | 71 | 0.8 MB |
-| Part layers (70 parts × 6 vehicles × 2 angles, trimmed) | 840 | 5.9 MB |
-| Total images | | 10.7 MB |
-| With 20% margin | | 12.9 MB |
-| **HTML file** (base64 + about 1.2 MB of code, styles, notices) | | **18.4 MB** of the 40 MB target and 50 MB limit |
+| Vehicle set (hero, turntable 24 frames, 2 build bases) | 6 | 2.9 MB |
+| Card renders | 71 | 0.5 MB |
+| Part layers (70 parts × 6 vehicles × 2 angles, trimmed) | 840 | 4.0 MB |
+| Total images | | 7.5 MB |
+| With 20% margin | | 9.0 MB |
+| **HTML file** (base64 + about 1.2 MB of code, styles, notices) | | **13.1 MB** of the 40 MB target and 50 MB limit |
 
 ## Performance (`node art/tools/measure-spike.ts`, median of 3 runs)
 
 | Profile | File | Bytes | Chooser interactive (ms) | Student start (ms) | Showcase update (ms) | Turntable scrub, worst (ms) | JS heap (MB) | Decoded images shown (MB) |
 |---|---|---|---|---|---|---|---|---|
-| reference (4x CPU) | built | 1,820,039 | 155 | 316 | 38 | 9 | 10 | 3.5 |
-| reference (4x CPU) | stress40 | 41,945,475 | 1029 | 946 | 38 | 5 | 45 | 3.5 |
-| reference, GPU disabled | built | 1,820,039 | 184 | 354 | 43 | 10 | 10 | 3.5 |
-| reference, GPU disabled | stress40 | 41,945,475 | 928 | 977 | 46 | 5 | 45 | 3.5 |
+| reference (4x CPU) | built | 1,548,001 | 128 | 269 | 32 | 8 | 10 | 2 |
+| reference (4x CPU) | stress40 | 42,442,685 | 753 | 811 | 31 | 6 | 48 | 2 |
+| reference, GPU disabled | built | 1,548,001 | 135 | 271 | 30 | 7 | 10 | 2 |
+| reference, GPU disabled | stress40 | 42,442,685 | 767 | 824 | 31 | 5 | 48 | 2 |
 
 Budgets (MPES §10.3, §14): chooser ≤ 2,000 ms; student start ≤ 3,000 ms; showcase update ≤ 100 ms; turntable change ≤ 50 ms; decoded images ≤ 250 MB. All PASS on both files and both profiles.
 
-Reference profile: Chromium with 4× CPU throttling (MPES §14). "GPU disabled" forces software compositing, the stand-in for GPU-less machines such as the WARP-rendered CI runners. The stress file replicates the spike renders until the file reaches the 40 MB target, more than twice the projected 18 MB production file. The first parse of the whole render table costs about 100 ms at 4× throttling (one time, when the showcase first opens).
+Reference profile: Chromium with 4× CPU throttling (MPES §14). "GPU disabled" forces software compositing, the stand-in for GPU-less machines. The stress file replicates the spike renders until it reaches the 40 MB target, about three times the projected production file. The first parse of the whole render table costs about 100 ms at 4× throttling (once, when the showcase first opens).
 
 ## Accessibility
 

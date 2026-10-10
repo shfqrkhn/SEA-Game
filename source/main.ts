@@ -3,7 +3,7 @@ import { sessionStoragePort } from './app/ports.ts';
 import { VehicleBay } from './bay/bay.ts';
 import { showAbout } from './ui/about.ts';
 import { vehicleArt } from './ui/art.ts';
-import { applyHud, hudEnabled, withHud } from './ui/hud.ts';
+import { applyHud, withHud } from './ui/hud.ts';
 import { renders } from './showcase/renders.ts';
 import { startInstructor } from './ui/instructor.ts';
 import { startStudent } from './ui/student.ts';
@@ -26,11 +26,11 @@ export function roleHref(role: Role | null, lang: Language): string {
 }
 
 let hero: VehicleBay | null = null;
-/** Hero: the fully equipped recovery vehicle in the studio bay, as on the concept's landing page. */
+/** Chooser hero: the embedded pre-rendered still; the WebGL bay is only a fallback when no still is embedded. */
 function heroBay(lang: Language): HTMLElement {
   const t = (key: StringKey) => translate(lang, key);
-  // HUD prototype: the pre-rendered hero still replaces the WebGL hero (MPES §17 V1).
-  const still = hudEnabled() ? renders().get('recovery-hero') : undefined;
+  // The pre-rendered hero still keeps WebGL off the first screen (D-08; performance over looks).
+  const still = renders().get('recovery-hero');
   if (still) return h('img', { class: 'hero-still', src: still.src, alt: t('chooser.heroStill'), decoding: 'async', width: String(still.size.width), height: String(still.size.height) });
   const text = { unavailable: t('bay.unavailable'), hint: t('bay.hint'), fallback: () => vehicleArt('RECOVERY', t('chooser.heroLabel')) };
   if (hero) hero.setText(text); else hero = new VehicleBay(text);

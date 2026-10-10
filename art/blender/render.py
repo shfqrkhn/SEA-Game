@@ -18,8 +18,8 @@ from sea.parts.spike import PARTS  # noqa: E402
 from sea.vehicles import recovery  # noqa: E402
 
 ANGLES = {'front': (38, 10), 'rear': (218, 12)}  # (yaw, pitch) of the two build angles
-# Sizes balance look and weight (MPES §10.3): showcase and turntable at screen resolution, cards at 3x their CSS size.
-HERO, BUILD, TURN, CARD = (1920, 1080), (1920, 1080), (1280, 720), (768, 768)
+# Sizes favour performance over looks (owner, 2026-10-10): enough pixels for the panels they fill, no more.
+HERO, BUILD, TURN, CARD = (1600, 900), (1280, 720), (960, 540), (512, 512)
 TURNTABLE_FRAMES = 24
 TURNTABLE_PITCH = 9
 
