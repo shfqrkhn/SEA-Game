@@ -6,6 +6,8 @@ export interface StoragePort {
   read(key: string): { ok: true; raw: string | null } | { ok: false };
   /** Writes only when the value changed. Returns false on any failure (quota, denied, missing). */
   write(key: string, raw: string): boolean;
+  /** Removes the key. Returns false on any failure. */
+  remove(key: string): boolean;
 }
 
 export function sessionStoragePort(access: () => Storage = () => window.sessionStorage): StoragePort {
@@ -37,6 +39,15 @@ export function sessionStoragePort(access: () => Storage = () => window.sessionS
         return false;
       }
     },
+    remove(key) {
+      try {
+        access().removeItem(key);
+        return true;
+      } catch {
+        availability = false;
+        return false;
+      }
+    },
   };
 }
 
@@ -47,6 +58,7 @@ export function memoryStoragePort(): StoragePort & { data: Map<string, string> }
     available: () => true,
     read: key => ({ ok: true, raw: data.get(key) ?? null }),
     write: (key, raw) => { data.set(key, raw); return true; },
+    remove: key => { data.delete(key); return true; },
   };
 }
 

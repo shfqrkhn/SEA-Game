@@ -15,6 +15,32 @@ async function importFile(page: import('@playwright/test').Page, file: string): 
   await (await chooser).setFiles(file);
 }
 
+async function startNewSession(page: import('@playwright/test').Page): Promise<void> {
+  await page.click('#menu-button');
+  await page.locator('dialog button[data-value="new"]').click();
+  await confirmDialog(page);
+}
+
+test('new session survives a reload in both roles', async ({ page }) => {
+  guardNetwork(page);
+  await page.goto(gameUrl('?role=instructor&lang=en'));
+  await page.click('#generate');
+  await expect(page.locator('.session-code')).toBeVisible();
+  await startNewSession(page);
+  await page.reload();
+  await expect(page.locator('#generate')).toBeVisible();
+  await expect(page.locator('.session-code')).toHaveCount(0);
+
+  await page.goto(gameUrl('?role=student&lang=en'));
+  await page.fill('#join-code', 'SEA3-T4-0A1B2C3D4E5F6071');
+  await page.selectOption('#join-mission', 'TROOP');
+  await page.click('#join');
+  await expect(page.locator('#record-practice')).toBeVisible();
+  await startNewSession(page);
+  await page.reload();
+  await expect(page.locator('#join-code')).toBeVisible();
+});
+
 test('storage denied: play continues in memory with a clear warning', async ({ page }) => {
   guardNetwork(page);
   await page.addInitScript(() => {
