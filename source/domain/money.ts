@@ -1,7 +1,11 @@
 // Money in integer cents (MPES §6.4).
 import { ensure, fail, safe } from './errors.ts';
 
+/** The price grid: every valid price is the start price plus whole $50,000 steps, and the default bid increment. */
 export const INCREMENT_CENTS = 5_000_000;
+/** Bid increments the instructor can choose: $50,000 to $250,000. All lie on the $50,000 price grid, so every
+ *  offered price stays valid for students, who never learn the instructor's choice (MPES §6.4, §6.5). */
+export const BID_INCREMENTS: readonly number[] = [5_000_000, 10_000_000, 15_000_000, 20_000_000, 25_000_000];
 export const MAX_PERCENT_BPS = 1_000_000n;
 
 export function isCents(value: unknown): value is number {

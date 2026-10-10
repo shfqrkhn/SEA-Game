@@ -169,7 +169,7 @@
   "setup.generate": "Générer la séance",
   "setup.codeTitle": "Code de séance",
   "setup.codeHint": "Écrivez ce code au tableau. Chaque équipe l’entre avec son numéro et sa mission.",
-  "setup.summary": "{teams} équipes · {reveal} · {timing}",
+  "setup.summary": "{teams} équipes · {reveal} · {timing} · offres par paliers de {increment}",
   "setup.startPractice": "Commencer la pratique",
   "practice.title": "Lot de pratique (non compté)",
   "practice.desc": "Faites un lot avec la carte d’entraînement. Rien ici ne compte.",
@@ -367,5 +367,7 @@
   "debrief.q4": "Comment avez-vous fixé votre profit ?",
   "debrief.q5": "Quel est votre coût par point ?",
   "debrief.q6": "Quels sont vos trois plus grands risques de conception ?",
-  "debrief.q7": "À quoi sert un processus d’ingénierie des systèmes que vous avez acheté ?"
+  "debrief.q7": "À quoi sert un processus d’ingénierie des systèmes que vous avez acheté ?",
+  "setup.increment": "Palier d’enchère",
+  "setup.incrementHint": "Chaque offre acceptée augmente le prix de ce montant. Les équipes enregistrent les prix de la même façon, quel que soit votre choix."
 }

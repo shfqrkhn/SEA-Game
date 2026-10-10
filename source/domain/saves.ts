@@ -5,14 +5,14 @@ import { ensure, fail, isInt } from './errors.ts';
 import type { InstructorState, Practice, ResultDraft } from './instructor.ts';
 import { effectiveOutcomes, lotIndex, type LedgerEntry, type Outcome } from './ledger.ts';
 import { deal, slotCard, SEED_PATTERN, type MarketCard } from './market.ts';
-import { add, cents, isCents, validPrice } from './money.ts';
+import { add, BID_INCREMENTS, cents, isCents, validPrice } from './money.ts';
 import { atOrAfter, isPhase, parseSessionCode, REVEAL_MODES, MIN_BID_SECONDS, MAX_BID_SECONDS, type Phase, type RevealMode } from './session.ts';
 import type { JoinedStudent, ScratchEntry } from './student.ts';
 import { acquire, createTeams, withPurchases, type Purchase, type Team } from './team.ts';
 import { passiveCopy } from './backup.ts';
 
 type Rec = Record<string, unknown>;
-const INSTRUCTOR_KEYS = ['schema', 'phase', 'lang', 'vehiclesLocked', 'sessionCode', 'marketSeed', 'market', 'teams', 'teamCount', 'revealMode', 'timingMode', 'bidSeconds', 'round', 'lot', 'revealed', 'open', 'pausedRemaining', 'deadline', 'leader', 'currentBid', 'ledger', 'seq', 'practice', 'privateEntry', 'resultDraft', 'finalCallAnnounced'];
+const INSTRUCTOR_KEYS = ['schema', 'phase', 'lang', 'vehiclesLocked', 'sessionCode', 'marketSeed', 'market', 'teams', 'teamCount', 'revealMode', 'timingMode', 'bidSeconds', 'round', 'lot', 'revealed', 'open', 'pausedRemaining', 'deadline', 'leader', 'currentBid', 'ledger', 'seq', 'practice', 'privateEntry', 'resultDraft', 'finalCallAnnounced', 'bidIncrement'];
 const STUDENT_KEYS = ['schema', 'phase', 'lang', 'vehicleConfirmed', 'lockedMission', 'sessionCode', 'teamCount', 'teamId', 'team', 'round', 'lot', 'currentCard', 'plan', 'planBaseline', 'risks', 'maxWtpCents', 'scratch', 'profitMode', 'profitInput', 'profitCents', 'practiceWon', 'vehicleChangeNotice'];
 const TEAM_KEYS = ['id', 'mission', 'lockedMission', 'totals', 'cost', 'purchases', 'purchasesByRound', 'profit', 'submitted'];
 const PURCHASE_KEYS = ['id', 'title', 'start', 'e', 'cat', 'round', 'lot', 'instance', 'paid'];
@@ -130,7 +130,7 @@ function practice(value: unknown, phase: Phase): Practice {
 }
 
 export function validateInstructor(raw: unknown): InstructorState {
-  const x = record(passiveCopy(raw), INSTRUCTOR_KEYS, INSTRUCTOR_KEYS.filter(k => !['privateEntry', 'resultDraft', 'finalCallAnnounced'].includes(k)));
+  const x = record(passiveCopy(raw), INSTRUCTOR_KEYS, INSTRUCTOR_KEYS.filter(k => !['privateEntry', 'resultDraft', 'finalCallAnnounced', 'bidIncrement'].includes(k)));
   const b = base(x);
   const locked = bool(x.vehiclesLocked);
   ensure((REVEAL_MODES as readonly unknown[]).includes(x.revealMode), 'invalid-state', 'reveal');
@@ -192,6 +192,7 @@ export function validateInstructor(raw: unknown): InstructorState {
     resultDraft = { team: str(d.team, 10), price: str(d.price, 20), reason: str(d.reason, 120) };
   }
   ensure(x.finalCallAnnounced === undefined || typeof x.finalCallAnnounced === 'boolean', 'invalid-state', 'final call');
+  ensure(x.bidIncrement === undefined || BID_INCREMENTS.includes(x.bidIncrement as number), 'invalid-state', 'bid increment');
   for (const t of teams) add(t.cost, t.profit);
   const state: InstructorState = {
     schema: 3, phase: b.phase, lang: b.lang, vehiclesLocked: locked, sessionCode: b.code, marketSeed: x.marketSeed, market,
@@ -199,7 +200,8 @@ export function validateInstructor(raw: unknown): InstructorState {
     round: b.round, lot: b.lot, revealed, open, pausedRemaining, deadline, leader, currentBid, ledger, seq: ledger.length,
     practice: practice(x.practice, b.phase), privateEntry: x.privateEntry === true && b.phase === 'submit', resultDraft,
   };
-  return typeof x.finalCallAnnounced === 'boolean' ? { ...state, finalCallAnnounced: x.finalCallAnnounced } : state;
+  const withIncrement = x.bidIncrement === undefined ? state : { ...state, bidIncrement: x.bidIncrement as number };
+  return typeof x.finalCallAnnounced === 'boolean' ? { ...withIncrement, finalCallAnnounced: x.finalCallAnnounced } : withIncrement;
 }
 
 /** Saved form: private entry never restores open (MPES §8.3). */

@@ -3,7 +3,7 @@
 | Field | Value |
 |---|---|
 | Document | Master Product and Engineering Specification (MPES) for the clean-room rebuild of **Systems Engineering Awareness (SEA Game)** |
-| Version | 3.2.0 |
+| Version | 3.3.0 |
 | Date | 2026-10-10 (America/Toronto) |
 | Status | **ACCEPTED**. Owner delegated all remaining decisions and gates to the implementing agent on 2026-10-09 (§22) |
 | Supersedes | MPES 1.5.2 and every earlier handover, ledger, prompt and evidence packet for implementation purposes |
@@ -266,8 +266,8 @@ Exactly eight phases, in this order:
 ### 6.4 Money
 
 - Unit: integer cents, `0 ≤ value ≤ Number.MAX_SAFE_INTEGER`. Reject NaN, Infinity, negatives, fractions and anything out of range.
-- Bid increment: **5,000,000 cents ($50,000)**.
-- A purchase price is valid only if `price ≥ start` and `(price − start)` is a whole multiple of the increment.
+- Price grid: **5,000,000 cents ($50,000)**. A purchase price is valid only if `price ≥ start` and `(price − start)` is a whole multiple of the grid.
+- Bid increment: chosen by the instructor at setup from $50,000 (default), $100,000, $150,000, $200,000 or $250,000 (owner request, 2026-10-10). Every choice lies on the price grid, so students, who never learn the choice, validate prices exactly as before; corrections may use any grid price.
 - Parsing:
   - Amount fields: optional whitespace, digits, optional `.` or `,` followed by 1 or 2 digits. At most 20 characters. No signs, no thousands separators, no exponent.
   - Whole-dollar fields (paid price, willingness-to-pay, scratch WTP): digits only, at most 17 characters.
@@ -295,7 +295,7 @@ A lot once revealed stays visible. The set of visible lots never shrinks. Reload
 
 1. *Reveal* (MANUAL mode only, when not yet revealed).
 2. *Open bidding*. In TIMED mode a deadline is set to now + the bid window.
-3. *Accept bid from team T*. The offer is the start price for the first bid, otherwise the current bid + $50,000. The command carries the amount shown on screen, so a repeated click cannot raise it twice ("stale" if it differs). Rejected when:
+3. *Accept bid from team T*. The offer is the start price for the first bid, otherwise the current bid + the chosen bid increment. The command carries the amount shown on screen, so a repeated click cannot raise it twice ("stale" if it differs). Rejected when:
    - bidding is paused;
    - the timed window has expired;
    - T is already the leader;
@@ -501,7 +501,7 @@ A confirmation is bound to the state it was opened for. If state changed meanwhi
 
 ### 8.3 Instructor state (schema 3)
 
-Exactly these keys (`finalCallAnnounced` optional):
+Exactly these keys (`finalCallAnnounced` and `bidIncrement` optional):
 
 | Key | Type / rule |
 |---|---|
@@ -528,6 +528,7 @@ Exactly these keys (`finalCallAnnounced` optional):
 | `practice` | `{revealed, open, leader, closed}` booleans; all false outside practice |
 | `privateEntry` | always saved as `false` (private mode never restores open) |
 | `resultDraft` | null or `{team, price, reason}` strings (≤ 10, 20, 120 chars). **Compatibility-only:** kept so 4.1 saves round-trip; validated on import and cleared at every lot transition, never set or shown by 5.x |
+| `bidIncrement` | optional; one of 5,000,000, 10,000,000, 15,000,000, 20,000,000, 25,000,000 cents; absent (earlier versions) means 5,000,000 |
 | `finalCallAnnounced` | optional boolean. **Compatibility-only:** reset when a lot opens, extends or closes; 5.x never announces a final call |
 
 Consistency rules (checked on load and import):
@@ -1017,6 +1018,7 @@ Announce, keep the last package and its guides available for at least one school
 
 | Version | Date | Change |
 |---|---|---|
+| 3.3.0 | 2026-10-10 | Owner request: the instructor chooses the bid increment at setup ($50,000 to $250,000 in $50,000 steps); prices stay on the $50,000 grid (§6.4, §6.5, §8.3, Appendix A constants). |
 | 3.2.0 | 2026-10-10 | V2 production: mount slots, hidden layers and SE badges (§10.2); debrief class chart and presentation questions (§6.13, from the owner-supplied course source); projector theme in the URL (§7.1); stricter save invariants and compatibility-only fields (§8.3, §8.4). |
 | 3.1.0 | 2026-10-10 | §7.1: the live lot's auction actions must be fully visible at 1280×720 without scrolling (V2 layout requirement; found from a Firefox lost-click CI failure). |
 | 3.0.1 | 2026-10-10 | §10.2 and §11 aligned with the V1 implementation: draw order is the recorded camera distance; manifest fields named; alt text derived at runtime from canonical titles instead of stored. No change to requirements. |
@@ -1151,7 +1153,7 @@ Start prices are shown in dollars; store them as cents (× 100). Effects are sig
 | TRAIN-CAP | Training capacity | Capacité de formation | Practice only; no scored effect |
 | Vehicle illustrations | combat, recce, troop-carrier, command-post, recovery, mine-clearing | | One per mission (§6.6) |
 
-Constants: `RULESET = "STANDARD"`, `DECK = "synthetic-v1"`, rounds 7, lots per round 10, increment 5,000,000 cents, maximum wins 2 per round and 14 per game, ledger capacity 210.
+Constants: `RULESET = "STANDARD"`, `DECK = "synthetic-v1"`, rounds 7, lots per round 10, price grid and default bid increment 5,000,000 cents (increments 5,000,000 to 25,000,000 in steps of 5,000,000), maximum wins 2 per round and 14 per game, ledger capacity 210.
 
 ---
 

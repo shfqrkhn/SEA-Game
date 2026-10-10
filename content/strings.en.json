@@ -169,7 +169,7 @@
   "setup.generate": "Generate session",
   "setup.codeTitle": "Session code",
   "setup.codeHint": "Write this code on the board. Each team enters it with its team number and mission.",
-  "setup.summary": "{teams} teams · {reveal} · {timing}",
+  "setup.summary": "{teams} teams · {reveal} · {timing} · bids rise by {increment}",
   "setup.startPractice": "Start practice",
   "practice.title": "Practice lot (not scored)",
   "practice.desc": "Walk through one lot with the training card. Nothing here counts.",
@@ -367,5 +367,7 @@
   "debrief.q4": "How did you decide your profit?",
   "debrief.q5": "What is your cost per point?",
   "debrief.q6": "What are your three biggest design risks?",
-  "debrief.q7": "What is the purpose of one systems engineering process you bought?"
+  "debrief.q7": "What is the purpose of one systems engineering process you bought?",
+  "setup.increment": "Bid increment",
+  "setup.incrementHint": "Each accepted bid raises the offer by this amount. Students record prices the same way whatever you choose."
 }

@@ -24,13 +24,14 @@ function setupView(v: View): Child {
       h('h1', { text: t('setup.codeTitle') }),
       h('p', { class: 'session-code mono', text: s.sessionCode }),
       h('p', { text: t('setup.codeHint') }),
-      h('p', { class: 'muted', text: t('setup.summary', { teams: s.teamCount, reveal: t(`setup.reveal.${s.revealMode}` as StringKey), timing: s.timingMode === 'TIMED' ? `${t('setup.timing.TIMED')} (${s.bidSeconds} s)` : t('setup.timing.UNTIMED') }) }),
+      h('p', { class: 'muted', text: t('setup.summary', { teams: s.teamCount, reveal: t(`setup.reveal.${s.revealMode}` as StringKey), timing: s.timingMode === 'TIMED' ? `${t('setup.timing.TIMED')} (${s.bidSeconds} s)` : t('setup.timing.UNTIMED'), increment: money(I.bidIncrementOf(s), v.lang) }) }),
       h('button', { type: 'button', class: 'btn primary', id: 'start-practice', text: t('setup.startPractice'), on: { click: () => v.run(I.startPractice) } }),
     );
   }
   const teams = v.draft('setup-teams', String(s.teamCount));
   const reveal = v.draft('setup-reveal', s.revealMode) as RevealMode;
   const timing = v.draft('setup-timing', s.timingMode) as TimingMode;
+  const increment = v.draft('setup-increment', String(I.bidIncrementOf(s)));
   const radio = (name: string, value: string, checked: boolean, label: string, hint?: string) => h('label', { class: 'choice' },
     h('input', { type: 'radio', name, id: `${name}-${value}`, value, checked, on: { change: () => { v.drafts.set(name, value); v.render(); } } }),
     h('span', {}, h('span', { text: label }), hint ? h('span', { class: 'hint', text: hint }) : null),
@@ -46,6 +47,12 @@ function setupView(v: View): Child {
       REVEAL_MODES.map(mode => radio('setup-reveal', mode, mode === reveal, t(`setup.reveal.${mode}` as StringKey), t(`setup.reveal.${mode}.hint` as StringKey)))),
     h('fieldset', { class: 'stack' }, h('legend', { text: t('setup.timing') }),
       (['TIMED', 'UNTIMED'] as const).map(mode => radio('setup-timing', mode, mode === timing, t(`setup.timing.${mode}` as StringKey)))),
+    h('div', { class: 'field' },
+      h('label', { for: 'setup-increment', text: t('setup.increment') }),
+      h('select', { id: 'setup-increment', 'aria-describedby': 'setup-increment-hint', on: { change: e => v.drafts.set('setup-increment', (e.target as HTMLSelectElement).value) } },
+        I.BID_INCREMENTS.map(cents => h('option', { value: String(cents), text: money(cents, v.lang), selected: String(cents) === increment }))),
+      h('span', { class: 'hint', id: 'setup-increment-hint', text: t('setup.incrementHint') }),
+    ),
     timing === 'TIMED' ? h('div', { class: 'field' },
       h('label', { for: 'setup-seconds', text: t('setup.seconds') }),
       v.input('setup-seconds', { type: 'number', min: String(MIN_BID_SECONDS), max: String(MAX_BID_SECONDS), step: '1', inputmode: 'numeric', value: String(s.bidSeconds), 'aria-describedby': 'setup-seconds-hint' }),
@@ -56,13 +63,13 @@ function setupView(v: View): Child {
       const secondsValue = Number(v.draft('setup-seconds', String(v.state.bidSeconds)));
       v.run(state => I.generateSession(state, sessionOptions(v, Number(v.draft('setup-teams', String(state.teamCount))),
         v.draft('setup-reveal', state.revealMode) as RevealMode, v.draft('setup-timing', state.timingMode) as TimingMode,
-        Number.isInteger(secondsValue) ? secondsValue : NaN)));
+        Number.isInteger(secondsValue) ? secondsValue : NaN, Number(v.draft('setup-increment', String(I.bidIncrementOf(state)))))));
     } } }),
   );
 }
 
-function sessionOptions(_v: View, teamCount: number, revealMode: RevealMode, timingMode: TimingMode, bidSeconds: number): I.SessionOptions {
-  return { teamCount, revealMode, timingMode, bidSeconds, token: randomHex(16), seed: randomHex(32) };
+function sessionOptions(_v: View, teamCount: number, revealMode: RevealMode, timingMode: TimingMode, bidSeconds: number, bidIncrement: number): I.SessionOptions {
+  return { teamCount, revealMode, timingMode, bidSeconds, bidIncrement, token: randomHex(16), seed: randomHex(32) };
 }
 
 function practiceView(v: View): Child {
