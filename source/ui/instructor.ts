@@ -315,7 +315,7 @@ function resultsTable(v: View, withMoney: boolean): Child {
 function teamPurchases(v: View): Child {
   return v.state.teams.map(team => h('details', { class: 'panel' },
     h('summary', { text: `${v.t('common.team', { n: team.id })} · ${v.t('common.purchases')} (${team.purchases.length})` }),
-    purchasesTable(team.purchases, v.lang)));
+    purchasesTable(team.purchases, v.lang, team.lockedMission ? { mission: team.lockedMission } : {})));
 }
 
 function buildView(v: View): Child {

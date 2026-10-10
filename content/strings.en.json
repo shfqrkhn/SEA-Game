@@ -338,5 +338,13 @@
   "bay.unavailable": "3D view unavailable on this device. The game works without it.",
   "bay.summary": "{mission} with {n} installed parts",
   "auction.keys": "Keyboard: 1–9 and 0 accept a bid from Teams 1–10 · S sell · U no sale · O open · R reveal · N next lot · P pause or resume · E add 30 s.",
-  "app.unsupported": "This browser is too old for this game. Use a current version of Chrome, Edge, Firefox or Safari."
+  "app.unsupported": "This browser is too old for this game. Use a current version of Chrome, Edge, Firefox or Safari.",
+  "value.points": "Score it adds",
+  "value.needed": "needed for a minimum",
+  "value.hint": "Score it adds = your score minus your score without that card. A card can add 0 points and still be needed for a minimum.",
+  "bay.left": "Rotate left",
+  "bay.right": "Rotate right",
+  "bay.exploded": "Exploded view",
+  "bay.reset": "Reset view",
+  "bay.hint": "Drag, or use the arrow keys, to rotate. Plus and minus zoom."
 }

@@ -338,5 +338,13 @@
   "bay.unavailable": "Vue 3D indisponible sur cet appareil. Le jeu fonctionne sans elle.",
   "bay.summary": "{mission} avec {n} pièces installées",
   "auction.keys": "Clavier : 1 à 9 et 0 acceptent une offre des équipes 1 à 10 · S vendre · U pas de vente · O ouvrir · R révéler · N lot suivant · P pause ou reprise · E ajouter 30 s.",
-  "app.unsupported": "Ce navigateur est trop ancien pour ce jeu. Utilisez une version récente de Chrome, Edge, Firefox ou Safari."
+  "app.unsupported": "Ce navigateur est trop ancien pour ce jeu. Utilisez une version récente de Chrome, Edge, Firefox ou Safari.",
+  "value.points": "Score apporté",
+  "value.needed": "nécessaire pour un minimum",
+  "value.hint": "Score apporté = votre score moins votre score sans cette carte. Une carte peut apporter 0 point et rester nécessaire pour un minimum.",
+  "bay.left": "Tourner à gauche",
+  "bay.right": "Tourner à droite",
+  "bay.exploded": "Vue éclatée",
+  "bay.reset": "Réinitialiser la vue",
+  "bay.hint": "Faites glisser, ou utilisez les flèches, pour tourner. Plus et moins pour zoomer."
 }

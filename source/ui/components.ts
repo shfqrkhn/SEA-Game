@@ -1,7 +1,7 @@
 // Reusable views: cards, effects, mission minimums, gap meter, purchases (MPES §7.4).
 import { CAPABILITIES, MISSIONS, mission as missionDef, type Capability, type MissionId, type Totals, type Effects } from '../domain/data.ts';
 import type { MarketCard } from '../domain/market.ts';
-import { compliant, score, shortfalls } from '../domain/missions.ts';
+import { compliant, score, shortfalls, sumEffects } from '../domain/missions.ts';
 import type { Purchase } from '../domain/team.ts';
 import { cardArt } from './art.ts';
 import { h, type Child } from './dom.ts';
@@ -76,24 +76,41 @@ export function gapMeter(id: MissionId, totals: Totals, lang: Language, preview?
   );
 }
 
-export function purchasesTable(purchases: readonly Purchase[], lang: Language, action?: (p: Purchase) => Child): HTMLElement {
-  const t = tr(lang);
+export interface PurchasesOptions {
+  readonly action?: (p: Purchase) => Child;
+  /** Adds "score it adds" per card: score with all purchases minus score without that card. */
+  readonly mission?: MissionId;
+}
+
+export function purchasesTable(purchases: readonly Purchase[], lang: Language, options: PurchasesOptions = {}): HTMLElement {
+  const t = tr(lang), { action, mission } = options;
   if (purchases.length === 0) return h('p', { class: 'muted', text: t('common.noPurchases') });
+  const all = sumEffects(purchases.map(p => p.e));
+  const value = (p: Purchase): Child => {
+    if (!mission) return null;
+    const without = sumEffects(purchases.filter(x => x !== p).map(x => x.e));
+    const points = score(mission, all) - score(mission, without);
+    const needed = compliant(mission, all) && !compliant(mission, without);
+    return h('td', { class: 'num' }, signed(points), needed ? h('span', { class: 'small warn', text: ` · ${t('value.needed')}` }) : null);
+  };
   return h('div', { class: 'table-wrap' }, h('table', {},
     h('caption', { class: 'visually-hidden', text: t('common.purchases') }),
     h('thead', {}, h('tr', {},
       h('th', { scope: 'col', text: t('strack.round') }), h('th', { scope: 'col', text: t('strack.lot') }),
       h('th', { scope: 'col', text: t('common.card') }), h('th', { scope: 'col', text: t('common.effects') }),
-      h('th', { scope: 'col', class: 'num', text: t('common.price') }), action ? h('th', { scope: 'col' }, h('span', { class: 'visually-hidden', text: t('sbuild.remove') })) : null,
+      h('th', { scope: 'col', class: 'num', text: t('common.price') }),
+      mission ? h('th', { scope: 'col', class: 'num', text: t('value.points') }) : null,
+      action ? h('th', { scope: 'col' }, h('span', { class: 'visually-hidden', text: t('sbuild.remove') })) : null,
     )),
     h('tbody', {}, purchases.map(p => h('tr', {},
       h('td', { class: 'num', text: String(p.round) }), h('td', { class: 'num', text: String(p.lot) }),
       h('td', {}, h('span', { class: 'mono small', text: p.id }), ' ', p.title[lang]),
       h('td', { class: 'small', text: CAPABILITIES.filter(k => p.e[k] !== undefined).map(k => `${k} ${signed(p.e[k]!)}`).join(', ') }),
       h('td', { class: 'num', text: money(p.paid, lang) }),
+      value(p),
       action ? h('td', {}, action(p)) : null,
     ))),
-  ));
+  ), mission ? h('p', { class: 'muted small', text: t('value.hint') }) : null);
 }
 
 export function complianceText(id: MissionId, totals: Totals, lang: Language): string {

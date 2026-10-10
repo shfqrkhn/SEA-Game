@@ -36,10 +36,13 @@ function wheel(cx: number, cy: number, r: number): Node {
   return group([circle(cx, cy, r, 'art-tyre'), circle(cx, cy, r * 0.55, 'art-metal'), circle(cx, cy, r * 0.18, 'art-ink-fill')]);
 }
 
+/** 0–20 from the card letter (A=0); gives each card its own variant within a category. */
+const variant = (id: string): number => id.charCodeAt(id.length - 1) - 65;
+
 // ---- Categories ----
-function capacity(e: Record<string, number>): Node[] {
-  const seats = Math.max(2, e.CAP ?? 4), heavy = (e.MOB ?? 0) < 0, armoured = (e.PRO ?? 0) > 0;
-  const length = 120 + seats * 12, x = (W - length) / 2, top = heavy ? 58 : 66;
+function capacity(e: Record<string, number>, id: string): Node[] {
+  const v = variant(id), seats = Math.max(2, e.CAP ?? 4), heavy = (e.MOB ?? 0) < 0, armoured = (e.PRO ?? 0) > 0;
+  const length = Math.min(250, 110 + seats * 12 + (v === 1 ? 20 : 0)), x = (W - length) / 2, top = v === 3 ? 44 : heavy ? 58 : v === 6 ? 74 : 66;
   const parts: Node[] = [path(`M${x} 128 L${x} ${top + 12} Q${x} ${top} ${x + 14} ${top} L${x + length - 18} ${top} L${x + length} ${top + 22} L${x + length} 128 Z`, armoured ? 'art-fill-strong' : 'art-fill')];
   for (let i = 0; i < seats; i++) {
     const sx = x + 16 + i * ((length - 34) / seats);
@@ -47,6 +50,11 @@ function capacity(e: Record<string, number>): Node[] {
     parts.push(circle(sx + 6, top + 46, 5, 'art-person'), rect(sx + 1, top + 52, 10, 14, 'art-person', 3));
   }
   parts.push(line(x, 128, x + length, 128), wheel(x + 26, 132, 13), wheel(x + length - 26, 132, 13));
+  if (v === 0) for (let i = 1; i < 3; i++) parts.push(line(x + (length * i) / 3, top + 2, x + (length * i) / 3, 126, 'art-ink'));
+  if (v === 1) parts.push(wheel(x + length / 2, 132, 13));
+  if (v === 3) parts.push(line(x + 4, top + 40, x + length - 4, top + 40, 'art-ink'));
+  if (v === 4) parts.push(rect(x + 8, top + 8, length - 16, 4, 'art-accent cat-CAPACITY', 2));
+  if (armoured) parts.push(rect(x + 10, 112, length - 20, 12, 'art-metal', 2));
   if (heavy) parts.push(path(`M${x + length / 2 - 10} 150 l10 10 l10 -10`, 'art-penalty-stroke'));
   return parts;
 }
@@ -62,16 +70,24 @@ function mobility(e: Record<string, number>, id: string): Node[] {
   }
   parts.push(wheel(96, 136, 15), wheel(160, 136, 15), wheel(224, 136, 15));
   if (id === 'MOB-D' || (e.PRO ?? 0) > 0) for (const cx of [96, 160, 224]) parts.push(path(`M${cx - 6} 118 l6 -4 l6 4 l-6 4 l6 4 l-6 4`, 'art-ink'));
-  if (id === 'MOB-E') parts.push(rect(70, 46, 60, 14, 'art-accent cat-MOBILITY', 7));
+  const v = variant(id);
+  if (v === 0) parts.push(path('M190 70 l0 -18 l12 0', 'art-ink'), circle(202, 50, 4, 'art-metal'));
+  if (v === 2) for (const cx of [96, 160, 224]) for (let s = 0; s < 6; s++) { const ang = s * Math.PI / 3; parts.push(line(cx, 136, cx + Math.cos(ang) * 8, 136 + Math.sin(ang) * 8)); }
+  if (v === 4) parts.push(rect(70, 46, 60, 14, 'art-accent cat-MOBILITY', 7), rect(134, 46, 40, 14, 'art-accent cat-MOBILITY', 7));
+  if (v === 5) parts.push(rect(120, 74, 40, 12, 'art-accent cat-MOBILITY', 3));
+  if (v === 6) parts.push(path('M80 150 L240 150 Q252 136 240 122 L80 122 Q68 136 80 150 Z', 'art-chain'));
   for (let i = 0; i < Math.min(speed, 7); i++) parts.push(line(30, 76 + i * 8, 58 - (i % 2) * 10, 76 + i * 8, 'art-motion'));
   return parts;
 }
 
 function firepower(e: Record<string, number>, id: string): Node[] {
-  const length = 40 + (e.FP ?? 2) * 18, parts: Node[] = [];
+  const length = 30 + (e.FP ?? 2) * 11, v = variant(id), parts: Node[] = [];
   parts.push(rect(70, 110, 180, 30, 'art-fill', 4), path('M110 110 L130 78 L200 78 L216 110 Z', 'art-fill-strong'));
   const barrels = id === 'FP-G' ? [86, 96] : [92];
   for (const y of barrels) parts.push(rect(200, y - 3, length, 6, 'art-metal', 3));
+  if (v === 1 || v === 5) parts.push(rect(200 + length - 14, 88, 14, 10, 'art-metal', 2));
+  if (v === 5) parts.push(path('M130 110 l-14 12 M200 110 l14 12', 'art-ink'));
+  if (v === 4) parts.push(path('M120 110 L136 88 L180 88 L190 110 Z', 'art-fill'));
   if (id === 'FP-D' || (e.SA ?? 0) > 0) parts.push(rect(140, 60, 22, 16, 'art-accent cat-SA', 3), circle(151, 68, 4, 'art-ink-fill'));
   if ((e.MOB ?? 0) < 0 || (e.PRO ?? 0) < 0) parts.push(path('M150 150 l10 10 l10 -10', 'art-penalty-stroke'));
   return parts;
@@ -86,6 +102,10 @@ function protection(e: Record<string, number>, id: string): Node[] {
     for (let i = 0; i < layers; i++) parts.push(rect(90 + i * 8, 52 + i * 12, 130, 70, i === layers - 1 ? 'art-fill-strong' : 'art-fill', 5));
     for (let i = 0; i < 6; i++) parts.push(circle(100 + layers * 8 + i * 20, 62 + layers * 12, 2.5, 'art-ink-fill'));
   }
+  const v = variant(id);
+  if (v === 1) for (let i = 0; i < 4; i++) parts.push(poly([[130 + i * 18, 90], [138 + i * 18, 84], [146 + i * 18, 90], [138 + i * 18, 96]], 'art-metal'));
+  if (v === 4) parts.push(rect(70, 128, 180, 10, 'art-accent cat-PROTECTION', 3));
+  if (v === 6) parts.push(path('M96 54 Q160 30 224 54', 'art-ink'));
   if (id === 'PRO-D' || (e.CAP ?? 0) > 0) parts.push(circle(160, 100, 7, 'art-person'), rect(152, 108, 16, 18, 'art-person', 4));
   if ((e.MOB ?? 0) < 0) parts.push(path('M260 130 l10 10 l10 -10', 'art-penalty-stroke'));
   return parts;
@@ -96,14 +116,18 @@ function comms(e: Record<string, number>, id: string): Node[] {
   const masts = id === 'COM-D' ? [120, 200] : [160];
   parts.push(rect(90, 128, 140, 16, 'art-fill', 4));
   for (const x of masts) {
-    parts.push(rect(x - 3, 52, 6, 76, 'art-metal'), circle(x, 48, 6, 'art-accent cat-COMMS'));
-    for (let i = 1; i <= Math.min(arcs, 5); i++) {
-      const r = 10 + i * 9;
-      parts.push(path(`M${x - r} ${48 - r * 0.2} A${r} ${r} 0 0 1 ${x + r} ${48 - r * 0.2}`, 'art-wave'));
+    const top = id === 'COM-C' ? 92 : 70;
+    parts.push(rect(x - 3, top + 4, 6, 128 - top - 4, 'art-metal'), circle(x, top, 6, 'art-accent cat-COMMS'));
+    for (let i = 1; i <= Math.min(arcs, 4); i++) {
+      const r = 8 + i * 9;
+      parts.push(path(`M${x - r} ${top - r * 0.15} A${r} ${r} 0 0 1 ${x + r} ${top - r * 0.15}`, 'art-wave'));
     }
   }
   parts.push(rect(110, 104, 36, 22, 'art-fill-strong', 3), line(116, 112, 140, 112), line(116, 118, 134, 118));
   if ((e.SA ?? 0) > 0) parts.push(circle(250, 112, 8, 'art-accent cat-SA'));
+  if (id === 'COM-F') parts.push(rect(206, 100, 22, 18, 'art-fill-strong', 3), path('M210 100 l0 -6 a7 7 0 0 1 14 0 l0 6', 'art-ink'));
+  if (id === 'COM-G') parts.push(rect(196, 96, 3, 32, 'art-metal'), rect(206, 104, 3, 24, 'art-metal'));
+  if (id === 'COM-E') parts.push(rect(176, 112, 40, 14, 'art-accent cat-COMMS', 3));
   return parts;
 }
 
@@ -114,8 +138,12 @@ function awareness(e: Record<string, number>, id: string): Node[] {
   parts.push(rect(138, top, 44, 26, 'art-fill-strong', 6), circle(160, top + 13, 8, 'art-lens'), circle(160, top + 13, 3, 'art-ink-fill'));
   for (let i = 0; i < Math.min(rays, 8); i++) {
     const a = -Math.PI / 2 + (i - (rays - 1) / 2) * 0.28;
-    parts.push(line(160 + Math.cos(a) * 28, top + 13 + Math.sin(a) * 28, 160 + Math.cos(a) * 70, top + 13 + Math.sin(a) * 70, 'art-ray'));
+    const reach = Math.min(70, top);
+    parts.push(line(160 + Math.cos(a) * 26, top + 13 + Math.sin(a) * 26, 160 + Math.cos(a) * reach, top + 13 + Math.sin(a) * reach, 'art-ray'));
   }
+  if (id === 'SA-E') parts.push(path('M130 46 q30 -14 60 0', 'art-ink'));
+  if (id === 'SA-C') parts.push(rect(150, 128, 20, 6, 'art-accent cat-SA', 2));
+  if (id === 'SA-F') parts.push(rect(186, 78, 20, 14, 'art-fill-strong', 3), circle(196, 85, 3, 'art-ink-fill'));
   if (id === 'SA-G') for (const x of [100, 220]) parts.push(circle(x, 120, 7, 'art-lens'));
   if ((e.COM ?? 0) > 0) parts.push(path('M214 70 A16 16 0 0 1 230 86', 'art-wave'));
   if ((e.MOB ?? 0) < 0) parts.push(path('M240 140 l10 10 l10 -10', 'art-penalty-stroke'));
@@ -170,7 +198,7 @@ export function cardArt(id: string, category: Category | 'PRACTICE', label: stri
   const effects = (cardDef(id)?.effects ?? {}) as Record<string, number>;
   const body = ((): Node[] => {
     switch (category) {
-      case 'CAPACITY': return capacity(effects);
+      case 'CAPACITY': return capacity(effects, id);
       case 'MOBILITY': return mobility(effects, id);
       case 'FIREPOWER': return firepower(effects, id);
       case 'PROTECTION': return protection(effects, id);

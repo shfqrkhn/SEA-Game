@@ -20,7 +20,8 @@ let bay: VehicleBay | null = null;
 /** One persistent bay per page; re-attached on every render so its WebGL context survives. */
 function bayFor(v: View, mission: MissionId): Child {
   const s = joined(v);
-  bay ??= new VehicleBay(v.t('bay.unavailable'));
+  const text = { unavailable: v.t('bay.unavailable'), rotateLeft: v.t('bay.left'), rotateRight: v.t('bay.right'), exploded: v.t('bay.exploded'), reset: v.t('bay.reset'), hint: v.t('bay.hint') };
+  if (bay) bay.setText(text); else bay = new VehicleBay(text);
   bay.update({ mission, parts: s.team.purchases.map(p => ({ id: p.id, category: p.cat })) },
     v.t('bay.summary', { mission: missionName(mission, v.lang), n: s.team.purchases.length }));
   return h('section', { class: 'panel stack', 'aria-labelledby': 'bay-heading' }, h('h2', { id: 'bay-heading', text: v.t('bay.title') }), bay.element);
@@ -215,10 +216,10 @@ function buildView(v: View): Child {
     h('section', { class: 'stack' },
       h('h1', { text: t('sbuild.title') }),
       h('p', { text: t('sbuild.hint') }),
-      purchasesTable(s.team.purchases, lang, p => h('button', { type: 'button', class: 'btn danger', id: `remove-${p.instance}`, 'aria-label': `${t('sbuild.remove')} ${p.id}`, text: t('sbuild.remove'), on: {
+      purchasesTable(s.team.purchases, lang, { action: p => h('button', { type: 'button', class: 'btn danger', id: `remove-${p.instance}`, 'aria-label': `${t('sbuild.remove')} ${p.id}`, text: t('sbuild.remove'), on: {
         click: e => void v.confirm({ title: t('sbuild.removeTitle'), body: h('p', { text: `${p.id} · ${p.title[lang]} · ${money(p.paid, lang)}. ${t('sbuild.removeBody')}` }), confirm: t('sbuild.remove'), danger: true, opener: e.currentTarget as HTMLElement },
           state => S.removeOwnPurchase(state, p.instance)),
-      } })),
+      } }) }),
       h('details', { class: 'panel stack' }, h('summary', { text: t('sbuild.add') }),
         h('div', { class: 'cluster' },
           field('add-id', 'common.cardId', { autocomplete: 'off', class: 'mono', size: '8', maxlength: '20' }),
@@ -288,7 +289,7 @@ function debriefView(v: View, closed: boolean): Child {
     ),
     h('section', { class: 'stack' },
       h('section', { class: 'panel stack' }, h('h2', { text: `${t('sdebrief.outcome')} · ${missionName(mission, lang)}` }), gapMeter(mission, s.team.totals, lang)),
-      h('section', { class: 'panel' }, h('h2', { text: t('common.purchases') }), purchasesTable(s.team.purchases, lang)),
+      h('section', { class: 'panel' }, h('h2', { text: t('common.purchases') }), purchasesTable(s.team.purchases, lang, { mission })),
     ),
   );
 }
