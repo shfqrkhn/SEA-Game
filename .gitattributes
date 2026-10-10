@@ -1,5 +1,5 @@
 * text=auto eol=lf
+*.png binary
+*.jpg binary
 *.webp binary
-# Preserve independent rules and current verification receipts byte-for-byte.
-docs/evidence/** -text
-docs/verification/** -text
+*.woff2 binary

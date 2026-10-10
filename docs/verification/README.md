@@ -1,5 +1,0 @@
-# Current maintenance verification
-
-[current.json](current.json) records exact4.1.0-dev.1 HTTPS bytes, candidate/main all4 Windows/Ubuntu Node22/24 CI and actual built-in-browser French Three.js editor/caret/navigation/whole-dollar/mission checks, synthetic file import Cancel/Confirm/reload,72-entry instructor recovery and bounded Troop rotation/shadow/exploded/cutaway/assembled inspection. Dev.6 full70-lot journey and dev.7 bounded checks remain explicitly historical. Current full journeys, populated-session downloads/recovery, file/offline/OS egress, device/IME/assistive/performance/reference/rights/classroom/lifecycle acceptance and full release closure remain OPEN.
-
-hosted-996101c.json and w68-matched-english-journey.json retain the compact3.5.0 rollback/independent English baseline. Captures and finite synthetic fixtures stay ignored in current/.artifacts under D:\VSCode\SEA-Game; no additional folders or system-temp outputs. Preserve .artifacts/preserved-references during cleanup.
