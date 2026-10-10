@@ -120,6 +120,14 @@ export class RoleView<S extends RoleState> {
       replaceChildren(this.#content, this.shell());
       this.#statusLine.className = `page status-line ${this.#status?.tone === 'bad' ? 'error' : this.#status?.tone === 'ok' ? 'ok' : ''}`;
       if (this.#statusLine.textContent !== (this.#status?.text ?? '')) this.#statusLine.textContent = this.#status?.text ?? '';
+      // Tables wider than the screen become labelled, focusable regions so they can be scrolled by keyboard (WCAG 2.1.1).
+      for (const wrap of this.#content.querySelectorAll<HTMLElement>('.table-wrap')) {
+        if (wrap.scrollWidth > wrap.clientWidth + 1) {
+          wrap.tabIndex = 0;
+          wrap.setAttribute('role', 'region');
+          wrap.setAttribute('aria-label', wrap.querySelector('caption')?.textContent || wrap.closest('section')?.querySelector('h1, h2, h3')?.textContent || this.t('common.purchases'));
+        }
+      }
       if (focusId) {
         const next = document.getElementById(focusId) as (HTMLElement & Partial<HTMLInputElement>) | null;
         if (next && next !== document.activeElement) {

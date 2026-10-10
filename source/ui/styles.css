@@ -243,3 +243,13 @@ summary { cursor: pointer; font-weight: 600; min-height: 32px; }
 .bay-canvas { background: radial-gradient(ellipse at 50% 75%, var(--surface), var(--sunken)); }
 .bay-canvas.with-art { display: grid; gap: .5rem; place-items: center; }
 .bay-canvas.with-art svg { width: 100%; height: auto; }
+
+/* Phones: numbered circles only, with the current phase named; the stepper never scrolls. */
+@media (max-width: 40rem) {
+  .progress { overflow: visible; }
+  .progress ol { padding: .4rem .5rem; gap: 0; }
+  .progress li { min-width: 0; font-size: 0; }
+  .progress li::before { font-size: .75rem; width: 1.5rem; height: 1.5rem; }
+  .progress li::after { top: .75rem; left: calc(50% + .75rem); right: calc(-50% + .75rem); }
+  .progress li.current { font-size: .7rem; }
+}
