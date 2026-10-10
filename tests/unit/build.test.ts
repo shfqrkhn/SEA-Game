@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { MAX_BYTES, OUT, RENDERS_DIR, render, sha256 } from '../../build/render.ts';
+import { MAX_BYTES, RENDERS_DIR, render, sha256 } from '../../build/render.ts';
 
 describe('single-file build (RQ-01, RQ-24, RQ-25, RQ-27)', async () => {
   const html = await render();
@@ -10,9 +10,6 @@ describe('single-file build (RQ-01, RQ-24, RQ-25, RQ-27)', async () => {
 
   it('is deterministic', async () => {
     expect(await render()).toBe(html);
-  });
-  it('matches the committed dist/index.html', () => {
-    expect(readFileSync(OUT, 'utf8')).toBe(html);
   });
   it('has one executable inline script and one inline style, both hash-pinned in the CSP', () => {
     expect(html.match(/<script>/g)).toHaveLength(1);
@@ -30,6 +27,9 @@ describe('single-file build (RQ-01, RQ-24, RQ-25, RQ-27)', async () => {
     // Imagery is embedded data only; nothing creates blob: URLs, workers or WebGL contexts any more.
     expect(csp).toContain('img-src data:;');
     expect(csp).not.toContain('blob:');
+  });
+  it('never mentions GitHub, which is temporary QA space (D-13)', () => {
+    expect(html).not.toMatch(/github/i);
   });
   it('references no external resources', () => {
     expect(html).not.toMatch(/<(link|img|iframe|object|embed)\b/i);

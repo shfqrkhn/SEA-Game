@@ -25,3 +25,10 @@ describe('quick-start guide matches the interface (S1)', () => {
     });
   }
 });
+
+// D-13: GitHub is temporary QA space and will be deleted; nothing the owner keeps may point at it.
+describe('no GitHub links in the README or the guides (D-13)', () => {
+  for (const file of ['README.md', 'docs/CLASSROOM_QUICK_START.md', 'docs/RECOVERY_GUIDE.md']) {
+    it(file, () => expect(readFileSync(new URL(`../../${file}`, import.meta.url), 'utf8')).not.toMatch(/github/i));
+  }
+});

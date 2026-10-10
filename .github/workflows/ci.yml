@@ -29,6 +29,7 @@ jobs:
       - run: npm run lint
       - run: npm test
       - run: npm run check
+      - run: npm run build
       - run: npx playwright install ${{ env.SEA_ENGINES == 'chromium' && 'chromium' || 'chromium firefox' }}
       - run: npx playwright test
       - if: failure()
@@ -37,3 +38,31 @@ jobs:
           name: playwright-windows-${{ matrix.node }}
           path: .artifacts/test-results
           retention-days: 7
+
+  # Temporary QA hosting (D-12, D-13): main's verified build is published to GitHub Pages. dist/ is never
+  # committed. The release itself is the local handoff package (MPES §19.3), not this site.
+  pages:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: verify
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '24'
+      - run: npm ci --no-audit --no-fund
+      - run: npm run build
+      - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          path: dist
+      - id: deploy
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1

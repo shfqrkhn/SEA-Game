@@ -11,7 +11,7 @@ Supported: Windows 11 with a current Chrome, Edge or Firefox, for the instructor
 ### Before class (10 minutes)
 
 1. Give every device the same `index.html` (USB key, shared drive, email) or the web link your school uses.
-2. On each device, open the file and check that the role chooser appears. Try **Français / English** once.
+2. On each device, open the file and check that the role chooser appears. Try **Français / English** once. On a projector or a bright room, choose **Projector theme** (first screen, or **Menu → Projector theme**); **War-room theme** switches back.
 3. Instructor: open **Instructor**. Students: open **Student team**. Use one tab per role; keep the tab open for the whole session.
 4. Use fictional team names only. Do not enter personal or operational information.
 
@@ -48,7 +48,7 @@ Configuration prise en charge : Windows 11 avec une version récente de Chrome, 
 ### Avant la séance (10 minutes)
 
 1. Remettez le même `index.html` à chaque appareil (clé USB, lecteur partagé, courriel) ou utilisez le lien Web de votre établissement.
-2. Sur chaque appareil, ouvrez le fichier et vérifiez que le choix du rôle s’affiche. Essayez une fois **Français / English**.
+2. Sur chaque appareil, ouvrez le fichier et vérifiez que le choix du rôle s’affiche. Essayez une fois **Français / English**. Avec un projecteur ou dans une salle claire, choisissez **Thème projecteur** (premier écran, ou **Menu → Thème projecteur**) ; **Thème salle de crise** revient au thème sombre.
 3. Instructeur : **Instructeur**. Équipes : **Équipe étudiante**. Un onglet par rôle, gardé ouvert toute la séance.
 4. Utilisez seulement des noms d’équipe fictifs. N’inscrivez aucune information personnelle ou opérationnelle.
 
