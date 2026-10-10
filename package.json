@@ -20,8 +20,12 @@
   },
   "devDependencies": {
     "@axe-core/playwright": "4.13.0",
+    "@gltf-transform/core": "4.5.0",
+    "@gltf-transform/extensions": "4.5.0",
+    "@gltf-transform/functions": "4.5.0",
     "@playwright/test": "1.63.0",
     "@types/node": "24.19.0",
+    "@types/three": "0.186.0",
     "@vitest/coverage-v8": "5.0.1",
     "esbuild": "0.28.2",
     "eslint": "10.10.0",
@@ -33,5 +37,8 @@
   },
   "overrides": {
     "playwright-core": "1.63.0"
+  },
+  "dependencies": {
+    "three": "0.186.1"
   }
 }

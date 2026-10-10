@@ -18,7 +18,7 @@ import { Showcase } from '../showcase/showcase.ts';
 import { renders, VEHICLE } from '../showcase/renders.ts';
 
 let showcase: Showcase | null = null;
-/** The pre-rendered vehicle showcase (MPES §10): one per page, so its view and turntable frame persist. */
+/** The vehicle showcase (MPES §10): one per page, so its 3D stage, view and turntable frame persist. */
 function showcaseFor(v: View, mission: MissionId): Child {
   const s = joined(v), t = v.t;
   showcase ??= new Showcase();
@@ -28,6 +28,7 @@ function showcaseFor(v: View, mission: MissionId): Child {
       turntable: t('showcase.turntable'), rotate: t('showcase.rotate'), installed: t('showcase.installed'), none: t('showcase.none'),
       turntableLabel: `${t('showcase.vehicle', { mission: missionName(mission, v.lang) })} ${t('showcase.turntableNote')}`, turntableNote: t('showcase.turntableNote'),
       process: t('showcase.process'), slotNote: t('showcase.slotNote'),
+      drag: t('showcase.drag'), pause: t('showcase.pause'), left: t('showcase.left'), right: t('showcase.right'),
     });
 }
 

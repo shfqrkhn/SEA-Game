@@ -1,0 +1,6 @@
+{
+  "file": "showcase.glb",
+  "bytes": 11713448,
+  "sha256": "d5d2d8d265310e5176175dee4c8984838634ad836fe9b40cde4cf7fae644a149",
+  "source": "art/blender/export.py then art/tools/pack-models.ts"
+}

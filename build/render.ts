@@ -3,12 +3,13 @@ import { build } from 'esbuild';
 import { createHash } from 'node:crypto';
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
+import { deflateRawSync } from 'node:zlib';
 import { fileURLToPath } from 'node:url';
 
 export const MAX_BYTES = 50 * 1024 * 1024; // MPES §14
 export const ROOT = fileURLToPath(new URL('..', import.meta.url));
 export const OUT = join(ROOT, 'dist', 'index.html');
-const REQUIRED_NOTICES = ['bundles no third-party software', 'Blender'];
+const REQUIRED_NOTICES = ['three.js', 'MIT License', 'Blender'];
 
 function read(path: string): string {
   return readFileSync(join(ROOT, path), 'utf8');
@@ -47,6 +48,19 @@ function renders(): string {
   const json = JSON.stringify(out);
   if (json.includes('<')) throw new Error('Unsafe renders content');
   return json;
+}
+
+export const MODELS_DIR = 'content/models';
+
+/**
+ * The real-time showcase models (MPES §10): one glTF binary, hash-checked against its manifest, raw-deflated
+ * (deterministic at a fixed level) and base64-encoded into an inert block the game inflates with DecompressionStream.
+ */
+function models(): string {
+  const manifest = JSON.parse(read(`${MODELS_DIR}/manifest.json`)) as { file: string; sha256: string };
+  const bytes = readFileSync(join(ROOT, MODELS_DIR, manifest.file));
+  if (createHash('sha256').update(bytes).digest('hex') !== manifest.sha256) throw new Error(`Model hash mismatch: ${manifest.file}`);
+  return deflateRawSync(bytes, { level: 9 }).toString('base64');
 }
 
 export async function render(): Promise<string> {
@@ -94,6 +108,7 @@ export async function render(): Promise<string> {
     .replace('{{VERSION}}', () => version)
     .replace('{{STYLE}}', () => css)
     .replace('{{RENDERS}}', () => renders())
+    .replace('{{MODELS}}', () => models())
     .replace('{{SCRIPT}}', () => js);
   if (/\{\{[A-Z]+\}\}/.test(html)) throw new Error('Unfilled template placeholder');
   const bytes = Buffer.byteLength(html, 'utf8');

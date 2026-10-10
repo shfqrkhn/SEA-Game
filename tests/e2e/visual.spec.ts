@@ -3,7 +3,7 @@
 // Update deliberately with `npx playwright test tests/e2e/visual.spec.ts --update-snapshots` and review the diff.
 import { expect, test, type Page } from '@playwright/test';
 import { readFileSync } from 'node:fs';
-import { gameUrl, guardNetwork } from './helpers.ts';
+import { gameUrl, guardNetwork, withoutWebgl } from './helpers.ts';
 import { confirmDialog, studentJoin } from './roles.ts';
 
 test.skip(({ browserName }) => browserName !== 'chromium', 'pixel baselines are recorded in Chromium');
@@ -44,8 +44,9 @@ for (const name of ['student-practice', 'student-planning-fr', 'student-auction'
 }
 
 for (const mission of ['COMBAT', 'RECCE', 'TROOP', 'COMMAND', 'RECOVERY', 'MINE']) {
-  test(`showcase: ${mission}, every angle`, async ({ page }) => {
+  test(`showcase stills: ${mission}, every angle`, async ({ page }) => {
     guardNetwork(page);
+    await withoutWebgl(page);
     await page.goto(gameUrl('?role=student&lang=en'));
     await studentJoin(page, 'SEA3-T2-0123456789ABCDEF', 1, mission);
     await page.check('#plan-confirm');

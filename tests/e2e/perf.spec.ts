@@ -4,7 +4,7 @@
 // skewed by parallel work.
 import { expect, test, type Page } from '@playwright/test';
 import { readFileSync, statSync } from 'node:fs';
-import { gameUrl, guardNetwork } from './helpers.ts';
+import { gameUrl, guardNetwork, withGpu, withoutWebgl } from './helpers.ts';
 import { instructorSetup } from './roles.ts';
 
 test.use({ launchOptions: { args: ['--js-flags=--expose-gc'] } });
@@ -84,13 +84,44 @@ test('performance budgets (MPES §14, §10.3)', async ({ page }, info) => {
   for (let cycle = 0; cycle < 10; cycle++) await fresh.evaluate(() => { for (let i = 0; i < 20; i++) document.querySelector<HTMLButtonElement>('#lang-toggle')!.click(); });
   results.memoryGrowthMB = Math.round((await memoryMB(fresh) - before) * 10) / 10;
 
-  // Showcase (MPES §10.3): record a purchase until its layer is decoded; change angle; scrub the turntable.
+  // 3D showcase (MPES §10.3): from opening the tracker until the model is drawn; then record a purchase until the
+  // model shows it.
+  const tracker = async (page: Page) => {
+    await page.goto(gameUrl('?role=student&lang=en'));
+    await page.fill('#join-code', 'SEA3-T2-0123456789ABCDEF');
+    await page.selectOption('#join-mission', 'RECOVERY');
+    await page.click('#join'); await page.click('#record-practice'); await page.click('#student-planning');
+    await page.check('#plan-confirm'); await page.click('#student-start-auction');
+  };
+  const model = await reference(await page.context().newPage());
+  await withGpu(model);
+  await tracker(model);
+  const opened = await model.evaluate(() => performance.now());
+  await model.locator('dialog button[data-value="ok"]').click();
+  await model.locator('#showcase [data-mode="3d"][data-ready="true"]').waitFor();
+  results.modelReadyMs = Math.round(await model.evaluate(() => performance.now()) - opened);
+  const modelUpdates: number[] = [];
+  for (const [round, lot, card, paid] of [[1, 5, 'COM-E', 600000], [1, 7, 'ACC-F', 350000], [2, 1, 'CAP-B', 450000]] as const) {
+    if (round > 1) await model.selectOption('#pos-round', String(round));
+    await model.selectOption('#pos-lot', String(lot));
+    await model.fill('#card-id', card); await model.click('#load-card'); await model.fill('#paid', String(paid));
+    modelUpdates.push(await model.evaluate(async id => {
+      const start = performance.now();
+      document.querySelector<HTMLButtonElement>('#record-win')!.click();
+      if (!document.querySelector('#showcase [data-mode="3d"]')!.getAttribute('data-layers')!.split(' ').includes(id)) throw new Error(`model lacks ${id}`);
+      await new Promise(requestAnimationFrame);
+      return performance.now() - start;
+    }, card));
+  }
+  results.modelUpdateMaxMs = Math.round(Math.max(...modelUpdates));
+  results.modelMemoryMB = Math.round(await memoryMB(model));
+  await model.close();
+
+  // Stills showcase without WebGL (MPES §10.3): record a purchase until its layer is decoded; change angle; scrub
+  // the turntable.
   const student = await reference(await page.context().newPage());
-  await student.goto(gameUrl('?role=student&lang=en'));
-  await student.fill('#join-code', 'SEA3-T2-0123456789ABCDEF');
-  await student.selectOption('#join-mission', 'RECOVERY');
-  await student.click('#join'); await student.click('#record-practice'); await student.click('#student-planning');
-  await student.check('#plan-confirm'); await student.click('#student-start-auction');
+  await withoutWebgl(student);
+  await tracker(student);
   await student.locator('dialog button[data-value="ok"]').click();
   await student.locator('#showcase img[data-layer="base"]').waitFor();
   const updates: number[] = [];
@@ -140,6 +171,9 @@ test('performance budgets (MPES §14, §10.3)', async ({ page }, info) => {
   expect(results.studentMemoryMB).toBeLessThanOrEqual(400);
   expect(results.memoryGrowthMB).toBeLessThanOrEqual(5);
   expect(results.showcaseUpdateMaxMs).toBeLessThanOrEqual(100);
+  expect(results.modelReadyMs).toBeLessThanOrEqual(3000);
+  expect(results.modelUpdateMaxMs).toBeLessThanOrEqual(100);
+  expect(results.modelMemoryMB).toBeLessThanOrEqual(400);
   expect(results.angleChangeMs).toBeLessThanOrEqual(50);
   expect(results.turntableStepMaxMs).toBeLessThanOrEqual(50);
 });
