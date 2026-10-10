@@ -6,7 +6,7 @@ import { expect, test, type Page } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 import { collectConsoleErrors, expectAccessible, gameUrl, guardNetwork } from './helpers.ts';
 import { compliant, dollars, score, startCents, totals, winners, type OracleTeam } from './oracle.ts';
-import { confirmDialog, instructorSetup, studentJoin } from './roles.ts';
+import { act, confirmDialog, instructorSetup, studentJoin } from './roles.ts';
 
 test.setTimeout(600_000);
 
@@ -60,31 +60,31 @@ test('J1/J3: full English timed session with every correction path', async ({ br
         await ip.click('#extend');
         await expect(ip.locator('#bid-1')).toBeEnabled();
         await ip.click('#bid-1');
-        await ip.click('#sell');
+        await act(ip, '#sell');
       } else if (at === '1-4') {
         await ip.click('#open-bidding');
         await expect(ip.locator('#bid-1')).toBeDisabled(); // Team 1 already won lots 1 and 3
         await ip.click('#bid-2');
-        await ip.click('#unsold');
+        await act(ip, '#unsold');
         await confirmDialog(ip);
       } else if (at === '2-2') {
         await ip.click('#open-bidding');
         await ip.click('#bid-1');
-        await ip.click('#sell');
+        await act(ip, '#sell');
         await ip.click('#void');
         await ip.fill('#void-reason', 'Sold before final call');
         await confirmDialog(ip);
         await ip.click('#open-bidding');
         await ip.click('#bid-2');
         await ip.click('#bid-1');
-        await ip.click('#sell');
+        await act(ip, '#sell');
       } else if (at === '3-1') {
         await ip.click('#open-bidding');
         await ip.click('#bid-1');
         await ip.reload(); // an open lot comes back paused for review
         await expect(ip.locator('#resume')).toBeVisible();
         await ip.click('#resume');
-        await ip.click('#unsold');
+        await act(ip, '#unsold');
         await confirmDialog(ip);
       } else if (at === '3-5') {
         await ip.click('#open-bidding');
@@ -103,10 +103,10 @@ test('J1/J3: full English timed session with every correction path', async ({ br
         await ip.click('#open-bidding');
         if (winner === 1 && lot % 2 === 0) await ip.click('#bid-2'); // Team 2 still has capacity before lot 7
         await ip.click(`#bid-${winner}`);
-        await ip.click('#sell');
+        await act(ip, '#sell');
       } else {
         await ip.click('#open-bidding');
-        await ip.click('#unsold');
+        await act(ip, '#unsold');
       }
       const result = await outcome(ip);
       if (at === '3-1') expect(result).toBeNull();
@@ -129,7 +129,7 @@ test('J1/J3: full English timed session with every correction path', async ({ br
         await sp.click('#not-ours');
       }
       if (at === '4-1') await ip.locator('body').press('n');
-      else await ip.click('#next-lot');
+      else await act(ip, '#next-lot');
       if (at === '2-5') { await sp.reload(); await expect(sp.locator('#track-heading')).toHaveText('Round 2 · Lot 6 of 10'); }
     }
   }

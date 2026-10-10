@@ -1,6 +1,17 @@
 // Page drivers for the two roles, used by the journey tests.
 import { expect, type Page } from '@playwright/test';
 
+/**
+ * Click a lot action (#sell, #unsold, #next-lot) after centring it. At 1280×720 these buttons can sit
+ * half below the fold; Firefox then scrolls the button into view on mousedown, the mouseup lands
+ * elsewhere and the click is lost (CI run 38064762108). Centring first makes the press deterministic.
+ */
+export async function act(page: Page, selector: string): Promise<void> {
+  const target = page.locator(selector);
+  await target.evaluate(element => element.scrollIntoView({ block: 'center' }));
+  await target.click();
+}
+
 export async function confirmDialog(page: Page): Promise<void> {
   const dialog = page.locator('dialog[open]');
   await expect(dialog).toBeVisible();
@@ -28,9 +39,9 @@ export async function instructorLot(page: Page, bids: number[], result: 'sell' |
   if (await page.locator('#reveal').count()) await page.click('#reveal');
   await page.click('#open-bidding');
   for (const team of bids) await page.click(`#bid-${team}`);
-  if (result === 'sell') await page.click('#sell');
+  if (result === 'sell') await act(page, '#sell');
   else {
-    await page.click('#unsold');
+    await act(page, '#unsold');
     if (bids.length) await confirmDialog(page);
   }
   await expect(page.locator('#outcome')).toBeVisible();

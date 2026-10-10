@@ -127,7 +127,9 @@ test('WebGL context loss: the bay falls back, then returns when the context is r
   const canvas = page.locator('#vehicle-bay canvas');
   const holder = page.locator('#vehicle-bay .bay-canvas');
   // Wait for the bay to choose WebGL or the fallback; engines without WebGL are covered by the next test.
-  await expect(holder.locator('canvas, svg').first()).toBeAttached();
+  // GPU-less CI runners compile the bay shaders in software: 5-16 s under parallel load (CI run 38064762108).
+  // This is a readiness wait, not a budget; bay start-up time is measured by perf.spec.ts.
+  await expect(holder.locator('canvas, svg').first()).toBeAttached({ timeout: 30_000 });
   test.skip(await canvas.count() === 0, 'No WebGL in this engine.');
   // Keep the extension handle on window: the bay must not depend on the test finding the canvas again.
   const lose = (restore: boolean) => page.evaluate(restore => {

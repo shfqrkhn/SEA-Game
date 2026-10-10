@@ -29,6 +29,9 @@ export default defineConfig({
   retries: 0,
   reporter: process.env.CI ? [['list'], ['github']] : [['list']],
   timeout: 120_000,
-  use: { viewport: { width: 1280, height: 720 }, trace: 'retain-on-failure' },
+  // actionTimeout: a click or read that cannot happen fails within 60 s with its own message instead of hanging until the
+  // test timeout (a lost Firefox click once held J1 for 10 minutes). Not shorter: renderers under parallel
+  // load can stall for about 15 s and then recover (local verify, 2026-10-10).
+  use: { viewport: { width: 1280, height: 720 }, actionTimeout: 60_000, trace: 'retain-on-failure' },
   projects: [...browsers, ...perf],
 });
