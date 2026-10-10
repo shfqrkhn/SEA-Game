@@ -40,7 +40,9 @@ export interface InstructorState {
   readonly seq: number;
   readonly practice: Practice;
   readonly privateEntry: boolean;
+  /** Compatibility-only (MPES §8.3): carried so 4.1 saves round-trip; validated, cleared on lot changes, never shown. */
   readonly resultDraft: ResultDraft | null;
+  /** Compatibility-only (MPES §8.3): reset when a lot opens, extends or closes; 5.x never announces a final call. */
   readonly finalCallAnnounced?: boolean;
 }
 
@@ -302,12 +304,6 @@ export function advance(state: InstructorState): InstructorState {
   if (position === ROUNDS * LOTS - 1) return { ...state, ...reset, phase: 'build' };
   const next = position + 1;
   return { ...state, ...reset, round: Math.floor(next / LOTS), lot: next % LOTS, revealed: state.revealMode !== 'MANUAL', leader: null, currentBid: null };
-}
-
-export function setResultDraft(state: InstructorState, draft: ResultDraft | null): InstructorState {
-  auction(state);
-  if (draft) ensure(draft.team.length <= 10 && draft.price.length <= 20 && draft.reason.length <= 120, 'text');
-  return { ...state, resultDraft: draft };
 }
 
 // ---- Build, submissions, debrief (MPES §6.11–6.13) ----

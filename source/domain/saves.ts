@@ -178,6 +178,9 @@ export function validateInstructor(raw: unknown): InstructorState {
     if (current?.kind === 'SALE') ensure(leader === current.team && currentBid === current.price, 'invalid-state', 'closed lot');
     else ensure(leader === null && currentBid === null, 'invalid-state', 'closed lot');
   }
+  // An untimed game has no deadline (an open lot may still be paused for review); a closed lot is never paused (MPES §8.3).
+  if (x.timingMode === 'UNTIMED') ensure(deadline === null, 'invalid-state', 'untimed deadline');
+  if (!open) ensure(pausedRemaining === null, 'invalid-state', 'closed lot paused');
   if (open) {
     ensure(b.phase === 'auction' && revealed && current === undefined, 'invalid-state', 'open');
     if (x.timingMode === 'TIMED') ensure(deadline !== null || pausedRemaining !== null, 'invalid-state', 'deadline');
@@ -237,6 +240,10 @@ export function validateStudent(raw: unknown): JoinedStudent {
     ensure(c.instance === currentCard.instance, 'invalid-state', 'card instance');
   }
   ensure(x.vehicleChangeNotice === undefined || typeof x.vehicleChangeNotice === 'boolean', 'invalid-state', 'notice');
+  // From the auction on, the team has confirmed its vehicle and its plan baseline was snapshotted (MPES §8.4).
+  if (['auction', 'build', 'submit', 'debrief', 'closed'].includes(b.phase)) {
+    ensure(x.vehicleConfirmed === true && typeof x.planBaseline === 'string', 'invalid-state', 'confirmed plan');
+  }
   return {
     schema: 3, phase: b.phase, lang: b.lang, vehicleConfirmed: bool(x.vehicleConfirmed), lockedMission, sessionCode: b.code,
     teamCount: b.teamCount, teamId, team: t, round: b.round, lot: b.lot, currentCard, plan: str(x.plan, 1200),

@@ -518,16 +518,16 @@ Exactly these keys (`finalCallAnnounced` optional):
 | `bidSeconds` | 10..120 |
 | `round`, `lot` | 0-based current position, 0..6 and 0..9 |
 | `revealed`, `open` | booleans |
-| `deadline` | epoch ms or null; required when open and TIMED |
-| `pausedRemaining` | ms ≥ 0 or null |
+| `deadline` | epoch ms or null; required when open and TIMED (or paused); always null when UNTIMED |
+| `pausedRemaining` | ms ≥ 0 or null; null whenever the lot is closed (an open lot, timed or not, may be paused for review) |
 | `leader` | team ID or null |
 | `currentBid` | valid price or null; null iff leader is null |
 | `ledger` | §6.5 entries, ≤ 210 |
 | `seq` | equals the ledger length |
 | `practice` | `{revealed, open, leader, closed}` booleans; all false outside practice |
 | `privateEntry` | always saved as `false` (private mode never restores open) |
-| `resultDraft` | null or `{team, price, reason}` strings (≤ 10, 20, 120 chars) |
-| `finalCallAnnounced` | optional boolean |
+| `resultDraft` | null or `{team, price, reason}` strings (≤ 10, 20, 120 chars). **Compatibility-only:** kept so 4.1 saves round-trip; validated on import and cleared at every lot transition, never set or shown by 5.x |
+| `finalCallAnnounced` | optional boolean. **Compatibility-only:** reset when a lot opens, extends or closes; 5.x never announces a final call |
 
 Consistency rules (checked on load and import):
 
@@ -544,10 +544,10 @@ Consistency rules (checked on load and import):
 | `teamId` | 1..N |
 | `team` | own team object only (§8.5) |
 | `lockedMission` | null before auction; equals the team mission after |
-| `vehicleConfirmed` | boolean |
+| `vehicleConfirmed` | boolean; true from the auction phase on |
 | `currentCard` | null or a card at the current slot |
 | `plan`, `risks` | strings ≤ 1,200 |
-| `planBaseline` | null or string ≤ 1,200 |
+| `planBaseline` | null or string ≤ 1,200; a string from the auction phase on (snapshotted when the auction starts) |
 | `maxWtpCents` | cents |
 | `scratch` | ≤ 70 entries, keys `"<1-7>-<1-10>"`, values `{wtp ≤ 20 chars, note ≤ 600 chars}` |
 | `profitMode` | `AMOUNT` or `PERCENT` |

@@ -18,8 +18,14 @@ describe('strings (RQ-19)', () => {
   it('French uses typographic apostrophes and no straight quotes', () => {
     for (const [key, value] of Object.entries(fr)) expect(value, key).not.toMatch(/'/);
   });
-  it('French puts a space before high punctuation', () => {
-    for (const [key, value] of Object.entries(fr)) expect(value, key).not.toMatch(/\S[:;!?](\s|$)/);
+  it('French puts a non-breaking space before : ; ! ? so they never start a line (MPES §12)', () => {
+    // U+00A0 (or the narrow U+202F) before every high punctuation mark, except in clock times such as 1:30.
+    for (const [key, value] of Object.entries(fr)) {
+      for (const match of value.matchAll(/(.)([:;!?])/g)) {
+        if (/\d/.test(match[1]!) && /\d/.test(value[match.index! + 2] ?? '')) continue;
+        expect(match[1], `${key}: ${value}`).toMatch(/[  ]/);
+      }
+    }
   });
   it('the unsupported-browser notice names exactly the supported Windows 11 browsers (MPES §4.3)', () => {
     for (const text of [en['app.unsupported'], fr['app.unsupported']]) {
