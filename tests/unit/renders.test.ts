@@ -2,6 +2,7 @@
 // draw order and a slot, nothing is orphaned, hashes match and the imagery fits its budget.
 import { createHash } from 'node:crypto';
 import { readFileSync, readdirSync } from 'node:fs';
+import sharp from 'sharp';
 import { describe, expect, it } from 'vitest';
 import { RENDERS_DIR } from '../../build/render.ts';
 import { VEHICLE } from '../../source/showcase/renders.ts';
@@ -64,6 +65,26 @@ describe('render manifest (MPES §10.2, §11)', () => {
       expect(e.offset.top + e.size.height, e.file).toBeLessThanOrEqual(e.frame.height);
     }
   });
+
+  // Decoding cost grows with pixels, transparent ones included (CI run 38136462558: a purchase waited 212 ms, budget
+  // 100, for layers kept near full-frame by alpha too faint to survive 8-bit output). Each build image ends within its
+  // 2 px apron, plus a little for lossy edges, of its visible pixels.
+  it('trims every build image to its visible pixels (MPES §10.3)', async () => {
+    const SLACK = 2 + 6;
+    const loose: string[] = [];
+    for (const e of manifest.entries.filter(x => x.kind.startsWith('build-'))) {
+      const { data, info } = await sharp(`${RENDERS_DIR}/${e.file}`).ensureAlpha().extractChannel(3).raw().toBuffer({ resolveWithObject: true });
+      let x0 = info.width, y0 = info.height, x1 = -1, y1 = -1;
+      for (let y = 0; y < info.height; y++) for (let x = 0; x < info.width; x++) {
+        if (!data[y * info.width + x]) continue;
+        x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y);
+      }
+      if (x0 > SLACK || y0 > SLACK || info.width - 1 - x1 > SLACK || info.height - 1 - y1 > SLACK) {
+        loose.push(`${e.file} ${info.width}x${info.height}, visible ${x1 - x0 + 1}x${y1 - y0 + 1}`);
+      }
+    }
+    expect(loose).toEqual([]);
+  }, 300_000);
 
   it('keeps all imagery within 40 MB (MPES §10.3)', () => {
     const total = manifest.entries.reduce((n, e) => n + e.bytes, 0);

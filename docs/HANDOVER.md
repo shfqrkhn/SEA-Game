@@ -1,6 +1,6 @@
 # Handover
 
-Updated 2026-10-11 (America/Toronto). Specification: [MPES](MPES.md) 4.2.1. Evidence: [verification/0.5.0.0.md](verification/0.5.0.0.md), [verification/spike-visual.md](verification/spike-visual.md).
+Updated 2026-10-11 (America/Toronto). Specification: [MPES](MPES.md) 4.2.2. Evidence: [verification/0.5.0.0.md](verification/0.5.0.0.md), [verification/spike-visual.md](verification/spike-visual.md).
 
 ## 1. Version and milestone
 
@@ -23,7 +23,7 @@ Version 0.5.0.0 beta (four-part MAJOR.MINOR.PATCH.BUILD, MPES §19.2; renumbered
 
 ## 3. Not done
 
-- **G1 finish:** green CI on PR #21, merge, tag `v0.5.0.0`, confirm Pages. Fixed so far: CI starvation (frame pacing, run 38089382489); Firefox refusing WebGL on the runner and stills decoded twice (run 38097185474, decoded-image pool, MPES 4.1.1 §10.3); turntable frames waiting for idle time on a busy runner (run 38106258905, MPES 4.1.2 §10.3); background decodes competing with a purchase (run 38133130929, MPES 4.1.3 §10.3); a purchase waiting for its layer to decode (run 38135172580, MPES 4.2.1 §10.3: the loaded card is prepared first).
+- **G1 finish:** green CI on PR #21, merge, tag `v0.5.0.0`, confirm Pages. Fixed so far: CI starvation (frame pacing, run 38089382489); Firefox refusing WebGL on the runner and stills decoded twice (run 38097185474, decoded-image pool, MPES 4.1.1 §10.3); turntable frames waiting for idle time on a busy runner (run 38106258905, MPES 4.1.2 §10.3); background decodes competing with a purchase (run 38133130929, MPES 4.1.3 §10.3); a purchase waiting for its layer to decode (run 38135172580, MPES 4.2.1 §10.3: the loaded card is prepared first); layers kept near full-frame by invisible alpha noise, so each decode cost up to 19 times the pixels (run 38136462558, MPES 4.2.2 §10.3: placed images trimmed to visible pixels, re-encoded from the v3 masters, cards and heroes unchanged).
 - **Owner art judgement:** BLOCKED-owner, script `docs/owner/art-review.md`.
 - **G2–G5:** MPES §17. `npm run perf:ref` (the Intel UHD 770 proxy) does not exist yet; it is G2's first step.
 - **Residual risks:** real learners (S3); Narrator and NVDA users; no physical laptop test (D-16: the UHD 770 proxy stands in); CI runs Windows Server, not Windows 11; art quality is the owner's judgement.
