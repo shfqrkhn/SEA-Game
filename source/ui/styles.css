@@ -167,6 +167,7 @@ legend { font-weight: 700; padding: 0 .25rem; }
 .btn.leading { border-width: 3px; border-color: var(--accent); }
 .market { list-style: none; margin: 0; padding: 0; display: grid; gap: .25rem; }
 .market li { padding: .3rem .5rem; border-radius: var(--radius); border: 1px solid transparent; }
+.gone-cards { margin: 0; padding-left: 1.2rem; display: grid; gap: .1rem; }
 .market li.current { border-color: var(--accent); background: var(--sunken); font-weight: 600; }
 .ledger { margin: 0; padding-left: 1.5rem; display: grid; gap: .2rem; }
 .hidden-card { display: grid; place-items: center; min-height: 8rem; border: 2px dashed var(--line); border-radius: var(--radius); color: var(--muted); font-weight: 600; }
@@ -190,6 +191,9 @@ summary { cursor: pointer; font-weight: 600; min-height: 32px; }
 .topbar .brand::before { content: "SEA"; font-weight: 900; letter-spacing: .02em; color: var(--accent); margin-right: .6rem; font-size: 1.25rem; }
 .wordmark { display: flex; align-items: center; gap: 1rem; }
 .wordmark-sea { font-size: clamp(3rem, 2rem + 4vw, 5rem); font-weight: 900; letter-spacing: -.02em; color: var(--accent); line-height: .9; }
+/* Live teams panel: headings wrap between words and the mission reads as text, so the cost column fits at 1366×768. */
+.team-table thead th { white-space: normal; }
+.team-table .mission { text-transform: none; letter-spacing: 0; font-family: var(--font); font-weight: 400; font-size: .875rem; color: var(--ink); white-space: normal; }
 .wordmark-title { font-size: clamp(1.1rem, .9rem + .8vw, 1.6rem); font-weight: 500; max-width: 12ch; margin: 0; line-height: 1.15; }
 .hero { display: grid; grid-template-columns: minmax(0, 1fr); min-height: 100dvh; }
 @media (min-width: 64rem) { .hero { grid-template-columns: minmax(0, 1.6fr) minmax(22rem, 1fr); } }

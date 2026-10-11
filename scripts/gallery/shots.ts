@@ -7,6 +7,7 @@ export type Kind =
   | { readonly type: 'chooser' }
   | { readonly type: 'about' }
   | { readonly type: 'fixture'; readonly role: 'instructor' | 'student'; readonly fixture: string }
+  | { readonly type: 'scenario'; readonly scenario: 'round-full' | 'round-closed' }
   | { readonly type: 'showcase'; readonly mission: string; readonly view: 'front' | 'rear' | 'turntable' | '3d' };
 export interface Shot {
   readonly id: string;
@@ -34,6 +35,8 @@ const VIEWS: readonly { id: string; group: string; title: string; caption: strin
     ['instructor-max-ledger', 'Full ledger', 'The heaviest session: every lot sold, the longest ledger the game allows.'],
     ['instructor-closed', 'Debrief', 'Session closed: class chart, ranking and presentation questions.'],
   ] as const).map(([fixture, title, caption]) => ({ id: fixture, group: 'Instructor', title, caption, kind: { type: 'fixture', role: 'instructor', fixture } as Kind })),
+  { id: 'instructor-round-full', group: 'Instructor', title: 'Round full', caption: 'Every team has its 2 wins in round 1: one button records the rest of the round unsold and opens round 2; the cards that leave the game are listed and shown in the market list.', kind: { type: 'scenario', scenario: 'round-full' } },
+  { id: 'instructor-round-closed', group: 'Instructor', title: 'Next round after a close', caption: 'Lot 1 of round 2 after the close: the cards round 1 left unsold, out of the game.', kind: { type: 'scenario', scenario: 'round-closed' } },
   ...([
     ['student-practice', 'Practice', 'Student practice round before the auction.'],
     ['student-planning-fr', 'Planning', 'Student planning: mission, budget and the parts the team wants.'],

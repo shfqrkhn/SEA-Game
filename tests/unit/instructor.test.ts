@@ -203,9 +203,14 @@ describe('closing a round no team can win in', () => {
       let s = fill(session(3, mode), 3);
       expect([s.round, s.lot]).toEqual([0, 6]);
       expect(I.lotsNobodyCanWin(s)).toBe(4);
+      const gone = I.cardsNobodyCanWin(s);
+      expect(gone).toEqual(s.market[0]!.slice(6));
       const before = s.ledger.length;
       s = I.closeRound(s);
       expect(s.ledger.slice(before).map(e => [e.kind, e.round, e.lot])).toEqual([7, 8, 9, 10].map(lot => ['UNSOLD', 1, lot]));
+      // Listed again in the next round as out of the game: the cards each lot showed, never any later round's.
+      expect(I.unsoldIn(s, 0)).toEqual(gone);
+      expect(I.cardsNobodyCanWin(s)).toEqual([]);
       expect(s.ledger.map(e => e.seq)).toEqual(s.ledger.map((_, i) => i + 1));
       expect([s.round, s.lot, s.open, s.leader]).toEqual([1, 0, false, null]);
       expect(s.revealed).toBe(mode !== 'MANUAL');

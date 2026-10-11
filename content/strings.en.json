@@ -234,6 +234,8 @@
   "auction.finish": "Finish the auction",
   "auction.roundFull": "Every team has its 2 wins in round {round}, so nobody can buy the lots left.",
   "auction.closeRound": "Go to round {round}, the rest unsold",
+  "auction.closeCards": "These cards go unsold and do not come up again:",
+  "auction.goneCards": "Not sold in round {round}, so out of the game:",
   "auction.closeLast": "Close round 7, the rest unsold",
   "auction.announce": "Announce: round {round}, lot {lot}, card {id}.",
   "auction.marketTitle": "This round",

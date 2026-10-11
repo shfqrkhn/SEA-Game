@@ -5,6 +5,7 @@ import { costPerPointCents, rankAwards, standing } from '../domain/award.ts';
 import { LOTS, MISSIONS, PRACTICE_CARD, isMissionId, type MissionId } from '../domain/data.ts';
 import * as I from '../domain/instructor.ts';
 import { lotIndex } from '../domain/ledger.ts';
+import type { MarketCard } from '../domain/market.ts';
 import { parseAmount } from '../domain/money.ts';
 import { instructorForSave, validateInstructor } from '../domain/saves.ts';
 import { lotVisible, REVEAL_MODES, MIN_BID_SECONDS, MAX_BID_SECONDS, type RevealMode, type TimingMode } from '../domain/session.ts';
@@ -146,12 +147,24 @@ function liveLot(v: View, clock: Clock): Child {
   // Every team has its 2 wins this round: one click records the rest of the round unsold (owner, 2026-10-11).
   // Offered from the sale that used the last win, so no Next lot is needed first.
   const rest = I.lotsNobodyCanWin(s);
+  // The cards it leaves unsold are listed before and after the close: they never come up again (owner, 2026-10-11).
+  const cardList = (id: string, cards: readonly MarketCard[]) => h('ul', { class: 'gone-cards', id }, cards.map(card =>
+    h('li', {}, h('span', { class: 'mono small', text: card.id }), ' ', card.title[v.lang])));
   const closeRound: Child[] = rest > 0 ? [
     h('p', { class: 'ok', id: 'round-full', text: t('auction.roundFull', { round: s.round + 1 }) }),
     h('button', { type: 'button', class: 'btn primary', id: 'close-round', text: s.round === 6 ? t('auction.closeLast') : t('auction.closeRound', { round: s.round + 2 }),
       on: { click: () => v.run(I.closeRound) } }),
   ] : [];
   if (!outcome) controls.push(...closeRound);
+  // On lot 1 of rounds 2–7, and on lot 70 once round 7 is closed: the cards the round before (or round 7) left unsold.
+  const goneRound = s.lot === 0 && s.round > 0 && !outcome ? s.round - 1 : s.round === 6 && s.lot === 9 && outcome ? 6 : -1;
+  const gone = goneRound >= 0 ? I.unsoldIn(s, goneRound) : [];
+  const goneBlock: Child[] = gone.length ? [h('p', { class: 'small', id: 'gone-heading', text: t('auction.goneCards', { round: goneRound + 1 }) }), cardList('gone-cards', gone)] : [];
+  // Lists last, so a long one never pushes a lot action below the fold at 1280×720 (MPES §7.1).
+  const lists: Child[] = [
+    ...(rest > 0 ? [h('p', { class: 'small', id: 'close-heading', text: t('auction.closeCards') }), cardList('close-cards', I.cardsNobodyCanWin(s))] : []),
+    ...goneBlock,
+  ];
   const first = rest > 0 ? 'btn' : 'btn primary';
   if (!visible && !outcome) {
     controls.push(h('button', { type: 'button', class: first, id: 'reveal', text: t('auction.reveal'), on: { click: () => v.run(I.reveal) } }));
@@ -203,6 +216,7 @@ function liveLot(v: View, clock: Clock): Child {
       ),
     );
   }
+  controls.push(...lists);
   // Two columns on wide screens (card | controls) keep every lot action visible at 1280×720 (MPES §7.1).
   return h('section', { class: 'panel stack', 'aria-labelledby': 'lot-heading' },
     h('h1', { id: 'lot-heading', text: t('common.roundLot', { round: s.round + 1, lot: s.lot + 1 }) }),
@@ -241,7 +255,7 @@ async function voidDialog(v: View, opener: HTMLElement): Promise<void> {
 }
 
 function roundMarket(v: View): Child {
-  const s = v.state, t = v.t;
+  const s = v.state, t = v.t, closing = I.lotsNobodyCanWin(s);
   const outcomes = new Map<number, I.InstructorState['ledger'][number]>();
   for (const entry of s.ledger) {
     const key = lotIndex(entry.round, entry.lot);
@@ -250,7 +264,8 @@ function roundMarket(v: View): Child {
   return h('section', { class: 'panel stack', 'aria-labelledby': 'market-heading' },
     h('h2', { id: 'market-heading', text: `${t('auction.marketTitle')} · ${t('common.round', { n: s.round + 1 })}` }),
     h('ol', { class: 'market' }, s.market[s.round]!.map((card, lot) => {
-      const visible = lotVisible(s.revealMode, s.lot, s.revealed, lot);
+      // Lots a close would record unsold are shown, so the room sees which cards leave the game.
+      const visible = lotVisible(s.revealMode, s.lot, s.revealed, lot) || (closing > 0 && lot >= LOTS - closing);
       const result = outcomes.get(s.round * LOTS + lot);
       return h('li', { class: lot === s.lot ? 'current' : '', 'aria-current': lot === s.lot ? 'true' : undefined },
         h('span', { class: 'muted small', text: t('common.lot', { n: lot + 1 }) }), ' ',
@@ -265,14 +280,14 @@ function teamsPanel(v: View): Child {
   const s = v.state, t = v.t;
   return h('section', { class: 'panel', 'aria-labelledby': 'teams-heading' },
     h('h2', { id: 'teams-heading', text: t('auction.teamsTitle') }),
-    h('div', { class: 'table-wrap' }, h('table', {},
+    h('div', { class: 'table-wrap' }, h('table', { class: 'team-table' },
       h('thead', {}, h('tr', {},
-        h('th', { scope: 'col', text: t('common.teams') }), h('th', { scope: 'col', text: t('common.mission') }),
+        h('th', { scope: 'col', text: `${t('common.teams')} · ${t('common.mission')}` }),
         h('th', { scope: 'col', class: 'num', text: t('common.wins') }), h('th', { scope: 'col', class: 'num', text: t('common.purchases') }),
         h('th', { scope: 'col', class: 'num', text: t('common.cost') }))),
       h('tbody', {}, s.teams.map(team => h('tr', {},
-        h('th', { scope: 'row', text: t('common.team', { n: team.id }) }),
-        h('td', { text: team.mission ? missionName(team.mission, v.lang) : t('common.empty') }),
+        // The mission under the team keeps four columns, so the cost fits the side panel at 1366×768.
+        h('th', { scope: 'row' }, t('common.team', { n: team.id }), h('br'), h('span', { class: 'mission', text: team.mission ? missionName(team.mission, v.lang) : t('common.empty') })),
         h('td', { class: 'num', text: `${team.purchasesByRound[s.round] ?? 0}/2` }),
         h('td', { class: 'num', text: String(team.purchases.length) }),
         h('td', { class: 'num', text: money(team.cost, v.lang) }),

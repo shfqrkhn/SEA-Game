@@ -234,6 +234,8 @@
   "auction.finish": "Terminer l’enchère",
   "auction.roundFull": "Chaque équipe a ses 2 gains de la ronde {round} : personne ne peut acheter les lots restants.",
   "auction.closeRound": "Passer à la ronde {round}, le reste invendu",
+  "auction.closeCards": "Ces cartes restent invendues et ne reviennent plus :",
+  "auction.goneCards": "Non vendues à la ronde {round}, donc hors jeu :",
   "auction.closeLast": "Clore la ronde 7, le reste invendu",
   "auction.announce": "Annoncez : ronde {round}, lot {lot}, carte {id}.",
   "auction.marketTitle": "Cette ronde",

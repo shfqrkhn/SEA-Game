@@ -328,6 +328,18 @@ export function lotsNobodyCanWin(state: InstructorState): number {
   return LOTS - state.lot - (currentOutcome(state) ? 1 : 0);
 }
 
+/** The cards a close of this round would record UNSOLD, in lot order (empty when it is not allowed). */
+export function cardsNobodyCanWin(state: InstructorState): MarketCard[] {
+  const count = lotsNobodyCanWin(state);
+  return count === 0 ? [] : state.market[state.round]!.slice(LOTS - count);
+}
+
+/** Cards of a round (0-based) whose effective outcome is UNSOLD, in lot order: each card comes up once, so these are out of the game. */
+export function unsoldIn(state: InstructorState, round: number): MarketCard[] {
+  const outcomes = effectiveOutcomes(state.ledger);
+  return (state.market[round] ?? []).filter((_, lot) => outcomes.get(round * LOTS + lot)?.kind === 'UNSOLD');
+}
+
 /**
  * Owner request 2026-10-11 (MPES §6.5): when no team may win more this round, record the current lot and every later
  * lot of the round UNSOLD at once and open the next round. It is offered from the sale that used the last win, so the

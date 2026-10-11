@@ -24,12 +24,21 @@ test('the instructor closes a full round in one click and the student skips to t
   await expect(ip.locator('#round-full')).toContainText('round 1');
   await expect(ip.locator('#close-round')).toHaveText('Go to round 2, the rest unsold');
   await expect(ip.locator('#next-lot')).toBeVisible();
+  // Owner, 2026-10-11: the room must still learn which cards leave the game. Listed before the close, shown in the
+  // round's market list although the reveal is lot by lot, and listed again on the next round's first lot.
+  const gone = ip.locator('#close-cards li');
+  await expect(gone).toHaveCount(6);
+  const goneIds = (await ip.locator('#close-cards li .mono').allTextContents()).map(id => id.trim());
+  expect(new Set([...cards, ...goneIds]).size).toBe(10);
+  for (const id of goneIds) await expect(ip.locator('.market')).toContainText(id);
   await ip.keyboard.press('n');
   await expect(ip.locator('#lot-heading')).toContainText('Round 2');
   await expect(ip.locator('#lot-heading')).toContainText('Lot 1 of');
   await expect(ip.locator('#close-round')).toHaveCount(0);
   await ip.reload();
   await expect(ip.locator('#lot-heading')).toContainText('Round 2');
+  await expect(ip.locator('#gone-heading')).toHaveText('Not sold in round 1, so out of the game:');
+  expect((await ip.locator('#gone-cards li .mono').allTextContents()).map(id => id.trim())).toEqual(goneIds);
 
   await sp.goto(gameUrl('?role=student&lang=en'));
   await studentJoin(sp, code, 2, 'RECCE');

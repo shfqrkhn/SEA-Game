@@ -24423,7 +24423,7 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
 
 ### content/strings.en.json
 
-Paths: `content/strings.en.json`. SHA-256 `d75434385189cb5d065c255eea51ac8f484ee62b1907781f7b0161d8f5db35fa`, 20491 bytes.
+Paths: `content/strings.en.json`. SHA-256 `499d5d0596644ee62affbe61485c79593411f22004b86b8bc060502a52fbc45d`, 20639 bytes.
 
 ```json
 {
@@ -24662,6 +24662,8 @@ Paths: `content/strings.en.json`. SHA-256 `d75434385189cb5d065c255eea51ac8f484ee
   "auction.finish": "Finish the auction",
   "auction.roundFull": "Every team has its 2 wins in round {round}, so nobody can buy the lots left.",
   "auction.closeRound": "Go to round {round}, the rest unsold",
+  "auction.closeCards": "These cards go unsold and do not come up again:",
+  "auction.goneCards": "Not sold in round {round}, so out of the game:",
   "auction.closeLast": "Close round 7, the rest unsold",
   "auction.announce": "Announce: round {round}, lot {lot}, card {id}.",
   "auction.marketTitle": "This round",
@@ -24819,7 +24821,7 @@ Paths: `content/strings.en.json`. SHA-256 `d75434385189cb5d065c255eea51ac8f484ee
 
 ### content/strings.fr.json
 
-Paths: `content/strings.fr.json`. SHA-256 `6d2e11958b1b953d0cab6bf385994962afac5bbd715dac8b7c90fbb8d67cb6b1`, 23494 bytes.
+Paths: `content/strings.fr.json`. SHA-256 `9b83e048c3361f4593a2d402413d60f55b757502e2d946088ca240d50644be7f`, 23651 bytes.
 
 ```json
 {
@@ -25058,6 +25060,8 @@ Paths: `content/strings.fr.json`. SHA-256 `6d2e11958b1b953d0cab6bf385994962afac5
   "auction.finish": "Terminer l’enchère",
   "auction.roundFull": "Chaque équipe a ses 2 gains de la ronde {round} : personne ne peut acheter les lots restants.",
   "auction.closeRound": "Passer à la ronde {round}, le reste invendu",
+  "auction.closeCards": "Ces cartes restent invendues et ne reviennent plus :",
+  "auction.goneCards": "Non vendues à la ronde {round}, donc hors jeu :",
   "auction.closeLast": "Clore la ronde 7, le reste invendu",
   "auction.announce": "Annoncez : ronde {round}, lot {lot}, carte {id}.",
   "auction.marketTitle": "Cette ronde",
@@ -30477,7 +30481,7 @@ await main();
 
 ### scripts/gallery/capture.spec.ts
 
-Paths: `scripts/gallery/capture.spec.ts`. SHA-256 `b0547abae2953d9a1b05603eb81e464cd2c620b95063799ea8e71cdc7fe174d4`, 4740 bytes.
+Paths: `scripts/gallery/capture.spec.ts`. SHA-256 `f29915ca14a9e29b87b710246fd14526eb2210702149fe75a59e21165d1f333f`, 6225 bytes.
 
 ```ts
 // Gallery capture (G2 item 4): one screenshot per shot of the game file named by SEA_GALLERY_DIST, into
@@ -30488,6 +30492,7 @@ import { join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { guardNetwork, withGpu, withoutWebgl } from '../../tests/e2e/helpers.ts';
 import { confirmDialog, studentJoin } from '../../tests/e2e/roles.ts';
+import * as I from '../../source/domain/instructor.ts';
 import { shots, type Shot } from './shots.ts';
 
 const DIST = pathToFileURL(resolve(process.env.SEA_GALLERY_DIST ?? 'dist/index.html')).href;
@@ -30531,6 +30536,24 @@ async function showcase(page: Page, shot: Shot, mission: string, view: string): 
   await stage.screenshot({ path: join(OUT, `${shot.id}.png`), ...SHOT });
 }
 
+/** An instructor session, 3 teams, played with the domain commands: each team wins 2 lots of round 1 at the start
+ *  price, then the close is offered ('round-full') or taken ('round-closed'). */
+function scenario(name: 'round-full' | 'round-closed', lang: 'en' | 'fr'): I.InstructorState {
+  const at = Date.parse('2026-10-10T09:00:00Z');
+  let s = I.generateSession(I.instructorShell(lang), { teamCount: 3, revealMode: 'JIT', timingMode: 'TIMED', bidSeconds: 30, token: '0123456789ABCDEF', seed: '0123456789ABCDEF0123456789ABCDEF' });
+  s = I.startPractice(s);
+  for (const step of ['reveal', 'open', 'accept', 'close'] as const) s = I.practiceStep(s, step);
+  s = I.openPlanning(s);
+  for (const [id, mission] of [[1, 'TROOP'], [2, 'RECCE'], [3, 'COMBAT']] as const) s = I.selectMission(s, id, mission);
+  s = I.startAuction(s);
+  for (const team of [1, 1, 2, 2, 3, 3]) {
+    if (I.currentOutcome(s)) s = I.advance(s);
+    const open = I.openBidding(s, at), offer = I.nextOffer(open)!;
+    s = I.commitSale(I.acceptBid(open, team, offer, at), team, offer);
+  }
+  return name === 'round-full' ? s : I.closeRound(s);
+}
+
 test.describe.configure({ mode: 'parallel' });
 for (const shot of shots()) {
   test(shot.id, async ({ page }) => {
@@ -30539,11 +30562,14 @@ for (const shot of shots()) {
     const path = join(OUT, `${shot.id}.png`);
     const kind = shot.kind;
     if (kind.type === 'showcase') return showcase(page, shot, kind.mission, kind.view);
-    if (kind.type === 'fixture') {
+    if (kind.type === 'fixture' || kind.type === 'scenario') {
       await page.clock.install({ time: new Date('2026-10-10T09:00:00Z') });
-      const raw = JSON.stringify(JSON.parse(readFileSync(`tests/fixtures/legacy/${kind.fixture}.json`, 'utf8')).state);
-      await page.addInitScript(([k, value]) => { if (!sessionStorage.getItem(k!)) sessionStorage.setItem(k!, value!); }, [KEYS[kind.role], raw]);
-      await page.goto(DIST + query(shot, { role: kind.role }));
+      const role = kind.type === 'fixture' ? kind.role : 'instructor';
+      // The saved state carries its own language, which the game prefers to the query: set it to the shot's.
+      const state = kind.type === 'fixture' ? JSON.parse(readFileSync(`tests/fixtures/legacy/${kind.fixture}.json`, 'utf8')).state : scenario(kind.scenario, shot.lang);
+      const raw = JSON.stringify({ ...state, lang: shot.lang });
+      await page.addInitScript(([k, value]) => { if (!sessionStorage.getItem(k!)) sessionStorage.setItem(k!, value!); }, [KEYS[role], raw]);
+      await page.goto(DIST + query(shot, { role }));
     } else {
       await page.goto(DIST + query(shot, {}));
     }
@@ -30592,7 +30618,7 @@ export default defineConfig({
 
 ### scripts/gallery/shots.ts
 
-Paths: `scripts/gallery/shots.ts`. SHA-256 `54e02b0ddd23abf31dc2b67681cc3de95703a4c7aeda8ed63439c78f67dd912c`, 4336 bytes.
+Paths: `scripts/gallery/shots.ts`. SHA-256 `5736e72fc7ab297cf16eec8943dc07a493803bffb669452d3b4218a42e8e83c1`, 4978 bytes.
 
 ```ts
 // The gallery's shot list (G2 item 4): every view of both roles, EN and FR, on the reference laptop and the projector,
@@ -30604,6 +30630,7 @@ export type Kind =
   | { readonly type: 'chooser' }
   | { readonly type: 'about' }
   | { readonly type: 'fixture'; readonly role: 'instructor' | 'student'; readonly fixture: string }
+  | { readonly type: 'scenario'; readonly scenario: 'round-full' | 'round-closed' }
   | { readonly type: 'showcase'; readonly mission: string; readonly view: 'front' | 'rear' | 'turntable' | '3d' };
 export interface Shot {
   readonly id: string;
@@ -30631,6 +30658,8 @@ const VIEWS: readonly { id: string; group: string; title: string; caption: strin
     ['instructor-max-ledger', 'Full ledger', 'The heaviest session: every lot sold, the longest ledger the game allows.'],
     ['instructor-closed', 'Debrief', 'Session closed: class chart, ranking and presentation questions.'],
   ] as const).map(([fixture, title, caption]) => ({ id: fixture, group: 'Instructor', title, caption, kind: { type: 'fixture', role: 'instructor', fixture } as Kind })),
+  { id: 'instructor-round-full', group: 'Instructor', title: 'Round full', caption: 'Every team has its 2 wins in round 1: one button records the rest of the round unsold and opens round 2; the cards that leave the game are listed and shown in the market list.', kind: { type: 'scenario', scenario: 'round-full' } },
+  { id: 'instructor-round-closed', group: 'Instructor', title: 'Next round after a close', caption: 'Lot 1 of round 2 after the close: the cards round 1 left unsold, out of the game.', kind: { type: 'scenario', scenario: 'round-closed' } },
   ...([
     ['student-practice', 'Practice', 'Student practice round before the auction.'],
     ['student-planning-fr', 'Planning', 'Student planning: mission, budget and the parts the team wants.'],
@@ -31131,7 +31160,7 @@ export function isInt(value: unknown, min: number, max: number): value is number
 
 ### source/domain/instructor.ts
 
-Paths: `source/domain/instructor.ts`. SHA-256 `34842d9bc07afe1437f456d1cb9e56455285ab4ade33819361984342ccc13f05`, 18740 bytes.
+Paths: `source/domain/instructor.ts`. SHA-256 `6fd4dfd241437d4b042bd3164a05a4f54d064654f8f49812c2e9d87785e70b34`, 19422 bytes.
 
 ```ts
 // Instructor role: authoritative session, auction and results (MPES §6). Commands are pure:
@@ -31462,6 +31491,18 @@ export function advance(state: InstructorState): InstructorState {
 export function lotsNobodyCanWin(state: InstructorState): number {
   if (state.phase !== 'auction' || state.teams.some(team => canWin(team, state.round + 1))) return 0;
   return LOTS - state.lot - (currentOutcome(state) ? 1 : 0);
+}
+
+/** The cards a close of this round would record UNSOLD, in lot order (empty when it is not allowed). */
+export function cardsNobodyCanWin(state: InstructorState): MarketCard[] {
+  const count = lotsNobodyCanWin(state);
+  return count === 0 ? [] : state.market[state.round]!.slice(LOTS - count);
+}
+
+/** Cards of a round (0-based) whose effective outcome is UNSOLD, in lot order: each card comes up once, so these are out of the game. */
+export function unsoldIn(state: InstructorState, round: number): MarketCard[] {
+  const outcomes = effectiveOutcomes(state.ledger);
+  return (state.market[round] ?? []).filter((_, lot) => outcomes.get(round * LOTS + lot)?.kind === 'UNSOLD');
 }
 
 /**
@@ -33661,7 +33702,7 @@ export function detectLanguage(search: string, navigatorLanguage: string | undef
 
 ### source/ui/instructor.ts
 
-Paths: `source/ui/instructor.ts`. SHA-256 `b2740e57d3d7495f5c9e613976565ed04535e965a0ef760f61b0dd0c7fb27d6b`, 35830 bytes.
+Paths: `source/ui/instructor.ts`. SHA-256 `dfd7e72005e1000deeb5c713c94be32fc8f85ea3d4732686443d7fcd515cdfcf`, 37333 bytes.
 
 ```ts
 // Instructor console (MPES §7.2).
@@ -33671,6 +33712,7 @@ import { costPerPointCents, rankAwards, standing } from '../domain/award.ts';
 import { LOTS, MISSIONS, PRACTICE_CARD, isMissionId, type MissionId } from '../domain/data.ts';
 import * as I from '../domain/instructor.ts';
 import { lotIndex } from '../domain/ledger.ts';
+import type { MarketCard } from '../domain/market.ts';
 import { parseAmount } from '../domain/money.ts';
 import { instructorForSave, validateInstructor } from '../domain/saves.ts';
 import { lotVisible, REVEAL_MODES, MIN_BID_SECONDS, MAX_BID_SECONDS, type RevealMode, type TimingMode } from '../domain/session.ts';
@@ -33812,12 +33854,24 @@ function liveLot(v: View, clock: Clock): Child {
   // Every team has its 2 wins this round: one click records the rest of the round unsold (owner, 2026-10-11).
   // Offered from the sale that used the last win, so no Next lot is needed first.
   const rest = I.lotsNobodyCanWin(s);
+  // The cards it leaves unsold are listed before and after the close: they never come up again (owner, 2026-10-11).
+  const cardList = (id: string, cards: readonly MarketCard[]) => h('ul', { class: 'gone-cards', id }, cards.map(card =>
+    h('li', {}, h('span', { class: 'mono small', text: card.id }), ' ', card.title[v.lang])));
   const closeRound: Child[] = rest > 0 ? [
     h('p', { class: 'ok', id: 'round-full', text: t('auction.roundFull', { round: s.round + 1 }) }),
     h('button', { type: 'button', class: 'btn primary', id: 'close-round', text: s.round === 6 ? t('auction.closeLast') : t('auction.closeRound', { round: s.round + 2 }),
       on: { click: () => v.run(I.closeRound) } }),
   ] : [];
   if (!outcome) controls.push(...closeRound);
+  // On lot 1 of rounds 2–7, and on lot 70 once round 7 is closed: the cards the round before (or round 7) left unsold.
+  const goneRound = s.lot === 0 && s.round > 0 && !outcome ? s.round - 1 : s.round === 6 && s.lot === 9 && outcome ? 6 : -1;
+  const gone = goneRound >= 0 ? I.unsoldIn(s, goneRound) : [];
+  const goneBlock: Child[] = gone.length ? [h('p', { class: 'small', id: 'gone-heading', text: t('auction.goneCards', { round: goneRound + 1 }) }), cardList('gone-cards', gone)] : [];
+  // Lists last, so a long one never pushes a lot action below the fold at 1280×720 (MPES §7.1).
+  const lists: Child[] = [
+    ...(rest > 0 ? [h('p', { class: 'small', id: 'close-heading', text: t('auction.closeCards') }), cardList('close-cards', I.cardsNobodyCanWin(s))] : []),
+    ...goneBlock,
+  ];
   const first = rest > 0 ? 'btn' : 'btn primary';
   if (!visible && !outcome) {
     controls.push(h('button', { type: 'button', class: first, id: 'reveal', text: t('auction.reveal'), on: { click: () => v.run(I.reveal) } }));
@@ -33869,6 +33923,7 @@ function liveLot(v: View, clock: Clock): Child {
       ),
     );
   }
+  controls.push(...lists);
   // Two columns on wide screens (card | controls) keep every lot action visible at 1280×720 (MPES §7.1).
   return h('section', { class: 'panel stack', 'aria-labelledby': 'lot-heading' },
     h('h1', { id: 'lot-heading', text: t('common.roundLot', { round: s.round + 1, lot: s.lot + 1 }) }),
@@ -33907,7 +33962,7 @@ async function voidDialog(v: View, opener: HTMLElement): Promise<void> {
 }
 
 function roundMarket(v: View): Child {
-  const s = v.state, t = v.t;
+  const s = v.state, t = v.t, closing = I.lotsNobodyCanWin(s);
   const outcomes = new Map<number, I.InstructorState['ledger'][number]>();
   for (const entry of s.ledger) {
     const key = lotIndex(entry.round, entry.lot);
@@ -33916,7 +33971,8 @@ function roundMarket(v: View): Child {
   return h('section', { class: 'panel stack', 'aria-labelledby': 'market-heading' },
     h('h2', { id: 'market-heading', text: `${t('auction.marketTitle')} · ${t('common.round', { n: s.round + 1 })}` }),
     h('ol', { class: 'market' }, s.market[s.round]!.map((card, lot) => {
-      const visible = lotVisible(s.revealMode, s.lot, s.revealed, lot);
+      // Lots a close would record unsold are shown, so the room sees which cards leave the game.
+      const visible = lotVisible(s.revealMode, s.lot, s.revealed, lot) || (closing > 0 && lot >= LOTS - closing);
       const result = outcomes.get(s.round * LOTS + lot);
       return h('li', { class: lot === s.lot ? 'current' : '', 'aria-current': lot === s.lot ? 'true' : undefined },
         h('span', { class: 'muted small', text: t('common.lot', { n: lot + 1 }) }), ' ',
@@ -33931,14 +33987,14 @@ function teamsPanel(v: View): Child {
   const s = v.state, t = v.t;
   return h('section', { class: 'panel', 'aria-labelledby': 'teams-heading' },
     h('h2', { id: 'teams-heading', text: t('auction.teamsTitle') }),
-    h('div', { class: 'table-wrap' }, h('table', {},
+    h('div', { class: 'table-wrap' }, h('table', { class: 'team-table' },
       h('thead', {}, h('tr', {},
-        h('th', { scope: 'col', text: t('common.teams') }), h('th', { scope: 'col', text: t('common.mission') }),
+        h('th', { scope: 'col', text: `${t('common.teams')} · ${t('common.mission')}` }),
         h('th', { scope: 'col', class: 'num', text: t('common.wins') }), h('th', { scope: 'col', class: 'num', text: t('common.purchases') }),
         h('th', { scope: 'col', class: 'num', text: t('common.cost') }))),
       h('tbody', {}, s.teams.map(team => h('tr', {},
-        h('th', { scope: 'row', text: t('common.team', { n: team.id }) }),
-        h('td', { text: team.mission ? missionName(team.mission, v.lang) : t('common.empty') }),
+        // The mission under the team keeps four columns, so the cost fits the side panel at 1366×768.
+        h('th', { scope: 'row' }, t('common.team', { n: team.id }), h('br'), h('span', { class: 'mission', text: team.mission ? missionName(team.mission, v.lang) : t('common.empty') })),
         h('td', { class: 'num', text: `${team.purchasesByRound[s.round] ?? 0}/2` }),
         h('td', { class: 'num', text: String(team.purchases.length) }),
         h('td', { class: 'num', text: money(team.cost, v.lang) }),
@@ -34634,7 +34690,7 @@ export function startStudent(root: HTMLElement, lang: Language, storage: Storage
 
 ### source/ui/styles.css
 
-Paths: `source/ui/styles.css`. SHA-256 `b2248366da555ae0125ae7a9ec91b9e54072c4804a193e124e4ff6f1d96e5101`, 19016 bytes.
+Paths: `source/ui/styles.css`. SHA-256 `220c6d62b5f555c6abdb9933abad1b784c8c364371ccaee03a81d735502c6b27`, 19429 bytes.
 
 ```css
 /* SEA Game design system (MPES §7.1): one set of tokens for both roles. */
@@ -34806,6 +34862,7 @@ legend { font-weight: 700; padding: 0 .25rem; }
 .btn.leading { border-width: 3px; border-color: var(--accent); }
 .market { list-style: none; margin: 0; padding: 0; display: grid; gap: .25rem; }
 .market li { padding: .3rem .5rem; border-radius: var(--radius); border: 1px solid transparent; }
+.gone-cards { margin: 0; padding-left: 1.2rem; display: grid; gap: .1rem; }
 .market li.current { border-color: var(--accent); background: var(--sunken); font-weight: 600; }
 .ledger { margin: 0; padding-left: 1.5rem; display: grid; gap: .2rem; }
 .hidden-card { display: grid; place-items: center; min-height: 8rem; border: 2px dashed var(--line); border-radius: var(--radius); color: var(--muted); font-weight: 600; }
@@ -34829,6 +34886,9 @@ summary { cursor: pointer; font-weight: 600; min-height: 32px; }
 .topbar .brand::before { content: "SEA"; font-weight: 900; letter-spacing: .02em; color: var(--accent); margin-right: .6rem; font-size: 1.25rem; }
 .wordmark { display: flex; align-items: center; gap: 1rem; }
 .wordmark-sea { font-size: clamp(3rem, 2rem + 4vw, 5rem); font-weight: 900; letter-spacing: -.02em; color: var(--accent); line-height: .9; }
+/* Live teams panel: headings wrap between words and the mission reads as text, so the cost column fits at 1366×768. */
+.team-table thead th { white-space: normal; }
+.team-table .mission { text-transform: none; letter-spacing: 0; font-family: var(--font); font-weight: 400; font-size: .875rem; color: var(--ink); white-space: normal; }
 .wordmark-title { font-size: clamp(1.1rem, .9rem + .8vw, 1.6rem); font-weight: 500; max-width: 12ch; margin: 0; line-height: 1.15; }
 .hero { display: grid; grid-template-columns: minmax(0, 1fr); min-height: 100dvh; }
 @media (min-width: 64rem) { .hero { grid-template-columns: minmax(0, 1.6fr) minmax(22rem, 1fr); } }
@@ -35559,7 +35619,7 @@ test.describe('role chooser over file:// (RQ-01, RQ-19, RQ-20)', () => {
 
 ### tests/e2e/close-round.spec.ts
 
-Paths: `tests/e2e/close-round.spec.ts`. SHA-256 `661b257b37e6e1850d5bf73fef95e884602ddf6ee017207a2c5661389dcf2b93`, 2807 bytes.
+Paths: `tests/e2e/close-round.spec.ts`. SHA-256 `6f01e656bd83d7e3d506afa7c1d846bc68e66a736d809f3dcec056b84d4d4a38`, 3566 bytes.
 
 ```ts
 // Owner request 2026-10-11 (MPES §6.5): when every team has its 2 wins in a round, one click records the rest of the
@@ -35588,12 +35648,21 @@ test('the instructor closes a full round in one click and the student skips to t
   await expect(ip.locator('#round-full')).toContainText('round 1');
   await expect(ip.locator('#close-round')).toHaveText('Go to round 2, the rest unsold');
   await expect(ip.locator('#next-lot')).toBeVisible();
+  // Owner, 2026-10-11: the room must still learn which cards leave the game. Listed before the close, shown in the
+  // round's market list although the reveal is lot by lot, and listed again on the next round's first lot.
+  const gone = ip.locator('#close-cards li');
+  await expect(gone).toHaveCount(6);
+  const goneIds = (await ip.locator('#close-cards li .mono').allTextContents()).map(id => id.trim());
+  expect(new Set([...cards, ...goneIds]).size).toBe(10);
+  for (const id of goneIds) await expect(ip.locator('.market')).toContainText(id);
   await ip.keyboard.press('n');
   await expect(ip.locator('#lot-heading')).toContainText('Round 2');
   await expect(ip.locator('#lot-heading')).toContainText('Lot 1 of');
   await expect(ip.locator('#close-round')).toHaveCount(0);
   await ip.reload();
   await expect(ip.locator('#lot-heading')).toContainText('Round 2');
+  await expect(ip.locator('#gone-heading')).toHaveText('Not sold in round 1, so out of the game:');
+  expect((await ip.locator('#gone-cards li .mono').allTextContents()).map(id => id.trim())).toEqual(goneIds);
 
   await sp.goto(gameUrl('?role=student&lang=en'));
   await studentJoin(sp, code, 2, 'RECCE');
@@ -38162,7 +38231,7 @@ describe('vehicleGlb (MPES §10, §14)', () => {
 
 ### tests/unit/instructor.test.ts
 
-Paths: `tests/unit/instructor.test.ts`. SHA-256 `42a7a6fc38da2b131bc131dcf1e6ef15d91460481661afe96b437508b604e898`, 17357 bytes.
+Paths: `tests/unit/instructor.test.ts`. SHA-256 `4cab8e1205e162b77f2cb302a1e5d151a4175996b38c87c3383d0cc49ea10b21`, 17659 bytes.
 
 ```ts
 // RQ-03, RQ-06, RQ-07, RQ-08, RQ-10, RQ-11: instructor commands and their rejections.
@@ -38370,9 +38439,14 @@ describe('closing a round no team can win in', () => {
       let s = fill(session(3, mode), 3);
       expect([s.round, s.lot]).toEqual([0, 6]);
       expect(I.lotsNobodyCanWin(s)).toBe(4);
+      const gone = I.cardsNobodyCanWin(s);
+      expect(gone).toEqual(s.market[0]!.slice(6));
       const before = s.ledger.length;
       s = I.closeRound(s);
       expect(s.ledger.slice(before).map(e => [e.kind, e.round, e.lot])).toEqual([7, 8, 9, 10].map(lot => ['UNSOLD', 1, lot]));
+      // Listed again in the next round as out of the game: the cards each lot showed, never any later round's.
+      expect(I.unsoldIn(s, 0)).toEqual(gone);
+      expect(I.cardsNobodyCanWin(s)).toEqual([]);
       expect(s.ledger.map(e => e.seq)).toEqual(s.ledger.map((_, i) => i + 1));
       expect([s.round, s.lot, s.open, s.leader]).toEqual([1, 0, false, null]);
       expect(s.revealed).toBe(mode !== 'MANUAL');
@@ -40333,7 +40407,7 @@ Keys and the commands that make each kind again:
 | `tests/e2e/visual.spec.ts-snapshots/about-320-chromium-win32.png` | 28853 | `a212f588b8beed5fce31e4b18ea08508bacf7df0a399b01b9de4762bb9668546` | S |
 | `tests/e2e/visual.spec.ts-snapshots/chooser-dark-chromium-win32.png` | 377817 | `a83a0067c4cc8f0ac4e3fbaad6af0f07981e2f5ba92905903b1b2c2552d203c5` | S |
 | `tests/e2e/visual.spec.ts-snapshots/chooser-light-chromium-win32.png` | 405574 | `b9317ca857dfc55ba754956c7ac28e0f6cba4f7b8b322ddcde911cab2c80585b` | S |
-| `tests/e2e/visual.spec.ts-snapshots/instructor-auction-open-paused-chromium-win32.png` | 224390 | `50f8b161ef4caad08c2409c3e3febbda6affa39b8944c621c70a09776ae64b10` | S |
+| `tests/e2e/visual.spec.ts-snapshots/instructor-auction-open-paused-chromium-win32.png` | 228500 | `a4fe312b815c9bc859ba62c7fabace3c40f0323f156a162daf80133c6a8966ff` | S |
 | `tests/e2e/visual.spec.ts-snapshots/instructor-build-chromium-win32.png` | 232619 | `aa7463f6cc016a92b7b74f0bcf592aad045aaec21bcc607ec52e63ab1edd59d5` | S |
 | `tests/e2e/visual.spec.ts-snapshots/instructor-closed-chromium-win32.png` | 271457 | `a55a8fbede873b65f4a3e8d794d06f4ee20735e3797099f8283e680207ac6c5e` | S |
 | `tests/e2e/visual.spec.ts-snapshots/instructor-planning-chromium-win32.png` | 206886 | `a8954f58b46943735d47836a562f8d195c9d6ef5776c88be13e604e2cb11896e` | S |
@@ -40366,5 +40440,5 @@ Keys and the commands that make each kind again:
 
 | Path | Bytes | SHA-256 | Why |
 |---|---:|---|---|
-| `docs/MPES.md` | 146523 | `6e8b03cf0007f1d9fc826eef4fd41af53cc78bd85d7672ff3236d1dbf6b344f7` | The specification, a clean-room document of its own (Omni 5.1.1 §333). |
+| `docs/MPES.md` | 147557 | `4304a9f8242ed26cb9d2749c96817ae2b1688967ed59d88c11ed880410274636` | The specification, a clean-room document of its own (Omni 5.1.1 §333). |
 | `docs/CODEBASE.md` | | | This file. |

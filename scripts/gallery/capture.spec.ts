@@ -6,6 +6,7 @@ import { join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { guardNetwork, withGpu, withoutWebgl } from '../../tests/e2e/helpers.ts';
 import { confirmDialog, studentJoin } from '../../tests/e2e/roles.ts';
+import * as I from '../../source/domain/instructor.ts';
 import { shots, type Shot } from './shots.ts';
 
 const DIST = pathToFileURL(resolve(process.env.SEA_GALLERY_DIST ?? 'dist/index.html')).href;
@@ -49,6 +50,24 @@ async function showcase(page: Page, shot: Shot, mission: string, view: string): 
   await stage.screenshot({ path: join(OUT, `${shot.id}.png`), ...SHOT });
 }
 
+/** An instructor session, 3 teams, played with the domain commands: each team wins 2 lots of round 1 at the start
+ *  price, then the close is offered ('round-full') or taken ('round-closed'). */
+function scenario(name: 'round-full' | 'round-closed', lang: 'en' | 'fr'): I.InstructorState {
+  const at = Date.parse('2026-10-10T09:00:00Z');
+  let s = I.generateSession(I.instructorShell(lang), { teamCount: 3, revealMode: 'JIT', timingMode: 'TIMED', bidSeconds: 30, token: '0123456789ABCDEF', seed: '0123456789ABCDEF0123456789ABCDEF' });
+  s = I.startPractice(s);
+  for (const step of ['reveal', 'open', 'accept', 'close'] as const) s = I.practiceStep(s, step);
+  s = I.openPlanning(s);
+  for (const [id, mission] of [[1, 'TROOP'], [2, 'RECCE'], [3, 'COMBAT']] as const) s = I.selectMission(s, id, mission);
+  s = I.startAuction(s);
+  for (const team of [1, 1, 2, 2, 3, 3]) {
+    if (I.currentOutcome(s)) s = I.advance(s);
+    const open = I.openBidding(s, at), offer = I.nextOffer(open)!;
+    s = I.commitSale(I.acceptBid(open, team, offer, at), team, offer);
+  }
+  return name === 'round-full' ? s : I.closeRound(s);
+}
+
 test.describe.configure({ mode: 'parallel' });
 for (const shot of shots()) {
   test(shot.id, async ({ page }) => {
@@ -57,11 +76,14 @@ for (const shot of shots()) {
     const path = join(OUT, `${shot.id}.png`);
     const kind = shot.kind;
     if (kind.type === 'showcase') return showcase(page, shot, kind.mission, kind.view);
-    if (kind.type === 'fixture') {
+    if (kind.type === 'fixture' || kind.type === 'scenario') {
       await page.clock.install({ time: new Date('2026-10-10T09:00:00Z') });
-      const raw = JSON.stringify(JSON.parse(readFileSync(`tests/fixtures/legacy/${kind.fixture}.json`, 'utf8')).state);
-      await page.addInitScript(([k, value]) => { if (!sessionStorage.getItem(k!)) sessionStorage.setItem(k!, value!); }, [KEYS[kind.role], raw]);
-      await page.goto(DIST + query(shot, { role: kind.role }));
+      const role = kind.type === 'fixture' ? kind.role : 'instructor';
+      // The saved state carries its own language, which the game prefers to the query: set it to the shot's.
+      const state = kind.type === 'fixture' ? JSON.parse(readFileSync(`tests/fixtures/legacy/${kind.fixture}.json`, 'utf8')).state : scenario(kind.scenario, shot.lang);
+      const raw = JSON.stringify({ ...state, lang: shot.lang });
+      await page.addInitScript(([k, value]) => { if (!sessionStorage.getItem(k!)) sessionStorage.setItem(k!, value!); }, [KEYS[role], raw]);
+      await page.goto(DIST + query(shot, { role }));
     } else {
       await page.goto(DIST + query(shot, {}));
     }
