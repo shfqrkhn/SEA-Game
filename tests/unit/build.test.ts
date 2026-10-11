@@ -3,6 +3,8 @@ import { inflateRawSync } from 'node:zlib';
 import { describe, expect, it } from 'vitest';
 import { MAX_BYTES, MODELS_DIR, RENDERS_DIR, render, sha256 } from '../../build/render.ts';
 
+const COPYRIGHT = 'Copyright (c) 2026 Shafiqur Rahman Khan';
+
 describe('single-file build (RQ-01, RQ-24, RQ-25, RQ-27)', async () => {
   const html = await render();
   const script = /<script>([\s\S]*)<\/script>\s*<\/body>/.exec(html)?.[1] ?? '';
@@ -48,8 +50,19 @@ describe('single-file build (RQ-01, RQ-24, RQ-25, RQ-27)', async () => {
   it('embeds the licence and third-party notices and stays within the size limit', () => {
     expect(html).toContain('bundles one third-party library, three.js');
     expect(html).toContain('Copyright © 2010-2026 three.js authors');
-    expect(html).toContain('SEA Game contributors');
+    expect(html).toContain(COPYRIGHT);
     expect(Buffer.byteLength(html)).toBeLessThanOrEqual(MAX_BYTES);
+  });
+  // The owner is the creator and sole copyright holder (G2): the licence, the notices, the package and the About text.
+  it('names the creator as copyright holder everywhere', () => {
+    expect(readFileSync('LICENSE', 'utf8')).toContain(COPYRIGHT);
+    expect(readFileSync('LICENSE', 'utf8')).not.toContain('contributors');
+    expect(readFileSync('THIRD_PARTY_NOTICES.md', 'utf8')).toContain(COPYRIGHT);
+    expect((JSON.parse(readFileSync('package.json', 'utf8')) as { author: string }).author).toBe('Shafiqur Rahman Khan');
+    for (const lang of ['en', 'fr']) {
+      const strings = JSON.parse(readFileSync(`content/strings.${lang}.json`, 'utf8')) as Record<string, string>;
+      expect(strings['about.body'], lang).toContain('© 2026 Shafiqur Rahman Khan');
+    }
   });
   it('embeds the committed renders once, as an inert JSON block of AVIF data URIs matching the manifest (MPES §11)', () => {
     const block = /<script type="application\/json" id="sea-renders">([^<]*)<\/script>/.exec(html)?.[1];

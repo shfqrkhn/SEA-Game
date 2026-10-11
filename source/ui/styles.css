@@ -109,7 +109,11 @@ dialog {
   padding: 1.25rem; width: min(36rem, calc(100vw - 2rem)); max-height: calc(100dvh - 2rem); overflow: auto;
 }
 dialog::backdrop { background: rgb(0 0 0 / .45); }
-dialog pre { white-space: pre-wrap; font-size: .8rem; background: var(--sunken); padding: .75rem; border-radius: var(--radius); }
+dialog .licence-text { font-size: .85rem; line-height: 1.5; background: var(--sunken); padding: .75rem 1rem; border-radius: var(--radius); }
+dialog .licence-text > * { margin: 0 0 .6rem; max-width: 72ch; }
+dialog .licence-text > :last-child { margin-bottom: 0; }
+dialog .licence-text h3 { font-size: .8rem; margin-top: 1rem; }
+dialog .licence-text ul { padding-left: 1.2rem; }
 
 /* Chooser */
 .chooser { max-width: 48rem; margin: 0 auto; padding: 2rem 1rem; }
@@ -240,6 +244,20 @@ input, select, textarea { background: var(--field-bg); border-color: var(--field
 .hero-stage { background: var(--stage); }
 .hero-panel { background: var(--panel-bg); border-color: var(--line); }
 .hero-still { display: block; width: 100%; height: auto; }
+/* Chooser lineup (G2): stills never drawn wider than half their pixels, so they stay sharp at 2x device pixels. */
+.hero-lineup { display: grid; gap: .75rem; width: 100%; max-width: 50rem; margin-inline: auto; }
+.hero-lineup .hero-still { aspect-ratio: 16 / 9; }
+.lineup { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .5rem; }
+@media (min-width: 30rem) { .lineup { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (min-width: 48rem) { .lineup { grid-template-columns: repeat(6, minmax(0, 1fr)); } }
+.lineup-pick { display: grid; gap: .2rem; align-content: start; min-height: 44px; padding: .25rem; cursor: pointer; color: var(--muted);
+  background: var(--sunken); border: 1px solid var(--line); border-radius: var(--radius); font: 600 .68rem/1.2 var(--mono);
+  text-transform: uppercase; letter-spacing: .02em; overflow-wrap: normal; word-break: normal; hyphens: manual; }
+.lineup-pick img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; }
+.lineup-pick:hover { border-color: var(--accent); background: var(--hover-bg); }
+.lineup-pick[aria-pressed="true"] { border-color: var(--accent); color: var(--ink); box-shadow: var(--hud-glow); }
+/* Phones and narrow windows: the role buttons first, the lineup after them. */
+@media (max-width: 63.99rem) { .hero-panel { order: -1; border-left: 0; border-bottom: 1px solid var(--line); } }
 
 /* Vehicle showcase (MPES §10): a turning 3D model, or stacked still renders without WebGL. */
 .showcase-stage { position: relative; width: 100%; aspect-ratio: 16 / 9; overflow: hidden; border-radius: var(--radius);

@@ -5,6 +5,7 @@
   "private": true,
   "description": "Systems Engineering Awareness: offline single-file classroom auction game (EN/FR)",
   "license": "MIT",
+  "author": "Shafiqur Rahman Khan",
   "type": "module",
   "engines": {
     "node": ">=22"
