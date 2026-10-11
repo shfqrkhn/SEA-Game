@@ -1,5 +1,6 @@
 // Real-time vehicle showcase (MPES §10): the embedded glTF model on a slowly turning stage the player can drag.
-// One renderer per page; it draws only while visible, at most 30 frames a second, and never turns by itself
+// One renderer per page; it draws only while visible, in one paced animation frame (at most 30 a second and at
+// most half the machine, MPES §10.3), and never turns by itself
 // when the player prefers reduced motion. Without WebGL the caller shows the still renders instead.
 import {
   ACESFilmicToneMapping, Box3, Color, DirectionalLight, Group, Mesh, MeshStandardMaterial, type Object3D,
@@ -10,10 +11,10 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { vehicleGlb } from './glb.ts';
+import { FramePacer } from './pace.ts';
 
 /** Seconds per full turn when the stage turns by itself. */
 export const TURN_SECONDS = 40;
-const FRAME_MS = 1000 / 30;
 const UP = new Vector3(0, 1, 0);
 
 let packed: Promise<ArrayBuffer | null> | null = null;
@@ -88,7 +89,8 @@ export class ModelStage {
   #timer = new Timer();
   #vehicle: Object3D | null = null;
   #frame = 0;
-  #last = 0;
+  #pacer = new FramePacer();
+  #dirty = true;
   #visible = true;
   #observer: IntersectionObserver;
   #resize: ResizeObserver;
@@ -128,7 +130,7 @@ export class ModelStage {
       enableDamping: true, enablePan: false, enableZoom: false, autoRotate: !this.#motion.matches,
       autoRotateSpeed: 60 / TURN_SECONDS, minPolarAngle: 0.6, maxPolarAngle: 1.45,
     });
-    this.#controls.addEventListener('change', () => this.#draw());
+    this.#controls.addEventListener('change', () => this.#invalidate());
     this.#controls.addEventListener('start', () => this.#loop());
     this.#motion.addEventListener('change', () => { this.turning = !this.#motion.matches; });
     this.#observer = new IntersectionObserver(([entry]) => { this.#visible = !!entry?.isIntersecting; this.#loop(); });
@@ -147,7 +149,6 @@ export class ModelStage {
     const offset = this.#camera.position.clone().sub(this.#controls.target).applyAxisAngle(UP, radians);
     this.#camera.position.copy(this.#controls.target).add(offset);
     this.#controls.update();
-    this.#draw();
   }
 
   /** Shows one vehicle with the given part nodes; returns false if the library has no such vehicle. */
@@ -169,8 +170,7 @@ export class ModelStage {
     }
     const shown = new Set(parts);
     for (const node of this.#vehicle.children) node.visible = layerOf(node) === 'base' || shown.has(layerOf(node));
-    this.#draw();
-    this.#loop();
+    this.#invalidate();
     return true;
   }
 
@@ -191,27 +191,40 @@ export class ModelStage {
     this.#renderer.setSize(w, h, false);
     this.#camera.aspect = w / h;
     this.#camera.updateProjectionMatrix();
-    this.#draw();
+    this.#invalidate();
+  }
+
+  /** Asks for a redraw in the next paced frame; drags and key turns never draw synchronously. */
+  #invalidate(): void {
+    this.#dirty = true;
+    this.#loop();
   }
 
   #draw(): void {
+    this.#dirty = false;
     this.#renderer.render(this.#scene, this.#camera);
     this.onTurn?.(this.#controls.getAzimuthalAngle());
   }
 
-  /** Animates only while the stage is visible and turning; dragging redraws through the controls' change event. */
+  #stop(): void {
+    cancelAnimationFrame(this.#frame);
+    this.#frame = 0;
+    this.#pacer.pause();
+  }
+
+  /** Animates only while the stage is visible and turning or waiting to redraw; the pacer picks the frames that draw. */
   #loop(): void {
     const running = this.#visible && document.visibilityState === 'visible' && this.canvas.isConnected;
-    if (!running) { cancelAnimationFrame(this.#frame); this.#frame = 0; return; }
+    if (!running) { this.#stop(); return; }
     if (this.#frame) return;
     this.#timer.update();
     const tick = (now: number) => {
       this.#frame = requestAnimationFrame(tick);
-      if (now - this.#last < FRAME_MS) return;
-      this.#last = now;
+      if (!this.#pacer.due(now)) return;
       this.#timer.update(now);
       const moved = this.#controls.update(this.#timer.getDelta());
-      if (!moved && !this.#controls.autoRotate) { cancelAnimationFrame(this.#frame); this.#frame = 0; }
+      if (this.#dirty) { this.#draw(); this.#pacer.drew(now); }
+      if (!moved && !this.#controls.autoRotate && !this.#dirty) this.#stop();
     };
     this.#frame = requestAnimationFrame(tick);
   }

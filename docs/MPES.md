@@ -652,6 +652,7 @@ Make the build tangible: the selected mission's base vehicle visibly gains parts
 | 3D model ready (opening the tracker to the first drawn model) | ≤ 3 s, reference profile |
 | 3D model update after a purchase is recorded | ≤ 100 ms, reference profile |
 | Memory added by the 3D showcase | ≤ 400 MB |
+| 3D drawing rate and share of the machine | ≤ 30 frames a second; a drawn frame is timed by the gap to the next animation frame, and the next draw waits at least twice that (at most 1 s), so drawing never takes more than half the machine. Drags, key turns and resizes draw in the next paced frame, never synchronously |
 
 Renders are reproducible: pinned Blender version, fixed seeds, sample counts and cameras. Renders are committed with their SHA-256 in the manifest; a re-render that changes bytes is a deliberate, reviewed change.
 
