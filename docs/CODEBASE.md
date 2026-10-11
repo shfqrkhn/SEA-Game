@@ -1,6 +1,6 @@
 # SEA Game codebase
 
-Version 0.5.1.0. Written by `npm run codebase` (scripts/codebase.ts); do not edit by hand. It holds all 1008 tracked files of the repository: 152 text files as 150 unique contents, 854 binary files by hash with the command that regenerates them, and 2 documents kept separately. With docs/MPES.md it is enough to rebuild the project.
+Version 0.5.1.0. Written by `npm run codebase` (scripts/codebase.ts); do not edit by hand. It holds all 1009 tracked files of the repository: 153 text files as 151 unique contents, 854 binary files by hash with the command that regenerates them, and 2 documents kept separately. With docs/MPES.md it is enough to rebuild the project.
 
 ## How to rebuild the tree
 
@@ -25599,6 +25599,62 @@ The three Firefox failures are browser-internal and appeared only under full loc
 **Close-out (G1).** The docs-only close-out commit (this record, HANDOVER with next action G2, README status) gets its own two consecutive green CI runs before PR #21 is merged with a merge commit. Tag `v0.5.0.0` is then set on `main`; its annotation records both run ids and the Pages check: the SHA-256 of https://shfqrkhn.github.io/SEA-Game/ equals that of `npm run build` from the tag.
 ```
 
+### docs/verification/0.5.1.0.md
+
+Paths: `docs/verification/0.5.1.0.md`. SHA-256 `2efa6ed715805108e1b09fb6cfe677137eb95d6490b681ba82f6f983578c492a`, 4715 bytes.
+
+```markdown
+# Verification record: 0.5.1.0 beta (goal G2)
+
+Goal G2: owner fixes and the documentation regime. Branch `goal2b/foundation`, from `main` at `v0.5.0.0`. Specification: MPES 4.3.0. Environment: Windows 11 Enterprise, Node 24.20.0, npm 11.19.0, Playwright 1.63.0, local `file://`. Logs in `.artifacts/logs/` (not committed).
+
+## Items and their tests
+
+| Item | What | Test | Result |
+|---|---|---|---|
+| 1 | "Copyright (c) 2026 Shafiqur Rahman Khan" in `LICENSE`, About, `package.json` author, notices | `tests/unit/build.test.ts` | PASS |
+| 2 | About licence and notices reflowed for display; files verbatim | `tests/unit/reflow.test.ts`; `tests/e2e/visual.spec.ts` at 1366×768 and 320 px | PASS |
+| 3 | Chooser shows all six vehicles: lineup of hero stills, selected one large, keyboard and touch, EN/FR | `tests/e2e/chooser.spec.ts`, `tests/e2e/visual.spec.ts` | PASS |
+| 4 | `npm run gallery`: every view, both roles, EN/FR, laptop and projector, six vehicles in stills and 3D | `tests/unit/gallery.test.ts`; the page `.artifacts/review/0.5.1.0.html` | PASS; owner GO: see below |
+| 5 | `DecodedImages` never evicts an on-screen or prepared image (up to 20 layers per angle) | `tests/unit/showcase.test.ts` | PASS |
+| 6 | MPES without code, alone enough for a clean-room rebuild | `tests/unit/mpes.test.ts`; Codex rebuild review (below) | PASS |
+| 7 | `npm run codebase` writes `docs/CODEBASE.md`; the tree rebuilds from it with every hash | `tests/unit/codebase.test.ts` | PASS |
+| 8 | `npm run archive:prep` (dry run; `--apply` on the owner's request), `RESTORE.md` | `tests/unit/archive.test.ts` (fresh clone, apply, restore, same build SHA-256) | PASS |
+| 9 | `AGENTS.md` rules 18–21 (documents, visual check, cleanup, Codex headless); plan G3–G8 in HANDOVER and MPES §17 | `tests/unit/mpes.test.ts` (G3–G8 with versions) | PASS |
+
+## Checks
+
+| Check | Command | Result |
+|---|---|---|
+| Types | `npm run typecheck` | PASS |
+| Lint | `npm run lint` | PASS |
+| Unit and property | `npm test` | PASS, 18 files, 196 tests |
+| Domain coverage | `npm run coverage` | PASS, 98.5% of lines (≥ 95%) |
+| Full gate | `npm run verify` (typecheck, lint, unit, build check, build, Playwright in Chromium, Firefox and Edge, then perf) | VERIFY_RESULT |
+| CI, two consecutive green runs on one head | GitHub Actions `ci.yml` | CI_RESULT |
+| Owner visual check | `npm run gallery` → `.artifacts/review/0.5.1.0.html` | GALLERY_RESULT |
+
+## Codex rebuild review (item 6)
+
+A Codex session given only `docs/MPES.md` (copied alone into `.artifacts/codex-mpes-review/`) wrote a rebuild plan of 424 lines and listed 86 gaps. Fixed in MPES 4.3.0:
+
+- what a rebuild reproduces, what it takes from git history or `docs/CODEBASE.md`, and what is not yet specified (§0.2); the meaning of "no code"; owner-only actions;
+- the rollback contradiction (Appendix C named 3.6.0; the rebuild's rollback is tag `v4.1.0-dev.1`, whose HTML is in its `dist/`; §19.4);
+- the GitHub ban scoped to user documents; the maintenance history and workflow are source (§13.2, §19.3);
+- package freeze: `SHA256SUMS.txt` format, the package identity, evidence recorded after packaging does not reset the key (§19.3, §21.2); `RELEASE.md` contents; the package rebuild downloads its tools;
+- beta passes may use the delegated substitutes; 1.0.0.0 needs the real checks (§21.2);
+- 49 physical cards have layers, SE_PROCESS none (§10.2); the decode-once oracle scoped to kept images (§10.3); imagery counted in base64 bytes and 1 MB = 1 MiB (§10.3);
+- `perf:ref` is G3, not G2 (§14); fixture count (twelve files: the instructor auction is open then paused in one file, §16.3);
+- breaking changes in beta bump MINOR (§19.2); `npm run coverage` at every close-out (§19.6);
+- C-13: tests' scratch folders were in the system temp folder; they now live in `.artifacts/tmp/` (listed by `archive:prep` as regenerable), and the cleanup exception is stated.
+
+Assigned, not fixed here (recorded in MPES §0.2 and §17): the measurement protocol of the proxy (frame and memory definitions, samples, percentiles: G3); rule edge cases the unit tests decide but MPES does not yet state (untouched shells, per-phase field domains, repeated auction commands, clock changes, import repair versus rejection, parser whitespace, award tie display: G6). Exact art bytes, interface strings and styling values are in the tracked source (`docs/CODEBASE.md`) by design; a rebuild from MPES alone is conforming, not byte-identical.
+
+## Residual risks (unchanged)
+
+Real learners (S3); Narrator and NVDA users; no physical laptop test (D-16); CI runs Windows Server, not Windows 11; art quality is the owner's judgement (`docs/owner/art-review.md`, BLOCKED-owner).
+```
+
 ### docs/verification/source-fidelity.md
 
 Paths: `docs/verification/source-fidelity.md`. SHA-256 `919625b552e345c7b42dc574acbb918945b1af6ae34b01cf07969b7ccd3b3746`, 3519 bytes.
@@ -40049,5 +40105,5 @@ Keys and the commands that make each kind again:
 
 | Path | Bytes | SHA-256 | Why |
 |---|---:|---|---|
-| `docs/MPES.md` | 144644 | `af49b51e6f53d5a47d43cd574b77c426a0861eaeb6e10bc9047cdd3965d8e12f` | The specification, a clean-room document of its own (Omni 5.1.1 §333). |
+| `docs/MPES.md` | 144676 | `ece9ad53c9d2cbf5c84ace8a961c33ccc3c6d800ee8f9adf0ad99f91713c96f6` | The specification, a clean-room document of its own (Omni 5.1.1 §333). |
 | `docs/CODEBASE.md` | | | This file. |
