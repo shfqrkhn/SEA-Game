@@ -3,7 +3,7 @@
 A bilingual (English/French) classroom auction game. Teams plan a vehicle for a mission, bid for components in a facilitator-led auction, reconcile their build and submit a value-for-money bid. The whole game is one offline HTML file with every image embedded.
 
 - **Play:** open the game file (`SEA-Game-<version>.html` in a release package, or `dist/index.html` after a build) in a current Chrome, Edge or Firefox on **Windows 11** (the only supported platform). No installation, no network, no account.
-- **Status:** 0.5.1.0 beta, tagged `v0.5.1.0` (G2: owner fixes, six-vehicle chooser, review gallery, code-free specification, codebase file, backup preparation); not yet release-qualified. Next: G3 (proxy and runtime, 0.6.0.0). The rollback is tag `v4.1.0-dev.1`.
+- **Status:** 0.5.1.0 beta, tagged `v0.5.1.0` when its PR merges (G2: owner fixes, six-vehicle chooser, review gallery, code-free specification, codebase file, backup preparation); not yet release-qualified. Next: G3 (proxy and runtime, 0.6.0.0). The rollback is tag `v4.1.0-dev.1`.
 - **Copyright:** (c) 2026 Shafiqur Rahman Khan, the creator.
 - **Specification:** [docs/MPES.md](docs/MPES.md). **Current state and next steps:** [docs/HANDOVER.md](docs/HANDOVER.md). **Working rules:** [AGENTS.md](AGENTS.md).
 - **Guides:** [classroom quick start](docs/CLASSROOM_QUICK_START.md), [recovery guide](docs/RECOVERY_GUIDE.md).
@@ -19,7 +19,7 @@ npm run lint
 npm test
 npm run check          # builds twice and fails unless both builds are byte-identical
 npm run build          # writes dist/index.html (generated, never committed)
-npx playwright install chromium firefox   # Edge: the copy installed with Windows is used
+npm run browsers       # Chromium and Firefox into .artifacts/ms-playwright; Edge: the copy installed with Windows
 npm run e2e            # browser tests against the built file over file://
 npm run verify         # all of the above, in order
 ```

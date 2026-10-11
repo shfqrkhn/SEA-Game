@@ -7,14 +7,14 @@
 import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { existsSync, lstatSync, readFileSync, readdirSync, rmdirSync, unlinkSync, writeFileSync } from 'node:fs';
-import { join, relative, resolve, sep } from 'node:path';
+import { dirname, join, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 /** Everything removable: each one comes back from a command in RESTORE.md. */
 export const REGENERABLE: readonly { readonly path: string; readonly how: string }[] = [
   { path: 'node_modules', how: '`npm ci`' },
   { path: 'dist', how: '`npm run build`' },
-  { path: '.artifacts/ms-playwright', how: '`npx playwright install chromium firefox` (Edge: the copy installed with Windows)' },
+  { path: '.artifacts/ms-playwright', how: '`npm run browsers` (Edge: the copy installed with Windows)' },
   { path: '.artifacts/npm-cache', how: 'npm fills it again' },
   { path: '.artifacts/tools', how: 'Blender 5.2.2: download and unzip (art/README.md, URL and SHA-256 there)' },
   { path: '.artifacts/gallery', how: '`npm run gallery`' },
@@ -68,6 +68,10 @@ export function plan(root = ROOT): Entry[] {
   for (const { path, how } of targets) {
     const full = resolve(root, path);
     if (!full.startsWith(root + sep)) throw new Error(`${path}: outside the project`);
+    // A link or junction above the target (say .artifacts itself) would lead removal outside the project.
+    for (let up = dirname(full); up.length > root.length; up = dirname(up)) {
+      if (lstatSync(up, { throwIfNoEntry: false })?.isSymbolicLink()) throw new Error(`${path}: ${relative(root, up).split(sep).join('/')} is a link, refusing`);
+    }
     if (tracked.some(t => t === path || t.startsWith(`${path}/`))) throw new Error(`${path}: holds tracked files, refusing`);
     if (!existsSync(full)) continue;
     entries.push({ path, how, ...measure(full) });
@@ -92,7 +96,7 @@ export function restoreText(root: string, removed: readonly Entry[]): string {
     '',
     '1. Install Node.js 22 or later (CI uses Node 24) and Git.',
     '2. `npm ci` installs the exact packages of package-lock.json.',
-    '3. `npx playwright install chromium firefox` installs the test browsers into .artifacts/ms-playwright (playwright.config.ts); Edge is the copy installed with Windows.',
+    '3. `npm run browsers` installs Chromium and Firefox into .artifacts/ms-playwright, where playwright.config.ts looks (plain `npx playwright install` would use the user cache); Edge is the copy installed with Windows.',
     '4. `npm run build` writes dist/index.html.',
     `5. Check it: its SHA-256 must be \`${build || 'not recorded: dist/ was absent at preparation'}\`.`,
     '6. `npm run verify` runs every check; it must pass.',

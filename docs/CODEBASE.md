@@ -1,6 +1,6 @@
 # SEA Game codebase
 
-Version 0.5.1.0. Written by `npm run codebase` (scripts/codebase.ts); do not edit by hand. It holds all 1009 tracked files of the repository: 153 text files as 151 unique contents, 854 binary files by hash with the command that regenerates them, and 2 documents kept separately. With docs/MPES.md it is enough to rebuild the project.
+Version 0.5.1.0. Written by `npm run codebase` (scripts/codebase.ts); do not edit by hand. It holds all 1010 tracked files of the repository: 154 text files as 152 unique contents, 854 binary files by hash with the command that regenerates them, and 2 documents kept separately. With docs/MPES.md it is enough to rebuild the project.
 
 ## How to rebuild the tree
 
@@ -8,7 +8,7 @@ Version 0.5.1.0. Written by `npm run codebase` (scripts/codebase.ts); do not edi
 2. Each block ends with a line end, which belongs to the file unless the section says "no final line end"; then drop that one last LF. A section of 0 bytes has an empty block and makes an empty file.
 3. Check every file against the SHA-256 on its section.
 4. Make each binary file with the command of its key (table "Binary files"); check its hash when the command is deterministic.
-5. Then: `npm ci`, `npx playwright install chromium firefox` (Edge is the copy installed with Windows), `npm run verify`.
+5. Then: `npm ci`, `npm run browsers` (Chromium and Firefox into .artifacts/ms-playwright; Edge is the copy installed with Windows), `npm run verify`.
 
 ## Text files
 
@@ -186,7 +186,7 @@ THE SOFTWARE.
 
 ### README.md
 
-Paths: `README.md`. SHA-256 `27f75f6e93c3ee7628f3d975ebbd623bb79e9fbbab25b0174d0fa1a6bc5b7dc8`, 3238 bytes.
+Paths: `README.md`. SHA-256 `db257cb1e78170f9661d22821373a93681016ef58f0bb534013778cb36c98c32`, 3282 bytes.
 
 ````markdown
 # SEA Game: Systems Engineering Awareness
@@ -194,7 +194,7 @@ Paths: `README.md`. SHA-256 `27f75f6e93c3ee7628f3d975ebbd623bb79e9fbbab25b0174d0
 A bilingual (English/French) classroom auction game. Teams plan a vehicle for a mission, bid for components in a facilitator-led auction, reconcile their build and submit a value-for-money bid. The whole game is one offline HTML file with every image embedded.
 
 - **Play:** open the game file (`SEA-Game-<version>.html` in a release package, or `dist/index.html` after a build) in a current Chrome, Edge or Firefox on **Windows 11** (the only supported platform). No installation, no network, no account.
-- **Status:** 0.5.1.0 beta, tagged `v0.5.1.0` (G2: owner fixes, six-vehicle chooser, review gallery, code-free specification, codebase file, backup preparation); not yet release-qualified. Next: G3 (proxy and runtime, 0.6.0.0). The rollback is tag `v4.1.0-dev.1`.
+- **Status:** 0.5.1.0 beta, tagged `v0.5.1.0` when its PR merges (G2: owner fixes, six-vehicle chooser, review gallery, code-free specification, codebase file, backup preparation); not yet release-qualified. Next: G3 (proxy and runtime, 0.6.0.0). The rollback is tag `v4.1.0-dev.1`.
 - **Copyright:** (c) 2026 Shafiqur Rahman Khan, the creator.
 - **Specification:** [docs/MPES.md](docs/MPES.md). **Current state and next steps:** [docs/HANDOVER.md](docs/HANDOVER.md). **Working rules:** [AGENTS.md](AGENTS.md).
 - **Guides:** [classroom quick start](docs/CLASSROOM_QUICK_START.md), [recovery guide](docs/RECOVERY_GUIDE.md).
@@ -210,7 +210,7 @@ npm run lint
 npm test
 npm run check          # builds twice and fails unless both builds are byte-identical
 npm run build          # writes dist/index.html (generated, never committed)
-npx playwright install chromium firefox   # Edge: the copy installed with Windows is used
+npm run browsers       # Chromium and Firefox into .artifacts/ms-playwright; Edge: the copy installed with Windows
 npm run e2e            # browser tests against the built file over file://
 npm run verify         # all of the above, in order
 ```
@@ -29907,7 +29907,7 @@ Paths: `package-lock.json`. SHA-256 `f276bde2de3901c902cb2c1f63c5734350301a3b8db
 
 ### package.json
 
-Paths: `package.json`. SHA-256 `518d2237ecdc3deba92c83c54cbca1b1b7f2ad7f08d58a5ab63dfe509be53118`, 1432 bytes.
+Paths: `package.json`. SHA-256 `01e143550b73c465111702d1c16c6394c6c29f521e2f75162a8fa0f95affeef8`, 1476 bytes.
 
 ```json
 {
@@ -29931,6 +29931,7 @@ Paths: `package.json`. SHA-256 `518d2237ecdc3deba92c83c54cbca1b1b7f2ad7f08d58a5a
     "check": "node build/build.ts --check",
     "e2e": "playwright test",
     "archive:prep": "node scripts/archive-prep.ts",
+    "browsers": "node scripts/browsers.ts",
     "codebase": "node scripts/codebase.ts",
     "gallery": "node scripts/gallery.ts",
     "verify": "npm run typecheck && npm run lint && npm run test && npm run check && npm run build && npm run e2e"
@@ -30010,7 +30011,7 @@ export default defineConfig({
 
 ### scripts/archive-prep.ts
 
-Paths: `scripts/archive-prep.ts`. SHA-256 `7583fcbda7427947d3cb00c9be4e8d2ba6c36c57c43633553ffce631789eea23`, 7505 bytes.
+Paths: `scripts/archive-prep.ts`. SHA-256 `a14b5ddb8762b530f636b13bc19391147257399f9c00f39fbfab83df72868436`, 7893 bytes.
 
 ```ts
 // Backup preparation (G2 item 8, AGENTS.md): the smallest project folder that still rebuilds, runs and is maintained
@@ -30022,14 +30023,14 @@ Paths: `scripts/archive-prep.ts`. SHA-256 `7583fcbda7427947d3cb00c9be4e8d2ba6c36
 import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { existsSync, lstatSync, readFileSync, readdirSync, rmdirSync, unlinkSync, writeFileSync } from 'node:fs';
-import { join, relative, resolve, sep } from 'node:path';
+import { dirname, join, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 /** Everything removable: each one comes back from a command in RESTORE.md. */
 export const REGENERABLE: readonly { readonly path: string; readonly how: string }[] = [
   { path: 'node_modules', how: '`npm ci`' },
   { path: 'dist', how: '`npm run build`' },
-  { path: '.artifacts/ms-playwright', how: '`npx playwright install chromium firefox` (Edge: the copy installed with Windows)' },
+  { path: '.artifacts/ms-playwright', how: '`npm run browsers` (Edge: the copy installed with Windows)' },
   { path: '.artifacts/npm-cache', how: 'npm fills it again' },
   { path: '.artifacts/tools', how: 'Blender 5.2.2: download and unzip (art/README.md, URL and SHA-256 there)' },
   { path: '.artifacts/gallery', how: '`npm run gallery`' },
@@ -30083,6 +30084,10 @@ export function plan(root = ROOT): Entry[] {
   for (const { path, how } of targets) {
     const full = resolve(root, path);
     if (!full.startsWith(root + sep)) throw new Error(`${path}: outside the project`);
+    // A link or junction above the target (say .artifacts itself) would lead removal outside the project.
+    for (let up = dirname(full); up.length > root.length; up = dirname(up)) {
+      if (lstatSync(up, { throwIfNoEntry: false })?.isSymbolicLink()) throw new Error(`${path}: ${relative(root, up).split(sep).join('/')} is a link, refusing`);
+    }
     if (tracked.some(t => t === path || t.startsWith(`${path}/`))) throw new Error(`${path}: holds tracked files, refusing`);
     if (!existsSync(full)) continue;
     entries.push({ path, how, ...measure(full) });
@@ -30107,7 +30112,7 @@ export function restoreText(root: string, removed: readonly Entry[]): string {
     '',
     '1. Install Node.js 22 or later (CI uses Node 24) and Git.',
     '2. `npm ci` installs the exact packages of package-lock.json.',
-    '3. `npx playwright install chromium firefox` installs the test browsers into .artifacts/ms-playwright (playwright.config.ts); Edge is the copy installed with Windows.',
+    '3. `npm run browsers` installs Chromium and Firefox into .artifacts/ms-playwright, where playwright.config.ts looks (plain `npx playwright install` would use the user cache); Edge is the copy installed with Windows.',
     '4. `npm run build` writes dist/index.html.',
     `5. Check it: its SHA-256 must be \`${build || 'not recorded: dist/ was absent at preparation'}\`.`,
     '6. `npm run verify` runs every check; it must pass.',
@@ -30142,9 +30147,41 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
 }
 ```
 
+### scripts/browsers.ts
+
+Paths: `scripts/browsers.ts`. SHA-256 `e8aa61de3af6aa06d30710f0dbea8c94ba0d8c12e3d8885c939129226bcb9d9f`, 1525 bytes.
+
+```ts
+// Test browsers into the project (MPES C-13): npm run browsers [-- <engine> ...] (default chromium firefox). `npx
+// playwright install` alone does not read playwright.config.ts, so it would install into the user's cache and the tests,
+// which look in .artifacts/ms-playwright, would not find them. Edge is the copy installed with Windows. On CI, or when
+// PLAYWRIGHT_BROWSERS_PATH is already set, that setting is kept, as playwright.config.ts does.
+import { spawnSync } from 'node:child_process';
+import { resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const ROOT = resolve(import.meta.dirname, '..');
+
+/** The folder playwright.config.ts reads browsers from, or undefined when the environment decides. */
+export function browsersPath(env: NodeJS.ProcessEnv = process.env, root = ROOT): string | undefined {
+  if (env.CI || env.PLAYWRIGHT_BROWSERS_PATH) return env.PLAYWRIGHT_BROWSERS_PATH;
+  return resolve(root, '.artifacts', 'ms-playwright');
+}
+
+if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  const engines = process.argv.slice(2).filter(a => !a.startsWith('-'));
+  const path = browsersPath();
+  const run = spawnSync(process.platform === 'win32' ? 'npx.cmd' : 'npx', ['playwright', 'install', ...(engines.length ? engines : ['chromium', 'firefox'])], {
+    cwd: ROOT, stdio: 'inherit', shell: process.platform === 'win32',
+    env: { ...process.env, ...(path ? { PLAYWRIGHT_BROWSERS_PATH: path } : {}) },
+  });
+  process.exitCode = run.status ?? 1;
+}
+```
+
 ### scripts/codebase.ts
 
-Paths: `scripts/codebase.ts`. SHA-256 `a2482181487d8718860ac9daa0a5a01ef02f15515b4c1b4d379cb0fa8d728bb5`, 7920 bytes.
+Paths: `scripts/codebase.ts`. SHA-256 `90e36495a0df3098a678d0efbf8c1df773a0ffec007840d0c28d52e64cbb47d9`, 7949 bytes.
 
 ```ts
 // docs/CODEBASE.md (G2 item 7): every tracked text file verbatim, each unique content once, with its paths and SHA-256;
@@ -30232,7 +30269,7 @@ export function codebase(root = ROOT): string {
     '2. Each block ends with a line end, which belongs to the file unless the section says "no final line end"; then drop that one last LF. A section of 0 bytes has an empty block and makes an empty file.',
     '3. Check every file against the SHA-256 on its section.',
     '4. Make each binary file with the command of its key (table "Binary files"); check its hash when the command is deterministic.',
-    '5. Then: `npm ci`, `npx playwright install chromium firefox` (Edge is the copy installed with Windows), `npm run verify`.',
+    '5. Then: `npm ci`, `npm run browsers` (Chromium and Firefox into .artifacts/ms-playwright; Edge is the copy installed with Windows), `npm run verify`.',
     '',
     '## Text files',
     '',
@@ -30267,7 +30304,7 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
 
 ### scripts/gallery.ts
 
-Paths: `scripts/gallery.ts`. SHA-256 `73a927bb8cd080747109bd2895ff49269413b556a24f5fb84f3f319015c6d755`, 9639 bytes.
+Paths: `scripts/gallery.ts`. SHA-256 `bb4e0916225325bc7bafa6d9cc9ed2c3ff7249b175b1d00998afd818de9971bd`, 10338 bytes.
 
 ```ts
 // Visual review gallery (G2 item 4, AGENTS.md visual check). Usage: npm run gallery [-- --since <tag>] [--notes <file>]
@@ -30287,7 +30324,8 @@ const arg = (name: string) => { const i = process.argv.indexOf(name); return i >
 const git = (...args: string[]) => execFileSync('git', args, { cwd: ROOT, encoding: 'utf8' }).trim();
 const npx = process.platform === 'win32' ? 'npx.cmd' : 'npx';
 
-/** The tag's game file, built once from `git archive` into .artifacts/gallery/<tag>/ with this checkout's packages. */
+/** The tag's game file, built once from `git archive` into .artifacts/gallery/<tag>/: with this checkout's packages when
+ *  the tag's lockfile is the same, otherwise with the tag's own (`npm ci`), so the before-image is the tag as released. */
 function buildTag(tag: string): string {
   const tree = join(WORK, tag);
   const out = join(tree, 'dist', 'index.html');
@@ -30297,19 +30335,25 @@ function buildTag(tag: string): string {
   // Windows' own tar: the Git Bash tar earlier on PATH cannot open drive-letter paths.
   const tar = process.platform === 'win32' ? join(process.env.SystemRoot ?? 'C:\\Windows', 'System32', 'tar.exe') : 'tar';
   execFileSync(tar, ['-x', '-C', tree], { input: archive });
-  if (!existsSync(join(tree, 'node_modules'))) symlinkSync(join(ROOT, 'node_modules'), join(tree, 'node_modules'), 'junction');
+  if (!existsSync(join(tree, 'node_modules'))) {
+    const same = readFileSync(join(tree, 'package-lock.json'), 'utf8') === readFileSync(join(ROOT, 'package-lock.json'), 'utf8');
+    if (same) symlinkSync(join(ROOT, 'node_modules'), join(tree, 'node_modules'), 'junction');
+    else execFileSync(process.platform === 'win32' ? 'npm.cmd' : 'npm', ['ci', '--no-audit', '--no-fund'], { cwd: tree, stdio: 'inherit', shell: process.platform === 'win32' });
+  }
   execFileSync(process.execPath, ['build/build.ts'], { cwd: tree, stdio: 'inherit' });
   return out;
 }
 
-/** Captures every shot of one game file; a shot that fails (a view an older tag lacks) leaves no fresh file. */
-function capture(dist: string, out: string): void {
+/** Captures every shot of one game file; a shot that fails (a view an older tag lacks) leaves no fresh file. True when
+ *  every shot was captured. */
+function capture(dist: string, out: string): boolean {
   mkdirSync(out, { recursive: true });
   const run = spawnSync(npx, ['playwright', 'test', '--config', 'scripts/gallery/playwright.config.ts'], {
     cwd: ROOT, stdio: 'inherit', shell: process.platform === 'win32',
     env: { ...process.env, SEA_GALLERY_DIST: dist, SEA_GALLERY_OUT: out },
   });
   if (run.status !== 0) console.warn(`Some shots of ${dist} failed; they are marked missing in the gallery.`);
+  return run.status === 0;
 }
 
 /** A capture written since `after` (ms); older files are left from earlier runs and count as missing. */
@@ -30340,10 +30384,9 @@ async function main(): Promise<void> {
   const after = join(WORK, 'after'), before = join(WORK, `before-${since}`);
   const started = Date.now() - 1000;
   capture(join(ROOT, 'dist', 'index.html'), after);
-  if (!existsSync(join(before, '.complete'))) {
-    capture(buildTag(since), before);
-    writeFileSync(join(before, '.complete'), since);
-  }
+  // The baseline is kept only when every shot of it was captured; otherwise it is captured again next time, so a failed
+  // capture never passes for a view the tag lacked ("New since").
+  if (!existsSync(join(before, '.complete')) && capture(buildTag(since), before)) writeFileSync(join(before, '.complete'), since);
 
   const list = shots();
   const rows: { shot: Shot; status: 'changed' | 'new' | 'same' | 'missing'; html: string }[] = [];
@@ -37420,7 +37463,7 @@ Paths: `tests/fixtures/legacy/student-practice.json`. SHA-256 `fbf972503388c8ac6
 
 ### tests/unit/archive.test.ts
 
-Paths: `tests/unit/archive.test.ts`. SHA-256 `55f18371ddfe00b8218510fd05c47c88d792635460b6cb45b66bab32acf3536f`, 3702 bytes.
+Paths: `tests/unit/archive.test.ts`. SHA-256 `aa88f59b4d741d3cfaf80cd1d51ea07e012a21c1b46cb4de0150f812d065dbf4`, 4786 bytes.
 
 ```ts
 // G2 item 8: npm run archive:prep -- --apply leaves the smallest folder that restores to the same build. On a fresh
@@ -37431,6 +37474,7 @@ import { existsSync, mkdirSync, mkdtempSync, readFileSync, symlinkSync, writeFil
 import { dirname, join, resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { plan, prepare } from '../../scripts/archive-prep.ts';
+import { browsersPath } from '../../scripts/browsers.ts';
 
 const ROOT = resolve(import.meta.dirname, '../..');
 const npm = (cwd: string, ...args: string[]) => execFileSync(process.platform === 'win32' ? 'npm.cmd' : 'npm', args, { cwd, stdio: 'pipe', shell: process.platform === 'win32' });
@@ -37468,6 +37512,23 @@ describe('archive:prep', () => {
     npm(dir, 'run', 'build');
     expect(hash(join(dir, 'dist', 'index.html'))).toBe(built);
   }, 600_000);
+
+  it('refuses a target under a linked folder, which would lead removal outside the project', () => {
+    const dir = scratch('sea-archive-linked-'), outside = scratch('sea-archive-outside-');
+    execFileSync('git', ['init', '--quiet'], { cwd: dir });
+    put(join(outside, 'gallery', 'precious.txt'));
+    symlinkSync(outside, join(dir, '.artifacts'), 'junction');
+    expect(() => plan(dir)).toThrow(/\.artifacts is a link/);
+    expect(() => prepare(dir, true)).toThrow(/\.artifacts is a link/);
+    expect(existsSync(join(outside, 'gallery', 'precious.txt'))).toBe(true);
+  });
+
+  it('installs test browsers where playwright.config.ts looks for them', () => {
+    expect(browsersPath({}, ROOT)).toBe(join(ROOT, '.artifacts', 'ms-playwright'));
+    expect(browsersPath({ PLAYWRIGHT_BROWSERS_PATH: 'X:/b' }, ROOT)).toBe('X:/b');
+    expect(browsersPath({ CI: 'true' }, ROOT)).toBeUndefined();
+    expect(readFileSync(join(ROOT, 'playwright.config.ts'), 'utf8')).toContain("path.resolve('.artifacts/ms-playwright')");
+  });
 
   it('refuses a path that holds a tracked file', () => {
     const dir = scratch('sea-archive-tracked-');
@@ -40105,5 +40166,5 @@ Keys and the commands that make each kind again:
 
 | Path | Bytes | SHA-256 | Why |
 |---|---:|---|---|
-| `docs/MPES.md` | 144676 | `ece9ad53c9d2cbf5c84ace8a961c33ccc3c6d800ee8f9adf0ad99f91713c96f6` | The specification, a clean-room document of its own (Omni 5.1.1 §333). |
+| `docs/MPES.md` | 145261 | `0afe3d84f3ea36f48682cff9313f66221afc72dc1df7b1ab2828fb424047896a` | The specification, a clean-room document of its own (Omni 5.1.1 §333). |
 | `docs/CODEBASE.md` | | | This file. |

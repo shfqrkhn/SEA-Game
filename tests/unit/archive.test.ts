@@ -6,6 +6,7 @@ import { existsSync, mkdirSync, mkdtempSync, readFileSync, symlinkSync, writeFil
 import { dirname, join, resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { plan, prepare } from '../../scripts/archive-prep.ts';
+import { browsersPath } from '../../scripts/browsers.ts';
 
 const ROOT = resolve(import.meta.dirname, '../..');
 const npm = (cwd: string, ...args: string[]) => execFileSync(process.platform === 'win32' ? 'npm.cmd' : 'npm', args, { cwd, stdio: 'pipe', shell: process.platform === 'win32' });
@@ -43,6 +44,23 @@ describe('archive:prep', () => {
     npm(dir, 'run', 'build');
     expect(hash(join(dir, 'dist', 'index.html'))).toBe(built);
   }, 600_000);
+
+  it('refuses a target under a linked folder, which would lead removal outside the project', () => {
+    const dir = scratch('sea-archive-linked-'), outside = scratch('sea-archive-outside-');
+    execFileSync('git', ['init', '--quiet'], { cwd: dir });
+    put(join(outside, 'gallery', 'precious.txt'));
+    symlinkSync(outside, join(dir, '.artifacts'), 'junction');
+    expect(() => plan(dir)).toThrow(/\.artifacts is a link/);
+    expect(() => prepare(dir, true)).toThrow(/\.artifacts is a link/);
+    expect(existsSync(join(outside, 'gallery', 'precious.txt'))).toBe(true);
+  });
+
+  it('installs test browsers where playwright.config.ts looks for them', () => {
+    expect(browsersPath({}, ROOT)).toBe(join(ROOT, '.artifacts', 'ms-playwright'));
+    expect(browsersPath({ PLAYWRIGHT_BROWSERS_PATH: 'X:/b' }, ROOT)).toBe('X:/b');
+    expect(browsersPath({ CI: 'true' }, ROOT)).toBeUndefined();
+    expect(readFileSync(join(ROOT, 'playwright.config.ts'), 'utf8')).toContain("path.resolve('.artifacts/ms-playwright')");
+  });
 
   it('refuses a path that holds a tracked file', () => {
     const dir = scratch('sea-archive-tracked-');

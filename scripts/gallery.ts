@@ -15,7 +15,8 @@ const arg = (name: string) => { const i = process.argv.indexOf(name); return i >
 const git = (...args: string[]) => execFileSync('git', args, { cwd: ROOT, encoding: 'utf8' }).trim();
 const npx = process.platform === 'win32' ? 'npx.cmd' : 'npx';
 
-/** The tag's game file, built once from `git archive` into .artifacts/gallery/<tag>/ with this checkout's packages. */
+/** The tag's game file, built once from `git archive` into .artifacts/gallery/<tag>/: with this checkout's packages when
+ *  the tag's lockfile is the same, otherwise with the tag's own (`npm ci`), so the before-image is the tag as released. */
 function buildTag(tag: string): string {
   const tree = join(WORK, tag);
   const out = join(tree, 'dist', 'index.html');
@@ -25,19 +26,25 @@ function buildTag(tag: string): string {
   // Windows' own tar: the Git Bash tar earlier on PATH cannot open drive-letter paths.
   const tar = process.platform === 'win32' ? join(process.env.SystemRoot ?? 'C:\\Windows', 'System32', 'tar.exe') : 'tar';
   execFileSync(tar, ['-x', '-C', tree], { input: archive });
-  if (!existsSync(join(tree, 'node_modules'))) symlinkSync(join(ROOT, 'node_modules'), join(tree, 'node_modules'), 'junction');
+  if (!existsSync(join(tree, 'node_modules'))) {
+    const same = readFileSync(join(tree, 'package-lock.json'), 'utf8') === readFileSync(join(ROOT, 'package-lock.json'), 'utf8');
+    if (same) symlinkSync(join(ROOT, 'node_modules'), join(tree, 'node_modules'), 'junction');
+    else execFileSync(process.platform === 'win32' ? 'npm.cmd' : 'npm', ['ci', '--no-audit', '--no-fund'], { cwd: tree, stdio: 'inherit', shell: process.platform === 'win32' });
+  }
   execFileSync(process.execPath, ['build/build.ts'], { cwd: tree, stdio: 'inherit' });
   return out;
 }
 
-/** Captures every shot of one game file; a shot that fails (a view an older tag lacks) leaves no fresh file. */
-function capture(dist: string, out: string): void {
+/** Captures every shot of one game file; a shot that fails (a view an older tag lacks) leaves no fresh file. True when
+ *  every shot was captured. */
+function capture(dist: string, out: string): boolean {
   mkdirSync(out, { recursive: true });
   const run = spawnSync(npx, ['playwright', 'test', '--config', 'scripts/gallery/playwright.config.ts'], {
     cwd: ROOT, stdio: 'inherit', shell: process.platform === 'win32',
     env: { ...process.env, SEA_GALLERY_DIST: dist, SEA_GALLERY_OUT: out },
   });
   if (run.status !== 0) console.warn(`Some shots of ${dist} failed; they are marked missing in the gallery.`);
+  return run.status === 0;
 }
 
 /** A capture written since `after` (ms); older files are left from earlier runs and count as missing. */
@@ -68,10 +75,9 @@ async function main(): Promise<void> {
   const after = join(WORK, 'after'), before = join(WORK, `before-${since}`);
   const started = Date.now() - 1000;
   capture(join(ROOT, 'dist', 'index.html'), after);
-  if (!existsSync(join(before, '.complete'))) {
-    capture(buildTag(since), before);
-    writeFileSync(join(before, '.complete'), since);
-  }
+  // The baseline is kept only when every shot of it was captured; otherwise it is captured again next time, so a failed
+  // capture never passes for a view the tag lacked ("New since").
+  if (!existsSync(join(before, '.complete')) && capture(buildTag(since), before)) writeFileSync(join(before, '.complete'), since);
 
   const list = shots();
   const rows: { shot: Shot; status: 'changed' | 'new' | 'same' | 'missing'; html: string }[] = [];
