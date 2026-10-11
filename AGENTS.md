@@ -16,3 +16,4 @@
 14. Work on a branch with a PR; merge only on green CI and tag each goal. End commit messages with `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`.
 15. Never ask the owner a question. Anything only a person can do is reported as BLOCKED-owner, with a script of one page or less in `docs/owner/`.
 16. When KPIs conflict (MPES §1.4): teaching and reliability come first, then learnability and workload, then performance and any-classroom (floors that are never traded away), then realism, then maintainability. Every effect must teach or confirm something.
+17. Every change bumps the matching version by its scale (SemVer: patch for a fix, minor for a feature or a spec addition, major for a break; pre-releases `5.0.0-dev.N`, `rc.N`), with a changelog row in the same PR: `package.json` for the game, MPES for the specification. A version that is not yet tagged is not bumped again.

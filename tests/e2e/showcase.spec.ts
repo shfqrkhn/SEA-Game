@@ -157,6 +157,16 @@ test('stills fallback decodes each layer once: purchases, angle changes and turn
     } as typeof create;
     const NativeImage = window.Image;
     window.Image = function (width?: number, height?: number) { return stamp(new NativeImage(width, height)); } as unknown as typeof Image;
+    // Background decodes (images not on screen) in flight at once: each competes with what the player is waiting
+    // for (CI run 38133130929: four at once made a purchase take 117 ms, budget 100).
+    let background = 0;
+    const decode = HTMLImageElement.prototype.decode;
+    HTMLImageElement.prototype.decode = function (this: HTMLImageElement) {
+      if (this.isConnected) return decode.call(this);
+      const w = window as unknown as { seaBackgroundMax: number };
+      w.seaBackgroundMax = Math.max(w.seaBackgroundMax ?? 0, ++background);
+      return decode.call(this).finally(() => { background--; });
+    };
     // A machine that is never idle, like the CI runner of run 38106258905: idle callbacks run only at their timeout.
     window.requestIdleCallback = (callback, options) => window.setTimeout(() => callback({ didTimeout: true, timeRemaining: () => 0 }), options?.timeout ?? 2 ** 31 - 1);
   });
@@ -202,6 +212,8 @@ test('stills fallback decodes each layer once: purchases, angle changes and turn
     await expect(showcase.locator(`img[data-frame="${frame}"]`)).toHaveCount(1);
     expect(await fresh(t), `turntable frame ${frame} was prepared in advance`).toEqual([]);
   }
+  expect(await sp.evaluate(() => (window as unknown as { seaBackgroundMax: number }).seaBackgroundMax),
+    'background decodes run one at a time').toBe(1);
 });
 
 test('every vehicle has its showcase, in 3D and in stills, and every lot its card render', async ({ page, browser }) => {

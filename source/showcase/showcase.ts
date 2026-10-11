@@ -218,8 +218,8 @@ export class Showcase {
   /**
    * Prepares what the player can ask for next, nearest first: from an angle, the other angle and the turntable frame
    * shown on entry with the frames either side; when turning, the frames ahead in the direction of travel, then
-   * behind. The images exist at once, so a step never creates one, and decode once the shown view has decoded, so
-   * they never delay it. Not left for idle time: a busy machine may have none before the next step (CI run
+   * behind. The images exist at once, so a step never creates one, and decode one at a time once the shown view has
+   * decoded, so they never delay it. Not left for idle time: a busy machine may have none before the next step (CI run
    * 38106258905). `data-prepared` reports when it is done.
    */
   #prepare(stage: HTMLElement, vehicle: string, parts: readonly ShowcasePart[]): void {
@@ -231,11 +231,16 @@ export class Showcase {
       : [...this.#layers(vehicle, this.#view === 'front' ? 'rear' : 'front', parts, 0),
         ...[0, 1, -1].flatMap(step => this.#layers(vehicle, 'turntable', parts, this.#frame + step))];
     const images = next.map(([render]) => this.#images.get(render.src));
-    const decode = (all: HTMLImageElement[]) => Promise.all(all.map(img => img.decode().catch(() => undefined)));
+    // One at a time, nearest first, stopping when the view changes: each background decode competes with the next
+    // image the player waits for (CI run 38133130929: four at once made a purchase take 117 ms).
     void (async () => {
-      await decode([...stage.querySelectorAll('img')]);
-      if (generation !== this.#generation) return;
-      await decode(images);
+      await Promise.all([...stage.querySelectorAll('img')].map(img => img.decode().catch(() => undefined)));
+      for (const img of images) {
+        await this.#background; // a decode an earlier view started is still running
+        if (generation !== this.#generation) return;
+        this.#background = img.decode().catch(() => undefined);
+        await this.#background;
+      }
       if (generation === this.#generation) this.element.setAttribute('data-prepared', 'true');
     })();
   }
@@ -278,4 +283,5 @@ export class Showcase {
   readonly #images = new DecodedImages();
   #generation = 0;
   #direction: 1 | -1 = 1;
+  #background: Promise<void> = Promise.resolve();
 }
