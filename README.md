@@ -3,7 +3,7 @@
 A bilingual (English/French) classroom auction game. Teams plan a vehicle for a mission, bid for components in a facilitator-led auction, reconcile their build and submit a value-for-money bid. The whole game is one offline HTML file with every image embedded.
 
 - **Play:** open the game file (`SEA-Game-<version>.html` in a release package, or `dist/index.html` after a build) in a current Chrome, Edge or Firefox on **Windows 11** (the only supported platform). No installation, no network, no account.
-- **Status:** 0.5.0.0 beta (clean-room rebuild, 3D showcase and V2 art); not yet release-qualified. The rollback is tag `v4.1.0-dev.1`.
+- **Status:** 0.5.0.0 beta, tagged `v0.5.0.0` (clean-room rebuild, 3D showcase and V2 art); not yet release-qualified. The rollback is tag `v4.1.0-dev.1`.
 - **Specification:** [docs/MPES.md](docs/MPES.md). **Current state and next steps:** [docs/HANDOVER.md](docs/HANDOVER.md). **Working rules:** [AGENTS.md](AGENTS.md).
 - **Guides:** [classroom quick start](docs/CLASSROOM_QUICK_START.md), [recovery guide](docs/RECOVERY_GUIDE.md).
 
