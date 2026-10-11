@@ -1,6 +1,6 @@
 {
   "name": "sea-game",
-  "version": "5.0.0-dev.0",
+  "version": "5.0.0-dev.1",
   "private": true,
   "description": "Systems Engineering Awareness: offline single-file classroom auction game (EN/FR)",
   "license": "MIT",

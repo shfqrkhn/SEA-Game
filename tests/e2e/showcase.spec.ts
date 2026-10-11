@@ -157,6 +157,8 @@ test('stills fallback decodes each layer once: purchases, angle changes and turn
     } as typeof create;
     const NativeImage = window.Image;
     window.Image = function (width?: number, height?: number) { return stamp(new NativeImage(width, height)); } as unknown as typeof Image;
+    // A machine that is never idle, like the CI runner of run 38106258905: idle callbacks run only at their timeout.
+    window.requestIdleCallback = (callback, options) => window.setTimeout(() => callback({ didTimeout: true, timeRemaining: () => 0 }), options?.timeout ?? 2 ** 31 - 1);
   });
   await ip.goto(gameUrl('?role=instructor&lang=en'));
   const code = await instructorSetup(ip, { teams: 2, reveal: 'JIT', timed: false, missions: ['RECOVERY', 'TROOP'] });
@@ -184,14 +186,22 @@ test('stills fallback decodes each layer once: purchases, angle changes and turn
   await expect(showcase.locator('img[data-layer="base"]')).toHaveAttribute('data-angle', 'rear');
   expect(await fresh(t), 'the rear angle was decoded in advance').toEqual([]);
 
-  await showcase.getByRole('radio', { name: 'Turntable' }).check();
+  // A person may scrub the moment the turntable opens and keep going (CI run 38106258905: the frames either side were
+  // still waiting for idle time and two steps took 410 and 720 ms). No pause between steps.
   await expect(showcase).toHaveAttribute('data-prepared', 'true');
+  t = await now();
+  await showcase.getByRole('radio', { name: 'Turntable' }).check();
+  await expect(showcase.locator('img[data-frame="0"]')).toHaveCount(1);
+  expect(await fresh(t), 'the turntable frame was prepared in advance').toEqual([]);
   const scrub = showcase.getByRole('slider');
   await scrub.focus();
-  t = await now();
-  await sp.keyboard.press('ArrowRight');
-  await expect(showcase.locator('img[data-frame="1"]')).toHaveCount(1);
-  expect(await fresh(t), 'the next turntable frame was decoded in advance').toEqual([]);
+  const last = Number(await scrub.getAttribute('max'));
+  for (const [key, frame] of [['ArrowRight', 1], ['ArrowRight', 2], ['ArrowLeft', 1], ['ArrowLeft', 0], ['End', last]] as const) {
+    t = await now();
+    await sp.keyboard.press(key);
+    await expect(showcase.locator(`img[data-frame="${frame}"]`)).toHaveCount(1);
+    expect(await fresh(t), `turntable frame ${frame} was prepared in advance`).toEqual([]);
+  }
 });
 
 test('every vehicle has its showcase, in 3D and in stills, and every lot its card render', async ({ page, browser }) => {

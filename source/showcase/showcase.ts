@@ -216,22 +216,28 @@ export class Showcase {
   }
 
   /**
-   * When the page is idle, decodes what the player can ask for next: the other angle and the turntable from an
-   * angle, the frames either side when turning. `data-prepared` reports when it is done.
+   * Prepares what the player can ask for next, nearest first: from an angle, the other angle and the turntable frame
+   * shown on entry with the frames either side; when turning, the frames ahead in the direction of travel, then
+   * behind. The images exist at once, so a step never creates one, and decode once the shown view has decoded, so
+   * they never delay it. Not left for idle time: a busy machine may have none before the next step (CI run
+   * 38106258905). `data-prepared` reports when it is done.
    */
-  #prepare(vehicle: string, parts: readonly ShowcasePart[]): void {
+  #prepare(stage: HTMLElement, vehicle: string, parts: readonly ShowcasePart[]): void {
     const generation = ++this.#generation;
     this.element.setAttribute('data-prepared', 'false');
+    const d = this.#direction;
     const next: [Render, Record<string, string>][] = this.#view === 'turntable'
-      ? [-2, -1, 1, 2].flatMap(step => this.#layers(vehicle, 'turntable', parts, this.#frame + step))
-      : [...this.#layers(vehicle, this.#view === 'front' ? 'rear' : 'front', parts, 0), ...this.#layers(vehicle, 'turntable', parts, this.#frame)];
-    const run = () => {
+      ? [d, -d, 2 * d, -2 * d, 3 * d].flatMap(step => this.#layers(vehicle, 'turntable', parts, this.#frame + step))
+      : [...this.#layers(vehicle, this.#view === 'front' ? 'rear' : 'front', parts, 0),
+        ...[0, 1, -1].flatMap(step => this.#layers(vehicle, 'turntable', parts, this.#frame + step))];
+    const images = next.map(([render]) => this.#images.get(render.src));
+    const decode = (all: HTMLImageElement[]) => Promise.all(all.map(img => img.decode().catch(() => undefined)));
+    void (async () => {
+      await decode([...stage.querySelectorAll('img')]);
       if (generation !== this.#generation) return;
-      void Promise.all(next.map(([render]) => this.#images.prepare(render.src))).then(() => {
-        if (generation === this.#generation) this.element.setAttribute('data-prepared', 'true');
-      });
-    };
-    if (typeof requestIdleCallback === 'function') requestIdleCallback(run, { timeout: 500 }); else setTimeout(run, 0);
+      await decode(images);
+      if (generation === this.#generation) this.element.setAttribute('data-prepared', 'true');
+    })();
   }
 
   #updateStills(mission: MissionId, parts: readonly ShowcasePart[], label: string, text: ShowcaseText): HTMLElement {
@@ -251,9 +257,12 @@ export class Showcase {
       ? h('div', { class: 'field' }, h('label', { for: 'showcase-turn', text: text.rotate }),
         h('input', { type: 'range', id: 'showcase-turn', min: '0', max: String(turntable.length - 1), step: '1', value: String(this.#frame),
           on: { input: e => {
-            this.#frame = Number((e.target as HTMLInputElement).value);
+            const frame = Number((e.target as HTMLInputElement).value), count = turntable.length;
+            // Direction of travel on the ring: End from frame 0 is one step back.
+            this.#direction = (frame - this.#frame + count) % count <= count / 2 ? 1 : -1;
+            this.#frame = frame;
             this.#draw(stage, this.#layers(vehicle, 'turntable', parts, this.#frame));
-            this.#prepare(vehicle, parts);
+            this.#prepare(stage, vehicle, parts);
           } } }))
       : null;
     const physical = parts.filter(p => p.category !== 'SE_PROCESS');
@@ -262,10 +271,11 @@ export class Showcase {
     const note = turning ? h('p', { class: 'muted small', text: text.turntableNote }) : '';
     this.element.replaceChildren(h('h2', { id: 'showcase-heading', text: text.title }), stage, note, slotNote, views, scrub ?? '', ...this.#lists(parts, text));
     if (focused?.startsWith('showcase-')) document.getElementById(focused)?.focus();
-    this.#prepare(vehicle, parts);
+    this.#prepare(stage, vehicle, parts);
     return this.element;
   }
 
   readonly #images = new DecodedImages();
   #generation = 0;
+  #direction: 1 | -1 = 1;
 }
