@@ -18,6 +18,7 @@
     "build": "node build/build.ts",
     "check": "node build/build.ts --check",
     "e2e": "playwright test",
+    "codebase": "node scripts/codebase.ts",
     "gallery": "node scripts/gallery.ts",
     "verify": "npm run typecheck && npm run lint && npm run test && npm run check && npm run build && npm run e2e"
   },
