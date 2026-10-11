@@ -22,6 +22,7 @@ export const REGENERABLE: readonly { readonly path: string; readonly how: string
   { path: '.artifacts/test-results', how: '`npm run e2e`' },
   { path: '.artifacts/test-results-sw', how: '`npm run e2e`' },
   { path: '.artifacts/coverage', how: '`npx vitest run --coverage`' },
+  { path: '.artifacts/tmp', how: 'scratch folders of the unit tests, made again by `npm test`' },
   { path: 'test-results', how: '`npm run e2e`' },
   { path: 'playwright-report', how: '`npm run e2e`' },
   { path: 'coverage', how: '`npx vitest run --coverage`' },

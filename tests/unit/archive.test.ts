@@ -3,7 +3,6 @@
 import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, symlinkSync, writeFileSync } from 'node:fs';
-import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { plan, prepare } from '../../scripts/archive-prep.ts';
@@ -11,11 +10,13 @@ import { plan, prepare } from '../../scripts/archive-prep.ts';
 const ROOT = resolve(import.meta.dirname, '../..');
 const npm = (cwd: string, ...args: string[]) => execFileSync(process.platform === 'win32' ? 'npm.cmd' : 'npm', args, { cwd, stdio: 'pipe', shell: process.platform === 'win32' });
 const hash = (path: string) => createHash('sha256').update(readFileSync(path)).digest('hex');
+// Scratch stays inside the project (MPES C-13): .artifacts/tmp, which archive:prep lists as regenerable.
+const scratch = (prefix: string) => { mkdirSync(join(ROOT, '.artifacts', 'tmp'), { recursive: true }); return mkdtempSync(join(ROOT, '.artifacts', 'tmp', prefix)); };
 const put = (path: string, text = 'x') => { mkdirSync(dirname(path), { recursive: true }); writeFileSync(path, text); };
 
 describe('archive:prep', () => {
   it('removes only the regenerable, keeps the irreplaceable, and restores to the same build', () => {
-    const dir = mkdtempSync(join(tmpdir(), 'sea-archive-'));
+    const dir = scratch('sea-archive-');
     execFileSync('git', ['clone', '--quiet', '--no-hardlinks', ROOT, dir]);
     npm(dir, 'ci', '--prefer-offline', '--no-audit', '--no-fund');
     npm(dir, 'run', 'build');
@@ -44,7 +45,7 @@ describe('archive:prep', () => {
   }, 600_000);
 
   it('refuses a path that holds a tracked file', () => {
-    const dir = mkdtempSync(join(tmpdir(), 'sea-archive-tracked-'));
+    const dir = scratch('sea-archive-tracked-');
     const git = (...args: string[]) => execFileSync('git', args, { cwd: dir, stdio: 'pipe' });
     git('init', '--quiet');
     put(join(dir, 'dist', 'index.html'));

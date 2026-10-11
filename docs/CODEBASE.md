@@ -1,6 +1,6 @@
 # SEA Game codebase
 
-Version 0.5.0.0. Written by `npm run codebase` (scripts/codebase.ts); do not edit by hand. It holds all 1007 tracked files of the repository: 151 text files as 149 unique contents, 854 binary files by hash with the command that regenerates them, and 2 documents kept separately. With docs/MPES.md it is enough to rebuild the project.
+Version 0.5.1.0. Written by `npm run codebase` (scripts/codebase.ts); do not edit by hand. It holds all 1007 tracked files of the repository: 151 text files as 149 unique contents, 854 binary files by hash with the command that regenerates them, and 2 documents kept separately. With docs/MPES.md it is enough to rebuild the project.
 
 ## How to rebuild the tree
 
@@ -120,7 +120,7 @@ RESTORE.md
 
 ### AGENTS.md
 
-Paths: `AGENTS.md`. SHA-256 `45be6760946fd23bf455279893bed1e50d2aa35c8d986c10b633b08f3dc3310b`, 5919 bytes.
+Paths: `AGENTS.md`. SHA-256 `26b7e9ca262558b23680b7e0361eb93f2baf2b4c3ec6e96c48b9817f8212cdc6`, 6064 bytes.
 
 ```markdown
 # Working rules for agents and maintainers
@@ -145,7 +145,7 @@ Paths: `AGENTS.md`. SHA-256 `45be6760946fd23bf455279893bed1e50d2aa35c8d986c10b63
 18. Documents that rebuild the project, kept current in the same PR as any change: `docs/MPES.md` (the specification, no code at all: prose and tables only, alone enough for a clean-room rebuild; `tests/unit/mpes.test.ts` checks it) and `docs/CODEBASE.md` (every tracked file, written by `npm run codebase`, never by hand; `tests/unit/codebase.test.ts` rebuilds the tree from it and fails when it is out of date, so run `npm run codebase` after the last edit and before committing).
 19. Visual check at each goal close: `npm run gallery` (`-- --since <tag>`, default the latest tag; `--notes <file>` adds an intro) builds this checkout and the tag and writes `.artifacts/review/<gameVersion>.html`, every view of both roles in EN and FR on the laptop and the projector, and the six vehicles in stills and 3D, changed shots beside their before. Send it to the owner and ask GO or FIX; repeat until GO before merging.
 20. Cleanup and backup: `npm run archive:prep` is a dry run that lists the regenerable folders (packages, builds, browsers, caches, the Blender download, gallery captures) with sizes. Only when the owner asks for a cleanup run `npm run archive:prep -- --apply`: it removes exactly those (never a tracked file, never through a link), keeps everything irreplaceable (git history, sources, content, render masters, models, concepts, logs and evidence, `_archive/`) and writes `RESTORE.md` with the steps back (`npm ci`, browsers, build, its SHA-256, verify). `tests/unit/archive.test.ts` applies and restores a fresh clone to the same build hash.
-21. Codex (the owner's ChatGPT subscription) raises quality: concept, texture and decal images, Blender modelling, an independent review of each diff, gallery and French text. Its CLI is not on PATH: `$codex = (Get-AppxPackage OpenAI.Codex).InstallLocation + '\app\resources\codex.exe'`. Run it headless in an empty work folder under `.artifacts/` with stdin closed (otherwise it waits on "Reading additional input from stdin"): `& $codex exec --skip-git-repo-check -s workspace-write -C <dir> [-i <reference.png>] "<prompt>" < NUL` (Git Bash: `< /dev/null`). For a review, pass the diff as a file in `<dir>` and ask for findings only. For an image, ask it to generate exactly one image and copy the PNG into the folder as `out.png` (images also land in `~/.codex/generated_images/`, about 1.5 minutes each); `node art/tools/concepts.ts` batches concept images. Verify everything it returns (rule 6); one Codex or Blender job at a time (rule 11).
+21. Codex (the owner's ChatGPT subscription) raises quality: concept, texture and decal images, Blender modelling, an independent review of each diff, gallery and French text. Its CLI is not on PATH: `$codex = (Get-AppxPackage OpenAI.Codex).InstallLocation + '\app\resources\codex.exe'`. Run it headless in an empty work folder under `.artifacts/` with stdin closed (otherwise it waits on "Reading additional input from stdin"): from PowerShell, `cmd /c "`"$codex`" exec --skip-git-repo-check -s workspace-write -C <dir> [-i <reference.png>] `"<prompt>`" < NUL"` (PowerShell has no `<` redirection; Git Bash: `< /dev/null`). The prompt must hold no double quote, or cmd splits it ("unexpected argument"). For a review, pass the diff as a file in `<dir>` and ask for findings only. For an image, ask it to generate exactly one image and copy the PNG into the folder as `out.png` (images also land in `~/.codex/generated_images/`, about 1.5 minutes each); `node art/tools/concepts.ts` batches concept images. Verify everything it returns (rule 6); one Codex or Blender job at a time (rule 11).
 ```
 
 ### CLAUDE.md
@@ -186,7 +186,7 @@ THE SOFTWARE.
 
 ### README.md
 
-Paths: `README.md`. SHA-256 `4a7bf852e712a6dcf93c6a7f0eb0c1448e212b84fcb6bced539b368d6811cf9d`, 2497 bytes.
+Paths: `README.md`. SHA-256 `27f75f6e93c3ee7628f3d975ebbd623bb79e9fbbab25b0174d0fa1a6bc5b7dc8`, 3238 bytes.
 
 ````markdown
 # SEA Game: Systems Engineering Awareness
@@ -194,7 +194,8 @@ Paths: `README.md`. SHA-256 `4a7bf852e712a6dcf93c6a7f0eb0c1448e212b84fcb6bced539
 A bilingual (English/French) classroom auction game. Teams plan a vehicle for a mission, bid for components in a facilitator-led auction, reconcile their build and submit a value-for-money bid. The whole game is one offline HTML file with every image embedded.
 
 - **Play:** open the game file (`SEA-Game-<version>.html` in a release package, or `dist/index.html` after a build) in a current Chrome, Edge or Firefox on **Windows 11** (the only supported platform). No installation, no network, no account.
-- **Status:** 0.5.0.0 beta, tagged `v0.5.0.0` (clean-room rebuild, 3D showcase and V2 art); not yet release-qualified. The rollback is tag `v4.1.0-dev.1`.
+- **Status:** 0.5.1.0 beta, tagged `v0.5.1.0` (G2: owner fixes, six-vehicle chooser, review gallery, code-free specification, codebase file, backup preparation); not yet release-qualified. Next: G3 (proxy and runtime, 0.6.0.0). The rollback is tag `v4.1.0-dev.1`.
+- **Copyright:** (c) 2026 Shafiqur Rahman Khan, the creator.
 - **Specification:** [docs/MPES.md](docs/MPES.md). **Current state and next steps:** [docs/HANDOVER.md](docs/HANDOVER.md). **Working rules:** [AGENTS.md](AGENTS.md).
 - **Guides:** [classroom quick start](docs/CLASSROOM_QUICK_START.md), [recovery guide](docs/RECOVERY_GUIDE.md).
 
@@ -214,6 +215,14 @@ npm run e2e            # browser tests against the built file over file://
 npm run verify         # all of the above, in order
 ```
 
+Maintenance:
+
+```sh
+npm run gallery        # offline visual review page .artifacts/review/<version>.html, before/after vs the latest tag
+npm run codebase       # rewrites docs/CODEBASE.md (every tracked file); run after the last edit of a change
+npm run archive:prep   # dry run: what a cleanup would remove; -- --apply only when a cleanup is wanted
+```
+
 Locally, keep caches inside the project: set `npm_config_cache=.artifacts/npm-cache`. Playwright browsers default to `.artifacts/ms-playwright` (see `playwright.config.ts`).
 
 Never edit `dist/index.html`; change `source/`, `content/` or `art/` and rebuild. Re-rendering the imagery needs the pinned Blender: see [art/README.md](art/README.md).
@@ -222,15 +231,17 @@ Never edit `dist/index.html`; change `source/`, `content/` or `art/` and rebuild
 
 - `source/domain/`: pure game rules (TypeScript, no DOM).
 - `source/app/`, `source/ui/`: role controllers and the HTML interface (war-room HUD and projector theme).
-- `source/showcase/`: the pre-rendered vehicle showcase.
+- `source/showcase/`: the vehicle showcase (real-time 3D, stills fallback).
 - `content/`: canonical card/mission data, EN/FR strings and the encoded renders (`content/renders/`).
-- `art/`: Blender scripts and tools that produce the renders.
+- `art/`: Blender scripts and tools that produce the renders and the 3D model.
+- `scripts/`: review gallery, codebase document, backup preparation.
 - `build/`: the single-file builder.
 - `tests/unit/`, `tests/e2e/`: Vitest and Playwright suites.
+- `docs/`: specification, codebase, handover, guides, owner scripts and verification evidence.
 
 ## Licence
 
-Original code and imagery: [MIT](LICENSE). The game file bundles no third-party software: [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md), also shown in the game under About.
+Original code and imagery: [MIT](LICENSE). The game file bundles one third-party library, three.js (MIT): [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md), also shown in the game under About.
 ````
 
 ### THIRD_PARTY_NOTICES.md
@@ -25282,51 +25293,66 @@ Exportez une sauvegarde par **Menu → Exporter une sauvegarde** après la confi
 
 ### docs/HANDOVER.md
 
-Paths: `docs/HANDOVER.md`. SHA-256 `da0a9f3119ee3c1eca23bcf68c5b4e8d5b33563166817090573d7b976bb4dec9`, 5791 bytes.
+Paths: `docs/HANDOVER.md`. SHA-256 `4eecd5f3eb3d0cebf80b071946fa2ee4980e3ee1fb652db0eb19af82495504de`, 5038 bytes.
 
 ```markdown
 # Handover
 
-Updated 2026-10-11 (America/Toronto). Specification: [MPES](MPES.md) 4.2.2. Evidence: [verification/0.5.0.0.md](verification/0.5.0.0.md), [verification/spike-visual.md](verification/spike-visual.md).
+Updated 2026-10-11 (America/Toronto). Specification: [MPES](MPES.md) 4.3.0. Evidence: [verification/0.5.1.0.md](verification/0.5.1.0.md), [verification/0.5.0.0.md](verification/0.5.0.0.md), [verification/spike-visual.md](verification/spike-visual.md).
 
 ## 1. Version and milestone
 
-Version 0.5.0.0 beta (four-part MAJOR.MINOR.PATCH.BUILD, MPES §19.2; renumbered on 2026-10-11 from the untagged 5.0.0-dev.1; 1.0.0.0 only once out of beta: MPES §19.2 exit criteria, including every owner gate). M0–M4, V1 (visual spike) and V2 (visual production, goal G1, PR [#21](https://github.com/shfqrkhn/SEA-Game/pull/21), merged on two consecutive green CI runs) are complete and on `main`, tagged `v0.5.0.0`; the tag annotation records the Pages SHA-256 check. The rollback is tag `v4.1.0-dev.1`.
+Version 0.5.1.0 beta (four-part MAJOR.MINOR.PATCH.BUILD, MPES §19.2; 1.0.0.0 only once out of beta: MPES §19.2 exit criteria, including every owner gate). M0–M4, V1, V2 (goal G1, tag `v0.5.0.0`) and G2 (owner fixes and the docs regime, branch `goal2b/foundation`, tag `v0.5.1.0` once the owner says GO on the gallery and CI is green twice) are complete. The rollback is tag `v4.1.0-dev.1`.
 
-**Plan to completion (MPES §17):** G1 V2 close-out, 0.5.0.0 (done) → G2 V3 reference laptop, 0.6.0.0 (proxy rig, §14 gates, baked lighting, adaptive tiers) → G3 V4 classroom polish, 0.7.0.0 (UX, workload, teaching, game feel §7.7, projector mode §7.8, fault tests) → G4 M6 hardening, 0.8.0.0 → G5 M7 beta release candidate and local handoff package, 0.9.0.0 → G6 exit beta, 1.0.0.0, only when the owner's results arrive and every MPES §19.2 criterion holds. Shared rules for every goal: `AGENTS.md`. KPIs and priority: MPES §1.4.
+**Plan to beta exit (MPES §17), one PR and one tag per goal:**
+
+| Goal | Version | Content |
+|---|---|---|
+| G3 proxy + runtime | 0.6.0.0 | `npm run perf:ref` on the Intel UHD 770 proxy (D-16), every §14 gate, baked lighting, adaptive tiers, context-loss recovery, touchpad and panel safety |
+| G4 hyper-real assets | 0.7.0.0 | vehicles, parts and cards raised towards the Codex concepts within budgets; textures and decals where they pay |
+| G5 classroom | 0.8.0.0 | UX, workload, teaching aids, game feel §7.7, projector mode §7.8, fault tests |
+| G6 hardening | 0.9.0.0 | manual accessibility, Windows 11 matrix, egress, security and content review, `npm run package` |
+| G7 release candidate | 0.9.1.0 | freeze, three release passes (§21), beta handoff package |
+| G8 beta exit | 1.0.0.0 | only when every MPES §19.2 criterion holds, owner results included |
+
+Shared rules for every goal: `AGENTS.md`. KPIs and priority: MPES §1.4.
 
 ## 2. What works
 
 - **Game:** all of MPES §6 for both roles, all eight phases, EN/FR, schema-3 saves and backups, private entry, degraded states. Legacy 4.1 backups import.
-- **V2:**
-  - war-room HUD on every view, with a projector theme from the menu (MPES §7.1);
-  - setup shows the defaults first and keeps options behind "More options"; the instructor picks the bid increment ($50,000 to $250,000);
-  - the live lot fits 1280×720 with every action visible; the student's card entry suggests the lot's category cards by name;
-  - debrief class chart and presentation questions; French spacing; stricter save invariants;
-  - `dist/` no longer committed; `npm run check` compares two builds; CI deploys `main` to Pages for QA only.
-- **Imagery** (`content/renders/`, 821 AVIF, 7.8 MB, V3 render pass after the Codex upgrade; placed images trimmed to their visible pixels, MPES 4.2.2): 6 vehicles (hero, 24-frame turntable, front and rear build layers for all 49 parts) and 71 cards, from the Blender pipeline in [art/README.md](../art/README.md).
-- **Interactive 3D showcase** (MPES 4.0.0 §10, owner request): on the student tracker the team's vehicle turns slowly by itself, can be dragged or turned with buttons, pauses on request and under reduced motion, and gains each part as it is recorded. The model is `content/models/showcase.glb` (all six vehicles with every part, 1.82 million unique triangles, 8.5 MB deflated), embedded once; the game parses only the team's vehicle (about 400,000 triangles, `source/showcase/glb.ts`), which brought 3D ready from 3.2 s to 1.9 s. Without WebGL 2, on a software renderer, or if the model fails to load, the showcase shows the stills. Drawing is paced (`source/showcase/pace.ts`, MPES §10.3): at most 30 fps and at most half the machine, however slow the graphics. Stills decode each layer once (`DecodedImages`) and prepare the next angle and frames as soon as the shown view has decoded, never on idle, one at a time (MPES 4.1.3). three.js 0.186.1 is bundled for the showcase only.
-- **Tests:** `npm run verify` (typecheck, lint, unit, build check, Playwright in Chromium, Firefox and Edge, then perf alone). 3D tests spoof a hardware renderer with `withGpu()` (`tests/e2e/helpers.ts`), because test browsers render WebGL in software, which the product treats as no GPU.
+- **V2:** war-room HUD on every view with a projector theme; setup defaults first; bid increment chosen at setup; live lot fits 1280×720; debrief chart and questions; `dist/` not committed, `npm run check` compares two builds, CI deploys `main` to Pages for QA only.
+- **G2:**
+  - copyright "Copyright (c) 2026 Shafiqur Rahman Khan" in `LICENSE`, About and `package.json` (`tests/unit/build.test.ts`);
+  - About shows the licence and notices reflowed (`source/ui/reflow.ts`, `tests/unit/reflow.test.ts`, visual baselines at 1366×768 and 320 px);
+  - the chooser shows all six vehicles as a lineup of hero stills, selected one large, keyboard and touch, EN/FR (`tests/e2e/chooser.spec.ts`, visual baselines);
+  - `DecodedImages` never evicts an image on screen or a prepared one (`tests/unit/showcase.test.ts`);
+  - `npm run gallery` writes the offline review page `.artifacts/review/<version>.html` (`tests/unit/gallery.test.ts`);
+  - MPES has no code and names every file, script, pin, CSP directive and goal (`tests/unit/mpes.test.ts`); a Codex session given only MPES wrote a rebuild plan and its gaps were fixed (`docs/verification/0.5.1.0.md`);
+  - `npm run codebase` writes `docs/CODEBASE.md`, which rebuilds every tracked file (`tests/unit/codebase.test.ts`);
+  - `npm run archive:prep` (dry run; `--apply` only on the owner's cleanup request) and `RESTORE.md` (`tests/unit/archive.test.ts`);
+  - `AGENTS.md` rule 21: driving Codex headless.
+- **Imagery and 3D:** 821 AVIF stills (7.8 MB) and one packed model (all six vehicles, every part), Blender pipeline in [art/README.md](../art/README.md); the game parses only the team's vehicle; paced drawing (≤ 30 fps, ≤ half the machine); stills fallback without WebGL 2.
+- **Tests:** `npm run verify` (typecheck, lint, unit, build check, Playwright in Chromium, Firefox and Edge, then perf alone). 3D tests spoof a hardware renderer with `withGpu()` (`tests/e2e/helpers.ts`).
 
 ## 3. Not done
 
-- **G1 history** (CI root causes, each fixed test-first; details in [verification/0.5.0.0.md](verification/0.5.0.0.md)): CI starvation (frame pacing, run 38089382489); Firefox refusing WebGL on the runner and stills decoded twice (run 38097185474, decoded-image pool, MPES 4.1.1 §10.3); turntable frames waiting for idle time on a busy runner (run 38106258905, MPES 4.1.2 §10.3); background decodes competing with a purchase (run 38133130929, MPES 4.1.3 §10.3); a purchase waiting for its layer to decode (run 38135172580, MPES 4.2.1 §10.3: the loaded card is prepared first); layers kept near full-frame by invisible alpha noise, so each decode cost up to 19 times the pixels (run 38136462558, MPES 4.2.2 §10.3: placed images trimmed to visible pixels, re-encoded from the v3 masters, cards and heroes unchanged).
 - **Owner art judgement:** BLOCKED-owner, script `docs/owner/art-review.md`.
-- **G2–G5:** MPES §17. `npm run perf:ref` (the Intel UHD 770 proxy) does not exist yet; it is G2's first step.
-- **Residual risks:** real learners (S3); Narrator and NVDA users; no physical laptop test (D-16: the UHD 770 proxy stands in); CI runs Windows Server, not Windows 11; art quality is the owner's judgement.
+- **G3–G8:** above. `npm run perf:ref` does not exist yet; it is G3's first step.
+- **Known timing note:** `tests/unit/codebase.test.ts` usually runs in under half a second but once took 7.1 s (2026-10-11, cause unknown, result correct, not reproduced in 22 runs); it has an explicit 60 s bound with that evidence in a comment. Watch for a repeat.
+- **Residual risks:** real learners (S3); Narrator and NVDA users; no physical laptop test (D-16); CI runs Windows Server, not Windows 11; art quality is the owner's judgement.
 
 ## 4. In-progress work
 
-None. Review aids are rebuilt from `.artifacts/renders/v3` with the commands in `art/README.md` ("Review before committing"). Run only one Blender process at a time, Codex jobs included: the owner uses this PC.
+None. Run only one Blender or Codex job at a time: the owner uses this PC.
 
 ## 5. Next action
 
-**Agent:** start G2 (V3, release 0.6.0.0): branch `goal3/laptop` from `main` at `v0.5.0.0`; first step `npm run perf:ref` on the Intel UHD 770 proxy, measuring a baseline before any change. Known G2 item: `DecodedImages` holds 24 images, but a fully built vehicle has up to 20 layers per angle, so its doc comment is wrong and prepared images can be evicted; size or order the pool, with a test.
+**Agent:** start G3 (proxy + runtime, release 0.6.0.0): branch from `main` at `v0.5.1.0`; first step `npm run perf:ref` on the Intel UHD 770 proxy, measuring a baseline before any change.
 **Owner:** `docs/owner/art-review.md` (5 minutes, reply GO or FIX).
 
 ## 6. Rollback
 
-Tag `v4.1.0-dev.1`. Its built file is `git show v4.1.0-dev.1:dist/index.html`. Old material sits in `_archive/` (read-only; recycled files in `_archive/recycle/<date>/`) until the owner deletes it.
+Tag `v4.1.0-dev.1` (the previous application) or `v0.5.0.0` (the rebuild before G2). A tag's built file comes from `git archive <tag>`, `npm ci`, `npm run build`. Old material sits in `_archive/` (read-only; recycled files in `_archive/recycle/<date>/`) until the owner deletes it.
 ```
 
 ### docs/RECOVERY_GUIDE.md
@@ -25777,18 +25803,18 @@ export default tseslint.config(
 
 ### package-lock.json
 
-Paths: `package-lock.json`. SHA-256 `aa4b511f3eb45e4bc9a9871b11a4d99a8c9716c618111f2fadbb1831754b286e`, 134005 bytes.
+Paths: `package-lock.json`. SHA-256 `f276bde2de3901c902cb2c1f63c5734350301a3b8dbdeff7011dc9b3e1556ca9`, 134005 bytes.
 
 ```json
 {
   "name": "sea-game",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "lockfileVersion": 3,
   "requires": true,
   "packages": {
     "": {
       "name": "sea-game",
-      "version": "0.5.0",
+      "version": "0.5.1",
       "license": "MIT",
       "dependencies": {
         "three": "0.186.1"
@@ -29825,13 +29851,13 @@ Paths: `package-lock.json`. SHA-256 `aa4b511f3eb45e4bc9a9871b11a4d99a8c9716c6181
 
 ### package.json
 
-Paths: `package.json`. SHA-256 `f60f300f8ba0eb0a994fdc35bd9bb596c342b56133be63f3a01eda1a6478bec2`, 1432 bytes.
+Paths: `package.json`. SHA-256 `518d2237ecdc3deba92c83c54cbca1b1b7f2ad7f08d58a5ab63dfe509be53118`, 1432 bytes.
 
 ```json
 {
   "name": "sea-game",
-  "version": "0.5.0",
-  "gameVersion": "0.5.0.0",
+  "version": "0.5.1",
+  "gameVersion": "0.5.1.0",
   "private": true,
   "description": "Systems Engineering Awareness: offline single-file classroom auction game (EN/FR)",
   "license": "MIT",
@@ -29928,7 +29954,7 @@ export default defineConfig({
 
 ### scripts/archive-prep.ts
 
-Paths: `scripts/archive-prep.ts`. SHA-256 `dd7b01e9189d1bdc91cbcb3c59488da59869ae7490e4f19c0cf6b79adb9b43d8`, 7407 bytes.
+Paths: `scripts/archive-prep.ts`. SHA-256 `7583fcbda7427947d3cb00c9be4e8d2ba6c36c57c43633553ffce631789eea23`, 7505 bytes.
 
 ```ts
 // Backup preparation (G2 item 8, AGENTS.md): the smallest project folder that still rebuilds, runs and is maintained
@@ -29955,6 +29981,7 @@ export const REGENERABLE: readonly { readonly path: string; readonly how: string
   { path: '.artifacts/test-results', how: '`npm run e2e`' },
   { path: '.artifacts/test-results-sw', how: '`npm run e2e`' },
   { path: '.artifacts/coverage', how: '`npx vitest run --coverage`' },
+  { path: '.artifacts/tmp', how: 'scratch folders of the unit tests, made again by `npm test`' },
   { path: 'test-results', how: '`npm run e2e`' },
   { path: 'playwright-report', how: '`npm run e2e`' },
   { path: 'coverage', how: '`npx vitest run --coverage`' },
@@ -37337,7 +37364,7 @@ Paths: `tests/fixtures/legacy/student-practice.json`. SHA-256 `fbf972503388c8ac6
 
 ### tests/unit/archive.test.ts
 
-Paths: `tests/unit/archive.test.ts`. SHA-256 `b9518899ea9a82bbf4d40fe75a41b2fbf25c0a1001651be90f1e8110d8aca847`, 3503 bytes.
+Paths: `tests/unit/archive.test.ts`. SHA-256 `55f18371ddfe00b8218510fd05c47c88d792635460b6cb45b66bab32acf3536f`, 3702 bytes.
 
 ```ts
 // G2 item 8: npm run archive:prep -- --apply leaves the smallest folder that restores to the same build. On a fresh
@@ -37345,7 +37372,6 @@ Paths: `tests/unit/archive.test.ts`. SHA-256 `b9518899ea9a82bbf4d40fe75a41b2fbf2
 import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, symlinkSync, writeFileSync } from 'node:fs';
-import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { plan, prepare } from '../../scripts/archive-prep.ts';
@@ -37353,11 +37379,13 @@ import { plan, prepare } from '../../scripts/archive-prep.ts';
 const ROOT = resolve(import.meta.dirname, '../..');
 const npm = (cwd: string, ...args: string[]) => execFileSync(process.platform === 'win32' ? 'npm.cmd' : 'npm', args, { cwd, stdio: 'pipe', shell: process.platform === 'win32' });
 const hash = (path: string) => createHash('sha256').update(readFileSync(path)).digest('hex');
+// Scratch stays inside the project (MPES C-13): .artifacts/tmp, which archive:prep lists as regenerable.
+const scratch = (prefix: string) => { mkdirSync(join(ROOT, '.artifacts', 'tmp'), { recursive: true }); return mkdtempSync(join(ROOT, '.artifacts', 'tmp', prefix)); };
 const put = (path: string, text = 'x') => { mkdirSync(dirname(path), { recursive: true }); writeFileSync(path, text); };
 
 describe('archive:prep', () => {
   it('removes only the regenerable, keeps the irreplaceable, and restores to the same build', () => {
-    const dir = mkdtempSync(join(tmpdir(), 'sea-archive-'));
+    const dir = scratch('sea-archive-');
     execFileSync('git', ['clone', '--quiet', '--no-hardlinks', ROOT, dir]);
     npm(dir, 'ci', '--prefer-offline', '--no-audit', '--no-fund');
     npm(dir, 'run', 'build');
@@ -37386,7 +37414,7 @@ describe('archive:prep', () => {
   }, 600_000);
 
   it('refuses a path that holds a tracked file', () => {
-    const dir = mkdtempSync(join(tmpdir(), 'sea-archive-tracked-'));
+    const dir = scratch('sea-archive-tracked-');
     const git = (...args: string[]) => execFileSync('git', args, { cwd: dir, stdio: 'pipe' });
     git('init', '--quiet');
     put(join(dir, 'dist', 'index.html'));
@@ -37501,7 +37529,7 @@ describe('single-file build (RQ-01, RQ-24, RQ-25, RQ-27)', async () => {
 
 ### tests/unit/codebase.test.ts
 
-Paths: `tests/unit/codebase.test.ts`. SHA-256 `6afef5b1f867688910df7cafe54a5bb54a41133c1592bdcf7309a03bc43bc214`, 4000 bytes.
+Paths: `tests/unit/codebase.test.ts`. SHA-256 `999b9f8ab8b7c1e24145c060d1291d97789969af6ec5a382d6b14f10e48a95fe`, 4244 bytes.
 
 ```ts
 // G2 item 7: docs/CODEBASE.md rebuilds the tree. This test reads it with its own parser, following only the rules the
@@ -37509,12 +37537,14 @@ Paths: `tests/unit/codebase.test.ts`. SHA-256 `6afef5b1f867688910df7cafe54a5bb54
 import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
-import { tmpdir } from 'node:os';
-import { dirname, join } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { codebase } from '../../scripts/codebase.ts';
 
 const sha = (data: Buffer | string) => createHash('sha256').update(data).digest('hex');
+// Scratch stays inside the project (MPES C-13): .artifacts/tmp, which archive:prep lists as regenerable.
+const TMP = resolve(import.meta.dirname, '../../.artifacts/tmp');
+const scratch = (prefix: string) => { mkdirSync(TMP, { recursive: true }); return mkdtempSync(join(TMP, prefix)); };
 const DOC = readFileSync('docs/CODEBASE.md', 'utf8');
 
 /** Text sections: paths, hash, size and the file content rebuilt from the fenced block. */
@@ -37547,7 +37577,7 @@ function rows(doc: string, title: string): Map<string, string> {
 describe('docs/CODEBASE.md', () => {
   it('rebuilds every tracked file: text verbatim, binaries and separate documents by hash', () => {
     const tracked = execFileSync('git', ['ls-files', '-z'], { encoding: 'utf8', maxBuffer: 1 << 26 }).split('\0').filter(Boolean);
-    const dir = mkdtempSync(join(tmpdir(), 'sea-codebase-'));
+    const dir = scratch('sea-codebase-');
     const listed = new Map<string, string>();
     for (const { paths, hash, bytes, content } of textFiles(DOC)) {
       expect(sha(content), paths[0]).toBe(hash);
@@ -39954,5 +39984,5 @@ Keys and the commands that make each kind again:
 
 | Path | Bytes | SHA-256 | Why |
 |---|---:|---|---|
-| `docs/MPES.md` | 96871 | `7506b4f5d78ec83d83841ee5ae872f764d8b629a59f613802f520e5065905da0` | The specification, a clean-room document of its own (Omni 5.1.1 §333). |
+| `docs/MPES.md` | 144644 | `af49b51e6f53d5a47d43cd574b77c426a0861eaeb6e10bc9047cdd3965d8e12f` | The specification, a clean-room document of its own (Omni 5.1.1 §333). |
 | `docs/CODEBASE.md` | | | This file. |

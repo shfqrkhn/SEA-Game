@@ -3,12 +3,14 @@
 import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
-import { tmpdir } from 'node:os';
-import { dirname, join } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { codebase } from '../../scripts/codebase.ts';
 
 const sha = (data: Buffer | string) => createHash('sha256').update(data).digest('hex');
+// Scratch stays inside the project (MPES C-13): .artifacts/tmp, which archive:prep lists as regenerable.
+const TMP = resolve(import.meta.dirname, '../../.artifacts/tmp');
+const scratch = (prefix: string) => { mkdirSync(TMP, { recursive: true }); return mkdtempSync(join(TMP, prefix)); };
 const DOC = readFileSync('docs/CODEBASE.md', 'utf8');
 
 /** Text sections: paths, hash, size and the file content rebuilt from the fenced block. */
@@ -41,7 +43,7 @@ function rows(doc: string, title: string): Map<string, string> {
 describe('docs/CODEBASE.md', () => {
   it('rebuilds every tracked file: text verbatim, binaries and separate documents by hash', () => {
     const tracked = execFileSync('git', ['ls-files', '-z'], { encoding: 'utf8', maxBuffer: 1 << 26 }).split('\0').filter(Boolean);
-    const dir = mkdtempSync(join(tmpdir(), 'sea-codebase-'));
+    const dir = scratch('sea-codebase-');
     const listed = new Map<string, string>();
     for (const { paths, hash, bytes, content } of textFiles(DOC)) {
       expect(sha(content), paths[0]).toBe(hash);
