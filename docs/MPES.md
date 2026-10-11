@@ -272,7 +272,7 @@ Every package is pinned to an exact version in `package.json` (no ranges) and re
 | Browser tests | `@playwright/test` 1.63.0, override `playwright-core` 1.63.0 | Chromium and Firefox downloaded by Playwright into `.artifacts/ms-playwright`; Edge is the copy installed with Windows (`channel: msedge`). |
 | Accessibility scan | `@axe-core/playwright` 4.13.0 | Automated part only; manual checks still needed (§12). |
 | Image encoding | `sharp` 0.35.4 (libvips 8.18.6) | AVIF quality 65, 4:4:4; also the gallery's WebP and the review contact sheets. |
-| Model packing | `@gltf-transform/core`, `@gltf-transform/extensions`, `@gltf-transform/functions`, all 4.5.0 | Merge, weld, quantise and pack the exported models (§11.1). |
+| Model packing | `@gltf-transform/core`, `@gltf-transform/extensions`, `@gltf-transform/functions`, all 4.5.0; `meshoptimizer` 1.1.1 | Merge, weld, reorder for locality, quantise and pack the exported models (§11.1). |
 | Imagery and models | Blender 5.2.2 LTS portable zip, build hash `d13f752e3b9c`, from `download.blender.org/release/Blender5.2/blender-5.2.2-windows-x64.zip`, SHA-256 `3849d17a682cba006075aaa3f3597ecb5c9c30ec31035b2e092c53e40679b535` | Unzipped into `.artifacts/tools/`; offline authoring only (§11.1), never a runtime dependency. Cycles on the GPU (OptiX) with OpenImageDenoise, CPU fallback. |
 | AI assistance | The owner's ChatGPT Codex desktop app and its bundled CLI | Concept images, modelling help, independent reviews (D-14, §19.6). Optional: nothing in the build or tests needs it. |
 | Version control | Git | Line endings by `.gitattributes` (§5.7). |
@@ -300,7 +300,7 @@ A different tool is acceptable only if it is qualified against the same tasks, a
 8. Fill `build/template.html`: an HTML5 page in English by default with the CSP meta tag, viewport, `color-scheme` light dark, `referrer` no-referrer, a `generator` meta naming the version, the title "Systems Engineering Awareness", the inline style, a bilingual `noscript` line, the `#app` root, the renders as `<script type="application/json" id="sea-renders">`, the model as `<script type="application/octet-stream" id="sea-models">`, then the inline script. Placeholders are `{{CSP}}`, `{{VERSION}}`, `{{STYLE}}`, `{{RENDERS}}`, `{{MODELS}}` and `{{SCRIPT}}`, each replaced literally once; any placeholder left is an error.
 9. Refuse a result above 50 MiB (52,428,800 bytes). Write `dist/index.html` only if it changed, and print its size and SHA-256 (hex).
 
-At run time the game reads the renders block once on first use and inflates the model block with `DecompressionStream('deflate-raw')`.
+At run time the game reads the renders block once on first use, decodes the model block's base64 with `Uint8Array.fromBase64` where the browser has it (otherwise `atob`) and inflates it with `DecompressionStream('deflate-raw')`.
 
 ### 5.6 Module contracts
 
@@ -357,7 +357,7 @@ Each module's responsibility and public contract. Names are the exported identif
 | `source/showcase/renders.ts` | `renders()` (the embedded render table, parsed once), `Render`, `VEHICLE` (mission to file stem), `cardRender`. |
 | `source/showcase/glb.ts` | `vehicleGlb`: a copy of the embedded GLB whose scene holds only the named vehicle's root node, so the loader parses only that vehicle. |
 | `source/showcase/pace.ts` | `FramePacer` and `FRAME_MS`: at most 30 draws a second, each next draw at least twice the last frame's gap later (at most 1 s), §10.3. |
-| `source/showcase/model.ts` | `ModelStage` (one WebGL renderer, slow turn, drag, buttons, reduced motion, draws only while visible), `loadVehicle`, `webglAvailable` (WebGL 2 on a hardware renderer), `layerOf`, `partSlots`, `TURN_SECONDS`. |
+| `source/showcase/model.ts` | `ModelStage` (one WebGL renderer, slow turn, drag, buttons, reduced motion, draws only while visible), `loadVehicle` (marks `sea-model:<stem>` in the performance timeline when parsed), `prepareVehicle` (once the team confirms its vehicle in planning: in idle time, within 2 s, decodes and parses that vehicle alone if WebGL is available, so the tracker opens with it ready), `webglAvailable` (WebGL 2 on a hardware renderer), `layerOf`, `partSlots`, `TURN_SECONDS`. |
 | `source/showcase/showcase.ts` | `Showcase` (3D when available, else stills; text list of parts; process badges), `DecodedImages` (decode-once pool of §10.3), `stackOrder` (farthest first), `latestBySlot`, `latestPerSlot`, `TURN_STEP`. |
 
 **Build, art and maintenance:**
@@ -382,9 +382,10 @@ Each module's responsibility and public contract. Names are the exported identif
 | `art/blender/sea/parts/cap.py`, `art/blender/sea/parts/mob.py`, `art/blender/sea/parts/fp.py`, `art/blender/sea/parts/pro.py`, `art/blender/sea/parts/com.py`, `art/blender/sea/parts/sa.py`, `art/blender/sea/parts/acc.py` | Seven part builders per category, placed only through `Mounts`. |
 | `art/blender/sea/parts/tokens.py` | The 21 SE_PROCESS tokens (outline shape names the improved attribute, relief icon the review) and TRAIN-CAP. |
 | `art/tools/encode-renders.ts` | `measure` (AVIF vs WebP sweep) and `encode` (trim, encode, write `content/renders/manifest.json`), §11.1. |
-| `art/tools/pack-models.ts` | Merge the per-vehicle GLBs into one, weld, quantise, keep each vehicle a root node named by its stem. |
+| `art/tools/pack-models.ts` | Merge the per-vehicle GLBs into one, weld, reorder vertices and triangles for locality (meshoptimizer), quantise (positions 14 bits, normals 10, colours 8), keep each vehicle a root node named by its stem. Measured and rejected: simplification (at an error of 0.001 it visibly changed the hull's shading) and 8-bit normals with the reorder (model updates about 30 ms slower). |
 | `art/tools/concepts.ts` | Concept images through the Codex CLI into `.artifacts/concepts-v3/` (references only, D-14). |
 | `art/tools/contact-sheet.ts`, `art/tools/build-composites.ts`, `art/tools/preview.ts` | Review aids: tiled sheets, base plus one part per slot, renders over a HUD backdrop. |
+| `art/tools/angles.ts` | Still-angle analysis: renders the packed model in headless Chromium from a yaw and pitch grid framed as a build still, counts each part's visible pixels with only the base in front, and scores angle pairs (§10.2). |
 | `art/tools/measure-spike.ts` | Time to interactive and showcase update on the reference profile and without GPU (§14). |
 | `scripts/gallery.ts`, `scripts/gallery/shots.ts`, `scripts/gallery/capture.spec.ts`, `scripts/gallery/playwright.config.ts` | The review gallery (§19.6). |
 | `scripts/codebase.ts` | Writes `docs/CODEBASE.md` (§19.6). |
@@ -879,7 +880,7 @@ Make the build tangible: the selected mission's base vehicle visibly gains parts
 | Showcase update after a purchase is recorded | ≤ 100 ms (p95), reference profile (§14) |
 | Turntable or angle change | ≤ 50 ms, reference profile |
 | Memory added by decoded images | ≤ 250 MB |
-| 3D model ready (opening the tracker to the first drawn model) | ≤ 3 s, reference profile |
+| 3D model ready (opening the tracker to the first drawn model) | ≤ 3 s, reference profile. The model is prepared while the team plans (`prepareVehicle`), so the tracker usually opens with it parsed |
 | 3D model update after a purchase is recorded | ≤ 100 ms, reference profile |
 | Memory added by the 3D showcase | ≤ 400 MB |
 | 3D drawing rate and share of the machine | ≤ 30 frames a second; a drawn frame is timed by the gap to the next animation frame, and the next draw waits at least twice that (at most 1 s), so drawing never takes more than half the machine. Drags, key turns and resizes draw in the next paced frame, never synchronously |
@@ -929,7 +930,7 @@ Renders are reproducible: pinned Blender version, fixed seeds, sample counts and
 3. Encode: `node art/tools/encode-renders.ts encode <masters> content/renders avif 65` trims each placed image to the pixels visible at 8-bit output plus a 2 px apron (cards and heroes keep their full margin trim), lists fully hidden layers under `hidden`, encodes with sharp and replaces `content/renders/` with the files and the manifest. `measure` compares AVIF and WebP qualities over the masters.
 4. Check the model: `art/blender/tris.py` (budgets of §10.2) and `art/blender/overlap.py` (exit code 1 on any cross-slot intersection).
 5. Export: `art/blender/export.py` writes one GLB per vehicle at real-time detail with ambient occlusion baked by Cycles into vertex colours (the base over a ground plane, each part alone).
-6. Pack: `node art/tools/pack-models.ts <exports> <packed.glb>` merges, deduplicates, welds, quantises and prunes; copy the result to `content/models/showcase.glb` and write its size and SHA-256 into `content/models/manifest.json`.
+6. Pack: `node art/tools/pack-models.ts <exports> <packed.glb>` merges, deduplicates, welds, reorders, quantises and prunes; copy the result to `content/models/showcase.glb` and write its size and SHA-256 into `content/models/manifest.json`.
 7. Review: contact sheets and build composites (base plus one part per slot), then `npm test` (render and model manifest tests check completeness, slots, hashes, trims and the 40 MB budget), then the owner's visual check (§19.6).
 
 Cycles output varies slightly between GPUs and drivers, so a re-render matches in look and size, not byte for byte; the committed bytes and their manifest hashes are the reference.

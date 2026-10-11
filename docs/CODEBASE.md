@@ -6283,7 +6283,7 @@ console.table(results);
 
 ### art/tools/pack-models.ts
 
-Paths: `art/tools/pack-models.ts`. SHA-256 `c0e2831d78d97f8edc3aecac4a33f41d6e8c0cbd0c5591e2d9c955a293221252`, 2690 bytes.
+Paths: `art/tools/pack-models.ts`. SHA-256 `2fa6f9d0484179b9b988a1b1e93aa2c17825ccf022bbed10a4cb3042a6414031`, 3132 bytes.
 
 ```ts
 // Packs the Blender glTF exports (art/blender/export.py) into the one model file the game embeds (MPES §10).
@@ -6291,14 +6291,18 @@ Paths: `art/tools/pack-models.ts`. SHA-256 `c0e2831d78d97f8edc3aecac4a33f41d6e8c
 //   node art/tools/pack-models.ts <dir of <stem>.glb> <out .glb>
 //
 // One scene; a group node per vehicle (named by its stem) holding `base` and one node per part card. Identical
-// meshes and materials are shared, vertices welded, and attributes quantised (KHR_mesh_quantization), which three.js
-// GLTFLoader reads natively, so the game needs no decoder beyond the browser's own DecompressionStream.
+// meshes and materials are shared, vertices welded and reordered for locality (meshoptimizer: the deflated file is
+// smaller and draws the same), and attributes quantised (KHR_mesh_quantization), which three.js GLTFLoader reads
+// natively, so the game needs no decoder beyond the browser's own DecompressionStream. Measured and rejected (G2):
+// simplification at an error of 0.001 visibly changed the hull's shading; 8-bit normals together with the reorder
+// made a purchase's model update about 30 ms slower on the reference profile.
 import { readdirSync, writeFileSync } from 'node:fs';
 import { join, basename } from 'node:path';
 import { deflateRawSync } from 'node:zlib';
 import { NodeIO, type Document } from '@gltf-transform/core';
 import { KHRMaterialsEmissiveStrength, KHRMeshQuantization } from '@gltf-transform/extensions';
-import { dedup, mergeDocuments, prune, quantize, unpartition, weld } from '@gltf-transform/functions';
+import { dedup, mergeDocuments, prune, quantize, reorder, unpartition, weld } from '@gltf-transform/functions';
+import { MeshoptEncoder } from 'meshoptimizer';
 
 const [dir, out] = process.argv.slice(2);
 if (!dir || !out) throw new Error('usage: pack-models.ts <dir> <out.glb>');
@@ -6325,10 +6329,12 @@ for (const file of files) {
   }
 }
 root.setDefaultScene(scene);
+await MeshoptEncoder.ready;
 await doc.transform(
   unpartition(),
   dedup(),
   weld(),
+  reorder({ encoder: MeshoptEncoder }),
   quantize({ quantizePosition: 14, quantizeNormal: 10, quantizeColor: 8 }),
   dedup(),
   prune({ keepAttributes: false }),
@@ -7385,13 +7391,13 @@ Paths: `content/missions.json`. SHA-256 `fa7d9150ec60fe5c5d02b072ae1283de4581822
 
 ### content/models/manifest.json
 
-Paths: `content/models/manifest.json`. SHA-256 `2b0b24981ef9abbbbc4e88db5734f2d61cc172bae15a9f38ff3d04be325f5a32`, 197 bytes.
+Paths: `content/models/manifest.json`. SHA-256 `21508bba25e3a3dbb3c13f17e59f6836775a2df6fa5cf1a454b18e03c1c32a82`, 197 bytes.
 
 ```json
 {
   "file": "showcase.glb",
-  "bytes": 24655328,
-  "sha256": "15aa97f7fcc3f7dd8ab9f9334a4836d96efc1e7899539fd696fbf1fc6ffa4b15",
+  "bytes": 23880460,
+  "sha256": "cd3d8b79b62883ed5ee895c3bcf3323f31cebe0544059a6d48aaff37536d5bd4",
   "source": "art/blender/export.py then art/tools/pack-models.ts"
 }
 ```
@@ -25888,7 +25894,7 @@ export default tseslint.config(
 
 ### package-lock.json
 
-Paths: `package-lock.json`. SHA-256 `f276bde2de3901c902cb2c1f63c5734350301a3b8dbdeff7011dc9b3e1556ca9`, 134005 bytes.
+Paths: `package-lock.json`. SHA-256 `c24390aa6610c5dba6d38f8dd7b46bc35c792e5a0c8205711da0418272dec52b`, 134039 bytes.
 
 ```json
 {
@@ -25916,6 +25922,7 @@ Paths: `package-lock.json`. SHA-256 `f276bde2de3901c902cb2c1f63c5734350301a3b8db
         "esbuild": "0.28.2",
         "eslint": "10.10.0",
         "fast-check": "4.10.1",
+        "meshoptimizer": "1.1.1",
         "sharp": "0.35.4",
         "typescript": "6.0.3",
         "typescript-eslint": "8.70.1",
@@ -29936,7 +29943,7 @@ Paths: `package-lock.json`. SHA-256 `f276bde2de3901c902cb2c1f63c5734350301a3b8db
 
 ### package.json
 
-Paths: `package.json`. SHA-256 `01e143550b73c465111702d1c16c6394c6c29f521e2f75162a8fa0f95affeef8`, 1476 bytes.
+Paths: `package.json`. SHA-256 `1778a4285131a9f7170861ea17a3487511fafa2726767fc148d3db4e705b383c`, 1506 bytes.
 
 ```json
 {
@@ -29977,6 +29984,7 @@ Paths: `package.json`. SHA-256 `01e143550b73c465111702d1c16c6394c6c29f521e2f7516
     "esbuild": "0.28.2",
     "eslint": "10.10.0",
     "fast-check": "4.10.1",
+    "meshoptimizer": "1.1.1",
     "sharp": "0.35.4",
     "typescript": "6.0.3",
     "typescript-eslint": "8.70.1",
@@ -32666,7 +32674,7 @@ export function vehicleGlb(glb: ArrayBuffer, vehicle: string): ArrayBuffer | nul
 
 ### source/showcase/model.ts
 
-Paths: `source/showcase/model.ts`. SHA-256 `5b63f9b18f58c574c3433215ed0d47e768855df99b6e7c7ff255b54aab70c1f4`, 10499 bytes.
+Paths: `source/showcase/model.ts`. SHA-256 `80e74916f1e19bbf94cd3250bfcb8f135f55e7dea92e3c1a720e7782972b39cd`, 11604 bytes.
 
 ```ts
 // Real-time vehicle showcase (MPES §10): the embedded glTF model on a slowly turning stage the player can drag.
@@ -32690,15 +32698,24 @@ const UP = new Vector3(0, 1, 0);
 
 let packed: Promise<ArrayBuffer | null> | null = null;
 const libraries = new Map<string, Promise<Group | null>>();
+const preparing = new Set<string>();
+
+/** Base64 to bytes: the browser's own decoder where it has one (a quarter of the time), else atob. */
+function base64Bytes(text: string): Uint8Array<ArrayBuffer> {
+  const native = (Uint8Array as unknown as { fromBase64?: (s: string) => Uint8Array<ArrayBuffer> }).fromBase64;
+  if (native) return native(text);
+  const binary = atob(text);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  return bytes;
+}
 
 /** The embedded model file (every vehicle): base64 of a raw-deflated GLB in an inert script block, inflated once. */
 function embedded(): Promise<ArrayBuffer | null> {
   packed ??= (async () => {
     const text = document.getElementById('sea-models')?.textContent?.trim();
     if (!text) return null;
-    const binary = atob(text);
-    const bytes = new Uint8Array(binary.length);
-    for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+    const bytes = base64Bytes(text);
     return new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).arrayBuffer();
   })().catch(() => null);
   return packed;
@@ -32715,11 +32732,25 @@ export function loadVehicle(vehicle: string): Promise<Group | null> {
       const file = await embedded();
       const glb = file && vehicleGlb(file, vehicle);
       if (!glb) return null;
-      return (await new GLTFLoader().parseAsync(glb, '')).scene;
+      const scene = (await new GLTFLoader().parseAsync(glb, '')).scene;
+      performance.mark(`sea-model:${vehicle}`);
+      return scene;
     })().catch(() => null);
     libraries.set(vehicle, library);
   }
   return library;
+}
+
+/**
+ * Decodes and parses a vehicle's model in idle time, so the tracker opens with it ready (MPES §10.3). Called once the
+ * team confirms its vehicle in planning; nothing happens without WebGL, where the tracker shows stills.
+ */
+export function prepareVehicle(vehicle: string): void {
+  if (libraries.has(vehicle) || preparing.has(vehicle)) return;
+  preparing.add(vehicle);
+  const run = () => { if (webglAvailable()) void loadVehicle(vehicle); };
+  // Idle time, but within two seconds even on a busy page.
+  if ('requestIdleCallback' in globalThis) requestIdleCallback(run, { timeout: 2000 }); else setTimeout(run, 200);
 }
 
 /** Software renderers draw on the CPU, which a turning model would saturate (no GPU, remote desktop). */
@@ -34332,7 +34363,7 @@ export function reflow(source: string): Block[] {
 
 ### source/ui/student.ts
 
-Paths: `source/ui/student.ts`. SHA-256 `4f8c63edcb7bd1b96085a5f33f750f2b8a94770f98ef8caf59dd58178b8e360d`, 24203 bytes.
+Paths: `source/ui/student.ts`. SHA-256 `5c9a36add881baaaf20edd1dd1e36d85f6df5f8c597c9a924ab80cb3c2454627`, 24318 bytes.
 
 ```ts
 // Student companion (MPES §7.3).
@@ -34351,6 +34382,7 @@ import { labelled, money, signed } from './format.ts';
 import type { Language, StringKey } from './i18n.ts';
 import { practiceCard } from './instructor.ts';
 import { RoleView } from './view.ts';
+import { prepareVehicle } from '../showcase/model.ts';
 import { Showcase } from '../showcase/showcase.ts';
 import { renders, VEHICLE } from '../showcase/renders.ts';
 
@@ -34449,6 +34481,7 @@ function missionHero(mission: MissionId, lang: Language, t: View['t']): Child {
 
 function planningView(v: View): Child {
   const s = joined(v), t = v.t, mission = s.team.mission as MissionId;
+  if (s.vehicleConfirmed) prepareVehicle(VEHICLE[mission]);
   const area = (field: 'plan' | 'risks', label: StringKey, hint: StringKey) => h('div', { class: 'field' },
     h('label', { for: `plan-${field}`, text: t(label) }),
     h('span', { class: 'hint', id: `plan-${field}-hint`, text: t(hint) }),
@@ -36851,7 +36884,7 @@ export async function studentRecord(page: Page, cardId: string, paidDollars: num
 
 ### tests/e2e/showcase.spec.ts
 
-Paths: `tests/e2e/showcase.spec.ts`. SHA-256 `c53d2f25bf416630292eebef13636fbdec6338e5ff2255fe505a31e514ccddee`, 17325 bytes.
+Paths: `tests/e2e/showcase.spec.ts`. SHA-256 `6a9f02d39b2b7a8bf8ab1f206ee6a40dcb9dd5a48a1b36ddbcc645656443989b`, 18738 bytes.
 
 ```ts
 // War-room HUD and vehicle showcase (MPES §7.1, §10, §11): the default look of every view. The live lot shows the
@@ -36922,6 +36955,29 @@ test('3D showcase: the model turns by itself, follows recorded purchases, and ca
   await expect(pause).toHaveAttribute('aria-pressed', 'true');
   await expectAccessible(sp, 'student tracker, 3D showcase');
   expect(errors).toEqual([]);
+});
+
+test('3D showcase: the confirmed vehicle is prepared during planning, and only then, so the tracker opens with it ready', async ({ browser }) => {
+  const prepared = (page: import('@playwright/test').Page) => page.evaluate(() => performance.getEntriesByType('mark').map(m => m.name).filter(n => n.startsWith('sea-model:')));
+  const ip = await (await browser.newContext()).newPage();
+  const sp = await (await browser.newContext()).newPage();
+  guardNetwork(ip); guardNetwork(sp);
+  await withGpu(sp);
+  await ip.goto(gameUrl('?role=instructor&lang=en'));
+  const code = await instructorSetup(ip, { teams: 2, reveal: 'JIT', timed: false, missions: ['MINE', 'TROOP'] });
+  await sp.goto(gameUrl('?role=student&lang=en'));
+  await studentJoin(sp, code, 1, 'MINE');
+  // Browsing missions decodes nothing; confirming one prepares that vehicle alone.
+  await sp.selectOption('#plan-mission', 'RECCE');
+  await sp.selectOption('#plan-mission', 'MINE');
+  await sp.waitForTimeout(1000);
+  expect(await prepared(sp)).toEqual([]);
+  await sp.check('#plan-confirm');
+  await expect.poll(() => prepared(sp), { timeout: 30_000 }).toEqual(['sea-model:mine-clearing']);
+  await sp.click('#student-start-auction');
+  await confirmDialog(sp);
+  await expect(sp.locator('#showcase [role="img"]')).toHaveAttribute('data-ready', 'true', { timeout: 30_000 });
+  expect(await prepared(sp)).toEqual(['sea-model:mine-clearing']);
 });
 
 test('3D showcase does not turn by itself when the player prefers reduced motion', async ({ browser }) => {
@@ -39581,7 +39637,7 @@ Keys and the commands that make each kind again:
 
 | Path | Bytes | SHA-256 | Key |
 |---|---:|---|---|
-| `content/models/showcase.glb` | 24655328 | `15aa97f7fcc3f7dd8ab9f9334a4836d96efc1e7899539fd696fbf1fc6ffa4b15` | M |
+| `content/models/showcase.glb` | 23880460 | `cd3d8b79b62883ed5ee895c3bcf3323f31cebe0544059a6d48aaff37536d5bd4` | M |
 | `content/renders/card-ACC-A.avif` | 9720 | `b71ca22c8544c147a61247225ad72f1748515007a3520315ddfe7afacf02e120` | R |
 | `content/renders/card-ACC-B.avif` | 10454 | `8c4b38acc728babb8f5436627e0c55ecb2c5c4d53647b88c73e45d36f198c26a` | R |
 | `content/renders/card-ACC-C.avif` | 14738 | `798ceff23ffbe70a2f6c4c03765dd4ad91149d2dce0a5b4bfc87a963ede5de4a` | R |
@@ -40440,5 +40496,5 @@ Keys and the commands that make each kind again:
 
 | Path | Bytes | SHA-256 | Why |
 |---|---:|---|---|
-| `docs/MPES.md` | 147557 | `4304a9f8242ed26cb9d2749c96817ae2b1688967ed59d88c11ed880410274636` | The specification, a clean-room document of its own (Omni 5.1.1 §333). |
+| `docs/MPES.md` | 148588 | `f94545fecf0c971d5b3dde3755e2e0a976d36e4e556aaee495f42154b9b0cfa8` | The specification, a clean-room document of its own (Omni 5.1.1 §333). |
 | `docs/CODEBASE.md` | | | This file. |

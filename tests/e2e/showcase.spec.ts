@@ -68,6 +68,29 @@ test('3D showcase: the model turns by itself, follows recorded purchases, and ca
   expect(errors).toEqual([]);
 });
 
+test('3D showcase: the confirmed vehicle is prepared during planning, and only then, so the tracker opens with it ready', async ({ browser }) => {
+  const prepared = (page: import('@playwright/test').Page) => page.evaluate(() => performance.getEntriesByType('mark').map(m => m.name).filter(n => n.startsWith('sea-model:')));
+  const ip = await (await browser.newContext()).newPage();
+  const sp = await (await browser.newContext()).newPage();
+  guardNetwork(ip); guardNetwork(sp);
+  await withGpu(sp);
+  await ip.goto(gameUrl('?role=instructor&lang=en'));
+  const code = await instructorSetup(ip, { teams: 2, reveal: 'JIT', timed: false, missions: ['MINE', 'TROOP'] });
+  await sp.goto(gameUrl('?role=student&lang=en'));
+  await studentJoin(sp, code, 1, 'MINE');
+  // Browsing missions decodes nothing; confirming one prepares that vehicle alone.
+  await sp.selectOption('#plan-mission', 'RECCE');
+  await sp.selectOption('#plan-mission', 'MINE');
+  await sp.waitForTimeout(1000);
+  expect(await prepared(sp)).toEqual([]);
+  await sp.check('#plan-confirm');
+  await expect.poll(() => prepared(sp), { timeout: 30_000 }).toEqual(['sea-model:mine-clearing']);
+  await sp.click('#student-start-auction');
+  await confirmDialog(sp);
+  await expect(sp.locator('#showcase [role="img"]')).toHaveAttribute('data-ready', 'true', { timeout: 30_000 });
+  expect(await prepared(sp)).toEqual(['sea-model:mine-clearing']);
+});
+
 test('3D showcase does not turn by itself when the player prefers reduced motion', async ({ browser }) => {
   const context = await browser.newContext({ reducedMotion: 'reduce' });
   const sp = await context.newPage();

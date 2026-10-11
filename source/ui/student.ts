@@ -14,6 +14,7 @@ import { labelled, money, signed } from './format.ts';
 import type { Language, StringKey } from './i18n.ts';
 import { practiceCard } from './instructor.ts';
 import { RoleView } from './view.ts';
+import { prepareVehicle } from '../showcase/model.ts';
 import { Showcase } from '../showcase/showcase.ts';
 import { renders, VEHICLE } from '../showcase/renders.ts';
 
@@ -112,6 +113,7 @@ function missionHero(mission: MissionId, lang: Language, t: View['t']): Child {
 
 function planningView(v: View): Child {
   const s = joined(v), t = v.t, mission = s.team.mission as MissionId;
+  if (s.vehicleConfirmed) prepareVehicle(VEHICLE[mission]);
   const area = (field: 'plan' | 'risks', label: StringKey, hint: StringKey) => h('div', { class: 'field' },
     h('label', { for: `plan-${field}`, text: t(label) }),
     h('span', { class: 'hint', id: `plan-${field}-hint`, text: t(hint) }),
