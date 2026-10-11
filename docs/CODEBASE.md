@@ -1,6 +1,6 @@
 # SEA Game codebase
 
-Version 0.5.1.0. Written by `npm run codebase` (scripts/codebase.ts); do not edit by hand. It holds all 1010 tracked files of the repository: 154 text files as 152 unique contents, 854 binary files by hash with the command that regenerates them, and 2 documents kept separately. With docs/MPES.md it is enough to rebuild the project.
+Version 0.5.1.0. Written by `npm run codebase` (scripts/codebase.ts); do not edit by hand. It holds all 1011 tracked files of the repository: 155 text files as 153 unique contents, 854 binary files by hash with the command that regenerates them, and 2 documents kept separately. With docs/MPES.md it is enough to rebuild the project.
 
 ## How to rebuild the tree
 
@@ -24423,7 +24423,7 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
 
 ### content/strings.en.json
 
-Paths: `content/strings.en.json`. SHA-256 `b93f012ab692d9f15721f34efa5902b776d5c571437097cef5d2b81b5a6a1dce`, 20211 bytes.
+Paths: `content/strings.en.json`. SHA-256 `d75434385189cb5d065c255eea51ac8f484ee62b1907781f7b0161d8f5db35fa`, 20491 bytes.
 
 ```json
 {
@@ -24660,6 +24660,9 @@ Paths: `content/strings.en.json`. SHA-256 `b93f012ab692d9f15721f34efa5902b776d5c
   "auction.voidConfirm": "Void result",
   "auction.next": "Next lot",
   "auction.finish": "Finish the auction",
+  "auction.roundFull": "Every team has its 2 wins in round {round}, so nobody can buy the lots left.",
+  "auction.closeRound": "Go to round {round}, the rest unsold",
+  "auction.closeLast": "Close round 7, the rest unsold",
   "auction.announce": "Announce: round {round}, lot {lot}, card {id}.",
   "auction.marketTitle": "This round",
   "auction.hidden": "Hidden",
@@ -24730,6 +24733,7 @@ Paths: `content/strings.en.json`. SHA-256 `b93f012ab692d9f15721f34efa5902b776d5c
   "strack.paid": "Price paid (whole dollars)",
   "strack.record": "We won this card",
   "strack.notOurs": "Not ours, next lot",
+  "strack.nextRound": "Skip to round {round}",
   "strack.notes": "Private note for this lot",
   "strack.wtp": "Our limit for this lot (dollars)",
   "strack.finish": "Finish early",
@@ -24765,7 +24769,7 @@ Paths: `content/strings.en.json`. SHA-256 `b93f012ab692d9f15721f34efa5902b776d5c
   "sdebrief.close": "Close",
   "sdebrief.closeTitle": "Close your companion?",
   "sdebrief.closeBody": "Do this after the instructor announces the results.",
-  "auction.keys": "Keyboard: 1–9 and 0 accept a bid from Teams 1–10 · S sell · U no sale · O open · R reveal · N next lot · P pause or resume · E add 30 s.",
+  "auction.keys": "Keyboard: 1–9 and 0 accept a bid from Teams 1–10 · S sell · U no sale · O open · R reveal · N next lot or round · P pause or resume · E add 30 s.",
   "app.unsupported": "This browser is too old for this game. Use Windows 11 with a current version of Chrome, Edge or Firefox.",
   "value.points": "Score it adds",
   "value.needed": "needed for a minimum",
@@ -24815,7 +24819,7 @@ Paths: `content/strings.en.json`. SHA-256 `b93f012ab692d9f15721f34efa5902b776d5c
 
 ### content/strings.fr.json
 
-Paths: `content/strings.fr.json`. SHA-256 `6cfcdd986d5d5e3eef87f84933d324befc5a29c83d599229f658d1659c579474`, 23177 bytes.
+Paths: `content/strings.fr.json`. SHA-256 `6d2e11958b1b953d0cab6bf385994962afac5bbd715dac8b7c90fbb8d67cb6b1`, 23494 bytes.
 
 ```json
 {
@@ -25052,6 +25056,9 @@ Paths: `content/strings.fr.json`. SHA-256 `6cfcdd986d5d5e3eef87f84933d324befc5a2
   "auction.voidConfirm": "Annuler le résultat",
   "auction.next": "Lot suivant",
   "auction.finish": "Terminer l’enchère",
+  "auction.roundFull": "Chaque équipe a ses 2 gains de la ronde {round} : personne ne peut acheter les lots restants.",
+  "auction.closeRound": "Passer à la ronde {round}, le reste invendu",
+  "auction.closeLast": "Clore la ronde 7, le reste invendu",
   "auction.announce": "Annoncez : ronde {round}, lot {lot}, carte {id}.",
   "auction.marketTitle": "Cette ronde",
   "auction.hidden": "Caché",
@@ -25122,6 +25129,7 @@ Paths: `content/strings.fr.json`. SHA-256 `6cfcdd986d5d5e3eef87f84933d324befc5a2
   "strack.paid": "Prix payé (dollars entiers)",
   "strack.record": "Nous avons gagné cette carte",
   "strack.notOurs": "Pas à nous, lot suivant",
+  "strack.nextRound": "Passer à la ronde {round}",
   "strack.notes": "Note privée pour ce lot",
   "strack.wtp": "Notre limite pour ce lot (dollars)",
   "strack.finish": "Terminer plus tôt",
@@ -25157,7 +25165,7 @@ Paths: `content/strings.fr.json`. SHA-256 `6cfcdd986d5d5e3eef87f84933d324befc5a2
   "sdebrief.close": "Fermer",
   "sdebrief.closeTitle": "Fermer votre compagnon ?",
   "sdebrief.closeBody": "Faites-le après l’annonce des résultats par l’instructeur.",
-  "auction.keys": "Clavier : 1 à 9 et 0 acceptent une offre des équipes 1 à 10 · S vendre · U pas de vente · O ouvrir · R révéler · N lot suivant · P pause ou reprise · E ajouter 30 s.",
+  "auction.keys": "Clavier : 1 à 9 et 0 acceptent une offre des équipes 1 à 10 · S vendre · U pas de vente · O ouvrir · R révéler · N lot ou ronde suivants · P pause ou reprise · E ajouter 30 s.",
   "app.unsupported": "Ce navigateur est trop ancien pour ce jeu. Utilisez Windows 11 avec une version récente de Chrome, Edge ou Firefox.",
   "value.points": "Score apporté",
   "value.needed": "nécessaire pour un minimum",
@@ -25601,7 +25609,7 @@ The three Firefox failures are browser-internal and appeared only under full loc
 
 ### docs/verification/0.5.1.0.md
 
-Paths: `docs/verification/0.5.1.0.md`. SHA-256 `2efa6ed715805108e1b09fb6cfe677137eb95d6490b681ba82f6f983578c492a`, 4715 bytes.
+Paths: `docs/verification/0.5.1.0.md`. SHA-256 `8f006a3a35f4a34acfc55d75f3539720e1fa08312841e9dab78139377c246b94`, 6474 bytes.
 
 ```markdown
 # Verification record: 0.5.1.0 beta (goal G2)
@@ -25649,6 +25657,23 @@ A Codex session given only `docs/MPES.md` (copied alone into `.artifacts/codex-m
 - C-13: tests' scratch folders were in the system temp folder; they now live in `.artifacts/tmp/` (listed by `archive:prep` as regenerable), and the cleanup exception is stated.
 
 Assigned, not fixed here (recorded in MPES §0.2 and §17): the measurement protocol of the proxy (frame and memory definitions, samples, percentiles: G3); rule edge cases the unit tests decide but MPES does not yet state (untouched shells, per-phase field domains, repeated auction commands, clock changes, import repair versus rejection, parser whitespace, award tie display: G6). Exact art bytes, interface strings and styling values are in the tracked source (`docs/CODEBASE.md`) by design; a rebuild from MPES alone is conforming, not byte-identical.
+
+## Codex diff review
+
+A Codex session reviewed the whole diff from `v0.5.0.0` (`.artifacts/codex-review-g2/REVIEW.md`, six findings):
+
+| # | Finding | Disposition |
+|---|---|---|
+| 1 | `archive:prep --apply` could follow a linked parent folder (say `.artifacts` as a junction) out of the project | Confirmed; refused, with a test (`tests/unit/archive.test.ts`) |
+| 2 | The cleanup removes `.artifacts/test-results`, which holds evidence | Rejected: Playwright empties that folder at the start of every run; kept evidence is in `.artifacts/logs/` |
+| 3 | `npx playwright install` ignores `playwright.config.ts`, so browsers land outside the project | Confirmed; `npm run browsers` (`scripts/browsers.ts`), with a test; README, RESTORE, CODEBASE and MPES use it |
+| 4 | The gallery marked a baseline complete after a failed capture | Confirmed; marked only when the capture succeeds |
+| 5 | The gallery built a tag with this checkout's `node_modules` | Confirmed; the tag runs `npm ci` when its lockfile differs |
+| 6 | README called the release tagged before the tag exists | Reworded; this record's results are filled at close-out |
+
+## Local browser runs and the GPU
+
+During this goal the owner's local language model (`llama-server`) held about 15.4 of 16.3 GB of the RTX 5060 Ti's memory at 92–100% use. Under that load headless Firefox failed with "RenderCompositorSWGL failed mapping default framebuffer" and four Firefox tests (`rehearsal.spec.ts:43`, `slice.spec.ts:8`, `showcase.spec.ts:32`, `showcase.spec.ts:226`) timed out in the full run; run alone, the same nine Firefox tests passed (`.artifacts/logs/g2-firefox-rerun.log`). The cause is outside the project and is not called a flake; CI, on its own runner, is the authoritative browser run.
 
 ## Residual risks (unchanged)
 
@@ -31106,7 +31131,7 @@ export function isInt(value: unknown, min: number, max: number): value is number
 
 ### source/domain/instructor.ts
 
-Paths: `source/domain/instructor.ts`. SHA-256 `f90ddf0404df7d3d7704cde84103fc73dad64e8f99892736c678c7c84ff1e1ab`, 17050 bytes.
+Paths: `source/domain/instructor.ts`. SHA-256 `34842d9bc07afe1437f456d1cb9e56455285ab4ade33819361984342ccc13f05`, 18740 bytes.
 
 ```ts
 // Instructor role: authoritative session, auction and results (MPES §6). Commands are pure:
@@ -31428,6 +31453,38 @@ export function advance(state: InstructorState): InstructorState {
   if (position === ROUNDS * LOTS - 1) return { ...state, ...reset, phase: 'build' };
   const next = position + 1;
   return { ...state, ...reset, round: Math.floor(next / LOTS), lot: next % LOTS, revealed: state.revealMode !== 'MANUAL', leader: null, currentBid: null };
+}
+
+/**
+ * Lots left in this round that no team may win (every team has its wins): the current one unless it has its outcome,
+ * and every later one. 0 if any team may still win.
+ */
+export function lotsNobodyCanWin(state: InstructorState): number {
+  if (state.phase !== 'auction' || state.teams.some(team => canWin(team, state.round + 1))) return 0;
+  return LOTS - state.lot - (currentOutcome(state) ? 1 : 0);
+}
+
+/**
+ * Owner request 2026-10-11 (MPES §6.5): when no team may win more this round, record the current lot and every later
+ * lot of the round UNSOLD at once and open the next round. It is offered from the sale that used the last win, so the
+ * instructor needs no extra Next lot. In round 7 it stops on lot 70, so build stays a deliberate step.
+ */
+export function closeRound(state: InstructorState): InstructorState {
+  auction(state);
+  const count = lotsNobodyCanWin(state);
+  if (count === 0) fail('phase');
+  const ledger = [...state.ledger];
+  for (let lot = LOTS - count; lot < LOTS; lot++) {
+    const card = state.market[state.round]?.[lot];
+    if (!card) fail('invalid-state');
+    if (!hasCapacity(state.round * LOTS + lot, ledger.length, 'UNSOLD')) fail('ledger-limit');
+    ledger.push({ seq: state.seq + ledger.length - state.ledger.length + 1, kind: 'UNSOLD', round: card.round, lot: card.lot, card: card.id, team: null, price: null });
+  }
+  const closed: InstructorState = {
+    ...state, ledger, seq: ledger.at(-1)!.seq, leader: null, currentBid: null, lot: LOTS - 1, revealed: true,
+    open: false, pausedRemaining: null, deadline: null, resultDraft: null, finalCallAnnounced: false,
+  };
+  return state.round === ROUNDS - 1 ? closed : advance(closed);
 }
 
 // ---- Build, submissions, debrief (MPES §6.11–6.13) ----
@@ -33604,7 +33661,7 @@ export function detectLanguage(search: string, navigatorLanguage: string | undef
 
 ### source/ui/instructor.ts
 
-Paths: `source/ui/instructor.ts`. SHA-256 `2e342d8f53d88102a88a73d78aa95b2b821a86b3fd38bff715a92d83520dbe00`, 35113 bytes.
+Paths: `source/ui/instructor.ts`. SHA-256 `b2740e57d3d7495f5c9e613976565ed04535e965a0ef760f61b0dd0c7fb27d6b`, 35830 bytes.
 
 ```ts
 // Instructor console (MPES §7.2).
@@ -33752,10 +33809,20 @@ function liveLot(v: View, clock: Clock): Child {
   const visible = lotVisible(s.revealMode, s.lot, s.revealed, s.lot);
   const outcome = status.outcome;
   const controls: Child[] = [];
+  // Every team has its 2 wins this round: one click records the rest of the round unsold (owner, 2026-10-11).
+  // Offered from the sale that used the last win, so no Next lot is needed first.
+  const rest = I.lotsNobodyCanWin(s);
+  const closeRound: Child[] = rest > 0 ? [
+    h('p', { class: 'ok', id: 'round-full', text: t('auction.roundFull', { round: s.round + 1 }) }),
+    h('button', { type: 'button', class: 'btn primary', id: 'close-round', text: s.round === 6 ? t('auction.closeLast') : t('auction.closeRound', { round: s.round + 2 }),
+      on: { click: () => v.run(I.closeRound) } }),
+  ] : [];
+  if (!outcome) controls.push(...closeRound);
+  const first = rest > 0 ? 'btn' : 'btn primary';
   if (!visible && !outcome) {
-    controls.push(h('button', { type: 'button', class: 'btn primary', id: 'reveal', text: t('auction.reveal'), on: { click: () => v.run(I.reveal) } }));
+    controls.push(h('button', { type: 'button', class: first, id: 'reveal', text: t('auction.reveal'), on: { click: () => v.run(I.reveal) } }));
   } else if (!s.open && !outcome) {
-    controls.push(h('button', { type: 'button', class: 'btn primary', id: 'open-bidding', text: t('auction.open'), on: { click: () => v.run(state => I.openBidding(state, clock())) } }));
+    controls.push(h('button', { type: 'button', class: first, id: 'open-bidding', text: t('auction.open'), on: { click: () => v.run(state => I.openBidding(state, clock())) } }));
   }
   if (s.open && !outcome) {
     const offer = status.nextOffer!;
@@ -33795,8 +33862,9 @@ function liveLot(v: View, clock: Clock): Child {
   if (outcome) {
     controls.push(
       h('p', { class: 'lead', id: 'outcome', text: outcome.kind === 'SALE' ? t('auction.outcomeSale', { n: outcome.team, amount: money(outcome.price, v.lang) }) : t('auction.outcomeUnsold') }),
+      ...closeRound,
       h('div', { class: 'cluster' },
-        h('button', { type: 'button', class: 'btn primary', id: 'next-lot', text: s.round === 6 && s.lot === 9 ? t('auction.finish') : t('auction.next'), on: { click: () => v.run(I.advance) } }),
+        h('button', { type: 'button', class: first, id: 'next-lot', text: s.round === 6 && s.lot === 9 ? t('auction.finish') : t('auction.next'), on: { click: () => v.run(I.advance) } }),
         h('button', { type: 'button', class: 'btn ghost', id: 'void', text: t('auction.void'), on: { click: e => void voidDialog(v, e.currentTarget as HTMLElement) } }),
       ),
     );
@@ -34135,7 +34203,7 @@ export function startInstructor(root: HTMLElement, lang: Language, storage: Stor
 
 /** Live-auction shortcuts (MPES §7.1): each key presses the matching visible, enabled button. */
 const KEY_TARGETS: Record<string, string[]> = {
-  s: ['#sell'], u: ['#unsold'], o: ['#open-bidding'], r: ['#reveal'], n: ['#next-lot'], p: ['#pause', '#resume'], e: ['#extend'],
+  s: ['#sell'], u: ['#unsold'], o: ['#open-bidding'], r: ['#reveal'], n: ['#close-round', '#next-lot'], p: ['#pause', '#resume'], e: ['#extend'],
 };
 function auctionKeys(event: KeyboardEvent): void {
   if (event.ctrlKey || event.metaKey || event.altKey || event.repeat) return;
@@ -34208,7 +34276,7 @@ export function reflow(source: string): Block[] {
 
 ### source/ui/student.ts
 
-Paths: `source/ui/student.ts`. SHA-256 `2113f1ccf3f45ab7d01460d09b0865f618c8b024e44947dbf7910bde0df1f611`, 23751 bytes.
+Paths: `source/ui/student.ts`. SHA-256 `4f8c63edcb7bd1b96085a5f33f750f2b8a94770f98ef8caf59dd58178b8e360d`, 24203 bytes.
 
 ```ts
 // Student companion (MPES §7.3).
@@ -34410,6 +34478,10 @@ function auctionView(v: View): Child {
       ] : h('p', { class: 'muted', text: t('strack.noCard') }),
       h('p', { class: 'small', text: t('strack.winsLeft', { n: Math.max(0, winsLeft) }) }),
       h('div', { class: 'cluster' },
+        // With both wins of this round recorded the team cannot buy again until the next round (owner, 2026-10-11).
+        winsLeft <= 0 && round < ROUNDS ? h('button', { type: 'button', class: 'btn primary', id: 'next-round', text: t('strack.nextRound', { round: round + 1 }), on: {
+          click: () => v.run(state => S.setPosition(state, state.round + 2, 1), () => { v.drafts.delete('card-id'); v.drafts.delete('paid'); }),
+        } }) : null,
         h('button', { type: 'button', class: 'btn', id: 'not-ours', text: t('strack.notOurs'), on: { click: () => v.run(S.notOurs, () => { v.drafts.delete('card-id'); v.drafts.delete('paid'); }) } }),
         h('button', { type: 'button', class: 'btn ghost', id: 'finish-early', text: t('strack.finish'), on: {
           click: e => void v.confirm({ title: t('strack.finishTitle'), body: h('p', { text: t('strack.finishBody') }), confirm: t('strack.finish'), opener: e.currentTarget as HTMLElement }, S.finishAuction),
@@ -35482,6 +35554,62 @@ test.describe('role chooser over file:// (RQ-01, RQ-19, RQ-20)', () => {
       await context.close();
     });
   });
+});
+```
+
+### tests/e2e/close-round.spec.ts
+
+Paths: `tests/e2e/close-round.spec.ts`. SHA-256 `661b257b37e6e1850d5bf73fef95e884602ddf6ee017207a2c5661389dcf2b93`, 2807 bytes.
+
+```ts
+// Owner request 2026-10-11 (MPES §6.5): when every team has its 2 wins in a round, one click records the rest of the
+// round unsold and opens the next; a student whose team has its 2 wins skips to the next round's tracker.
+import { expect, test } from '@playwright/test';
+import { gameUrl, guardNetwork } from './helpers.ts';
+import { confirmDialog, instructorLot, instructorSetup, studentJoin, studentRecord } from './roles.ts';
+
+test('the instructor closes a full round in one click and the student skips to the next round', async ({ browser }) => {
+  const ip = await (await browser.newContext()).newPage();
+  const sp = await (await browser.newContext()).newPage();
+  guardNetwork(ip); guardNetwork(sp);
+  await ip.goto(gameUrl('?role=instructor&lang=en'));
+  const code = await instructorSetup(ip, { teams: 2, reveal: 'JIT', timed: false, missions: ['TROOP', 'RECCE'] });
+  const cards: string[] = [];
+  const prices: number[] = [];
+  for (const team of [1, 1, 2, 2]) {
+    await expect(ip.locator('#close-round')).toHaveCount(0);
+    if (await ip.locator('#reveal').count()) await ip.click('#reveal');
+    cards.push((await ip.locator('.card-figure[data-card]').getAttribute('data-card'))!);
+    prices.push(Number((await ip.locator('.card-figure strong.num').first().textContent())!.replace(/[$,]/g, '')));
+    await instructorLot(ip, [team], 'sell');
+    if (cards.length < 4) await ip.click('#next-lot');
+  }
+  // The sale that used the last win offers the close at once; Next lot stays as the slower path.
+  await expect(ip.locator('#round-full')).toContainText('round 1');
+  await expect(ip.locator('#close-round')).toHaveText('Go to round 2, the rest unsold');
+  await expect(ip.locator('#next-lot')).toBeVisible();
+  await ip.keyboard.press('n');
+  await expect(ip.locator('#lot-heading')).toContainText('Round 2');
+  await expect(ip.locator('#lot-heading')).toContainText('Lot 1 of');
+  await expect(ip.locator('#close-round')).toHaveCount(0);
+  await ip.reload();
+  await expect(ip.locator('#lot-heading')).toContainText('Round 2');
+
+  await sp.goto(gameUrl('?role=student&lang=en'));
+  await studentJoin(sp, code, 2, 'RECCE');
+  await sp.check('#plan-confirm');
+  await sp.click('#student-start-auction');
+  await confirmDialog(sp);
+  await studentRecord(sp, cards[0]!, null);
+  await studentRecord(sp, cards[1]!, null);
+  await expect(sp.locator('#next-round')).toHaveCount(0);
+  await studentRecord(sp, cards[2]!, prices[2]!);
+  await expect(sp.locator('#next-round')).toHaveCount(0);
+  await studentRecord(sp, cards[3]!, prices[3]!);
+  await expect(sp.locator('#next-round')).toHaveText('Skip to round 2');
+  await sp.click('#next-round');
+  await expect(sp.locator('#track-heading')).toHaveText('Round 2 · Lot 1 of 10');
+  await expect(sp.locator('#next-round')).toHaveCount(0);
 });
 ```
 
@@ -38034,7 +38162,7 @@ describe('vehicleGlb (MPES §10, §14)', () => {
 
 ### tests/unit/instructor.test.ts
 
-Paths: `tests/unit/instructor.test.ts`. SHA-256 `b8ed0810ad5d2cca5be424f01a2eca9770192826c55858619b16755c78eeaea5`, 13653 bytes.
+Paths: `tests/unit/instructor.test.ts`. SHA-256 `42a7a6fc38da2b131bc131dcf1e6ef15d91460481661afe96b437508b604e898`, 17357 bytes.
 
 ```ts
 // RQ-03, RQ-06, RQ-07, RQ-08, RQ-10, RQ-11: instructor commands and their rejections.
@@ -38203,6 +38331,77 @@ describe('outcomes, corrections and void (RQ-06, RQ-08)', () => {
   });
 });
 
+// Owner request 2026-10-11 (MPES §6.5): when no team may win more this round, one command closes the rest unsold.
+describe('closing a round no team can win in', () => {
+  /** Two wins each for teams 1..n in the current round, from the current lot on. */
+  function fill(s: I.InstructorState, teams: number): I.InstructorState {
+    for (let id = 1; id <= teams; id++) {
+      for (let k = 0; k < 2; k++) s = I.advance(I.commitSale(bidFor(I.openBidding(s, now()), id), id, I.currentCard(s).start));
+    }
+    return s;
+  }
+  it('is refused while any team may still win, and offered from the sale that used the last win', () => {
+    let s = fill(session(2), 1);
+    s = I.advance(I.commitSale(bidFor(I.openBidding(s, now()), 2), 2, I.currentCard(s).start));
+    expect(I.lotsNobodyCanWin(s)).toBe(0);
+    expect(code(() => I.closeRound(s))).toBe('phase');
+    s = I.commitSale(bidFor(I.openBidding(s, now()), 2), 2, I.currentCard(s).start);
+    expect([s.round, s.lot]).toEqual([0, 3]);
+    expect(I.lotsNobodyCanWin(s)).toBe(6);
+    const before = s.ledger.length;
+    const closed = I.closeRound(s);
+    expect(closed.ledger.slice(before).map(e => [e.kind, e.lot])).toEqual([5, 6, 7, 8, 9, 10].map(lot => ['UNSOLD', lot]));
+    expect([closed.round, closed.lot]).toEqual([1, 0]);
+    valid(closed);
+    expect(I.lotsNobodyCanWin(I.advance(s))).toBe(6);
+  });
+  it('is not offered when the sale that used the last win was on the last lot', () => {
+    let s = session(2);
+    for (let lot = 0; lot < 6; lot++) s = I.advance(I.commitUnsold(I.openBidding(s, now())));
+    s = fill(s, 1);
+    s = I.advance(I.commitSale(bidFor(I.openBidding(s, now()), 2), 2, I.currentCard(s).start));
+    s = I.commitSale(bidFor(I.openBidding(s, now()), 2), 2, I.currentCard(s).start);
+    expect([s.round, s.lot]).toEqual([0, 9]);
+    expect(I.lotsNobodyCanWin(s)).toBe(0);
+    expect(code(() => I.closeRound(s))).toBe('phase');
+  });
+  it('records every remaining lot of the round unsold and opens the next round, in each reveal mode', () => {
+    for (const mode of ['ROUND', 'JIT', 'MANUAL'] as const) {
+      let s = fill(session(3, mode), 3);
+      expect([s.round, s.lot]).toEqual([0, 6]);
+      expect(I.lotsNobodyCanWin(s)).toBe(4);
+      const before = s.ledger.length;
+      s = I.closeRound(s);
+      expect(s.ledger.slice(before).map(e => [e.kind, e.round, e.lot])).toEqual([7, 8, 9, 10].map(lot => ['UNSOLD', 1, lot]));
+      expect(s.ledger.map(e => e.seq)).toEqual(s.ledger.map((_, i) => i + 1));
+      expect([s.round, s.lot, s.open, s.leader]).toEqual([1, 0, false, null]);
+      expect(s.revealed).toBe(mode !== 'MANUAL');
+      valid(s);
+    }
+  });
+  it('works while bidding is open or paused, since no team can lead', () => {
+    let s = I.openBidding(fill(session(2), 2), now());
+    expect(I.lotsNobodyCanWin(s)).toBe(6);
+    expect([I.closeRound(s).round, I.closeRound(s).lot]).toEqual([1, 0]);
+    s = I.closeRound(I.pause(s, now()));
+    expect([s.round, s.lot, s.pausedRemaining, s.deadline]).toEqual([1, 0, null, null]);
+    valid(s);
+  });
+  it('stays on the last lot of round 7 so moving to build remains a deliberate step', () => {
+    let s = session(2);
+    for (let r = 0; r < 6; r++) s = I.closeRound(fill(s, 2));
+    expect([s.round, s.lot]).toEqual([6, 0]);
+    s = I.closeRound(fill(s, 2));
+    expect([s.phase, s.round, s.lot]).toEqual(['auction', 6, 9]);
+    expect(I.currentOutcome(s)?.kind).toBe('UNSOLD');
+    expect(I.lotsNobodyCanWin(s)).toBe(0);
+    s = I.advance(s);
+    expect(s.phase).toBe('build');
+    expect(s.ledger).toHaveLength(70);
+    valid(s);
+  });
+});
+
 function playToBuild(s: I.InstructorState): I.InstructorState {
   while (s.phase === 'auction') {
     if (!I.currentOutcome(s)) {
@@ -38243,7 +38442,7 @@ describe('every reachable state validates and equals its ledger replay (RQ-08 pr
       fc.constant({ kind: 'pause' as const }), fc.constant({ kind: 'resume' as const }), fc.constant({ kind: 'extend' as const }),
       fc.record({ kind: fc.constant('bid' as const), team: fc.integer({ min: 1, max: 4 }) }),
       fc.record({ kind: fc.constant('sale' as const), team: fc.integer({ min: 1, max: 4 }), steps: fc.integer({ min: 0, max: 3 }) }),
-      fc.record({ kind: fc.constant('void' as const) }),
+      fc.record({ kind: fc.constant('void' as const) }), fc.constant({ kind: 'close-round' as const }),
     );
     fc.assert(fc.property(fc.array(action, { maxLength: 120 }), fc.constantFrom<RevealMode>('ROUND', 'JIT', 'MANUAL'), (actions, mode) => {
       let s = session(4, mode);
@@ -38257,6 +38456,7 @@ describe('every reachable state validates and equals its ledger replay (RQ-08 pr
             case 'unsold': s = I.commitUnsold(s); break;
             case 'void': s = I.voidCurrent(s, 'property'); break;
             case 'advance': s = I.advance(s); break;
+            case 'close-round': s = I.closeRound(s); break;
             case 'pause': s = I.pause(s, now()); break;
             case 'resume': s = I.resume(s, now()); break;
             case 'extend': s = I.extend(s, now()); break;
@@ -40166,5 +40366,5 @@ Keys and the commands that make each kind again:
 
 | Path | Bytes | SHA-256 | Why |
 |---|---:|---|---|
-| `docs/MPES.md` | 145261 | `0afe3d84f3ea36f48682cff9313f66221afc72dc1df7b1ab2828fb424047896a` | The specification, a clean-room document of its own (Omni 5.1.1 §333). |
+| `docs/MPES.md` | 146523 | `6e8b03cf0007f1d9fc826eef4fd41af53cc78bd85d7672ff3236d1dbf6b344f7` | The specification, a clean-room document of its own (Omni 5.1.1 §333). |
 | `docs/CODEBASE.md` | | | This file. |

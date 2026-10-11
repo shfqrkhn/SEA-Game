@@ -319,7 +319,7 @@ Each module's responsibility and public contract. Names are the exported identif
 | `source/domain/ledger.ts` | §6.5: `LedgerEntry` (SALE, UNSOLD, VOID), `lotIndex`, `effectiveOutcomes` (replay), `hasCapacity`. |
 | `source/domain/team.ts` | §8.5: `Team`, `Purchase`, `createTeams`, `withPurchases` (rebuild totals, cost and per-round counts), `canWin`, `acquire`, `removePurchase`, `bid`. |
 | `source/domain/award.ts` | §6.12: `standing`, `compareStandings` (exact cross-multiplication), `rankAwards`, `costPerPointCents`. |
-| `source/domain/instructor.ts` | §6 instructor commands on `InstructorState` (§8.3): `instructorShell`, `setLanguage`, `bidIncrementOf`, `generateSession`, `newSession`, `startPractice`, `practiceStep`, `openPlanning`, `selectMission`, `startAuction`, `reveal`, `openBidding`, `acceptBid`, `pause`, `resume`, `extend`, `commitSale`, `commitUnsold`, `voidCurrent`, `advance`, `openSubmissions`, `setPrivateEntry`, `setProfit`, `setSubmitted`, `closeSubmissions`, `closeRoom`; queries `currentCard`, `currentOutcome`, `nextOffer`, `auctionStatus`, `pendingSubmissions`, `ledgerFor`. Time and entropy are arguments. |
+| `source/domain/instructor.ts` | §6 instructor commands on `InstructorState` (§8.3): `instructorShell`, `setLanguage`, `bidIncrementOf`, `generateSession`, `newSession`, `startPractice`, `practiceStep`, `openPlanning`, `selectMission`, `startAuction`, `reveal`, `openBidding`, `acceptBid`, `pause`, `resume`, `extend`, `commitSale`, `commitUnsold`, `voidCurrent`, `advance`, `closeRound`, `openSubmissions`, `setPrivateEntry`, `setProfit`, `setSubmitted`, `closeSubmissions`, `closeRoom`; queries `currentCard`, `currentOutcome`, `lotsNobodyCanWin`, `nextOffer`, `auctionStatus`, `pendingSubmissions`, `ledgerFor`. Time and entropy are arguments. |
 | `source/domain/student.ts` | §6.9 to §6.11 student commands on `StudentState` (§8.4): `studentShell`, `setLanguage`, `join`, `newSession`, `recordPracticeWin`, `resetPractice`, `openPlanning`, `selectMission`, `confirmVehicle`, `setPlanText`, `setMaxWtp`, `startAuction`, `setPosition`, `loadCard`, `editScratch`, `recordWin`, `notOurs`, `finishAuction`, `addMissingPurchase`, `removeOwnPurchase`, `openSubmit`, `draftProfit`, `setProfitInput`, `setProfitMode`, `finishSubmit`, `closeStudent`; `scratchKey`; limits `PLAN_MAX` 1,200, `NOTE_MAX` 600, `DEFAULT_MAX_WTP_CENTS`, `DEFAULT_PROFIT_CENTS`. |
 | `source/domain/saves.ts` | §8.3 to §8.5, §8.8: `validateInstructor` and `validateStudent` (untrusted input: copy passively, check every invariant, rebuild derived values from canonical data, return the canonical state or throw), `instructorForSave` (what is stored: private entry off). |
 | `source/domain/backup.ts` | §8.6: `BACKUP_FORMAT`, `BACKUP_VERSION`, `MAX_BACKUP_BYTES` 1,500,000, `MAX_BACKUP_CHARS` 500,000, `FORBIDDEN_KEYS` (per role), `passiveCopy`, `makeBackup`, `parseBackup`. |
@@ -516,6 +516,7 @@ A lot once revealed stays visible. The set of visible lots never shrinks. Reload
    - **UNSOLD**.
 7. *Void* the current lot's effective outcome. A reason is required. Void appends a VOID entry referencing the voided entry. A voided SALE removes that purchase from the team. A replacement outcome must be committed before advancing.
 8. *Advance* to the next lot. Allowed only when the current lot has an effective outcome. After lot 70, advance moves to the `build` phase.
+9. *Close the round* (owner request 2026-10-11). Allowed only when no team may win more this round (every team has 2 wins this round or 14 in all). It records the current lot, unless it already has its outcome, and every later lot of the round as UNSOLD entries in one step, then advances to lot 1 of the next round. In round 7 it stops on lot 70 with its UNSOLD outcome, so moving to `build` stays a separate *Advance*. The query `lotsNobodyCanWin` gives the number of lots it would record (0 when it is not allowed).
 
 **Win limits:** at most **2** effective wins per team per round, and therefore at most **14** per game.
 
@@ -578,6 +579,7 @@ The student app does not know the market. During the auction the student:
 - keeps per-lot private notes (up to 600 characters) and a whole-dollar WTP (`scratch["<round>-<lot>"]`);
 - **records a win** only after the instructor confirms the winner and price. This adds the purchase (same validation as §6.4/§6.5) and advances one position;
 - otherwise selects **Not ours / advance**;
+- once its team has 2 wins this round, may **skip to the next round** (lot 1 of the next round, rounds 1–6), the student's side of §6.5 step 9;
 - may **finish the auction early**, after a confirmation bound to the exact current state. This moves the student to `build`.
 
 ### 6.10 Build reconciliation (student)
@@ -638,7 +640,7 @@ Team 1, mission TROOP, with effective purchases totalling CAP 18, MOB 180, FP 4,
 | setup | Session form | Team count, reveal mode, timing and bid window; Generate session; large session code display for projection |
 | practice | Practice lot | Training card, the four practice steps as one stepper, reset |
 | planning | Team board | Teams × mission selector, missing-mission warnings, Start auction (disabled until all set) |
-| auction | Live lot | Round/lot, card illustration, title, start price, effects; next offer; team bid buttons 1..N (disabled with reason when at limit or leader); timer with pause/resume/extend; commit SALE/UNSOLD; void; advance. Side panel: compact ledger for this round, team win counts |
+| auction | Live lot | Round/lot, card illustration, title, start price, effects; next offer; team bid buttons 1..N (disabled with reason when at limit or leader); timer with pause/resume/extend; commit SALE/UNSOLD; void; advance. When no team may win more this round (§6.5 step 9), a line says so and **Go to round N, the rest unsold** (round 7: **Close round 7, the rest unsold**) becomes the primary button, shown from the sale that used the last win; key N presses it before Next lot. Side panel: compact ledger for this round, team win counts |
 | build | Results table | All teams' purchases, totals, compliance; Open submissions |
 | submit | Private entry | "Private – do not project" banner; per-team profit and submitted toggle; Close submissions |
 | debrief | Award view | Ranking table, award announcement, per-team gap analysis, class comparison chart (accessible table equivalent) |
@@ -653,7 +655,7 @@ The full ledger is always reachable: grouped by round, each entry showing round,
 | setup | Join | Session code, team number, mission; Start companion |
 | practice | Practice | Training card; Record practice win |
 | planning | Mission planner | Mission minimums; capability catalogue showing what each card category contributes; plan and risks text (≤ 1,200 characters each); max WTP; confirm vehicle; "Instructor started auction" |
-| auction | Lot tracker | Position selector; load card by ID; card details; **gap meter** per capability (current vs minimum); private notes/WTP; Record confirmed win (paid price); Not ours / advance; Finish early |
+| auction | Lot tracker | Position selector; load card by ID; card details; **gap meter** per capability (current vs minimum); private notes/WTP; Record confirmed win (paid price); Not ours / advance; **Skip to round N** once the team has its 2 wins this round (moves to lot 1 of the next round, rounds 1–6); Finish early |
 | build | Reconcile | Purchases list with remove; add missing purchase; totals vs minimums; compliance; Reconciliation complete |
 | submit | Bid | Profit mode, value, live bid and cost-per-point preview; Finish |
 | debrief | Reflection | Outcome vs plan baseline, shortfalls, spending by category |
@@ -1114,6 +1116,7 @@ Gates outside the code:
 | `tests/e2e/a11y.spec.ts` | J6, RQ-20, 21. |
 | `tests/e2e/slice.spec.ts` | M2 slice: one round, both roles, persistence, export and import, languages. |
 | `tests/e2e/increment.spec.ts` | The bid increment chosen at setup (§6.5). |
+| `tests/e2e/close-round.spec.ts` | Closing a round no team can win in from the sale that used the last win, key N, reload; the student's skip to the next round (§6.5 step 9, §7.2, §7.3). |
 | `tests/e2e/layout.spec.ts` | §7.1: live-lot actions fully visible at 1280×720. |
 | `tests/e2e/chooser.spec.ts` | The chooser: offline, languages, both roles, the six-vehicle lineup by keyboard and touch, About. |
 | `tests/e2e/showcase.spec.ts` | §7.1, §10, §11: the HUD look, card renders, 3D and stills modes. |

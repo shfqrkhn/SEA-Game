@@ -197,6 +197,10 @@ function auctionView(v: View): Child {
       ] : h('p', { class: 'muted', text: t('strack.noCard') }),
       h('p', { class: 'small', text: t('strack.winsLeft', { n: Math.max(0, winsLeft) }) }),
       h('div', { class: 'cluster' },
+        // With both wins of this round recorded the team cannot buy again until the next round (owner, 2026-10-11).
+        winsLeft <= 0 && round < ROUNDS ? h('button', { type: 'button', class: 'btn primary', id: 'next-round', text: t('strack.nextRound', { round: round + 1 }), on: {
+          click: () => v.run(state => S.setPosition(state, state.round + 2, 1), () => { v.drafts.delete('card-id'); v.drafts.delete('paid'); }),
+        } }) : null,
         h('button', { type: 'button', class: 'btn', id: 'not-ours', text: t('strack.notOurs'), on: { click: () => v.run(S.notOurs, () => { v.drafts.delete('card-id'); v.drafts.delete('paid'); }) } }),
         h('button', { type: 'button', class: 'btn ghost', id: 'finish-early', text: t('strack.finish'), on: {
           click: e => void v.confirm({ title: t('strack.finishTitle'), body: h('p', { text: t('strack.finishBody') }), confirm: t('strack.finish'), opener: e.currentTarget as HTMLElement }, S.finishAuction),

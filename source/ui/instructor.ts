@@ -143,10 +143,20 @@ function liveLot(v: View, clock: Clock): Child {
   const visible = lotVisible(s.revealMode, s.lot, s.revealed, s.lot);
   const outcome = status.outcome;
   const controls: Child[] = [];
+  // Every team has its 2 wins this round: one click records the rest of the round unsold (owner, 2026-10-11).
+  // Offered from the sale that used the last win, so no Next lot is needed first.
+  const rest = I.lotsNobodyCanWin(s);
+  const closeRound: Child[] = rest > 0 ? [
+    h('p', { class: 'ok', id: 'round-full', text: t('auction.roundFull', { round: s.round + 1 }) }),
+    h('button', { type: 'button', class: 'btn primary', id: 'close-round', text: s.round === 6 ? t('auction.closeLast') : t('auction.closeRound', { round: s.round + 2 }),
+      on: { click: () => v.run(I.closeRound) } }),
+  ] : [];
+  if (!outcome) controls.push(...closeRound);
+  const first = rest > 0 ? 'btn' : 'btn primary';
   if (!visible && !outcome) {
-    controls.push(h('button', { type: 'button', class: 'btn primary', id: 'reveal', text: t('auction.reveal'), on: { click: () => v.run(I.reveal) } }));
+    controls.push(h('button', { type: 'button', class: first, id: 'reveal', text: t('auction.reveal'), on: { click: () => v.run(I.reveal) } }));
   } else if (!s.open && !outcome) {
-    controls.push(h('button', { type: 'button', class: 'btn primary', id: 'open-bidding', text: t('auction.open'), on: { click: () => v.run(state => I.openBidding(state, clock())) } }));
+    controls.push(h('button', { type: 'button', class: first, id: 'open-bidding', text: t('auction.open'), on: { click: () => v.run(state => I.openBidding(state, clock())) } }));
   }
   if (s.open && !outcome) {
     const offer = status.nextOffer!;
@@ -186,8 +196,9 @@ function liveLot(v: View, clock: Clock): Child {
   if (outcome) {
     controls.push(
       h('p', { class: 'lead', id: 'outcome', text: outcome.kind === 'SALE' ? t('auction.outcomeSale', { n: outcome.team, amount: money(outcome.price, v.lang) }) : t('auction.outcomeUnsold') }),
+      ...closeRound,
       h('div', { class: 'cluster' },
-        h('button', { type: 'button', class: 'btn primary', id: 'next-lot', text: s.round === 6 && s.lot === 9 ? t('auction.finish') : t('auction.next'), on: { click: () => v.run(I.advance) } }),
+        h('button', { type: 'button', class: first, id: 'next-lot', text: s.round === 6 && s.lot === 9 ? t('auction.finish') : t('auction.next'), on: { click: () => v.run(I.advance) } }),
         h('button', { type: 'button', class: 'btn ghost', id: 'void', text: t('auction.void'), on: { click: e => void voidDialog(v, e.currentTarget as HTMLElement) } }),
       ),
     );
@@ -526,7 +537,7 @@ export function startInstructor(root: HTMLElement, lang: Language, storage: Stor
 
 /** Live-auction shortcuts (MPES §7.1): each key presses the matching visible, enabled button. */
 const KEY_TARGETS: Record<string, string[]> = {
-  s: ['#sell'], u: ['#unsold'], o: ['#open-bidding'], r: ['#reveal'], n: ['#next-lot'], p: ['#pause', '#resume'], e: ['#extend'],
+  s: ['#sell'], u: ['#unsold'], o: ['#open-bidding'], r: ['#reveal'], n: ['#close-round', '#next-lot'], p: ['#pause', '#resume'], e: ['#extend'],
 };
 function auctionKeys(event: KeyboardEvent): void {
   if (event.ctrlKey || event.metaKey || event.altKey || event.repeat) return;
