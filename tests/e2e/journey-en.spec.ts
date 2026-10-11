@@ -183,6 +183,10 @@ test('J1/J3: full English timed session with every correction path', async ({ br
   else await expect(award).toContainText(`Team ${expected.join(', ')}`);
   for (const id of [1, 2]) await expect(ip.locator('main')).toContainText(dollars(teams[id]!.paidCents + teams[id]!.profitCents).replace(/(\.\d)$/, '$10'));
   info.annotations.push({ type: 'oracle', description: JSON.stringify(Object.entries(teams).map(([id, t]) => ({ id, mission: t.mission, cards: t.cards.length, compliant: compliant(t.mission, totals(t.cards)), score: score(t.mission, totals(t.cards)) }))) });
+  // Class comparison chart with the ranking table as its text equivalent (MPES §6.13), and the presentation questions.
+  await expect(ip.locator('.class-chart li')).toHaveCount(2);
+  await expect(ip.locator('#debrief-table')).toBeVisible();
+  await expect(ip.getByRole('heading', { name: 'Presentation questions' })).toBeVisible();
   await expectAccessible(ip, 'instructor debrief');
   await ip.reload();
   await ip.click('#close-room');
@@ -191,6 +195,7 @@ test('J1/J3: full English timed session with every correction path', async ({ br
 
   // Student debrief, close and a private export with no class data (J5).
   await expect(sp.locator('main')).toContainText('Capacity first, then protection.');
+  await expect(sp.getByRole('heading', { name: 'Presentation questions' })).toBeVisible();
   await sp.click('#student-close');
   await confirmDialog(sp);
   const download = sp.waitForEvent('download');

@@ -4,7 +4,7 @@ import { LOTS, ROUNDS, isMissionId, type MissionId } from './data.ts';
 import { ensure, fail, isInt } from './errors.ts';
 import { effectiveOutcomes, hasCapacity, type LedgerEntry, type Outcome } from './ledger.ts';
 import { deal, SEED_PATTERN, type MarketCard } from './market.ts';
-import { add, INCREMENT_CENTS, parseAmount, price as checkPrice } from './money.ts';
+import { add, BID_INCREMENTS, INCREMENT_CENTS, parseAmount, price as checkPrice } from './money.ts';
 import {
   DEFAULT_BID_SECONDS, EXTEND_MS, MAX_BID_SECONDS, MIN_BID_SECONDS, REVEAL_MODES, makeSessionCode,
   type Language, type Phase, type RevealMode, type TimingMode,
@@ -40,8 +40,12 @@ export interface InstructorState {
   readonly seq: number;
   readonly practice: Practice;
   readonly privateEntry: boolean;
+  /** Compatibility-only (MPES §8.3): carried so 4.1 saves round-trip; validated, cleared on lot changes, never shown. */
   readonly resultDraft: ResultDraft | null;
+  /** Compatibility-only (MPES §8.3): reset when a lot opens, extends or closes; 5.x never announces a final call. */
   readonly finalCallAnnounced?: boolean;
+  /** Bid increment chosen at setup, in cents (MPES §6.5). Absent in saves from earlier versions: $50,000. */
+  readonly bidIncrement?: number;
 }
 
 const EMPTY_PRACTICE: Practice = { revealed: false, open: false, leader: false, closed: false };
@@ -71,11 +75,20 @@ export function setLanguage(state: InstructorState, lang: Language): InstructorS
   return { ...state, lang };
 }
 
+export { BID_INCREMENTS } from './money.ts';
+
+/** The increment a state uses: its own, or the default of earlier versions. */
+export function bidIncrementOf(state: Pick<InstructorState, 'bidIncrement'>): number {
+  return state.bidIncrement ?? INCREMENT_CENTS;
+}
+
 export interface SessionOptions {
   readonly teamCount: number;
   readonly revealMode: RevealMode;
   readonly timingMode: TimingMode;
   readonly bidSeconds: number;
+  /** One of BID_INCREMENTS; omitted means $50,000. */
+  readonly bidIncrement?: number;
   /** 16 uppercase hex characters from crypto randomness (supplied by the app). */
   readonly token: string;
   /** 32 uppercase hex characters from crypto randomness, independent of the token. */
@@ -88,18 +101,20 @@ export function generateSession(state: InstructorState, options: SessionOptions)
   ensure((REVEAL_MODES as readonly string[]).includes(options.revealMode), 'invalid-state');
   ensure(options.timingMode === 'TIMED' || options.timingMode === 'UNTIMED', 'invalid-state');
   ensure(isInt(options.bidSeconds, MIN_BID_SECONDS, MAX_BID_SECONDS), 'time');
+  const bidIncrement = options.bidIncrement ?? INCREMENT_CENTS;
+  ensure(BID_INCREMENTS.includes(bidIncrement), 'money');
   ensure(SEED_PATTERN.test(options.seed), 'invalid-state');
   return {
     ...instructorShell(state.lang),
     sessionCode: makeSessionCode(options.teamCount, options.token), marketSeed: options.seed, market: deal(options.seed),
     teams: createTeams(options.teamCount), teamCount: options.teamCount, revealMode: options.revealMode,
-    timingMode: options.timingMode, bidSeconds: options.bidSeconds, revealed: options.revealMode !== 'MANUAL',
+    timingMode: options.timingMode, bidSeconds: options.bidSeconds, revealed: options.revealMode !== 'MANUAL', bidIncrement,
   };
 }
 
 /** Deliberate reset to an empty setup (UI confirms first). */
 export function newSession(state: InstructorState): InstructorState {
-  return { ...instructorShell(state.lang), teamCount: state.teamCount, revealMode: state.revealMode, timingMode: state.timingMode, bidSeconds: state.bidSeconds };
+  return { ...instructorShell(state.lang), teamCount: state.teamCount, revealMode: state.revealMode, timingMode: state.timingMode, bidSeconds: state.bidSeconds, bidIncrement: bidIncrementOf(state) };
 }
 
 // ---- Practice (MPES §6.8) ----
@@ -167,7 +182,7 @@ export function currentOutcome(state: InstructorState): Outcome | null {
 export function nextOffer(state: InstructorState): number | null {
   if (state.phase !== 'auction') return null;
   const card = currentCard(state);
-  return state.leader === null ? card.start : add(state.currentBid ?? 0, INCREMENT_CENTS);
+  return state.leader === null ? card.start : add(state.currentBid ?? 0, bidIncrementOf(state));
 }
 
 export interface AuctionStatus {
@@ -302,12 +317,6 @@ export function advance(state: InstructorState): InstructorState {
   if (position === ROUNDS * LOTS - 1) return { ...state, ...reset, phase: 'build' };
   const next = position + 1;
   return { ...state, ...reset, round: Math.floor(next / LOTS), lot: next % LOTS, revealed: state.revealMode !== 'MANUAL', leader: null, currentBid: null };
-}
-
-export function setResultDraft(state: InstructorState, draft: ResultDraft | null): InstructorState {
-  auction(state);
-  if (draft) ensure(draft.team.length <= 10 && draft.price.length <= 20 && draft.reason.length <= 120, 'text');
-  return { ...state, resultDraft: draft };
 }
 
 // ---- Build, submissions, debrief (MPES §6.11–6.13) ----

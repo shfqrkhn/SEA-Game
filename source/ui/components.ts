@@ -4,8 +4,6 @@ import type { MarketCard } from '../domain/market.ts';
 import { compliant, score, shortfalls, sumEffects } from '../domain/missions.ts';
 import type { Purchase } from '../domain/team.ts';
 import { cardRender } from '../showcase/renders.ts';
-import { cardArt } from './art.ts';
-import { hudEnabled } from './hud.ts';
 import { h, type Child } from './dom.ts';
 import { labelled, list, money, signed } from './format.ts';
 import { translate, type Language, type StringKey } from './i18n.ts';
@@ -23,13 +21,16 @@ export function effectsList(effects: Effects, lang: Language): Child {
       h('span', { class: 'num', text: signed(effects[k]!) }), ' ', `${t(`unit.${k}` as StringKey)} · ${t(`cap.${k}` as StringKey)}`)));
 }
 
+/** The card's photoreal render (MPES §11); every card and the practice card has one. */
+export function cardImage(id: string, label: string): HTMLElement | null {
+  const render = cardRender(id);
+  return render ? h('img', { class: 'card-render', src: render.src, alt: label, decoding: 'async', width: String(render.size.width), height: String(render.size.height) }) : null;
+}
+
 export function cardDetails(card: MarketCard, lang: Language, headingLevel: 'h2' | 'h3' = 'h3'): HTMLElement {
   const t = tr(lang);
-  const render = hudEnabled() ? cardRender(card.id) : undefined;
-  const label = `${card.id} · ${card.title[lang]}`;
   return h('figure', { class: 'card-figure', 'data-card': card.id },
-    render ? h('img', { class: 'card-render', src: render.src, alt: label, decoding: 'async', width: String(render.size.width), height: String(render.size.height) })
-      : cardArt(card.id, card.cat, label),
+    cardImage(card.id, `${card.id} · ${card.title[lang]}`),
     h('figcaption', { class: 'stack' },
       h('p', { class: 'muted small', text: `${t(`cat.${card.cat}` as StringKey)} · ${card.id}` }),
       h(headingLevel, { text: card.title[lang] }),
@@ -122,4 +123,13 @@ export function complianceText(id: MissionId, totals: Totals, lang: Language): s
   const t = tr(lang);
   if (compliant(id, totals)) return t('common.compliant');
   return t('common.notCompliant', { list: list(shortfalls(id, totals).map(s => t(`cap.${s.capability}` as StringKey)), lang) });
+}
+
+/** The original game's presentation questions (course source §18.18), asked of every team at the debrief. */
+export function presentationQuestions(lang: Language): HTMLElement {
+  const t = tr(lang);
+  return h('section', { class: 'panel stack', 'aria-labelledby': 'questions-heading' },
+    h('h2', { id: 'questions-heading', text: t('debrief.questions') }),
+    h('p', { class: 'muted small', text: t('debrief.questionsHint') }),
+    h('ol', { class: 'questions' }, ([1, 2, 3, 4, 5, 6, 7] as const).map(n => h('li', { text: t(`debrief.q${n}`) }))));
 }

@@ -8,8 +8,7 @@ import { lotIndex } from '../domain/ledger.ts';
 import { parseAmount } from '../domain/money.ts';
 import { instructorForSave, validateInstructor } from '../domain/saves.ts';
 import { lotVisible, REVEAL_MODES, MIN_BID_SECONDS, MAX_BID_SECONDS, type RevealMode, type TimingMode } from '../domain/session.ts';
-import { cardArt } from './art.ts';
-import { cardDetails, complianceText, missionName, missionTable, purchasesTable } from './components.ts';
+import { cardDetails, complianceText, missionName, missionTable, purchasesTable, cardImage, presentationQuestions } from './components.ts';
 import { h, type Child } from './dom.ts';
 import { labelled, money, seconds } from './format.ts';
 import type { Language, StringKey } from './i18n.ts';
@@ -25,13 +24,14 @@ function setupView(v: View): Child {
       h('h1', { text: t('setup.codeTitle') }),
       h('p', { class: 'session-code mono', text: s.sessionCode }),
       h('p', { text: t('setup.codeHint') }),
-      h('p', { class: 'muted', text: t('setup.summary', { teams: s.teamCount, reveal: t(`setup.reveal.${s.revealMode}` as StringKey), timing: s.timingMode === 'TIMED' ? `${t('setup.timing.TIMED')} (${s.bidSeconds} s)` : t('setup.timing.UNTIMED') }) }),
+      h('p', { class: 'muted', text: t('setup.summary', { teams: s.teamCount, reveal: t(`setup.reveal.${s.revealMode}` as StringKey), timing: s.timingMode === 'TIMED' ? `${t('setup.timing.TIMED')} (${s.bidSeconds} s)` : t('setup.timing.UNTIMED'), increment: money(I.bidIncrementOf(s), v.lang) }) }),
       h('button', { type: 'button', class: 'btn primary', id: 'start-practice', text: t('setup.startPractice'), on: { click: () => v.run(I.startPractice) } }),
     );
   }
   const teams = v.draft('setup-teams', String(s.teamCount));
   const reveal = v.draft('setup-reveal', s.revealMode) as RevealMode;
   const timing = v.draft('setup-timing', s.timingMode) as TimingMode;
+  const increment = v.draft('setup-increment', String(I.bidIncrementOf(s)));
   const radio = (name: string, value: string, checked: boolean, label: string, hint?: string) => h('label', { class: 'choice' },
     h('input', { type: 'radio', name, id: `${name}-${value}`, value, checked, on: { change: () => { v.drafts.set(name, value); v.render(); } } }),
     h('span', {}, h('span', { text: label }), hint ? h('span', { class: 'hint', text: hint }) : null),
@@ -43,27 +43,40 @@ function setupView(v: View): Child {
       h('select', { id: 'setup-teams', value: teams, on: { change: e => v.drafts.set('setup-teams', (e.target as HTMLSelectElement).value) } },
         Array.from({ length: 9 }, (_, i) => h('option', { value: String(i + 2), text: String(i + 2), selected: String(i + 2) === teams }))),
     ),
-    h('fieldset', { class: 'stack' }, h('legend', { text: t('setup.reveal') }),
-      REVEAL_MODES.map(mode => radio('setup-reveal', mode, mode === reveal, t(`setup.reveal.${mode}` as StringKey), t(`setup.reveal.${mode}.hint` as StringKey)))),
-    h('fieldset', { class: 'stack' }, h('legend', { text: t('setup.timing') }),
-      (['TIMED', 'UNTIMED'] as const).map(mode => radio('setup-timing', mode, mode === timing, t(`setup.timing.${mode}` as StringKey)))),
-    timing === 'TIMED' ? h('div', { class: 'field' },
-      h('label', { for: 'setup-seconds', text: t('setup.seconds') }),
-      v.input('setup-seconds', { type: 'number', min: String(MIN_BID_SECONDS), max: String(MAX_BID_SECONDS), step: '1', inputmode: 'numeric', value: String(s.bidSeconds), 'aria-describedby': 'setup-seconds-hint' }),
-      h('span', { class: 'hint', id: 'setup-seconds-hint', text: t('setup.secondsHint') }),
-    ) : null,
+    // Progressive disclosure: the defaults suit most classes, so the options wait behind one summary line.
+    h('details', { class: 'panel stack', id: 'setup-more', open: v.draft('setup-more') === 'open' ? true : undefined,
+      on: { toggle: e => v.drafts.set('setup-more', (e.currentTarget as HTMLDetailsElement).open ? 'open' : '') } },
+      h('summary', {}, h('span', { text: t('setup.more') }), ' ',
+        h('span', { class: 'muted small', id: 'setup-choices', text: [t(`setup.reveal.${reveal}` as StringKey), timing === 'TIMED' ? `${t('setup.timing.TIMED')} (${v.draft('setup-seconds', String(s.bidSeconds))} s)` : t('setup.timing.UNTIMED'),
+          t('setup.risesBy', { increment: money(Number(increment), v.lang) })].join(' · ') })),
+      h('fieldset', { class: 'stack' }, h('legend', { text: t('setup.reveal') }),
+        REVEAL_MODES.map(mode => radio('setup-reveal', mode, mode === reveal, t(`setup.reveal.${mode}` as StringKey), t(`setup.reveal.${mode}.hint` as StringKey)))),
+      h('fieldset', { class: 'stack' }, h('legend', { text: t('setup.timing') }),
+        (['TIMED', 'UNTIMED'] as const).map(mode => radio('setup-timing', mode, mode === timing, t(`setup.timing.${mode}` as StringKey)))),
+      h('div', { class: 'field' },
+        h('label', { for: 'setup-increment', text: t('setup.increment') }),
+        h('select', { id: 'setup-increment', 'aria-describedby': 'setup-increment-hint', on: { change: e => { v.drafts.set('setup-increment', (e.target as HTMLSelectElement).value); v.render(); } } },
+          I.BID_INCREMENTS.map(cents => h('option', { value: String(cents), text: money(cents, v.lang), selected: String(cents) === increment }))),
+        h('span', { class: 'hint', id: 'setup-increment-hint', text: t('setup.incrementHint') }),
+      ),
+      timing === 'TIMED' ? h('div', { class: 'field' },
+        h('label', { for: 'setup-seconds', text: t('setup.seconds') }),
+        v.input('setup-seconds', { type: 'number', min: String(MIN_BID_SECONDS), max: String(MAX_BID_SECONDS), step: '1', inputmode: 'numeric', value: String(s.bidSeconds), 'aria-describedby': 'setup-seconds-hint', on: { change: () => v.render() } }),
+        h('span', { class: 'hint', id: 'setup-seconds-hint', text: t('setup.secondsHint') }),
+      ) : null,
+    ),
     h('button', { type: 'button', class: 'btn primary', id: 'generate', text: t('setup.generate'), on: { click: () => {
       // Read the inputs at click time: drafts change without re-rendering.
       const secondsValue = Number(v.draft('setup-seconds', String(v.state.bidSeconds)));
       v.run(state => I.generateSession(state, sessionOptions(v, Number(v.draft('setup-teams', String(state.teamCount))),
         v.draft('setup-reveal', state.revealMode) as RevealMode, v.draft('setup-timing', state.timingMode) as TimingMode,
-        Number.isInteger(secondsValue) ? secondsValue : NaN)));
+        Number.isInteger(secondsValue) ? secondsValue : NaN, Number(v.draft('setup-increment', String(I.bidIncrementOf(state)))))));
     } } }),
   );
 }
 
-function sessionOptions(_v: View, teamCount: number, revealMode: RevealMode, timingMode: TimingMode, bidSeconds: number): I.SessionOptions {
-  return { teamCount, revealMode, timingMode, bidSeconds, token: randomHex(16), seed: randomHex(32) };
+function sessionOptions(_v: View, teamCount: number, revealMode: RevealMode, timingMode: TimingMode, bidSeconds: number, bidIncrement: number): I.SessionOptions {
+  return { teamCount, revealMode, timingMode, bidSeconds, bidIncrement, token: randomHex(16), seed: randomHex(32) };
 }
 
 function practiceView(v: View): Child {
@@ -92,8 +105,8 @@ function practiceView(v: View): Child {
 }
 
 export function practiceCard(lang: Language): Child {
-  return h('figure', { class: 'card-figure' },
-    cardArt(PRACTICE_CARD.id, 'PRACTICE', PRACTICE_CARD.title[lang]),
+  return h('figure', { class: 'card-figure', 'data-card': PRACTICE_CARD.id },
+    cardImage(PRACTICE_CARD.id, `${PRACTICE_CARD.id} · ${PRACTICE_CARD.title[lang]}`),
     h('figcaption', {}, h('h2', { text: PRACTICE_CARD.title[lang] }), h('p', { class: 'mono small', text: PRACTICE_CARD.id })));
 }
 
@@ -149,7 +162,6 @@ function liveLot(v: View, clock: Clock): Child {
           : h('button', { type: 'button', class: 'btn', id: 'pause', text: t('auction.pause'), on: { click: () => v.run(state => I.pause(state, clock())) } }),
         h('button', { type: 'button', class: 'btn', id: 'extend', text: t('auction.extend'), on: { click: () => v.run(state => I.extend(state, clock())) } }),
       ) : null,
-      h('p', { class: 'muted small', id: 'auction-keys', text: `${t('auction.bidHint')} ${t('auction.keys')}` }),
       h('div', { class: 'bid-grid' }, s.teams.map(team => {
         const atLimit = (team.purchasesByRound[s.round] ?? 0) >= 2;
         const leading = s.leader === team.id;
@@ -180,11 +192,15 @@ function liveLot(v: View, clock: Clock): Child {
       ),
     );
   }
+  // Two columns on wide screens (card | controls) keep every lot action visible at 1280×720 (MPES §7.1).
   return h('section', { class: 'panel stack', 'aria-labelledby': 'lot-heading' },
     h('h1', { id: 'lot-heading', text: t('common.roundLot', { round: s.round + 1, lot: s.lot + 1 }) }),
-    visible || outcome ? [cardDetails(card, v.lang, 'h2'), h('p', { class: 'muted small', text: t('auction.announce', { round: s.round + 1, lot: s.lot + 1, id: card.id }) })]
-      : h('p', { class: 'hidden-card', text: t('auction.hidden') }),
-    controls,
+    h('div', { class: 'lot-layout' },
+      visible || outcome ? h('div', { class: 'stack' }, cardDetails(card, v.lang, 'h2'), h('p', { class: 'muted small', text: t('auction.announce', { round: s.round + 1, lot: s.lot + 1, id: card.id }) }))
+        : h('p', { class: 'hidden-card', text: t('auction.hidden') }),
+      h('div', { class: 'stack lot-controls' }, controls),
+    ),
+    s.open && !outcome ? h('p', { class: 'muted small', id: 'auction-keys', text: `${t('auction.bidHint')} ${t('auction.keys')}` }) : null,
   );
 }
 
@@ -383,7 +399,9 @@ export function awardSection(v: View): Child {
   return h('section', { class: 'stack' },
     h('p', { class: 'award', id: 'award', text: headline }),
     h('p', { class: 'muted', text: t('debrief.why') }),
-    h('div', { class: 'table-wrap' }, h('table', {},
+    classChart(v, result.winners),
+    h('div', { class: 'table-wrap' }, h('table', { id: 'debrief-table' },
+      h('caption', { class: 'visually-hidden', text: t('debrief.tableCaption') }),
       h('thead', {}, h('tr', {},
         h('th', { scope: 'col', text: t('debrief.rank') }), h('th', { scope: 'col', text: t('common.teams') }), h('th', { scope: 'col', text: t('common.mission') }),
         h('th', { scope: 'col', text: t('common.status') }), h('th', { scope: 'col', class: 'num', text: t('common.score') }),
@@ -408,11 +426,33 @@ export function awardSection(v: View): Child {
   );
 }
 
+/**
+ * Class comparison (MPES §6.13): one bar per team, scaled to the best score. Bars are HTML sized through the
+ * CSSOM (no canvas); the ranking table below is the text equivalent, and each bar is labelled in words.
+ */
+function classChart(v: View, winners: readonly number[]): Child {
+  const s = v.state, t = v.t, lang = v.lang;
+  const rows = s.teams.map(team => ({ team, st: standing(team) }));
+  const best = Math.max(1, ...rows.map(r => r.st.score));
+  return h('figure', { class: 'class-chart', 'aria-labelledby': 'class-chart-title', 'aria-describedby': 'class-chart-note' },
+    h('figcaption', { class: 'stack' }, h('h2', { id: 'class-chart-title', text: t('debrief.chart') }), h('p', { class: 'muted small', id: 'class-chart-note', text: t('debrief.chartNote') })),
+    h('ul', { class: 'bars' }, rows.map(({ team, st }) => {
+      const bar = h('span', { class: `bar ${winners.includes(team.id) ? 'winner' : ''} ${st.eligible ? '' : 'ineligible'}` });
+      bar.style.width = `${(st.score / best) * 100}%`;
+      const words = [t('common.team', { n: team.id }), missionName(team.lockedMission as MissionId, lang), t('debrief.chartScore', { n: st.score })];
+      if (winners.includes(team.id)) words.push(t('debrief.chartWinner'));
+      if (!st.eligible) words.push(t('debrief.chartIneligible'));
+      return h('li', { class: 'bar-row' }, h('span', { class: 'bar-label', text: words.join(' · ') }), h('span', { class: 'bar-track' }, bar));
+    })),
+  );
+}
+
 function debriefView(v: View): Child {
   const t = v.t;
   return h('section', { class: 'stack' },
     h('h1', { text: t('debrief.title') }),
     awardSection(v),
+    presentationQuestions(v.lang),
     teamPurchases(v),
     h('button', { type: 'button', class: 'btn primary', id: 'close-room', text: t('debrief.closeRoom'), on: {
       click: e => void v.confirm({ title: t('debrief.closeTitle'), body: h('p', { text: t('debrief.closeBody') }), confirm: t('debrief.closeRoom'), opener: e.currentTarget as HTMLElement }, I.closeRoom),

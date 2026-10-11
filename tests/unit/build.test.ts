@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs';
+import { inflateRawSync } from 'node:zlib';
 import { describe, expect, it } from 'vitest';
-import { MAX_BYTES, OUT, render, sha256 } from '../../build/render.ts';
+import { MAX_BYTES, MODELS_DIR, RENDERS_DIR, render, sha256 } from '../../build/render.ts';
 
 describe('single-file build (RQ-01, RQ-24, RQ-25, RQ-27)', async () => {
   const html = await render();
@@ -8,15 +9,18 @@ describe('single-file build (RQ-01, RQ-24, RQ-25, RQ-27)', async () => {
   const style = /<style>([\s\S]*?)<\/style>/.exec(html)?.[1] ?? '';
   const csp = /http-equiv="Content-Security-Policy" content="([^"]+)"/.exec(html)?.[1] ?? '';
 
+  it('embeds the four-part game version; npm holds its first three parts (MPES §19.2)', () => {
+    const pkg = JSON.parse(readFileSync('package.json', 'utf8')) as { version: string; gameVersion: string };
+    expect(pkg.gameVersion).toMatch(/^\d+\.\d+\.\d+\.\d+$/);
+    expect(pkg.version).toBe(pkg.gameVersion.split('.').slice(0, 3).join('.'));
+    expect(script).toContain(JSON.stringify(pkg.gameVersion));
+  });
   it('is deterministic', async () => {
     expect(await render()).toBe(html);
   });
-  it('matches the committed dist/index.html', () => {
-    expect(readFileSync(OUT, 'utf8')).toBe(html);
-  });
   it('has one executable inline script and one inline style, both hash-pinned in the CSP', () => {
     expect(html.match(/<script>/g)).toHaveLength(1);
-    expect(html.match(/<script\b/g)).toHaveLength(2); // plus the inert renders data block
+    expect(html.match(/<script\b/g)).toHaveLength(3); // plus the inert renders and models data blocks
     expect(html.match(/<style/g)).toHaveLength(1);
     expect(csp).toContain(`'sha256-${sha256(script)}'`);
     expect(csp).toContain(`'sha256-${sha256(style)}'`);
@@ -27,13 +31,23 @@ describe('single-file build (RQ-01, RQ-24, RQ-25, RQ-27)', async () => {
     }
     expect(csp).not.toMatch(/unsafe-(inline|eval)/);
     expect(csp).not.toMatch(/https?:/);
+    // Imagery and models are embedded data only; the models carry no textures, so nothing creates blob: URLs or workers.
+    expect(csp).toContain('img-src data:;');
+    expect(csp).not.toContain('blob:');
+  });
+  it('never mentions GitHub, which is temporary QA space (D-13)', () => {
+    expect(html).not.toMatch(/github/i);
   });
   it('references no external resources', () => {
     expect(html).not.toMatch(/<(link|img|iframe|object|embed)\b/i);
     expect(html).not.toMatch(/\b(src|href)="(https?:)?\/\//i);
   });
+  it('caps the file at 50 MB (MPES §14)', () => {
+    expect(MAX_BYTES).toBe(50 * 1024 * 1024);
+  });
   it('embeds the licence and third-party notices and stays within the size limit', () => {
-    expect(html).toContain('three.js authors');
+    expect(html).toContain('bundles one third-party library, three.js');
+    expect(html).toContain('Copyright © 2010-2026 three.js authors');
     expect(html).toContain('SEA Game contributors');
     expect(Buffer.byteLength(html)).toBeLessThanOrEqual(MAX_BYTES);
   });
@@ -41,15 +55,26 @@ describe('single-file build (RQ-01, RQ-24, RQ-25, RQ-27)', async () => {
     const block = /<script type="application\/json" id="sea-renders">([^<]*)<\/script>/.exec(html)?.[1];
     expect(block).toBeDefined();
     const embedded = JSON.parse(block!) as Record<string, { src: string; kind: string; depth?: unknown }>;
-    const manifest = JSON.parse(readFileSync('content/renders/spike/manifest.json', 'utf8')) as { entries: { id: string; file: string }[] };
+    const manifest = JSON.parse(readFileSync(`${RENDERS_DIR}/manifest.json`, 'utf8')) as { entries: { id: string; file: string }[] };
     expect(Object.keys(embedded).sort()).toEqual(manifest.entries.map(e => e.id).sort());
     for (const e of manifest.entries) {
-      expect(embedded[e.id]!.src).toBe('data:image/avif;base64,' + readFileSync('content/renders/spike/' + e.file).toString('base64'));
+      expect(embedded[e.id]!.src).toBe('data:image/avif;base64,' + readFileSync(`${RENDERS_DIR}/${e.file}`).toString('base64'));
     }
     // Every build layer carries its camera distance, the draw order of MPES §10.2.
     const layers = Object.values(embedded).filter(r => r.kind === 'build-layer');
     expect(layers.length).toBeGreaterThan(0);
     for (const r of layers) expect(typeof r.depth === 'number' && r.depth > 0).toBe(true);
+  });
+  it('embeds the committed showcase models once, raw-deflated and base64-encoded, matching the manifest (MPES §10)', () => {
+    const block = /<script type="application\/octet-stream" id="sea-models">([A-Za-z0-9+/=]*)<\/script>/.exec(html)?.[1];
+    expect(block).toBeTruthy();
+    const glb = inflateRawSync(Buffer.from(block!, 'base64'));
+    const manifest = JSON.parse(readFileSync(`${MODELS_DIR}/manifest.json`, 'utf8')) as { file: string };
+    expect(glb.equals(readFileSync(`${MODELS_DIR}/${manifest.file}`))).toBe(true);
+    expect(glb.subarray(0, 4).toString('latin1')).toBe('glTF');
+    // No textures: GLTFLoader would need blob: URLs for them, which the CSP forbids.
+    const json = JSON.parse(glb.subarray(20, 20 + glb.readUInt32LE(12)).toString('utf8')) as { images?: unknown[] };
+    expect(json.images ?? []).toHaveLength(0);
   });
   it('has no duplicate static ids', () => {
     const ids = [...html.matchAll(/\sid="([^"]+)"/g)].map(match => match[1]);

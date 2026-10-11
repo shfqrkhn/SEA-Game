@@ -1,4 +1,6 @@
 # Local-only and generated inputs
+dist/
+handoff/
 _archive/
 .artifacts/
 node_modules/

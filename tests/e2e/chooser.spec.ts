@@ -34,7 +34,7 @@ test.describe('role chooser over file:// (RQ-01, RQ-19, RQ-20)', () => {
     const dialog = page.getByRole('dialog', { name: 'About this game' });
     await expect(dialog).toBeVisible();
     await dialog.locator('summary', { hasText: 'Third-party notices' }).click();
-    await expect(dialog).toContainText('three.js authors');
+    await expect(dialog).toContainText('bundles one third-party library, three.js');
     await page.keyboard.press('Escape');
     await expect(dialog).toBeHidden();
     await expect(opener).toBeFocused();

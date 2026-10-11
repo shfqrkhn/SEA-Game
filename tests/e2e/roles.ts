@@ -19,8 +19,14 @@ export async function confirmDialog(page: Page): Promise<void> {
   await expect(dialog).toHaveCount(0);
 }
 
+/** Open the setup's "More options" section (collapsed by default: the defaults suit most classes). */
+export async function moreOptions(page: Page): Promise<void> {
+  if (await page.locator('#setup-more').getAttribute('open') === null) await page.click('#setup-more summary');
+}
+
 export async function instructorSetup(page: Page, options: { teams: number; reveal: 'ROUND' | 'JIT' | 'MANUAL'; timed: boolean; missions: string[] }): Promise<string> {
   await page.selectOption('#setup-teams', String(options.teams));
+  await moreOptions(page);
   await page.check(`#setup-reveal-${options.reveal}`);
   await page.check(`#setup-timing-${options.timed ? 'TIMED' : 'UNTIMED'}`);
   await page.click('#generate');

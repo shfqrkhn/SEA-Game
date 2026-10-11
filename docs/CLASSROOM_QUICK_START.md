@@ -11,23 +11,24 @@ Supported: Windows 11 with a current Chrome, Edge or Firefox, for the instructor
 ### Before class (10 minutes)
 
 1. Give every device the same `index.html` (USB key, shared drive, email) or the web link your school uses.
-2. On each device, open the file and check that the role chooser appears. Try **Français / English** once.
+2. On each device, open the file and check that the role chooser appears. Try **Français / English** once. On a projector or a bright room, choose **Projector theme** (first screen, or **Menu → Projector theme**); **War-room theme** switches back.
 3. Instructor: open **Instructor**. Students: open **Student team**. Use one tab per role; keep the tab open for the whole session.
 4. Use fictional team names only. Do not enter personal or operational information.
+5. Each team shares four roles: a planner (fills in the plan), a bidder (the only voice in the auction), a card tracker (records wins in the team's tab) and a presenter (answers the presentation questions at the debrief).
 
 ### Run the session
 
 | Step | Instructor | Students |
 |---|---|---|
-| 1. Setup | Choose the number of teams, how lots are revealed and the timer, then **Generate session**. Write the session code on the board and give each team its number. | Enter the session code, your team number and your mission, then **Start**. |
+| 1. Setup | Choose the number of teams, then **Generate session**. The defaults suit most classes; **More options** changes how lots are revealed, the timer and the bid increment. Write the session code on the board and give each team its number. | Enter the session code, your team number and your mission, then **Start**. |
 | 2. Practice | **Start practice**, then do the four practice steps with the training card. Announce "Team 1 wins the practice lot". **Open planning**. | **Record practice win**, then **Continue to planning**. |
 | 3. Planning | Confirm each team's mission in the table. When everyone is ready: **Close planning and start the auction**. | Check the mission minimums, write priorities and risks, and tick **We confirmed this mission with the instructor**. When the instructor starts the auction: **The instructor started the auction**. |
-| 4. Auction (7 rounds × 10 lots) | For each lot: announce the round, lot and card ID, **Open bidding**, click the team that bids (each click accepts the next offer: the start price, then +$50,000), then **Sell to Team N** or **No sale**, and **Next lot**. Keyboard: digits for teams, S sell, U no sale, O open, R reveal, N next, P pause, E +30 s. | Enter the announced card ID and **Show card**. If the instructor announces that you won, enter the price and **We won this card**; otherwise **Not ours, next lot**. |
+| 4. Auction (7 rounds × 10 lots) | For each lot: announce the round, lot and card ID, **Open bidding**, click the team that bids (each click accepts the next offer: the start price, then up by the bid increment you chose at setup, $50,000 by default), then **Sell to Team N** or **No sale**, and **Next lot**. Keyboard: digits for teams, S sell, U no sale, O open, R reveal, N next, P pause, E +30 s. | Enter the announced card ID and **Show card**. If the instructor announces that you won, enter the price and **We won this card**; otherwise **Not ours, next lot**. |
 | 5. Build | Show the results table so teams can check their records. **Open submissions**. | Compare your purchases with the instructor's results. Fix only recording mistakes, then **Our records match. Continue to the bid**. |
 | 6. Submit | **Enter submissions privately** (do not project). Enter each team's profit and tick **Submitted**. **Leave private mode**, then **Close submissions**. | Choose a profit (amount or percent of cost), then **Done: tell the instructor** and tell the instructor your profit privately. |
 | 7. Debrief | Show the results: the lowest bid per score point wins; ties go to the lower bid, then the higher score. Discuss gaps and trade-offs. **Close the room**. | Compare your plan with what you built. **Close** after the results. |
 
-Rules in one breath: a team can win at most 2 lots per round; prices go up in $50,000 steps; a build must meet every mission minimum and score above 0 to be eligible.
+Rules in one breath: a team can win at most 2 lots per round; prices go up by the bid increment chosen at setup ($50,000 by default) and are always the start price plus whole $50,000 steps; a build must meet every mission minimum and score above 0 to be eligible.
 
 ### Corrections during the auction
 
@@ -48,23 +49,24 @@ Configuration prise en charge : Windows 11 avec une version récente de Chrome, 
 ### Avant la séance (10 minutes)
 
 1. Remettez le même `index.html` à chaque appareil (clé USB, lecteur partagé, courriel) ou utilisez le lien Web de votre établissement.
-2. Sur chaque appareil, ouvrez le fichier et vérifiez que le choix du rôle s’affiche. Essayez une fois **Français / English**.
+2. Sur chaque appareil, ouvrez le fichier et vérifiez que le choix du rôle s’affiche. Essayez une fois **Français / English**. Avec un projecteur ou dans une salle claire, choisissez **Thème projecteur** (premier écran, ou **Menu → Thème projecteur**) ; **Thème salle de crise** revient au thème sombre.
 3. Instructeur : **Instructeur**. Équipes : **Équipe étudiante**. Un onglet par rôle, gardé ouvert toute la séance.
 4. Utilisez seulement des noms d’équipe fictifs. N’inscrivez aucune information personnelle ou opérationnelle.
+5. Chaque équipe se partage quatre rôles : un planificateur (remplit le plan), un enchérisseur (seule voix pendant l’enchère), un responsable des cartes (enregistre les gains dans l’onglet de l’équipe) et un présentateur (répond aux questions de présentation au bilan).
 
 ### Déroulement
 
 | Étape | Instructeur | Équipes |
 |---|---|---|
-| 1. Configuration | Choisissez le nombre d’équipes, la révélation des lots et le chronomètre, puis **Générer la séance**. Écrivez le code au tableau et donnez à chaque équipe son numéro. | Entrez le code de séance, votre numéro d’équipe et votre mission, puis **Commencer**. |
+| 1. Configuration | Choisissez le nombre d’équipes, puis **Générer la séance**. Les réglages par défaut conviennent à la plupart des classes ; **Plus d’options** change la révélation des lots, le chronomètre et le palier d’enchère. Écrivez le code au tableau et donnez à chaque équipe son numéro. | Entrez le code de séance, votre numéro d’équipe et votre mission, puis **Commencer**. |
 | 2. Pratique | **Commencer la pratique**, puis les quatre étapes avec la carte d’entraînement. Annoncez « l’équipe 1 gagne le lot de pratique ». **Ouvrir la planification**. | **Enregistrer le gain de pratique**, puis **Passer à la planification**. |
 | 3. Planification | Confirmez la mission de chaque équipe dans le tableau. Quand tout est prêt : **Fermer la planification et lancer l’enchère**. | Vérifiez les minimums, notez priorités et risques et cochez **Nous avons confirmé cette mission avec l’instructeur**. Au lancement : **L’instructeur a lancé l’enchère**. |
-| 4. Enchère (7 rondes × 10 lots) | Pour chaque lot : annoncez la ronde, le lot et l’identifiant de carte, **Ouvrir les offres**, cliquez sur l’équipe qui offre (chaque clic accepte l’offre suivante : prix de départ, puis +50 000 $), puis **Vendre à l’équipe N** ou **Pas de vente**, et **Lot suivant**. Clavier : chiffres pour les équipes, S vendre, U pas de vente, O ouvrir, R révéler, N suivant, P pause, E +30 s. | Entrez l’identifiant annoncé et **Afficher la carte**. Si l’instructeur annonce votre gain, entrez le prix et **Nous avons gagné cette carte** ; sinon **Pas à nous, lot suivant**. |
+| 4. Enchère (7 rondes × 10 lots) | Pour chaque lot : annoncez la ronde, le lot et l’identifiant de carte, **Ouvrir les offres**, cliquez sur l’équipe qui offre (chaque clic accepte l’offre suivante : prix de départ, puis le palier d’enchère choisi à la configuration, 50 000 $ par défaut), puis **Vendre à l’équipe N** ou **Pas de vente**, et **Lot suivant**. Clavier : chiffres pour les équipes, S vendre, U pas de vente, O ouvrir, R révéler, N suivant, P pause, E +30 s. | Entrez l’identifiant annoncé et **Afficher la carte**. Si l’instructeur annonce votre gain, entrez le prix et **Nous avons gagné cette carte** ; sinon **Pas à nous, lot suivant**. |
 | 5. Construction | Montrez le tableau des résultats pour que les équipes vérifient. **Ouvrir les soumissions**. | Comparez vos achats aux résultats. Corrigez seulement les erreurs de saisie, puis **Nos registres concordent. Passer à l’offre**. |
 | 6. Soumission | **Saisir les soumissions en privé** (ne pas projeter). Entrez le profit de chaque équipe et cochez **Soumis**. **Quitter le mode privé**, puis **Fermer les soumissions**. | Choisissez un profit (montant ou pourcentage du coût), puis **Terminé : informer l’instructeur** et dites-lui votre profit en privé. |
 | 7. Bilan | Montrez les résultats : l’offre la plus faible par point de score gagne ; en cas d’égalité, l’offre la plus faible puis le score le plus élevé. Discutez des écarts et des compromis. **Fermer la salle**. | Comparez votre plan à votre véhicule. **Fermer** après l’annonce. |
 
-Règles en bref : 2 lots gagnés au plus par équipe et par ronde ; les prix montent par paliers de 50 000 $ ; un véhicule doit atteindre tous les minimums et un score supérieur à 0 pour être admissible.
+Règles en bref : 2 lots gagnés au plus par équipe et par ronde ; les prix montent du palier d’enchère choisi à la configuration (50 000 $ par défaut) et valent toujours le prix de départ plus des tranches entières de 50 000 $ ; un véhicule doit atteindre tous les minimums et un score supérieur à 0 pour être admissible.
 
 ### Corrections pendant l’enchère
 

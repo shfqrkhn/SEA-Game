@@ -80,7 +80,7 @@ def _road_dust(nodes, links, color_out, height=1.25, color=(0.23, 0.19, 0.13), a
     return mix.outputs[2], sharp.outputs['Color']
 
 
-def paint(name='olive', base=(0.07, 0.085, 0.033), wear=0.35):
+def paint(name='olive', base=(0.085, 0.102, 0.05), wear=0.35, dust_height=1.25):
     """Matte military paint: colour variation, dust in crevices (AO), worn edges (pointiness), fine orange peel."""
     if name in _cache:
         return _cache[name]
@@ -110,7 +110,7 @@ def paint(name='olive', base=(0.07, 0.085, 0.033), wear=0.35):
     links.new(edge_mask.outputs['Color'], mix_edge.inputs['Factor'])
     links.new(mix_dust.outputs[2], mix_edge.inputs[6])
     mix_edge.inputs[7].default_value = (0.32, 0.31, 0.26, 1)
-    dusty, dust_mask = _road_dust(nodes, links, mix_edge.outputs[2])
+    dusty, dust_mask = _road_dust(nodes, links, mix_edge.outputs[2], height=dust_height)
     links.new(dusty, bsdf.inputs['Base Color'])
     rough = _ramp(nodes, links, var.outputs['Fac'], [(0.0, (0.52, 0.52, 0.52, 1)), (1.0, (0.7, 0.7, 0.7, 1))])
     rough_mix = nodes.new('ShaderNodeMix')
@@ -154,7 +154,7 @@ def dielectric(name, color, roughness, bevel=0.003, bump_scale=0.0, dust=False):
     if dust:
         rgb = nodes.new('ShaderNodeRGB')
         rgb.outputs[0].default_value = (*color, 1)
-        dusty, _ = _road_dust(nodes, links, rgb.outputs[0], height=0.9, color=(0.2, 0.17, 0.12), amount=0.7)
+        dusty, _ = _road_dust(nodes, links, rgb.outputs[0], height=0.7, color=(0.2, 0.17, 0.12), amount=0.35)
         links.new(dusty, bsdf.inputs['Base Color'])
     bump = None
     if bump_scale:
@@ -195,11 +195,17 @@ def emissive(name, color, strength):
     return mat
 
 
-def palette():
-    """The shared material set for every vehicle and part."""
+def palette(dust_height=1.25):
+    """The shared material set for every vehicle and part. A scene reset frees the old materials.
+
+    Road dust rises from the ground to `dust_height` (world Z); card renders pass a negative height,
+    because a part alone sits near the ground and would otherwise look dust-covered.
+    """
+    _cache.clear()
     return {
-        'paint': paint(),
-        'paint_dark': paint('olive-dark', (0.04, 0.048, 0.024)),
+        'paint': paint(dust_height=dust_height),
+        'paint_dark': paint('olive-dark', (0.05, 0.06, 0.028), dust_height=dust_height),
+        'paint_light': paint('olive-light', (0.125, 0.14, 0.065), wear=0.45, dust_height=dust_height),
         'rubber': dielectric('rubber', (0.018, 0.018, 0.018), 0.86, 0.006, bump_scale=60, dust=True),
         'gunmetal': metal('gunmetal', (0.11, 0.115, 0.12), 0.42),
         'steel': metal('steel', (0.56, 0.56, 0.55), 0.28),
@@ -211,4 +217,48 @@ def palette():
         'canvas': dielectric('canvas', (0.11, 0.12, 0.075), 0.92, 0.01, bump_scale=180),
         'cable': dielectric('cable', (0.06, 0.06, 0.06), 0.5),
         'yellow': dielectric('hook-yellow', (0.55, 0.38, 0.02), 0.45),
+        'interior': dielectric('interior', (0.35, 0.37, 0.33), 0.7),
+        'interior_dark': dielectric('interior-floor', (0.06, 0.065, 0.06), 0.8, bump_scale=120),
+        'lamp_soft': emissive('lamp-soft', (1.0, 0.95, 0.85), 3.0),
+        'tread': dielectric('worn-tread', (0.043, 0.047, 0.043), 0.88, 0.006, bump_scale=60, dust=True),
+        'wood': dielectric('tool-wood', (0.19, 0.16, 0.10), 0.88, 0.004, bump_scale=120),
+        'chrome': metal('chrome', (0.65, 0.70, 0.71), 0.22),
+    }
+
+
+def flat(name, color, roughness, metallic=0.0, emission=0.0):
+    """A plain metallic-roughness material that exports to glTF as constants (no node textures)."""
+    mat, nodes, links, bsdf = _new(f'rt-{name}')
+    bsdf.inputs['Base Color'].default_value = (*color, 1)
+    bsdf.inputs['Roughness'].default_value = roughness
+    bsdf.inputs['Metallic'].default_value = metallic
+    if emission:
+        bsdf.inputs['Emission Color'].default_value = (*color, 1)
+        bsdf.inputs['Emission Strength'].default_value = emission
+    return mat
+
+
+def realtime_palette():
+    """The palette's keys as glTF-friendly constants for the real-time showcase; ambient occlusion is baked separately."""
+    return {
+        'paint': flat('paint', (0.085, 0.102, 0.05), 0.62),
+        'paint_dark': flat('paint_dark', (0.05, 0.06, 0.028), 0.62),
+        'paint_light': flat('paint_light', (0.125, 0.14, 0.065), 0.6),
+        'rubber': flat('rubber', (0.028, 0.028, 0.026), 0.9),
+        'gunmetal': flat('gunmetal', (0.11, 0.115, 0.12), 0.45, 1.0),
+        'steel': flat('steel', (0.56, 0.56, 0.55), 0.3, 1.0),
+        'black': flat('black', (0.025, 0.025, 0.027), 0.55),
+        'glass': flat('glass', (0.012, 0.015, 0.016), 0.05),
+        'lamp': flat('lamp', (1.0, 0.92, 0.75), 0.1, emission=4.0),
+        'amber': flat('amber', (1.0, 0.45, 0.05), 0.2, emission=3.0),
+        'red': flat('red', (0.9, 0.05, 0.03), 0.2, emission=2.0),
+        'canvas': flat('canvas', (0.11, 0.12, 0.075), 0.92),
+        'cable': flat('cable', (0.06, 0.06, 0.06), 0.5),
+        'yellow': flat('yellow', (0.55, 0.38, 0.02), 0.45),
+        'interior': flat('interior', (0.35, 0.37, 0.33), 0.7),
+        'interior_dark': flat('interior_dark', (0.06, 0.065, 0.06), 0.8),
+        'lamp_soft': flat('lamp_soft', (1.0, 0.95, 0.85), 0.2, emission=2.5),
+        'tread': flat('tread', (0.043, 0.047, 0.043), 0.88),
+        'wood': flat('wood', (0.19, 0.16, 0.10), 0.88),
+        'chrome': flat('chrome', (0.65, 0.70, 0.71), 0.22, 0.65),
     }

@@ -9,7 +9,7 @@ import { showDialog } from './dialog.ts';
 import { h, replaceChildren, type Child } from './dom.ts';
 import { otherLanguage, translate, type Language, type StringKey } from './i18n.ts';
 import { showAbout } from './about.ts';
-import { withHud } from './hud.ts';
+import { themeFrom, toggleTheme, withTheme } from './theme.ts';
 
 export interface RoleState { readonly phase: Phase; readonly lang: Language; readonly sessionCode: string | null; readonly round: number; readonly lot: number }
 
@@ -190,6 +190,7 @@ export class RoleView<S extends RoleState> {
         { label: t('shell.import'), value: 'import' },
         { label: t('shell.newSession'), value: 'new', kind: 'danger' },
         { label: t('shell.changeRole'), value: 'role' },
+        { label: t(themeFrom() === 'light' ? 'theme.dark' : 'theme.light'), value: 'theme' },
         { label: t('about.open'), value: 'about' },
         { label: t('common.close'), value: 'close' },
       ],
@@ -197,7 +198,8 @@ export class RoleView<S extends RoleState> {
     if (choice === 'export') this.exportBackup();
     else if (choice === 'import') this.chooseImport();
     else if (choice === 'new') await this.confirm({ title: t('newSession.title'), body: h('p', { text: t('newSession.body') }), confirm: t('newSession.confirm'), danger: true, opener }, state => this.config.newSession(state), () => this.drafts.clear());
-    else if (choice === 'role') location.search = `?${withHud(new URLSearchParams({ lang: this.lang })).toString()}`;
+    else if (choice === 'role') location.search = `?${withTheme(new URLSearchParams({ lang: this.lang })).toString()}`;
+    else if (choice === 'theme') toggleTheme();
     else if (choice === 'about') void showAbout(this.lang, opener);
   }
 

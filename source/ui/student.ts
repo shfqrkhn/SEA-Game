@@ -2,46 +2,34 @@
 import { Controller } from '../app/controller.ts';
 import type { StoragePort } from '../app/ports.ts';
 import { costPerPointCents } from '../domain/award.ts';
-import { CARDS, CATEGORIES, CAPABILITIES, LOTS, MISSIONS, ROUNDS, isMissionId, type Category, type MissionId } from '../domain/data.ts';
+import { CARDS, CATEGORIES, CAPABILITIES, LOTS, MISSIONS, ROUND_SLOTS, ROUNDS, isMissionId, type Category, type MissionId } from '../domain/data.ts';
 import { DomainError } from '../domain/errors.ts';
 import { compliant, score, sumEffects } from '../domain/missions.ts';
 import { add } from '../domain/money.ts';
 import { validateStudent } from '../domain/saves.ts';
 import * as S from '../domain/student.ts';
-import { cardDetails, complianceText, gapMeter, missionName, missionTable, purchasesTable } from './components.ts';
+import { cardDetails, complianceText, gapMeter, missionName, missionTable, purchasesTable, presentationQuestions } from './components.ts';
 import { h, type Child } from './dom.ts';
 import { labelled, money, signed } from './format.ts';
 import type { Language, StringKey } from './i18n.ts';
 import { practiceCard } from './instructor.ts';
 import { RoleView } from './view.ts';
-import { VehicleBay } from '../bay/bay.ts';
-import { hasShowcase, Showcase } from '../showcase/showcase.ts';
-import { hudEnabled } from './hud.ts';
-import { vehicleArt } from './art.ts';
-
-let bay: VehicleBay | null = null;
-/** One persistent bay per page; re-attached on every render so its WebGL context survives. */
-function bayFor(v: View, mission: MissionId): Child {
-  const s = joined(v);
-  const text = { unavailable: v.t('bay.unavailable'), hint: v.t('bay.hint'), fallback: () => vehicleArt(mission, missionName(mission, v.lang)) };
-  if (bay) bay.setText(text); else bay = new VehicleBay(text);
-  bay.update({ mission, parts: s.team.purchases.map(p => ({ id: p.id, category: p.cat })) },
-    v.t('bay.summary', { mission: missionName(mission, v.lang), n: s.team.purchases.length }));
-  return h('section', { class: 'panel stack', 'aria-labelledby': 'bay-heading' }, h('h2', { id: 'bay-heading', text: v.t('bay.title') }), bay.element);
-}
+import { Showcase } from '../showcase/showcase.ts';
+import { renders, VEHICLE } from '../showcase/renders.ts';
 
 let showcase: Showcase | null = null;
-/** HUD prototype (MPES §17 V1): the pre-rendered showcase replaces the bay where renders exist. */
-function showcaseFor(v: View, mission: MissionId): Child | null {
-  if (!hudEnabled() || !hasShowcase(mission)) return null;
+/** The vehicle showcase (MPES §10): one per page, so its 3D stage, view and turntable frame persist. */
+function showcaseFor(v: View, mission: MissionId): Child {
   const s = joined(v), t = v.t;
   showcase ??= new Showcase();
-  return showcase.update(mission, s.team.purchases.map(p => ({ id: p.id, title: p.title[v.lang] })),
+  return showcase.update(mission, s.team.purchases.map(p => ({ id: p.id, title: p.title[v.lang], category: p.cat })),
     t('showcase.summary', { mission: missionName(mission, v.lang), n: s.team.purchases.length }), {
       title: t('showcase.title'), view: t('showcase.view'), front: t('showcase.front'), rear: t('showcase.rear'),
       turntable: t('showcase.turntable'), rotate: t('showcase.rotate'), installed: t('showcase.installed'), none: t('showcase.none'),
       turntableLabel: `${t('showcase.vehicle', { mission: missionName(mission, v.lang) })} ${t('showcase.turntableNote')}`, turntableNote: t('showcase.turntableNote'),
-    });
+      process: t('showcase.process'), slotNote: t('showcase.slotNote'),
+      drag: t('showcase.drag'), pause: t('showcase.pause'), left: t('showcase.left'), right: t('showcase.right'),
+    }, s.currentCard && { id: s.currentCard.id, title: s.currentCard.title[v.lang], category: s.currentCard.cat });
 }
 
 type View = RoleView<S.StudentState>;
@@ -115,6 +103,13 @@ function categoryGuide(lang: Language, t: View['t']): Child {
     h('tbody', {}, rows)));
 }
 
+/** The mission's base vehicle as a pre-rendered hero still, so the team sees what it is designing (MPES §10.2). */
+function missionHero(mission: MissionId, lang: Language, t: View['t']): Child {
+  const still = renders().get(`${VEHICLE[mission]}-hero`);
+  return still ? h('figure', { class: 'mission-hero' },
+    h('img', { class: 'hero-still', src: still.src, alt: t('showcase.vehicle', { mission: missionName(mission, lang) }), decoding: 'async', width: String(still.size.width), height: String(still.size.height) })) : null;
+}
+
 function planningView(v: View): Child {
   const s = joined(v), t = v.t, mission = s.team.mission as MissionId;
   const area = (field: 'plan' | 'risks', label: StringKey, hint: StringKey) => h('div', { class: 'field' },
@@ -147,6 +142,7 @@ function planningView(v: View): Child {
       } }),
     ),
     h('div', { class: 'stack' },
+      missionHero(mission, v.lang, t),
       h('section', { class: 'panel stack' }, h('h2', { text: t('splan.minimums', { mission: missionName(mission, v.lang) }) }), gapMeter(mission, s.team.totals, v.lang)),
       h('details', { class: 'panel' }, h('summary', { text: t('splan.guide') }), categoryGuide(v.lang, t)),
       h('details', { class: 'panel' }, h('summary', { text: t('planning.requirements') }), missionTable(v.lang, mission)),
@@ -176,7 +172,9 @@ function auctionView(v: View): Child {
         h('label', { for: 'card-id', text: t('strack.cardId') }),
         h('div', { class: 'cluster' },
           v.input('card-id', { autocomplete: 'off', autocapitalize: 'characters', spellcheck: 'false', maxlength: '20', class: 'mono', size: '8',
-            value: card?.id ?? '' }),
+            value: card?.id ?? '', list: 'card-options' }),
+          // Suggest only the cards this lot's category can hold, with their names (fewer typing mistakes).
+          h('datalist', { id: 'card-options' }, CARDS.filter(c => c.category === ROUND_SLOTS[s.lot]).map(c => h('option', { value: c.id, label: c.title[lang] }))),
           h('button', { type: 'button', class: 'btn', id: 'load-card', text: t('strack.load'), on: { click: () => v.run(state => S.loadCard(state, v.draft('card-id', card?.id ?? ''))) } }),
         ),
       ),
@@ -217,7 +215,7 @@ function auctionView(v: View): Child {
         gapMeter(mission, s.team.totals, lang, preview),
         h('p', { text: t('strack.spent', { amount: money(s.team.cost, lang) }) }),
       ),
-      showcaseFor(v, mission) ?? bayFor(v, mission),
+      showcaseFor(v, mission),
       h('section', { class: 'panel' }, h('h2', { text: t('common.purchases') }), purchasesTable(s.team.purchases, lang)),
     ),
   );
@@ -296,6 +294,7 @@ function debriefView(v: View, closed: boolean): Child {
       h('section', { class: 'panel stack' }, h('h2', { text: t('sdebrief.plan') }),
         s.planBaseline ? h('p', { class: 'prewrap', text: s.planBaseline }) : h('p', { class: 'muted', text: t('sdebrief.noPlan') })),
       h('section', { class: 'panel stack' }, h('h2', { text: t('sdebrief.spend') }), spendingByCategory(s, lang, t)),
+      presentationQuestions(lang),
       closed ? h('button', { type: 'button', class: 'btn primary', id: 'export-final', text: t('shell.export'), on: { click: () => v.exportBackup() } })
         : h('button', { type: 'button', class: 'btn primary', id: 'student-close', text: t('sdebrief.close'), on: {
           click: e => void v.confirm({ title: t('sdebrief.closeTitle'), body: h('p', { text: t('sdebrief.closeBody') }), confirm: t('sdebrief.close'), opener: e.currentTarget as HTMLElement }, S.closeStudent),

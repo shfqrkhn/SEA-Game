@@ -1,12 +1,13 @@
 # Third-party notices
 
-The distributed game file `dist/index.html` bundles the following third-party software. These notices are also shown in the game under Help > About.
+The distributed game file bundles one third-party library, three.js (MIT License, below), which draws the interactive vehicle showcase. It bundles no third-party fonts or assets. These notices are also shown in the game under Help > About.
+
+All imagery and 3D models in the game are original. They were modelled procedurally by the project's own scripts in `art/blender/` and rendered or exported with Blender 5.2.2 (GNU GPL). Blender's licence does not extend to what it renders or exports; the images and models are released with the game under its MIT licence. AI-generated concept images used as modelling references (`art/tools/concepts.ts`) are not part of the game file.
+
+Build and test tools (esbuild, sharp, glTF Transform, TypeScript, Vitest, Playwright, axe-core and others in `package.json`) run only on the maintainer's machine and are not included in the game file.
 
 ## three.js 0.186.1
 
-Source: https://github.com/mrdoob/three.js (npm package `three`)
-
-```text
 The MIT License
 
 Copyright © 2010-2026 three.js authors
@@ -28,4 +29,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
-```

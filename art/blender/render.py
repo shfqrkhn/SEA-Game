@@ -1,50 +1,132 @@
-"""Render entry point (MPES §10, §11). Run with the pinned Blender (see art/blender/README.md):
+"""Render entry point (MPES §10, §11). Run with the pinned Blender (see art/README.md):
 
-    blender -b --factory-startup -P art/blender/render.py -- --job spike --out .artifacts/renders/spike [--preview]
+    blender -b --factory-startup -P art/blender/render.py -- --out .artifacts/renders/v2 [options]
 
-Writes 16-bit RGBA PNG masters; tools/encode-renders.ts encodes them and writes the manifest.
+Options:
+    --vehicles recovery,combat   vehicles to render (default: all six)
+    --only hero,turntable,build,cards   outputs to render (default: all)
+    --parts CAP-A,ACC-F          limit build layers and card renders to these cards
+    --preview                    low samples; per vehicle a hero and a 'kit' still with every part shown
+    --metadata-only              frame every shot and write renders.json without rendering
+
+Writes 16-bit RGBA PNG masters and renders.json; tools/encode-renders.ts encodes them and writes the manifest.
 """
 import argparse
 import json
 import os
 import sys
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+HERE = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, HERE)
 
 import bpy  # noqa: E402
 
-from sea import materials, scene  # noqa: E402
-from sea.parts.spike import PARTS  # noqa: E402
-from sea.vehicles import recovery  # noqa: E402
+from sea import fleet, materials, scene  # noqa: E402
+from sea.mounts import SLOTS, card_mount  # noqa: E402
+from sea.parts import tokens  # noqa: E402
+from sea.parts.library import PARTS, build as build_part  # noqa: E402
 
 ANGLES = {'front': (38, 10), 'rear': (218, 12)}  # (yaw, pitch) of the two build angles
 # Sizes favour performance over looks (owner, 2026-10-10): enough pixels for the panels they fill, no more.
 HERO, BUILD, TURN, CARD = (1600, 900), (1280, 720), (960, 540), (512, 512)
 TURNTABLE_FRAMES = 24
 TURNTABLE_PITCH = 9
+CARD_YAW, CARD_PITCH = 35, 18
+SAMPLES = {'hero': 384, 'turntable': 160, 'build': 256, 'card': 256, 'preview': 48}
 
 
 def args():
     argv = sys.argv[sys.argv.index('--') + 1:] if '--' in sys.argv else []
     p = argparse.ArgumentParser()
-    p.add_argument('--job', default='spike')
     p.add_argument('--out', required=True)
-    p.add_argument('--preview', action='store_true', help='low samples and size, hero only')
-    p.add_argument('--only', default='', help='comma list of outputs: hero,turntable,build,cards')
-    p.add_argument('--metadata-only', action='store_true', help='frame every shot and write renders.json without rendering')
+    p.add_argument('--vehicles', default=','.join(fleet.VEHICLES))
+    p.add_argument('--only', default='')
+    p.add_argument('--parts', default='')
+    p.add_argument('--preview', action='store_true')
+    p.add_argument('--metadata-only', action='store_true')
     return p.parse_args(argv)
 
 
-def build_scene():
-    scene.reset()
-    scene.world()
-    mats = materials.palette()
-    mounts = recovery.build(mats)
-    parts = {}
-    for card, (fn, mount) in PARTS.items():
-        parts[card] = fn(mats, mounts[mount])
-    scene.ground()
-    return list(parts)
+def cards():
+    with open(os.path.join(HERE, '..', '..', 'content', 'cards.json'), encoding='utf-8') as f:
+        return json.load(f)
+
+
+class Job:
+    def __init__(self, a):
+        self.a = a
+        self.outputs = []
+
+    def shot(self, name, size, samples, layers, catchers, yaw, pitch, framing=None, margin=1.06):
+        if self.a.preview:
+            size, samples = (size[0] // 2, size[1] // 2), SAMPLES['preview']
+        scene.configure(*size, samples)
+        scene.show_layers(layers, catchers)
+        framed = [o for layer in (framing or layers) for o in scene.layer_objects(layer)]
+        lo, hi = scene.bounds(framed)
+        scene.fit(self.cam, (lo + hi) / 2, yaw, pitch, framed, margin)
+        # Draw order of stacked layers (MPES §10.2): camera distance to the visible subject, farthest first.
+        shown = [o for layer in layers for o in scene.layer_objects(layer)]
+        slo, shi = scene.bounds(shown)
+        depth = round((self.cam.location - (slo + shi) / 2).length, 3)
+        if not self.a.metadata_only:
+            scene.render(os.path.join(self.a.out, name + '.png'))
+        entry = {'file': name + '.png', 'width': size[0], 'height': size[1], 'layers': list(layers), 'yaw': yaw, 'pitch': pitch, 'depth': depth}
+        if len(layers) == 1 and layers[0] in SLOTS and catchers:
+            entry['slot'] = SLOTS[layers[0]]
+        self.outputs.append(entry)
+        print(f'[sea] {name}', flush=True)
+
+    def setup(self, build, dust_height=1.25):
+        scene.reset()
+        scene.world()
+        mats = materials.palette(dust_height)
+        result = build(mats)
+        scene.ground()
+        self.cam = scene.camera(lens=55)
+        return mats, result
+
+    def vehicle(self, stem, only, parts):
+        mats, m = self.setup(fleet.VEHICLES[stem])
+        for card, fn in PARTS.items():
+            from sea.geo import Builder
+            build_part(card, Builder(card, mats), m)
+        everything = ['base', *PARTS]
+        lo, hi = scene.bounds([o for layer in everything for o in scene.layer_objects(layer)])
+        centre = (lo + hi) / 2
+        scene.studio(center=(centre.x, centre.y, 1.4), scale=1.0)
+        hero = ['base', *fleet.HERO[stem]]
+        if self.a.preview:
+            self.shot(f'{stem}-hero', HERO, 0, hero, [], 32, 8)
+            self.shot(f'{stem}-kit', HERO, 0, everything, [], 32, 8)
+            self.shot(f'{stem}-kit-rear', HERO, 0, everything, [], 212, 10)
+            return
+        if 'hero' in only:
+            self.shot(f'{stem}-hero', HERO, SAMPLES['hero'], hero, [], 32, 8)
+        if 'turntable' in only:
+            for i in range(TURNTABLE_FRAMES):
+                self.shot(f'{stem}-turntable-{i:02d}', TURN, SAMPLES['turntable'], ['base'], [], i * 360 / TURNTABLE_FRAMES, TURNTABLE_PITCH)
+        if 'build' in only:
+            for angle, (yaw, pitch) in ANGLES.items():
+                # Every layer of one angle shares the camera framed on the base and every part it can carry.
+                self.shot(f'{stem}-{angle}-base', BUILD, SAMPLES['build'], ['base'], [], yaw, pitch, everything)
+                for card in parts:
+                    self.shot(f'{stem}-{angle}-{card}', BUILD, SAMPLES['build'], [card], ['base'], yaw, pitch, everything)
+
+    def cards(self, parts):
+        data = {c['id']: c for c in cards()}
+        mats, m = self.setup(lambda mats: card_mount(), dust_height=-1.0)
+        from sea.geo import Builder
+        for card in parts:
+            if card in PARTS:
+                build_part(card, Builder(card, mats), m)
+            elif card in data and data[card]['category'] == 'SE_PROCESS':
+                tokens.token(mats, card, next(iter(data[card]['effects'])), CARD_YAW)
+            elif card == 'TRAIN-CAP':
+                tokens.practice(mats)
+        scene.studio(center=(0, 0, 0.6), scale=1.0)
+        for card in parts:
+            self.shot(f'card-{card}', CARD, SAMPLES['card'], [card], [], CARD_YAW, CARD_PITCH, [card], 1.12)
 
 
 def main():
@@ -53,48 +135,21 @@ def main():
     a.out = os.path.abspath(a.out)
     os.makedirs(a.out, exist_ok=True)
     only = set(filter(None, a.only.split(','))) or {'hero', 'turntable', 'build', 'cards'}
-    cards = build_scene()
-    everything = ['base', *cards]
-    cam = scene.camera(lens=55)
-    lo, hi = scene.bounds([o for layer in everything for o in scene.layer_objects(layer)])
-    centre = (lo + hi) / 2
-    scene.studio(center=(centre.x, centre.y, 1.4), scale=1.0)
-    outputs = []
-
-    def shot(name, size, samples, layers, catchers, yaw, pitch, framing_layers=None, margin=1.06):
-        w, h = size
-        scene.configure(w, h, samples)
-        scene.show_layers(layers, catchers)
-        framed = [o for layer in (framing_layers or layers) for o in scene.layer_objects(layer)]
-        lo, hi = scene.bounds(framed)
-        scene.fit(cam, (lo + hi) / 2, yaw, pitch, framed, margin)
-        # Draw order of stacked layers (MPES §10.2): camera distance to the visible subject, farthest first.
-        shown = [o for layer in layers for o in scene.layer_objects(layer)]
-        slo, shi = scene.bounds(shown)
-        depth = round((cam.location - (slo + shi) / 2).length, 3)
-        if not a.metadata_only:
-            scene.render(os.path.join(a.out, name + '.png'))
-        outputs.append({'file': name + '.png', 'width': w, 'height': h, 'layers': list(layers), 'yaw': yaw, 'pitch': pitch, 'depth': depth})
-
-    if a.preview:
-        shot('preview-hero', (960, 540), 48, everything, [], 32, 8)
-    else:
-        if 'hero' in only:
-            shot('recovery-hero', HERO, 384, everything, [], 32, 8)
-        if 'turntable' in only:
-            for i in range(TURNTABLE_FRAMES):
-                shot(f'recovery-turntable-{i:02d}', TURN, 160, ['base'], [], i * 360 / TURNTABLE_FRAMES, TURNTABLE_PITCH)
-        if 'build' in only:
-            for angle, (yaw, pitch) in ANGLES.items():
-                # Every layer of one angle shares the camera framed on the fully equipped vehicle.
-                shot(f'recovery-{angle}-base', BUILD, 320, ['base'], [], yaw, pitch, everything)
-                for card in cards:
-                    shot(f'recovery-{angle}-{card}', BUILD, 320, [card], ['base'], yaw, pitch, everything)
-        if 'cards' in only:
-            for card in cards:
-                shot(f'card-{card}', CARD, 320, [card], [], 35, 18, [card], 1.12)
-    with open(os.path.join(a.out, 'renders.json'), 'w', encoding='utf-8') as f:
-        json.dump({'blender': bpy.app.version_string, 'seed': scene.SEED, 'outputs': outputs}, f, indent=2)
+    every = [c['id'] for c in cards()] + ['TRAIN-CAP']
+    chosen = [p for p in a.parts.split(',') if p] or every
+    job = Job(a)
+    for stem in filter(None, a.vehicles.split(',')):
+        if only & {'hero', 'turntable', 'build'}:
+            job.vehicle(stem, only, [p for p in chosen if p in PARTS])
+    if 'cards' in only:
+        job.cards(chosen)
+    path = os.path.join(a.out, 'renders.json')
+    previous = []
+    if os.path.exists(path):
+        with open(path, encoding='utf-8') as f:
+            previous = [o for o in json.load(f)['outputs'] if o['file'] not in {x['file'] for x in job.outputs}]
+    with open(path, 'w', encoding='utf-8') as f:
+        json.dump({'blender': bpy.app.version_string, 'seed': scene.SEED, 'outputs': sorted(previous + job.outputs, key=lambda o: o['file'])}, f, indent=2)
 
 
 if __name__ == '__main__':

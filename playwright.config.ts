@@ -11,7 +11,10 @@ if (!process.env.CI && !process.env.PLAYWRIGHT_BROWSERS_PATH) {
 const engines = (process.env.SEA_ENGINES ?? 'chromium,firefox,msedge').split(',');
 const all = [
   { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
-  { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
+  // Firefox refuses WebGL on GPU-less machines such as CI runners ("AllowWebgl2:false restricts context creation",
+  // run 38097185474), so the 3D tests would only ever see the stills fallback. Forcing WebGL on gives it a software
+  // context, as Chromium has; the stills fallback keeps its own tests (withoutWebgl).
+  { name: 'firefox', use: { ...devices['Desktop Firefox'], launchOptions: { firefoxUserPrefs: { 'webgl.force-enabled': true } } } },
   { name: 'msedge', use: { ...devices['Desktop Edge'], channel: 'msedge' } },
 ];
 

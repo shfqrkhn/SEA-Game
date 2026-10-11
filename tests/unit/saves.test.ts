@@ -134,3 +134,22 @@ describe('student invariants (RQ-14, MPES §8.4)', () => {
     ['practice win outside practice', s => { s.practiceWon = true; }],
   ]);
 });
+
+// MPES §8.3, §8.4: invariants added in 0.5.0.0 (formerly 5.0.0-dev), accepted only because every legacy fixture still imports.
+describe('stricter state invariants', () => {
+  const stateOf = (name: string) => JSON.parse(fixture(name)).state as Record<string, unknown>;
+  it('an untimed game has no deadline', () => {
+    const s = { ...stateOf('instructor-build'), timingMode: 'UNTIMED', deadline: 1800000110000 };
+    expect(code(() => validateInstructor(s))).toBe('invalid-state');
+  });
+  it('a closed lot has no paused time', () => {
+    const s = { ...stateOf('instructor-auction-open-paused'), open: false, leader: null, currentBid: null };
+    expect(code(() => validateInstructor(s))).toBe('invalid-state');
+  });
+  it('a student at the auction or later has confirmed the vehicle and has a plan baseline', () => {
+    for (const name of ['student-auction', 'student-build']) {
+      expect(code(() => validateStudent({ ...stateOf(name), vehicleConfirmed: false })), name).toBe('invalid-state');
+      expect(code(() => validateStudent({ ...stateOf(name), planBaseline: null })), name).toBe('invalid-state');
+    }
+  });
+});

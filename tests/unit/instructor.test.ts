@@ -231,3 +231,36 @@ describe('every reachable state validates and equals its ledger replay (RQ-08 pr
     }), { numRuns: 60, seed: 20261009 });
   });
 });
+
+// Owner request 2026-10-10 (MPES §6.5): the instructor chooses the bid increment at setup.
+describe('bid increment chosen at setup', () => {
+  const options = { teamCount: 3, revealMode: 'JIT', timingMode: 'UNTIMED', bidSeconds: 30, token: '0123456789ABCDEF', seed: SEED } as const;
+  const auctionWith = (bidIncrement?: number) => {
+    let s = I.generateSession(I.instructorShell('en'), bidIncrement === undefined ? options : { ...options, bidIncrement });
+    s = I.startPractice(s);
+    for (const a of ['reveal', 'open', 'accept', 'close'] as const) s = I.practiceStep(s, a);
+    s = I.openPlanning(s);
+    for (let id = 1; id <= 3; id++) s = I.selectMission(s, id, 'TROOP');
+    return I.openBidding(I.startAuction(s), now());
+  };
+  it('defaults to $50,000, the rule of earlier versions', () => {
+    let s = auctionWith();
+    const start = I.currentCard(s).start;
+    s = bidFor(bidFor(s, 1), 2);
+    expect(s.currentBid).toBe(start + 5_000_000);
+  });
+  it('raises each offer by the chosen increment, and the sale and save stay valid', () => {
+    let s = auctionWith(10_000_000);
+    const start = I.currentCard(s).start;
+    s = bidFor(bidFor(bidFor(s, 1), 2), 1);
+    expect(s.currentBid).toBe(start + 20_000_000);
+    s = I.commitSale(s, 1, s.currentBid!);
+    expect(s.teams[0]!.cost).toBe(start + 20_000_000);
+    valid(s);
+    expect(I.newSession(s).bidIncrement).toBe(10_000_000);
+  });
+  it('accepts only the offered increments ($50,000 to $250,000 in $50,000 steps)', () => {
+    expect(I.BID_INCREMENTS).toEqual([5_000_000, 10_000_000, 15_000_000, 20_000_000, 25_000_000]);
+    for (const bad of [0, 2_500_000, 7_500_000, 30_000_000, 1.5]) expect(code(() => I.generateSession(I.instructorShell(), { ...options, bidIncrement: bad })), String(bad)).toBe('money');
+  });
+});

@@ -1,6 +1,7 @@
 {
   "name": "sea-game",
-  "version": "5.0.0-dev.0",
+  "version": "0.5.0",
+  "gameVersion": "0.5.0.0",
   "private": true,
   "description": "Systems Engineering Awareness: offline single-file classroom auction game (EN/FR)",
   "license": "MIT",
@@ -16,13 +17,13 @@
     "build": "node build/build.ts",
     "check": "node build/build.ts --check",
     "e2e": "playwright test",
-    "verify": "npm run typecheck && npm run lint && npm run test && npm run check && npm run e2e"
-  },
-  "dependencies": {
-    "three": "0.186.1"
+    "verify": "npm run typecheck && npm run lint && npm run test && npm run check && npm run build && npm run e2e"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.13.0",
+    "@gltf-transform/core": "4.5.0",
+    "@gltf-transform/extensions": "4.5.0",
+    "@gltf-transform/functions": "4.5.0",
     "@playwright/test": "1.63.0",
     "@types/node": "24.19.0",
     "@types/three": "0.186.0",
@@ -37,5 +38,8 @@
   },
   "overrides": {
     "playwright-core": "1.63.0"
+  },
+  "dependencies": {
+    "three": "0.186.1"
   }
 }

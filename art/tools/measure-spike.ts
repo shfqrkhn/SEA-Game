@@ -1,4 +1,4 @@
-// V1 spike measurements (MPES §14, §17): time to interactive and showcase update of the built file and of a
+// Performance measurements (MPES §14, §17): time to interactive and showcase update of the built file and of a
 // 40 MB stress variant (the embedded renders replicated to full-production size), on the reference profile
 // (Chromium, 4x CPU throttling) and with GPU disabled (software compositing, the WARP stand-in).
 //   node art/tools/measure-spike.ts <report.json>
@@ -40,7 +40,7 @@ async function chooserMs(page: Page, url: string): Promise<number> {
       requestAnimationFrame(() => { (window as unknown as { seaPainted: number }).seaPainted = performance.now(); });
     }).observe(document, { childList: true, subtree: true });
   });
-  await page.goto(url + '?lang=en&hud=1');
+  await page.goto(url + '?lang=en');
   await page.waitForFunction(() => (window as unknown as { seaPainted?: number }).seaPainted !== undefined);
   return Math.round(await page.evaluate(() => (window as unknown as { seaPainted: number }).seaPainted));
 }
@@ -48,7 +48,7 @@ async function chooserMs(page: Page, url: string): Promise<number> {
 /** Join as RECOVERY, enter the auction, then time "record win" until the new showcase layer is decoded. */
 async function showcaseMs(page: Page, url: string): Promise<{ startMs: number; updateMs: number; heapMB: number; scrubMs: number; decodedMB: number }> {
   const t0 = Date.now();
-  await page.goto(url + '?role=student&lang=en&hud=1');
+  await page.goto(url + '?role=student&lang=en');
   await page.locator('#join-code').waitFor();
   const startMs = Date.now() - t0;
   await page.fill('#join-code', 'SEA3-T2-0123456789ABCDEF');
