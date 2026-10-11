@@ -61,6 +61,30 @@ describe('decoded still images (MPES §10.3)', () => {
     expect(made).toEqual(['a', 'b', 'c', 'b']);
   });
 
+  // G2 item 5: a fully built vehicle shows up to 20 layers and a base per angle, and the next view is prepared on top:
+  // the other angle (up to 21), three turntable frames and the loaded card at both angles. A plain limit of 24 dropped
+  // prepared images, which then decoded a second time.
+  it('never drops an image prepared for the next view, however many layers a vehicle has', () => {
+    const { images, made } = pool(24);
+    for (let i = 0; i < 21; i++) (images.get(`shown-${i}`) as unknown as { isConnected: boolean }).isConnected = true;
+    const prepared = [...Array.from({ length: 21 }, (_, i) => `other-${i}`), 'frame-0', 'frame-1', 'frame-23', 'card-front', 'card-rear'];
+    const kept = images.keep(prepared);
+    expect(kept.map(img => img.src)).toEqual(prepared);
+    for (let i = 0; i < 30; i++) images.get(`stale-${i}`);
+    for (const src of prepared) expect(images.get(src), src).toBe(kept[prepared.indexOf(src)]);
+    expect(made.filter(src => !src.startsWith('stale-')).length).toBe(21 + prepared.length);
+    expect(new Set(made).size).toBe(made.length);
+  });
+
+  it('releases the previous prepared set when a new one is kept', () => {
+    const { images, made } = pool(1);
+    images.keep(['a', 'b']);
+    images.keep(['c']);
+    images.get('d');
+    images.get('a');
+    expect(made).toEqual(['a', 'b', 'c', 'd', 'a']);
+  });
+
   it('never drops an image that is on screen', () => {
     const { images } = pool(1);
     const a = images.get('a');

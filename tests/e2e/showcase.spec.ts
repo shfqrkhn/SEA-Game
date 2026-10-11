@@ -270,10 +270,21 @@ test('every vehicle has its showcase, in 3D and in stills, and every lot its car
   }
 });
 
-test('chooser: pre-rendered hero still, truthfully described, and no 3D on the first screen (D-08)', async ({ page }) => {
+test('chooser: pre-rendered hero stills, truthfully described, and no 3D on the first screen (D-08)', async ({ page }) => {
   guardNetwork(page);
   await page.goto(gameUrl('?lang=en'));
-  await expect(page.locator('img.hero-still')).toHaveAttribute('alt', 'Recovery vehicle with a carrier module, long-range radios and a recovery winch');
+  const described = {
+    Combat: 'Combat vehicle: eight-wheeled armoured vehicle with a gun turret',
+    RECCE: 'RECCE vehicle with a raised sensor mast and a remote weapon station',
+    'Troop Carrier': 'Troop carrier with a carrier module, slat armour and a remote weapon station',
+    'Command Post': 'Command post with tall radio masts, a roof equipment rack and a sensor mast',
+    Recovery: 'Recovery vehicle with a crane, a carrier module and a recovery winch',
+    'Mine Clearing': 'Mine clearing vehicle with a front mine roller and a remote weapon station',
+  };
+  for (const [name, alt] of Object.entries(described)) {
+    await page.getByRole('button', { name, exact: true }).click();
+    await expect(page.locator('img.hero-still')).toHaveAttribute('alt', alt);
+  }
   await page.waitForTimeout(300);
   await expect(page.locator('canvas')).toHaveCount(0);
 });

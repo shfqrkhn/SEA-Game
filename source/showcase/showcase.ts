@@ -61,12 +61,14 @@ export function latestPerSlot<P extends ShowcasePart>(table: ReadonlyMap<string,
 
 /**
  * Decoded still images, reused so no layer is ever decoded twice (MPES §10.3). Decoding runs off the main thread
- * and dominates update time on slow machines; a new <img> for an unchanged layer would decode it again. The most
- * recently used images are kept: 24 full frames (about 88 MB decoded) cover front and rear of a fully built
- * vehicle plus the turntable frames either side of the shown one.
+ * and dominates update time on slow machines; a new <img> for an unchanged layer would decode it again. Never dropped:
+ * an image on screen, or one in the prepared set (`keep`): a fully built vehicle has up to 20 layers and a base per
+ * angle, and the next view is prepared on top of the shown one, so no fixed count covers both. `limit` bounds only the
+ * rest, the most recently used images of views left behind.
  */
 export class DecodedImages {
   readonly #images = new Map<string, HTMLImageElement>();
+  #kept = new Set<string>();
   readonly limit: number;
   readonly #create: (src: string) => HTMLImageElement;
   constructor(limit = 24, create = (src: string) => h('img', { src, alt: '', decoding: 'async', draggable: 'false' })) {
@@ -74,17 +76,24 @@ export class DecodedImages {
     this.#create = create;
   }
 
-  /** The image for this source, decoded once; the least recently used one not on screen is dropped. */
+  /** The image for this source, decoded once; the least recently used one neither on screen nor kept is dropped. */
   get(src: string): HTMLImageElement {
     let img = this.#images.get(src);
     if (img) this.#images.delete(src);
     else img = this.#create(src);
     this.#images.set(src, img);
+    let spare = [...this.#images].filter(([key, old]) => !old.isConnected && !this.#kept.has(key)).length;
     for (const [key, old] of this.#images) {
-      if (this.#images.size <= this.limit) break;
-      if (!old.isConnected) this.#images.delete(key);
+      if (spare <= this.limit) break;
+      if (!old.isConnected && !this.#kept.has(key)) { this.#images.delete(key); spare--; }
     }
     return img;
+  }
+
+  /** The images of the next views, held until the next call replaces the set; nearest first, as given. */
+  keep(srcs: readonly string[]): HTMLImageElement[] {
+    this.#kept = new Set(srcs);
+    return srcs.map(src => this.get(src));
   }
 
   /** Decodes ahead of need; settles either way. */
@@ -236,9 +245,8 @@ export class Showcase {
     const id = this.#upcoming?.id, table = renders();
     const upcoming = id && this.#view !== 'turntable' && !parts.some(p => p.id === id)
       ? [this.#view, this.#view === 'front' ? 'rear' : 'front'].flatMap(view => table.get(`${vehicle}-${view}-${id}`) ?? []) : [];
-    // Taken from the pool last, so they are the most recently used and outlive the rest if the pool overflows.
-    const rest = next.map(([render]) => this.#images.get(render.src));
-    const images = [...upcoming.map(render => this.#images.get(render.src)), ...rest];
+    // Kept by the pool until the next view replaces them, so no prepared image is dropped and decoded again.
+    const images = this.#images.keep([...upcoming, ...next.map(([render]) => render)].map(render => render.src));
     // One at a time, nearest first, stopping when the view changes: each background decode competes with the next
     // image the player waits for (CI run 38133130929: four at once made a purchase take 117 ms).
     void (async () => {
