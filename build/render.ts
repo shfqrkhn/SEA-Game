@@ -66,7 +66,7 @@ function models(): string {
 export async function render(): Promise<string> {
   for (const dir of ['source', 'content', 'build']) assertLf(dir);
   for (const file of ['LICENSE', 'THIRD_PARTY_NOTICES.md']) if (read(file).includes('\r')) throw new Error(`CRLF in ${file}`);
-  const version = (JSON.parse(read('package.json')) as { version: string }).version;
+  const version = (JSON.parse(read('package.json')) as { gameVersion: string }).gameVersion;
   const notices = read('THIRD_PARTY_NOTICES.md');
   for (const needle of REQUIRED_NOTICES) if (!notices.includes(needle)) throw new Error(`Missing notice: ${needle}`);
 

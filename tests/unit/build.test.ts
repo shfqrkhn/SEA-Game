@@ -9,6 +9,12 @@ describe('single-file build (RQ-01, RQ-24, RQ-25, RQ-27)', async () => {
   const style = /<style>([\s\S]*?)<\/style>/.exec(html)?.[1] ?? '';
   const csp = /http-equiv="Content-Security-Policy" content="([^"]+)"/.exec(html)?.[1] ?? '';
 
+  it('embeds the four-part game version; npm holds its first three parts (MPES §19.2)', () => {
+    const pkg = JSON.parse(readFileSync('package.json', 'utf8')) as { version: string; gameVersion: string };
+    expect(pkg.gameVersion).toMatch(/^\d+\.\d+\.\d+\.\d+$/);
+    expect(pkg.version).toBe(pkg.gameVersion.split('.').slice(0, 3).join('.'));
+    expect(script).toContain(JSON.stringify(pkg.gameVersion));
+  });
   it('is deterministic', async () => {
     expect(await render()).toBe(html);
   });

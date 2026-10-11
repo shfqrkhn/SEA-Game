@@ -135,7 +135,7 @@ describe('student invariants (RQ-14, MPES §8.4)', () => {
   ]);
 });
 
-// MPES §8.3, §8.4: invariants added in 5.0.0-dev, accepted only because every legacy fixture still imports.
+// MPES §8.3, §8.4: invariants added in 0.5.0.0 (formerly 5.0.0-dev), accepted only because every legacy fixture still imports.
 describe('stricter state invariants', () => {
   const stateOf = (name: string) => JSON.parse(fixture(name)).state as Record<string, unknown>;
   it('an untimed game has no deadline', () => {

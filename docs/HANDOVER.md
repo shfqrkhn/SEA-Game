@@ -1,10 +1,10 @@
 # Handover
 
-Updated 2026-10-11 (America/Toronto). Specification: [MPES](MPES.md) 4.1.3. Evidence: [verification/5.0.0-dev.md](verification/5.0.0-dev.md), [verification/spike-visual.md](verification/spike-visual.md).
+Updated 2026-10-11 (America/Toronto). Specification: [MPES](MPES.md) 4.2.0. Evidence: [verification/0.5.0.0.md](verification/0.5.0.0.md), [verification/spike-visual.md](verification/spike-visual.md).
 
 ## 1. Version and milestone
 
-Version 5.0.0-dev.1. M0–M4 and V1 (visual spike) are complete and on `main`. **V2 (visual production, goal G1) is on branch `goal2/art`, PR [#21](https://github.com/shfqrkhn/SEA-Game/pull/21)**, waiting for green CI and merge. The rollback is tag `v4.1.0-dev.1`.
+Version 0.5.0.0 beta (four-part MAJOR.MINOR.PATCH.BUILD, MPES §19.2; renumbered on 2026-10-11 from the untagged 5.0.0-dev.1; 1.0.0.0 is the first release). M0–M4 and V1 (visual spike) are complete and on `main`. **V2 (visual production, goal G1) is on branch `goal2/art`, PR [#21](https://github.com/shfqrkhn/SEA-Game/pull/21)**, waiting for green CI and merge. The rollback is tag `v4.1.0-dev.1`.
 
 **Plan to completion (MPES §17):** G1 V2 close-out → G2 V3 reference laptop (proxy rig, §14 gates, baked lighting, adaptive tiers) → G3 V4 classroom polish (UX, workload, teaching, game feel §7.7, projector mode §7.8, fault tests) → G4 M6 hardening → G5 M7 release and convergence. Shared rules for every goal: `AGENTS.md`. KPIs and priority: MPES §1.4.
 
@@ -23,7 +23,7 @@ Version 5.0.0-dev.1. M0–M4 and V1 (visual spike) are complete and on `main`. *
 
 ## 3. Not done
 
-- **G1 finish:** green CI on PR #21, merge, tag `v5.0.0-dev.1`, confirm Pages. Fixed so far: CI starvation (frame pacing, run 38089382489); Firefox refusing WebGL on the runner and stills decoded twice (run 38097185474, decoded-image pool, MPES 4.1.1 §10.3); turntable frames waiting for idle time on a busy runner (run 38106258905, MPES 4.1.2 §10.3); background decodes competing with a purchase (run 38133130929, MPES 4.1.3 §10.3).
+- **G1 finish:** green CI on PR #21, merge, tag `v0.5.0.0`, confirm Pages. Fixed so far: CI starvation (frame pacing, run 38089382489); Firefox refusing WebGL on the runner and stills decoded twice (run 38097185474, decoded-image pool, MPES 4.1.1 §10.3); turntable frames waiting for idle time on a busy runner (run 38106258905, MPES 4.1.2 §10.3); background decodes competing with a purchase (run 38133130929, MPES 4.1.3 §10.3).
 - **Owner art judgement:** BLOCKED-owner, script `docs/owner/art-review.md`.
 - **G2–G5:** MPES §17. `npm run perf:ref` (the Intel UHD 770 proxy) does not exist yet; it is G2's first step.
 - **Residual risks:** real learners (S3); Narrator and NVDA users; no physical laptop test (D-16: the UHD 770 proxy stands in); CI runs Windows Server, not Windows 11; art quality is the owner's judgement.
@@ -34,7 +34,7 @@ None on disk outside the branch. Review aids are rebuilt from `.artifacts/render
 
 ## 5. Next action
 
-**Agent:** read the CI result of PR #21; if red, download `playwright-windows-*` and read the trace (AGENTS rule 10). On green, merge, tag `v5.0.0-dev.1`, confirm Pages, then start G2.
+**Agent:** read the CI result of PR #21; if red, download `playwright-windows-*` and read the trace (AGENTS rule 10). On green, merge, tag `v0.5.0.0`, confirm Pages, then start G2.
 **Owner:** `docs/owner/art-review.md` (5 minutes, reply GO or FIX).
 
 ## 6. Rollback
