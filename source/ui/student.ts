@@ -29,7 +29,7 @@ function showcaseFor(v: View, mission: MissionId): Child {
       turntableLabel: `${t('showcase.vehicle', { mission: missionName(mission, v.lang) })} ${t('showcase.turntableNote')}`, turntableNote: t('showcase.turntableNote'),
       process: t('showcase.process'), slotNote: t('showcase.slotNote'),
       drag: t('showcase.drag'), pause: t('showcase.pause'), left: t('showcase.left'), right: t('showcase.right'),
-    });
+    }, s.currentCard && { id: s.currentCard.id, title: s.currentCard.title[v.lang], category: s.currentCard.cat });
 }
 
 type View = RoleView<S.StudentState>;

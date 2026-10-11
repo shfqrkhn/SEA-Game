@@ -3,7 +3,7 @@
 | Field | Value |
 |---|---|
 | Document | Master Product and Engineering Specification (MPES) for the clean-room rebuild of **Systems Engineering Awareness (SEA Game)** |
-| Version | 4.2.0 |
+| Version | 4.2.1 |
 | Date | 2026-10-11 (America/Toronto) |
 | Status | **ACCEPTED**. Owner delegated all remaining decisions and gates to the implementing agent on 2026-10-09 (§22) |
 | Supersedes | MPES 1.5.2 and every earlier handover, ledger, prompt and evidence packet for implementation purposes |
@@ -690,7 +690,7 @@ Make the build tangible: the selected mission's base vehicle visibly gains parts
 | 3D model update after a purchase is recorded | ≤ 100 ms, reference profile |
 | Memory added by the 3D showcase | ≤ 400 MB |
 | 3D drawing rate and share of the machine | ≤ 30 frames a second; a drawn frame is timed by the gap to the next animation frame, and the next draw waits at least twice that (at most 1 s), so drawing never takes more than half the machine. Drags, key turns and resizes draw in the next paced frame, never synchronously |
-| Still decoding | Each still layer is decoded once and reused; what the player can ask for next is prepared nearest first as soon as the shown view has decoded, never left for idle time (a busy machine may have none before the next step): from an angle, the other angle and the turntable frame shown on entry with the frames either side; when turning, the frames ahead in the direction of travel, then behind. A step never creates a new image. Prepared images decode one at a time, so at most one background decode competes with the image the player is waiting for. At most 24 decoded frames are kept (about 88 MB, within the decoded-image budget above). Image decoding runs off the main thread, so CPU throttling does not show its cost: the oracle is that no layer is decoded twice |
+| Still decoding | Each still layer is decoded once and reused; what the player can ask for next is prepared nearest first as soon as the shown view has decoded, never left for idle time (a busy machine may have none before the next step): first the layers of the card the player has loaded, at this angle and then the other, so recording it never waits for a decode; from an angle, the other angle and the turntable frame shown on entry with the frames either side; when turning, the frames ahead in the direction of travel, then behind. A step never creates a new image. Prepared images decode one at a time, so at most one background decode competes with the image the player is waiting for. At most 24 decoded frames are kept (about 88 MB, within the decoded-image budget above). Image decoding runs off the main thread, so CPU throttling does not show its cost: the oracle is that no layer is decoded twice |
 
 ### 10.4 Technique per element
 
@@ -1084,6 +1084,7 @@ Announce, keep the last package and its guides available for at least one school
 
 | Version | Date | Change |
 |---|---|---|
+| 4.2.1 | 2026-10-11 | Still decoding in §10.3: the loaded card's layers are prepared first (CI run 38135172580). |
 | 4.2.0 | 2026-10-11 | §19.2: the game version is four-part MAJOR.MINOR.PATCH.BUILD, renumbered to 0.5.0.0 beta; 1.0.0.0 only after the beta exit criteria (owner request). |
 | 4.1.3 | 2026-10-11 | Still decoding in §10.3: prepared images decode one at a time (CI run 38133130929). |
 | 4.1.2 | 2026-10-11 | Still decoding in §10.3: prepare as soon as the shown view has decoded, not when idle (CI run 38106258905). |

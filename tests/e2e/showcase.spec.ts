@@ -185,10 +185,17 @@ test('stills fallback decodes each layer once: purchases, angle changes and turn
 
   await record(sp, 1, 7, 'ACC-F', 350000);
   await expect(showcase.locator('img[data-layer="ACC-F"]')).toHaveCount(1);
+  // A loaded card is the part most likely recorded next: its layer decodes before the purchase, so recording one
+  // never waits for a decode (CI run 38135172580: fresh layers took up to 190 ms, budget 100).
+  await sp.selectOption('#pos-lot', '5');
+  await sp.fill('#card-id', 'COM-E');
+  await sp.click('#load-card');
+  await expect(showcase).toHaveAttribute('data-prepared', 'true');
   let t = await now();
-  await record(sp, 1, 5, 'COM-E', 600000);
+  await sp.fill('#paid', '600000');
+  await sp.click('#record-win');
   await expect(showcase.locator('img[data-layer="COM-E"]')).toHaveCount(1);
-  expect(await fresh(t), 'only the new part is decoded').toEqual(['COM-E']);
+  expect(await fresh(t), 'the loaded card was decoded before it was recorded').toEqual([]);
 
   await expect(showcase).toHaveAttribute('data-prepared', 'true');
   t = await now();

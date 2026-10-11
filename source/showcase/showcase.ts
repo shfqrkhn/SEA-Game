@@ -119,8 +119,10 @@ export class Showcase {
     this.element = h('section', { class: 'panel showcase stack', id: 'showcase', 'aria-labelledby': 'showcase-heading' });
   }
 
-  update(mission: MissionId, parts: readonly ShowcasePart[], label: string, text: ShowcaseText): HTMLElement {
-    this.#last = () => this.update(mission, parts, label, text);
+  /** `upcoming` is the card the player has loaded: the part most likely recorded next. */
+  update(mission: MissionId, parts: readonly ShowcasePart[], label: string, text: ShowcaseText, upcoming: ShowcasePart | null = null): HTMLElement {
+    this.#upcoming = upcoming;
+    this.#last = () => this.update(mission, parts, label, text, upcoming);
     if (this.#mode === 'pending') this.#start(VEHICLE[mission]);
     return this.#mode === '3d' ? this.#update3d(mission, parts, label, text) : this.#updateStills(mission, parts, label, text);
   }
@@ -216,9 +218,10 @@ export class Showcase {
   }
 
   /**
-   * Prepares what the player can ask for next, nearest first: from an angle, the other angle and the turntable frame
-   * shown on entry with the frames either side; when turning, the frames ahead in the direction of travel, then
-   * behind. The images exist at once, so a step never creates one, and decode one at a time once the shown view has
+   * Prepares what the player can ask for next, nearest first: the loaded card's layers, at this angle and then the
+   * other, so recording it never waits for a decode (CI run 38135172580: a fresh layer took 190 ms, budget 100); from
+   * an angle, the other angle and the turntable frame shown on entry with the frames either side; when turning, the
+   * frames ahead in the direction of travel, then behind. The images exist at once, so a step never creates one, and decode one at a time once the shown view has
    * decoded, so they never delay it. Not left for idle time: a busy machine may have none before the next step (CI run
    * 38106258905). `data-prepared` reports when it is done.
    */
@@ -230,7 +233,12 @@ export class Showcase {
       ? [d, -d, 2 * d, -2 * d, 3 * d].flatMap(step => this.#layers(vehicle, 'turntable', parts, this.#frame + step))
       : [...this.#layers(vehicle, this.#view === 'front' ? 'rear' : 'front', parts, 0),
         ...[0, 1, -1].flatMap(step => this.#layers(vehicle, 'turntable', parts, this.#frame + step))];
-    const images = next.map(([render]) => this.#images.get(render.src));
+    const id = this.#upcoming?.id, table = renders();
+    const upcoming = id && this.#view !== 'turntable' && !parts.some(p => p.id === id)
+      ? [this.#view, this.#view === 'front' ? 'rear' : 'front'].flatMap(view => table.get(`${vehicle}-${view}-${id}`) ?? []) : [];
+    // Taken from the pool last, so they are the most recently used and outlive the rest if the pool overflows.
+    const rest = next.map(([render]) => this.#images.get(render.src));
+    const images = [...upcoming.map(render => this.#images.get(render.src)), ...rest];
     // One at a time, nearest first, stopping when the view changes: each background decode competes with the next
     // image the player waits for (CI run 38133130929: four at once made a purchase take 117 ms).
     void (async () => {
@@ -283,5 +291,6 @@ export class Showcase {
   readonly #images = new DecodedImages();
   #generation = 0;
   #direction: 1 | -1 = 1;
+  #upcoming: ShowcasePart | null = null;
   #background: Promise<void> = Promise.resolve();
 }
