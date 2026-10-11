@@ -965,7 +965,8 @@ Update it at each milestone, on a failed gate, before stopping work, and before 
 
 ### 19.2 Versioning
 
-- The game version is four-part **MAJOR.MINOR.PATCH.BUILD**, held as `gameVersion` in `package.json` (`version` there is its first three parts, because npm requires SemVer). The rebuild is beta: it was renumbered on 2026-10-11 from 5.0.0-dev.1 (never tagged) to **0.5.0.0**, and the first release (M7) is **1.0.0.0**. The numbering restarted, so versions of the earlier line (3.6.0 to 4.1.0-dev.1) are ordered by date, not by number.
+- The game version is four-part **MAJOR.MINOR.PATCH.BUILD**, held as `gameVersion` in `package.json` (`version` there is its first three parts, because npm requires SemVer). The rebuild is beta: it was renumbered on 2026-10-11 from 5.0.0-dev.1 (never tagged) to **0.5.0.0**, and it stays 0.x until it is out of beta. The numbering restarted, so versions of the earlier line (3.6.0 to 4.1.0-dev.1) are ordered by date, not by number.
+- **Out of beta (1.0.0.0)** only when all of these hold: §21 is satisfied on the package; every §1.4 KPI is PASS; and no gate is still BLOCKED-owner (the owner replied GO to the art and realism reviews, the dry run and the learner pilot ran and their results are applied, and the screen-reader pass is done). Until then every release, M7 included, stays 0.x (M7 ships 0.9.x.y as a beta handoff package), and the version goes to 1.0.0.0 in the PR that records the last criterion met.
 - BUILD: a change with no behaviour change (tests, documentation, tooling, CI).
 - Patch: fixes with no behaviour change to rules or saves. Minor: compatible features. Major: interface or architecture change, or any save-format change (which also requires a migration and a new schema number).
 - The version is shown in the app (Help → About) and embedded in exports as `appVersion`.
@@ -1083,7 +1084,7 @@ Announce, keep the last package and its guides available for at least one school
 
 | Version | Date | Change |
 |---|---|---|
-| 4.2.0 | 2026-10-11 | §19.2: the game version is four-part MAJOR.MINOR.PATCH.BUILD, renumbered to 0.5.0.0 beta; 1.0.0.0 is the first release (owner request). |
+| 4.2.0 | 2026-10-11 | §19.2: the game version is four-part MAJOR.MINOR.PATCH.BUILD, renumbered to 0.5.0.0 beta; 1.0.0.0 only after the beta exit criteria (owner request). |
 | 4.1.3 | 2026-10-11 | Still decoding in §10.3: prepared images decode one at a time (CI run 38133130929). |
 | 4.1.2 | 2026-10-11 | Still decoding in §10.3: prepare as soon as the shown view has decoded, not when idle (CI run 38106258905). |
 | 4.1.1 | 2026-10-10 | Still decoding row in §10.3 (decode once, prepare when idle), from the CI root cause of G1. |

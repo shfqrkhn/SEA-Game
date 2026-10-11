@@ -4,7 +4,7 @@ Updated 2026-10-11 (America/Toronto). Specification: [MPES](MPES.md) 4.2.0. Evid
 
 ## 1. Version and milestone
 
-Version 0.5.0.0 beta (four-part MAJOR.MINOR.PATCH.BUILD, MPES §19.2; renumbered on 2026-10-11 from the untagged 5.0.0-dev.1; 1.0.0.0 is the first release). M0–M4 and V1 (visual spike) are complete and on `main`. **V2 (visual production, goal G1) is on branch `goal2/art`, PR [#21](https://github.com/shfqrkhn/SEA-Game/pull/21)**, waiting for green CI and merge. The rollback is tag `v4.1.0-dev.1`.
+Version 0.5.0.0 beta (four-part MAJOR.MINOR.PATCH.BUILD, MPES §19.2; renumbered on 2026-10-11 from the untagged 5.0.0-dev.1; 1.0.0.0 only once out of beta: MPES §19.2 exit criteria, including every owner gate). M0–M4 and V1 (visual spike) are complete and on `main`. **V2 (visual production, goal G1) is on branch `goal2/art`, PR [#21](https://github.com/shfqrkhn/SEA-Game/pull/21)**, waiting for green CI and merge. The rollback is tag `v4.1.0-dev.1`.
 
 **Plan to completion (MPES §17):** G1 V2 close-out → G2 V3 reference laptop (proxy rig, §14 gates, baked lighting, adaptive tiers) → G3 V4 classroom polish (UX, workload, teaching, game feel §7.7, projector mode §7.8, fault tests) → G4 M6 hardening → G5 M7 release and convergence. Shared rules for every goal: `AGENTS.md`. KPIs and priority: MPES §1.4.
 
