@@ -1223,7 +1223,7 @@ The repository root is `D:\VSCode\SEA-Game`. Source, tests, content, build, art 
 | `docs/CLASSROOM_QUICK_START.md` | The facilitator's guide, EN and FR, naming the app's controls word for word (checked by `tests/unit/docs.test.ts`). |
 | `docs/RECOVERY_GUIDE.md` | Backup, restore and recovery steps, EN and FR. |
 | `docs/owner/art-review.md` | The owner's art review script (one page). Later owner-only steps go in `docs/owner/` too. |
-| `docs/verification/0.5.0.0.md`, `docs/verification/<version>.md` | Evidence for each released version, as text: every check with its command and PASS, FAIL, NOT_RUN or BLOCKED. |
+| `docs/verification/0.5.0.0.md`, `docs/verification/0.5.1.0.md`, `docs/verification/<version>.md` | Evidence for each released version, as text: every check with its command and PASS, FAIL, NOT_RUN or BLOCKED. |
 | `docs/verification/spike-visual.md` | V1 spike measurements and decision. |
 | `docs/verification/source-fidelity.md` | How the rules were checked against the previous application and the owner's course source. |
 | `content/renders/` | The encoded stills (§11.1). |
