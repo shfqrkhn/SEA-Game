@@ -140,6 +140,60 @@ test('stills fallback without WebGL: layers follow recorded purchases; one part 
   await expectAccessible(ip, 'instructor auction');
 });
 
+// MPES §10.3 stills budgets on slow machines (CI root cause, 2026-10-10): image decoding runs off the main thread,
+// so CPU throttling does not show its cost; the guard is that no decoded layer is ever decoded again. Every image
+// element is stamped with its creation time: after a purchase only the new part is a new element; an angle change
+// and a turntable step show only elements prepared in advance.
+test('stills fallback decodes each layer once: purchases, angle changes and turntable steps reuse decoded images', async ({ browser }) => {
+  const ip = await (await browser.newContext()).newPage();
+  const sp = await (await browser.newContext()).newPage();
+  guardNetwork(ip); guardNetwork(sp);
+  await withoutWebgl(sp);
+  await sp.addInitScript(() => {
+    const stamp = <T extends object>(el: T): T => Object.assign(el, { seaBorn: performance.now() });
+    const create = Document.prototype.createElement;
+    Document.prototype.createElement = function (this: Document, ...args: Parameters<Document['createElement']>) {
+      return stamp(create.apply(this, args));
+    } as typeof create;
+    const NativeImage = window.Image;
+    window.Image = function (width?: number, height?: number) { return stamp(new NativeImage(width, height)); } as unknown as typeof Image;
+  });
+  await ip.goto(gameUrl('?role=instructor&lang=en'));
+  const code = await instructorSetup(ip, { teams: 2, reveal: 'JIT', timed: false, missions: ['RECOVERY', 'TROOP'] });
+  await sp.goto(gameUrl('?role=student&lang=en'));
+  await studentJoin(sp, code, 1, 'RECOVERY');
+  await sp.check('#plan-confirm');
+  await sp.click('#student-start-auction');
+  await confirmDialog(sp);
+  const showcase = sp.locator('#showcase');
+  await expect(showcase.locator('img[data-layer="base"]')).toHaveCount(1);
+  const fresh = (since: number) => sp.evaluate(t => [...document.querySelectorAll<HTMLImageElement & { seaBorn: number }>('#showcase img')]
+    .filter(img => img.seaBorn >= t).map(img => img.dataset.layer ?? '?'), since);
+  const now = () => sp.evaluate(() => performance.now());
+
+  await record(sp, 1, 7, 'ACC-F', 350000);
+  await expect(showcase.locator('img[data-layer="ACC-F"]')).toHaveCount(1);
+  let t = await now();
+  await record(sp, 1, 5, 'COM-E', 600000);
+  await expect(showcase.locator('img[data-layer="COM-E"]')).toHaveCount(1);
+  expect(await fresh(t), 'only the new part is decoded').toEqual(['COM-E']);
+
+  await expect(showcase).toHaveAttribute('data-prepared', 'true');
+  t = await now();
+  await showcase.getByRole('radio', { name: 'Rear' }).check();
+  await expect(showcase.locator('img[data-layer="base"]')).toHaveAttribute('data-angle', 'rear');
+  expect(await fresh(t), 'the rear angle was decoded in advance').toEqual([]);
+
+  await showcase.getByRole('radio', { name: 'Turntable' }).check();
+  await expect(showcase).toHaveAttribute('data-prepared', 'true');
+  const scrub = showcase.getByRole('slider');
+  await scrub.focus();
+  t = await now();
+  await sp.keyboard.press('ArrowRight');
+  await expect(showcase.locator('img[data-frame="1"]')).toHaveCount(1);
+  expect(await fresh(t), 'the next turntable frame was decoded in advance').toEqual([]);
+});
+
 test('every vehicle has its showcase, in 3D and in stills, and every lot its card render', async ({ page, browser }) => {
   guardNetwork(page);
   for (const mission of ['COMBAT', 'RECCE', 'TROOP', 'COMMAND', 'RECOVERY', 'MINE']) {

@@ -59,8 +59,47 @@ export function latestPerSlot<P extends ShowcasePart>(table: ReadonlyMap<string,
   });
 }
 
-function layer(render: Render, attrs: Record<string, string>): HTMLImageElement {
-  const img = h('img', { src: render.src, alt: '', decoding: 'async', draggable: 'false', ...attrs });
+/**
+ * Decoded still images, reused so no layer is ever decoded twice (MPES §10.3). Decoding runs off the main thread
+ * and dominates update time on slow machines; a new <img> for an unchanged layer would decode it again. The most
+ * recently used images are kept: 24 full frames (about 88 MB decoded) cover front and rear of a fully built
+ * vehicle plus the turntable frames either side of the shown one.
+ */
+export class DecodedImages {
+  readonly #images = new Map<string, HTMLImageElement>();
+  readonly limit: number;
+  readonly #create: (src: string) => HTMLImageElement;
+  constructor(limit = 24, create = (src: string) => h('img', { src, alt: '', decoding: 'async', draggable: 'false' })) {
+    this.limit = limit;
+    this.#create = create;
+  }
+
+  /** The image for this source, decoded once; the least recently used one not on screen is dropped. */
+  get(src: string): HTMLImageElement {
+    let img = this.#images.get(src);
+    if (img) this.#images.delete(src);
+    else img = this.#create(src);
+    this.#images.set(src, img);
+    for (const [key, old] of this.#images) {
+      if (this.#images.size <= this.limit) break;
+      if (!old.isConnected) this.#images.delete(key);
+    }
+    return img;
+  }
+
+  /** Decodes ahead of need; settles either way. */
+  prepare(src: string): Promise<void> {
+    return this.get(src).decode().catch(() => undefined);
+  }
+
+  get size(): number { return this.#images.size; }
+}
+
+const LAYER_ATTRS = ['data-layer', 'data-frame', 'data-angle'];
+
+function place(img: HTMLImageElement, render: Render, attrs: Record<string, string>): HTMLImageElement {
+  for (const name of LAYER_ATTRS) img.removeAttribute(name);
+  for (const [name, value] of Object.entries(attrs)) img.setAttribute(name, value);
   // Placement through the CSSOM (allowed by the hash-pinned CSP; style attributes are not).
   img.style.left = `${(render.offset.left / render.frame.width) * 100}%`;
   img.style.top = `${(render.offset.top / render.frame.height) * 100}%`;
@@ -153,69 +192,80 @@ export class Showcase {
     return [badges, installed];
   }
 
+  /** The layers of one view, farthest first: a turntable frame, or the base and one part per mount at an angle. */
+  #layers(vehicle: string, view: ShowcaseView, parts: readonly ShowcasePart[], frame: number): [Render, Record<string, string>][] {
+    const table = renders();
+    if (view === 'turntable') {
+      const turntable = frames(vehicle);
+      const key = turntable[(frame + turntable.length) % turntable.length];
+      const render = key ? table.get(key) : undefined;
+      return render ? [[render, { 'data-layer': 'base', 'data-frame': String((frame + turntable.length) % turntable.length) }]] : [];
+    }
+    const base = table.get(`${vehicle}-${view}-base`);
+    return [
+      ...(base ? [[base, { 'data-layer': 'base', 'data-angle': view }] as [Render, Record<string, string>]] : []),
+      ...stackOrder(table, vehicle, view, parts).map(part =>
+        [table.get(`${vehicle}-${view}-${part.id}`)!, { 'data-layer': part.id, 'data-angle': view }] as [Render, Record<string, string>]),
+    ];
+  }
+
+  #draw(stage: HTMLElement, layers: [Render, Record<string, string>][]): void {
+    const first = layers[0]?.[0];
+    if (first) stage.style.aspectRatio = `${first.frame.width} / ${first.frame.height}`;
+    stage.replaceChildren(...layers.map(([render, attrs]) => place(this.#images.get(render.src), render, attrs)));
+  }
+
+  /**
+   * When the page is idle, decodes what the player can ask for next: the other angle and the turntable from an
+   * angle, the frames either side when turning. `data-prepared` reports when it is done.
+   */
+  #prepare(vehicle: string, parts: readonly ShowcasePart[]): void {
+    const generation = ++this.#generation;
+    this.element.setAttribute('data-prepared', 'false');
+    const next: [Render, Record<string, string>][] = this.#view === 'turntable'
+      ? [-2, -1, 1, 2].flatMap(step => this.#layers(vehicle, 'turntable', parts, this.#frame + step))
+      : [...this.#layers(vehicle, this.#view === 'front' ? 'rear' : 'front', parts, 0), ...this.#layers(vehicle, 'turntable', parts, this.#frame)];
+    const run = () => {
+      if (generation !== this.#generation) return;
+      void Promise.all(next.map(([render]) => this.#images.prepare(render.src))).then(() => {
+        if (generation === this.#generation) this.element.setAttribute('data-prepared', 'true');
+      });
+    };
+    if (typeof requestIdleCallback === 'function') requestIdleCallback(run, { timeout: 500 }); else setTimeout(run, 0);
+  }
+
   #updateStills(mission: MissionId, parts: readonly ShowcasePart[], label: string, text: ShowcaseText): HTMLElement {
     const vehicle = VEHICLE[mission], table = renders();
     const turntable = frames(vehicle);
     if (this.#frame >= turntable.length) this.#frame = 0;
     const turning = this.#view === 'turntable';
     const stage = h('div', { class: 'showcase-stage', role: 'img', 'data-mode': 'stills', 'aria-label': turning ? text.turntableLabel : label });
-    if (this.#view === 'turntable') {
-      const key = turntable[this.#frame];
-      const render = key ? table.get(key) : undefined;
-      if (render) {
-        stage.style.aspectRatio = `${render.frame.width} / ${render.frame.height}`;
-        stage.appendChild(layer(render, { 'data-layer': 'base', 'data-frame': String(this.#frame) }));
-      }
-    } else {
-      const base = table.get(`${vehicle}-${this.#view}-base`);
-      if (base) {
-        stage.style.aspectRatio = `${base.frame.width} / ${base.frame.height}`;
-        stage.appendChild(layer(base, { 'data-layer': 'base', 'data-angle': this.#view }));
-      }
-      for (const part of stackOrder(table, vehicle, this.#view, parts)) {
-        stage.appendChild(layer(table.get(`${vehicle}-${this.#view}-${part.id}`)!, { 'data-layer': part.id, 'data-angle': this.#view }));
-      }
-    }
+    this.#draw(stage, this.#layers(vehicle, this.#view, parts, this.#frame));
     const views = h('fieldset', { class: 'cluster showcase-views' }, h('legend', { class: 'visually-hidden', text: text.view }),
       VIEWS.map(view => h('label', { class: 'choice' },
         h('input', { type: 'radio', name: 'showcase-view', id: `showcase-view-${view}`, value: view, checked: view === this.#view,
           on: { change: () => { this.#view = view; this.update(mission, parts, label, text); } } }),
         h('span', { text: text[view] }))));
-    const scrub = this.#view === 'turntable' && turntable.length > 1
+    // Turntable scrubbing swaps one image without rebuilding the controls, so the slider keeps focus.
+    const scrub = turning && turntable.length > 1
       ? h('div', { class: 'field' }, h('label', { for: 'showcase-turn', text: text.rotate }),
         h('input', { type: 'range', id: 'showcase-turn', min: '0', max: String(turntable.length - 1), step: '1', value: String(this.#frame),
-          on: { input: e => { this.#frame = Number((e.target as HTMLInputElement).value); this.#swapFrame(stage, turntable); } } }))
+          on: { input: e => {
+            this.#frame = Number((e.target as HTMLInputElement).value);
+            this.#draw(stage, this.#layers(vehicle, 'turntable', parts, this.#frame));
+            this.#prepare(vehicle, parts);
+          } } }))
       : null;
     const physical = parts.filter(p => p.category !== 'SE_PROCESS');
     const slotNote = !turning && latestPerSlot(table, vehicle, physical).length < physical.length ? h('p', { class: 'muted small', text: text.slotNote }) : '';
-    if (this.#view === 'turntable') this.#warm(turntable);
     const focused = document.activeElement?.id;
     const note = turning ? h('p', { class: 'muted small', text: text.turntableNote }) : '';
     this.element.replaceChildren(h('h2', { id: 'showcase-heading', text: text.title }), stage, note, slotNote, views, scrub ?? '', ...this.#lists(parts, text));
     if (focused?.startsWith('showcase-')) document.getElementById(focused)?.focus();
+    this.#prepare(vehicle, parts);
     return this.element;
   }
 
-  /** Turntable scrubbing swaps one image without rebuilding the controls, so the slider keeps focus. */
-  #swapFrame(stage: HTMLElement, turntable: readonly string[]): void {
-    const key = turntable[this.#frame];
-    const render = key ? renders().get(key) : undefined;
-    if (!render) return;
-    stage.replaceChildren(layer(render, { 'data-layer': 'base', 'data-frame': String(this.#frame) }));
-    this.#warm(turntable);
-  }
-
-  /** Decode the frames either side of the current one, so the next scrub step shows at once. */
-  #warm(turntable: readonly string[]): void {
-    for (const step of [-2, -1, 1, 2]) {
-      const key = turntable[(this.#frame + step + turntable.length) % turntable.length];
-      const render = key ? renders().get(key) : undefined;
-      if (!render || this.#warmed.has(render.src)) continue;
-      this.#warmed.add(render.src);
-      const img = new Image();
-      img.src = render.src;
-      void img.decode().catch(() => this.#warmed.delete(render.src));
-    }
-  }
-  readonly #warmed = new Set<string>();
+  readonly #images = new DecodedImages();
+  #generation = 0;
 }
