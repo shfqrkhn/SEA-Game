@@ -83,7 +83,7 @@ export function codebase(root = ROOT): string {
     '2. Each block ends with a line end, which belongs to the file unless the section says "no final line end"; then drop that one last LF. A section of 0 bytes has an empty block and makes an empty file.',
     '3. Check every file against the SHA-256 on its section.',
     '4. Make each binary file with the command of its key (table "Binary files"); check its hash when the command is deterministic.',
-    '5. Then: `npm ci`, `npx playwright install chromium firefox msedge`, `npm run verify`.',
+    '5. Then: `npm ci`, `npx playwright install chromium firefox` (Edge is the copy installed with Windows), `npm run verify`.',
     '',
     '## Text files',
     '',

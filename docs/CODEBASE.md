@@ -1,6 +1,6 @@
 # SEA Game codebase
 
-Version 0.5.0.0. Written by `npm run codebase` (scripts/codebase.ts); do not edit by hand. It holds all 1005 tracked files of the repository: 149 text files as 147 unique contents, 854 binary files by hash with the command that regenerates them, and 2 documents kept separately. With docs/MPES.md it is enough to rebuild the project.
+Version 0.5.0.0. Written by `npm run codebase` (scripts/codebase.ts); do not edit by hand. It holds all 1007 tracked files of the repository: 151 text files as 149 unique contents, 854 binary files by hash with the command that regenerates them, and 2 documents kept separately. With docs/MPES.md it is enough to rebuild the project.
 
 ## How to rebuild the tree
 
@@ -8,7 +8,7 @@ Version 0.5.0.0. Written by `npm run codebase` (scripts/codebase.ts); do not edi
 2. Each block ends with a line end, which belongs to the file unless the section says "no final line end"; then drop that one last LF. A section of 0 bytes has an empty block and makes an empty file.
 3. Check every file against the SHA-256 on its section.
 4. Make each binary file with the command of its key (table "Binary files"); check its hash when the command is deterministic.
-5. Then: `npm ci`, `npx playwright install chromium firefox msedge`, `npm run verify`.
+5. Then: `npm ci`, `npx playwright install chromium firefox` (Edge is the copy installed with Windows), `npm run verify`.
 
 ## Text files
 
@@ -102,7 +102,7 @@ jobs:
 
 ### .gitignore
 
-Paths: `.gitignore`. SHA-256 `909ac5e2fb24ece956c778afb0920593aa784a43dfe9ca89bc0b5e0257c0261d`, 141 bytes.
+Paths: `.gitignore`. SHA-256 `abba64e8451fccbe6234f3629fdad0b0e92717271722972f60cf05fcbdb56456`, 152 bytes.
 
 ```text
 # Local-only and generated inputs
@@ -115,11 +115,12 @@ test-results/
 playwright-report/
 coverage/
 __pycache__/
+RESTORE.md
 ```
 
 ### AGENTS.md
 
-Paths: `AGENTS.md`. SHA-256 `a0586bf21f1a8c9c742f2ee83d9bf8eaa9439d1f513cd60b1e3103b4017c37e9`, 3372 bytes.
+Paths: `AGENTS.md`. SHA-256 `45be6760946fd23bf455279893bed1e50d2aa35c8d986c10b633b08f3dc3310b`, 5919 bytes.
 
 ```markdown
 # Working rules for agents and maintainers
@@ -138,9 +139,13 @@ Paths: `AGENTS.md`. SHA-256 `a0586bf21f1a8c9c742f2ee83d9bf8eaa9439d1f513cd60b1e3
 12. Never stage `docs/Omni_5.1.1.md` (the owner's governance file, local only).
 13. The product is `dist/index.html`: one offline file of at most 50 MB that fetches nothing, for Windows 11. Performance comes before looks: every change must hold the reference-laptop budgets (MPES §14) on the proxy.
 14. Work on a branch with a PR; merge only on green CI and tag each goal. End commit messages with `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`.
-15. Never ask the owner a question. Anything only a person can do is reported as BLOCKED-owner, with a script of one page or less in `docs/owner/`.
+15. Never ask the owner a question, except the visual check (rule 19). Anything else only a person can do is reported as BLOCKED-owner, with a script of one page or less in `docs/owner/`.
 16. When KPIs conflict (MPES §1.4): teaching and reliability come first, then learnability and workload, then performance and any-classroom (floors that are never traded away), then realism, then maintainability. Every effect must teach or confirm something.
 17. Every change bumps the game version by its scale, with a changelog row in the same PR. The game version is four-part `MAJOR.MINOR.PATCH.BUILD` (`gameVersion` in `package.json`; `version` holds the first three parts because npm needs SemVer): MAJOR for a break or for leaving beta (0.x is beta; 1.0.0.0 only when every beta exit criterion in MPES §19.2 holds, never earlier, whatever the milestone), MINOR for a feature or milestone, PATCH for a fix, BUILD for a change that alters no behaviour (tests, docs, tooling, CI). The specification bumps MPES by SemVer. A version that is not yet tagged is not bumped again; tags are `v<gameVersion>`.
+18. Documents that rebuild the project, kept current in the same PR as any change: `docs/MPES.md` (the specification, no code at all: prose and tables only, alone enough for a clean-room rebuild; `tests/unit/mpes.test.ts` checks it) and `docs/CODEBASE.md` (every tracked file, written by `npm run codebase`, never by hand; `tests/unit/codebase.test.ts` rebuilds the tree from it and fails when it is out of date, so run `npm run codebase` after the last edit and before committing).
+19. Visual check at each goal close: `npm run gallery` (`-- --since <tag>`, default the latest tag; `--notes <file>` adds an intro) builds this checkout and the tag and writes `.artifacts/review/<gameVersion>.html`, every view of both roles in EN and FR on the laptop and the projector, and the six vehicles in stills and 3D, changed shots beside their before. Send it to the owner and ask GO or FIX; repeat until GO before merging.
+20. Cleanup and backup: `npm run archive:prep` is a dry run that lists the regenerable folders (packages, builds, browsers, caches, the Blender download, gallery captures) with sizes. Only when the owner asks for a cleanup run `npm run archive:prep -- --apply`: it removes exactly those (never a tracked file, never through a link), keeps everything irreplaceable (git history, sources, content, render masters, models, concepts, logs and evidence, `_archive/`) and writes `RESTORE.md` with the steps back (`npm ci`, browsers, build, its SHA-256, verify). `tests/unit/archive.test.ts` applies and restores a fresh clone to the same build hash.
+21. Codex (the owner's ChatGPT subscription) raises quality: concept, texture and decal images, Blender modelling, an independent review of each diff, gallery and French text. Its CLI is not on PATH: `$codex = (Get-AppxPackage OpenAI.Codex).InstallLocation + '\app\resources\codex.exe'`. Run it headless in an empty work folder under `.artifacts/` with stdin closed (otherwise it waits on "Reading additional input from stdin"): `& $codex exec --skip-git-repo-check -s workspace-write -C <dir> [-i <reference.png>] "<prompt>" < NUL` (Git Bash: `< /dev/null`). For a review, pass the diff as a file in `<dir>` and ask for findings only. For an image, ask it to generate exactly one image and copy the PNG into the folder as `out.png` (images also land in `~/.codex/generated_images/`, about 1.5 minutes each); `node art/tools/concepts.ts` batches concept images. Verify everything it returns (rule 6); one Codex or Blender job at a time (rule 11).
 ```
 
 ### CLAUDE.md
@@ -29820,7 +29825,7 @@ Paths: `package-lock.json`. SHA-256 `aa4b511f3eb45e4bc9a9871b11a4d99a8c9716c6181
 
 ### package.json
 
-Paths: `package.json`. SHA-256 `8c612b9438ada641ed14d457fe0df978ba751ce60b26e00721c34af44340b64b`, 1380 bytes.
+Paths: `package.json`. SHA-256 `f60f300f8ba0eb0a994fdc35bd9bb596c342b56133be63f3a01eda1a6478bec2`, 1432 bytes.
 
 ```json
 {
@@ -29843,6 +29848,7 @@ Paths: `package.json`. SHA-256 `8c612b9438ada641ed14d457fe0df978ba751ce60b26e007
     "build": "node build/build.ts",
     "check": "node build/build.ts --check",
     "e2e": "playwright test",
+    "archive:prep": "node scripts/archive-prep.ts",
     "codebase": "node scripts/codebase.ts",
     "gallery": "node scripts/gallery.ts",
     "verify": "npm run typecheck && npm run lint && npm run test && npm run check && npm run build && npm run e2e"
@@ -29920,9 +29926,142 @@ export default defineConfig({
 });
 ```
 
+### scripts/archive-prep.ts
+
+Paths: `scripts/archive-prep.ts`. SHA-256 `dd7b01e9189d1bdc91cbcb3c59488da59869ae7490e4f19c0cf6b79adb9b43d8`, 7407 bytes.
+
+```ts
+// Backup preparation (G2 item 8, AGENTS.md): the smallest project folder that still rebuilds, runs and is maintained
+// the same. Usage: npm run archive:prep (dry run: lists what would go and what stays) or, only when the owner asks for
+// a cleanup, npm run archive:prep -- --apply. Only the regenerable paths below are removed; everything else is kept:
+// git history, source, content, renders, models, costly masters (.artifacts/renders, concepts, models), evidence and
+// logs, and _archive/. Apply refuses any path that holds a tracked file or lies outside the project, unlinks links
+// and junctions without following them, then writes RESTORE.md with the steps and the hashes to check.
+import { createHash } from 'node:crypto';
+import { execFileSync } from 'node:child_process';
+import { existsSync, lstatSync, readFileSync, readdirSync, rmdirSync, unlinkSync, writeFileSync } from 'node:fs';
+import { join, relative, resolve, sep } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+/** Everything removable: each one comes back from a command in RESTORE.md. */
+export const REGENERABLE: readonly { readonly path: string; readonly how: string }[] = [
+  { path: 'node_modules', how: '`npm ci`' },
+  { path: 'dist', how: '`npm run build`' },
+  { path: '.artifacts/ms-playwright', how: '`npx playwright install chromium firefox` (Edge: the copy installed with Windows)' },
+  { path: '.artifacts/npm-cache', how: 'npm fills it again' },
+  { path: '.artifacts/tools', how: 'Blender 5.2.2: download and unzip (art/README.md, URL and SHA-256 there)' },
+  { path: '.artifacts/gallery', how: '`npm run gallery`' },
+  { path: '.artifacts/packed', how: '`node art/tools/pack-models.ts .artifacts/models .artifacts/packed/models.glb`' },
+  { path: '.artifacts/test-results', how: '`npm run e2e`' },
+  { path: '.artifacts/test-results-sw', how: '`npm run e2e`' },
+  { path: '.artifacts/coverage', how: '`npx vitest run --coverage`' },
+  { path: 'test-results', how: '`npm run e2e`' },
+  { path: 'playwright-report', how: '`npm run e2e`' },
+  { path: 'coverage', how: '`npx vitest run --coverage`' },
+];
+/** Python bytecode caches, wherever they are outside the removed folders. */
+const CACHE_DIR = '__pycache__';
+
+const ROOT = resolve(import.meta.dirname, '..');
+
+interface Entry { readonly path: string; readonly how: string; readonly bytes: number; readonly files: number }
+
+/** Size of a tree, not following links (a junction counts as nothing: its target is elsewhere). */
+function measure(path: string): { bytes: number; files: number } {
+  const stat = lstatSync(path);
+  if (stat.isSymbolicLink() || !stat.isDirectory()) return { bytes: stat.isSymbolicLink() ? 0 : stat.size, files: 1 };
+  let bytes = 0, files = 0;
+  for (const name of readdirSync(path)) { const m = measure(join(path, name)); bytes += m.bytes; files += m.files; }
+  return { bytes, files };
+}
+
+/** Removes a tree; links and junctions are unlinked, never followed. */
+function remove(path: string): void {
+  const stat = lstatSync(path);
+  if (stat.isSymbolicLink()) { try { unlinkSync(path); } catch { rmdirSync(path); } return; }
+  if (stat.isDirectory()) { for (const name of readdirSync(path)) remove(join(path, name)); rmdirSync(path); return; }
+  unlinkSync(path);
+}
+
+function pycaches(root: string, dir = root, found: string[] = []): string[] {
+  for (const name of readdirSync(dir, { withFileTypes: true })) {
+    if (!name.isDirectory() || name.name === '.git' || name.name === '_archive') continue;
+    const rel = relative(root, join(dir, name.name)).split(sep).join('/');
+    if (REGENERABLE.some(r => rel === r.path)) continue;
+    if (name.name === CACHE_DIR) found.push(rel); else pycaches(root, join(dir, name.name), found);
+  }
+  return found;
+}
+
+export function plan(root = ROOT): Entry[] {
+  const tracked = execFileSync('git', ['ls-files', '-z'], { cwd: root, encoding: 'utf8', maxBuffer: 1 << 26 }).split('\0').filter(Boolean);
+  const targets = [...REGENERABLE, ...pycaches(root).map(path => ({ path, how: 'Python writes it again' }))];
+  const entries: Entry[] = [];
+  for (const { path, how } of targets) {
+    const full = resolve(root, path);
+    if (!full.startsWith(root + sep)) throw new Error(`${path}: outside the project`);
+    if (tracked.some(t => t === path || t.startsWith(`${path}/`))) throw new Error(`${path}: holds tracked files, refusing`);
+    if (!existsSync(full)) continue;
+    entries.push({ path, how, ...measure(full) });
+  }
+  return entries;
+}
+
+const sha256 = (data: Buffer) => createHash('sha256').update(data).digest('hex');
+
+/** RESTORE.md: the steps back to a working project and the hashes that prove it. */
+export function restoreText(root: string, removed: readonly Entry[]): string {
+  const git = (...args: string[]) => execFileSync('git', args, { cwd: root, encoding: 'utf8' }).trim();
+  const pkg = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8')) as { gameVersion: string };
+  const build = existsSync(join(root, 'dist', 'index.html')) ? sha256(readFileSync(join(root, 'dist', 'index.html'))) : '';
+  const dirty = git('status', '--porcelain', '--untracked-files=no');
+  return [
+    '# Restore this project',
+    '',
+    `Written by \`npm run archive:prep -- --apply\` (scripts/archive-prep.ts) for SEA Game ${pkg.gameVersion}, commit \`${git('rev-parse', 'HEAD')}\`${dirty ? ' with uncommitted changes to tracked files' : ''}. It removed only what the commands below make again.`,
+    '',
+    '## Steps',
+    '',
+    '1. Install Node.js 22 or later (CI uses Node 24) and Git.',
+    '2. `npm ci` installs the exact packages of package-lock.json.',
+    '3. `npx playwright install chromium firefox` installs the test browsers into .artifacts/ms-playwright (playwright.config.ts); Edge is the copy installed with Windows.',
+    '4. `npm run build` writes dist/index.html.',
+    `5. Check it: its SHA-256 must be \`${build || 'not recorded: dist/ was absent at preparation'}\`.`,
+    '6. `npm run verify` runs every check; it must pass.',
+    '7. Only for art work: Blender 5.2.2 into .artifacts/tools/ (art/README.md gives the URL and SHA-256).',
+    '',
+    '## Removed',
+    '',
+    '| Path | Files | MB | Comes back from |',
+    '|---|---:|---:|---|',
+    ...removed.map(e => `| \`${e.path}\` | ${e.files} | ${(e.bytes / 1048576).toFixed(1)} | ${e.how} |`),
+    '',
+    'Kept: the git history, every tracked file, render masters, models, concept images, logs and evidence in .artifacts/, and _archive/.',
+    '',
+  ].join('\n');
+}
+
+export function prepare(root = ROOT, apply = false): { entries: Entry[]; restore?: string } {
+  const entries = plan(root);
+  if (!apply) return { entries };
+  const restore = restoreText(root, entries);
+  for (const e of entries) remove(resolve(root, e.path));
+  writeFileSync(join(root, 'RESTORE.md'), restore);
+  return { entries, restore };
+}
+
+if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  const apply = process.argv.includes('--apply');
+  const { entries } = prepare(ROOT, apply);
+  const total = entries.reduce((n, e) => n + e.bytes, 0);
+  for (const e of entries) console.log(`${(e.bytes / 1048576).toFixed(1).padStart(9)} MB  ${e.path}  (back from ${e.how.replace(/`/g, '')})`);
+  console.log(`${(total / 1048576).toFixed(1).padStart(9)} MB  ${apply ? 'removed; RESTORE.md written' : 'would be removed (dry run; --apply only when the owner asks for a cleanup)'}`);
+}
+```
+
 ### scripts/codebase.ts
 
-Paths: `scripts/codebase.ts`. SHA-256 `2d1947954674235dd9cbff0f6d965694d974cfd907bc5abee731a2f680793805`, 7885 bytes.
+Paths: `scripts/codebase.ts`. SHA-256 `a2482181487d8718860ac9daa0a5a01ef02f15515b4c1b4d379cb0fa8d728bb5`, 7920 bytes.
 
 ```ts
 // docs/CODEBASE.md (G2 item 7): every tracked text file verbatim, each unique content once, with its paths and SHA-256;
@@ -30010,7 +30149,7 @@ export function codebase(root = ROOT): string {
     '2. Each block ends with a line end, which belongs to the file unless the section says "no final line end"; then drop that one last LF. A section of 0 bytes has an empty block and makes an empty file.',
     '3. Check every file against the SHA-256 on its section.',
     '4. Make each binary file with the command of its key (table "Binary files"); check its hash when the command is deterministic.',
-    '5. Then: `npm ci`, `npx playwright install chromium firefox msedge`, `npm run verify`.',
+    '5. Then: `npm ci`, `npx playwright install chromium firefox` (Edge is the copy installed with Windows), `npm run verify`.',
     '',
     '## Text files',
     '',
@@ -37194,6 +37333,67 @@ Paths: `tests/fixtures/legacy/student-practice.json`. SHA-256 `fbf972503388c8ac6
 
 ```json
 {"format":"SEA-GAME-BACKUP","version":1,"appVersion":"4.1.0-dev.1","ruleset":"STANDARD","deck":"synthetic-v1","schema":3,"sessionCode":"SEA3-T3-A1B2C3D4E5F60718","role":"STUDENT","state":{"schema":3,"phase":"practice","lang":"fr","vehicleConfirmed":false,"lockedMission":null,"sessionCode":"SEA3-T3-A1B2C3D4E5F60718","teamCount":3,"teamId":2,"team":{"id":2,"mission":"RECCE","lockedMission":null,"totals":{"CAP":0,"MOB":0,"FP":0,"PRO":0,"COM":0,"SA":0,"REC":0,"MC":0},"cost":0,"purchases":[],"purchasesByRound":[0,0,0,0,0,0,0],"profit":0,"submitted":false},"round":0,"lot":0,"currentCard":null,"plan":"","planBaseline":null,"risks":"","maxWtpCents":85000000,"scratch":{},"profitMode":"AMOUNT","profitInput":"250000","profitCents":25000000,"practiceWon":true,"vehicleChangeNotice":false}}
+```
+
+### tests/unit/archive.test.ts
+
+Paths: `tests/unit/archive.test.ts`. SHA-256 `b9518899ea9a82bbf4d40fe75a41b2fbf25c0a1001651be90f1e8110d8aca847`, 3503 bytes.
+
+```ts
+// G2 item 8: npm run archive:prep -- --apply leaves the smallest folder that restores to the same build. On a fresh
+// clone in a temp dir: install and build, plant what must stay and what may go, apply, then restore by RESTORE.md.
+import { createHash } from 'node:crypto';
+import { execFileSync } from 'node:child_process';
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, symlinkSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { dirname, join, resolve } from 'node:path';
+import { describe, expect, it } from 'vitest';
+import { plan, prepare } from '../../scripts/archive-prep.ts';
+
+const ROOT = resolve(import.meta.dirname, '../..');
+const npm = (cwd: string, ...args: string[]) => execFileSync(process.platform === 'win32' ? 'npm.cmd' : 'npm', args, { cwd, stdio: 'pipe', shell: process.platform === 'win32' });
+const hash = (path: string) => createHash('sha256').update(readFileSync(path)).digest('hex');
+const put = (path: string, text = 'x') => { mkdirSync(dirname(path), { recursive: true }); writeFileSync(path, text); };
+
+describe('archive:prep', () => {
+  it('removes only the regenerable, keeps the irreplaceable, and restores to the same build', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'sea-archive-'));
+    execFileSync('git', ['clone', '--quiet', '--no-hardlinks', ROOT, dir]);
+    npm(dir, 'ci', '--prefer-offline', '--no-audit', '--no-fund');
+    npm(dir, 'run', 'build');
+    const built = hash(join(dir, 'dist', 'index.html'));
+
+    const keep = ['.artifacts/renders/v3/combat-hero.png', '.artifacts/concepts-v3/FP-C.png', '.artifacts/models/combat.glb',
+      '.artifacts/logs/verify.log', '.artifacts/review/0.5.0.0.html', '_archive/recycle/old.txt', '_archive/x/__pycache__/keep.pyc'];
+    const go = ['.artifacts/ms-playwright/chromium/chrome.exe', '.artifacts/gallery/after/chooser.png', '.artifacts/tools/blender/blender.exe',
+      '.artifacts/packed/models.glb', 'test-results/a.txt', 'art/blender/sea/__pycache__/geo.pyc'];
+    for (const p of [...keep, ...go]) put(join(dir, p));
+    // A gallery tag tree links to a kept folder: removing the link must not touch its target.
+    mkdirSync(join(dir, '.artifacts', 'gallery', 'v0'));
+    symlinkSync(join(dir, '.artifacts', 'renders'), join(dir, '.artifacts', 'gallery', 'v0', 'node_modules'), 'junction');
+
+    expect(plan(dir).map(e => e.path)).toEqual(expect.arrayContaining(['node_modules', 'dist', '.artifacts/gallery', 'art/blender/sea/__pycache__']));
+    prepare(dir, true);
+    for (const p of keep) expect(existsSync(join(dir, p)), `kept ${p}`).toBe(true);
+    for (const p of [...go, 'node_modules', 'dist']) expect(existsSync(join(dir, p)), `removed ${p}`).toBe(false);
+    expect(execFileSync('git', ['status', '--porcelain', '--untracked-files=no'], { cwd: dir, encoding: 'utf8' })).toBe('');
+    const restore = readFileSync(join(dir, 'RESTORE.md'), 'utf8');
+    expect(restore).toContain(built);
+
+    npm(dir, 'ci', '--prefer-offline', '--no-audit', '--no-fund');
+    npm(dir, 'run', 'build');
+    expect(hash(join(dir, 'dist', 'index.html'))).toBe(built);
+  }, 600_000);
+
+  it('refuses a path that holds a tracked file', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'sea-archive-tracked-'));
+    const git = (...args: string[]) => execFileSync('git', args, { cwd: dir, stdio: 'pipe' });
+    git('init', '--quiet');
+    put(join(dir, 'dist', 'index.html'));
+    git('add', 'dist/index.html');
+    expect(() => plan(dir)).toThrow(/tracked/);
+  });
+});
 ```
 
 ### tests/unit/build.test.ts
