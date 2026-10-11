@@ -10,3 +10,9 @@
 8. Authority and limits: MPES §20.
 9. Keep every document current in the same PR as the change (HANDOVER, MPES, this file, `art/README.md`, `docs/verification/`, guides), so another agent can resume development, operations and maintenance from the files alone. A status claim (green, converged, assured) must be withdrawn as soon as evidence contradicts it.
 10. End-to-end tests: click instructor lot actions with `act()` from `tests/e2e/roles.ts` (it centres the button first; Firefox loses clicks on buttons half below the fold). Never wait without a bound: `actionTimeout` is 60 s; a slow readiness wait gets its own explicit timeout and a comment saying why. If main CI fails, download the `playwright-windows-*` artifact (`gh run download <id>`) and read the trace before changing anything.
+11. One Blender process at a time, Codex jobs included: check `tasklist` before starting one. The owner uses this PC.
+12. Never stage `docs/Omni_5.1.1.md` (the owner's governance file, local only).
+13. The product is `dist/index.html`: one offline file of at most 50 MB that fetches nothing, for Windows 11. Performance comes before looks: every change must hold the reference-laptop budgets (MPES §14) on the proxy.
+14. Work on a branch with a PR; merge only on green CI and tag each goal. End commit messages with `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`.
+15. Never ask the owner a question. Anything only a person can do is reported as BLOCKED-owner, with a script of one page or less in `docs/owner/`.
+16. When KPIs conflict (MPES §1.4): teaching and reliability come first, then learnability and workload, then performance and any-classroom (floors that are never traded away), then realism, then maintainability. Every effect must teach or confirm something.

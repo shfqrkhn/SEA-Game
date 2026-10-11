@@ -3,7 +3,7 @@
 | Field | Value |
 |---|---|
 | Document | Master Product and Engineering Specification (MPES) for the clean-room rebuild of **Systems Engineering Awareness (SEA Game)** |
-| Version | 4.0.1 |
+| Version | 4.1.0 |
 | Date | 2026-10-10 (America/Toronto) |
 | Status | **ACCEPTED**. Owner delegated all remaining decisions and gates to the implementing agent on 2026-10-09 (§22) |
 | Supersedes | MPES 1.5.2 and every earlier handover, ledger, prompt and evidence packet for implementation purposes |
@@ -67,6 +67,27 @@ The previous project often optimised the mechanism ("X") instead of the outcome 
 | Hosting, CI and releases on GitHub | PARTIAL | GitHub is temporary human-QA space and will be deleted (D-13). The product is a local, hash-verified handoff package (§19.3) that depends on nothing hosted. |
 | Very large assurance apparatus (dozens of bespoke test scripts, dense evidence prose) | PARTIAL | Keep the rigour, cut the volume: standard test runners, plain-language handover, one requirement-to-test map (§15, §16). |
 | Classroom pilot with real learners | MISSING | **Add early** (milestone M4), before visual polish. |
+
+### 1.4 Key performance indicators
+
+Owner-accepted 2026-10-10. Each KPI has a target, a measure and an owner of the measurement; "agent" KPIs are gated in CI or on the reference proxy (§14), "owner" KPIs are BLOCKED-owner until a scripted session in `docs/owner/` returns results.
+
+| KPI | Target | Measure (who) |
+|---|---|---|
+| Teaching effectiveness | S3 rubric met; facilitator rating ≥ 4/5; optional 5-question pre/post check shows gain | Rubric and offline pre/post check, aggregate only (owner) |
+| Classroom reliability | Zero lost sessions (S4) | Fault tests: killed tab, full storage, bad import, two tabs, clock change, offline (agent) |
+| Instructor workload | Setup ≤ 5 min; raw NASA-TLX ≤ 40 | Click and key counts per phase from e2e traces (agent); dry run (owner) |
+| Learnability | First bid ≤ 2 min for a novice; SUS ≥ 80 with 5 users | Scripted novice e2e (agent); dry run (owner) |
+| Responsive interface | INP ≤ 200 ms; LCP ≤ 2.5 s; CLS ≤ 0.1; no long task > 200 ms after load | Reference proxy (agent) |
+| Browser performance | §14 reference-laptop budgets | Reference proxy (agent) |
+| Visual realism | Owner GO at the visual gates; projected key text ≥ 24 px, key contrast ≥ 7:1 | Side-by-side review script (owner); size and contrast tests (agent) |
+| Runs in any classroom | Windows 11, Chrome, Edge and Firefox, `file://`, corporate defaults, no network | Browser matrix (agent) |
+| Accessibility and language | WCAG 2.2 AA (§12); complete EN/FR | axe and manual passes (agent, owner) |
+| Privacy and security | Zero egress; strict CSP; SBOM; no high audit findings | §13 checks (agent) |
+| Maintainability after handoff | Reproducible rebuild from the package alone | Two-build comparison and package passes (agent) |
+| Longevity and zero cost | No servers, licences or non-baseline web APIs | Dependency and API review (agent) |
+
+**Priority when KPIs conflict:** teaching and reliability, then learnability and workload, then performance and any-classroom (floors, never traded away), then realism, then maintainability. Every effect must teach or confirm something.
 
 ---
 
@@ -483,6 +504,22 @@ A confirmation is bound to the state it was opened for. If state changed meanwhi
 - French typography: non-breaking spaces before `: ; ! ?`, proper accents and `’`. Numbers and currency follow §6.4.
 - Card and mission titles come from Appendix A.
 
+### 7.7 Game feel
+
+The game feels alive only where that teaches or confirms (§1.4):
+
+- Feedback within 100 ms of every command.
+- Animated teaching gauges (weight, power, budget, compliance) that show integration penalties as they happen.
+- Earned moments: a SECURED stamp on a win, a MISSION CAPABLE seal with a 3D roll-out turn, a debrief ceremony.
+- An ambient war room (radar sweep, mission clock, status lines) in one shared animation loop that pauses when the page is hidden.
+- Motion uses transform and opacity only, 150–300 ms, with tokens in `styles.css`.
+- Sound is synthesized with Web Audio (no audio files). It is off on student devices, on in projector mode, and has a one-click toggle.
+- **Guardrails:** reduced motion makes every effect instant; at most 3 flashes a second; a pause control for ambient motion; every sound has a visual twin; visual tests freeze ambient effects. The §14 budgets hold with every effect on.
+
+### 7.8 Projector mode
+
+A full-screen class view for the instructor's projector: the current lot, a live bid ticker, the countdown and standings. It shows only what the whole class may see (§6.5). Private entry (§4.2) stays the only place submissions are recorded. Supersedes D-06 (D-15).
+
 ---
 
 ## 8. State, persistence and recovery
@@ -654,6 +691,16 @@ Make the build tangible: the selected mission's base vehicle visibly gains parts
 | Memory added by the 3D showcase | ≤ 400 MB |
 | 3D drawing rate and share of the machine | ≤ 30 frames a second; a drawn frame is timed by the gap to the next animation frame, and the next draw waits at least twice that (at most 1 s), so drawing never takes more than half the machine. Drags, key turns and resizes draw in the next paced frame, never synchronously |
 
+### 10.4 Technique per element
+
+| Element | Technique |
+|---|---|
+| Interface | CSS and inline SVG on semantic HTML; never text in images |
+| Backgrounds | At most 3 AVIF backgrounds from AI concepts, with provenance recorded (D-14) |
+| Vehicles and parts in the showcase | Real-time glTF with baked lighting and adaptive quality tiers (§14) |
+| Hero, cards and the no-GPU fallback | Cycles renders encoded as AVIF at quality 65 |
+| AI concept images | Art direction only; never shipped |
+
 Renders are reproducible: pinned Blender version, fixed seeds, sample counts and cameras. Renders are committed with their SHA-256 in the manifest; a re-render that changes bytes is a deliberate, reviewed change.
 
 ---
@@ -713,7 +760,7 @@ Add only what is demonstrated necessary: `font-src data:` only if an embedded OF
 
 ## 14. Performance budgets (calibrated at the visual spike, V1)
 
-**Reference profile (D-11):** a Windows 11 laptop with integrated graphics running current Chrome. In automation, Chromium with 4× CPU throttling stands in for it, and a WARP (software-rendered) run is recorded. Measurements on a physical integrated-graphics laptop are residual risk until made.
+**Reference laptop (D-11, D-16):** the lowest common denominator of business laptops at most 3 years old (Lenovo, dynabook, Dell, HP): Intel Core i3/i5 U-series or Ryzen 5 U; Intel UHD/Iris Xe or Radeon Vega 7 graphics; 8 GB single-channel memory; 1080p at 125–150% scaling or 1366×768; dim panels; a touchpad; Edge; battery saver on. No physical laptop test will be made. **Proxy:** Chromium and Edge forced onto this PC's Intel UHD 770 with 4× CPU throttling at 1536×864 @1.25, 1280×720 @1.5 and 1366×768 @1, with 2× GPU headroom (`npm run perf:ref`, from G2). The proxy, not a laptop, is residual risk.
 
 | Metric | Target |
 |---|---|
@@ -722,6 +769,9 @@ Add only what is demonstrated necessary: `font-src data:` only if an embedded OF
 | Time to interactive, role with maximum saved state | ≤ 3 s, reference profile |
 | Command response (click to rendered result) | ≤ 100 ms (p95) |
 | Memory after a full 70-lot, 10-team session | ≤ 400 MB including decoded images, no growth across 10 phase cycles |
+| Interaction to next paint (INP) | ≤ 200 ms; LCP ≤ 2.5 s; CLS ≤ 0.1; no long task > 200 ms after load |
+| 3D showcase on the proxy | Ready ≤ 3 s; p95 frame ≤ 33 ms with GPU frame ≤ 16 ms; memory ≤ 300 MB where headroom allows (never above §10.3) |
+| Idle CPU on any view | ≤ 3% over 60 s |
 
 ---
 
@@ -852,9 +902,11 @@ Each milestone ends with a tagged commit, green CI (while GitHub exists) and an 
 | **M3 Full game** | All 70 lots, all phases, all commands, all confirmations, private entry, debrief, award, all degraded states, teaching aids. | Done. |
 | **M4 Pilot** | Classroom quick start (EN/FR), recovery guide; pilot substitute (§16.6). | Done (substitute). |
 | **V1 Visual spike** | MPES 3.0.0; pinned Blender toolchain; RECOVERY vehicle and 3 parts (hero still, turntable, 2 build angles with layers, card renders); AVIF vs WebP; HUD prototype of the instructor live lot and student tracker; size and speed measurements. | Spike on Pages for QA; `docs/verification/spike-visual.md`; **owner GO or NO-GO**. |
-| **V2 Visual production** | All 77 subjects, the showcase, the HUD on every view, three.js removed, `dist/` no longer committed, Pages deployed by CI. | RQ-22, 23, 26, 31 accepted. |
-| **M6 Hardening** | Accessibility manual passes, Windows 11 matrix, egress observation, notices, security review, content review, packager. | RQ-01, 02, 19 to 21, 24, 25, 27, 32 accepted; G-CONTENT pass. |
-| **M7 Release** | Freeze, three release passes on the package (§21), docs (RQ-30), handoff. | §21 satisfied; package delivered to the owner. |
+| **V2 Visual production (G1)** | All 77 subjects, the interactive 3D showcase with stills fallback (D-08), the HUD on every view, `dist/` no longer committed, Pages deployed by CI; shared agent rules and the KPIs (§1.4). | RQ-22, 23, 31 accepted; art review scripted for the owner. |
+| **V3 Reference laptop (G2)** | Proxy rig, §14 gates, baked lighting, adaptive tiers, context-loss recovery, touchpad and panel safety. | RQ-26 accepted on the proxy; realism review scripted. |
+| **V4 Classroom polish (G3)** | UX review and fixes, workload, learnability, teaching aids, game feel (§7.7), projector mode (§7.8), fault tests. | Agent-measurable KPIs pass; dry run and pilot scripted. |
+| **M6 Hardening (G4)** | Accessibility manual passes, Windows 11 matrix, egress observation, notices, security review, content review, packager. | RQ-01, 02, 19 to 21, 24, 25, 27, 32 accepted; G-CONTENT pass. |
+| **M7 Release (G5)** | Freeze, three release passes on the package (§21), docs (RQ-30), handoff. | §21 satisfied; package delivered to the owner. |
 
 4.1.0-dev.1 (tag `v4.1.0-dev.1`) remains the rollback until M7 and ships in the package's `rollback/` folder.
 
@@ -993,7 +1045,7 @@ Announce, keep the last package and its guides available for at least one school
 | D-03 | Support matrix | Windows 11 only: current Chrome, Edge and Firefox, both roles (owner decision 2026-10-10; §4.3). |
 | D-04 | GitHub Pages hosting | Temporary human QA only (D-13). |
 | D-05 | Pilot | Owner-delegated scripted classroom rehearsal (§16.6). |
-| D-06 | Projector view | Not in 5.0; private entry mode covers projection safety. |
+| D-06 | Projector view | Superseded by D-15 (2026-10-10). |
 | D-07 | Visual language | War-room HUD as CSS on semantic HTML, never UI drawn in a canvas (§7.1). Owner, 2026-10-10. |
 | D-08 | 3D realism | Interactive real-time 3D showcase that turns slowly by itself, on a hardware GPU; pre-rendered photoreal stills without one (§10). three.js restored for the showcase only. Owner, 2026-10-10 (revises the earlier same-day pre-rendered-only decision). |
 | D-09 | Imagery source | Agent-built in a pinned Blender LTS: original, fictional, MIT (§11). Owner, 2026-10-10. |
@@ -1002,6 +1054,8 @@ Announce, keep the last package and its guides available for at least one school
 | D-12 | Build outputs | `dist/` not committed; `npm run check` compares two builds; CI deploys Pages for QA (§5.5, §18). |
 | D-13 | GitHub | Temporary human-QA space, deleted by the owner at the end. The product is a local handoff package; nothing shipped or documented depends on GitHub (§19.3). Owner, 2026-10-10. |
 | D-14 | AI-assisted art | The owner's ChatGPT Codex subscription generates concept images (references only, kept out of the product) and upgrades the procedural Blender scripts under the budgets of §10.2. Fidelity is the owner's judgement. Owner, 2026-10-10. |
+| D-15 | Projector mode | A full-screen class view (§7.8); private entry stays the recording surface. Owner, 2026-10-10. |
+| D-16 | Reference laptop | No physical laptop test; the Intel UHD 770 proxy with 4× CPU throttling and 2× GPU headroom stands in (§14). Owner, 2026-10-10. |
 
 ---
 
@@ -1017,7 +1071,7 @@ Announce, keep the last package and its guides available for at least one school
 | Compliance | All mission minimums met |
 | Score | Mission-specific excess-capability points (§6.7) |
 | Private entry mode | Instructor mode for recording submissions, not to be projected |
-| Vehicle showcase | Layered pre-rendered images of a team's build (§10) |
+| Vehicle showcase | The team's vehicle and recorded parts: real-time 3D on a hardware GPU, layered stills without one (§10) |
 | Handoff package | The delivered release folder: HTML, hashes, guides, rollback and maintenance material (§19.3) |
 | Key (convergence key) | The frozen set of inputs that identifies a release candidate |
 
@@ -1027,6 +1081,7 @@ Announce, keep the last package and its guides available for at least one school
 
 | Version | Date | Change |
 |---|---|---|
+| 4.1.0 | 2026-10-10 | Owner-accepted KPIs and priority (§1.4); game feel (§7.7); projector mode (§7.8, D-15 supersedes D-06); technique per element (§10.4); 3D frame pacing (§10.3); reference laptop and proxy (§14, D-16); goals G1–G5 in §17, stale "three.js removed" corrected. |
 | 4.0.1 | 2026-10-10 | §10: the game parses only the vehicle it shows; cross-slot collisions checked by `art/blender/overlap.py`. |
 | 4.0.0 | 2026-10-10 | Owner request: interactive 3D showcase that turns slowly by itself (D-08 revised, D-01, R-ARCH-4, §1.3, §2, §5, §10, §11); stills become the fallback without hardware WebGL; 3D budgets (§10.3); AI-assisted concepts and modelling (D-14). |
 | 3.3.0 | 2026-10-10 | Owner request: the instructor chooses the bid increment at setup ($50,000 to $250,000 in $50,000 steps); prices stay on the $50,000 grid (§6.4, §6.5, §8.3, Appendix A constants). |

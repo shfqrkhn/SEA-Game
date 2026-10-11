@@ -20,17 +20,24 @@ Unzip Blender into `.artifacts/tools/` (git-ignored). Nothing is installed syste
 B=.artifacts/tools/blender-5.2.2-windows-x64/blender.exe
 # Everything: 6 vehicles (hero, 24-frame turntable, front and rear bases, 49 part layers per angle) and 71 cards.
 # About 2.5 hours on an RTX 5060 Ti. Masters are 16-bit RGBA PNG with a transparent background.
-$B -b --factory-startup -P art/blender/render.py -- --out .artifacts/renders/v2
+$B -b --factory-startup --python-exit-code 1 -P art/blender/render.py -- --out .artifacts/renders/v3
 # Part of the job: any of --vehicles, --only (hero,turntable,build,cards) and --parts. Results merge into renders.json.
-$B -b --factory-startup -P art/blender/render.py -- --out .artifacts/renders/v2 --vehicles recce --only build --parts MOB-C,SA-D
+$B -b --factory-startup -P art/blender/render.py -- --out .artifacts/renders/v3 --vehicles recce --only build --parts MOB-C,SA-D
 # Quick look: low samples; per vehicle a hero, a 'kit' still with every part at once (front and rear), and all cards.
 $B -b --factory-startup -P art/blender/render.py -- --out .artifacts/renders/preview --preview
 node art/tools/contact-sheet.ts .artifacts/renders/kits.jpg 3 520 wide .artifacts/renders/preview/*-kit.png
 node art/tools/contact-sheet.ts .artifacts/renders/cards.jpg 7 200 square .artifacts/renders/preview/card-*.png
 # Encode and write the manifest the build embeds (replaces content/renders/ entirely).
-node art/tools/encode-renders.ts encode .artifacts/renders/v2 content/renders avif 65
+node art/tools/encode-renders.ts encode .artifacts/renders/v3 content/renders avif 65
+# Review before committing: hero and base stills, cards, a turntable, and base + one part per slot (variants A, D, G).
+R=.artifacts/renders/v3; C=.artifacts/contact; mkdir -p $C/builds
+node art/tools/contact-sheet.ts $C/heroes.jpg 3 640 wide $R/*-hero.png $R/*-base.png
+node art/tools/contact-sheet.ts $C/cards.jpg 10 200 square $R/card-*.png
+node art/tools/contact-sheet.ts $C/turntables.jpg 8 320 wide $R/combat-turntable-*.png
+node art/tools/build-composites.ts $R $C/builds A,D,G
+for L in A D G; do node art/tools/contact-sheet.ts $C/builds-$L.jpg 4 560 wide $C/builds/*-$L.png; done
 # Compare formats and qualities on a set of masters.
-node art/tools/encode-renders.ts measure .artifacts/renders/v2 .artifacts/renders/encoding.json
+node art/tools/encode-renders.ts measure .artifacts/renders/v3 .artifacts/renders/encoding.json
 # Performance on the built file (needs npm run build): reference profile and GPU-less.
 node art/tools/measure-spike.ts .artifacts/perf/measure.json
 # 3D showcase model: triangle budgets at real-time detail (base 90,000, part 8,000, running gear 32,000).
@@ -62,7 +69,7 @@ Pass absolute or project-relative output paths. `render.py` makes them absolute,
 - `blender/sea/parts/`: one builder per physical card (49), placed only through `Mounts`, so each fits all six vehicles and the card mount. One module per category (`cap`, `mob`, `fp`, `pro`, `com`, `sa`, `acc`), shared helpers in `common.py`, and `library.py` mapping card IDs to builders.
 - `blender/sea/parts/tokens.py`: the 21 SE_PROCESS process tokens (outline = attribute improved, relief icon = the review) and the practice card TRAIN-CAP.
 - `blender/sea/fleet.py`: vehicle file stems (MPES §11) and each hero still's loadout.
-- `tools/`: encoder, model packer (`pack-models.ts`), concept generator (`concepts.ts`), contact sheet, spike preview compositor and performance measurement (TypeScript, run by Node).
+- `tools/`: encoder, model packer (`pack-models.ts`), concept generator (`concepts.ts`), contact sheet, build composites for review (`build-composites.ts`), spike preview compositor and performance measurement (TypeScript, run by Node).
 
 ## Build layers and mount slots
 
