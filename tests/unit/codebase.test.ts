@@ -63,10 +63,12 @@ describe('docs/CODEBASE.md', () => {
     }
     expect(new Set(listed.keys())).toEqual(new Set([...tracked, 'docs/CODEBASE.md']));
     expect(binaries.size).toBeGreaterThan(800);
-  });
+    // Explicit bound: it writes about 150 files and hashes about 1,000 (60 MB). Usually 0.2-0.4 s, but one run on
+    // 2026-10-11 took 7.1 s and hit the 5 s default (cause unknown; correct result; not reproduced in 22 runs).
+  }, 60_000);
 
   it('keeps the specification out and has no hand edits', () => {
     expect(DOC).not.toMatch(/^Paths: .*`docs\/MPES\.md`/m);
     expect(DOC, 'run npm run codebase').toBe(codebase());
-  });
+  }, 60_000); // The same hashing as above, so the same bound.
 });

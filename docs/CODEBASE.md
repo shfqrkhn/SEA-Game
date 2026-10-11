@@ -37501,7 +37501,7 @@ describe('single-file build (RQ-01, RQ-24, RQ-25, RQ-27)', async () => {
 
 ### tests/unit/codebase.test.ts
 
-Paths: `tests/unit/codebase.test.ts`. SHA-256 `fb3525a19752c899624bbc0840932163500c5a89e7b82fef0c3080d335fc1a52`, 3707 bytes.
+Paths: `tests/unit/codebase.test.ts`. SHA-256 `6afef5b1f867688910df7cafe54a5bb54a41133c1592bdcf7309a03bc43bc214`, 4000 bytes.
 
 ```ts
 // G2 item 7: docs/CODEBASE.md rebuilds the tree. This test reads it with its own parser, following only the rules the
@@ -37569,12 +37569,14 @@ describe('docs/CODEBASE.md', () => {
     }
     expect(new Set(listed.keys())).toEqual(new Set([...tracked, 'docs/CODEBASE.md']));
     expect(binaries.size).toBeGreaterThan(800);
-  });
+    // Explicit bound: it writes about 150 files and hashes about 1,000 (60 MB). Usually 0.2-0.4 s, but one run on
+    // 2026-10-11 took 7.1 s and hit the 5 s default (cause unknown; correct result; not reproduced in 22 runs).
+  }, 60_000);
 
   it('keeps the specification out and has no hand edits', () => {
     expect(DOC).not.toMatch(/^Paths: .*`docs\/MPES\.md`/m);
     expect(DOC, 'run npm run codebase').toBe(codebase());
-  });
+  }, 60_000); // The same hashing as above, so the same bound.
 });
 ```
 
