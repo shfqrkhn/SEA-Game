@@ -144,6 +144,13 @@ export class ModelStage {
     sun.shadow.bias = -0.0005;
     sun.shadow.radius = 4;
     this.#scene.add(sun);
+    // Rim light from behind the vehicle as seen from the camera, whichever way it turns: a cool, unshadowed edge
+    // that lifts each part's outline off the dark stage and off the parts behind it (MPES §10.5 legibility).
+    const rim = new DirectionalLight(new Color(0.85, 0.9, 1), 0.5);
+    rim.position.set(6, 5, -18);
+    rim.target.position.set(0, 0, -10);
+    this.#camera.add(rim, rim.target);
+    this.#scene.add(this.#camera);
     const floor = new Mesh(new PlaneGeometry(30, 30), new ShadowMaterial({ opacity: 0.35 }));
     floor.rotation.x = -Math.PI / 2;
     floor.receiveShadow = true;

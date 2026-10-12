@@ -1,0 +1,45 @@
+/* Reusable theme tokens (library 0.1.0, from SEA Game 0.5.1.0). Copyright (c) 2026 Shafiqur Rahman Khan, MIT.
+   Two themes: dark "war-room" (default, screens) and light "projector" (bright rooms), switched with
+   <html data-theme="light">. Contrast against --surface (WCAG 2.x ratio), measured 2026-10-12:
+     dark : ink 14.7, muted 8.4, accent 11.4, ok 10.8, warn 9.9, bad 8.1, focus 12.3, field-line 3.5, line 1.7
+     light: ink 18.6, muted 10.4, accent 9.2, ok 7.3, warn 8.4, bad 8.0, focus 6.8, field-line 6.5, line 3.2
+   Every text colour clears the 7:1 projector target; --field-line clears 3:1 for form borders (WCAG 1.4.11);
+   --line is decorative only (in the dark theme it is under 3:1, so never let it carry meaning).
+   Re-measure any colour you change. Pair ok/warn/bad with an icon or word: never colour alone. */
+:root {
+  --paper: #0b100e; --surface: #121a17; --sunken: #18221e; --ink: #e3ece6; --muted: #a3b8ad;
+  --line: #2f4339; --accent: #8fe0b8; --accent-ink: #04130c; --ok: #82dd9d; --warn: #f2b84b; --bad: #ff9184;
+  --focus: #ffd166; --bar-track: #22302a;
+  --panel-bg: rgb(18 26 23 / .9); --bar-bg: rgb(10 15 13 / .92); --field-bg: #0d1412; --field-line: #5d7468;
+  --hover-bg: #1d2a25; --stage: radial-gradient(ellipse at 50% 70%, #1c2823, #0d1412 70%);
+  --grid-line: rgb(143 224 184 / .045); --glow: rgb(143 224 184 / .07);
+  --hud-glow: 0 0 0 1px rgb(143 224 184 / .18), 0 0 18px rgb(143 224 184 / .08);
+  --primary-glow: 0 0 14px rgb(143 224 184 / .25);
+  --radius: 2px;
+  --gap: 1rem;            /* 8 px within a group is --gap / 2; 16 px between groups is --gap */
+  --font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --mono: ui-monospace, "Cascadia Mono", "SF Mono", Consolas, monospace;
+  color-scheme: dark;
+}
+:root[data-theme="light"] {
+  --paper: #eef1ee; --surface: #ffffff; --sunken: #e3e9e5; --ink: #0b1510; --muted: #34433b;
+  --line: #7f968a; --accent: #0d5236; --accent-ink: #ffffff; --ok: #17632d; --warn: #6e4400; --bad: #9c1f16;
+  --focus: #1b4fd1; --bar-track: #d3dcd7;
+  --panel-bg: #ffffff; --bar-bg: #ffffff; --field-bg: #ffffff; --field-line: #4d6357;
+  --hover-bg: #dfe8e2; --stage: radial-gradient(ellipse at 50% 70%, #ffffff, #dfe6e1 70%);
+  --grid-line: rgb(13 82 54 / .06); --glow: rgb(13 82 54 / .05);
+  --hud-glow: 0 0 0 1px rgb(13 82 54 / .25); --primary-glow: none;
+  color-scheme: light;
+}
+
+/* Base that goes with the tokens. */
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 1rem/1.5 var(--font); overflow-wrap: anywhere; }
+p { max-width: 68ch; }
+a { color: var(--accent); }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}
+/* CSS cannot stop JavaScript or WebGL motion (auto-rotation, canvas effects): read matchMedia('(prefers-reduced-motion: reduce)')
+   in script, stop or replace that motion, and offer an in-app pause control as well. */

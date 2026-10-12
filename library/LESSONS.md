@@ -1,0 +1,47 @@
+# Lessons learned
+
+Each entry: what happened, the rule it produced, and the check that now enforces it. Newest first. Examples come from SEA Game (a classroom auction game with photoreal vehicle renders and a real-time 3D showcase, one offline HTML file).
+
+## 2026-10-12 · A part read as the end of a gun barrel
+
+- **What happened:** in a still, a roof sight stood where the eye carried a barrel on, so it looked like part of the barrel. A first check judged only parts in front of the muzzle; the fixed still still misled, because a part *behind* a barrel's end reads the same way. Then a hull mirror (not a "part", so not judged) did the same in another still.
+- **Rule:** in a picture, the eye continues lines (good continuation). Nothing may touch the end of a line-like component or its extension, at any depth, whatever kind of object it is.
+- **Check (as built in SEA Game):** project each weapon's muzzle and every part from another slot, plus small base fittings (no larger than 0.8 m), into the exact camera of each still; fail any within 1% of the frame width of the muzzle or of its extension 4% beyond. Proposed: extend to every line-like component (poles, aerials, cables). See `practices/asset-checks.md`.
+
+## 2026-10-12 · A count ceiling hides regressions
+
+- **What happened:** known failures were held "at or below 97 and 182". Fixing one and adding another kept the count, so a new defect could pass; filtered runs skipped the ceiling entirely; rewriting the record could let each entry creep 0.5 px worse.
+- **Rule:** record known exceptions *by identity with their measured value*; fail any new entry or any worse value, in every run; rewriting keeps the better of old and new; the record only shrinks, with a dated goal of empty.
+- **Check:** the record file is versioned, and the check refuses to add to it.
+
+## 2026-10-12 · A check that does not see what the viewer sees
+
+- **What happened:** the first check built the models at real-time detail while the stills render at full detail, and took the muzzle at the bored barrel instead of the brake beyond it; a degenerate (edge-on) triangle produced false hits.
+- **Rule:** a visual check must use the same geometry, camera, resolution and framing as the image it judges. Give geometric checks a self-test with the edge cases (crossing, clear, edge-on off the line, edge-on on the line).
+- **Check:** a self-test of those cases runs automatically before every check run.
+
+## 2026-10-12 · Fix one, find all
+
+- **What happened:** the owner reported one still; the same cause was in other vehicles, other angles and other slot types.
+- **Rule:** for any reported defect, find the class, sweep every instance (all variants, angles, languages, themes), fix them all and add a check that would have caught the first one.
+- **Check:** the evidence record lists the sweep and the new check.
+
+## 2026-10-12 · Moving one thing breaks another
+
+- **What happened:** relocating a sight 1.2 m back hit an engine cover (40 overlaps) and overhung the roof (18 fit failures); a mast moved left hit a gun; a raised head floated 543 mm off its support.
+- **Rule:** every geometry change runs the whole check suite (overlap, fit, budgets, sightline) on the whole fleet before any render. Renders are the slowest step; checks are cheap.
+
+## 2026-10-12 · The base is in every picture
+
+- **What happened:** lowering a mirror on the base meant every layered still had to be re-rendered, because the base is a holdout and shadow catcher in each layer.
+- **Rule:** know which outputs depend on which sources before changing a shared component; estimate re-render cost first and batch base changes.
+
+## 2026-10-12 · Ignore tool folders
+
+- **What happened:** the linter scanned agents' worktrees in `.claude/` and reported 241 errors that were not in the project.
+- **Rule:** exclude agent and tool folders (`.claude/`, `.artifacts/`, `_archive/`) from lint, tests and typecheck from day one.
+
+## 2026-10-11 · Timeouts are evidence, not knobs
+
+- **What happened:** tests timed out when other work loaded the PC; once, test scratch had piled up and slowed a test 16-fold.
+- **Rule:** never raise a timeout or budget to pass. Find the cause (here: scratch not cleaned up), fix it, add a check (scratch is removed after each run), and record the evidence of any one-off with the date.

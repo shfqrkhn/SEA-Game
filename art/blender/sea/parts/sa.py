@@ -19,16 +19,20 @@ def _optics(b, m):
     x, y, z = m.optics
     if _card(m):
         return _frame(b, (x, y, z), -.35)
-    # Keep the shoe on the roof; cantilever the head forward over the glacis
+    # Keep the shoe on the roof; raise the head on a steep strut over the roof front
     # to leave the auxiliary gun and its folding shield a separate envelope.
-    support = _frame(b, (x + .205, y + .06, z))
+    # The mount is on the right, out of the auxiliary gun's line of fire, and the head stands high and short of the
+    # glacis: lower or further forward, it stood where the eye carried a gun's barrel on in the stills, in front of the
+    # muzzle or behind it (owner FIX, 2026-10-12; art/blender/sightline.py).
+    s = -1 if y > 0 else 1    # towards the centreline
+    support = _frame(b, (x + .205, y + s * .06, z))
     support.box('optics-deck-shoe', (.070, .050, .016), (0, 0, .008), 'paint_dark', bevel=.003)
     _bolts(support, 'optics-shoe-studs', [(a, c, .019) for a in (-.025, .025) for c in (-.015, .015)], .005)
-    support.wedge('optics-riser', [(-.005, .016), (.025, .016), (.67, .27), (.67, .30), (-.005, .30)],
-                  .055, (0, -.008, 0), 'paint_dark', bevel=.006)
-    support.box('optics-cantilever', (.70, .075, .040), (.335, -.015, .30), 'paint', bevel=.008)
-    support.box('optics-head-crossplate', (.14, .32, .040), (.645, .11, .30), 'paint', bevel=.008)
-    return _frame(b, (x + .85, y + .28, z + .32))
+    support.wedge('optics-riser', [(-.005, .016), (.025, .016), (.22, .75), (.22, .78), (-.005, .78)],
+                  .055, (0, s * -.008, 0), 'paint_dark', bevel=.006)
+    support.box('optics-cantilever', (.24, .075, .040), (.10, s * -.015, .78), 'paint', bevel=.008)
+    support.box('optics-head-crossplate', (.14, .32, .040), (.195, s * .11, .78), 'paint', bevel=.008)
+    return _frame(b, (x + .40, y + s * .28, z + .80))
 
 
 def _bolts(b, name, points, radius=.012, rot=(0, 0, 0)):

@@ -3,7 +3,7 @@ import { defineConfig } from 'vitest/config';
 export default defineConfig({
   test: {
     include: ['tests/unit/**/*.test.ts'],
-    exclude: ['_archive/**', '.artifacts/**', 'node_modules/**'],
+    exclude: ['_archive/**', '.artifacts/**', '.claude/**', 'node_modules/**'],
     environment: 'node',
     coverage: {
       provider: 'v8',

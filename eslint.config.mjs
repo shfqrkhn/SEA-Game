@@ -8,7 +8,7 @@ const unsafeHtml = [
 ];
 
 export default tseslint.config(
-  { ignores: ['_archive/**', '.artifacts/**', 'dist/**', 'node_modules/**', 'test-results/**', 'coverage/**'] },
+  { ignores: ['_archive/**', '.artifacts/**', '.claude/**', 'dist/**', 'node_modules/**', 'test-results/**', 'coverage/**'] },
   ...tseslint.configs.recommended,
   {
     rules: {

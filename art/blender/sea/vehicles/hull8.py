@@ -351,10 +351,17 @@ def _front(b, mission):
         cage.done(bevel=.004)
         arm=Vector((2.19,side*1.21,2.065))
         b.box('mirror-foot',(.14,.07,.10),arm,'paint_dark',bevel=.009)
-        b.tube('mirror-arm',[arm,arm+Vector((.08,side*.23,.07)),arm+Vector((.08,side*.25,.41))],.018,'gunmetal',smooth=False)
-        c=arm+Vector((.08,side*.25,.49))
+        b.tube('mirror-arm',[arm,arm+Vector((.08,side*.23,.07)),arm+Vector((.08,side*.25,.19))],.018,'gunmetal',smooth=False)
+        c=arm+Vector((.08,side*.25,.27))
         b.box('mirror-shell',(.065,.18,.29),c,'rubber',bevel=.022)
         b.box('mirror-face',(.012,.148,.252),c+Vector((-.037,0,0)),'glass',bevel=.014)
+
+
+def _mast_x(mission):
+    """The sensor mast stands back from the roof front, behind the auxiliary gun's muzzle from the hero's side, so the
+    pole never reads as the barrel carried on (art/blender/sightline.py); the recovery vehicle's turret sits further
+    back, so its mast keeps the forward spot."""
+    return ROOF_FRONT - (0.7 if mission == 'RECOVERY' else 1.35)
 
 
 def _aux_x(mission):
@@ -495,7 +502,7 @@ def _mounts(mission, top=TOP):
         roof_span=(BACK + 0.2, ROOF_FRONT - 0.05, top, 1.15), belly=(BACK + 0.4, GLACIS_X, 0.52, 0.75),
         engine=(1.38, 0.62, top), tanks=(BACK + 0.08, BACK + 0.64, 0.95, 1.0),
         antenna_left=(BACK + 0.45, -1.0, top), antenna_right=(BACK + 0.45, 1.0, top), radio_mast=(BACK + 0.35, 0.75, top),
-        optics=(ROOF_FRONT - 0.25, -0.85, top), sensor_mast=(ROOF_FRONT - 0.7, 0.97, top),
+        optics=(ROOF_FRONT - 0.25, 0.85, top), sensor_mast=(_mast_x(mission), 0.97, top),
         corners=((ROOF_FRONT - 0.1, -1.05, top), (ROOF_FRONT - 0.1, 1.05, top), (rear_sensor_x, -rear_sensor_y, top), (rear_sensor_x, rear_sensor_y, top)),
         bumper=(FRONT + 0.05, 1.15), hitch=(BACK - 0.1, 0.82), rack=(BACK + 2.75, 0.0, top),
         extra={'armoured': True, 'module_h': 1.15, 'rear_ramp': mission == 'TROOP', 'recovery': mission == 'RECOVERY', 'driver_hatch': mission not in ('COMMAND', 'MINE')},
