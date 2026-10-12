@@ -142,7 +142,7 @@ function run(job: Job): Promise<boolean> {
   const dir = mkdir(join(OUT, 'work', job.id));
   const prompt = `Generate exactly one image with your built-in image generation tool, then copy the generated PNG into the current directory as out.png. Do nothing else and write no code.\n\nImage: ${job.prompt}`;
   return new Promise(resolve => {
-    const p = spawn(codex, ['exec', '--skip-git-repo-check', '--ephemeral', '-s', 'workspace-write', '-C', dir, '-'], { stdio: ['pipe', 'ignore', 'ignore'] });
+    const p = spawn(codex, ['exec', '-m', 'gpt-6.1-sol', '-c', 'model_reasoning_effort=medium', '--skip-git-repo-check', '--ephemeral', '-s', 'workspace-write', '-C', dir, '-'], { stdio: ['pipe', 'ignore', 'ignore'] });
     p.stdin.end(prompt);
     const timer = setTimeout(() => p.kill(), 10 * 60_000);
     p.on('close', () => {

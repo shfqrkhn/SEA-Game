@@ -97,7 +97,7 @@ def _base(b):
         for x in (-1.35, 0, 1.35):
             f = _face(b, x, side * 1.005, side=side)
             _panel(f, 0, 0.14, 0.18, 0.14, 'paint_light', 0.045, False)
-            f.box('lock-recess', (0.075, 0.006, 0.038), (0, -0.071, 0.15), 'black', bevel=0.005)
+            f.box('lock-recess', (0.075, 0.006, 0.038), (0, -0.047, 0.15), 'black', bevel=0.005)
 
 
 def _shell(b, segments=1):
@@ -173,7 +173,7 @@ def _front(b, kind):
             for x in (-.46, .46):
                 _window(f, x, z, .48 if kind != 'F' else .39, .25)
         if kind != 'D':
-            _bolts(f, [(x, -.048, .45) for x in (-.65, 0, .65)])
+            _bolts(f, [(x, -.0285, .45) for x in (-.65, 0, .65)])
 
 
 def cap_a(b, m):
@@ -188,7 +188,7 @@ def cap_a(b, m):
             f.cyl('blanking-port',.075,.024,(x,-.041,.5),'paint_dark',rot=(PI/2,0,0),verts=16,bevel=.004)
         for x in (-.5,.5):
             _panel(f,x,.77,.065,1.06,'paint_dark',.045,False)
-            _bolts(f,[(x,-.078,z) for z in (.24,.58,.94,1.25)])
+            _bolts(f,[(x,-.0535,z) for z in (.24,.58,.94,1.25)])
     for x in (-.5, .5):
         b.tube('flange-shoulder', [(x,-1.016,1.27),(x,-.84,1.585),
                                   (x,.84,1.585),(x,1.016,1.27)], .024, 'paint_dark', smooth=False)
@@ -207,7 +207,7 @@ def cap_b(b, m):
         f=_face(b,y=side,side=side)
         for x in (-1.38,-.64,.2,.74,1.39):
             _panel(f,x,.76,.055,1.04,'paint_light',.043,False)
-            _bolts(f,[(x,-.065,z) for z in (.27,1.27)])
+            _bolts(f,[(x,-.0515,z) for z in (.27,1.27)])
         _door(f,-1.01,.60,1.31)
         _vent(f,-.2,.89,.50,.62)
         _vent(f,.38,.45,.34,.30)
@@ -252,7 +252,7 @@ def _bow(b,x,height=1.61):
     for side in (-1,1):
         f=_face(b,x=x,y=side*1.0,side=side)
         _panel(f,0,.49,.09,.24,'paint_light',.035,False)
-        _bolts(f,[(0,-.049,.43),(0,-.049,.55)])
+        _bolts(f,[(0,-.0435,.43),(0,-.0435,.55)])
 
 
 def _roll(b, x0, x1, y, z):
@@ -307,7 +307,7 @@ def cap_d(b, m):
         for x in (-.92,0,.92):
             for z in (.51,1.08):
                 _window(f,x,z,.57,.25)
-        _bolts(f,[(x,-.021,z) for x in (-1.4,-.48,.48,1.4) for z in (.22,.78,1.29)])
+        _bolts(f,[(x,-.0085,z) for x in (-1.4,-.48,.48,1.4) for z in (.22,.78,1.29)])
     _door(_face(b,x=-1.48,y=0,rear=True),.38,.76,1.4,False)
     _front(b, 'D')
     _ladder(b)
@@ -353,7 +353,7 @@ def cap_f(b, m):
                 _panel(f,x,z,.65,.51,'paint_light',.057)
             _window(f,x,1.02,.35,.20)
             f.cyl('sealed-vision-port',.063,.023,(x,-.083,.7),'gunmetal',rot=(PI/2,0,0),verts=16,bevel=.004)
-        _bolts(f,[(x,-.045,.19) for x in (-1.3,-.85,-.4,.05,.5,.95,1.3)])
+        _bolts(f,[(x,-.0655,.19) for x in (-1.3,-.85,-.4,.05,.5,.95,1.3)])
     rear=_face(b,x=-1.48,y=0,rear=True)
     _door(rear,0,.8,1.4)
     for x in (-1,0,1):

@@ -103,7 +103,8 @@ def _side_armour(b,m,heavy):
         for xx in (x0+.06,x1-.06):
             rails.box((.08,.12,(z1-z0)*.58),(xx,side*(inner-.07),(z0+z1)/2))
             for zz in (z0+.1,z1-.1):
-                _bolt(washers,heads,(xx,side*(inner+.06),zz),(0,side,0),.025)
+                # On the plate's face (light), or clamped between the two layers (heavy).
+                _bolt(washers,heads,(xx,side*(inner+(.06 if heavy else LIGHT_PLATE/2+.006)),zz),(0,side,0),.025)
     rails.done(bevel=.005); _finish(washers,heads)
     if card and heavy:
         # Card-only shipping pallet, with real fork pockets between bearer blocks.
@@ -151,7 +152,7 @@ def pro_e(b,m):
                 fittings.box((.11,.035,.1),(xx,side*(yy+.025),zz))
                 _bolt(washers,heads,(xx,side*(yy+.048),zz),(0,side,0),.019)
         for row in range(count):
-            zz=z0+.02+row*(height-.04)/(count-1)
+            zz=z0+.02+row*(height-.06)/(count-1)
             for k in range(3):
                 left=x0+.065+k*(length-.08)/3
                 right=x0+.015+(k+1)*(length-.08)/3
@@ -177,38 +178,91 @@ def _front_frame(b,m):
     return local,hw,height
 
 
+def _relief_cells(batch, bounds, holes, depth, thickness):
+    u0,v0,u1,v1=bounds
+    us={u0,u1}; vs={v0,v1}; clipped=[]
+    for a,c,d,e in holes:
+        a,c,d,e=max(u0,a),max(v0,c),min(u1,d),min(v1,e)
+        if a>=d or c>=e: continue
+        clipped.append((a,c,d,e)); us.update((a,d)); vs.update((c,e))
+    us,vs=sorted(us),sorted(vs)
+    for i in range(len(us)-1):
+        for j in range(len(vs)-1):
+            a,d=us[i],us[i+1]; c,e=vs[j],vs[j+1]
+            u,v=(a+d)/2,(c+e)/2
+            if any(h[0]<u<h[2] and h[1]<v<h[3] for h in clipped): continue
+            batch.box((d-a,e-c,thickness),(u,v,depth))
+
+
+def _relief_done(batch, bevel):
+    if batch.bm.verts:
+        batch.b._mesh(batch.name,batch.bm,batch.mat,(0,0,0),(0,0,0),bevel,2)
+
+
+def _in_relief(u,v,holes):
+    return any(a<=u<=c and b<=v<=d for a,b,c,d in holes)
+
+
 def pro_b(b,m):
     """Raked composite tiles with dark laminate edges and two framed vision guards."""
     q,hw,height=_front_frame(b,m)
     washers,heads=_hardware(q)
+    holes=[]
     if not _card(m):
-        for u in (-hw*.73,hw*.73):
-            for v in (height*.12,height*.64):
+        inverse=q.matrix.inverted()
+        for side in (-1,1):
+            u,v=side*hw*.46,height*.79
+            holes.append((u-.50,v-.34,u+.50,v+.34))
+            grab=inverse @ Vector((2.72,side*.47,1.95))
+            holes.append((grab.x-.18,grab.y-.10,grab.x+.18,grab.y+.10))
+            lamp=inverse @ Vector((3.13,side*1.095,1.64))
+            holes.append((lamp.x-.22,lamp.y-.24,lamp.x+.22,lamp.y+.24))
+        for u in (-hw*.95,hw*.95):
+            for v in (height*.56,height*.70):
                 q.box('glacis-mount-shoe',(.12,.15,.18),(u,v,-.065),'paint_dark',bevel=.012)
-    q.box('composite-subframe',(hw*1.96,height,.035),(0,height/2,.024),'paint_dark',bevel=.012)
+        frame=Batch(q,'composite-subframe','paint_dark')
+        _relief_cells(frame,(-hw*.98,0,hw*.98,height),holes,.024,.035)
+        _relief_done(frame,.012)
+        cores=Batch(q,'laminate-core','gunmetal')
+        faces=Batch(q,'composite-face','paint')
+    else:
+        q.box('composite-subframe',(hw*1.96,height,.035),(0,height/2,.024),'paint_dark',bevel=.012)
     pw=hw*1.88/3; ph=height*.57/2
     for row in range(2):
         for col in range(3):
             u=-pw+(col*pw); v=.035+ph*(row+.5)
-            q.box('laminate-core',(pw-.023,ph-.022,.085),(u,v,.078),'gunmetal',bevel=.009)
-            q.box('composite-face',(pw-.035,ph-.03,.032),(u,v,.137),'paint',bevel=.012)
+            if _card(m):
+                q.box('laminate-core',(pw-.023,ph-.022,.085),(u,v,.078),'gunmetal',bevel=.009)
+                q.box('composite-face',(pw-.035,ph-.03,.032),(u,v,.137),'paint',bevel=.012)
+            else:
+                cw,ch=pw-.023,ph-.022
+                fw,fh=pw-.035,ph-.03
+                _relief_cells(cores,(u-cw/2,v-ch/2,u+cw/2,v+ch/2),holes,.078,.085)
+                _relief_cells(faces,(u-fw/2,v-fh/2,u+fw/2,v+fh/2),holes,.137,.032)
             for du in (-pw/2+.07,pw/2-.07):
                 for dv in (-ph/2+.05,ph/2-.05):
-                    _bolt(washers,heads,(u+du,v+dv,.158),radius=.018)
+                    if _card(m) or not _in_relief(u+du,v+dv,holes):
+                        _bolt(washers,heads,(u+du,v+dv,.158),radius=.018)
+    if not _card(m):
+        _relief_done(cores,.009); _relief_done(faces,.012)
     for side in (-1,1):
         u=side*hw*.46; v=height*.79; width=hw*.84; h=height*.29
-        q.box('vision-seal',(width,h,.035),(u,v,.065),'rubber',bevel=.016)
-        q.box('protected-vision',(width-.07,h-.055,.02),(u,v,.09),'glass',bevel=.008)
+        seal_z,glass_z,frame_z,hbar_z,vbar_z,bolt_z = ((.17,.196,.202,.25,.26,.25) if not _card(m) else
+                                                        (.065,.09,.13,.18,.19,.176))
+        q.box('vision-seal',(width,h,.035),(u,v,seal_z),'rubber',bevel=.016)
+        q.box('protected-vision',(width-.07,h-.055,.02),(u,v,glass_z),'glass',bevel=.008)
         for du in (-width/2,width/2):
-            q.box('guard-jamb',(.045,h+.05,.075),(u+du,v,.13),'paint_dark',bevel=.007)
+            q.box('guard-jamb',(.045,h+.05,.075),(u+du,v,frame_z),'paint_dark',bevel=.007)
         for dv in (-h/2,h/2):
-            q.box('guard-sill',(width+.04,.045,.075),(u,v+dv,.13),'paint_dark',bevel=.007)
+            q.box('guard-sill',(width+.04,.045,.075),(u,v+dv,frame_z),'paint_dark',bevel=.007)
+        if not _card(m):
+            q.box('vision-standoff',(.06,h+.04,.22),(side*(hw*.46+width/2+.016),v,.12),'paint_dark',bevel=.008)
         bars=Batch(q,'vision-guard-bars','gunmetal')
-        for j in range(4): bars.box((width,.014,.018),(u,v-h*.36+j*h*.24,.18))
-        for j in (-1,0,1): bars.box((.016,h,.02),(u+j*width*.28,v,.19))
+        for j in range(4): bars.box((width+(.04 if not _card(m) else 0),.014,.018),(u,v-h*.36+j*h*.24,hbar_z))
+        for j in (-1,0,1): bars.box((.016,h,.02),(u+j*width*.28,v,vbar_z))
         bars.done(bevel=.003)
         for du in (-width/2,width/2):
-            for dv in (-h/2,h/2): _bolt(washers,heads,(u+du,v+dv,.176),radius=.018)
+            for dv in (-h/2,h/2): _bolt(washers,heads,(u+du,v+dv,bolt_z),radius=.018)
     _finish(washers,heads)
 
 
@@ -372,10 +426,11 @@ def pro_g(b,m):
     for side in (-1,1):
         b.box('canopy-eave',(length,.05,.07),(cx,side*hw,roof(hw)),'paint',bevel=.01)
         for xx in (x0+.065,x1-.065):
-            b.box('canopy-foot',(.18,.16,.035),(xx,side*(hw-.035),z+.0175),'paint_dark',bevel=.012)
-            b.box('canopy-leg',(.055,.055,leg_h),(xx,side*(hw-.035),z+leg_h/2),'paint',bevel=.009)
-            b.wedge('foot-gusset',[(-.07,0),(.07,0),(0,.12)],.03,(xx,side*(hw-.035),z+.03),'paint',bevel=.003)
-            for dx in (-.055,.055): _bolt(washers,heads,(xx+dx,side*(hw-.035),z+.041),radius=.014)
+            foot_y = side*(hw-.035)
+            b.box('canopy-foot',(.18,.16,.035),(xx,foot_y,z+.0175),'paint_dark',bevel=.012)
+            b.box('canopy-leg',(.055,.055,leg_h),(xx,foot_y,z+leg_h/2),'paint',bevel=.009)
+            b.wedge('foot-gusset',[(-.07,0),(.07,0),(0,.12)],.03,(xx,foot_y,z+.03),'paint',bevel=.003)
+            for dx in (-.055,.055): _bolt(washers,heads,(xx+dx,foot_y,z+.041),radius=.014)
             _bolt(washers,heads,(xx,side*(hw+.027),z+leg_h-.025),(0,side,0),.018)
     # Square-section wires spend twelve triangles per span, rather than tubes per crossing.
     nx=max(5,round(length/MESH_PITCH)); ny=max(6,round(hw*2/MESH_PITCH))

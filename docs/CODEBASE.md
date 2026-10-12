@@ -120,7 +120,7 @@ RESTORE.md
 
 ### AGENTS.md
 
-Paths: `AGENTS.md`. SHA-256 `26b7e9ca262558b23680b7e0361eb93f2baf2b4c3ec6e96c48b9817f8212cdc6`, 6064 bytes.
+Paths: `AGENTS.md`. SHA-256 `b6c960468c4131d12e87691ee79bbe7b0d6e8513937103be02d29b801574facd`, 6345 bytes.
 
 ```markdown
 # Working rules for agents and maintainers
@@ -135,7 +135,7 @@ Paths: `AGENTS.md`. SHA-256 `26b7e9ca262558b23680b7e0361eb93f2baf2b4c3ec6e96c48b
 8. Authority and limits: MPES §20.
 9. Keep every document current in the same PR as the change (HANDOVER, MPES, this file, `art/README.md`, `docs/verification/`, guides), so another agent can resume development, operations and maintenance from the files alone. A status claim (green, converged, assured) must be withdrawn as soon as evidence contradicts it.
 10. End-to-end tests: click instructor lot actions with `act()` from `tests/e2e/roles.ts` (it centres the button first; Firefox loses clicks on buttons half below the fold). Never wait without a bound: `actionTimeout` is 60 s; a slow readiness wait gets its own explicit timeout and a comment saying why. If main CI fails, download the `playwright-windows-*` artifact (`gh run download <id>`) and read the trace before changing anything.
-11. One Blender process at a time, Codex jobs included: check `tasklist` before starting one. The owner uses this PC.
+11. One Blender process at a time, Codex jobs that run Blender included: check `tasklist` before starting one. The owner uses this PC. Codex sessions that do not run Blender (reviews, drafts) may run in parallel to finish sooner.
 12. Never stage `docs/Omni_5.1.1.md` (the owner's governance file, local only).
 13. The product is `dist/index.html`: one offline file of at most 50 MB that fetches nothing, for Windows 11. Performance comes before looks: every change must hold the reference-laptop budgets (MPES §14) on the proxy.
 14. Work on a branch with a PR; merge only on green CI and tag each goal. End commit messages with `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`.
@@ -145,7 +145,7 @@ Paths: `AGENTS.md`. SHA-256 `26b7e9ca262558b23680b7e0361eb93f2baf2b4c3ec6e96c48b
 18. Documents that rebuild the project, kept current in the same PR as any change: `docs/MPES.md` (the specification, no code at all: prose and tables only, alone enough for a clean-room rebuild; `tests/unit/mpes.test.ts` checks it) and `docs/CODEBASE.md` (every tracked file, written by `npm run codebase`, never by hand; `tests/unit/codebase.test.ts` rebuilds the tree from it and fails when it is out of date, so run `npm run codebase` after the last edit and before committing).
 19. Visual check at each goal close: `npm run gallery` (`-- --since <tag>`, default the latest tag; `--notes <file>` adds an intro) builds this checkout and the tag and writes `.artifacts/review/<gameVersion>.html`, every view of both roles in EN and FR on the laptop and the projector, and the six vehicles in stills and 3D, changed shots beside their before. Send it to the owner and ask GO or FIX; repeat until GO before merging.
 20. Cleanup and backup: `npm run archive:prep` is a dry run that lists the regenerable folders (packages, builds, browsers, caches, the Blender download, gallery captures) with sizes. Only when the owner asks for a cleanup run `npm run archive:prep -- --apply`: it removes exactly those (never a tracked file, never through a link), keeps everything irreplaceable (git history, sources, content, render masters, models, concepts, logs and evidence, `_archive/`) and writes `RESTORE.md` with the steps back (`npm ci`, browsers, build, its SHA-256, verify). `tests/unit/archive.test.ts` applies and restores a fresh clone to the same build hash.
-21. Codex (the owner's ChatGPT subscription) raises quality: concept, texture and decal images, Blender modelling, an independent review of each diff, gallery and French text. Its CLI is not on PATH: `$codex = (Get-AppxPackage OpenAI.Codex).InstallLocation + '\app\resources\codex.exe'`. Run it headless in an empty work folder under `.artifacts/` with stdin closed (otherwise it waits on "Reading additional input from stdin"): from PowerShell, `cmd /c "`"$codex`" exec --skip-git-repo-check -s workspace-write -C <dir> [-i <reference.png>] `"<prompt>`" < NUL"` (PowerShell has no `<` redirection; Git Bash: `< /dev/null`). The prompt must hold no double quote, or cmd splits it ("unexpected argument"). For a review, pass the diff as a file in `<dir>` and ask for findings only. For an image, ask it to generate exactly one image and copy the PNG into the folder as `out.png` (images also land in `~/.codex/generated_images/`, about 1.5 minutes each); `node art/tools/concepts.ts` batches concept images. Verify everything it returns (rule 6); one Codex or Blender job at a time (rule 11).
+21. Codex (the owner's ChatGPT subscription) raises quality: concept, texture and decal images, Blender modelling, an independent review of each diff, gallery and French text. Its CLI is not on PATH: `$codex = (Get-AppxPackage OpenAI.Codex).InstallLocation + '\app\resources\codex.exe'`. Run it headless in an empty work folder under `.artifacts/` with stdin closed (otherwise it waits on "Reading additional input from stdin"): from PowerShell, `cmd /c "`"$codex`" exec -m gpt-6.1-sol -c model_reasoning_effort=medium --skip-git-repo-check -s workspace-write -C <dir> [-i <reference.png>] `"<prompt>`" < NUL"` (PowerShell has no `<` redirection; Git Bash: `< /dev/null`). The prompt must hold no double quote, or cmd splits it ("unexpected argument"). For a review, pass the diff as a file in `<dir>` and ask for findings only. For an image, ask it to generate exactly one image and copy the PNG into the folder as `out.png` (images also land in `~/.codex/generated_images/`, about 1.5 minutes each); `node art/tools/concepts.ts` batches concept images. Always name the model and effort: GPT-6.1 Sol, medium, for every job until the owner says otherwise (owner, 2026-10-11). Verify everything it returns (rule 6); one Codex or Blender job at a time (rule 11).
 ```
 
 ### CLAUDE.md
@@ -714,14 +714,14 @@ def _cab(b):
 
 ### art/README.md
 
-Paths: `art/README.md`. SHA-256 `8b95e99acf8e0eaae7e101c0a3726e0a8f7f4e69ab9e9efca1c50e3fa3828e72`, 9502 bytes.
+Paths: `art/README.md`. SHA-256 `b3489a36b103bb8885b8ce2f6c3d652eda03139d35dd7e00ce630c685c2154d6`, 10605 bytes.
 
 ````markdown
 # Art pipeline (MPES §10, §11)
 
 All vehicle, part and card imagery and the 3D showcase model are original, procedural and authored by script: no image textures, HDRIs, scans or downloaded models. The same scripts make both outputs offline; the game embeds only the results: encoded stills (`content/renders/`) and one packed glTF model (`content/models/`).
 
-AI assistance (MPES D-14): `tools/concepts.ts` generates concept images with the owner's Codex subscription, and Codex jobs may upgrade the Blender scripts. Concept images are references only: they live in `.artifacts/` and are never embedded.
+AI assistance (MPES D-14): `tools/concepts.ts` generates concept images with the owner's Codex subscription (model GPT-6.1 Sol, medium effort, named on every call; AGENTS.md rule 21), and Codex jobs may upgrade the Blender scripts. Concept images are references only: they live in `.artifacts/` and are never embedded.
 
 ## Toolchain
 
@@ -763,6 +763,8 @@ node art/tools/measure-spike.ts .artifacts/perf/measure.json
 $B -b --factory-startup -P art/blender/tris.py -- --vehicles all --parts all
 # Parts in different slots must not intersect (exit 1 on any hit; --detail names the clashing objects).
 $B -b --factory-startup -P art/blender/overlap.py -- --vehicles all --parts all
+# Every part must be physically fittable: nothing inside or outboard of a tyre, nothing floating (exit 1 on any finding).
+$B -b --factory-startup -P art/blender/fit.py -- --vehicles all --parts all
 # Export one GLB per vehicle (real-time detail, AO baked into vertex colours), then merge, weld, quantise and pack.
 $B -b --factory-startup -P art/blender/export.py -- --out .artifacts/models
 node art/tools/pack-models.ts .artifacts/models .artifacts/packed/models.glb
@@ -779,6 +781,7 @@ Pass absolute or project-relative output paths. `render.py` makes them absolute,
 - `blender/export.py`: the 3D showcase export: one GLB per vehicle with a `base` node and one node per part card (its mount slot in the node's extras), at real-time detail (`geo.REALTIME`: one bevel segment, half the round vertices), ambient occlusion baked into vertex colours.
 - `blender/tris.py`: triangle budgets of the 3D model, per vehicle and part.
 - `blender/overlap.py`: cross-slot collision check: builds each vehicle with every part at real-time detail and tests the surfaces of every pair of parts in different slots for intersecting triangles (a part wholly inside another is not detected).
+- `blender/fit.py`: physical fit check: builds each vehicle with one part at a time at real-time detail and reports part surfaces inside a road wheel's tyre or outboard of its sidewall (a hub may stand proud within 42% of the radius and 0.16 m; replacement wheels and snow chains are exempt), and pieces (connected parts of a mesh, since a batch merges many) more than 15 mm from the hull or from an attached piece of the same part, and soles seated on a level surface with more than 10% of their area more than 40 mm over a slope or an edge with no bracing of the part's own within 0.3 m beneath (running gear on the base's wheels is exempt). Owner FIX in G2, after dampers had been modelled outside the tyres; the overhang check after a Codex review found a foot over the roof chamfer.
 - `blender/render.py`: the job: which shots, sizes, samples and cameras; writes `renders.json` with each shot's draw order (camera distance) and, for part layers, its mount slot.
 - `blender/sea/scene.py`: render settings, studio lights and reflection cards, shadow-catcher ground, camera framing, layer visibility.
 - `blender/sea/materials.py`: procedural physically based materials for stills, and `realtime_palette()`, the same keys as plain glTF constants for the 3D model (olive paints with edge wear, crevice dust and road dust; rubber; metals; glass; lamps). Card renders turn road dust off.
@@ -800,7 +803,7 @@ Every physical card has one slot (`SLOTS` in `mounts.py`): for example all seven
 
 1. Edit its builder in its category module under `parts/` (or its slot in `mounts.py`). Keep it fictional and recognisable at 512 px, and size it from the card's effects (Appendix A).
 2. Preview (`--preview`) and check the kit stills and the card on a contact sheet.
-3. Check its budget with `tris.py --parts <ID>` and its fit with `overlap.py --parts all` (one Blender at a time: the owner uses this PC).
+3. Check its budget with `tris.py --parts <ID>`, its clearance with `overlap.py --parts all` and its fit with `fit.py --parts <ID>` (one Blender at a time: the owner uses this PC).
 4. Render its layers on all six vehicles and its card (`--parts <ID>`), encode, export and pack the 3D model, then `npm test` (the render and model manifest tests check completeness, slots, hashes and the 40 MB budget).
 
 ## Sizes (performance over looks, owner 2026-10-10)
@@ -1031,7 +1034,7 @@ if __name__ == '__main__':
 
 ### art/blender/render.py
 
-Paths: `art/blender/render.py`. SHA-256 `091a9fc28a7d4a0c8dc72efd460908d13ee7aa1a8979bd06c08a7cda1bfa7a4c`, 7118 bytes.
+Paths: `art/blender/render.py`. SHA-256 `c7aa8607762985a64cd1d1f5af8067bb45e0d6d672623b9e82bb0e4f8b68193e`, 7330 bytes.
 
 ```python
 """Render entry point (MPES §10, §11). Run with the pinned Blender (see art/README.md):
@@ -1062,7 +1065,9 @@ from sea.mounts import SLOTS, card_mount  # noqa: E402
 from sea.parts import tokens  # noqa: E402
 from sea.parts.library import PARTS, build as build_part  # noqa: E402
 
-ANGLES = {'front': (38, 10), 'rear': (218, 12)}  # (yaw, pitch) of the two build angles
+# (yaw, pitch) of the two build angles. Chosen by art/tools/angles.ts (owner FIX, G2): near eye level and more side-on
+# than the earlier 38/10 and 218/12, so fewer parts are hidden by the hull and the vehicle fills more of the frame.
+ANGLES = {'front': (30, 6), 'rear': (210, 6)}
 # Sizes favour performance over looks (owner, 2026-10-10): enough pixels for the panels they fill, no more.
 HERO, BUILD, TURN, CARD = (1600, 900), (1280, 720), (960, 540), (512, 512)
 TURNTABLE_FRAMES = 24
@@ -1134,8 +1139,8 @@ class Job:
         hero = ['base', *fleet.HERO[stem]]
         if self.a.preview:
             self.shot(f'{stem}-hero', HERO, 0, hero, [], 32, 8)
-            self.shot(f'{stem}-kit', HERO, 0, everything, [], 32, 8)
-            self.shot(f'{stem}-kit-rear', HERO, 0, everything, [], 212, 10)
+            self.shot(f'{stem}-kit', HERO, 0, everything, [], *ANGLES['front'])
+            self.shot(f'{stem}-kit-rear', HERO, 0, everything, [], *ANGLES['rear'])
             return
         if 'hero' in only:
             self.shot(f'{stem}-hero', HERO, SAMPLES['hero'], hero, [], 32, 8)
@@ -1834,7 +1839,7 @@ def card_mount():
 
 ### art/blender/sea/parts/acc.py
 
-Paths: `art/blender/sea/parts/acc.py`. SHA-256 `9940f0f2d4beacc2dab88a3bbc80187c255a11c86fc2ce0d3c28f6156d73a1b5`, 26485 bytes.
+Paths: `art/blender/sea/parts/acc.py`. SHA-256 `4e00ad74c7d5c3e34bda4c11f4d0848147d2c9e7d0e2664a256227db12bb8b39`, 32568 bytes.
 
 ```python
 """Seven procedural accessory kits; metres, +X forward, -Y camera side.
@@ -1934,20 +1939,42 @@ def acc_a(b, m):
         flat = Builder(b.layer, b.m, origin=(0, 0, .10), rotation=(0, PI / 2, 0))
         flat.matrix = b.matrix @ flat.matrix
         b = flat
+    # Behind a lowered ramp the legs stand off the door pillars, ropes coiled over them, so the doorway stays clear
+    # (owner FIX, G2: the frame had hung in the troop carrier's open doorway).
+    ramp = m.extra.get('rear_ramp', False)
+    if ramp:
+        hx += .06
+    leg_y, top_y, top_z, coil_y = ((1.0, 1.0, 1.30, 1.0) if ramp else
+                                   ((.29, .7 * .29, 1.18, .72) if _card(m) else (.86, .60, 1.18, .86)))
     # Stand vertically on the rear when fitted.
     x = hx - .26
-    for y in (-.29, .29):
-        _beam(b, 'folded-tow-leg', (x, y, hz + .12), (x, y * .7, hz + 1.18), .11, .10)
+    for side in (-1, 1):
+        y = side * leg_y
+        _beam(b, 'folded-tow-leg', (x, y, hz + .12), (x, side * top_y, hz + top_z), .11, .10)
         b.box('hinge-cheek', (.16, .16, .20), (x, y, hz + .23), 'paint_dark', bevel=.018)
         b.cyl('hinge-pin', .052, .20, (x, y, hz + .23), 'steel', rot=X_AXIS, verts=20)
-        b.box('rear-mount-bracket', (.32, .14, .07), (hx - .12, y, hz + .10), 'paint_dark', bevel=.008)
-        b.box('retaining-clamp', (.15, .15, .065), (x, y * .76, hz + .96), 'gunmetal', bevel=.008)
+        if ramp or _card(m):
+            b.box('rear-mount-bracket', (.32, .14, .07), (hx - .12, y, hz + .10), 'paint_dark', bevel=.008)
+        else:
+            recovery = m.extra.get('recovery', False)
+            bracket_z = hz + (.42 if recovery else .10)
+            leg_t = (bracket_z + .02 - (hz + .12)) / (top_z - .12)
+            support_y = y + side * (top_y - leg_y) * leg_t
+            b.box('rear-mount-bracket', (.10, .10, .07), (hx + .10, y, bracket_z), 'paint_dark', bevel=.008)
+            _beam(b, 'rear-bracket-support', (x, support_y, bracket_z + .02),
+                  (hx + .10, y, bracket_z + .02), .06, .06)
+        b.box('retaining-clamp', (.15, .15, .065), (x, y + side * (top_y - leg_y) * .8, hz + .96), 'gunmetal', bevel=.008)
         _ring(b, 'split-pin', (x - .115, y, hz + .18), .038, .006, rot=(0, 0, PI / 2), steps=24)
-    b.box('cross-brace', (.09, .55, .10), (x, 0, hz + .45), 'paint_dark', bevel=.01)
-    b.box('tow-head', (.15, .46, .17), (x, 0, hz + 1.19), 'paint', bevel=.025)
-    _ring(b, 'towing-eye', (x, 0, hz + 1.38), .12, .035, rot=(0, 0, PI / 2), steps=40)
-    _bolts(b, 'tow-frame-bolts', [(x - .092, y, hz + z) for y in (-.29, .29) for z in (.2, .29)], .028, X_AXIS)
-    for y in (-.72, .72):
+    if not ramp:
+        span = .55 if _card(m) else 2 * leg_y + .14
+        depth = .09 if _card(m) else .14
+        brace_x = x if _card(m) else x + .10
+        b.box('cross-brace', (depth, span, .10), (brace_x, 0, hz + .45), 'paint_dark', bevel=.01)
+    b.box('tow-head', (.15, 2 * top_y + .17, .17), (x, 0, hz + top_z + .01), 'paint', bevel=.025)
+    # Beside a ramp the eye trails behind the head, below the deck edge and its radio masts.
+    _ring(b, 'towing-eye', (x - .14, 0, hz + top_z + .01) if ramp else (x, 0, hz + top_z + .20), .12, .035, rot=(0, 0, 0 if ramp else PI / 2), steps=40)
+    _bolts(b, 'tow-frame-bolts', [(x - .092, y, hz + z) for y in (-leg_y, leg_y) for z in (.2, .29)], .028, X_AXIS)
+    for y in (-coil_y, coil_y):
         # Nested loops in two layers retain visible grooves at card resolution.
         for layer, radii in ((0, (.145, .187, .229)), (1, (.166, .208))):
             for radius in radii:
@@ -1959,13 +1986,19 @@ def acc_a(b, m):
             b.box('rope-retaining-webbing', (.19, .065, .095), (x - .115, y, hz + .52 + dz), 'rubber', bevel=.008)
         _ring(b, 'rope-thimble', (x - .20, y - .13, hz + .17), .061, .016, rot=(0, 0, PI / 2), steps=28)
         _tube(b, 'rope-tail', [(x - .18, y, hz + .30), (x - .20, y - .12, hz + .20)], .022, 'canvas')
-        b.box('rope-hanger', (.34, .12, .06), (hx - .16, y, hz + .77), 'paint_dark', bevel=.006)
-    # Open cheeks leave the sheave and its groove readable.
+        if not (_card(m) or ramp):
+            side = 1 if y > 0 else -1
+            t=(.77-.12)/(top_z-.12)
+            leg_y_at_hanger=side*leg_y+(side*top_y-side*leg_y)*t
+            _beam(b,'rope-hanger-support',(x,leg_y_at_hanger,hz+.77),(x,y,hz+.77),.04,.04)
+        b.box('rope-hanger', (.36 if ramp else .42, .12, .06), (x, y, hz + .77), 'paint_dark', bevel=.006)
+    # Open cheeks leave the sheave and its groove readable; beside a ramp it hangs under the right leg.
+    sy, sz, eye = (leg_y, hz - .04, -.20) if ramp else (0, hz + .33, .23)
     for dx in (-.08, .08):
-        b.box('snatch-cheek', (.03, .25, .32), (x + dx, 0, hz + .33), 'paint', bevel=.06, segments=3)
-    b.cyl('snatch-sheave', .12, .12, (x, 0, hz + .33), 'gunmetal', rot=X_AXIS, verts=32)
-    _bolts(b, 'snatch-axle', [(x - .105, 0, hz + .33)], .042, X_AXIS)
-    _ring(b, 'snatch-eye', (x, 0, hz + .56), .062, .019, rot=(0, 0, PI / 2), steps=28)
+        b.box('snatch-cheek', (.03, .25, .32), (x + dx, sy, sz), 'paint', bevel=.06, segments=3)
+    b.cyl('snatch-sheave', .12, .12, (x, sy, sz), 'gunmetal', rot=X_AXIS, verts=32)
+    _bolts(b, 'snatch-axle', [(x - .105, sy, sz)], .042, X_AXIS)
+    _ring(b, 'snatch-eye', (x, sy, sz + eye), .062, .019, rot=(0, 0, PI / 2), steps=28)
 
 
 def _trailer_wheel(b, x, y, z, side):
@@ -1982,7 +2015,7 @@ def _trailer_wheel(b, x, y, z, side):
     b.revolve('wheel-rim', [(.06, 0), (.17, side * .11), (.23, side * .12), (.24, side * .15),
                            (.24, side * .17), (.20, side * .17), (.17, side * .135), (.06, side * .12)], (x, y, z), 'paint_dark', steps=40)
     b.cyl('wheel-hub', .08, .10, (x, y + side * .17, z), 'gunmetal', rot=Y_AXIS, verts=24)
-    _bolts(b, 'wheel-lugs', [(x + .13 * math.cos(a), y + side * .177, z + .13 * math.sin(a)) for a in [2 * PI * j / 6 for j in range(6)]], .021, Y_AXIS)
+    _bolts(b, 'wheel-lugs', [(x + .13 * math.cos(a), y + side * .136, z + .13 * math.sin(a)) for a in [2 * PI * j / 6 for j in range(6)]], .021, Y_AXIS)
 
 
 def acc_b(b, m):
@@ -1991,14 +2024,26 @@ def acc_b(b, m):
     tx = 0 if _card(m) else hx - 2.65
     hitch_x = tx + 2.30 if _card(m) else hx - .50
     tow_z = hz if _card(m) else hz + .30
-    if not _card(m):
+    # Behind a lowered ramp a split drawbar runs to a receiver on each door pillar, clear of the ramp
+    # (owner FIX, G2: the receiver had hung in the troop carrier's open doorway).
+    ramp = m.extra.get('rear_ramp', False) and not _card(m)
+    couplers = [-1.0, 1.0] if ramp else ([-.86, .86] if not _card(m) else [0])
+    if ramp:
+        tow_z = hz + .10
+        for cy in couplers:
+            b.box('receiver-mount', (.10, .26, .30), (hx + .06, cy, tow_z), 'paint_dark', bevel=.014)
+            _beam(b, 'raised-receiver', (hx + .02, cy, tow_z), (hitch_x + .03, cy, tow_z), .13, .12)
+            _bolts(b, 'receiver-fasteners', [(hx, cy + y, tow_z + z) for y in (-.08, .08) for z in (-.08, .08)], .022, X_AXIS)
+    elif not _card(m):
         # Raised receiver clears the recovery hull's rear stabiliser spade.
-        b.box('receiver-mount', (.10, .30, .30), (hx + .06, 0, hz + .40), 'paint_dark', bevel=.014)
-        _beam(b, 'raised-receiver', (hx + .02, 0, tow_z), (hitch_x + .03, 0, tow_z), .13, .12)
-        _bolts(b, 'receiver-fasteners', [(hx, y, hz + z) for y in (-.10, .10) for z in (.32, .50)], .022, X_AXIS)
+        for cy in couplers:
+            b.box('receiver-mount', (.10, .10, .20), (hx + .10, cy, tow_z + .10), 'paint_dark', bevel=.014)
+            _beam(b, 'raised-receiver', (hx + .10, cy, tow_z), (hitch_x + .03, cy, tow_z), .13, .12)
+            _bolts(b, 'receiver-fasteners', [(hx + .05, cy + y, tow_z + z) for y in (-.035, .035) for z in (-.07, .07)], .018, X_AXIS)
     for y in (-.55, .55):
         b.box('chassis-rail', (2.0, .10, .12), (tx, y, .63), 'paint_dark', bevel=.014)
-        _beam(b, 'drawbar', (tx + .55, y, .65), (hitch_x - .12, 0, tow_z), .10, .12)
+        end_y = y / .55 if ramp else (y / .55 * .86 if not _card(m) else 0)
+        _beam(b, 'drawbar', (tx + .55, y, .65), (hitch_x - .12, end_y, tow_z), .10, .12)
         for k in range(3):
             b.box('leaf-spring', (.70 - k * .13, .065, .02), (tx, y, .50 + k * .025), 'gunmetal', bevel=.003)
     _rod(b, 'trailer-axle', (tx, -.98, .453), (tx, .98, .453), .06, 'gunmetal', 16)
@@ -2035,19 +2080,26 @@ def acc_b(b, m):
         b.box('tail-light', (.02, .12, .065), (tx - 1.06, y, .92), 'red', bevel=.013)
         b.box('tail-reflector', (.02, .08, .035), (tx - 1.06, y, .85), 'lamp', bevel=.006)
         b.box('tailgate-hinge', (.04, .19, .06), (tx - .98, y, .77), 'steel', bevel=.006)
-    _ring(b, 'lunette', (hitch_x, 0, tow_z), .10, .028, rot=(PI / 2, 0, 0), steps=32)
-    b.box('coupler-block', (.21, .15, .13), (hitch_x - .16, 0, tow_z), 'paint_dark', bevel=.022)
+    for cy in couplers:
+        _ring(b, 'lunette', (hitch_x, cy, tow_z), .10, .028, rot=(PI / 2, 0, 0), steps=32)
+        b.box('coupler-block', (.21, .15, .13), (hitch_x - .16, cy, tow_z), 'paint_dark', bevel=.022)
     # Jack is retracted when fitted; extended on the standalone card.
     jx = hitch_x - .48
     foot_z = .0125 if _card(m) else .45
-    jack_top = max(.97, tow_z + .14)
-    b.box('jack-clamp', (.12, .28, .08), (jx, -.08, tow_z - .04), 'paint_dark', bevel=.01)
-    _rod(b, 'jack-leg', (jx, -.17, foot_z + .010), (jx, -.17, jack_top), .04, 'steel', 16)
-    _rod(b, 'jack-sleeve', (jx, -.17, .54), (jx, -.17, jack_top - .08), .057, 'paint', 20)
-    b.cyl('jack-foot', .10, .025, (jx, -.17, foot_z), 'paint_dark', verts=24)
-    _tube(b, 'jack-crank', [(jx, -.17, jack_top + .01), (jx, -.32, jack_top + .01), (jx, -.32, jack_top - .05)], .014, 'gunmetal')
-    for side in (-1, 1):
-        _tube(b, 'safety-cable', [(hitch_x - .32, side * .10, tow_z), (hitch_x - .12, side * .18, tow_z - .17), (hitch_x, side * .07, tow_z)], .011, 'steel')
+    # On a split drawbar the jack clamps to the left bar.
+    jy, jz = (-.86 if not ramp and not _card(m) else 0), tow_z
+    if ramp:
+        t = (jx - (tx + .55)) / (hitch_x - .12 - (tx + .55))
+        jy, jz = -.55 - .45 * t + .08, .65 + (tow_z - .65) * t
+    jack_top = max(.97, jz + .14)
+    b.box('jack-clamp', (.12, .28, .08), (jx, jy - .08, jz - .04), 'paint_dark', bevel=.01)
+    _rod(b, 'jack-leg', (jx, jy - .17, foot_z + .010), (jx, jy - .17, jack_top), .04, 'steel', 16)
+    _rod(b, 'jack-sleeve', (jx, jy - .17, .54), (jx, jy - .17, jack_top - .08), .057, 'paint', 20)
+    b.cyl('jack-foot', .10, .025, (jx, jy - .17, foot_z), 'paint_dark', verts=24)
+    _tube(b, 'jack-crank', [(jx, jy - .17, jack_top + .01), (jx, jy - .32, jack_top + .01), (jx, jy - .32, jack_top - .05)], .014, 'gunmetal')
+    for cy in couplers:
+        for side in (-1, 1):
+            _tube(b, 'safety-cable', [(hitch_x - .32, cy + side * .10, tow_z), (hitch_x - .12, cy + side * .18, tow_z - .17), (hitch_x, cy + side * .07, tow_z)], .011, 'steel')
 
 
 def acc_c(b, m):
@@ -2057,7 +2109,11 @@ def acc_c(b, m):
     if _card(m):
         # Present the detached frame at operating height above its grounded rollers.
         fz = rz + .70
-    b.box('attachment-beam', (.19, 1.76, .22), (fx + .12, 0, fz), 'paint_dark', bevel=.024)
+    if _card(m):
+        b.box('attachment-beam', (.19, 1.76, .22), (fx + .12, 0, fz), 'paint_dark', bevel=.024)
+    else:
+        for lo, hi in ((-.88, -.80), (-.44, .44), (.80, .88)):
+            b.box('attachment-beam', (.19, hi - lo, .22), (fx, (lo + hi) / 2, fz), 'paint_dark', bevel=.024)
     b.box('roller-crossbeam', (.18, 2.42, .16), (fx + .91, 0, .96), 'paint', bevel=.018)
     for side in (-1, 1):
         y = side * .75
@@ -2080,8 +2136,10 @@ def acc_c(b, m):
         yy = y + side * .43
         b.cyl('hub-cap', .125, .055, (rx, yy, rz), 'paint', rot=Y_AXIS, verts=24, bevel=.009)
         _bolts(b, 'roller-hub-bolts', [(rx + .094 * math.cos(a), yy + side * .033, rz + .094 * math.sin(a)) for a in [2 * PI * j / 6 for j in range(6)]], .020, Y_AXIS)
-        b.box('mount-clevis', (.23, .20, .37), (fx + .1, y, fz + .12), 'paint', bevel=.018)
-        _bolts(b, 'frame-fasteners', [(fx + .23, y + dy, fz + z) for dy in (-.065, .065) for z in (-.03, .23)], .023, X_AXIS)
+        clevis_y = side * (.75 if _card(m) else .90)
+        clevis_width = .20 if _card(m) else .18
+        b.box('mount-clevis', (.23, clevis_width, .37), (fx + .1, clevis_y, fz + .12), 'paint', bevel=.018)
+        _bolts(b, 'frame-fasteners', [(fx + .23, clevis_y + dy, fz + z) for dy in (-.065, .065) for z in (-.03, .23)], .023, X_AXIS)
     b.box('valve-block', (.22, .28, .18), (fx + .68, 0, 1.05), 'paint_dark', bevel=.018)
     for y in (-.70, .70):
         _tube(b, 'manifold-hose', [(fx + .65, 0, 1.14), (fx + .78, y * .7, 1.15), (fx + .65, y, 1.12)], .014, 'rubber')
@@ -2102,8 +2160,15 @@ def acc_e(b, m):
         b.box('cutting-shoe', (.066, .865, .145), (bx + .215, y, .16), 'steel', rot=(0, .18, 0), bevel=.007)
         _bolts(b, 'cutting-edge-bolts', [(bx + .258, y + dy, .20) for dy in (-.32, -.1, .1, .32)], .022, X_AXIS, 'gunmetal')
     b.box('blade-backbone', (.14, 2.47, .16), (bx - .11, 0, .59), 'paint_dark', bevel=.017)
-    b.box('mount-crossbeam', (.18, 1.68, .22), (fx + .10, 0, fz), 'paint', bevel=.017)
-    for y in (-.76, .76):
+    support_y = .94 if not _card(m) else .76
+    if _card(m):
+        b.box('mount-crossbeam', (.18, 1.68, .22), (fx + .10, 0, fz), 'paint', bevel=.017)
+    else:
+        for lo, hi in ((-.98, -.80), (-.44, .44), (.80, .98)):
+            b.box('mount-crossbeam', (.18, hi - lo, .22), (fx + .02, (lo + hi) / 2, fz), 'paint', bevel=.017)
+        for side in (-1, 1):
+            b.box('nose-mount-pad', (.16, .24, .16), (fx - .06, side * .89, fz), 'paint_dark', bevel=.012)
+    for y in (-support_y, support_y):
         _beam(b, 'dozer-push-arm', (fx + .09, y, fz - .05), (bx - .13, y, .49), .16, .20)
         b.wedge('lift-tower', [(-.12, -.16), (.10, -.16), (.07, .38), (-.08, .40)], .12, (fx + .15, y, fz), 'paint', bevel=.018)
         _ram(b, (fx + .20, y, fz + .34), (bx - .10, y, .75), .070)
@@ -2116,9 +2181,17 @@ def acc_f(b, m):
     """Heavy cable winch with open four-roller fairlead and forged towing fittings."""
     fx, fz = m.bumper
     x, z = fx + .33, fz + .08
-    b.box('winch-bed', (.66, 1.55, .095), (x, 0, z - .25), 'paint_dark', bevel=.023)
-    for y in (-.58, .58):
-        b.box('mount-foot', (.40, .18, .14), (fx + .14, y, z - .23), 'paint_dark', bevel=.014)
+    if _card(m):
+        b.box('winch-bed', (.66, 1.55, .095), (x, 0, z - .25), 'paint_dark', bevel=.023)
+        foot_y = (-.58, .58)
+        foot_width = .18
+    else:
+        b.box('winch-bed', (.52, 1.55, .095), (fx + .40, 0, z - .25), 'paint_dark', bevel=.023)
+        b.box('winch-bed', (.14, .88, .095), (fx + .07, 0, z - .25), 'paint_dark', bevel=.023)
+        foot_y = (-.38, .38)
+        foot_width = .13
+    for y in foot_y:
+        b.box('mount-foot', (.40, foot_width, .14), (fx + .14, y, z - .23), 'paint_dark', bevel=.014)
     for y in (-.43, .43):
         b.wedge('winch-sideplate', [(-.26, -.22), (.29, -.22), (.20, -.09), (.14, .25), (-.09, .30), (-.22, .20)], .065,
                 (x, y, z), 'paint', bevel=.016)
@@ -2135,10 +2208,15 @@ def acc_f(b, m):
     b.cyl('gear-housing', .18, .23, (x, .59, z + .03), 'paint', rot=Y_AXIS, verts=32, bevel=.024)
     _bolts(b, 'motor-fasteners', [(x + .135 * math.cos(a), -.828, z + .02 + .135 * math.sin(a)) for a in [2 * PI * j / 6 for j in range(6)]], .019, Y_AXIS)
     b.cyl('clutch-cap', .065, .04, (x, .59, z + .235), 'steel', verts=20)
-    _tube(b, 'motor-hose', [(x - .07, -.75, z + .25), (x - .25, -.77, z + .13), (x - .28, -.60, z - .12)], .021, 'rubber')
-    lx = x + .33
+    hose_y = -.40 if not _card(m) else -.77
+    hose_end_y = -.40 if not _card(m) else -.60
+    _tube(b, 'motor-hose', [(x - .07, -.75, z + .25), (x - .25, hose_y, z + .13), (x - .28, hose_end_y, z - .12)], .021, 'rubber')
+    lx = x + .27
+    for y in (-.43, .43):
+        # Side posts carry the fairlead on the winch bed.
+        b.box('fairlead-post', (.06, .05, .375), (lx + .04, y, z - .015), 'paint', bevel=.008)
     for dz in (-.115, .115):
-        b.box('fairlead-crossbar', (.075, .78, .055), (lx, 0, z + dz), 'paint', bevel=.009)
+        b.box('fairlead-crossbar', (.075, .86, .055), (lx, 0, z + dz), 'paint', bevel=.009)
         b.cyl('horizontal-roller', .045, .61, (lx + .036, 0, z + dz * .72), 'steel', rot=Y_AXIS, verts=24, bevel=.008)
     for y in (-.34, .34):
         b.cyl('vertical-roller', .047, .28, (lx + .075, y, z), 'steel', verts=24, bevel=.008)
@@ -2160,15 +2238,36 @@ def _rack_frame(b, m, length=1.72, width=.86):
     x, y, z = m.rack
     if not _card(m):
         # The supplied centre rack anchor is inside the weapon envelope. Carry
-        # the basket beside the roof on short brackets, above side-armour height.
+        # the basket beside the roof on brackets, above side-armour height.
         y -= m.side[4] + width / 2 + .06
+    feet, pad_bolts = [], []
+    # Roof edge chamfer (hull8 section): flat roof to |y| 1.1 at the roof, down to the sponson's 1.36 at 0.44 below.
+    rz = m.roof_span[2]
+    chamfer = [(-1.13, rz - .03 / .26 * .44), (-1.27, rz - .17 / .26 * .44)]
+    normal = Vector((0, -.44, .26)).normalized()
     for dx in (-length * .38, length * .38):
-        for dy in (-width * .36, width * .36):
-            b.box('rack-foot', (.16, .13, .045), (x + dx, y + dy, z + .0225), 'paint_dark', bevel=.008)
-            b.box('rack-leg', (.075, .075, .12), (x + dx, y + dy, z + .10), 'paint', bevel=.009)
-        if not _card(m):
-            inner = -m.side[4] + .18
-            _beam(b, 'roof-bracket', (x + dx, inner, z + .03), (x + dx, y + width * .35, z + .12), .08, .09)
+        if _card(m):
+            for dy in (-width * .36, width * .36):
+                b.box('rack-foot', (.16, .13, .045), (x + dx, y + dy, z + .0225), 'paint_dark', bevel=.008)
+                b.box('rack-leg', (.075, .075, .12), (x + dx, y + dy, z + .10), 'paint', bevel=.009)
+                feet.append((x + dx, y + dy))
+            continue
+        # Fitted: each bracket runs under the whole basket and is braced from the top of the sponson (owner FIX,
+        # G2: the feet had hung in the air beside the hull). The front one bolts to the flat roof ahead of the
+        # module deck; the rear one, beside the module, to a pad on the roof's chamfered edge behind the pioneer tools.
+        if dx > 0:
+            inner = -(m.roof_span[3] - .12)  # outboard of the turret-mount flange
+            b.box('rack-foot', (.16, .13, .045), (x + dx, inner, z + .0225), 'paint_dark', bevel=.008)
+            _beam(b, 'roof-bracket', (x + dx, inner - .04, z + .085), (x + dx, y - width * .47, z + .085), .08, .09)
+            feet.extend(Vector((x + dx + sx, inner, z + .052)) for sx in (-.045, .045))
+        else:
+            a, c = (Vector((x + dx, cy, cz)) + normal * .0225 for cy, cz in chamfer)
+            _beam(b, 'rack-foot', a, c, .16, .045, 'paint_dark', .008)
+            mid = (a + c) / 2 + normal * .0225
+            _beam(b, 'rack-leg', mid - normal * .01, (x + dx, mid.y, z + .085), .075, .075)
+            _beam(b, 'roof-bracket', (x + dx, mid.y + .05, z + .085), (x + dx, y - width * .47, z + .085), .08, .09)
+            pad_bolts.extend(mid + normal * .004 + Vector((sx, 0, 0)) for sx in (-.045, .045))
+        _beam(b, 'rack-brace', (x + dx, -(m.side[4] - .05), m.side[3] + .07), (x + dx, y - width * .2, z + .05), .06, .06)
     floor_z = z + .16
     for dy in (-width / 2, width / 2):
         b.box('basket-sill', (length, .06, .07), (x, y + dy, floor_z), 'paint', bevel=.012)
@@ -2187,8 +2286,12 @@ def _rack_frame(b, m, length=1.72, width=.86):
            (x + length / 2, y + width / 2, floor_z + .23), (x - length / 2, y + width / 2, floor_z + .23),
            (x - length / 2, y - width / 2, floor_z + .23)]
     _tube(b, 'basket-top-rail', pts, .022, 'paint')
-    _bolts(b, 'rack-foot-bolts', [(x + dx, y + dy, z + .052) for dx in (-length * .38, length * .38) for dy in (-width * .36, width * .36)], .018)
-    return x, y, floor_z + .015
+    if _card(m):
+        _bolts(b, 'rack-foot-bolts', [(fx, fy, z + .052) for fx, fy in feet], .018)
+    else:
+        _bolts(b, 'rack-foot-bolts', feet, .018)
+        _bolts(b, 'rack-pad-bolts', pad_bolts, .018, (math.atan2(-normal.y, normal.z), 0, 0))
+    return x, y, floor_z + .0095  # top of the open floor
 
 
 def _case(b, loc, size, rugged=False, mat='paint_dark'):
@@ -2210,9 +2313,9 @@ def _case(b, loc, size, rugged=False, mat='paint_dark'):
             for dy in (-width / 2 + .025, width / 2 - .025):
                 b.box('case-corner-rib', (.065, .065, height * .86), (x + dx, y + dy, z + height * .48), mat, bevel=.014)
         for dx in (-length * .27, length * .27):
-            b.box('case-webbing-top', (.035, width + .025, .009), (x + dx, y, z + height + .026), 'canvas', bevel=.002)
+            b.box('case-webbing-top', (.035, width + .025, .009), (x + dx, y, z + height + .0095), 'canvas', bevel=.002)
             for side in (-1, 1):
-                b.box('case-webbing-side', (.035, .009, height), (x + dx, y + side * (width / 2 + .019), z + height / 2), 'canvas', bevel=.002)
+                b.box('case-webbing-side', (.035, .009, height), (x + dx, y + side * (width / 2 + .0115), z + height / 2), 'canvas', bevel=.002)
 
 
 def acc_d(b, m):
@@ -2221,14 +2324,14 @@ def acc_d(b, m):
     _case(b, (x + .40, y, z), (.69, .64, .35))
     for dx in (-.57, -.36, -.15):
         cx, cy = x + dx, y - .17
-        b.box('jerrycan', (.18, .27, .38), (cx, cy, z + .20), 'paint', bevel=.026)
+        b.box('jerrycan', (.18, .27, .38), (cx, cy, z + .19), 'paint', bevel=.026)
         b.box('can-shoulder', (.16, .24, .07), (cx, cy, z + .39), 'paint_light', bevel=.022)
         _tube(b, 'can-handle', [(cx, cy - .075, z + .42), (cx, cy - .065, z + .475), (cx, cy + .055, z + .475), (cx, cy + .065, z + .42)], .013, 'paint_dark')
         b.cyl('can-cap', .037, .025, (cx + .055, cy + .075, z + .435), 'gunmetal', verts=16)
         for a, c in [((cx - .06, cy - .141, z + .07), (cx + .06, cy - .141, z + .31)),
                      ((cx + .06, cy - .141, z + .07), (cx - .06, cy - .141, z + .31))]:
             _beam(b, 'pressed-can-rib', a, c, .014, .012, 'paint_light', .004)
-        b.box('can-retaining-band', (.19, .018, .038), (cx, cy - .158, z + .18), 'canvas', bevel=.004)
+        b.box('can-retaining-band', (.19, .018, .038), (cx, cy - .144, z + .18), 'canvas', bevel=.004)
     b.cyl('canvas-roll', .175, .70, (x - .38, y + .20, z + .21), 'canvas', rot=X_AXIS, verts=40, bevel=.025)
     for dx in (-.60, -.19):
         _ring(b, 'roll-strap', (x + dx, y + .20, z + .21), .178, .014, 'rubber', rot=(0, 0, PI / 2), steps=32)
@@ -2280,7 +2383,7 @@ def acc_g(b, m):
 
 ### art/blender/sea/parts/cap.py
 
-Paths: `art/blender/sea/parts/cap.py`. SHA-256 `93bfd24a1aab4b074559b296f8698bf3fb0c169c2d3a5c2b0b2e6f63651a4f3e`, 19086 bytes.
+Paths: `art/blender/sea/parts/cap.py`. SHA-256 `62055bc6a853da3f2b0611990f90c57d5d9905da50fc94f1f015dae821fe63bd`, 19093 bytes.
 
 ```python
 """Seven deck-mounted crew modules; metres, +X forward, -Y camera-facing.
@@ -2382,7 +2485,7 @@ def _base(b):
         for x in (-1.35, 0, 1.35):
             f = _face(b, x, side * 1.005, side=side)
             _panel(f, 0, 0.14, 0.18, 0.14, 'paint_light', 0.045, False)
-            f.box('lock-recess', (0.075, 0.006, 0.038), (0, -0.071, 0.15), 'black', bevel=0.005)
+            f.box('lock-recess', (0.075, 0.006, 0.038), (0, -0.047, 0.15), 'black', bevel=0.005)
 
 
 def _shell(b, segments=1):
@@ -2458,7 +2561,7 @@ def _front(b, kind):
             for x in (-.46, .46):
                 _window(f, x, z, .48 if kind != 'F' else .39, .25)
         if kind != 'D':
-            _bolts(f, [(x, -.048, .45) for x in (-.65, 0, .65)])
+            _bolts(f, [(x, -.0285, .45) for x in (-.65, 0, .65)])
 
 
 def cap_a(b, m):
@@ -2473,7 +2576,7 @@ def cap_a(b, m):
             f.cyl('blanking-port',.075,.024,(x,-.041,.5),'paint_dark',rot=(PI/2,0,0),verts=16,bevel=.004)
         for x in (-.5,.5):
             _panel(f,x,.77,.065,1.06,'paint_dark',.045,False)
-            _bolts(f,[(x,-.078,z) for z in (.24,.58,.94,1.25)])
+            _bolts(f,[(x,-.0535,z) for z in (.24,.58,.94,1.25)])
     for x in (-.5, .5):
         b.tube('flange-shoulder', [(x,-1.016,1.27),(x,-.84,1.585),
                                   (x,.84,1.585),(x,1.016,1.27)], .024, 'paint_dark', smooth=False)
@@ -2492,7 +2595,7 @@ def cap_b(b, m):
         f=_face(b,y=side,side=side)
         for x in (-1.38,-.64,.2,.74,1.39):
             _panel(f,x,.76,.055,1.04,'paint_light',.043,False)
-            _bolts(f,[(x,-.065,z) for z in (.27,1.27)])
+            _bolts(f,[(x,-.0515,z) for z in (.27,1.27)])
         _door(f,-1.01,.60,1.31)
         _vent(f,-.2,.89,.50,.62)
         _vent(f,.38,.45,.34,.30)
@@ -2537,7 +2640,7 @@ def _bow(b,x,height=1.61):
     for side in (-1,1):
         f=_face(b,x=x,y=side*1.0,side=side)
         _panel(f,0,.49,.09,.24,'paint_light',.035,False)
-        _bolts(f,[(0,-.049,.43),(0,-.049,.55)])
+        _bolts(f,[(0,-.0435,.43),(0,-.0435,.55)])
 
 
 def _roll(b, x0, x1, y, z):
@@ -2592,7 +2695,7 @@ def cap_d(b, m):
         for x in (-.92,0,.92):
             for z in (.51,1.08):
                 _window(f,x,z,.57,.25)
-        _bolts(f,[(x,-.021,z) for x in (-1.4,-.48,.48,1.4) for z in (.22,.78,1.29)])
+        _bolts(f,[(x,-.0085,z) for x in (-1.4,-.48,.48,1.4) for z in (.22,.78,1.29)])
     _door(_face(b,x=-1.48,y=0,rear=True),.38,.76,1.4,False)
     _front(b, 'D')
     _ladder(b)
@@ -2638,7 +2741,7 @@ def cap_f(b, m):
                 _panel(f,x,z,.65,.51,'paint_light',.057)
             _window(f,x,1.02,.35,.20)
             f.cyl('sealed-vision-port',.063,.023,(x,-.083,.7),'gunmetal',rot=(PI/2,0,0),verts=16,bevel=.004)
-        _bolts(f,[(x,-.045,.19) for x in (-1.3,-.85,-.4,.05,.5,.95,1.3)])
+        _bolts(f,[(x,-.0655,.19) for x in (-1.3,-.85,-.4,.05,.5,.95,1.3)])
     rear=_face(b,x=-1.48,y=0,rear=True)
     _door(rear,0,.8,1.4)
     for x in (-1,0,1):
@@ -2738,7 +2841,7 @@ def _canvas_flap(b):
 
 ### art/blender/sea/parts/com.py
 
-Paths: `art/blender/sea/parts/com.py`. SHA-256 `a2e9e1f6b44eb0d052816c2941f3427c7e5571d0717cb0199d1863174f7a2544`, 17569 bytes.
+Paths: `art/blender/sea/parts/com.py`. SHA-256 `91f64221aa8658ddb2c8ef40187b57c1c9a1d1791ec7c06f8a8f9382c4f02375`, 18202 bytes.
 
 ```python
 """Seven rugged communications sets; shared fittings remain in this owned module."""
@@ -2789,8 +2892,9 @@ def _frame(b, m, mount, width, depth):
     else:
         _, y, z = getattr(m, mount)
         # All mounts are on the common hull. Rear cantilevers bolt to its deck,
-        # outside the capacity-module envelope; left/right/mast occupy separate lanes.
-        cy = {'antenna_left': y + .12, 'antenna_right': y - .10,
+        # outside the capacity-module envelope; left/right/mast occupy separate lanes,
+        # the outer ones inboard of the roof edge (fit.py overhang).
+        cy = {'antenna_left': y + (.21 if m.extra.get('recovery') else .25), 'antenna_right': y - .215,
               'radio_mast': y - .65}[mount]
         local = Builder(b.layer, b.m)
         local.matrix = b.matrix @ Matrix.Translation((m.back - .09, cy, z)) @ Matrix.Rotation(-PI / 2, 4, 'Z')
@@ -2810,6 +2914,11 @@ def _frame(b, m, mount, width, depth):
         for u in (-width * .36, width * .36):
             b.wedge('cantilever-gusset', [(-.02, .032), (.20, .032), (.20, .17)], .032,
                     (u, .08, .016), 'paint_dark', rot=(0, 0, PI / 2), bevel=.003)
+            # A knee under each shoe's overhang, to its end, bears on the hull's rear face (local Y .09; 2 mm off it, to stay
+            # out of the troop carrier's open compartment).
+            end = .027 - (depth + .10) / 2
+            b.wedge('cantilever-knee', [(.088, 0), (end, 0), (end, -.012), (.088, -.17)], .075,
+                    (u, 0, 0), 'paint_dark', rot=(0, 0, PI / 2), bevel=.003)
     return b
 
 
@@ -3008,7 +3117,7 @@ def com_d(b, m):
         b.cyl('telescopic-mast', r, h + .025, (mastx, .065, bottom + h / 2),
               'paint_dark' if i == 0 else 'paint', verts=24, bevel=.003)
         b.cyl('mast-clamp', r + .012, .032, (mastx, .065, bottom + h - .015), 'gunmetal', verts=24, bevel=.003)
-        b.box('clamp-buckle', (.034, .028, .030), (mastx, .012 - r, bottom + h - .015), 'paint_light', bevel=.003)
+        b.box('clamp-buckle', (.034, .028, .030), (mastx, .065 - r - .024, bottom + h - .015), 'paint_light', bevel=.003)
         bottom += h
     b.box('panel-yoke', (.115, .080, .080), (mastx, .065, bottom + .018), 'gunmetal', bevel=.008)
     b.cyl('panel-tilt-pivot', .031, .17, (mastx, .065, bottom + .055), 'gunmetal', (0, PI / 2, 0), verts=16, bevel=.003)
@@ -3035,9 +3144,10 @@ def com_d(b, m):
 def com_e(b, m):
     """Long-range HF: heavy side fins, twin whips and horizontal folding-mast pack."""
     b = _frame(b, m, 'radio_mast', .70, .45)
+    recovery = m.extra.get('recovery', False) and not _card(m)
     _radio(b, (0, .018, .076), (.56, .36, .285), fins=10, keys='hf')
-    for x in (-.278, .278):
-        _whip(b, (x, .12, .365), 2.60 if x < 0 else 2.1)
+    for x, y, height in ((-.278, .12, 2.60), (-.17, -.15, 2.1) if recovery else (.278, .12, 2.1)):
+        _whip(b, (x, y, .365), height)
     fins = Batch(b, 'side-heatsink', 'paint_dark')
     for x in (-.296, .296):
         for k in range(8):
@@ -3111,7 +3221,7 @@ def _armoured(m):
 
 ### art/blender/sea/parts/fp.py
 
-Paths: `art/blender/sea/parts/fp.py`. SHA-256 `d8fcda666c98c613010690ef5ef750e451af09a3447a5347f0f7fcf8cc09e3cf`, 24171 bytes.
+Paths: `art/blender/sea/parts/fp.py`. SHA-256 `c8bc34a798026b7f13f752f7f0085767f98c2acc20c7f43aa704bc609080840c`, 25129 bytes.
 
 ```python
 """Seven fictional weapon stations, built in mount-local metres with palette materials."""
@@ -3121,6 +3231,7 @@ import bmesh
 from mathutils import Euler, Matrix, Vector
 
 from ..geo import Batch, Builder, loft
+from .common import _card
 
 PI = math.pi
 X_AXIS = (0, PI / 2, 0)
@@ -3214,6 +3325,16 @@ def _annulus(b, name, r, inner, z, height, mat='paint', steps=48):
     profile = [(inner, -height/2), (r, -height/2), (r, height/2),
                (inner, height/2), (inner, -height/2)]
     b.revolve(name, profile, (0, 0, z+height/2), mat, rot=(PI/2, 0, 0), steps=steps)
+
+
+def _aux(b, m):
+    """The auxiliary station's frame: on the driver's hatch ring, where there is one, over an adapter that covers the hatch."""
+    at = Vector(m.roof2)+Vector((.16,-.06,0))
+    if m.extra.get('driver_hatch') and not _card(m):
+        # A hat: its skirt stands outside the hatch gasket and its plate above the closed hatch and grab.
+        b.revolve('hatch-ring-adapter',[(0,.12),(.335,.12),(.335,0),(.305,0),(.305,.105),(0,.105)],at,'paint_dark',rot=(PI/2,0,0),steps=48)
+        at.z += .12
+    return _local(b, at)
 
 
 def _ring(b, radius, height=0.15, hollow=False):
@@ -3331,14 +3452,14 @@ def _ammo(b, at, size=(0.32,0.22,0.28)):
         b.box('bin-latch', (0.035,0.022,0.095), (x+dx,y-sy/2-0.009,z+sz*0.3), 'gunmetal', bevel=0.003)
 
 
-def _feed(b, at, count=9, drop=0.18):
+def _feed(b, at, count=9, drop=0.18, side=-1):
     x,y,z = at
     rounds = Batch(b, 'linked-ammunition', 'steel')
     tips = Batch(b, 'projectile-tips', 'wood')
     links = Batch(b, 'feed-links', 'gunmetal')
     for k in range(count):
         t = k/(count-1)
-        yy = y-0.045-k*0.028
+        yy = y+side*(0.04+k*0.028)
         zz = z-drop*t*t
         rounds.cyl(0.012,0.09,(x,yy,zz),X_AXIS,verts=8)
         tips.cyl(0.012,0.035,(x+0.062,yy,zz),X_AXIS,verts=8,radius2=0.002)
@@ -3346,22 +3467,22 @@ def _feed(b, at, count=9, drop=0.18):
     rounds.done(); tips.done(); links.done()
 
 
-def _mg(b, at, length=0.70, heavy=True):
+def _mg(b, at, length=0.70, heavy=True, ammo_side=-1):
     x,y,z = at
     b.box('receiver', (0.39,0.12,0.14), at, 'gunmetal', bevel=0.009)
     b.box('feed-cover', (0.25,0.14,0.032), (x+0.015,y,z+0.085), 'black', bevel=0.005)
     _bolts(b, [(x+dx,y-0.067,z+dz) for dx in (-0.15,0.12) for dz in (-0.04,0.04)],Y_AXIS,0.009)
     _barrel(b, (x+0.195,y,z), length, 0.025 if heavy else 0.019)
     _shroud(b, (x+0.2,y,z), 0.32 if heavy else 0.24, 0.060 if heavy else 0.046)
-    b.box('rear-grip-bar', (0.035,0.24,0.035), (x-0.23,y,z), 'gunmetal', bevel=0.004)
+    b.box('rear-grip-bar', (0.035,0.24,0.035), (x-0.21,y,z), 'gunmetal', bevel=0.004)
     for s in (-1,1):
-        b.cyl('spade-grip',0.019,0.13,(x-0.24,y+s*0.11,z-0.035),'rubber',verts=12,bevel=0.004)
+        b.cyl('spade-grip',0.019,0.13,(x-0.215,y+s*0.11,z-0.05),'rubber',verts=12,bevel=0.004)
     b.tube('charging-handle', [(x-0.02,y+0.06,z),(x-0.02,y+0.14,z),(x-0.1,y+0.14,z)],0.011,'steel',smooth=False)
-    _handle(b, (x+0.17,y,z+0.11),0.14)
-    _feed(b,(x+0.05,y,z+0.01))
-    _ammo(b,(x-0.02,y-0.32,z-0.16))
-    b.box('ammunition-shelf',(.29,.43,.025),(x-.02,y-.245,z-.31),'paint_dark',bevel=.005)
-    b.box('ammunition-support',(.12,.10,.245),(x-.02,y-.085,z-.185),'paint_dark',bevel=.005)
+    _handle(b, (x+0.17,y,z+0.075),0.14)
+    _feed(b,(x+0.05,y,z+0.01),side=ammo_side)
+    _ammo(b,(x-0.02,y+ammo_side*.32,z-0.16))
+    b.box('ammunition-shelf',(.29,.43,.025),(x-.02,y+ammo_side*.245,z-.31),'paint_dark',bevel=.005)
+    b.box('ammunition-support',(.12,.10,.245),(x-.02,y+ammo_side*.085,z-.185),'paint_dark',bevel=.005)
 
 
 def _sight(b, at, size=(0.27,0.3,0.28)):
@@ -3487,10 +3608,13 @@ def _turret(b, width, length, height):
     b.box('rear-service-door',(.025,width*.46,height*.56),(-length*.535,0,top+height*.45),'paint_dark',bevel=.007)
     vents=Batch(b,'rear-cooling-louvres','gunmetal')
     for k in range(7):
-        vents.box((.026,width*.30,.017),(-length*.55,0,top+.15+k*.043))
+        # Within the door's height: the top louvre had stood clear of it (fit.py).
+        vents.box((.026,width*.30,.017),(-length*.55,0,top+.13+k*.035))
     vents.done()
     _handle(b,(-length*.27,0,top+height+.02),.24)
-    _bolts(b,[(xx,side*width*.32,top+height+.009) for xx in (-length*.24,0,length*.23) for side in (-1,1)],radius=.012)
+    # The roof falls 3% from the rear section to the front one; each bolt sits on it (fit.py).
+    roof=lambda xx: top+height*(1-.03*max(0,xx+length*.30)/(length*.58))
+    _bolts(b,[(xx,side*width*.32,roof(xx)+.009) for xx in (-length*.24,0,length*.23) for side in (-1,1)],radius=.012)
     for side in (-1,1):
         b.box('roof-panel-seam',(.012,width*.24,.010),(.12,side*width*.25,top+height*.993),'black',bevel=0)
         _handle(b,(-.06,side*width*.33,top+height),.14,'x')
@@ -3530,22 +3654,24 @@ def fp_c(b,m):
 
 def fp_d(b,m):
     """Compact powered machine-gun yoke with left camera and exposed drive cable."""
-    b=_local(b,Vector(m.roof2)+Vector((.16,-.06,0)))
+    b=_aux(b,m)
     _ring(b,.22,.13)
     b.box('servo-pedestal',(.32,.32,.15),(0,0,.19),'paint_dark',bevel=.025)
     for s in (-1,1):
         b.wedge('remote-yoke',[(-.18,0),(.18,0),(.13,.32),(-.09,.38)],.065,(0,s*.14,.25),'paint',bevel=.013)
         b.cyl('elevation-motor',.084,.075,(0,s*.19,.53),'paint_dark',rot=Y_AXIS,verts=24,bevel=.008)
-    _mg(b,(.04,0,.65),.58)
-    b.box('sensor-bracket',(.20,.14,.065),(.04,.20,.55),'paint_dark',bevel=.008)
-    _sight(b,(.03,.23,.70),(.20,.20,.24))
+    ammo=-1 if _card(m) else 1
+    _mg(b,(.04,0,.65),.58,ammo_side=ammo)
+    # The camera on the side away from the ammunition.
+    b.box('sensor-bracket',(.20,.14,.065),(.04,-ammo*.20,.55),'paint_dark',bevel=.008)
+    _sight(b,(.03,-ammo*.23,.70),(.20,.20,.24))
     b.tube('servo-harness',[(-.14,-.18,.49),(-.25,-.22,.33),(-.23,-.16,.14),(-.11,-.12,.11)],.018,'cable')
     _bolts(b,[(x,y,.143) for x in (-.14,.14) for y in (-.14,.14)])
 
 
 def fp_e(b,m):
     """Light manually served pintle with split folding shield and exposed support arms."""
-    b=_local(b,Vector(m.roof2)+Vector((.16,-.06,0)))
+    b=_aux(b,m)
     _pedestal(b,.39)
     b.box('traverse-fork',(.36,.17,.055),(.10,0,.50),'paint_dark',bevel=.007)
     for s in (-1,1):
@@ -3556,7 +3682,7 @@ def fp_e(b,m):
         if s<0: verts.reverse()
         _panel(b,'folding-shield-leaf',verts,'paint',.020)
         b.cyl('shield-hinge',.017,.27,(.38,s*.05,.52),'gunmetal',verts=12,bevel=.003)
-    _mg(b,(.09,0,.68),.54,False)
+    _mg(b,(.09,0,.68),.54,False,ammo_side=-1 if _card(m) else 1)
     b.tube('traverse-handle',[(-.15,.12,.55),(-.29,.12,.55),(-.29,-.1,.55)],.017,'paint_dark',smooth=False)
 
 
@@ -3586,7 +3712,7 @@ def fp_g(b,m):
     b=_local(b,m.roof)
     top=_remote_body(b,.75)
     b.box('gun-receiver',(.59,.23,.22),(-.03,.02,top+.54),'paint_dark',bevel=.019)
-    _barrel(b,(.28,.02,top+.54),1.03,.038)
+    _barrel(b,(.255,.02,top+.54),1.055,.038)
     b.box('launcher-crossarm',(.24,.44,.13),(-.06,-.46,top+.40),'gunmetal',bevel=.018)
     # Near-side pod exposes the defining twin circular canisters at card-camera angles.
     for z in (top+.35,top+.70):
@@ -3648,7 +3774,7 @@ def build(card, b, m):
 
 ### art/blender/sea/parts/mob.py
 
-Paths: `art/blender/sea/parts/mob.py`. SHA-256 `808c621619eaa1cd819c9b7cada62d4e43f78aba44671c2b1ea35d47ab1b37f1`, 23229 bytes.
+Paths: `art/blender/sea/parts/mob.py`. SHA-256 `b495b9fc503d535cd2d407476b8eeab000941b9e4a1409ff29bea06ac884296f`, 23896 bytes.
 
 ```python
 """Mobility kits: mount-relative hard-surface assemblies for stills and export."""
@@ -3919,58 +4045,58 @@ def mob_b(b, m):
 
 
 
-def _brake_hub(b, at, side):
-    """Vented brake rotor and exposed wheel studs, distinct from B's portal casing."""
-    x,y,z=at
-    b.cyl('brake-rotor',.24,.055,at,'gunmetal',rot=Y_AXIS,verts=40,bevel=.004)
-    _ring(b,'rotor-wear-face',.243,.098,.008,(x,y+side*.033,z),'steel',48)
-    b.cyl('bearing-hub',.13,.12,(x,y+side*.04,z),'paint_dark',rot=Y_AXIS,verts=32,bevel=.01)
-    b.cyl('bearing-dust-cap',.084,.028,(x,y+side*.112,z),'paint',rot=Y_AXIS,verts=24,bevel=.007)
-    _nuts(b,'wheel-studs',(x,y+side*.064,z),.174,10,.015)
-    vents=Batch(b,'rotor-vent-vanes','black')
-    vent_count=12 if geo.REALTIME else 24
-    for k in range(vent_count):
-        a=k*2*PI/vent_count
-        vents.box((.022,.042,.009),(x+.239*math.cos(a),y,z+.239*math.sin(a)),(0,-a,0))
-    vents.done()
-
-
 def mob_d(b, m):
-    """Heavy-Duty Suspension: wishbones, ribbed upright, coil and yellow damper."""
-    for x,y,s in _wheels(m):
-        r=m.wheel_r
-        # Fitted springs live inside the tyre plane, below the side-armour band.
-        face=y+s*(m.tyre_w*.5+.028)
-        inner=face-s*.48
-        _brake_hub(b,(x,face,r),s)
-        b.box('steering-upright',(.15,.13,.51),(x,face-s*.07,r+.035),'paint',bevel=.027)
-        for h in (-.22,.36):
-            for dx in (-.20,.20):
-                _bar(b,'wishbone',(x,face-s*.08,r+h),(x+dx,inner,r+h+.015),.045,'paint')
-                b.cyl('wishbone-bushing',.062,.09,(x+dx,inner,r+h+.015),'rubber',rot=X_AXIS,verts=16,bevel=.006)
-                b.cyl('pivot-pin',.032,.11,(x+dx,inner,r+h+.015),'steel',rot=X_AXIS,verts=6,bevel=0)
-        b.box('chassis-clevis',(.48,.09,.66),(x,inner,r+.10),'paint_dark',bevel=.023)
-        sy=face-s*.29
-        for h in (-.14,.39):
-            b.cyl('spring-seat',.116,.037,(x,sy,r+h),'paint',verts=24,bevel=.009)
-        _bar(b,'spring-guide',(x,sy,r-.12),(x,sy,r+.39),.05,'gunmetal')
-        coil_steps = 48 if geo.REALTIME else 96
-        coil=[(x+.085*math.cos(i*12*PI/coil_steps),sy+.085*math.sin(i*12*PI/coil_steps),r-.12+i*.49/coil_steps) for i in range(coil_steps+1)]
-        _pipe(b, 'heavy-coil',coil,.022,'paint_light')
-        dx=x+(.22 if _card(m) else .34)
-        damper_y=sy-s*.055 if _card(m) else face+s*.07
-        _bar(b,'yellow-damper',(dx,damper_y,r-.12),(dx,damper_y,r+.20),.049,'yellow')
-        _bar(b,'chrome-piston',(dx,damper_y,r+.19),(dx,damper_y,r+.40),.022,'chrome')
-        if not _card(m):
-            _pipe(b,'upper-damper-bracket',[(dx,inner,r+.65),(dx,damper_y,r+.65),(dx,damper_y,r+.42)],.025,'paint')
-            _bar(b,'lower-damper-bracket',(x,face,r-.10),(dx,damper_y,r-.15),.025,'paint',12)
-        for h in (-.15,.42):
-            b.cyl('damper-eye',.05,.075,(dx,damper_y,r+h),'yellow',rot=Y_AXIS,verts=16,bevel=.008)
-            b.cyl('damper-eye-pin',.023,.084,(dx,damper_y,r+h),'steel',rot=Y_AXIS,verts=6,bevel=0)
-        _bar(b,'cv-shaft',(x,face-s*.07,r),(x,inner,r),.05)
-        for j in range(5):
-            b.cyl('cv-boot-rib',.075-abs(j-2)*.005,.026,(x,face-s*(.15+j*.029),r),'rubber',rot=Y_AXIS,verts=16,bevel=.006)
-        _bar(b,'tie-rod',(x-.16,face-s*.08,r-.10),(x-.22,inner,r-.10),.023,'steel')
+    """Heavy-Duty Suspension: heavy hub, ventilated brake with yellow calliper, upright, double wishbones and a
+    canted yellow coil-over, all inboard of the tyre (owner FIX, G2: the dampers had stood outside the tyres)."""
+    # The card shows the station from its inboard side, where the springing is; fitted, the rim hides it.
+    stations=[(x,-y,-s) for x,y,s in _wheels(m)] if _card(m) else _wheels(m)
+    for x,y,s in stations:
+        r,half=m.wheel_r,m.tyre_w*.5
+        at=lambda o: y+s*o  # o: metres outward from the wheel's centre plane
+        # Outboard only the hub, proud of the rim within a hub's radius.
+        b.cyl('heavy-hub-flange',.20,.03,(x,at(half-.005),r),'paint',rot=Y_AXIS,verts=32,bevel=.006)
+        _nuts(b,'wheel-studs',(x,at(half+.012),r),.165,10,.015)
+        b.cyl('bearing-hub',.13,.10,(x,at(half+.06),r),'paint_dark',rot=Y_AXIS,verts=32,bevel=.01)
+        b.cyl('bearing-dust-cap',.084,.03,(x,at(half+.12),r),'yellow',rot=Y_AXIS,verts=24,bevel=.007)
+        # In the rim well, inside the bead seat: rotor, calliper, upright.
+        b.cyl('brake-rotor',.28,.045,(x,at(-.05),r),'gunmetal',rot=Y_AXIS,verts=40,bevel=.004)
+        _ring(b,'rotor-wear-face',.282,.09,.008,(x,at(-.0235),r),'steel',48)
+        # Spindle from the upright through the rotor to the hub (Codex review, G2).
+        b.cyl('hub-spindle',.075,.36,(x,at(.06),r),'steel',rot=Y_AXIS,verts=24,bevel=.006)
+        b.box('brake-calliper',(.17,.09,.10),(x-.05,at(-.05),r+.24),'yellow',rot=(0,.2,0),bevel=.02)
+        b.box('steering-upright',(.15,.09,.44),(x,at(-.12),r),'paint',bevel=.027)
+        # Wishbones from the upright to pivots on the hull side, below the sponson.
+        pivot_y=at(-.30)
+        for z0,z1 in ((r-.17,r+.14),(r+.17,r+.34)):
+            for dx in (-.18,.18):
+                _bar(b,'wishbone',(x,at(-.14),z0),(x+dx,pivot_y,z1),.04,'paint')
+                b.cyl('wishbone-bushing',.055,.08,(x+dx,pivot_y,z1),'rubber',rot=X_AXIS,verts=16,bevel=.006)
+                b.cyl('pivot-pin',.028,.10,(x+dx,pivot_y,z1),'steel',rot=X_AXIS,verts=6,bevel=0)
+        # Coil-over from the lower wishbone up and in to a hull bracket: the coil stays in the rim well.
+        low=Vector((x+.10,at(-.19),r-.12)); top=Vector((x+.16,at(-.36),r+.52))
+        axis=top-low
+        _bar(b,'yellow-damper',low,low+axis*.62,.042,'yellow')
+        _bar(b,'chrome-piston',low+axis*.58,top,.02,'chrome')
+        for end in (low,top):
+            b.cyl('damper-eye',.045,.07,end,'yellow',rot=X_AXIS,verts=16,bevel=.008)
+            b.cyl('damper-eye-pin',.02,.08,end,'steel',rot=X_AXIS,verts=6,bevel=0)
+        b.box('damper-bracket',(.16,.10,.14),(top.x,at(-.36),top.z),'paint_dark',bevel=.015)
+        u=axis.normalized(); v=u.orthogonal().normalized(); w=u.cross(v)
+        coil_steps = 40 if geo.REALTIME else 80
+        coil=[low+axis*(.08+.34*i/coil_steps)+(v*math.cos(i*10*PI/coil_steps)+w*math.sin(i*10*PI/coil_steps))*.075
+              for i in range(coil_steps+1)]
+        _pipe(b,'heavy-coil',coil,.018,'paint_light')
+        for t in (.08,.42):
+            b.cyl('spring-seat',.10,.03,low+axis*t,'paint',rot=axis.to_track_quat('Z','Y').to_euler(),verts=24,bevel=.008)
+        _bar(b,'cv-shaft',(x,at(-.12),r),(x,at(-.36),r),.05)
+        for j in range(4):
+            b.cyl('cv-boot-rib',.075-abs(j-1.5)*.006,.026,(x,at(-.19-j*.029),r),'rubber',rot=Y_AXIS,verts=16,bevel=.006)
+        _bar(b,'tie-rod',(x+.07,at(-.14),r-.08),(x+.20,pivot_y,r-.08),.022,'steel')
+        if _card(m):
+            # On the card there is no hull: chassis clevises stand in for it at each inner pivot.
+            for dx in (-.18,.18):
+                for z in (r+.14,r+.34):
+                    b.box('chassis-clevis',(.12,.05,.11),(x+dx,at(-.345),z),'paint_dark',bevel=.012)
 
 
 def _jerrycan(b, at, side, scale):
@@ -3999,13 +4125,13 @@ def mob_e(b, m):
             ln=length*.45
             b.box('armoured-fuel-tank',(ln,.34,height),(tx,y,z),'paint',bevel=.055,segments=3)
             for dx in (-ln*.32,ln*.32):
-                b.box('tank-strap',( .035,.37,height+.018),(tx+dx,y,z),'paint_dark',bevel=.035)
+                b.box('tank-strap',( .035,.37,height+.018),(tx+dx,y+s*.02,z),'paint_dark',bevel=.035)
                 b.box('strap-buckle',(.065,.025,.065),(tx+dx,y+s*.198,z+.05),'steel',bevel=.007)
             b.cyl('fuel-filler',.055,.028,(tx,y,z+height/2+.018),'gunmetal',verts=24,bevel=.007)
             b.cyl('filler-lock',.065,.014,(tx,y,z+height/2+.033),'paint',verts=16,bevel=.003)
             b.box('tank-cradle',(ln+.02,.43,.045),(tx,y,z-height/2-.03),'paint_dark',bevel=.012)
             for dx in (-ln*.3,ln*.3):
-                b.box('tank-hanger',(.05,.05,height+.06),(tx+dx,y-s*.20,z),'paint_dark',bevel=.01)
+                b.box('tank-hanger',(.05,.05,height+.06),(tx+dx,y-s*.15,z),'paint_dark',bevel=.01)
             can_scale=1 if _card(m) else .77
             for dx in (-.105,.105) if _card(m) else (0,):
                 _jerrycan(b,(tx+dx,y+s*.28,z-.01),s,can_scale)
@@ -4097,7 +4223,7 @@ def mob_g(b, m):
 
 ### art/blender/sea/parts/pro.py
 
-Paths: `art/blender/sea/parts/pro.py`. SHA-256 `67c32078f480fa99dd082fc4044b435ddb2a9404e5032bbe2e346f1b722d97e1`, 19247 bytes.
+Paths: `art/blender/sea/parts/pro.py`. SHA-256 `c7fdfcad84d772819bd4dd96a4c4fd5ee58b511a061ab144449b5491fcebeb35`, 21734 bytes.
 
 ```python
 """Protection kits: bevelled armour, service hardware and open protective grids.
@@ -4205,7 +4331,8 @@ def _side_armour(b,m,heavy):
         for xx in (x0+.06,x1-.06):
             rails.box((.08,.12,(z1-z0)*.58),(xx,side*(inner-.07),(z0+z1)/2))
             for zz in (z0+.1,z1-.1):
-                _bolt(washers,heads,(xx,side*(inner+.06),zz),(0,side,0),.025)
+                # On the plate's face (light), or clamped between the two layers (heavy).
+                _bolt(washers,heads,(xx,side*(inner+(.06 if heavy else LIGHT_PLATE/2+.006)),zz),(0,side,0),.025)
     rails.done(bevel=.005); _finish(washers,heads)
     if card and heavy:
         # Card-only shipping pallet, with real fork pockets between bearer blocks.
@@ -4253,7 +4380,7 @@ def pro_e(b,m):
                 fittings.box((.11,.035,.1),(xx,side*(yy+.025),zz))
                 _bolt(washers,heads,(xx,side*(yy+.048),zz),(0,side,0),.019)
         for row in range(count):
-            zz=z0+.02+row*(height-.04)/(count-1)
+            zz=z0+.02+row*(height-.06)/(count-1)
             for k in range(3):
                 left=x0+.065+k*(length-.08)/3
                 right=x0+.015+(k+1)*(length-.08)/3
@@ -4279,38 +4406,91 @@ def _front_frame(b,m):
     return local,hw,height
 
 
+def _relief_cells(batch, bounds, holes, depth, thickness):
+    u0,v0,u1,v1=bounds
+    us={u0,u1}; vs={v0,v1}; clipped=[]
+    for a,c,d,e in holes:
+        a,c,d,e=max(u0,a),max(v0,c),min(u1,d),min(v1,e)
+        if a>=d or c>=e: continue
+        clipped.append((a,c,d,e)); us.update((a,d)); vs.update((c,e))
+    us,vs=sorted(us),sorted(vs)
+    for i in range(len(us)-1):
+        for j in range(len(vs)-1):
+            a,d=us[i],us[i+1]; c,e=vs[j],vs[j+1]
+            u,v=(a+d)/2,(c+e)/2
+            if any(h[0]<u<h[2] and h[1]<v<h[3] for h in clipped): continue
+            batch.box((d-a,e-c,thickness),(u,v,depth))
+
+
+def _relief_done(batch, bevel):
+    if batch.bm.verts:
+        batch.b._mesh(batch.name,batch.bm,batch.mat,(0,0,0),(0,0,0),bevel,2)
+
+
+def _in_relief(u,v,holes):
+    return any(a<=u<=c and b<=v<=d for a,b,c,d in holes)
+
+
 def pro_b(b,m):
     """Raked composite tiles with dark laminate edges and two framed vision guards."""
     q,hw,height=_front_frame(b,m)
     washers,heads=_hardware(q)
+    holes=[]
     if not _card(m):
-        for u in (-hw*.73,hw*.73):
-            for v in (height*.12,height*.64):
+        inverse=q.matrix.inverted()
+        for side in (-1,1):
+            u,v=side*hw*.46,height*.79
+            holes.append((u-.50,v-.34,u+.50,v+.34))
+            grab=inverse @ Vector((2.72,side*.47,1.95))
+            holes.append((grab.x-.18,grab.y-.10,grab.x+.18,grab.y+.10))
+            lamp=inverse @ Vector((3.13,side*1.095,1.64))
+            holes.append((lamp.x-.22,lamp.y-.24,lamp.x+.22,lamp.y+.24))
+        for u in (-hw*.95,hw*.95):
+            for v in (height*.56,height*.70):
                 q.box('glacis-mount-shoe',(.12,.15,.18),(u,v,-.065),'paint_dark',bevel=.012)
-    q.box('composite-subframe',(hw*1.96,height,.035),(0,height/2,.024),'paint_dark',bevel=.012)
+        frame=Batch(q,'composite-subframe','paint_dark')
+        _relief_cells(frame,(-hw*.98,0,hw*.98,height),holes,.024,.035)
+        _relief_done(frame,.012)
+        cores=Batch(q,'laminate-core','gunmetal')
+        faces=Batch(q,'composite-face','paint')
+    else:
+        q.box('composite-subframe',(hw*1.96,height,.035),(0,height/2,.024),'paint_dark',bevel=.012)
     pw=hw*1.88/3; ph=height*.57/2
     for row in range(2):
         for col in range(3):
             u=-pw+(col*pw); v=.035+ph*(row+.5)
-            q.box('laminate-core',(pw-.023,ph-.022,.085),(u,v,.078),'gunmetal',bevel=.009)
-            q.box('composite-face',(pw-.035,ph-.03,.032),(u,v,.137),'paint',bevel=.012)
+            if _card(m):
+                q.box('laminate-core',(pw-.023,ph-.022,.085),(u,v,.078),'gunmetal',bevel=.009)
+                q.box('composite-face',(pw-.035,ph-.03,.032),(u,v,.137),'paint',bevel=.012)
+            else:
+                cw,ch=pw-.023,ph-.022
+                fw,fh=pw-.035,ph-.03
+                _relief_cells(cores,(u-cw/2,v-ch/2,u+cw/2,v+ch/2),holes,.078,.085)
+                _relief_cells(faces,(u-fw/2,v-fh/2,u+fw/2,v+fh/2),holes,.137,.032)
             for du in (-pw/2+.07,pw/2-.07):
                 for dv in (-ph/2+.05,ph/2-.05):
-                    _bolt(washers,heads,(u+du,v+dv,.158),radius=.018)
+                    if _card(m) or not _in_relief(u+du,v+dv,holes):
+                        _bolt(washers,heads,(u+du,v+dv,.158),radius=.018)
+    if not _card(m):
+        _relief_done(cores,.009); _relief_done(faces,.012)
     for side in (-1,1):
         u=side*hw*.46; v=height*.79; width=hw*.84; h=height*.29
-        q.box('vision-seal',(width,h,.035),(u,v,.065),'rubber',bevel=.016)
-        q.box('protected-vision',(width-.07,h-.055,.02),(u,v,.09),'glass',bevel=.008)
+        seal_z,glass_z,frame_z,hbar_z,vbar_z,bolt_z = ((.17,.196,.202,.25,.26,.25) if not _card(m) else
+                                                        (.065,.09,.13,.18,.19,.176))
+        q.box('vision-seal',(width,h,.035),(u,v,seal_z),'rubber',bevel=.016)
+        q.box('protected-vision',(width-.07,h-.055,.02),(u,v,glass_z),'glass',bevel=.008)
         for du in (-width/2,width/2):
-            q.box('guard-jamb',(.045,h+.05,.075),(u+du,v,.13),'paint_dark',bevel=.007)
+            q.box('guard-jamb',(.045,h+.05,.075),(u+du,v,frame_z),'paint_dark',bevel=.007)
         for dv in (-h/2,h/2):
-            q.box('guard-sill',(width+.04,.045,.075),(u,v+dv,.13),'paint_dark',bevel=.007)
+            q.box('guard-sill',(width+.04,.045,.075),(u,v+dv,frame_z),'paint_dark',bevel=.007)
+        if not _card(m):
+            q.box('vision-standoff',(.06,h+.04,.22),(side*(hw*.46+width/2+.016),v,.12),'paint_dark',bevel=.008)
         bars=Batch(q,'vision-guard-bars','gunmetal')
-        for j in range(4): bars.box((width,.014,.018),(u,v-h*.36+j*h*.24,.18))
-        for j in (-1,0,1): bars.box((.016,h,.02),(u+j*width*.28,v,.19))
+        for j in range(4): bars.box((width+(.04 if not _card(m) else 0),.014,.018),(u,v-h*.36+j*h*.24,hbar_z))
+        for j in (-1,0,1): bars.box((.016,h,.02),(u+j*width*.28,v,vbar_z))
         bars.done(bevel=.003)
         for du in (-width/2,width/2):
-            for dv in (-h/2,h/2): _bolt(washers,heads,(u+du,v+dv,.176),radius=.018)
+            for dv in (-h/2,h/2): _bolt(washers,heads,(u+du,v+dv,bolt_z),radius=.018)
     _finish(washers,heads)
 
 
@@ -4474,10 +4654,11 @@ def pro_g(b,m):
     for side in (-1,1):
         b.box('canopy-eave',(length,.05,.07),(cx,side*hw,roof(hw)),'paint',bevel=.01)
         for xx in (x0+.065,x1-.065):
-            b.box('canopy-foot',(.18,.16,.035),(xx,side*(hw-.035),z+.0175),'paint_dark',bevel=.012)
-            b.box('canopy-leg',(.055,.055,leg_h),(xx,side*(hw-.035),z+leg_h/2),'paint',bevel=.009)
-            b.wedge('foot-gusset',[(-.07,0),(.07,0),(0,.12)],.03,(xx,side*(hw-.035),z+.03),'paint',bevel=.003)
-            for dx in (-.055,.055): _bolt(washers,heads,(xx+dx,side*(hw-.035),z+.041),radius=.014)
+            foot_y = side*(hw-.035)
+            b.box('canopy-foot',(.18,.16,.035),(xx,foot_y,z+.0175),'paint_dark',bevel=.012)
+            b.box('canopy-leg',(.055,.055,leg_h),(xx,foot_y,z+leg_h/2),'paint',bevel=.009)
+            b.wedge('foot-gusset',[(-.07,0),(.07,0),(0,.12)],.03,(xx,foot_y,z+.03),'paint',bevel=.003)
+            for dx in (-.055,.055): _bolt(washers,heads,(xx+dx,foot_y,z+.041),radius=.014)
             _bolt(washers,heads,(xx,side*(hw+.027),z+leg_h-.025),(0,side,0),.018)
     # Square-section wires spend twelve triangles per span, rather than tubes per crossing.
     nx=max(5,round(length/MESH_PITCH)); ny=max(6,round(hw*2/MESH_PITCH))
@@ -4502,7 +4683,7 @@ def pro_g(b,m):
 
 ### art/blender/sea/parts/sa.py
 
-Paths: `art/blender/sea/parts/sa.py`. SHA-256 `b4657efaf906926cd8494c25ab8af2279964841f96188847de853ad7d1356f01`, 20148 bytes.
+Paths: `art/blender/sea/parts/sa.py`. SHA-256 `382aebf0a559e2f7f7c0831c5b5e6543aca96413684d1b9ad3f25fa8d6c02a50`, 20645 bytes.
 
 ```python
 """Seven procedural SA assemblies with hardware sized for the shared roof slots."""
@@ -4682,7 +4863,8 @@ def sa_e(b, m):
 def sa_b(b, m):
     """Medium mast with separate EO gimbal and radar pedestal on a crossarm."""
     b = _frame(b, m.sensor_mast, -.35 if _card(m) else 0)
-    _foot(b, (.32, .32), .046)
+    # Long and narrow on the vehicle: the lane between the engine deck and the roof edge.
+    _foot(b, (.32, .32) if _card(m) else (.36, .24), .046)
     b.box('mast-drive', (.255, .255, .20), (0, 0, .151), 'paint', bevel=.022)
     b.box('drive-service', (.026, .20, .14), (.14, 0, .15), 'paint_dark', bevel=.012)
     _bolts(b, 'drive-service-screws', [(.155, y, z) for y in (-.075, .075) for z in (.10, .20)], .010, X_AXIS)
@@ -4719,7 +4901,7 @@ def sa_b(b, m):
 def sa_d(b, m):
     """Three-stage telescopic mast, panoramic head and four compact roof guy anchors."""
     b = _frame(b, m.sensor_mast, -.35 if _card(m) else 0)
-    _foot(b, (.38, .38), .050)
+    _foot(b, (.38, .38) if _card(m) else (.40, .24), .050)
     b.box('mast-drive-case', (.25, .25, .23), (0, 0, .165), 'paint', bevel=.023)
     grilles = Batch(b, 'mast-drive-grille', 'gunmetal')
     for k in range(7):
@@ -4742,11 +4924,12 @@ def sa_d(b, m):
         _bolts(f, 'head-face-screws', [(.222, y, z) for y in (-.049, .049) for z in (-.055, .055)], .007, X_AXIS)
     b.cyl('head-lid', .225, .023, (0, 0, 3.012), 'paint_dark', verts=32, bevel=.006)
     b.cyl('head-cap', .047, .029, (0, 0, 3.038), 'paint', verts=24, radius2=.029, bevel=.005)
-    spread = .46 if _card(m) else .19
+    # On the vehicle the anchors stand in the mast lane, spread fore and aft.
+    spread_x, spread_y = (.46, .46) if _card(m) else (.22, .075)
     for sx in (-1, 1):
         for sy in (-1, 1):
-            a = Vector((sx * spread, sy * spread, .065))
-            arm_length = math.sqrt(2) * spread
+            a = Vector((sx * spread_x, sy * spread_y, .065))
+            arm_length = math.hypot(spread_x, spread_y)
             b.box('guy-outrigger', (arm_length, .060, .046), (a.x / 2, a.y / 2, .052),
                   'paint', rot=(0, 0, math.atan2(a.y, a.x)), bevel=.006)
             c = Vector((sx * .045, sy * .045, 2.03))
@@ -4765,8 +4948,8 @@ def _corner_frame(b, m, corner):
     yaw = 0 if x > middle else PI
     sign = (1 if y > 0 else -1) * (1 if yaw == 0 else -1)
     if yaw == 0:
-        # Front feet bolt onto the existing smoke mounting plate, outside its tubes.
-        f = _frame(b, (x + .065, y + sign * .04, z + .08))
+        # Front feet bolt to the roof just ahead of the corner, inboard of the roof edge (fit.py overhang).
+        f = _frame(b, (x + .065, y - sign * .005, z))
         _foot(f, (.070, .070), .032, 'corner-foot')
         f.wedge('corner-outrigger', [(-.035, .03), (.26, .29), (.26, .33), (-.035, .07)], .070,
                 (0, sign * .045, 0), 'paint_dark', bevel=.007)
@@ -4814,12 +4997,14 @@ def sa_g(b, m):
     x = sum(p[0] for p in rear) / 2
     y = min(p[1] for p in rear)
     z = rear[0][2]
-    # Outboard of the cabin skin, including the recovery module's window lips.
-    hub_at = centre if _card(m) else (x + .27, y - .09, z)
+    # Inboard of the roof edge, sole and all (fit.py overhang), and behind the recovery module.
+    # On the recovery hull a narrower foot stands between the roof edge and the rear service plate.
+    recovery = m.extra.get('recovery') and not _card(m)
+    hub_at = centre if _card(m) else (x + .20, y + (0 if recovery else .08), z)
     f = _frame(b, hub_at)
     if _card(m):
         f.matrix = f.matrix @ Matrix.Diagonal((1.45, 1.35, 1, 1))
-    _foot(f, (.33, .25), .027, 'hub-foot')
+    _foot(f, (.33, .19 if recovery else .25), .027, 'hub-foot')
     f.box('data-hub', (.28, .21, .12), (0, 0, .091), 'paint_dark', bevel=.013)
     f.box('hub-lid-seal', (.286, .216, .009), (0, 0, .154), 'rubber', bevel=.005)
     f.box('hub-lid', (.29, .22, .014), (0, 0, .166), 'paint', bevel=.007)
@@ -5189,7 +5374,7 @@ def render(path):
 
 ### art/blender/sea/vehicles/hull8.py
 
-Paths: `art/blender/sea/vehicles/hull8.py`. SHA-256 `270dded46a1320b7a9c1b9a9d5a57ab55664fb4d84eaea0b85f532f0c7adc40a`, 29473 bytes.
+Paths: `art/blender/sea/vehicles/hull8.py`. SHA-256 `9de08fc150014ab21b10fd05f73cd110197f4daa07b58a537eec1528e04993e8`, 30089 bytes.
 
 ```python
 """The fictional 8x8 armoured vehicle family (owner concepts, 2026-10-10): one hull, six mission variants.
@@ -5551,9 +5736,15 @@ def _front(b, mission):
         b.box('mirror-face',(.012,.148,.252),c+Vector((-.037,0,0)),'glass',bevel=.014)
 
 
+def _aux_x(mission):
+    """The auxiliary weapon mount's x, ahead of the main weapon ring; it stands outboard of the roof armour bay."""
+    return ROOF_FRONT-(.77 if mission=='RECOVERY' else .95)
+
+
 def _roof(b, mission):
     """Low-profile deck service hatches and vents; all mission equipment remains separate."""
-    _grille(b,'engine-deck',(1.40,.62,TOP+.002),(1,0,0),(0,1,0),(.90,.70))
+    # Inboard of the sensor-mast lane (y .85 to the roof edge).
+    _grille(b,'engine-deck',(1.40,.545,TOP+.002),(1,0,0),(0,1,0),(.90,.55))
     _panel(b,'engine-access',(.22,.27,TOP),(1,0,0),(0,1,0),(.63,.70))
     # Deck centre and edges have only flush seams; no smoke tubes or equipment racks.
     seams=Batch(b,'deck-seams','paint_dark')
@@ -5561,10 +5752,12 @@ def _roof(b, mission):
         seams.box((.008,1.99,.003),(x,0,TOP+.001))
     seams.done()
     if mission not in ('COMMAND','MINE'):
-        b.cyl('driver-hatch-gasket',.295,.018,(1.56,-.56,TOP+.009),'rubber',verts=48,bevel=0)
-        b.cyl('driver-hatch',.278,.025,(1.56,-.56,TOP+.028),'paint',verts=48,bevel=.008)
-        b.cyl('hatch-hinge',.027,.22,(1.285,-.56,TOP+.04),'gunmetal',rot=(PI/2,0,0),verts=12,bevel=.003)
-        b.tube('hatch-grab',[(1.62,-.66,TOP+.043),(1.62,-.66,TOP+.09),(1.62,-.46,TOP+.09),(1.62,-.46,TOP+.043)],.012,'paint_dark',smooth=False)
+        # Under the auxiliary weapon mount, whose station stands on this hatch ring (owner FIX 1 sweep).
+        hx,hy=_aux_x(mission)+.16,-.78
+        b.cyl('driver-hatch-gasket',.295,.018,(hx,hy,TOP+.009),'rubber',verts=48,bevel=0)
+        b.cyl('driver-hatch',.278,.025,(hx,hy,TOP+.028),'paint',verts=48,bevel=.008)
+        b.cyl('hatch-hinge',.027,.22,(hx-.255,hy,TOP+.04),'gunmetal',rot=(PI/2,0,0),verts=12,bevel=.003)
+        b.tube('hatch-grab',[(hx+.06,hy-.10,TOP+.043),(hx+.06,hy-.10,TOP+.09),(hx+.06,hy+.10,TOP+.09),(hx+.06,hy+.10,TOP+.043)],.012,'paint_dark',smooth=False)
     for y in (-.51,.51):
         _panel(b,'rear-service',(-3.02,y-.39,TOP),(1,0,0),(0,1,0),(.78,.78))
         for dx in (-2.93,-2.47):
@@ -5625,12 +5818,12 @@ def _crane(b):
             b.box('boom-service-cover',(.36,.028,.25),pivot+d*along+Vector((0,side*.21,0)),'paint_dark',rot=rot,bevel=.01)
             for dx in (-.13,.13):
                 b.cyl('boom-cover-bolt',.019,.018,pivot+d*(along+dx)+Vector((0,side*.234,0)),'steel',rot=(PI/2,0,0),verts=6,bevel=0)
-    low=pivot+Vector((.12,0,-.41)); high=pivot+d*1.38+Vector((0,0,-.23))
+    low=pivot+Vector((.12,-.40,-.41)); high=pivot+d*1.38+Vector((0,-.40,-.23))
     delta=high-low
     b.tube('lift-cylinder',[low,low+delta*.65],.087,'paint_dark',smooth=False)
     b.tube('lift-piston',[low+delta*.57,high],.044,'chrome',smooth=False)
     for endpoint in (low,high):
-        b.cyl('ram-pin',.065,.29,endpoint,'gunmetal',rot=(PI/2,0,0),verts=16,bevel=.006)
+        b.cyl('ram-pin',.065,.46,endpoint,'gunmetal',rot=(PI/2,0,0),verts=16,bevel=.006)
     for side in (-1,1):
         b.tube('hydraulic-hose',[pivot+Vector((.22,side*.25,-.38)),pivot+Vector((.42,side*.25,-.13)),
                                pivot+d*.45+Vector((0,side*.235,.23)),pivot+d*1.80+Vector((0,side*.235,.23))],.015,'cable')
@@ -5668,13 +5861,14 @@ def _mounts(mission, top=TOP):
     if mission == 'RECOVERY':
         # Reserve the rear crane circle, then cabin, then the full-size weapon ring.
         deck_x, deck_length, roof_x = -1.55, 1.4, .15
-        rear_sensor_x, rear_sensor_y = -2.15, 1.18
+        # Rear sensors stand on the flat roof between the cabin and the crane, not out over the chamfer (fit.py).
+        rear_sensor_x, rear_sensor_y = -2.62, 1.0
     if mission == 'TROOP':
         roof_x = 0.0
     return Mounts(
         front=FRONT + 0.05, back=BACK, axles=AXLES, wheel_r=R, track=TRACK, tyre_w=TYRE_W,
         deck=(deck_x, top), deck_size=(deck_length, 2.1),
-        roof=(roof_x, 0.0, top), roof2=(ROOF_FRONT - (0.77 if mission == 'RECOVERY' else 0.95), -0.45, top),
+        roof=(roof_x, 0.0, top), roof2=(_aux_x(mission), -0.72, top),
         side=(BACK + 0.4, ROOF_FRONT - 0.1, SPONSON_Z0 + 0.04, SPONSON_Z1, SPONSON + 0.04),
         front_face=(GLACIS_X + 0.2, 1.05, GLACIS_Z - 0.05, 1.05),
         roof_span=(BACK + 0.2, ROOF_FRONT - 0.05, top, 1.15), belly=(BACK + 0.4, GLACIS_X, 0.52, 0.75),
@@ -5683,7 +5877,7 @@ def _mounts(mission, top=TOP):
         optics=(ROOF_FRONT - 0.25, -0.85, top), sensor_mast=(ROOF_FRONT - 0.7, 0.97, top),
         corners=((ROOF_FRONT - 0.1, -1.05, top), (ROOF_FRONT - 0.1, 1.05, top), (rear_sensor_x, -rear_sensor_y, top), (rear_sensor_x, rear_sensor_y, top)),
         bumper=(FRONT + 0.05, 1.15), hitch=(BACK - 0.1, 0.82), rack=(BACK + 2.75, 0.0, top),
-        extra={'armoured': True, 'module_h': 1.15},
+        extra={'armoured': True, 'module_h': 1.15, 'rear_ramp': mission == 'TROOP', 'recovery': mission == 'RECOVERY', 'driver_hatch': mission not in ('COMMAND', 'MINE')},
     )
 
 
@@ -5821,7 +6015,7 @@ console.log(`${letters.split(',').length * vehicles.length * 2} composites -> ${
 
 ### art/tools/concepts.ts
 
-Paths: `art/tools/concepts.ts`. SHA-256 `b388fdab74e077dc90b09baa3e29b9313e7e0fa20e8a0d467be1f2458fe66994`, 18494 bytes.
+Paths: `art/tools/concepts.ts`. SHA-256 `27eda2b42873aa6572b281205c7ce0c4bcefbf1aca5434556969c1a33d5692d7`, 18554 bytes.
 
 ```ts
 // Generates the V3 concept reference images with the owner's ChatGPT Codex CLI (built-in image generation).
@@ -5968,7 +6162,7 @@ function run(job: Job): Promise<boolean> {
   const dir = mkdir(join(OUT, 'work', job.id));
   const prompt = `Generate exactly one image with your built-in image generation tool, then copy the generated PNG into the current directory as out.png. Do nothing else and write no code.\n\nImage: ${job.prompt}`;
   return new Promise(resolve => {
-    const p = spawn(codex, ['exec', '--skip-git-repo-check', '--ephemeral', '-s', 'workspace-write', '-C', dir, '-'], { stdio: ['pipe', 'ignore', 'ignore'] });
+    const p = spawn(codex, ['exec', '-m', 'gpt-6.1-sol', '-c', 'model_reasoning_effort=medium', '--skip-git-repo-check', '--ephemeral', '-s', 'workspace-write', '-C', dir, '-'], { stdio: ['pipe', 'ignore', 'ignore'] });
     p.stdin.end(prompt);
     const timer = setTimeout(() => p.kill(), 10 * 60_000);
     p.on('close', () => {
@@ -7391,20 +7585,20 @@ Paths: `content/missions.json`. SHA-256 `fa7d9150ec60fe5c5d02b072ae1283de4581822
 
 ### content/models/manifest.json
 
-Paths: `content/models/manifest.json`. SHA-256 `21508bba25e3a3dbb3c13f17e59f6836775a2df6fa5cf1a454b18e03c1c32a82`, 197 bytes.
+Paths: `content/models/manifest.json`. SHA-256 `28762a014fd9839ee5c55b8aa9bbb861b36d3fdd38e53468a222861bbf5c736f`, 197 bytes.
 
 ```json
 {
   "file": "showcase.glb",
-  "bytes": 23880460,
-  "sha256": "cd3d8b79b62883ed5ee895c3bcf3323f31cebe0544059a6d48aaff37536d5bd4",
+  "bytes": 25031636,
+  "sha256": "f39600a910cf948e0e779ccebda421a3c7f1479a189a19a8f4d0d83a2c9ac334",
   "source": "art/blender/export.py then art/tools/pack-models.ts"
 }
 ```
 
 ### content/renders/manifest.json
 
-Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52bb9dc07c031bdefe802a7acf5fcc6d2ae`, 387446 bytes.
+Paths: `content/renders/manifest.json`. SHA-256 `20f0321b47ba5f30edf679c20d4dfd72fe5c603ffa1a1e03c96c75e6ed8acdf1`, 387472 bytes.
 
 ```json
 {
@@ -7412,16 +7606,16 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
   "seed": 20261010,
   "format": "avif",
   "quality": 65,
-  "totalBytes": 7761551,
+  "totalBytes": 7923103,
   "hidden": [],
   "entries": [
     {
       "file": "card-ACC-A.avif",
       "kind": "card",
       "id": "card-ACC-A",
-      "depth": 3.512,
-      "bytes": 9720,
-      "sha256": "b71ca22c8544c147a61247225ad72f1748515007a3520315ddfe7afacf02e120",
+      "depth": 3.511,
+      "bytes": 9908,
+      "sha256": "bd060399ff7fa9cbf0851a8fb7be46e3d855170e324c5f0331f0fba80d964ffd",
       "frame": {
         "width": 512,
         "height": 512
@@ -7432,7 +7626,7 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       },
       "size": {
         "width": 512,
-        "height": 499
+        "height": 512
       }
     },
     {
@@ -7440,8 +7634,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "card",
       "id": "card-ACC-B",
       "depth": 6.201,
-      "bytes": 10454,
-      "sha256": "8c4b38acc728babb8f5436627e0c55ecb2c5c4d53647b88c73e45d36f198c26a",
+      "bytes": 10461,
+      "sha256": "f0b8c283e9b58642b392e98bb8ef0e9e59e92170044f1abbbccc04bf570b8f1d",
       "frame": {
         "width": 512,
         "height": 512
@@ -7460,8 +7654,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "card",
       "id": "card-ACC-C",
       "depth": 4.887,
-      "bytes": 14738,
-      "sha256": "798ceff23ffbe70a2f6c4c03765dd4ad91149d2dce0a5b4bfc87a963ede5de4a",
+      "bytes": 14759,
+      "sha256": "b64abad38e38d078b9bb64225f633e41fc519bdf106e9f6707d41fbeede90ee2",
       "frame": {
         "width": 512,
         "height": 512
@@ -7479,9 +7673,9 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "file": "card-ACC-D.avif",
       "kind": "card",
       "id": "card-ACC-D",
-      "depth": 3.37,
-      "bytes": 11619,
-      "sha256": "21f81b869dd0cac74d6e8569228271faf456e0b6c5b64584a6ec1477b0346d7e",
+      "depth": 3.371,
+      "bytes": 11516,
+      "sha256": "9dc0b1c4cfc5fd39ad03e24b1e09430458cc6ef506d5cee3768ee8f30406be99",
       "frame": {
         "width": 512,
         "height": 512
@@ -7500,8 +7694,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "card",
       "id": "card-ACC-E",
       "depth": 3.754,
-      "bytes": 8815,
-      "sha256": "5a8bbfbf5e3a550088dbed5b8e6eef3f59bcd975196f00a8381496ddc121f460",
+      "bytes": 8802,
+      "sha256": "8c87b0ee73b78ab91484ee560e5bac57bd39f6e891281cde30402fced0dce068",
       "frame": {
         "width": 512,
         "height": 512
@@ -7519,9 +7713,9 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "file": "card-ACC-F.avif",
       "kind": "card",
       "id": "card-ACC-F",
-      "depth": 2.494,
-      "bytes": 13637,
-      "sha256": "ca365dedad2230bfeb6e39d8d4fd3f0c7ac4a06a7ee31875b3c62583ca10eb7c",
+      "depth": 2.41,
+      "bytes": 13064,
+      "sha256": "62878e1338da5ebb933004aceebc35b9288b434bb90002c5b3acdcb5152225f6",
       "frame": {
         "width": 512,
         "height": 512
@@ -7539,9 +7733,9 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "file": "card-ACC-G.avif",
       "kind": "card",
       "id": "card-ACC-G",
-      "depth": 3.533,
-      "bytes": 13686,
-      "sha256": "8718f5b28c6b8816908780581d89388f56278ced3049941bc42734eddf3dd888",
+      "depth": 3.534,
+      "bytes": 13571,
+      "sha256": "919c4bedc4c06b8326f2cbc13b4c3df9305e18965ebbea737f15bed2df86ee43",
       "frame": {
         "width": 512,
         "height": 512
@@ -7560,8 +7754,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "card",
       "id": "card-CAP-A",
       "depth": 8.477,
-      "bytes": 7358,
-      "sha256": "e51f5a1bb15fe0ad8b6ddaf11fb13d5300069379b6939b4c55c47f938ce49e23",
+      "bytes": 7325,
+      "sha256": "fd6542f96c3131eaf8454abb123b437c70c8cb0ed78bc543cc9c90fa936bc4f0",
       "frame": {
         "width": 512,
         "height": 512
@@ -7579,9 +7773,9 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "file": "card-CAP-B.avif",
       "kind": "card",
       "id": "card-CAP-B",
-      "depth": 5.372,
-      "bytes": 12367,
-      "sha256": "8b8eeb63d9c2cbbbcf09bc199d4fe55496f8f710396279c8ef0f5f9ca0bf4b8c",
+      "depth": 5.363,
+      "bytes": 12248,
+      "sha256": "03c98753418711c61a1b57e0cfb41edd6419d8811a3a6ee5f6bbd2ba6a4ef5bd",
       "frame": {
         "width": 512,
         "height": 512
@@ -7600,8 +7794,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "card",
       "id": "card-CAP-C",
       "depth": 4.43,
-      "bytes": 16757,
-      "sha256": "7360e67628ae4687567e37ed45c16e040559825f273ad35fa7195fb922beba42",
+      "bytes": 16675,
+      "sha256": "3f277b70c9c80ef9de6893f857366d0f2ec80401d4eb8a59dd1db08b95898e2f",
       "frame": {
         "width": 512,
         "height": 512
@@ -7619,9 +7813,9 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "file": "card-CAP-D.avif",
       "kind": "card",
       "id": "card-CAP-D",
-      "depth": 5.538,
-      "bytes": 15223,
-      "sha256": "1465db6ef22670d0a7c52d99b9f285f460154ebf05a2f1508db35b5b6142e32b",
+      "depth": 5.529,
+      "bytes": 15192,
+      "sha256": "07c1ef10a11d8b89c3dff636b985ff94849590b7284d56246f35a58cc73d998d",
       "frame": {
         "width": 512,
         "height": 512
@@ -7639,9 +7833,9 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "file": "card-CAP-E.avif",
       "kind": "card",
       "id": "card-CAP-E",
-      "depth": 4.897,
-      "bytes": 12402,
-      "sha256": "c8afb7961fdce0684b1cfbd8d18c43d2f521b0d8ed1ac15a1e9a33c169ca6a7d",
+      "depth": 4.888,
+      "bytes": 12408,
+      "sha256": "9ef581cf2d263215fcdc061cb85d3ab68c1051ea7ec80b262c22023ab4d529ee",
       "frame": {
         "width": 512,
         "height": 512
@@ -7659,9 +7853,9 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "file": "card-CAP-F.avif",
       "kind": "card",
       "id": "card-CAP-F",
-      "depth": 5.166,
-      "bytes": 12712,
-      "sha256": "58ad042da7f8cefda34b0c071aafd2b70d30fe820d7b117c024c0f758c2cc38f",
+      "depth": 5.156,
+      "bytes": 12881,
+      "sha256": "fd3de4fa96223277f825b7db6a3dc8bc4bb985f25eeaebb98be5355a6158c69a",
       "frame": {
         "width": 512,
         "height": 512
@@ -7680,8 +7874,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "card",
       "id": "card-CAP-G",
       "depth": 4.8,
-      "bytes": 16160,
-      "sha256": "89c34bb682e4f6cbc961df8c229f1c4c717823d0b89a657ee135bfef9105298c",
+      "bytes": 16036,
+      "sha256": "af9837333f00b106a90cbd083a689df5e0e78f696202da369e13ce0f683f181a",
       "frame": {
         "width": 512,
         "height": 512
@@ -7700,8 +7894,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "card",
       "id": "card-COM-A",
       "depth": 2.323,
-      "bytes": 7684,
-      "sha256": "dde7bd49fb4b034a31b8db32345bdfb42a219681326b00a151895ac2dc174ccc",
+      "bytes": 7677,
+      "sha256": "efcb0250adee3754f9754537baa601c10f20b94826424c6a3bca0caa20914217",
       "frame": {
         "width": 512,
         "height": 512
@@ -7720,8 +7914,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "card",
       "id": "card-COM-B",
       "depth": 2.593,
-      "bytes": 6961,
-      "sha256": "1e086ac4304d79934ab48fb23341e4e5683408db184c3193c6ca1721a8c3937a",
+      "bytes": 6956,
+      "sha256": "fd849f8d0c5f4e2eb2b2a1be0d349d3944fba9b960a99a9f493633934c01c6a2",
       "frame": {
         "width": 512,
         "height": 512
@@ -7740,8 +7934,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "card",
       "id": "card-COM-C",
       "depth": 1.429,
-      "bytes": 9708,
-      "sha256": "8121857350c72a433a13128acae0652e586e12cb45cfc2f20a1ed8c5e7d34bd4",
+      "bytes": 9709,
+      "sha256": "2b87e1eb5ba7e5d5a303d99707a340df01cf855cd6f16dc393236c1047042671",
       "frame": {
         "width": 512,
         "height": 512
@@ -7760,8 +7954,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "card",
       "id": "card-COM-D",
       "depth": 3.414,
-      "bytes": 8176,
-      "sha256": "05aa3c64dc9f79369a3923a89ac4c2c8c1d7bfb45f2623801ffa44ff067f4cb4",
+      "bytes": 8028,
+      "sha256": "2219eab56e20f172d4836f0a5482de050ff7b6e650b5c7b448cb8d283c0c764c",
       "frame": {
         "width": 512,
         "height": 512
@@ -7780,8 +7974,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "card",
       "id": "card-COM-E",
       "depth": 3.098,
-      "bytes": 7992,
-      "sha256": "487ee3cf27f172227b85136708c6b95bd70e6e45f861c35053454acaea05edef",
+      "bytes": 8007,
+      "sha256": "f2bcb8090d0f54f80de32d8397d2b20bfd3635ad0cb7146691a654721f486e08",
       "frame": {
         "width": 512,
         "height": 512
@@ -7800,8 +7994,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "card",
       "id": "card-COM-F",
       "depth": 2.248,
-      "bytes": 7660,
-      "sha256": "dada2454544655c228ec59bc44cb9d4100916ad9d3d3ef47d62f2f4a59d4b649",
+      "bytes": 7665,
+      "sha256": "f382a7370b52db730c8cc0319ec2f540422154d50c3bf69295129885407a7529",
       "frame": {
         "width": 512,
         "height": 512
@@ -7820,8 +8014,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "card",
       "id": "card-COM-G",
       "depth": 2.056,
-      "bytes": 11184,
-      "sha256": "38501ce72f6e681211a7a9bbeb73bfc934336e4a4f625aa1cda21046f95f8de2",
+      "bytes": 11183,
+      "sha256": "287364f605308e0e6abc32aa0c93ef60c3b587401f7057b98da5a78d23bf232f",
       "frame": {
         "width": 512,
         "height": 512
@@ -7840,8 +8034,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "card",
       "id": "card-FP-A",
       "depth": 3.507,
-      "bytes": 9875,
-      "sha256": "068667f15e2ee7a0ee8dffa8e392ba9639d06e8b5bab1ddcd37d45177fa8c5a2",
+      "bytes": 9791,
+      "sha256": "e95a72063c3ee7428694491480b1f0d4c003fd33dddd7a8e2fe9bc71a57d7f05",
       "frame": {
         "width": 512,
         "height": 512
@@ -7860,8 +8054,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "card",
       "id": "card-FP-B",
       "depth": 3.948,
-      "bytes": 8746,
-      "sha256": "bbbe62e9025f57b8eebcbe2c1ec091d534ef88b27aebeec28916dd4a0c7229d9",
+      "bytes": 8776,
+      "sha256": "aaf751b14ac844bf5c0d73491228ea462564a8a0fd17149540c36472a8ba6efe",
       "frame": {
         "width": 512,
         "height": 512
@@ -7880,8 +8074,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "card",
       "id": "card-FP-C",
       "depth": 7.017,
-      "bytes": 7227,
-      "sha256": "b22c664b818eb4cf00e10b5497ce8d9db34230a733129900db5b0081cb233723",
+      "bytes": 7219,
+      "sha256": "5029655b7f5bec92253ecbeed200f7b6ed27ca0a8404b335a12d38812a9ca0e3",
       "frame": {
         "width": 512,
         "height": 512
@@ -7900,8 +8094,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "card",
       "id": "card-FP-D",
       "depth": 2.173,
-      "bytes": 10380,
-      "sha256": "d367fefea76e082b25c693f9fee677b719d19fc88ad0d3d9f7507ea5b7903333",
+      "bytes": 10314,
+      "sha256": "279d3786cc747d0dad2c09e03573a59ffc473305da3ad35b06faa186265cc676",
       "frame": {
         "width": 512,
         "height": 512
@@ -7920,8 +8114,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "card",
       "id": "card-FP-E",
       "depth": 2.123,
-      "bytes": 10852,
-      "sha256": "d58f781b0f1e00e337a0fbc7d73a2a4b412558df93bdb7a1ae37855244f4b378",
+      "bytes": 10764,
+      "sha256": "b5828b3fe8f2d7c9596ccbc8da8e5730fdf28bb2bc5c5d676f9ef4fa88b4701c",
       "frame": {
         "width": 512,
         "height": 512
@@ -7939,9 +8133,9 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "file": "card-FP-F.avif",
       "kind": "card",
       "id": "card-FP-F",
-      "depth": 5.825,
-      "bytes": 8069,
-      "sha256": "a8e002239f301026a6514ec9c3c16ff5582633ad5371b61c0a7c8631da6ea11d",
+      "depth": 5.826,
+      "bytes": 8044,
+      "sha256": "4910f199c229a452d37bd88fd02493feae74ed9b16ced233faa2da962f3ffd4d",
       "frame": {
         "width": 512,
         "height": 512
@@ -7960,8 +8154,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "card",
       "id": "card-FP-G",
       "depth": 3.908,
-      "bytes": 10577,
-      "sha256": "dfc6ed14d55239dd8eeec6958266553ef92238da7ef53c60604807e9f31ef8f7",
+      "bytes": 10610,
+      "sha256": "7a1c932ab0aa03a59352b0e6c5cfd0ce95a4f1cbd3e91bd0704d562d2dd3d800",
       "frame": {
         "width": 512,
         "height": 512
@@ -7980,8 +8174,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "card",
       "id": "card-MOB-A",
       "depth": 3.122,
-      "bytes": 15757,
-      "sha256": "8b6a0c13263124de4d60295d254a6d9062ede33104fec889040013191520a0b3",
+      "bytes": 15743,
+      "sha256": "540fd8169796ae279fb5d58d7bdbcbca5f8be72fa2ed6c8b772f4a59f82ae23e",
       "frame": {
         "width": 512,
         "height": 512
@@ -8000,8 +8194,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "card",
       "id": "card-MOB-B",
       "depth": 2.015,
-      "bytes": 9591,
-      "sha256": "3a37adde2c954d540b5cb1288fe0259ddc2fa6bb433856fb6a3046cf1b2a375b",
+      "bytes": 9575,
+      "sha256": "9bc046cecee5038837404d81806fab3d5528113d6004b5fa3a878647551d3e7b",
       "frame": {
         "width": 512,
         "height": 512
@@ -8020,8 +8214,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "card",
       "id": "card-MOB-C",
       "depth": 2.486,
-      "bytes": 13615,
-      "sha256": "ccfb5b297ed5e2db106f22b8dbf34a1105867dfae6693a4a93797a0915961218",
+      "bytes": 13624,
+      "sha256": "b939342d81296ad3014959b28f185bb4518b0526c6ab6e94ddf97a66d4fe57bd",
       "frame": {
         "width": 512,
         "height": 512
@@ -8039,9 +8233,9 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "file": "card-MOB-D.avif",
       "kind": "card",
       "id": "card-MOB-D",
-      "depth": 1.529,
-      "bytes": 12193,
-      "sha256": "506b5be486e87060bf84ff5e2ffa7663493da9033fe6884a952a9754353c30e0",
+      "depth": 1.609,
+      "bytes": 10482,
+      "sha256": "f40eb80cdd073faed3cfd3c28a5186a28a54701f951c5f3097bcf47bdd718050",
       "frame": {
         "width": 512,
         "height": 512
@@ -8059,9 +8253,9 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "file": "card-MOB-E.avif",
       "kind": "card",
       "id": "card-MOB-E",
-      "depth": 2.991,
-      "bytes": 10027,
-      "sha256": "e6c9eccb243a76721c8840595020b3a589e3d808af16b79c38a31329f97b7e59",
+      "depth": 2.99,
+      "bytes": 9843,
+      "sha256": "f3cd5354f3573df9954a8b918a7fdfa40659724566dff5fda43658501cd8d6d5",
       "frame": {
         "width": 512,
         "height": 512
@@ -8080,8 +8274,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "card",
       "id": "card-MOB-F",
       "depth": 2,
-      "bytes": 17798,
-      "sha256": "aab49e0bc9f0e8620477f3ccdaa1a50bfd5ab0c106d46d54190f66275b980207",
+      "bytes": 17789,
+      "sha256": "33b137af80e2e10d4714d25a00e76e33a0714a53fb924d074b0dab685f98ea0f",
       "frame": {
         "width": 512,
         "height": 512
@@ -8100,8 +8294,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "card",
       "id": "card-MOB-G",
       "depth": 2.57,
-      "bytes": 15989,
-      "sha256": "7ef32fae1c6639a1aa9e9c981ab36d470435aea6ce950b5248b34ecbbe727ec9",
+      "bytes": 15993,
+      "sha256": "66efaae27fcd515d48cfb56047dd62ff84f67bee160a272ee932973684a46670",
       "frame": {
         "width": 512,
         "height": 512
@@ -8120,8 +8314,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "card",
       "id": "card-PRO-A",
       "depth": 3.758,
-      "bytes": 13347,
-      "sha256": "70a96da7cbe606001846691692db82fdf5bd6c26e5906d422f9dc11bb1438a9b",
+      "bytes": 13360,
+      "sha256": "f692334b2277cffb1dfb9494d84dfefebaa0f9f4e2d822fe415affd6976d20a0",
       "frame": {
         "width": 512,
         "height": 512
@@ -8140,8 +8334,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "card",
       "id": "card-PRO-B",
       "depth": 3.386,
-      "bytes": 13616,
-      "sha256": "12a543f76e4e0ade7156d7721fa3dee53e2b234d58d4b19b54d491f126d97fd2",
+      "bytes": 13577,
+      "sha256": "21de525d7bb02af662732cf04ec6686a9c2f8ff1330b7e5af2c9b5e5abe2002a",
       "frame": {
         "width": 512,
         "height": 512
@@ -8159,9 +8353,9 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "file": "card-PRO-C.avif",
       "kind": "card",
       "id": "card-PRO-C",
-      "depth": 3.364,
-      "bytes": 11137,
-      "sha256": "0249edc26d32aed3515b4106b67ff93d3053cee64f8596be9a67b4534a89672b",
+      "depth": 3.347,
+      "bytes": 10980,
+      "sha256": "48a6da92cfd211193a8b710f3f975e182cd811a324da5dba7cc7d25849878e3a",
       "frame": {
         "width": 512,
         "height": 512
@@ -8180,8 +8374,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "card",
       "id": "card-PRO-D",
       "depth": 5.565,
-      "bytes": 8813,
-      "sha256": "b4a5f1fe8dc31fd807d8db7680140da764363ab897d4d7155bc7ae8e6ebdadba",
+      "bytes": 8817,
+      "sha256": "79496db55a6a6b58e2b83cc79e73a77c76ff53191836f99af9199866085e0831",
       "frame": {
         "width": 512,
         "height": 512
@@ -8200,8 +8394,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "card",
       "id": "card-PRO-E",
       "depth": 3.458,
-      "bytes": 20757,
-      "sha256": "f390d53cbe9d7823100faec39a14df1e82028cc51ab817c0bf8357f6732fa7f1",
+      "bytes": 20961,
+      "sha256": "493cc510f4a0022d1473fdc110d9cb26bbdcc7286d0ca187d7d820c98a88f7a5",
       "frame": {
         "width": 512,
         "height": 512
@@ -8220,8 +8414,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "card",
       "id": "card-PRO-F",
       "depth": 6.023,
-      "bytes": 8682,
-      "sha256": "28b1e5babec6ff3c798d495e54744e18cc57fe671f298616e20ea09b102ca9e1",
+      "bytes": 8695,
+      "sha256": "ff310d2902e62659e6b1c61ca913fcb1eba9cb109758dd6c24e9305cf3b7922b",
       "frame": {
         "width": 512,
         "height": 512
@@ -8240,8 +8434,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "card",
       "id": "card-PRO-G",
       "depth": 5.163,
-      "bytes": 21095,
-      "sha256": "65bebf80e08c731ad956b9a69ab6d47b75582523991f30da497a76b7d006a7a2",
+      "bytes": 21126,
+      "sha256": "567b8c27381ca439d4e642a7bbff71e8aced24a3b4eca88dd25d9113a74c9503",
       "frame": {
         "width": 512,
         "height": 512
@@ -8260,8 +8454,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "card",
       "id": "card-SA-A",
       "depth": 1.562,
-      "bytes": 7638,
-      "sha256": "84905decd5d85d53695d1a6222a788b6af8941abfa5b7fa6384c1230179cd3e1",
+      "bytes": 7630,
+      "sha256": "1ef96b0cb41af732709d61e3f51abd89664f5b456c0fb64d5f267e8b4770c804",
       "frame": {
         "width": 512,
         "height": 512
@@ -8280,8 +8474,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "card",
       "id": "card-SA-B",
       "depth": 3.141,
-      "bytes": 7278,
-      "sha256": "c6940b89c116c912bf5f8dbe3a6033f30e156ff04441f0d4ce7b0a696b5afa93",
+      "bytes": 7287,
+      "sha256": "37c7f7fd5260220b375e4310bae489359de992c486807ff6e377a115d0eb509c",
       "frame": {
         "width": 512,
         "height": 512
@@ -8301,7 +8495,7 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "id": "card-SA-C",
       "depth": 0.898,
       "bytes": 10396,
-      "sha256": "5704e3c44b134085c68fceb6c0cff569545cb58d5692ada0d13a751d0c801dd2",
+      "sha256": "59572bc477d85d218c5d349473ecf9d12d278dde3de880cc825d3964a8fcdf52",
       "frame": {
         "width": 512,
         "height": 512
@@ -8320,8 +8514,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "card",
       "id": "card-SA-D",
       "depth": 5.703,
-      "bytes": 7473,
-      "sha256": "7143877362f243a42e5df466dad9909898fa5db3940b93555f05b38b772476a5",
+      "bytes": 7478,
+      "sha256": "34132e8d3e6d1d7b8f870901526e00c1110a7a352ef2016ff3329599cae4bd32",
       "frame": {
         "width": 512,
         "height": 512
@@ -8341,7 +8535,7 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "id": "card-SA-E",
       "depth": 1.181,
       "bytes": 12306,
-      "sha256": "bf36e7399521ca16aa4cd3dc069e1f23c563259a179cbf4384994ed5e2dcfbff",
+      "sha256": "a74e3b27a75d78feeb71be148da707282085ee1a2d89e74e83ea582c2561a6a2",
       "frame": {
         "width": 512,
         "height": 512
@@ -8360,8 +8554,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "card",
       "id": "card-SA-F",
       "depth": 2.18,
-      "bytes": 11218,
-      "sha256": "038f00a76d8e38ca258d84d8be6d9053b5aa83525f0027c0e23ba0b7961fc930",
+      "bytes": 11225,
+      "sha256": "536f8266f2e9f35b79ec2039382d4090b51f071721323c082aa2421c7959943f",
       "frame": {
         "width": 512,
         "height": 512
@@ -8380,8 +8574,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "card",
       "id": "card-SA-G",
       "depth": 2.502,
-      "bytes": 10980,
-      "sha256": "4682951d92680f08ebe2e0b1c054b3eacb22cef2d07acd9ae8ae333a5142253a",
+      "bytes": 10973,
+      "sha256": "285bd97bfd8d92c22121e6a44b7770dfba93c6cab3d1a6084a077c0a56aac32a",
       "frame": {
         "width": 512,
         "height": 512
@@ -8400,8 +8594,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "card",
       "id": "card-SE-A",
       "depth": 1.889,
-      "bytes": 10527,
-      "sha256": "270640b93d82c94a9ead018e20a6ba8e07afc29fa01846410b66928afd48276f",
+      "bytes": 10525,
+      "sha256": "520cecd79878a598a7a21b3d6148c4e1606be14f722462f1e21e1f71dc873616",
       "frame": {
         "width": 512,
         "height": 512
@@ -8420,8 +8614,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "card",
       "id": "card-SE-B",
       "depth": 1.783,
-      "bytes": 11297,
-      "sha256": "154a8a4dd2b060544f084ba8d46a2faea7dc2ddf1f5cf66b443cb27137368738",
+      "bytes": 11293,
+      "sha256": "fdebda32713396b72570554c03c63071326beb9995b4ba47cd3db2b72341c457",
       "frame": {
         "width": 512,
         "height": 512
@@ -8440,8 +8634,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "card",
       "id": "card-SE-C",
       "depth": 1.96,
-      "bytes": 11591,
-      "sha256": "a2b7aa0fe835d35d11c9eeb87ad422a38137aa8c3c2969e7f49be24cdb715b3f",
+      "bytes": 11592,
+      "sha256": "bb87c8ff289388b999d05ba5d11cf134c5262024e900f2cdc3baeac4edce9346",
       "frame": {
         "width": 512,
         "height": 512
@@ -8460,8 +8654,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "card",
       "id": "card-SE-D",
       "depth": 1.811,
-      "bytes": 8701,
-      "sha256": "2fc81a13aa7a5173067ed9b27947a34e22fdccc94ac7ea280810c32ace3ba99b",
+      "bytes": 8702,
+      "sha256": "87d0aa984b70184b5356e53b02a7f1cf4551bd4afbc0f0e68e18a8457ada8fcf",
       "frame": {
         "width": 512,
         "height": 512
@@ -8480,8 +8674,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "card",
       "id": "card-SE-E",
       "depth": 1.806,
-      "bytes": 12424,
-      "sha256": "9852828aab44ac1299c71e88e89996f32c469b69c557b2aba8eaf1215258a1c6",
+      "bytes": 12414,
+      "sha256": "d137f84f04397fbbc5a8dffd903de9d75f24b8bf1599abd703c7471cda689806",
       "frame": {
         "width": 512,
         "height": 512
@@ -8500,8 +8694,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "card",
       "id": "card-SE-F",
       "depth": 1.884,
-      "bytes": 10862,
-      "sha256": "1160486ab19d7e11a3e690e301df676706139cc8d4f9d18a86de072416010660",
+      "bytes": 10878,
+      "sha256": "32cf57e776321068759a3b460ad39393dd1b26f971c3602721da66434d0a386e",
       "frame": {
         "width": 512,
         "height": 512
@@ -8520,8 +8714,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "card",
       "id": "card-SE-G",
       "depth": 1.783,
-      "bytes": 12787,
-      "sha256": "5db801f50dab69744202967c1fda255645a44f847a283c6febf989019e0a6f41",
+      "bytes": 12780,
+      "sha256": "7b42f17b6e2d27797d5dbc8b31ba6cc3aa10988ac8960e6ad1e338a91f3cbb40",
       "frame": {
         "width": 512,
         "height": 512
@@ -8540,8 +8734,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "card",
       "id": "card-SE-H",
       "depth": 1.957,
-      "bytes": 10286,
-      "sha256": "319335764019a3e1215341354350799b1b6b1c6939fb9a43c698a652a470f82c",
+      "bytes": 10302,
+      "sha256": "dba69ad475abeb7b39b332c44a7e3f8f917c1825831472e0dd15fc99caa96209",
       "frame": {
         "width": 512,
         "height": 512
@@ -8560,8 +8754,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "card",
       "id": "card-SE-I",
       "depth": 1.809,
-      "bytes": 8582,
-      "sha256": "04f76e6eac9ede3b8676a758b6fc63b8e2544627fd35f77305c2348ddb592e4e",
+      "bytes": 8568,
+      "sha256": "e6f3cf61ba49f16eb87d57f7ebf5355895e2bf1c4192312953dc2a16ac325102",
       "frame": {
         "width": 512,
         "height": 512
@@ -8580,8 +8774,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "card",
       "id": "card-SE-J",
       "depth": 1.81,
-      "bytes": 10835,
-      "sha256": "4d335e0db5a7bc30d34fa2b6f1a8ce0e963b4bbe87a6bd0a3a8bb30c4fe6a260",
+      "bytes": 10839,
+      "sha256": "f63b6e5610a263a9668ffa0030daebd371a0e8b8af7ee5bc8a4efd99d23fed71",
       "frame": {
         "width": 512,
         "height": 512
@@ -8600,8 +8794,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "card",
       "id": "card-SE-K",
       "depth": 1.893,
-      "bytes": 9551,
-      "sha256": "0295ce6dcc8db53b68714161baeda56c833bf85bd662fd7248b21960b76c3c1f",
+      "bytes": 9545,
+      "sha256": "7fa91ad5579608b66973812d5dae323954b342452600b1f64faca0f75eaf467b",
       "frame": {
         "width": 512,
         "height": 512
@@ -8620,8 +8814,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "card",
       "id": "card-SE-L",
       "depth": 1.784,
-      "bytes": 9589,
-      "sha256": "2816cd42558cb26ad150ec690675abaac564760dbdc16fcd492cdb169ad9d398",
+      "bytes": 9593,
+      "sha256": "b42e63b2a611966f65908529cb0e076183fa7ba566ac730bfd4009dd1430f4b7",
       "frame": {
         "width": 512,
         "height": 512
@@ -8640,8 +8834,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "card",
       "id": "card-SE-M",
       "depth": 1.961,
-      "bytes": 10280,
-      "sha256": "34ea36de5255120051e608b91d9775bf49c29d697be8508e39c38bda71fd5a16",
+      "bytes": 10248,
+      "sha256": "8fc71125c44fdb450ca97d67bc89dd4ddb9a9c4583e087555117647a80fb4052",
       "frame": {
         "width": 512,
         "height": 512
@@ -8660,8 +8854,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "card",
       "id": "card-SE-N",
       "depth": 1.808,
-      "bytes": 8637,
-      "sha256": "bfa16debd837f51965d40cce28820c413a7a1f0ae2b05444b5fad2b0b85e0e76",
+      "bytes": 8644,
+      "sha256": "bf06615702e3acad33dbfda2ad7c13b5acc01e4857e3ebabb4a0830238c2bbd7",
       "frame": {
         "width": 512,
         "height": 512
@@ -8680,8 +8874,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "card",
       "id": "card-SE-O",
       "depth": 1.808,
-      "bytes": 10773,
-      "sha256": "e172a26ffef33f7d9f4618c5c98f5f88a231d56de61167f49c85881fe45cac1c",
+      "bytes": 10774,
+      "sha256": "1ec3200a0e646df8143d912136dcecfc4d3a491f08e1eee9709d1efe1ecd1cd3",
       "frame": {
         "width": 512,
         "height": 512
@@ -8700,8 +8894,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "card",
       "id": "card-SE-P",
       "depth": 1.891,
-      "bytes": 11526,
-      "sha256": "418a46d69561e30aa3a988d4402ba3df1fd43367db3dd2037091c7138e3f92a0",
+      "bytes": 11523,
+      "sha256": "0790ee1cf30e9c66f3b762297e872ad01c806adcdae2e4b30a18f462c5198436",
       "frame": {
         "width": 512,
         "height": 512
@@ -8720,8 +8914,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "card",
       "id": "card-SE-Q",
       "depth": 1.782,
-      "bytes": 10341,
-      "sha256": "065575e794b791a947dabaf0abb9056b4609dafeedf0b0e24cfff3a5fa8567ab",
+      "bytes": 10335,
+      "sha256": "436b79f1c80667aede4f3a26a5d2e9e8d359b0edab3c615280b4112129c26c8a",
       "frame": {
         "width": 512,
         "height": 512
@@ -8740,8 +8934,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "card",
       "id": "card-SE-R",
       "depth": 1.959,
-      "bytes": 10341,
-      "sha256": "21b72bd5c49c0dcbd7c84f2cc08a030f999d63ef8554522a466bb9cb2f21a847",
+      "bytes": 10346,
+      "sha256": "e32d9ccea3320cbc296a5f536c58b3b77fa64d84a2f5174e0334ef087ac0b6ec",
       "frame": {
         "width": 512,
         "height": 512
@@ -8761,7 +8955,7 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "id": "card-SE-S",
       "depth": 1.805,
       "bytes": 10678,
-      "sha256": "0e25fbf3180d6c799da3a20a5234b3e65deef8f52c5927d8a31642cd7419dad3",
+      "sha256": "b1748121930a8d5c71aa96067d9f958c014aec38ad0881286964f7d3daf20cf7",
       "frame": {
         "width": 512,
         "height": 512
@@ -8780,8 +8974,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "card",
       "id": "card-SE-T",
       "depth": 1.816,
-      "bytes": 11400,
-      "sha256": "f1eb06b497ce882fa58efc48fc1acb19b6e6707c0ab54c2f194bc4b875386346",
+      "bytes": 11390,
+      "sha256": "9ea5c1b549d985d1abecf59fdffe6813e60c3a6fa4d071f544d863e307be94f4",
       "frame": {
         "width": 512,
         "height": 512
@@ -8800,8 +8994,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "card",
       "id": "card-SE-U",
       "depth": 1.894,
-      "bytes": 12084,
-      "sha256": "cb70fcd42aeb66effa4ea0e84fd79e500dde4985ba0c108a4e64452de54446de",
+      "bytes": 12022,
+      "sha256": "7829ae067fa0a3973877c8e2994b49ea7d63d4d299e31f24d8fadd688c75d33e",
       "frame": {
         "width": 512,
         "height": 512
@@ -8820,8 +9014,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "card",
       "id": "card-TRAIN-CAP",
       "depth": 3.583,
-      "bytes": 6712,
-      "sha256": "d82b20e07f77b7f00b1aa26e820966bf2ab600d71964e21d50f5ec55c6131592",
+      "bytes": 6696,
+      "sha256": "5f7ca6b6d98b83625af3968b1cab198ba0f07809eb9b053a0fce090017442559",
       "frame": {
         "width": 512,
         "height": 512
@@ -8839,838 +9033,838 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "file": "combat-front-ACC-A.avif",
       "kind": "build-layer",
       "id": "combat-front-ACC-A",
-      "depth": 23.081,
+      "depth": 21.187,
       "slot": "rear-kit",
-      "bytes": 1408,
-      "sha256": "c60f1d7975c28871d0aac2096d5c3a3c9788c062a6f2ec281dc0a359b56cbd2c",
+      "bytes": 2185,
+      "sha256": "9f733d46ce25aaf35d6b745cffd6cb9bee059f00970864e7b12c59a1695551e1",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 270,
-        "top": 301
+        "left": 234,
+        "top": 327
       },
       "size": {
-        "width": 83,
-        "height": 135
+        "width": 93,
+        "height": 163
       }
     },
     {
       "file": "combat-front-ACC-B.avif",
       "kind": "build-layer",
       "id": "combat-front-ACC-B",
-      "depth": 24.369,
+      "depth": 22.328,
       "slot": "rear-kit",
-      "bytes": 4433,
-      "sha256": "3d7ec648dff74f01e5c26348dcff6e5293958bfcdc97c433a7cd7af8628f1ec6",
+      "bytes": 5891,
+      "sha256": "e23856b4447f601052a70c2d58a78704ccb6ab56dbc6059d25dac0085c844240",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 102,
-        "top": 315
+        "left": 33,
+        "top": 357
       },
       "size": {
-        "width": 223,
-        "height": 176
+        "width": 267,
+        "height": 198
       }
     },
     {
       "file": "combat-front-ACC-C.avif",
       "kind": "build-layer",
       "id": "combat-front-ACC-C",
-      "depth": 18.256,
+      "depth": 17.385,
       "slot": "front-kit",
-      "bytes": 9955,
-      "sha256": "832ff83a7588d6f9f99df10ecfd71c8b67ca9dd40d8f229f8f005360e4e5c24e",
+      "bytes": 9961,
+      "sha256": "d74827080dbe8c047e471b5cb7696f9a27af7dd587ff860de901d3854986987d",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 772,
-        "top": 451
+        "left": 739,
+        "top": 452
       },
       "size": {
-        "width": 373,
-        "height": 251
+        "width": 507,
+        "height": 244
       }
     },
     {
       "file": "combat-front-ACC-D.avif",
       "kind": "build-layer",
       "id": "combat-front-ACC-D",
-      "depth": 19.521,
+      "depth": 17.968,
       "slot": "rack",
-      "bytes": 7826,
-      "sha256": "dd4d0849369a739eef4819d2ec769046c97797a90f38e24fe647e4633b2424e6",
+      "bytes": 7547,
+      "sha256": "b02375044e1518f48a922ca687d797bcba484efacfc59d0f1bf11707f0e5f0d0",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 322,
-        "top": 287
+        "left": 307,
+        "top": 291
       },
       "size": {
-        "width": 337,
-        "height": 298
+        "width": 338,
+        "height": 180
       }
     },
     {
       "file": "combat-front-ACC-E.avif",
       "kind": "build-layer",
       "id": "combat-front-ACC-E",
-      "depth": 18.404,
+      "depth": 17.491,
       "slot": "front-kit",
-      "bytes": 7577,
-      "sha256": "05ebb9967f4657ffad5890e76feb868c262c21a5600a17518bc4697e4a0df400",
+      "bytes": 8592,
+      "sha256": "a17ca1946945ce7518c7cedb9a64c537b630122015c39c2fb1f7e2f0f85a7b60",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 772,
-        "top": 443
+        "left": 740,
+        "top": 442
       },
       "size": {
-        "width": 305,
-        "height": 244
+        "width": 418,
+        "height": 249
       }
     },
     {
       "file": "combat-front-ACC-F.avif",
       "kind": "build-layer",
       "id": "combat-front-ACC-F",
-      "depth": 18.394,
+      "depth": 17.455,
       "slot": "front-kit",
-      "bytes": 5064,
-      "sha256": "cc10b16e3bc2587eba80f87ae4712a977aa12adb74bc9c59ac25fe312471a33d",
+      "bytes": 4518,
+      "sha256": "a9d2bd4ff300f72b7927923c86bd56c5913ed101154df419fe82ecab15ca5b8a",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 770,
-        "top": 454
+        "left": 851,
+        "top": 453
       },
       "size": {
-        "width": 224,
-        "height": 148
+        "width": 223,
+        "height": 166
       }
     },
     {
       "file": "combat-front-ACC-G.avif",
       "kind": "build-layer",
       "id": "combat-front-ACC-G",
-      "depth": 19.444,
+      "depth": 17.894,
       "slot": "rack",
-      "bytes": 9214,
-      "sha256": "11f7a8b4bb17992a47da73859eea43d4e0460554908f6e1eaa0e57b5f0196c02",
+      "bytes": 11115,
+      "sha256": "f83124b3499bd30486f15ae932be9c76d31b167cea2301ad2848f8c72b5f7c94",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 313,
-        "top": 243
+        "left": 307,
+        "top": 247
       },
       "size": {
-        "width": 346,
-        "height": 341
+        "width": 413,
+        "height": 361
       }
     },
     {
       "file": "combat-front-base.avif",
       "kind": "build-base",
       "id": "combat-front-base",
-      "depth": 20.625,
-      "bytes": 20984,
-      "sha256": "531d9c912f6ef27d0c1b92568e150ddd5ff0df7713a391d8ddd7278ee620d622",
+      "depth": 19.132,
+      "bytes": 22858,
+      "sha256": "fcc37e9681db6d4ea5066c80bf5b4d6d7782f9381920757d3f50da5dbbe9edfc",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 273,
-        "top": 299
+        "left": 255,
+        "top": 308
       },
       "size": {
-        "width": 669,
-        "height": 347
+        "width": 758,
+        "height": 360
       }
     },
     {
       "file": "combat-front-CAP-A.avif",
       "kind": "build-layer",
       "id": "combat-front-CAP-A",
-      "depth": 21.804,
+      "depth": 20.157,
       "slot": "module",
-      "bytes": 4240,
-      "sha256": "c05e2beb61d18a2b6237e65425d7b9fccd93cd8ace472d3a0eac0352e1964fcf",
+      "bytes": 4528,
+      "sha256": "042f95d428c6dee5ce77b5b7141574a498892ca17bfc9e76e92076e8300e5fe4",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 304,
-        "top": 226
+        "left": 296,
+        "top": 245
       },
       "size": {
-        "width": 251,
-        "height": 117
+        "width": 262,
+        "height": 126
       }
     },
     {
       "file": "combat-front-CAP-B.avif",
       "kind": "build-layer",
       "id": "combat-front-CAP-B",
-      "depth": 21.792,
+      "depth": 20.15,
       "slot": "module",
-      "bytes": 4528,
-      "sha256": "f5997e89f2aad570c7401a36abeca7921201e463ea56dd15e56519b699068214",
+      "bytes": 4634,
+      "sha256": "3cfbac9e1b8af00d935bc48963aea8db7f0fb74d4b692bbbc8c9013085ec5893",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 304,
-        "top": 215
+        "left": 296,
+        "top": 233
       },
       "size": {
-        "width": 255,
-        "height": 128
+        "width": 267,
+        "height": 138
       }
     },
     {
       "file": "combat-front-CAP-C.avif",
       "kind": "build-layer",
       "id": "combat-front-CAP-C",
-      "depth": 21.798,
+      "depth": 20.152,
       "slot": "module",
-      "bytes": 5299,
-      "sha256": "b70da6308160a3cfd962c179ea2596fafc5daa44c60135901d28fbb788a5b3e7",
+      "bytes": 5062,
+      "sha256": "8ef0f1f2f11bdc80fac042693ce675cffcd6c09f1f25a075d4d625bacfa35b4a",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 304,
-        "top": 227
+        "left": 296,
+        "top": 245
       },
       "size": {
-        "width": 240,
-        "height": 116
+        "width": 249,
+        "height": 126
       }
     },
     {
       "file": "combat-front-CAP-D.avif",
       "kind": "build-layer",
       "id": "combat-front-CAP-D",
-      "depth": 21.793,
+      "depth": 20.152,
       "slot": "module",
-      "bytes": 5190,
-      "sha256": "72996349422aafc7fc30466a1491bea54ebf7918cbec9f4a0ba9aebefe4c1f27",
+      "bytes": 5563,
+      "sha256": "14964d7ef84322a340a520433091c923df7b7045f7da352db84c1e3f3ef22434",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 304,
-        "top": 209
+        "left": 296,
+        "top": 227
       },
       "size": {
-        "width": 259,
-        "height": 134
+        "width": 271,
+        "height": 144
       }
     },
     {
       "file": "combat-front-CAP-E.avif",
       "kind": "build-layer",
       "id": "combat-front-CAP-E",
-      "depth": 21.803,
+      "depth": 20.157,
       "slot": "module",
-      "bytes": 3886,
-      "sha256": "432df0b3a4a0df04394269f3ef6a8e187a6f7f0557b2784a2b0952d9d05be17a",
+      "bytes": 4177,
+      "sha256": "4967e8952ca9d3afa51aefbd9d9010e53574b45ff4b6cb2aa182371c8571dee8",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 304,
-        "top": 226
+        "left": 296,
+        "top": 245
       },
       "size": {
-        "width": 246,
-        "height": 117
+        "width": 256,
+        "height": 126
       }
     },
     {
       "file": "combat-front-CAP-F.avif",
       "kind": "build-layer",
       "id": "combat-front-CAP-F",
-      "depth": 21.8,
+      "depth": 20.155,
       "slot": "module",
-      "bytes": 4255,
-      "sha256": "8ab699b619fab2cdf7666af4d4f08bf29330e981fbcbc6d37ed20aea44b5a39f",
+      "bytes": 4507,
+      "sha256": "58497970390f7d22f42e0ebc33b5273cbbd4cd23cae82943c6a9183382d05a95",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 304,
-        "top": 221
+        "left": 296,
+        "top": 240
       },
       "size": {
-        "width": 252,
-        "height": 122
+        "width": 263,
+        "height": 131
       }
     },
     {
       "file": "combat-front-CAP-G.avif",
       "kind": "build-layer",
       "id": "combat-front-CAP-G",
-      "depth": 21.799,
+      "depth": 20.152,
       "slot": "module",
-      "bytes": 4931,
-      "sha256": "dde239119cb14ea6ae7488d4bff2879d4be5d0cca0e4ef871d59f245df0c95cd",
+      "bytes": 4867,
+      "sha256": "dddd0de2f93f8d2ba216358360dc8b229f2ad8b8166e3be4612c4bfcff725cc5",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 304,
-        "top": 229
+        "left": 296,
+        "top": 248
       },
       "size": {
-        "width": 245,
-        "height": 114
+        "width": 256,
+        "height": 123
       }
     },
     {
       "file": "combat-front-COM-A.avif",
       "kind": "build-layer",
       "id": "combat-front-COM-A",
-      "depth": 22.04,
+      "depth": 20.335,
       "slot": "antenna-left",
-      "bytes": 1933,
-      "sha256": "23d7220c90c950e3f18f496e018693b4ddc62cf9f58e08405a5a17e7d20c068b",
+      "bytes": 1988,
+      "sha256": "4599efc1f04949c980bf266fd34d6e253c11af72a8ef012f2dbe7001adf6bc9e",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 262,
-        "top": 86
+        "left": 250,
+        "top": 89
       },
       "size": {
-        "width": 76,
-        "height": 244
+        "width": 81,
+        "height": 269
       }
     },
     {
       "file": "combat-front-COM-B.avif",
       "kind": "build-layer",
       "id": "combat-front-COM-B",
-      "depth": 23.221,
+      "depth": 21.503,
       "slot": "antenna-right",
-      "bytes": 2276,
-      "sha256": "bf917bbf8e32209f4ac51dcfe57f05b3797dde5172881b357ad372b7c6561beb",
+      "bytes": 2356,
+      "sha256": "e8552c53bf100f510d05bf0eb03f43944157ab75c1bdd04315772adc96427af1",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 384,
-        "top": 42
+        "left": 352,
+        "top": 48
       },
       "size": {
-        "width": 61,
-        "height": 265
+        "width": 65,
+        "height": 289
       }
     },
     {
       "file": "combat-front-COM-C.avif",
       "kind": "build-layer",
       "id": "combat-front-COM-C",
-      "depth": 22.135,
+      "depth": 20.379,
       "slot": "antenna-left",
-      "bytes": 1402,
-      "sha256": "954935e36422b954b2c835901e84e2697a7dcd96f05fb5c83a74b170220b8b7a",
+      "bytes": 1470,
+      "sha256": "95f6c3e4c084b79ad75fe3dca8e7381f879faf7a6e069c9bcc0bdc50ffde84ad",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 268,
-        "top": 256
+        "left": 256,
+        "top": 273
       },
       "size": {
-        "width": 65,
-        "height": 71
+        "width": 70,
+        "height": 82
       }
     },
     {
       "file": "combat-front-COM-D.avif",
       "kind": "build-layer",
       "id": "combat-front-COM-D",
-      "depth": 22.678,
+      "depth": 20.982,
       "slot": "radio-mast",
-      "bytes": 2590,
-      "sha256": "ff857d5487d6d336dd423d3fd82b7b8888210905c13d5f0ed485c006b5d95dab",
+      "bytes": 2633,
+      "sha256": "4386c6913ddd1eb57c9e583b66c6561dae7fae958bf90a9028adbe26bf744ea9",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 328,
-        "top": 32
+        "left": 304,
+        "top": 33
       },
       "size": {
-        "width": 72,
-        "height": 284
+        "width": 77,
+        "height": 309
       }
     },
     {
       "file": "combat-front-COM-E.avif",
       "kind": "build-layer",
       "id": "combat-front-COM-E",
-      "depth": 22.674,
+      "depth": 20.982,
       "slot": "radio-mast",
-      "bytes": 2607,
-      "sha256": "95d5ceb2390302825c9738cd339be90a21382063e41126ef79fee0e16be0c202",
+      "bytes": 2834,
+      "sha256": "f412f64c079f1a30ca00f618f7b67c8e2d18bf525777853444d75676554810fd",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 326,
-        "top": 17
+        "left": 302,
+        "top": 20
       },
       "size": {
-        "width": 76,
-        "height": 299
+        "width": 81,
+        "height": 323
       }
     },
     {
       "file": "combat-front-COM-F.avif",
       "kind": "build-layer",
       "id": "combat-front-COM-F",
-      "depth": 22.057,
+      "depth": 20.342,
       "slot": "antenna-left",
-      "bytes": 1793,
-      "sha256": "5724dab895f07e9293a769cf6e7e213eb1d1dc1a66d47d607b911e6401c72a39",
+      "bytes": 1889,
+      "sha256": "bb18c1b574ff69817e5f79918a35d70152b8e6da84db658e75fa9e5c25d45150",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 261,
-        "top": 118
+        "left": 249,
+        "top": 124
       },
       "size": {
-        "width": 78,
-        "height": 212
+        "width": 83,
+        "height": 234
       }
     },
     {
       "file": "combat-front-COM-G.avif",
       "kind": "build-layer",
       "id": "combat-front-COM-G",
-      "depth": 23.293,
+      "depth": 21.542,
       "slot": "antenna-right",
-      "bytes": 1968,
-      "sha256": "09fd3b9ebdab86861040e94a4128ad59820dbe75d24f622eab892bf287b6a8c0",
+      "bytes": 1994,
+      "sha256": "7c2122120012791bfa51d6bad6a5d37cdd36633fb51c70eb706655ab45d8d55a",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 379,
-        "top": 136
+        "left": 347,
+        "top": 152
       },
       "size": {
-        "width": 67,
-        "height": 172
+        "width": 71,
+        "height": 185
       }
     },
     {
       "file": "combat-front-FP-A.avif",
       "kind": "build-layer",
       "id": "combat-front-FP-A",
-      "depth": 20.294,
+      "depth": 18.906,
       "slot": "weapon",
-      "bytes": 3317,
-      "sha256": "7590ac36bab7fa45a47927124be12a54f4e393a4607f4dcbc9ffb36810958d79",
+      "bytes": 3696,
+      "sha256": "272ad2690a16bcbf79926d21701f044ee2ad0992411048cf5d9af172f134fbd1",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 517,
-        "top": 244
+        "left": 537,
+        "top": 248
       },
       "size": {
-        "width": 160,
-        "height": 106
+        "width": 184,
+        "height": 125
       }
     },
     {
       "file": "combat-front-FP-B.avif",
       "kind": "build-layer",
       "id": "combat-front-FP-B",
-      "depth": 20.057,
+      "depth": 18.708,
       "slot": "weapon",
-      "bytes": 3851,
-      "sha256": "f3de1520e754b2635ae78204b2a2f8e6813bbbbe243b7ed354f3da8c609afc79",
+      "bytes": 3912,
+      "sha256": "db603510e99da334fc61ed62eac2dd27f39ed12d34e3d50ccc30f1b587af8540",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 502,
-        "top": 203
+        "left": 528,
+        "top": 209
       },
       "size": {
-        "width": 233,
-        "height": 146
+        "width": 230,
+        "height": 151
       }
     },
     {
       "file": "combat-front-FP-C.avif",
       "kind": "build-layer",
       "id": "combat-front-FP-C",
-      "depth": 19.809,
+      "depth": 18.525,
       "slot": "weapon",
-      "bytes": 6216,
-      "sha256": "c0b5e8ff3e5e1717f5e3eb16db497a3e050d4a12556fd5b2f4e8daa6793f8563",
+      "bytes": 6263,
+      "sha256": "3bcfd00c66e9d647ced3ac86ce181eacd0f522472366ff7b369c1f182da16ba9",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 470,
-        "top": 213
+        "left": 489,
+        "top": 222
       },
       "size": {
-        "width": 365,
-        "height": 153
+        "width": 417,
+        "height": 152
       }
     },
     {
       "file": "combat-front-FP-D.avif",
       "kind": "build-layer",
       "id": "combat-front-FP-D",
-      "depth": 18.935,
+      "depth": 17.557,
       "slot": "aux-weapon",
-      "bytes": 2849,
-      "sha256": "76851088d5b7fdc75aef68aaf6624632aeb789ae6fc8fff14d7b3902d78a8b88",
+      "bytes": 3132,
+      "sha256": "22dfaca42b32aa95566992dfc22cb5d3d1783aac89b657dbcddb78aabd166778",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 623,
-        "top": 271
+        "left": 644,
+        "top": 260
       },
       "size": {
-        "width": 179,
-        "height": 108
+        "width": 220,
+        "height": 121
       }
     },
     {
       "file": "combat-front-FP-E.avif",
       "kind": "build-layer",
       "id": "combat-front-FP-E",
-      "depth": 18.936,
+      "depth": 17.557,
       "slot": "aux-weapon",
-      "bytes": 2417,
-      "sha256": "5a40ef834688c1b18fe4751aad0fe09d709f114f75a74927074a696909921d02",
+      "bytes": 2830,
+      "sha256": "0bf6cce4ef43d9ac8c6b658927170662e2bc527fdba1f35a758a45a657dd32cb",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 627,
-        "top": 266
+        "left": 665,
+        "top": 251
       },
       "size": {
-        "width": 116,
-        "height": 100
+        "width": 199,
+        "height": 130
       }
     },
     {
       "file": "combat-front-FP-F.avif",
       "kind": "build-layer",
       "id": "combat-front-FP-F",
-      "depth": 19.944,
+      "depth": 18.63,
       "slot": "weapon",
-      "bytes": 5543,
-      "sha256": "f9152483255a2c1e7da2eadf6bab8b6b9dfa67a96497348961e44891ab587adc",
+      "bytes": 5439,
+      "sha256": "67ed9147b581be91f3fbad4fe180b0b580d0f03b328072e9c96b9c088d83a7d6",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 482,
-        "top": 224
+        "left": 502,
+        "top": 228
       },
       "size": {
-        "width": 304,
-        "height": 142
+        "width": 347,
+        "height": 151
       }
     },
     {
       "file": "combat-front-FP-G.avif",
       "kind": "build-layer",
       "id": "combat-front-FP-G",
-      "depth": 20.091,
+      "depth": 18.706,
       "slot": "weapon",
-      "bytes": 4833,
-      "sha256": "aaa21ec8760dfe383c92682d02b4611736f7098d2b932dd5ece52e09b011aded",
+      "bytes": 4803,
+      "sha256": "bf4f2cc35d1347c69931d9ce1b768c6a421ffa3baeaad15b699eb2eb90a98058",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 479,
-        "top": 205
+        "left": 502,
+        "top": 211
       },
       "size": {
-        "width": 259,
-        "height": 149
+        "width": 236,
+        "height": 151
       }
     },
     {
       "file": "combat-front-MOB-A.avif",
       "kind": "build-layer",
       "id": "combat-front-MOB-A",
-      "depth": 19.726,
+      "depth": 18.568,
       "slot": "powerpack",
-      "bytes": 3224,
-      "sha256": "c6a3420ae3d22802985558d98f03417239359ac65905ee0f006affe91660149e",
-      "frame": {
-        "width": 1280,
-        "height": 720
-      },
-      "offset": {
-        "left": 657,
-        "top": 267
-      },
-      "size": {
-        "width": 143,
-        "height": 119
-      }
-    },
-    {
-      "file": "combat-front-MOB-B.avif",
-      "kind": "build-layer",
-      "id": "combat-front-MOB-B",
-      "depth": 20.694,
-      "slot": "running",
-      "bytes": 5735,
-      "sha256": "8dc0003116b882768edac1b5e510073ecf970272ba442a79f5261642e826194c",
-      "frame": {
-        "width": 1280,
-        "height": 720
-      },
-      "offset": {
-        "left": 341,
-        "top": 466
-      },
-      "size": {
-        "width": 442,
-        "height": 134
-      }
-    },
-    {
-      "file": "combat-front-MOB-C.avif",
-      "kind": "build-layer",
-      "id": "combat-front-MOB-C",
-      "depth": 20.694,
-      "slot": "running",
-      "bytes": 25865,
-      "sha256": "e98840d77c5a0690026fb3c2b4187f75555d139513f522e8554ded528c7b3323",
-      "frame": {
-        "width": 1280,
-        "height": 720
-      },
-      "offset": {
-        "left": 326,
-        "top": 429
-      },
-      "size": {
-        "width": 576,
-        "height": 201
-      }
-    },
-    {
-      "file": "combat-front-MOB-D.avif",
-      "kind": "build-layer",
-      "id": "combat-front-MOB-D",
-      "depth": 20.604,
-      "slot": "running",
-      "bytes": 9727,
-      "sha256": "8922096e5b81a9b6f807a3c11dc2340d962e3047702ac44f408e0e2b4ecceda3",
-      "frame": {
-        "width": 1280,
-        "height": 720
-      },
-      "offset": {
-        "left": 344,
-        "top": 433
-      },
-      "size": {
-        "width": 507,
-        "height": 179
-      }
-    },
-    {
-      "file": "combat-front-MOB-E.avif",
-      "kind": "build-layer",
-      "id": "combat-front-MOB-E",
-      "depth": 22.73,
-      "slot": "tanks",
-      "bytes": 2335,
-      "sha256": "28df1d765a127de9d216dc92d1edf517cb09e302a3c42855eb3eb72b4cc1168b",
-      "frame": {
-        "width": 1280,
-        "height": 720
-      },
-      "offset": {
-        "left": 240,
-        "top": 420
-      },
-      "size": {
-        "width": 120,
-        "height": 125
-      }
-    },
-    {
-      "file": "combat-front-MOB-F.avif",
-      "kind": "build-layer",
-      "id": "combat-front-MOB-F",
-      "depth": 19.761,
-      "slot": "powerpack",
-      "bytes": 1937,
-      "sha256": "ab21e05c64e9cfb8b0527b0f3fcbc615a5c8613802c0d476efb4a38a06c224c4",
+      "bytes": 3545,
+      "sha256": "60d1319f5e431a9555aacb18a762a888aa9ba5262bf6219a66cbeae2b184d714",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
         "left": 709,
-        "top": 299
+        "top": 270
       },
       "size": {
-        "width": 73,
-        "height": 68
+        "width": 183,
+        "height": 117
+      }
+    },
+    {
+      "file": "combat-front-MOB-B.avif",
+      "kind": "build-layer",
+      "id": "combat-front-MOB-B",
+      "depth": 19.177,
+      "slot": "running",
+      "bytes": 6597,
+      "sha256": "f73f195dfa0b8b097c4d06f958cf96fdd4b7237cbf4ec84942ab8b1bee61bbc6",
+      "frame": {
+        "width": 1280,
+        "height": 720
+      },
+      "offset": {
+        "left": 341,
+        "top": 496
+      },
+      "size": {
+        "width": 479,
+        "height": 119
+      }
+    },
+    {
+      "file": "combat-front-MOB-C.avif",
+      "kind": "build-layer",
+      "id": "combat-front-MOB-C",
+      "depth": 19.177,
+      "slot": "running",
+      "bytes": 29795,
+      "sha256": "71b9d6d2576adec5220c56776c7e6bd903009624aa5ae8fc3cd658e2a7fdeeb4",
+      "frame": {
+        "width": 1280,
+        "height": 720
+      },
+      "offset": {
+        "left": 320,
+        "top": 457
+      },
+      "size": {
+        "width": 636,
+        "height": 190
+      }
+    },
+    {
+      "file": "combat-front-MOB-D.avif",
+      "kind": "build-layer",
+      "id": "combat-front-MOB-D",
+      "depth": 19.149,
+      "slot": "running",
+      "bytes": 5165,
+      "sha256": "7779cf89b65ccb9e8add6b4c9e8538f3c48427cfcbbedebb7b8a861d84afa7e7",
+      "frame": {
+        "width": 1280,
+        "height": 720
+      },
+      "offset": {
+        "left": 350,
+        "top": 504
+      },
+      "size": {
+        "width": 553,
+        "height": 107
+      }
+    },
+    {
+      "file": "combat-front-MOB-E.avif",
+      "kind": "build-layer",
+      "id": "combat-front-MOB-E",
+      "depth": 20.896,
+      "slot": "tanks",
+      "bytes": 2660,
+      "sha256": "63f6ddb9b0f71d8cfbf84027172199638ce683aff9c75215f3b8264309bc4290",
+      "frame": {
+        "width": 1280,
+        "height": 720
+      },
+      "offset": {
+        "left": 225,
+        "top": 445
+      },
+      "size": {
+        "width": 134,
+        "height": 141
+      }
+    },
+    {
+      "file": "combat-front-MOB-F.avif",
+      "kind": "build-layer",
+      "id": "combat-front-MOB-F",
+      "depth": 18.591,
+      "slot": "powerpack",
+      "bytes": 2061,
+      "sha256": "91a91e5f65599c0b68eb954c7db4dd0aff32a6cf4795e49871db6a0cd81cfc26",
+      "frame": {
+        "width": 1280,
+        "height": 720
+      },
+      "offset": {
+        "left": 748,
+        "top": 303
+      },
+      "size": {
+        "width": 85,
+        "height": 69
       }
     },
     {
       "file": "combat-front-MOB-G.avif",
       "kind": "build-layer",
       "id": "combat-front-MOB-G",
-      "depth": 20.694,
+      "depth": 19.177,
       "slot": "running",
-      "bytes": 20433,
-      "sha256": "e58d3d48a49b10055ad43935beff9cfab43b91efdacdedb6a00183e6bd02b0f2",
+      "bytes": 23017,
+      "sha256": "efcc04637322c67db919d0440ccc5c4b4e9053768fac1f072d27688ec8967d33",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 322,
-        "top": 428
+        "left": 317,
+        "top": 457
       },
       "size": {
-        "width": 582,
-        "height": 202
+        "width": 635,
+        "height": 190
       }
     },
     {
       "file": "combat-front-PRO-A.avif",
       "kind": "build-layer",
       "id": "combat-front-PRO-A",
-      "depth": 20.867,
+      "depth": 19.336,
       "slot": "side-armour",
-      "bytes": 12163,
-      "sha256": "5b5e16cca00e86d79bf05acba73ed99e8434aafc46c947edb4c6146959631f02",
+      "bytes": 14331,
+      "sha256": "0639911666eca4b8f1866884bd66602d2544d3ab1e02cfba0f5e2123580eef88",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 260,
-        "top": 359
+        "left": 251,
+        "top": 384
       },
       "size": {
-        "width": 458,
-        "height": 226
+        "width": 555,
+        "height": 223
       }
     },
     {
       "file": "combat-front-PRO-B.avif",
       "kind": "build-layer",
       "id": "combat-front-PRO-B",
-      "depth": 18.818,
+      "depth": 17.736,
       "slot": "front-armour",
-      "bytes": 6376,
-      "sha256": "db6fc1ee102296f35405de22168b82f25078348e9f5a8722dcabe8a51b3b5073",
+      "bytes": 6476,
+      "sha256": "03d0afa6e9b45437090c0da7ae203c4b8b9d89ac9ba1239bd4a2285a7b7f276c",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 703,
-        "top": 343
+        "left": 778,
+        "top": 339
       },
       "size": {
-        "width": 243,
-        "height": 168
+        "width": 236,
+        "height": 171
       }
     },
     {
       "file": "combat-front-PRO-C.avif",
       "kind": "build-layer",
       "id": "combat-front-PRO-C",
-      "depth": 20.867,
+      "depth": 19.336,
       "slot": "side-armour",
-      "bytes": 10665,
-      "sha256": "53cc3f1435f3e3c508bd8d8d6d274ebf6d96f8328ae42bc057900266327c7003",
+      "bytes": 12239,
+      "sha256": "9cf9e3b27056213ffd915062d5aad3e215d27806f1e5d1b450a256b7a58f9807",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 263,
-        "top": 361
+        "left": 258,
+        "top": 384
       },
       "size": {
-        "width": 454,
-        "height": 224
+        "width": 543,
+        "height": 223
       }
     },
     {
       "file": "combat-front-PRO-D.avif",
       "kind": "build-layer",
       "id": "combat-front-PRO-D",
-      "depth": 19.275,
+      "depth": 18.066,
       "slot": "roof-armour",
-      "bytes": 1083,
-      "sha256": "fbceb7fd41650b68448f083f4aeab7e6470bbe34f5d1c26e8fe62573a0ce534b",
+      "bytes": 1165,
+      "sha256": "32e40b2d5c9ed9ab72dfaf5a0b2ec36c1f4f4505df0ad651e6437170e07aa020",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 691,
-        "top": 334
+        "left": 736,
+        "top": 337
       },
       "size": {
-        "width": 66,
+        "width": 79,
         "height": 36
       }
     },
@@ -9678,219 +9872,219 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "file": "combat-front-PRO-E.avif",
       "kind": "build-layer",
       "id": "combat-front-PRO-E",
-      "depth": 20.875,
+      "depth": 19.342,
       "slot": "side-armour",
-      "bytes": 14137,
-      "sha256": "6f60b7739cc993af440b6d1f94315b514c8aeb439a55d2d61cf565855c92ecd1",
+      "bytes": 16495,
+      "sha256": "512c221784ad09381a25193cdc518ccd8ee1ff7bea2d3cedd1a58e4adaafb055",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 257,
-        "top": 362
+        "left": 248,
+        "top": 385
       },
       "size": {
-        "width": 452,
-        "height": 187
+        "width": 544,
+        "height": 203
       }
     },
     {
       "file": "combat-front-PRO-F.avif",
       "kind": "build-layer",
       "id": "combat-front-PRO-F",
-      "depth": 20.836,
+      "depth": 19.291,
       "slot": "belly",
-      "bytes": 2920,
-      "sha256": "31f2559b932fed4c0955767eaf0b34faf879e6ae770a6af09be7b4392371f115",
+      "bytes": 2644,
+      "sha256": "72cd72a620400c90c56d2879cf7d03da9c4eed3df18caf66903eb38db7bc4f19",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 403,
-        "top": 506
+        "left": 541,
+        "top": 534
       },
       "size": {
-        "width": 475,
-        "height": 104
+        "width": 400,
+        "height": 93
       }
     },
     {
       "file": "combat-front-PRO-G.avif",
       "kind": "build-layer",
       "id": "combat-front-PRO-G",
-      "depth": 19.27,
+      "depth": 18.063,
       "slot": "roof-armour",
-      "bytes": 1862,
-      "sha256": "bf72adc112146c3317ec99518a4acb30c7b1ef4c5751a817e049594c7574ca11",
+      "bytes": 2038,
+      "sha256": "b0e11b48efcb4a923b62f35088696eb832778eef7442d117af0e73cc5d757a1c",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 688,
-        "top": 327
+        "left": 732,
+        "top": 329
       },
       "size": {
-        "width": 115,
-        "height": 45
+        "width": 133,
+        "height": 46
       }
     },
     {
       "file": "combat-front-SA-A.avif",
       "kind": "build-layer",
       "id": "combat-front-SA-A",
-      "depth": 18.421,
+      "depth": 17.298,
       "slot": "optics",
-      "bytes": 2094,
-      "sha256": "9b02924ff5e950e1621f4cc7e9c061722f5fe9f794fd6b98ef2c04b3604c1c6b",
+      "bytes": 2237,
+      "sha256": "16961d8bf4c2f10e769c45f0ec05c2ee3bdcb0b587bedacdc3cfe59305cec73e",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 695,
-        "top": 303
+        "left": 767,
+        "top": 295
       },
       "size": {
-        "width": 123,
-        "height": 85
+        "width": 131,
+        "height": 91
       }
     },
     {
       "file": "combat-front-SA-B.avif",
       "kind": "build-layer",
       "id": "combat-front-SA-B",
-      "depth": 20.213,
+      "depth": 19.111,
       "slot": "sensor-mast",
-      "bytes": 2715,
-      "sha256": "57430f1ba947402fe26c60bd6759f4738cb731f28ed17c0e8d5f6777aed74d2f",
+      "bytes": 2709,
+      "sha256": "e666eeb9774c503efc4759588b610ded5c6f57a556a86a395c23311e5dde0fd1",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 725,
+        "left": 762,
         "top": 164
       },
       "size": {
-        "width": 73,
-        "height": 181
+        "width": 78,
+        "height": 189
       }
     },
     {
       "file": "combat-front-SA-C.avif",
       "kind": "build-layer",
       "id": "combat-front-SA-C",
-      "depth": 18.404,
+      "depth": 17.27,
       "slot": "optics",
-      "bytes": 2053,
-      "sha256": "f0587e9e9872b9d181736d8a658a86943b7c36e4403b570e2549a840134cd23c",
+      "bytes": 2193,
+      "sha256": "c33775329b6a8bde116730f206b6837cab5b2f33ee1740f5bd30bb891f918ae3",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 695,
-        "top": 295
+        "left": 767,
+        "top": 286
       },
       "size": {
-        "width": 114,
-        "height": 93
+        "width": 120,
+        "height": 100
       }
     },
     {
       "file": "combat-front-SA-D.avif",
       "kind": "build-layer",
       "id": "combat-front-SA-D",
-      "depth": 20.164,
+      "depth": 19.102,
       "slot": "sensor-mast",
-      "bytes": 3347,
-      "sha256": "5463889e0e439e4ae18125d5298ed8916e70e4f03c2c603b4007dc17ff162fa4",
+      "bytes": 3742,
+      "sha256": "a524e54cd621d53c0a8c29cfb14b3f9ff4c38341e16d117859d93c8371e193fc",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 728,
-        "top": 43
+        "left": 771,
+        "top": 33
       },
       "size": {
-        "width": 63,
-        "height": 303
+        "width": 57,
+        "height": 320
       }
     },
     {
       "file": "combat-front-SA-E.avif",
       "kind": "build-layer",
       "id": "combat-front-SA-E",
-      "depth": 18.435,
+      "depth": 17.311,
       "slot": "optics",
-      "bytes": 2351,
-      "sha256": "d2f1f413187a5cf1d58228d895f7c033a923fbe0907863649772c07640a66892",
+      "bytes": 2480,
+      "sha256": "6561a79df89886bb2067424ef716b67877f8789ff8701739d195e62c2fbc19c4",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 695,
-        "top": 284
+        "left": 767,
+        "top": 274
       },
       "size": {
-        "width": 122,
-        "height": 104
+        "width": 126,
+        "height": 112
       }
     },
     {
       "file": "combat-front-SA-F.avif",
       "kind": "build-layer",
       "id": "combat-front-SA-F",
-      "depth": 20.023,
+      "depth": 18.688,
       "slot": "sensor-pods",
-      "bytes": 4303,
-      "sha256": "9f3363a53af62a3ac601ae64867a14a322611e1fca1f7d2cda484668a3141aaa",
+      "bytes": 4872,
+      "sha256": "1a62cf874e3af79acb6c183ce987b09700f1face290d2a70e4770e146dc7d9b1",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 413,
-        "top": 270
+        "left": 430,
+        "top": 281
       },
       "size": {
-        "width": 450,
-        "height": 113
+        "width": 479,
+        "height": 115
       }
     },
     {
       "file": "combat-front-SA-G.avif",
       "kind": "build-layer",
       "id": "combat-front-SA-G",
-      "depth": 20.028,
+      "depth": 18.693,
       "slot": "sensor-pods",
-      "bytes": 4203,
-      "sha256": "fadf81d8c4e8086bbcd72c208c6910b0f3ca8287fe752f10b626593ca21a79f0",
+      "bytes": 4806,
+      "sha256": "3508364830ab0f735457deff7275008d44364306c1ace03c0c8a99982b6cf131",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 417,
-        "top": 278
+        "left": 434,
+        "top": 292
       },
       "size": {
-        "width": 443,
-        "height": 105
+        "width": 473,
+        "height": 104
       }
     },
     {
       "file": "combat-hero.avif",
       "kind": "hero",
       "id": "combat-hero",
-      "depth": 16.153,
-      "bytes": 44903,
-      "sha256": "ba47ee56c163eff0f8a19907944ebe3c88cccc0d81fd71574397811795f2819d",
+      "depth": 16.14,
+      "bytes": 44900,
+      "sha256": "72705d98b85762c0963dbbe28a2cc0b484716c028f6836f57599460641dd7306",
       "frame": {
         "width": 1600,
         "height": 900
@@ -9908,502 +10102,502 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "file": "combat-rear-ACC-A.avif",
       "kind": "build-layer",
       "id": "combat-rear-ACC-A",
-      "depth": 19.244,
+      "depth": 18.477,
       "slot": "rear-kit",
-      "bytes": 5489,
-      "sha256": "8e5bfe7c9f7c99f644e7a517aaf5383bdd40224c61eaea6c717186ea02823288",
+      "bytes": 6163,
+      "sha256": "c2b036f6ddcdf1800c0ef29b1bca66bf711329dacb018f1e916072fc789663ff",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 699,
-        "top": 360
+        "left": 754,
+        "top": 375
       },
       "size": {
-        "width": 157,
-        "height": 180
+        "width": 156,
+        "height": 188
       }
     },
     {
       "file": "combat-rear-ACC-B.avif",
       "kind": "build-layer",
       "id": "combat-rear-ACC-B",
-      "depth": 18.633,
+      "depth": 18.011,
       "slot": "rear-kit",
-      "bytes": 10559,
-      "sha256": "c3bba242217e859c5bb81dca91558f1af4886b13454260b688f678cb7f40c809",
+      "bytes": 10714,
+      "sha256": "d00b86e3b76a1a85bc6b89bb5c55cbc4c02b923e9e825964ebd7fa1ee5342e77",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 589,
-        "top": 425
+        "left": 760,
+        "top": 436
       },
       "size": {
-        "width": 558,
-        "height": 295
+        "width": 477,
+        "height": 284
       }
     },
     {
       "file": "combat-rear-ACC-C.avif",
       "kind": "build-layer",
       "id": "combat-rear-ACC-C",
-      "depth": 24.972,
+      "depth": 23.248,
       "slot": "front-kit",
-      "bytes": 4028,
-      "sha256": "ebe0e335bafc38b176df41a7ff3062b82ec59bcab414c7d1f89c940e7c101f79",
+      "bytes": 4690,
+      "sha256": "7ea67c516ecbdc3c18aeb5245ceebc1a5f3c1ba85b58980b38387eb4bd11d3a3",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 96,
-        "top": 361
+        "left": 34,
+        "top": 422
       },
       "size": {
-        "width": 332,
-        "height": 151
+        "width": 386,
+        "height": 154
       }
     },
     {
       "file": "combat-rear-ACC-D.avif",
       "kind": "build-layer",
       "id": "combat-rear-ACC-D",
-      "depth": 22.213,
+      "depth": 21.211,
       "slot": "rack",
-      "bytes": 3433,
-      "sha256": "f6ee6790f82867c0ea742055feb1693037b0d76180995c68d166310728bcd4ef",
+      "bytes": 3621,
+      "sha256": "6f45ececd2d76f87b1b4668a34b83c14c35cb919f4f37338bac4628a90f6528b",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 567,
-        "top": 244
+        "left": 235,
+        "top": 286
       },
       "size": {
-        "width": 174,
-        "height": 79
+        "width": 512,
+        "height": 283
       }
     },
     {
       "file": "combat-rear-ACC-E.avif",
       "kind": "build-layer",
       "id": "combat-rear-ACC-E",
-      "depth": 24.676,
+      "depth": 22.961,
       "slot": "front-kit",
-      "bytes": 3316,
-      "sha256": "7afa41717ef68f2a7f03d4bce255786a594ffad1097e6342077cf929746bf521",
+      "bytes": 3353,
+      "sha256": "65ac7936778abf4ca72956bb14cc545adcb26325f0648de0538af107c69f4702",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 121,
-        "top": 355
+        "left": 71,
+        "top": 417
       },
       "size": {
-        "width": 199,
-        "height": 157
+        "width": 150,
+        "height": 142
       }
     },
     {
       "file": "combat-rear-ACC-F.avif",
       "kind": "build-layer",
       "id": "combat-rear-ACC-F",
-      "depth": 24.45,
+      "depth": 22.809,
       "slot": "front-kit",
-      "bytes": 1772,
-      "sha256": "d9432d4ca4220a7313cca21ee07849fa7eb35ab333bcc5e109dd8c1a7c9436d9",
+      "bytes": 2106,
+      "sha256": "ba172ca9db4795fa4596d3a1e94e73edf2ae2d16ae46253fc399dc395273fa94",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 191,
-        "top": 354
+        "left": 147,
+        "top": 415
       },
       "size": {
-        "width": 131,
-        "height": 158
+        "width": 172,
+        "height": 162
       }
     },
     {
       "file": "combat-rear-ACC-G.avif",
       "kind": "build-layer",
       "id": "combat-rear-ACC-G",
-      "depth": 22.236,
+      "depth": 21.254,
       "slot": "rack",
-      "bytes": 3962,
-      "sha256": "ccf50af97e7bde1076076e6b5a44d8cb50fc7e4b78d204e0709e826c09f2a629",
+      "bytes": 4058,
+      "sha256": "4d841738cfc652dc1dcd834520c4297aaf7af828444f554fcd86776876bee2c8",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 562,
-        "top": 210
+        "left": 235,
+        "top": 252
       },
       "size": {
-        "width": 187,
-        "height": 114
+        "width": 521,
+        "height": 318
       }
     },
     {
       "file": "combat-rear-base.avif",
       "kind": "build-base",
       "id": "combat-rear-base",
-      "depth": 21.542,
-      "bytes": 19684,
-      "sha256": "32b7fa8d4eb3439185176df3db14b8eaee8114a7d4ee4f0e80358399840947ff",
+      "depth": 20.288,
+      "bytes": 21101,
+      "sha256": "78b5f48c292bc89eb83746db6baaf0be567d2e0b23dad76c7f55c29272666a64",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 208,
-        "top": 247
+        "left": 177,
+        "top": 302
       },
       "size": {
-        "width": 627,
-        "height": 376
+        "width": 697,
+        "height": 351
       }
     },
     {
       "file": "combat-rear-CAP-A.avif",
       "kind": "build-layer",
       "id": "combat-rear-CAP-A",
-      "depth": 19.891,
+      "depth": 19.005,
       "slot": "module",
-      "bytes": 5382,
-      "sha256": "585d0327705390523206ee64b43fd06b460f2ae92cc6d46ab4e60457ae04e84a",
+      "bytes": 4995,
+      "sha256": "df7d3b7c5216e532aeb399de8878dd76fcad95408452de3f3e0ab2055dbec30d",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 416,
-        "top": 241
+        "left": 504,
+        "top": 270
       },
       "size": {
-        "width": 381,
-        "height": 157
+        "width": 320,
+        "height": 145
       }
     },
     {
       "file": "combat-rear-CAP-B.avif",
       "kind": "build-layer",
       "id": "combat-rear-CAP-B",
-      "depth": 19.885,
+      "depth": 19.004,
       "slot": "module",
-      "bytes": 5648,
-      "sha256": "ab2b61a07e61805af8ea001768d0f8fa02bc7da036943f70a40d87e93916f586",
+      "bytes": 4994,
+      "sha256": "77dad37dda5c1f3291afa982588820e8ee3589f96b3c8dc84e70d37c963a2913",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 416,
-        "top": 233
+        "left": 504,
+        "top": 259
       },
       "size": {
-        "width": 381,
-        "height": 165
+        "width": 318,
+        "height": 156
       }
     },
     {
       "file": "combat-rear-CAP-C.avif",
       "kind": "build-layer",
       "id": "combat-rear-CAP-C",
-      "depth": 19.899,
+      "depth": 19.011,
       "slot": "module",
-      "bytes": 6318,
-      "sha256": "efb9d2315e784a19629d9f1a775517ae8e52a1e101cd52fc2bddef0f9847cbe6",
+      "bytes": 5397,
+      "sha256": "838bc359618c5f208c0f28da6e0fb525b64ed6bcada7ff60124c47059c8c622c",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 545,
-        "top": 241
+        "left": 582,
+        "top": 270
       },
       "size": {
-        "width": 252,
-        "height": 157
+        "width": 242,
+        "height": 144
       }
     },
     {
       "file": "combat-rear-CAP-D.avif",
       "kind": "build-layer",
       "id": "combat-rear-CAP-D",
-      "depth": 19.876,
+      "depth": 18.998,
       "slot": "module",
-      "bytes": 6864,
-      "sha256": "39083543b075fea6b946ef97b227d5fd1ec1881be587c116cc69aaaac21c250d",
+      "bytes": 6256,
+      "sha256": "e4cdfa868ba353444cf752c99139184184178da58d1f1edf3c85df6567763617",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 416,
-        "top": 222
+        "left": 504,
+        "top": 251
       },
       "size": {
-        "width": 381,
-        "height": 176
+        "width": 322,
+        "height": 164
       }
     },
     {
       "file": "combat-rear-CAP-E.avif",
       "kind": "build-layer",
       "id": "combat-rear-CAP-E",
-      "depth": 19.891,
+      "depth": 19.006,
       "slot": "module",
-      "bytes": 4729,
-      "sha256": "dadc04752af8ca6be0fc2aec8022fc3f696fcddd85399c8a6dce0ded866fb4e8",
+      "bytes": 4435,
+      "sha256": "e6bcd6b435023743c200b74fbc7a34a25559e4c319cb32b3328d9398fdfac3c0",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 473,
-        "top": 241
+        "left": 504,
+        "top": 270
       },
       "size": {
-        "width": 324,
-        "height": 157
+        "width": 320,
+        "height": 145
       }
     },
     {
       "file": "combat-rear-CAP-F.avif",
       "kind": "build-layer",
       "id": "combat-rear-CAP-F",
-      "depth": 19.886,
+      "depth": 19.003,
       "slot": "module",
-      "bytes": 5437,
-      "sha256": "adfd4f832ce00b9d2b7c6f255852c95127d1fb393fdacbdd16616f326011d27d",
+      "bytes": 4904,
+      "sha256": "947e022ddb9f5cd82e6dfc7a8ab5d87c09273e10e6195fa2e844303bff2bc46a",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 416,
-        "top": 236
+        "left": 504,
+        "top": 264
       },
       "size": {
-        "width": 381,
-        "height": 162
+        "width": 319,
+        "height": 151
       }
     },
     {
       "file": "combat-rear-CAP-G.avif",
       "kind": "build-layer",
       "id": "combat-rear-CAP-G",
-      "depth": 19.902,
+      "depth": 19.013,
       "slot": "module",
-      "bytes": 5725,
-      "sha256": "19cc93bc97775382952cc04f64e9aa5ea553d2c15ce94aaba7f4e95b70301e11",
+      "bytes": 5555,
+      "sha256": "29aa999f4735fd83f748ce50116b93bb395e5c88c86c2141434af38815599265",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 539,
-        "top": 249
+        "left": 574,
+        "top": 275
       },
       "size": {
-        "width": 258,
-        "height": 149
+        "width": 250,
+        "height": 140
       }
     },
     {
       "file": "combat-rear-COM-A.avif",
       "kind": "build-layer",
       "id": "combat-rear-COM-A",
-      "depth": 19.728,
+      "depth": 19.053,
       "slot": "antenna-left",
-      "bytes": 2352,
-      "sha256": "069ae167b2d132c20966c56cb4e9bbac194f43f21dfc983ec081869f41ef4a27",
+      "bytes": 2586,
+      "sha256": "73c42dc907164969d248f9705809071b3ba0ae82d0c8f8021d741a07943cb5d3",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 769,
-        "top": 96
+        "left": 810,
+        "top": 106
       },
       "size": {
-        "width": 82,
-        "height": 298
+        "width": 77,
+        "height": 414
       }
     },
     {
       "file": "combat-rear-COM-B.avif",
       "kind": "build-layer",
       "id": "combat-rear-COM-B",
-      "depth": 18.261,
+      "depth": 17.667,
       "slot": "antenna-right",
-      "bytes": 2878,
-      "sha256": "0f4c430fb76c0cfdf2c1effe5ce628c43251f8da6ab94657367d856e41bbd476",
+      "bytes": 3356,
+      "sha256": "5164aacc6e78704eb6680d35bbb44153b326f9a5030453560e17a5bf745ab498",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 671,
-        "top": 54
+        "left": 741,
+        "top": 49
       },
       "size": {
-        "width": 73,
-        "height": 356
+        "width": 72,
+        "height": 386
       }
     },
     {
       "file": "combat-rear-COM-C.avif",
       "kind": "build-layer",
       "id": "combat-rear-COM-C",
-      "depth": 19.891,
+      "depth": 19.129,
       "slot": "antenna-left",
-      "bytes": 1773,
-      "sha256": "c89d8c95d53844e8aee204951c27e4e958d27e62d4221ea85ed95f6f14b5ed68",
+      "bytes": 1928,
+      "sha256": "241c1c64838632d53c251b2b4e62fc74aa1c383dfddc403296f6b16cc40616e8",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 771,
-        "top": 285
+        "left": 814,
+        "top": 304
       },
       "size": {
-        "width": 75,
-        "height": 107
+        "width": 68,
+        "height": 216
       }
     },
     {
       "file": "combat-rear-COM-D.avif",
       "kind": "build-layer",
       "id": "combat-rear-COM-D",
-      "depth": 18.882,
+      "depth": 18.268,
       "slot": "radio-mast",
-      "bytes": 3730,
-      "sha256": "ea2f610113c719ae2875496cd68b0b6f5f0cb4da19544b5197f6e7a93629953f",
+      "bytes": 3922,
+      "sha256": "d0d89fc92e16adbba317b5eb8dd66544f9d0cd76b8975480d6aa0116c509e8a7",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 673,
-        "top": 37
+        "left": 729,
+        "top": 39
       },
       "size": {
-        "width": 125,
-        "height": 383
+        "width": 122,
+        "height": 398
       }
     },
     {
       "file": "combat-rear-COM-E.avif",
       "kind": "build-layer",
       "id": "combat-rear-COM-E",
-      "depth": 18.87,
+      "depth": 18.265,
       "slot": "radio-mast",
-      "bytes": 3843,
-      "sha256": "f6551442e06b51ad683b1345fb142df3ca3077e41257850daf67ae1f0d0cc8e0",
+      "bytes": 3793,
+      "sha256": "ef5e3829f06d550e941027234c7bfdb393199769cb4d78e7449e0b30059bf979",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 703,
+        "left": 760,
         "top": 21
       },
       "size": {
-        "width": 97,
-        "height": 399
+        "width": 94,
+        "height": 416
       }
     },
     {
       "file": "combat-rear-COM-F.avif",
       "kind": "build-layer",
       "id": "combat-rear-COM-F",
-      "depth": 19.753,
+      "depth": 19.062,
       "slot": "antenna-left",
-      "bytes": 2345,
-      "sha256": "8aecba80c55b224d9ae054d02b3a497cb20d6db1963bdbd06580fc0901130b18",
+      "bytes": 2441,
+      "sha256": "bedc5510c50e94d1abdb29e76a392d0790e0fbc9a54c843290d5699b98edac36",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 768,
-        "top": 132
+        "left": 809,
+        "top": 143
       },
       "size": {
-        "width": 84,
-        "height": 262
+        "width": 79,
+        "height": 377
       }
     },
     {
       "file": "combat-rear-COM-G.avif",
       "kind": "build-layer",
       "id": "combat-rear-COM-G",
-      "depth": 18.326,
+      "depth": 17.682,
       "slot": "antenna-right",
-      "bytes": 3247,
-      "sha256": "ba3415e2dff9f0938f64fc1622d425030213032a1bbd0c66cfff12cf6fa4a72b",
+      "bytes": 3375,
+      "sha256": "890709c9341c9641d012b19031be288cad6acdfc0452ec3f6d0a8a5ce7c6a822",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 639,
-        "top": 177
+        "left": 704,
+        "top": 175
       },
       "size": {
-        "width": 111,
-        "height": 248
+        "width": 115,
+        "height": 274
       }
     },
     {
       "file": "combat-rear-FP-A.avif",
       "kind": "build-layer",
       "id": "combat-rear-FP-A",
-      "depth": 21.339,
+      "depth": 20.191,
       "slot": "weapon",
-      "bytes": 4287,
-      "sha256": "4f6a182a9c3e04a37c3abcf41c540cd172bd2849321c60ce85ca921240530bab",
+      "bytes": 3909,
+      "sha256": "5054b1572e1814c511e1a014e2b723fe9ff3c6f8d0c1be3b404def619e037ab0",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 247,
-        "top": 225
+        "left": 378,
+        "top": 261
       },
       "size": {
-        "width": 325,
-        "height": 117
+        "width": 209,
+        "height": 110
       }
     },
     {
       "file": "combat-rear-FP-B.avif",
       "kind": "build-layer",
       "id": "combat-rear-FP-B",
-      "depth": 21.532,
+      "depth": 20.378,
       "slot": "weapon",
-      "bytes": 3871,
-      "sha256": "558307834bccd2493194d1c21f290d26e6f0ff5f9ac010c21a604f90bd31310d",
+      "bytes": 3592,
+      "sha256": "e1074c1bfee1b4da6aac4e8b215275ebd1a6f4fe2e13af174c1421db98cf6c59",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 366,
-        "top": 202
+        "left": 390,
+        "top": 230
       },
       "size": {
-        "width": 223,
+        "width": 209,
         "height": 140
       }
     },
@@ -10411,20 +10605,20 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "file": "combat-rear-FP-C.avif",
       "kind": "build-layer",
       "id": "combat-rear-FP-C",
-      "depth": 21.837,
+      "depth": 20.62,
       "slot": "weapon",
-      "bytes": 6157,
-      "sha256": "63eb7f146158b84be0c2824992826d27129883d550a73f0748929f4d36f82783",
+      "bytes": 5683,
+      "sha256": "5db4731cb3f4145ceed753c8adbd08be841c891115bb47a29ccd2f11c076bb96",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 246,
-        "top": 213
+        "left": 233,
+        "top": 244
       },
       "size": {
-        "width": 369,
+        "width": 400,
         "height": 145
       }
     },
@@ -10432,83 +10626,83 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "file": "combat-rear-FP-D.avif",
       "kind": "build-layer",
       "id": "combat-rear-FP-D",
-      "depth": 22.792,
+      "depth": 21.642,
       "slot": "aux-weapon",
-      "bytes": 2613,
-      "sha256": "ffeef82d5c459af4ca29dd22f178d1e62b5453a8830d6cb0f5cdad20e30862ea",
+      "bytes": 2771,
+      "sha256": "20ef2938b227a897ad8dc48180f709c27fad21ab7fa5a5cab3d2ecf955b7695e",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 320,
-        "top": 228
+        "left": 310,
+        "top": 257
       },
       "size": {
-        "width": 158,
-        "height": 111
+        "width": 170,
+        "height": 113
       }
     },
     {
       "file": "combat-rear-FP-E.avif",
       "kind": "build-layer",
       "id": "combat-rear-FP-E",
-      "depth": 22.779,
+      "depth": 21.638,
       "slot": "aux-weapon",
-      "bytes": 2745,
-      "sha256": "23a6c2d14682d72633d4f1e7c1dc14003a93fef0f784a67bcfa7020681d5b7c4",
+      "bytes": 2780,
+      "sha256": "7ee2537a1e8b673668c0f3ba0d9606397863ed84c2cf94d8031e0a259d14bd53",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 331,
-        "top": 216
+        "left": 313,
+        "top": 250
       },
       "size": {
-        "width": 144,
-        "height": 123
+        "width": 166,
+        "height": 121
       }
     },
     {
       "file": "combat-rear-FP-F.avif",
       "kind": "build-layer",
       "id": "combat-rear-FP-F",
-      "depth": 21.69,
+      "depth": 20.494,
       "slot": "weapon",
-      "bytes": 5873,
-      "sha256": "878d9e3b29f2be2e140ae978332036554991af8f8ae2963a74e482255767936c",
+      "bytes": 5166,
+      "sha256": "196041b0896b4a1b0e98a52909b785ef767a60328d95ce076b3856467d2a77d7",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 246,
-        "top": 208
+        "left": 234,
+        "top": 242
       },
       "size": {
-        "width": 358,
-        "height": 149
+        "width": 385,
+        "height": 147
       }
     },
     {
       "file": "combat-rear-FP-G.avif",
       "kind": "build-layer",
       "id": "combat-rear-FP-G",
-      "depth": 21.488,
+      "depth": 20.364,
       "slot": "weapon",
-      "bytes": 4829,
-      "sha256": "519d438427f340640cf24782b22aaab7a34a10f83e9fa58f1d1874bb93dd4726",
+      "bytes": 4455,
+      "sha256": "4ab51560cbf659428b80455023df8287ed95d6a1b62b568270f675ac2880c6b5",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 246,
-        "top": 203
+        "left": 234,
+        "top": 231
       },
       "size": {
-        "width": 359,
+        "width": 383,
         "height": 139
       }
     },
@@ -10516,441 +10710,441 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "file": "combat-rear-MOB-A.avif",
       "kind": "build-layer",
       "id": "combat-rear-MOB-A",
-      "depth": 22.115,
+      "depth": 20.765,
       "slot": "powerpack",
-      "bytes": 3121,
-      "sha256": "4b265e78768dc16d0ebe5395bf13ab29947148a1f7e442c55b2e66545db13c79",
+      "bytes": 2991,
+      "sha256": "dfdf48e6990e5425f55029800a82704523e3c8c1550ac721277d53ec2fa3b9c7",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 249,
-        "top": 243
+        "left": 233,
+        "top": 281
       },
       "size": {
-        "width": 191,
-        "height": 93
+        "width": 213,
+        "height": 89
       }
     },
     {
       "file": "combat-rear-MOB-B.avif",
       "kind": "build-layer",
       "id": "combat-rear-MOB-B",
-      "depth": 21.835,
+      "depth": 20.506,
       "slot": "running",
-      "bytes": 4811,
-      "sha256": "d87dfeaff09ea6ff534f9730511b03340670daa5baa20be3f3a39c7a6fc6094e",
+      "bytes": 5431,
+      "sha256": "ae5afe16e2973b013519a25ebcc885037fb954c505ce9873a038ed724833e14c",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 242,
-        "top": 440
+        "left": 222,
+        "top": 494
       },
       "size": {
-        "width": 354,
-        "height": 130
+        "width": 427,
+        "height": 112
       }
     },
     {
       "file": "combat-rear-MOB-C.avif",
       "kind": "build-layer",
       "id": "combat-rear-MOB-C",
-      "depth": 21.834,
+      "depth": 20.505,
       "slot": "running",
-      "bytes": 21749,
-      "sha256": "2a5f4c31e419187dc0df78ca87c8f1f00567f501f6f00e651d4ba3915a85af26",
+      "bytes": 25953,
+      "sha256": "f9128a56645b8812529b8df356b5b49931c3af05687c40caf3e67e9b94ac9e12",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 230,
-        "top": 402
+        "left": 204,
+        "top": 458
       },
       "size": {
-        "width": 486,
-        "height": 196
+        "width": 564,
+        "height": 177
       }
     },
     {
       "file": "combat-rear-MOB-D.avif",
       "kind": "build-layer",
       "id": "combat-rear-MOB-D",
-      "depth": 21.826,
+      "depth": 20.477,
       "slot": "running",
-      "bytes": 8076,
-      "sha256": "61a3e6807c1efe9a4cd22614410f2c176da9ed80438c459abb23c321f2fe2db6",
+      "bytes": 4003,
+      "sha256": "656587e5ce4f1de4fe0b51b537ec28057aa9fc0f91054610769fbb67e8da1a10",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 231,
-        "top": 395
+        "left": 230,
+        "top": 487
       },
       "size": {
-        "width": 365,
-        "height": 173
+        "width": 413,
+        "height": 109
       }
     },
     {
       "file": "combat-rear-MOB-E.avif",
       "kind": "build-layer",
       "id": "combat-rear-MOB-E",
-      "depth": 19.79,
+      "depth": 18.851,
       "slot": "tanks",
-      "bytes": 4323,
-      "sha256": "5d3df9cd284e733d7a1b2405ae8d3a7d31bc17068413732c782b8bd5f98d5e8e",
+      "bytes": 4191,
+      "sha256": "4408803fc854f9ece2f8e76b6bce9a900da3eb588ba150499a6d96d7aad89da1",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 582,
-        "top": 434
+        "left": 649,
+        "top": 469
       },
       "size": {
-        "width": 271,
-        "height": 143
+        "width": 233,
+        "height": 145
       }
     },
     {
       "file": "combat-rear-MOB-F.avif",
       "kind": "build-layer",
       "id": "combat-rear-MOB-F",
-      "depth": 22.129,
+      "depth": 20.767,
       "slot": "powerpack",
-      "bytes": 2252,
-      "sha256": "7702b2ba649b722288cd6a1e760ddb81dbc7998f8a4a40609e3775031c4e0de5",
+      "bytes": 1992,
+      "sha256": "35dc846f755faa825e2692d67993c1fc9080e16fedbb573253534c883cb9bbd6",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 309,
-        "top": 268
+        "left": 233,
+        "top": 309
       },
       "size": {
-        "width": 127,
-        "height": 67
+        "width": 156,
+        "height": 59
       }
     },
     {
       "file": "combat-rear-MOB-G.avif",
       "kind": "build-layer",
       "id": "combat-rear-MOB-G",
-      "depth": 21.834,
+      "depth": 20.505,
       "slot": "running",
-      "bytes": 16562,
-      "sha256": "ca625d4656f5ad236f3d11f6778dda640643c8dc3db2ca858e66350f5b4a5a0e",
+      "bytes": 19218,
+      "sha256": "d0bbfbefff7405100f2201b7c6a4eac261f3a2336c061bf3d86845234d7eed2c",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 226,
-        "top": 401
+        "left": 201,
+        "top": 457
       },
       "size": {
-        "width": 465,
-        "height": 197
+        "width": 561,
+        "height": 178
       }
     },
     {
       "file": "combat-rear-PRO-A.avif",
       "kind": "build-layer",
       "id": "combat-rear-PRO-A",
-      "depth": 21.155,
+      "depth": 19.978,
       "slot": "side-armour",
-      "bytes": 9189,
-      "sha256": "822782952dc1a5129f99b8e7e3bc77e24e08af5b447d662bda59a95901ce3e44",
+      "bytes": 10377,
+      "sha256": "da046033b295e5dc6f26c46f45f49318f20ba9e83c9a9ea42f8344d5b22f4d4d",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 241,
-        "top": 362
+        "left": 233,
+        "top": 397
       },
       "size": {
-        "width": 490,
-        "height": 199
+        "width": 561,
+        "height": 192
       }
     },
     {
       "file": "combat-rear-PRO-B.avif",
       "kind": "build-layer",
       "id": "combat-rear-PRO-B",
-      "depth": 23.443,
+      "depth": 21.963,
       "slot": "front-armour",
-      "bytes": 2642,
-      "sha256": "2e6254ea147bd50a172a69ca09c6df48cdf4f562c65b437b697ecd5dd8da407c",
+      "bytes": 2980,
+      "sha256": "63bff25bd8c4b68d29ce58f820e7215965566c4a6a96b9304541f9b5fa513cb7",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 210,
-        "top": 280
+        "left": 175,
+        "top": 328
       },
       "size": {
-        "width": 199,
-        "height": 78
+        "width": 212,
+        "height": 89
       }
     },
     {
       "file": "combat-rear-PRO-C.avif",
       "kind": "build-layer",
       "id": "combat-rear-PRO-C",
-      "depth": 21.155,
+      "depth": 19.978,
       "slot": "side-armour",
-      "bytes": 7828,
-      "sha256": "84c616117757211cc88ef134c6c57188f8b1c11c71b85ea002809c53ee102031",
+      "bytes": 9028,
+      "sha256": "47b1823aab7b522a3b56182b95156c0767572ed52db3cae761f96a7d62a055b0",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 244,
-        "top": 363
+        "left": 239,
+        "top": 402
       },
       "size": {
-        "width": 418,
-        "height": 160
+        "width": 549,
+        "height": 172
       }
     },
     {
       "file": "combat-rear-PRO-D.avif",
       "kind": "build-layer",
       "id": "combat-rear-PRO-D",
-      "depth": 22.614,
+      "depth": 21.282,
       "slot": "roof-armour",
-      "bytes": 1133,
-      "sha256": "5648a1a8234735574ba65da23ac3db091274c55d6f0731006142dc7dfa8688c8",
+      "bytes": 1017,
+      "sha256": "338a0bf489048e6cdbaaace64716dacda5c7686a3603cda30d3d0089a184e298",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 362,
-        "top": 281
+        "left": 347,
+        "top": 329
       },
       "size": {
         "width": 60,
-        "height": 36
+        "height": 30
       }
     },
     {
       "file": "combat-rear-PRO-E.avif",
       "kind": "build-layer",
       "id": "combat-rear-PRO-E",
-      "depth": 21.164,
+      "depth": 19.984,
       "slot": "side-armour",
-      "bytes": 11207,
-      "sha256": "f1d0dc231753d963c2a8a2aa3ae0457c6e4b2cc92a0b4e3b4b4aa72837aa3ff0",
+      "bytes": 11745,
+      "sha256": "85bfdaf7e46afd58053dc7393726d7af9cb3b0de90df656dda58069a35de2e7f",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 238,
-        "top": 358
+        "left": 230,
+        "top": 407
       },
       "size": {
-        "width": 418,
-        "height": 149
+        "width": 493,
+        "height": 131
       }
     },
     {
       "file": "combat-rear-PRO-F.avif",
       "kind": "build-layer",
       "id": "combat-rear-PRO-F",
-      "depth": 21.791,
+      "depth": 20.462,
       "slot": "belly",
-      "bytes": 2616,
-      "sha256": "d854991e85cc5261de3a83a27325d10f21410d36c42c117951c2ccf096206b59",
+      "bytes": 2882,
+      "sha256": "dd7158c198f67d9e5f8931bc285a0e640b465b80ee45798e8fda6305fec1da62",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 300,
-        "top": 472
+        "left": 282,
+        "top": 524
       },
       "size": {
-        "width": 441,
-        "height": 113
+        "width": 506,
+        "height": 96
       }
     },
     {
       "file": "combat-rear-PRO-G.avif",
       "kind": "build-layer",
       "id": "combat-rear-PRO-G",
-      "depth": 22.609,
+      "depth": 21.279,
       "slot": "roof-armour",
-      "bytes": 1931,
-      "sha256": "be87bb2ebbc4c8b711fe2113a7fe300eab96e79dffcbdc8f7e01e9a076ec0a1a",
+      "bytes": 1703,
+      "sha256": "ab7044b6682440b99ea53189d60dee44471f369c69f17c76ebf8a72370375515",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 332,
-        "top": 274
+        "left": 342,
+        "top": 323
       },
       "size": {
-        "width": 91,
-        "height": 44
+        "width": 70,
+        "height": 37
       }
     },
     {
       "file": "combat-rear-SA-A.avif",
       "kind": "build-layer",
       "id": "combat-rear-SA-A",
-      "depth": 23.449,
+      "depth": 22.107,
       "slot": "optics",
-      "bytes": 2545,
-      "sha256": "3242ad6558917265c4291e932f3b3473f1db1f9c074717ab6dc87c70ac173c9b",
+      "bytes": 2128,
+      "sha256": "277bdd71de8c30a7defbefe1db786f8bda2bbaa9c7edf997b89ecc890e469b84",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 325,
-        "top": 231
+        "left": 300,
+        "top": 282
       },
       "size": {
-        "width": 112,
-        "height": 95
+        "width": 111,
+        "height": 84
       }
     },
     {
       "file": "combat-rear-SA-B.avif",
       "kind": "build-layer",
       "id": "combat-rear-SA-B",
-      "depth": 21.527,
+      "depth": 20.183,
       "slot": "sensor-mast",
-      "bytes": 2592,
-      "sha256": "b97a25ba69085a500a9ebe575aedfb5f6f6736763ad9c1bb0e5a9699ca5886bf",
+      "bytes": 2534,
+      "sha256": "59c20be0462e606810877069511c3dcd65d40d45a0e7d1c52623e909d87e84c6",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 246,
-        "top": 154
+        "left": 299,
+        "top": 183
       },
       "size": {
-        "width": 125,
-        "height": 174
+        "width": 72,
+        "height": 185
       }
     },
     {
       "file": "combat-rear-SA-C.avif",
       "kind": "build-layer",
       "id": "combat-rear-SA-C",
-      "depth": 23.439,
+      "depth": 22.11,
       "slot": "optics",
-      "bytes": 2353,
-      "sha256": "66927b74b08dd2b9d2a8ba7b2d468af65fac1cb879fbfffae31f8c821b793917",
+      "bytes": 2036,
+      "sha256": "503b26d3b303816e2c723ec0965fa91decc287f9065b0b6d0d6720bbbffb615f",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 337,
-        "top": 223
+        "left": 309,
+        "top": 275
       },
       "size": {
-        "width": 100,
-        "height": 101
+        "width": 102,
+        "height": 84
       }
     },
     {
       "file": "combat-rear-SA-D.avif",
       "kind": "build-layer",
       "id": "combat-rear-SA-D",
-      "depth": 21.423,
+      "depth": 20.135,
       "slot": "sensor-mast",
-      "bytes": 3603,
-      "sha256": "e103bbda9c00308909f06296de643083ef32a6e2fa8146e8fd8ade92ae916ebf",
+      "bytes": 3487,
+      "sha256": "3d07cfa1403c93979bf50a1e46fcc7245a6205a792ed355097528f81c1130813",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 246,
-        "top": 36
+        "left": 307,
+        "top": 59
       },
       "size": {
-        "width": 126,
-        "height": 294
+        "width": 63,
+        "height": 308
       }
     },
     {
       "file": "combat-rear-SA-E.avif",
       "kind": "build-layer",
       "id": "combat-rear-SA-E",
-      "depth": 23.4,
+      "depth": 22.069,
       "slot": "optics",
-      "bytes": 2661,
-      "sha256": "dc566d530c1ab840bc61ee5916a7b5c1fa6920fa1ee4218961b6426af4bec5f0",
+      "bytes": 2377,
+      "sha256": "3764f689b7e845f4cb14038ec76b6836d7a479d26fa2f3fc6ad1c992193b7be6",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 328,
-        "top": 214
+        "left": 301,
+        "top": 266
       },
       "size": {
-        "width": 109,
-        "height": 110
+        "width": 110,
+        "height": 100
       }
     },
     {
       "file": "combat-rear-SA-F.avif",
       "kind": "build-layer",
       "id": "combat-rear-SA-F",
-      "depth": 21.67,
+      "depth": 20.468,
       "slot": "sensor-pods",
-      "bytes": 4459,
-      "sha256": "3b112eda371671926fbaa1a9c9a8cdbf4088e1942d4585d828506832bbc3668a",
+      "bytes": 4552,
+      "sha256": "f1a778a0f424884945a0d042b3e163dd5de60d262cc8b7720781240726d1d47d",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 252,
-        "top": 221
+        "left": 243,
+        "top": 279
       },
       "size": {
-        "width": 416,
-        "height": 144
+        "width": 439,
+        "height": 114
       }
     },
     {
       "file": "combat-rear-SA-G.avif",
       "kind": "build-layer",
       "id": "combat-rear-SA-G",
-      "depth": 21.681,
+      "depth": 20.472,
       "slot": "sensor-pods",
-      "bytes": 4280,
-      "sha256": "26b3b0366b0e8b81d74133582afceab8563c4c4b8743ab4163f7647aa1cfa205",
+      "bytes": 4528,
+      "sha256": "8c2c381d662b3cac7b1123421f9c6dccb142e6ac216412929458d4061b0176b9",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 255,
-        "top": 228
+        "left": 243,
+        "top": 288
       },
       "size": {
-        "width": 410,
-        "height": 137
+        "width": 436,
+        "height": 105
       }
     },
     {
@@ -10958,18 +11152,18 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "combat-turntable-00",
       "depth": 12.967,
-      "bytes": 23752,
-      "sha256": "a79ace12e0f2a72692a386d6d89c245dcc4ca63a755582ed26d8832358089424",
+      "bytes": 23730,
+      "sha256": "1eef52e8ec5e5008f7681a2e169b6548b1afb994dcf5e7574645ae67e2caa608",
       "frame": {
         "width": 960,
         "height": 540
       },
       "offset": {
-        "left": 29,
+        "left": 28,
         "top": 90
       },
       "size": {
-        "width": 890,
+        "width": 891,
         "height": 364
       }
     },
@@ -10978,8 +11172,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "combat-turntable-01",
       "depth": 12.623,
-      "bytes": 25114,
-      "sha256": "64bc47dd6d363d6ad4f3edf83bc4c68f566a44f4c2c2c392891d16b82b4bec9d",
+      "bytes": 25037,
+      "sha256": "8f8e997be6beaf3e48a4006d2590135c428f313ff47ffc8832681aaf61bb626c",
       "frame": {
         "width": 960,
         "height": 540
@@ -10998,8 +11192,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "combat-turntable-02",
       "depth": 12.244,
-      "bytes": 27038,
-      "sha256": "b5fee93583e1920ac8e011734c7cff884faefd6618e75b87a19b409b9df22c5a",
+      "bytes": 27154,
+      "sha256": "4f9d83fdf4056da1f154b863acefc015255d944f948f7fc729fe48f48503f109",
       "frame": {
         "width": 960,
         "height": 540
@@ -11018,8 +11212,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "combat-turntable-03",
       "depth": 11.391,
-      "bytes": 29152,
-      "sha256": "415c7a89ba36fbd869e1f2f692460c4c62664dc12b15a58d12a398ef3dc3ae11",
+      "bytes": 29100,
+      "sha256": "27fec5200a873c0f8c0e7b480ce47a6967f82955cef219166b47b894c6482ed6",
       "frame": {
         "width": 960,
         "height": 540
@@ -11038,8 +11232,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "combat-turntable-04",
       "depth": 11.076,
-      "bytes": 26012,
-      "sha256": "492461dd04333fb44a37f414b6428d3484fc86382f13dd5e68ec8fcfdcb02fda",
+      "bytes": 25965,
+      "sha256": "43fcb66154d9464c8c75172cffaa08e0083915593952cf3e9ed23d2a262cf442",
       "frame": {
         "width": 960,
         "height": 540
@@ -11058,8 +11252,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "combat-turntable-05",
       "depth": 11.058,
-      "bytes": 18852,
-      "sha256": "3733f2ed7f7d1902dda8d153e11b9106beadc2a6a1f4cd0b4136575f2a4f8c3c",
+      "bytes": 18726,
+      "sha256": "8c49ac0981806875c56d9e8506bae5c9097ffe9e71f786d5d6f28c9c6408922a",
       "frame": {
         "width": 960,
         "height": 540
@@ -11077,9 +11271,9 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "file": "combat-turntable-06.avif",
       "kind": "turntable",
       "id": "combat-turntable-06",
-      "depth": 10.789,
-      "bytes": 17009,
-      "sha256": "807f2f13b96c8c3f94f96ae036f8621670e294ea8bd8c6ed90fbb8db11417f39",
+      "depth": 10.79,
+      "bytes": 16898,
+      "sha256": "a9e3f32f6b45f176cf525829a7709f61e78fd94e434c975503df8c618e36bab0",
       "frame": {
         "width": 960,
         "height": 540
@@ -11098,8 +11292,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "combat-turntable-07",
       "depth": 11.057,
-      "bytes": 19341,
-      "sha256": "cfffba3344527841a10d7c36e3d644199c8dd5b53bb6d299a55f251b4d7647aa",
+      "bytes": 19471,
+      "sha256": "b11080d5d8450bd488dac2a736c7cc9cc4ca2491ff90373051ee8ed82a7c969f",
       "frame": {
         "width": 960,
         "height": 540
@@ -11118,8 +11312,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "combat-turntable-08",
       "depth": 11.075,
-      "bytes": 26645,
-      "sha256": "086ae0d0362cf2e9f3bc5730ad8472cf73f3276e9653e2f74e65b56debe62c62",
+      "bytes": 26529,
+      "sha256": "873396d51203e9073c0fa0399067fee29d632611fc1757d8138091768bdfe9e2",
       "frame": {
         "width": 960,
         "height": 540
@@ -11137,9 +11331,9 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "file": "combat-turntable-09.avif",
       "kind": "turntable",
       "id": "combat-turntable-09",
-      "depth": 11.389,
-      "bytes": 29449,
-      "sha256": "404b8714ca6e05efb44870f40ac2be77a9148b261c821d87ac06d93500d0f636",
+      "depth": 11.39,
+      "bytes": 29380,
+      "sha256": "0de970fcfc99acb9211ab1bd1e5e8745406fdde71536516c9dc5db0160044a24",
       "frame": {
         "width": 960,
         "height": 540
@@ -11158,8 +11352,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "combat-turntable-10",
       "depth": 12.241,
-      "bytes": 27426,
-      "sha256": "96d531bcf922a29b3e23013e69d26aefdf9d514f50eb0cfaacba5ff5d823d726",
+      "bytes": 27446,
+      "sha256": "c71331937d6311a4b80a4447347fb516ffa2411c7b96f0c953b2e9262844551a",
       "frame": {
         "width": 960,
         "height": 540
@@ -11178,8 +11372,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "combat-turntable-11",
       "depth": 12.62,
-      "bytes": 25417,
-      "sha256": "e4a35532ec382015eba92e9746ad5955b73c7072bee4caa0e01a45d9ac589ad0",
+      "bytes": 25486,
+      "sha256": "ca3cf0d2d3013da7761eee966451359e6dcae98729a6e5df1fcaab3546b0b9d9",
       "frame": {
         "width": 960,
         "height": 540
@@ -11198,8 +11392,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "combat-turntable-12",
       "depth": 12.964,
-      "bytes": 24389,
-      "sha256": "f0fa899abad749a35a97594173a7e32ff0725ab7ea0a81a9892da9e55056ec5b",
+      "bytes": 24281,
+      "sha256": "0e64ae1d087f2726eeefc577cb3ed487c188b5ed59f12460fe7cbd4c8f2e7a8b",
       "frame": {
         "width": 960,
         "height": 540
@@ -11218,8 +11412,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "combat-turntable-13",
       "depth": 12.778,
-      "bytes": 25843,
-      "sha256": "f637d38082bdccd7d6d403786ae04b208bc7334029fffa6d5f59a3d3990855e4",
+      "bytes": 25883,
+      "sha256": "ade83e9093bf4a5768a771dffc2f7ff944b99e7947a7f8d19aea904e3ff34514",
       "frame": {
         "width": 960,
         "height": 540
@@ -11238,8 +11432,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "combat-turntable-14",
       "depth": 12.194,
-      "bytes": 27638,
-      "sha256": "18d9e33596cb047c2eee2fe700319e85b25ed9f6b1f595a4d2af6e78b8105648",
+      "bytes": 27576,
+      "sha256": "4e1bfa10c60358f96b7c247f28cac9b070b5fc11f83c01e6450c361850765512",
       "frame": {
         "width": 960,
         "height": 540
@@ -11258,8 +11452,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "combat-turntable-15",
       "depth": 11.233,
-      "bytes": 28960,
-      "sha256": "ffb2f69201248c1db45d74b633bf5ddf7d667ff5df5176a13e93b124c41691db",
+      "bytes": 29003,
+      "sha256": "9f95bf6c28e6e52736cadd52e30bb5100ae24ef7ab078e9c5eac1873b92f5cae",
       "frame": {
         "width": 960,
         "height": 540
@@ -11278,8 +11472,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "combat-turntable-16",
       "depth": 10.458,
-      "bytes": 26455,
-      "sha256": "615231d2e58c91a94a506c6c9c80152e136e93a183dff8d515b6fd5ab41a6604",
+      "bytes": 26376,
+      "sha256": "f81a5495bb0899b1c353d319440570c97503407defd1f514875e29de8acc81c6",
       "frame": {
         "width": 960,
         "height": 540
@@ -11298,8 +11492,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "combat-turntable-17",
       "depth": 10.375,
-      "bytes": 17990,
-      "sha256": "d6c866863c30c8f4272a9a1dbcebfa6a3a49834ae0e939e4c4a235e65bad2d96",
+      "bytes": 18084,
+      "sha256": "409e7897c8f2176c1ac13b817203a1d82e03365fd42a56b94e256e590e85e8c6",
       "frame": {
         "width": 960,
         "height": 540
@@ -11318,8 +11512,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "combat-turntable-18",
       "depth": 10.082,
-      "bytes": 15911,
-      "sha256": "45a05cbeec7db5c7f50e9b287b34783c617762cfe408f4d1e0f134dcba4e829f",
+      "bytes": 15917,
+      "sha256": "e776b8c5bc39939f4679097945186e28a190d5faf000122a96922cb960179c1d",
       "frame": {
         "width": 960,
         "height": 540
@@ -11338,8 +11532,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "combat-turntable-19",
       "depth": 10.375,
-      "bytes": 17915,
-      "sha256": "4442c6aec5642bd27b60dd5bb330c809ca0dc8d0992310fbdb09f6fa81118c33",
+      "bytes": 17881,
+      "sha256": "93e3d229e7fe3a11470ef484c2f722847e9cd2f0bfa4d4ede78a3bce5871e6a4",
       "frame": {
         "width": 960,
         "height": 540
@@ -11358,8 +11552,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "combat-turntable-20",
       "depth": 10.459,
-      "bytes": 26250,
-      "sha256": "d7ed867c8324db00e19ebc94e39db0ba3d13128664473fa8877b0b68cf8f4c34",
+      "bytes": 26279,
+      "sha256": "f657cc0ce2bdef0328f18c8eb543bad058fd54eb059ae0e747b17c3b988c060c",
       "frame": {
         "width": 960,
         "height": 540
@@ -11378,18 +11572,18 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "combat-turntable-21",
       "depth": 11.235,
-      "bytes": 28172,
-      "sha256": "fa6c3c6cc7825598f68ce7b1dd1b4bd7754f731d67bbd90925f53f6c162cd2bb",
+      "bytes": 28280,
+      "sha256": "5686582a5e01deae531a89ffe274b0f250af7280c810ed2a3b1da4b51ed1ec03",
       "frame": {
         "width": 960,
         "height": 540
       },
       "offset": {
-        "left": 30,
+        "left": 29,
         "top": 32
       },
       "size": {
-        "width": 881,
+        "width": 882,
         "height": 490
       }
     },
@@ -11398,8 +11592,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "combat-turntable-22",
       "depth": 12.196,
-      "bytes": 26302,
-      "sha256": "df946f854949bdea08cdd3d73506a1eadcb973df05f1d41f9704938dc65b7605",
+      "bytes": 26305,
+      "sha256": "92f5b189267157d8a74fe783ffd0088380c4de25234863d79f34dfdd4db60df9",
       "frame": {
         "width": 960,
         "height": 540
@@ -11418,8 +11612,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "combat-turntable-23",
       "depth": 12.781,
-      "bytes": 24547,
-      "sha256": "2185f3f491051b3a56449a600829793d4828cceef9af8594cd5181782de3307d",
+      "bytes": 24565,
+      "sha256": "709a7ec12dc02e7722fef4900b35ab1c9b502afa7ba048ccc401cb27096ae6bf",
       "frame": {
         "width": 960,
         "height": 540
@@ -11437,544 +11631,544 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "file": "command-post-front-ACC-A.avif",
       "kind": "build-layer",
       "id": "command-post-front-ACC-A",
-      "depth": 23.081,
+      "depth": 21.187,
       "slot": "rear-kit",
-      "bytes": 1402,
-      "sha256": "555e69115eb04ff82d7bd68c4e2815823d3c11b4e392c75c815d0fa1c85270d7",
+      "bytes": 2193,
+      "sha256": "fb55d43cb088b31d97247e65872e80a4a0732ab59bdd7c6f81a17fcef82fada9",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 270,
-        "top": 301
+        "left": 234,
+        "top": 327
       },
       "size": {
-        "width": 83,
-        "height": 135
+        "width": 93,
+        "height": 163
       }
     },
     {
       "file": "command-post-front-ACC-B.avif",
       "kind": "build-layer",
       "id": "command-post-front-ACC-B",
-      "depth": 24.369,
+      "depth": 22.328,
       "slot": "rear-kit",
-      "bytes": 4474,
-      "sha256": "23d2ac155f9832bfa1b3226bd437f5f4cc06138ac0c53bab4ad9b2b940852672",
+      "bytes": 5899,
+      "sha256": "c2a40643f04f3ac46ff2c754a6da43aa9c5aeb7a1b45156ded11a48e307c8cc0",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 102,
-        "top": 315
+        "left": 33,
+        "top": 357
       },
       "size": {
-        "width": 223,
-        "height": 176
+        "width": 267,
+        "height": 198
       }
     },
     {
       "file": "command-post-front-ACC-C.avif",
       "kind": "build-layer",
       "id": "command-post-front-ACC-C",
-      "depth": 18.255,
+      "depth": 17.385,
       "slot": "front-kit",
-      "bytes": 9900,
-      "sha256": "c89831ac54234681888fd81f3c780bfce181576f8430d6559e1157202d0ccff9",
+      "bytes": 9940,
+      "sha256": "f2b83e8ffe43269a61c4082b6f39338b42cfcceb89e33b3737a794e40fd3f4d3",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 771,
-        "top": 451
+        "left": 739,
+        "top": 452
       },
       "size": {
-        "width": 374,
-        "height": 251
+        "width": 507,
+        "height": 244
       }
     },
     {
       "file": "command-post-front-ACC-D.avif",
       "kind": "build-layer",
       "id": "command-post-front-ACC-D",
-      "depth": 19.521,
+      "depth": 17.968,
       "slot": "rack",
-      "bytes": 7813,
-      "sha256": "24188b8c46224fef8d978c5aaf6c9d97769e38096ce57de7ab7b808be8a93b4b",
+      "bytes": 7543,
+      "sha256": "24d71874d139d719dc0c24754cffc537c8d0a10a1313d89a31b492afabaf4554",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 322,
-        "top": 287
+        "left": 307,
+        "top": 291
       },
       "size": {
-        "width": 337,
-        "height": 298
+        "width": 338,
+        "height": 180
       }
     },
     {
       "file": "command-post-front-ACC-E.avif",
       "kind": "build-layer",
       "id": "command-post-front-ACC-E",
-      "depth": 18.404,
+      "depth": 17.491,
       "slot": "front-kit",
-      "bytes": 7544,
-      "sha256": "446481a7b49227468f9794a381d76d95bdd99bb97db6a325f7ef5772acecceca",
+      "bytes": 8593,
+      "sha256": "31127c7961e05e31e99f31050ce2609c91da6e385acd469c0850413de1236c3f",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 772,
-        "top": 443
+        "left": 740,
+        "top": 442
       },
       "size": {
-        "width": 305,
-        "height": 244
+        "width": 418,
+        "height": 249
       }
     },
     {
       "file": "command-post-front-ACC-F.avif",
       "kind": "build-layer",
       "id": "command-post-front-ACC-F",
-      "depth": 18.394,
+      "depth": 17.455,
       "slot": "front-kit",
-      "bytes": 5068,
-      "sha256": "3d6948357985901c65cb56420f9c7796c3ba90f0a60d205cd8f48808c08ba127",
+      "bytes": 4496,
+      "sha256": "0b508c21808bc4c93bb342be15dbfe4f172e3c1aa6f8c8c36e3b5af4a1e06f59",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 770,
-        "top": 454
+        "left": 851,
+        "top": 453
       },
       "size": {
-        "width": 224,
-        "height": 148
+        "width": 223,
+        "height": 166
       }
     },
     {
       "file": "command-post-front-ACC-G.avif",
       "kind": "build-layer",
       "id": "command-post-front-ACC-G",
-      "depth": 19.444,
+      "depth": 17.894,
       "slot": "rack",
-      "bytes": 9210,
-      "sha256": "485d5d6d26dc00033ba05f266ff654c8d4a0157749de88deec3b7b86d4fb4a01",
+      "bytes": 11068,
+      "sha256": "81a924a74e1c06360bfe2b3375861f9bcfc689e409a1e8a78a0b7cd1935bbe7d",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 313,
-        "top": 243
+        "left": 307,
+        "top": 247
       },
       "size": {
-        "width": 346,
-        "height": 341
+        "width": 413,
+        "height": 361
       }
     },
     {
       "file": "command-post-front-base.avif",
       "kind": "build-base",
       "id": "command-post-front-base",
-      "depth": 20.625,
-      "bytes": 20790,
-      "sha256": "5411c4f11425006f7e0be62bfc3cd70d6a8839cdfedcd662ca811b3e9bcf14eb",
+      "depth": 19.132,
+      "bytes": 22815,
+      "sha256": "a06c789fd36ee60739bf41cab60d5cbdbd30e458216a47b508916a82d06390b5",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 273,
-        "top": 299
+        "left": 255,
+        "top": 308
       },
       "size": {
-        "width": 669,
-        "height": 347
+        "width": 758,
+        "height": 360
       }
     },
     {
       "file": "command-post-front-CAP-A.avif",
       "kind": "build-layer",
       "id": "command-post-front-CAP-A",
-      "depth": 21.803,
+      "depth": 20.157,
       "slot": "module",
-      "bytes": 4172,
-      "sha256": "8ffb9e8596cb8ed0f9d1696017c5de5ed1ccd8b726799e7964d2c0790e00de34",
+      "bytes": 4483,
+      "sha256": "0e00acb8aecf8c0393cbb5c5266041b4f8a6e52c5308cbae11aa44022597e3b7",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 304,
-        "top": 226
+        "left": 296,
+        "top": 245
       },
       "size": {
-        "width": 251,
-        "height": 117
+        "width": 262,
+        "height": 126
       }
     },
     {
       "file": "command-post-front-CAP-B.avif",
       "kind": "build-layer",
       "id": "command-post-front-CAP-B",
-      "depth": 21.792,
+      "depth": 20.15,
       "slot": "module",
-      "bytes": 4451,
-      "sha256": "55335692bdee3c74d5b72f8691770c857699d537ad5d65c198fe8b67e1924927",
+      "bytes": 4538,
+      "sha256": "db40b7d774f453899894dfef9c2914e1f84db6d6c3d6b540b9aa423921596278",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 304,
-        "top": 215
+        "left": 296,
+        "top": 233
       },
       "size": {
-        "width": 255,
-        "height": 128
+        "width": 267,
+        "height": 138
       }
     },
     {
       "file": "command-post-front-CAP-C.avif",
       "kind": "build-layer",
       "id": "command-post-front-CAP-C",
-      "depth": 21.798,
+      "depth": 20.152,
       "slot": "module",
-      "bytes": 5282,
-      "sha256": "3f346201cdafef35748a294deefaff12cd4acbbaeeec72efe6e99ee483723c99",
+      "bytes": 5049,
+      "sha256": "03d03fbab41c743f0141841c471512bea0421a7418b79460c3f2bd6b4d278c4a",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 304,
-        "top": 227
+        "left": 296,
+        "top": 245
       },
       "size": {
-        "width": 240,
-        "height": 116
+        "width": 249,
+        "height": 126
       }
     },
     {
       "file": "command-post-front-CAP-D.avif",
       "kind": "build-layer",
       "id": "command-post-front-CAP-D",
-      "depth": 21.793,
+      "depth": 20.152,
       "slot": "module",
-      "bytes": 5138,
-      "sha256": "b390b62670fa2c81df4df48332e9ae7588aa0ea99235f670684bc6596e80892c",
+      "bytes": 5495,
+      "sha256": "c9325a0bade93110e6a657590993b00c5499b974ff26f2c784c3d4d2ffd20f15",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 304,
-        "top": 209
+        "left": 296,
+        "top": 227
       },
       "size": {
-        "width": 259,
-        "height": 134
+        "width": 271,
+        "height": 144
       }
     },
     {
       "file": "command-post-front-CAP-E.avif",
       "kind": "build-layer",
       "id": "command-post-front-CAP-E",
-      "depth": 21.803,
+      "depth": 20.157,
       "slot": "module",
-      "bytes": 3846,
-      "sha256": "75f7b10003fe8c7f8d6cb44a9e5a5946e4d7471ba89cdc5eb4b0e807e81138ad",
+      "bytes": 4140,
+      "sha256": "74ca71618c6894506161da9bbca4f0c16bdfe2618b2a246c41ffbc6b713adb30",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 304,
-        "top": 226
+        "left": 296,
+        "top": 245
       },
       "size": {
-        "width": 246,
-        "height": 117
+        "width": 256,
+        "height": 126
       }
     },
     {
       "file": "command-post-front-CAP-F.avif",
       "kind": "build-layer",
       "id": "command-post-front-CAP-F",
-      "depth": 21.8,
+      "depth": 20.155,
       "slot": "module",
-      "bytes": 4171,
-      "sha256": "c63170718bbf216bdd3138070af50e56ca13a0a5a83d208492972b067f8edcd7",
+      "bytes": 4522,
+      "sha256": "12090d541c797fbca5b11c742a388a6afeb8231225e5326374519d847e3f12dd",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 304,
-        "top": 221
+        "left": 296,
+        "top": 240
       },
       "size": {
-        "width": 252,
-        "height": 122
+        "width": 263,
+        "height": 131
       }
     },
     {
       "file": "command-post-front-CAP-G.avif",
       "kind": "build-layer",
       "id": "command-post-front-CAP-G",
-      "depth": 21.799,
+      "depth": 20.152,
       "slot": "module",
-      "bytes": 4944,
-      "sha256": "904a197cf4c75fd4486b824579668f0c03fcb4a86dd692a3b55fdd2378500150",
+      "bytes": 4869,
+      "sha256": "e5f203ea7a95c1371b9b8bae0c6657010f37e4f8d28c71ccd4ebba390ca2362f",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 304,
-        "top": 229
+        "left": 296,
+        "top": 248
       },
       "size": {
-        "width": 245,
-        "height": 114
+        "width": 256,
+        "height": 123
       }
     },
     {
       "file": "command-post-front-COM-A.avif",
       "kind": "build-layer",
       "id": "command-post-front-COM-A",
-      "depth": 22.039,
+      "depth": 20.335,
       "slot": "antenna-left",
-      "bytes": 1910,
-      "sha256": "6b6eb6c47c3e4cb674b369d6d3a832f2d0bf5832e0f98558ad3baffa9005e4db",
+      "bytes": 2005,
+      "sha256": "a6773c42ca16481b3845341a630b4f6dab40d35d9e7cc01308af507b646cde7f",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 262,
-        "top": 86
+        "left": 250,
+        "top": 89
       },
       "size": {
-        "width": 76,
-        "height": 244
+        "width": 81,
+        "height": 269
       }
     },
     {
       "file": "command-post-front-COM-B.avif",
       "kind": "build-layer",
       "id": "command-post-front-COM-B",
-      "depth": 23.22,
+      "depth": 21.503,
       "slot": "antenna-right",
-      "bytes": 2279,
-      "sha256": "1d172ccb422928170680ff265991f961bfe73fd6cc93aa9c4412d44b97e74238",
+      "bytes": 2356,
+      "sha256": "8b913ce8093c54e120d79d7c3f3713bdc366922e6f82f5f9eef7f20d7cdaf194",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 384,
-        "top": 42
+        "left": 352,
+        "top": 48
       },
       "size": {
-        "width": 61,
-        "height": 265
+        "width": 65,
+        "height": 289
       }
     },
     {
       "file": "command-post-front-COM-C.avif",
       "kind": "build-layer",
       "id": "command-post-front-COM-C",
-      "depth": 22.135,
+      "depth": 20.379,
       "slot": "antenna-left",
-      "bytes": 1386,
-      "sha256": "b65a5f7037a16d65db59ef129670a8dac588ee04526d6164f2efc5251ad7bd1c",
+      "bytes": 1476,
+      "sha256": "3bc4f0b91043f93e0bd009b8e0fa05d71c3dfa77d0a8922ff775c131424130e0",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 268,
-        "top": 256
+        "left": 256,
+        "top": 273
       },
       "size": {
-        "width": 65,
-        "height": 71
+        "width": 70,
+        "height": 82
       }
     },
     {
       "file": "command-post-front-COM-D.avif",
       "kind": "build-layer",
       "id": "command-post-front-COM-D",
-      "depth": 22.678,
+      "depth": 20.982,
       "slot": "radio-mast",
-      "bytes": 2581,
-      "sha256": "2b604535713019c8a80d44107fa1ff3db14533e0c97fda47d1a2cdc068df5e11",
+      "bytes": 2630,
+      "sha256": "2e5f4cd05efd736ee6ab270b16dead30d4042fbdb4f4576051f73b030510aeb2",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 328,
-        "top": 32
+        "left": 304,
+        "top": 33
       },
       "size": {
-        "width": 72,
-        "height": 284
+        "width": 77,
+        "height": 309
       }
     },
     {
       "file": "command-post-front-COM-E.avif",
       "kind": "build-layer",
       "id": "command-post-front-COM-E",
-      "depth": 22.674,
+      "depth": 20.982,
       "slot": "radio-mast",
-      "bytes": 2618,
-      "sha256": "6b962ce013278c45bb9525379cf240483a49e1b08bc17bff823673722e444361",
+      "bytes": 2825,
+      "sha256": "1eb9cdecb4b09d59e622c039d3212dd47043d873b9f7e512da346a41697da8ec",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 326,
-        "top": 17
+        "left": 302,
+        "top": 20
       },
       "size": {
-        "width": 76,
-        "height": 299
+        "width": 81,
+        "height": 323
       }
     },
     {
       "file": "command-post-front-COM-F.avif",
       "kind": "build-layer",
       "id": "command-post-front-COM-F",
-      "depth": 22.057,
+      "depth": 20.342,
       "slot": "antenna-left",
-      "bytes": 1802,
-      "sha256": "3d02d791dbf5a9545289882f204b1ffc2a8c0353384ecb066f3b6046ccddc836",
+      "bytes": 1892,
+      "sha256": "e16894a2a1177b7bc46418ffaef89d29f37f43ec0a03363474cb24a8624160c1",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 261,
-        "top": 118
+        "left": 249,
+        "top": 124
       },
       "size": {
-        "width": 78,
-        "height": 212
+        "width": 83,
+        "height": 234
       }
     },
     {
       "file": "command-post-front-COM-G.avif",
       "kind": "build-layer",
       "id": "command-post-front-COM-G",
-      "depth": 23.293,
+      "depth": 21.542,
       "slot": "antenna-right",
-      "bytes": 1993,
-      "sha256": "7a8a7a17ea6018a9d04053062b170f85c8ef914c2402f59192a65d50e84f5bbf",
+      "bytes": 1995,
+      "sha256": "51e7a736b666266f89609f2f17de2e3cf2a9ea5b13f1492a4dd9eb2f7a321931",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 379,
-        "top": 136
+        "left": 347,
+        "top": 152
       },
       "size": {
-        "width": 67,
-        "height": 172
+        "width": 71,
+        "height": 185
       }
     },
     {
       "file": "command-post-front-FP-A.avif",
       "kind": "build-layer",
       "id": "command-post-front-FP-A",
-      "depth": 20.294,
+      "depth": 18.906,
       "slot": "weapon",
-      "bytes": 3259,
-      "sha256": "3a74c0e7a3cd9ca5c4b526af2c913d7faf033f7640cc36f70625096c1a9162f4",
+      "bytes": 3660,
+      "sha256": "af2b71874c0610ac04d53dab1771dd6f09aacfba211644530fcb6108a2bbf757",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 517,
-        "top": 244
+        "left": 537,
+        "top": 248
       },
       "size": {
-        "width": 160,
-        "height": 106
+        "width": 184,
+        "height": 125
       }
     },
     {
       "file": "command-post-front-FP-B.avif",
       "kind": "build-layer",
       "id": "command-post-front-FP-B",
-      "depth": 20.057,
+      "depth": 18.708,
       "slot": "weapon",
-      "bytes": 3793,
-      "sha256": "a675dc3a8a3f4fc74bc1e67ddab2076e1e12d373c8d1812a309a34cfa5d1518c",
+      "bytes": 3831,
+      "sha256": "e577108419e8581b6adab38bd1b66ec0fef2e0bba0a2880f0a2b03d93252aff3",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 502,
-        "top": 203
+        "left": 528,
+        "top": 209
       },
       "size": {
-        "width": 233,
-        "height": 146
+        "width": 230,
+        "height": 151
       }
     },
     {
       "file": "command-post-front-FP-C.avif",
       "kind": "build-layer",
       "id": "command-post-front-FP-C",
-      "depth": 19.809,
+      "depth": 18.525,
       "slot": "weapon",
-      "bytes": 6071,
-      "sha256": "356236122a3c627de2dbad4a379b5db124257b0069ced5f838ee6c4ddaf043ad",
+      "bytes": 5972,
+      "sha256": "84e0248874bec6066509fb9a427ef7e931aa78302f6a3c9ffde87e119b761993",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 470,
-        "top": 213
+        "left": 489,
+        "top": 222
       },
       "size": {
-        "width": 365,
-        "height": 153
+        "width": 417,
+        "height": 152
       }
     },
     {
       "file": "command-post-front-FP-D.avif",
       "kind": "build-layer",
       "id": "command-post-front-FP-D",
-      "depth": 18.935,
+      "depth": 17.547,
       "slot": "aux-weapon",
-      "bytes": 2706,
-      "sha256": "45b2e666d10ac57c0332d197601d24bc6344a624ca5addda0a9c9d8de290ea7a",
+      "bytes": 2704,
+      "sha256": "5e29ff967e2aaa849d5dce22ee050805f4ac5101e4d10215076d911cfea29329",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 623,
-        "top": 271
+        "left": 664,
+        "top": 273
       },
       "size": {
-        "width": 156,
+        "width": 177,
         "height": 100
       }
     },
@@ -11982,513 +12176,513 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "file": "command-post-front-FP-E.avif",
       "kind": "build-layer",
       "id": "command-post-front-FP-E",
-      "depth": 18.936,
+      "depth": 17.555,
       "slot": "aux-weapon",
-      "bytes": 2511,
-      "sha256": "5e3caf7bec0f2b498591c8523d7b8a179fe75d3b88a12c5c310432486d896d4d",
+      "bytes": 2573,
+      "sha256": "6a08a8f037d44fd4ce11814ab25829527fe77214595a2c974c70371121380e65",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 627,
-        "top": 266
+        "left": 667,
+        "top": 264
       },
       "size": {
-        "width": 152,
-        "height": 105
+        "width": 174,
+        "height": 108
       }
     },
     {
       "file": "command-post-front-FP-F.avif",
       "kind": "build-layer",
       "id": "command-post-front-FP-F",
-      "depth": 19.943,
+      "depth": 18.63,
       "slot": "weapon",
-      "bytes": 5324,
-      "sha256": "2da559783d1758b63b0e33539e6cf8892eb6bd5c513ff951494d74afbbc24c62",
+      "bytes": 5241,
+      "sha256": "822b2aaef6d5bb224b9429c61998dcd1e6e84ec375aa53a65c233d5276dca3e8",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 482,
-        "top": 224
+        "left": 502,
+        "top": 228
       },
       "size": {
-        "width": 304,
-        "height": 142
+        "width": 347,
+        "height": 151
       }
     },
     {
       "file": "command-post-front-FP-G.avif",
       "kind": "build-layer",
       "id": "command-post-front-FP-G",
-      "depth": 20.091,
+      "depth": 18.706,
       "slot": "weapon",
-      "bytes": 4615,
-      "sha256": "3b095c628b42097a3bc80858f15a00f1742ff2b2aeadd35ee1b4f960fcbb5618",
+      "bytes": 4662,
+      "sha256": "9ec55a48cae34d729cfca2223cf8a133719f50734d4805829748fee8e5d414f8",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 479,
-        "top": 205
+        "left": 502,
+        "top": 211
       },
       "size": {
-        "width": 259,
-        "height": 148
+        "width": 240,
+        "height": 151
       }
     },
     {
       "file": "command-post-front-MOB-A.avif",
       "kind": "build-layer",
       "id": "command-post-front-MOB-A",
-      "depth": 19.726,
+      "depth": 18.568,
       "slot": "powerpack",
-      "bytes": 2902,
-      "sha256": "498c741d2c57a0d554804f91bb2fe81dd2bab690d9c04cc1e2a89fc65a3327f9",
+      "bytes": 3266,
+      "sha256": "dce513437042e0202a7da949839f5149285b3ffc181baaa1403c7fff2a38a32f",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 694,
-        "top": 267
+        "left": 729,
+        "top": 270
       },
       "size": {
-        "width": 106,
-        "height": 120
+        "width": 123,
+        "height": 117
       }
     },
     {
       "file": "command-post-front-MOB-B.avif",
       "kind": "build-layer",
       "id": "command-post-front-MOB-B",
-      "depth": 20.694,
+      "depth": 19.177,
       "slot": "running",
-      "bytes": 5742,
-      "sha256": "1a6b158158e1140477b93a78464485a1fb114c2a7f49743a29fe98efc88ec8db",
+      "bytes": 6597,
+      "sha256": "fe172835133d40420e02f7999727e4b0d20dfa9ec421b7eea5f2cb0d8697f771",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
         "left": 341,
-        "top": 466
+        "top": 496
       },
       "size": {
-        "width": 442,
-        "height": 134
+        "width": 479,
+        "height": 119
       }
     },
     {
       "file": "command-post-front-MOB-C.avif",
       "kind": "build-layer",
       "id": "command-post-front-MOB-C",
-      "depth": 20.694,
+      "depth": 19.177,
       "slot": "running",
-      "bytes": 25815,
-      "sha256": "f71e2db3dc24a328926c009a807282fa87dacf40a2fc2d877da0a77620364af3",
+      "bytes": 29762,
+      "sha256": "30b9540adbde11079a0ff652167c03741d4c31a9034f4735c56c6486ea23dda0",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 326,
-        "top": 429
+        "left": 320,
+        "top": 457
       },
       "size": {
-        "width": 576,
-        "height": 201
+        "width": 636,
+        "height": 190
       }
     },
     {
       "file": "command-post-front-MOB-D.avif",
       "kind": "build-layer",
       "id": "command-post-front-MOB-D",
-      "depth": 20.604,
+      "depth": 19.149,
       "slot": "running",
-      "bytes": 9712,
-      "sha256": "2c733dddadb5846b323ac9af94e85d8821098175f3aba14094a5fc79f82224ab",
+      "bytes": 5167,
+      "sha256": "15ec61401ff3581253024acce192438e4d80a9f0fe9dcd948820eedc1f57b1b3",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 344,
-        "top": 433
+        "left": 350,
+        "top": 504
       },
       "size": {
-        "width": 507,
-        "height": 179
+        "width": 553,
+        "height": 107
       }
     },
     {
       "file": "command-post-front-MOB-E.avif",
       "kind": "build-layer",
       "id": "command-post-front-MOB-E",
-      "depth": 22.73,
+      "depth": 20.896,
       "slot": "tanks",
-      "bytes": 2620,
-      "sha256": "3eada9df06dff4e17e183ba731b12b37dfd3bcc91f746a717bddfa8f8deebf32",
+      "bytes": 2648,
+      "sha256": "3cbdfe19867948ea7d5cf0a41d894f39b6c331df1fc4f093b097df42183c5964",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 240,
-        "top": 420
+        "left": 225,
+        "top": 445
       },
       "size": {
-        "width": 178,
-        "height": 125
+        "width": 134,
+        "height": 141
       }
     },
     {
       "file": "command-post-front-MOB-F.avif",
       "kind": "build-layer",
       "id": "command-post-front-MOB-F",
-      "depth": 19.76,
+      "depth": 18.591,
       "slot": "powerpack",
-      "bytes": 1918,
-      "sha256": "4b7a3f879f29353b361b3d09f5d498c7783d6dd87f0c0cfa1e27b1426bb75444",
+      "bytes": 2047,
+      "sha256": "9725c79483d854ce9fc84f48554998b4c9850d9ac56e2069caab2a136d6b5ee9",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 709,
-        "top": 299
+        "left": 748,
+        "top": 303
       },
       "size": {
-        "width": 73,
-        "height": 60
+        "width": 85,
+        "height": 69
       }
     },
     {
       "file": "command-post-front-MOB-G.avif",
       "kind": "build-layer",
       "id": "command-post-front-MOB-G",
-      "depth": 20.694,
+      "depth": 19.177,
       "slot": "running",
-      "bytes": 20399,
-      "sha256": "16bf02fd3e65b5ba3b8b0dbb8f05049eba15260dcfaf130e067af7d279021137",
+      "bytes": 22964,
+      "sha256": "4b77a8aeed2fb6662893775e7fdfccfcf96845d46baab17052950464b19ef41e",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 322,
-        "top": 428
+        "left": 317,
+        "top": 457
       },
       "size": {
-        "width": 582,
-        "height": 202
+        "width": 635,
+        "height": 190
       }
     },
     {
       "file": "command-post-front-PRO-A.avif",
       "kind": "build-layer",
       "id": "command-post-front-PRO-A",
-      "depth": 20.867,
+      "depth": 19.336,
       "slot": "side-armour",
-      "bytes": 12110,
-      "sha256": "8432a17f129037729cdd70051cc180cadf75368cf0948050e6efa63121bfbc35",
+      "bytes": 14270,
+      "sha256": "4e6a16babfde7410687349828e759c9b1b835daf0a928fa71fef7a3b8fb73408",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 260,
-        "top": 359
+        "left": 251,
+        "top": 384
       },
       "size": {
-        "width": 458,
-        "height": 226
+        "width": 555,
+        "height": 223
       }
     },
     {
       "file": "command-post-front-PRO-B.avif",
       "kind": "build-layer",
       "id": "command-post-front-PRO-B",
-      "depth": 18.818,
+      "depth": 17.736,
       "slot": "front-armour",
-      "bytes": 6167,
-      "sha256": "9b8e1c15e420883bbc16423df9dc9f8b0b04df40e580451c4600e02d5d20e2b4",
+      "bytes": 6724,
+      "sha256": "fffeafcc3a2563e969da02f580b2c8338c8f2ad9e4d23c646e41524938c390f2",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 704,
-        "top": 343
+        "left": 778,
+        "top": 339
       },
       "size": {
-        "width": 242,
-        "height": 168
+        "width": 236,
+        "height": 171
       }
     },
     {
       "file": "command-post-front-PRO-C.avif",
       "kind": "build-layer",
       "id": "command-post-front-PRO-C",
-      "depth": 20.867,
+      "depth": 19.336,
       "slot": "side-armour",
-      "bytes": 10690,
-      "sha256": "f761e5fb920ee0e3510433e2f7c9e4efc477a7f1fa32fc09e5efb1acab19c66f",
+      "bytes": 12248,
+      "sha256": "b56e8c06924e53d7444db1141483a6edbc5deaca0ef90e7809fd48ecdf035261",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 263,
-        "top": 361
+        "left": 258,
+        "top": 384
       },
       "size": {
-        "width": 454,
-        "height": 225
+        "width": 543,
+        "height": 223
       }
     },
     {
       "file": "command-post-front-PRO-D.avif",
       "kind": "build-layer",
       "id": "command-post-front-PRO-D",
-      "depth": 19.275,
+      "depth": 18.066,
       "slot": "roof-armour",
-      "bytes": 999,
-      "sha256": "b957d623b72db8b00532529857311aef5690c3337390f4e5ed36af6379e95bd9",
+      "bytes": 1151,
+      "sha256": "5300425fe9b1e75cb77ca6627f630ef748bf99840e3871fe2ac7c9454f3ca4ed",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 691,
-        "top": 334
+        "left": 737,
+        "top": 337
       },
       "size": {
-        "width": 66,
-        "height": 33
+        "width": 78,
+        "height": 36
       }
     },
     {
       "file": "command-post-front-PRO-E.avif",
       "kind": "build-layer",
       "id": "command-post-front-PRO-E",
-      "depth": 20.875,
+      "depth": 19.342,
       "slot": "side-armour",
-      "bytes": 14269,
-      "sha256": "116df8e857792198bf959066f6bc2e89adf63e8cafb4dd1c5261cdd46e9bf96c",
+      "bytes": 16447,
+      "sha256": "f2c4072f82017037cf7a58b8c4cb8d9e639172d5a5240f882f183b55fd3e9b32",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 257,
-        "top": 362
+        "left": 248,
+        "top": 385
       },
       "size": {
-        "width": 461,
-        "height": 187
+        "width": 544,
+        "height": 203
       }
     },
     {
       "file": "command-post-front-PRO-F.avif",
       "kind": "build-layer",
       "id": "command-post-front-PRO-F",
-      "depth": 20.836,
+      "depth": 19.29,
       "slot": "belly",
-      "bytes": 2913,
-      "sha256": "ba9a32a87a894942a25a19b0969667502738c34cac39803d80a7b3d469ea847a",
+      "bytes": 2636,
+      "sha256": "47072af3b7bf4747b725609139a663ef612ad54ee89ee9581f2a8bb26ababa51",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 403,
-        "top": 506
+        "left": 541,
+        "top": 534
       },
       "size": {
-        "width": 475,
-        "height": 104
+        "width": 400,
+        "height": 93
       }
     },
     {
       "file": "command-post-front-PRO-G.avif",
       "kind": "build-layer",
       "id": "command-post-front-PRO-G",
-      "depth": 19.27,
+      "depth": 18.063,
       "slot": "roof-armour",
-      "bytes": 1764,
-      "sha256": "8aafbf1b358bb39b3bbeb4c6cd2fd6554c02be29964cf6c9ed51e8f39fac44b5",
+      "bytes": 1911,
+      "sha256": "fd5340b684551bc60c53068bf64210f53f93604541e9f06f6cadda2fb21c59a7",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 688,
-        "top": 327
+        "left": 735,
+        "top": 329
       },
       "size": {
-        "width": 74,
-        "height": 41
+        "width": 85,
+        "height": 45
       }
     },
     {
       "file": "command-post-front-SA-A.avif",
       "kind": "build-layer",
       "id": "command-post-front-SA-A",
-      "depth": 18.421,
+      "depth": 17.298,
       "slot": "optics",
-      "bytes": 2016,
-      "sha256": "d3dca9ab2345c9aea56471c67e319b587eb277d8d763a161dbf90066c56da473",
+      "bytes": 2215,
+      "sha256": "0e24b3171634aa46c6165e59667ef7cdcafe03000f12fa1649b4cf7e07c787bd",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 695,
-        "top": 303
+        "left": 767,
+        "top": 295
       },
       "size": {
-        "width": 123,
-        "height": 85
+        "width": 131,
+        "height": 91
       }
     },
     {
       "file": "command-post-front-SA-B.avif",
       "kind": "build-layer",
       "id": "command-post-front-SA-B",
-      "depth": 20.212,
+      "depth": 19.111,
       "slot": "sensor-mast",
-      "bytes": 2700,
-      "sha256": "9e53ff019e4e423d828022f9a62b44dafb228c8bb2ce0005015c291b3a7cefae",
+      "bytes": 2706,
+      "sha256": "04dcd1686c2018adcfb29025d9eb3da18c0c5eb6e319324870fe291d6adc5c1a",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 725,
+        "left": 762,
         "top": 164
       },
       "size": {
-        "width": 73,
-        "height": 181
+        "width": 78,
+        "height": 189
       }
     },
     {
       "file": "command-post-front-SA-C.avif",
       "kind": "build-layer",
       "id": "command-post-front-SA-C",
-      "depth": 18.403,
+      "depth": 17.27,
       "slot": "optics",
-      "bytes": 1956,
-      "sha256": "905ab59301b224676888cb3b825dfb3bf48ec85e01eac5a69a6584d8c3bc3bb6",
+      "bytes": 2130,
+      "sha256": "d9306c5163b109643a5a0b31d99f5cb027fe2afa5292bf24a6d7e0d7ab0a5cc1",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 695,
-        "top": 295
+        "left": 767,
+        "top": 286
       },
       "size": {
-        "width": 114,
-        "height": 93
+        "width": 120,
+        "height": 100
       }
     },
     {
       "file": "command-post-front-SA-D.avif",
       "kind": "build-layer",
       "id": "command-post-front-SA-D",
-      "depth": 20.164,
+      "depth": 19.101,
       "slot": "sensor-mast",
-      "bytes": 3339,
-      "sha256": "863e834ea241ee8b6100398e732c2f2bc48e2830c489d19cf4eeded53672512d",
+      "bytes": 3754,
+      "sha256": "d324970c28bfaa4f927be736d6668c27c6a07c950b872e10a02cee173afaa103",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 728,
-        "top": 43
+        "left": 771,
+        "top": 33
       },
       "size": {
-        "width": 63,
-        "height": 303
+        "width": 57,
+        "height": 320
       }
     },
     {
       "file": "command-post-front-SA-E.avif",
       "kind": "build-layer",
       "id": "command-post-front-SA-E",
-      "depth": 18.435,
+      "depth": 17.311,
       "slot": "optics",
-      "bytes": 2287,
-      "sha256": "05ee45b5bb7461a65146577df2b98eeb5cb7f34e3dcb33aece4b715d26f5c202",
+      "bytes": 2445,
+      "sha256": "8cd47bb1b2891f968bd348e73bb87f83e2a397f658269cb374897a2e4c4577f6",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 695,
-        "top": 284
+        "left": 767,
+        "top": 274
       },
       "size": {
-        "width": 122,
-        "height": 104
+        "width": 126,
+        "height": 112
       }
     },
     {
       "file": "command-post-front-SA-F.avif",
       "kind": "build-layer",
       "id": "command-post-front-SA-F",
-      "depth": 20.022,
+      "depth": 18.688,
       "slot": "sensor-pods",
-      "bytes": 4989,
-      "sha256": "366097aecf13e927c65913ed56e29c38f8f7e78c7895f40005cbd6ce71253345",
+      "bytes": 5192,
+      "sha256": "4e3913eaa2dcc7748505d931a1c9160eba9bfdc7e9620545c07306f4fcb3bc4f",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 413,
-        "top": 270
+        "left": 430,
+        "top": 281
       },
       "size": {
-        "width": 450,
-        "height": 147
+        "width": 479,
+        "height": 120
       }
     },
     {
       "file": "command-post-front-SA-G.avif",
       "kind": "build-layer",
       "id": "command-post-front-SA-G",
-      "depth": 20.028,
+      "depth": 18.693,
       "slot": "sensor-pods",
-      "bytes": 4673,
-      "sha256": "c11bc6a4687b5c3343631e4a6b9390b9ca7f1d51b7237c9370a70c8b502444ea",
+      "bytes": 5195,
+      "sha256": "3b230b0c3cd46018b5d2033ed0b00745a33f5fdd3c100c35d1fb202963d0121e",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 417,
-        "top": 278
+        "left": 434,
+        "top": 292
       },
       "size": {
-        "width": 443,
-        "height": 117
+        "width": 473,
+        "height": 108
       }
     },
     {
       "file": "command-post-hero.avif",
       "kind": "hero",
       "id": "command-post-hero",
-      "depth": 17.411,
-      "bytes": 40846,
-      "sha256": "ce05b0d5bd541859acd8eed2c80b377f62bd8750d1bd91fc65965366d706deae",
+      "depth": 17.412,
+      "bytes": 40931,
+      "sha256": "143e79412e0e65af5ba27a3e1bbf38f6987cae824b70f22d2f944336635d8938",
       "frame": {
         "width": 1600,
         "height": 900
@@ -12506,523 +12700,523 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "file": "command-post-rear-ACC-A.avif",
       "kind": "build-layer",
       "id": "command-post-rear-ACC-A",
-      "depth": 19.244,
+      "depth": 18.477,
       "slot": "rear-kit",
-      "bytes": 5510,
-      "sha256": "a0080a62ac28c7ab22f46b7f893dcaec713286c562500c658c81e026cd9bf526",
+      "bytes": 6193,
+      "sha256": "6c0a59ba1c34ff5b79c9c22dd4f3dd59c955cf03e736a531877dcc26b724a33a",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 699,
-        "top": 360
+        "left": 754,
+        "top": 375
       },
       "size": {
-        "width": 157,
-        "height": 180
+        "width": 156,
+        "height": 188
       }
     },
     {
       "file": "command-post-rear-ACC-B.avif",
       "kind": "build-layer",
       "id": "command-post-rear-ACC-B",
-      "depth": 18.634,
+      "depth": 18.011,
       "slot": "rear-kit",
-      "bytes": 10520,
-      "sha256": "3de75b9ef541ff9afaf4e98bd95695b8bae9d88a9ac2fd1d54ee5b68ba145c29",
+      "bytes": 10768,
+      "sha256": "622574da78523f357a2fc75ae509505e95ab5653772c459b5b4c08d341252a42",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 589,
-        "top": 425
+        "left": 760,
+        "top": 436
       },
       "size": {
-        "width": 558,
-        "height": 295
+        "width": 477,
+        "height": 284
       }
     },
     {
       "file": "command-post-rear-ACC-C.avif",
       "kind": "build-layer",
       "id": "command-post-rear-ACC-C",
-      "depth": 24.972,
+      "depth": 23.248,
       "slot": "front-kit",
-      "bytes": 4038,
-      "sha256": "1d7cbfa00ab40c03044ce0ab22a9ca94efecba3c64b03a7d7d38bf0886b1713f",
+      "bytes": 4690,
+      "sha256": "4cbda106fa37ac06c53748baf9bd5df3b9c32a51a54cfa762873f77c242db367",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 96,
-        "top": 361
+        "left": 34,
+        "top": 422
       },
       "size": {
-        "width": 332,
-        "height": 151
+        "width": 386,
+        "height": 154
       }
     },
     {
       "file": "command-post-rear-ACC-D.avif",
       "kind": "build-layer",
       "id": "command-post-rear-ACC-D",
-      "depth": 22.213,
+      "depth": 21.211,
       "slot": "rack",
-      "bytes": 3473,
-      "sha256": "2e6d9efc6c88ed7052a78f00e6cd424680299c22206f25781e09825157a2f07f",
+      "bytes": 3610,
+      "sha256": "985e914b52ee515972fdbcbe64366c618dd21148726678e9adba5a09d0c2c528",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 567,
-        "top": 244
+        "left": 234,
+        "top": 286
       },
       "size": {
-        "width": 174,
-        "height": 79
+        "width": 513,
+        "height": 283
       }
     },
     {
       "file": "command-post-rear-ACC-E.avif",
       "kind": "build-layer",
       "id": "command-post-rear-ACC-E",
-      "depth": 24.676,
+      "depth": 22.961,
       "slot": "front-kit",
-      "bytes": 3268,
-      "sha256": "28e5f216f06ce07bbdf3843cec36d39fdd416c0eea9f272455e39bc7e701d39e",
+      "bytes": 3362,
+      "sha256": "e460beaaf1386b9e729a4717708ca65dcfae9d8ff1e8d4e6dd2c6d795c3d0e44",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 121,
-        "top": 355
+        "left": 71,
+        "top": 417
       },
       "size": {
-        "width": 199,
-        "height": 157
+        "width": 150,
+        "height": 142
       }
     },
     {
       "file": "command-post-rear-ACC-F.avif",
       "kind": "build-layer",
       "id": "command-post-rear-ACC-F",
-      "depth": 24.45,
+      "depth": 22.809,
       "slot": "front-kit",
-      "bytes": 1767,
-      "sha256": "796ae2aa4a37eddf36ac26b0a3e204b5c1c26fa5bfe5e8d223a30d4a5e93e6dc",
+      "bytes": 2085,
+      "sha256": "21f706f063dff5171d2bbc7068e599c4125523329a6f417ebb2419d906e6484c",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 191,
-        "top": 354
+        "left": 147,
+        "top": 415
       },
       "size": {
-        "width": 131,
-        "height": 158
+        "width": 172,
+        "height": 162
       }
     },
     {
       "file": "command-post-rear-ACC-G.avif",
       "kind": "build-layer",
       "id": "command-post-rear-ACC-G",
-      "depth": 22.237,
+      "depth": 21.254,
       "slot": "rack",
-      "bytes": 3953,
-      "sha256": "f5fc69b0b613695027982e048079ab1de693929b48fced44c15b49cb1e4f72eb",
+      "bytes": 4060,
+      "sha256": "48d581940b76c5b5ef799f36d6e668b018eb2f5bb3c6a3b0854dc1ca2920c743",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 562,
-        "top": 210
+        "left": 234,
+        "top": 252
       },
       "size": {
-        "width": 187,
-        "height": 114
+        "width": 522,
+        "height": 318
       }
     },
     {
       "file": "command-post-rear-base.avif",
       "kind": "build-base",
       "id": "command-post-rear-base",
-      "depth": 21.542,
-      "bytes": 19373,
-      "sha256": "944fc5013b9ea22c609af13dcad32130067ba6a12b21927101205bba81d9db91",
+      "depth": 20.288,
+      "bytes": 20573,
+      "sha256": "e9df4975e1f78cb970e13fee35b042b5ee5af25126aef0af28b861159fc1a9b3",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 208,
-        "top": 247
+        "left": 177,
+        "top": 302
       },
       "size": {
-        "width": 627,
-        "height": 376
+        "width": 697,
+        "height": 351
       }
     },
     {
       "file": "command-post-rear-CAP-A.avif",
       "kind": "build-layer",
       "id": "command-post-rear-CAP-A",
-      "depth": 19.891,
+      "depth": 19.005,
       "slot": "module",
-      "bytes": 5359,
-      "sha256": "dfb4a600261aa4c970dd7dc23a36a09b1aaaa42cbcb1a02274e7fdf5fbec1531",
+      "bytes": 4940,
+      "sha256": "f20d465ddb2da0dbaa998c6c1a971ad5f4ceb3141b7bbf2692f3f35114d1bc6d",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 416,
-        "top": 241
+        "left": 504,
+        "top": 270
       },
       "size": {
-        "width": 381,
-        "height": 157
+        "width": 320,
+        "height": 145
       }
     },
     {
       "file": "command-post-rear-CAP-B.avif",
       "kind": "build-layer",
       "id": "command-post-rear-CAP-B",
-      "depth": 19.885,
+      "depth": 19.004,
       "slot": "module",
-      "bytes": 5638,
-      "sha256": "d4c4c35fa92cd9fcdd9710831e38249df51114e8c0aaa1405ce28f3a9e822bdf",
+      "bytes": 5002,
+      "sha256": "7298ef38e3e025c323c47770eb2852e39fb05cd0ff24b067eb1b14630c3f4eed",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 416,
-        "top": 233
+        "left": 504,
+        "top": 259
       },
       "size": {
-        "width": 381,
-        "height": 165
+        "width": 318,
+        "height": 156
       }
     },
     {
       "file": "command-post-rear-CAP-C.avif",
       "kind": "build-layer",
       "id": "command-post-rear-CAP-C",
-      "depth": 19.899,
+      "depth": 19.011,
       "slot": "module",
-      "bytes": 6321,
-      "sha256": "a6072bb4088cc07446f88e892800345bfe4b44c4b8f6f3ba1d7b066f9145c472",
+      "bytes": 5425,
+      "sha256": "84f28d4e9cfc4b6087d637657a7f0694f205ca7543c6cf1c6d36083d080d14f3",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 545,
-        "top": 241
+        "left": 582,
+        "top": 270
       },
       "size": {
-        "width": 252,
-        "height": 157
+        "width": 242,
+        "height": 144
       }
     },
     {
       "file": "command-post-rear-CAP-D.avif",
       "kind": "build-layer",
       "id": "command-post-rear-CAP-D",
-      "depth": 19.876,
+      "depth": 18.998,
       "slot": "module",
-      "bytes": 6901,
-      "sha256": "0dd7f2ee07e6a17817b0911f7cbcbf34619a46a85c71d866965f68dd3e943f13",
+      "bytes": 6187,
+      "sha256": "a3b99db9a96f1b4e653a413df9afd79d7e5e4538b6c7d2b2a8ffe0108a6a7a04",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 416,
-        "top": 222
+        "left": 504,
+        "top": 251
       },
       "size": {
-        "width": 381,
-        "height": 176
+        "width": 322,
+        "height": 164
       }
     },
     {
       "file": "command-post-rear-CAP-E.avif",
       "kind": "build-layer",
       "id": "command-post-rear-CAP-E",
-      "depth": 19.891,
+      "depth": 19.006,
       "slot": "module",
-      "bytes": 4718,
-      "sha256": "a5bc5c43ec83f5336f91d9f68d3ad62342b7319fe9e30af286f8894e929e2893",
+      "bytes": 4400,
+      "sha256": "102993c7edfe2bb54c307168d16123939cc6005dda548d9a70276bcaf0af2608",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 473,
-        "top": 241
+        "left": 504,
+        "top": 270
       },
       "size": {
-        "width": 324,
-        "height": 157
+        "width": 320,
+        "height": 145
       }
     },
     {
       "file": "command-post-rear-CAP-F.avif",
       "kind": "build-layer",
       "id": "command-post-rear-CAP-F",
-      "depth": 19.886,
+      "depth": 19.003,
       "slot": "module",
-      "bytes": 5435,
-      "sha256": "a7a41fc24e6c3f45d4033cb6a68b46c91e58a4e20929e8ea81e55dc5fb76b2e9",
+      "bytes": 4877,
+      "sha256": "18b7ea9f23cc6ffe47cde1a42d23250a7c42fbfa16934a0e38c1baefe1606d3a",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 416,
-        "top": 236
+        "left": 504,
+        "top": 264
       },
       "size": {
-        "width": 381,
-        "height": 162
+        "width": 319,
+        "height": 151
       }
     },
     {
       "file": "command-post-rear-CAP-G.avif",
       "kind": "build-layer",
       "id": "command-post-rear-CAP-G",
-      "depth": 19.902,
+      "depth": 19.013,
       "slot": "module",
-      "bytes": 5657,
-      "sha256": "35fe53e749e4dc633e7be29494e674e018f312f2ccd19d5507099d40b1aba105",
+      "bytes": 5553,
+      "sha256": "1984ab94ecfc8cb4b19fde3658097230df981e1dd8fac689fcbddef9a3a312a9",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 539,
-        "top": 249
+        "left": 574,
+        "top": 275
       },
       "size": {
-        "width": 258,
-        "height": 149
+        "width": 250,
+        "height": 140
       }
     },
     {
       "file": "command-post-rear-COM-A.avif",
       "kind": "build-layer",
       "id": "command-post-rear-COM-A",
-      "depth": 19.728,
+      "depth": 19.053,
       "slot": "antenna-left",
-      "bytes": 2359,
-      "sha256": "265cfbe87daaee700a9e1630a1fe394bc1d4a4ae29bd4d1ab9aa29991f6ebcc2",
+      "bytes": 2584,
+      "sha256": "69ca0988201b5eaccd68efa3f652763a751cc6ae4a75f142fc3cabc71e4cd8b4",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 769,
-        "top": 96
+        "left": 810,
+        "top": 106
       },
       "size": {
-        "width": 82,
-        "height": 298
+        "width": 77,
+        "height": 414
       }
     },
     {
       "file": "command-post-rear-COM-B.avif",
       "kind": "build-layer",
       "id": "command-post-rear-COM-B",
-      "depth": 18.261,
+      "depth": 17.667,
       "slot": "antenna-right",
-      "bytes": 2893,
-      "sha256": "9298950a2620d802d81f59a9487d9fbbc301a2553f5783a293c9136e72ecc02e",
+      "bytes": 3404,
+      "sha256": "eb921769a62e5c55d96043ad8721b985e5157936aaa1ded3007d0dd22e270657",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 671,
-        "top": 54
+        "left": 741,
+        "top": 49
       },
       "size": {
-        "width": 73,
-        "height": 356
+        "width": 72,
+        "height": 400
       }
     },
     {
       "file": "command-post-rear-COM-C.avif",
       "kind": "build-layer",
       "id": "command-post-rear-COM-C",
-      "depth": 19.891,
+      "depth": 19.129,
       "slot": "antenna-left",
-      "bytes": 1767,
-      "sha256": "dc5d50d903a62c3e1b3a4116ed78aade0c9453dde71b130709f26da3984052b6",
+      "bytes": 1919,
+      "sha256": "ab616e962b02f89d603071e80937c07edbe20c4b79a7723672e9eca9d4db5682",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 771,
-        "top": 285
+        "left": 814,
+        "top": 304
       },
       "size": {
-        "width": 75,
-        "height": 107
+        "width": 68,
+        "height": 216
       }
     },
     {
       "file": "command-post-rear-COM-D.avif",
       "kind": "build-layer",
       "id": "command-post-rear-COM-D",
-      "depth": 18.882,
+      "depth": 18.269,
       "slot": "radio-mast",
-      "bytes": 3749,
-      "sha256": "a5c42481c8f56841ae935791692f2eab72701f917826cf4c36e083248672981a",
+      "bytes": 3928,
+      "sha256": "4eb4bfccfedfddcc3320c68f2340480608960f9618f094a5b7c0370525301fdf",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 673,
-        "top": 37
+        "left": 729,
+        "top": 39
       },
       "size": {
-        "width": 125,
-        "height": 383
+        "width": 122,
+        "height": 398
       }
     },
     {
       "file": "command-post-rear-COM-E.avif",
       "kind": "build-layer",
       "id": "command-post-rear-COM-E",
-      "depth": 18.87,
+      "depth": 18.265,
       "slot": "radio-mast",
-      "bytes": 3832,
-      "sha256": "5358d663000a76089bf975e9b73b2caabbc8bb975732318f648a858850a308a7",
+      "bytes": 3759,
+      "sha256": "0248c6796a3e7c39675c69e64024a6968a48226145c9f1a3362244a99e39721f",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 703,
+        "left": 760,
         "top": 21
       },
       "size": {
-        "width": 97,
-        "height": 399
+        "width": 94,
+        "height": 416
       }
     },
     {
       "file": "command-post-rear-COM-F.avif",
       "kind": "build-layer",
       "id": "command-post-rear-COM-F",
-      "depth": 19.754,
+      "depth": 19.062,
       "slot": "antenna-left",
-      "bytes": 2336,
-      "sha256": "dcdd41fae6950410e0c65d9f35901fcd1f73b1b2585b1ab47aa1720e5c3e3814",
+      "bytes": 2446,
+      "sha256": "33f78eb0eaf94565398a4f05998c5c6ceb188875409eae52cdbb00b9035bc944",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 768,
-        "top": 132
+        "left": 809,
+        "top": 143
       },
       "size": {
-        "width": 84,
-        "height": 262
+        "width": 79,
+        "height": 377
       }
     },
     {
       "file": "command-post-rear-COM-G.avif",
       "kind": "build-layer",
       "id": "command-post-rear-COM-G",
-      "depth": 18.327,
+      "depth": 17.683,
       "slot": "antenna-right",
-      "bytes": 3251,
-      "sha256": "51ad40ef7cf7268e0d567563d19b9db9aad733d93b7e4390d785ff447d183cb1",
+      "bytes": 3339,
+      "sha256": "fe9b5b09320660c5f284942d2b2a8b2db2f4dbfb9ac75660ed80718a9757c31d",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 639,
-        "top": 177
+        "left": 704,
+        "top": 175
       },
       "size": {
-        "width": 111,
-        "height": 248
+        "width": 115,
+        "height": 274
       }
     },
     {
       "file": "command-post-rear-FP-A.avif",
       "kind": "build-layer",
       "id": "command-post-rear-FP-A",
-      "depth": 21.339,
+      "depth": 20.192,
       "slot": "weapon",
-      "bytes": 4278,
-      "sha256": "51fda2df0717be9104a0185c8c9a03486fdf791838e3cc47e861fec6f1ce51fe",
+      "bytes": 3848,
+      "sha256": "bcd197a7912962ada75ed2d2e08007087d932f6354695786ad6a1a8c726e6a77",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 246,
-        "top": 225
+        "left": 378,
+        "top": 261
       },
       "size": {
-        "width": 326,
-        "height": 121
+        "width": 209,
+        "height": 110
       }
     },
     {
       "file": "command-post-rear-FP-B.avif",
       "kind": "build-layer",
       "id": "command-post-rear-FP-B",
-      "depth": 21.532,
+      "depth": 20.378,
       "slot": "weapon",
-      "bytes": 3922,
-      "sha256": "e36d3570f90f6b6fe12ec9caeec52844c2677ec0e5c3d60a7c1c19bfedc961e0",
+      "bytes": 3499,
+      "sha256": "1437bab0693e792b8358192045dd6479892dfcdbd1bb0ad761cb40c82c8ed785",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 246,
-        "top": 202
+        "left": 390,
+        "top": 230
       },
       "size": {
-        "width": 337,
-        "height": 144
+        "width": 203,
+        "height": 140
       }
     },
     {
       "file": "command-post-rear-FP-C.avif",
       "kind": "build-layer",
       "id": "command-post-rear-FP-C",
-      "depth": 21.837,
+      "depth": 20.62,
       "slot": "weapon",
-      "bytes": 5955,
-      "sha256": "0d5bc5213f8720b13b86b855d14a25f5931bd813c9aab9533d4b373ab5059cf2",
+      "bytes": 5580,
+      "sha256": "41f6cdd3f6a44ea4002831d08ca1b75aa7f430a280c839cdb2d898e96e4c3cc7",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 246,
-        "top": 213
+        "left": 233,
+        "top": 244
       },
       "size": {
-        "width": 369,
+        "width": 400,
         "height": 145
       }
     },
@@ -13030,525 +13224,525 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "file": "command-post-rear-FP-D.avif",
       "kind": "build-layer",
       "id": "command-post-rear-FP-D",
-      "depth": 22.792,
+      "depth": 21.665,
       "slot": "aux-weapon",
-      "bytes": 2420,
-      "sha256": "20a982ff0c998b3ec46d106a8886f5a23ab8bf7be294d6038c705bbb0ab29883",
+      "bytes": 2579,
+      "sha256": "e2f96d895b5fa5d1e3d8aa9e266b480a2f82d4a29ce83b1bfb39f4c88a71c8e8",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 332,
-        "top": 228
+        "left": 318,
+        "top": 268
       },
       "size": {
-        "width": 146,
-        "height": 108
+        "width": 162,
+        "height": 103
       }
     },
     {
       "file": "command-post-rear-FP-E.avif",
       "kind": "build-layer",
       "id": "command-post-rear-FP-E",
-      "depth": 22.779,
+      "depth": 21.651,
       "slot": "aux-weapon",
-      "bytes": 2647,
-      "sha256": "71d1cded3aba65ba95b1cd90b8faa2f66b58efd1f2f5f2ad8993387d06238e67",
+      "bytes": 2533,
+      "sha256": "e4a5b5c7a8c079534dcfd08828c3e86ca373d7b1c58a4497b30ddd9add5dd1a4",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 340,
-        "top": 216
+        "left": 320,
+        "top": 261
       },
       "size": {
-        "width": 135,
-        "height": 122
+        "width": 156,
+        "height": 110
       }
     },
     {
       "file": "command-post-rear-FP-F.avif",
       "kind": "build-layer",
       "id": "command-post-rear-FP-F",
-      "depth": 21.69,
+      "depth": 20.494,
       "slot": "weapon",
-      "bytes": 5623,
-      "sha256": "bf94e67cec0eba4b0d21ca5e2c4fa93cfbbe86160490f1d754d1d98f3341aa80",
+      "bytes": 5040,
+      "sha256": "effcd3ecb72b7812febdfd29404e4a71f4fa1ebe91f408e80bf8a36baf1a9ddb",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 246,
-        "top": 208
+        "left": 234,
+        "top": 242
       },
       "size": {
-        "width": 358,
-        "height": 149
+        "width": 385,
+        "height": 147
       }
     },
     {
       "file": "command-post-rear-FP-G.avif",
       "kind": "build-layer",
       "id": "command-post-rear-FP-G",
-      "depth": 21.488,
+      "depth": 20.364,
       "slot": "weapon",
-      "bytes": 4731,
-      "sha256": "85185671ae6fc183f3b31e11f577b75e87a03646428b8ca219db5e06031d3fdb",
+      "bytes": 4410,
+      "sha256": "4ea613a7b5be054f439fe5cc165bec1f597069bd23a99790c273c58be67fe17f",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 246,
-        "top": 203
+        "left": 234,
+        "top": 231
       },
       "size": {
-        "width": 359,
-        "height": 140
+        "width": 383,
+        "height": 139
       }
     },
     {
       "file": "command-post-rear-MOB-A.avif",
       "kind": "build-layer",
       "id": "command-post-rear-MOB-A",
-      "depth": 22.115,
+      "depth": 20.765,
       "slot": "powerpack",
-      "bytes": 2891,
-      "sha256": "e9525da0ea0344c4e6035583c9da2c4b08862eb371243ef46fbdd00d7c4f4e5a",
+      "bytes": 2838,
+      "sha256": "7b7e3e62cec4fab1f1f53c1afc81d283fc50116ef0d9a3c723f313737bd7e5b4",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 248,
-        "top": 243
+        "left": 233,
+        "top": 281
       },
       "size": {
-        "width": 163,
-        "height": 89
+        "width": 174,
+        "height": 88
       }
     },
     {
       "file": "command-post-rear-MOB-B.avif",
       "kind": "build-layer",
       "id": "command-post-rear-MOB-B",
-      "depth": 21.835,
+      "depth": 20.506,
       "slot": "running",
-      "bytes": 4798,
-      "sha256": "609bdc46ae5a114fe2450a3aac5c3af45e2f0810f59e87ba486de591a9bcf5a9",
+      "bytes": 5439,
+      "sha256": "832e20e8763c78a97fbfba06897536534fa9336d30139ddd3076eb7e0d0aea37",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 242,
-        "top": 440
+        "left": 222,
+        "top": 494
       },
       "size": {
-        "width": 354,
-        "height": 130
+        "width": 427,
+        "height": 112
       }
     },
     {
       "file": "command-post-rear-MOB-C.avif",
       "kind": "build-layer",
       "id": "command-post-rear-MOB-C",
-      "depth": 21.835,
+      "depth": 20.506,
       "slot": "running",
-      "bytes": 21699,
-      "sha256": "ac6093d48f1d0030ebbecde2b022e18957a40d0dca75fe30255c023a9c00ceb6",
+      "bytes": 25922,
+      "sha256": "5311938e5c5461b54226d29bb9c2e2aced4eca37ab5b024ac13fc68235db2e80",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 230,
-        "top": 402
+        "left": 204,
+        "top": 458
       },
       "size": {
-        "width": 486,
-        "height": 196
+        "width": 564,
+        "height": 177
       }
     },
     {
       "file": "command-post-rear-MOB-D.avif",
       "kind": "build-layer",
       "id": "command-post-rear-MOB-D",
-      "depth": 21.826,
+      "depth": 20.477,
       "slot": "running",
-      "bytes": 8062,
-      "sha256": "044f0fe0aca50b3d1e833b53dface33fdbe8d1a127394eb80169981747487cee",
+      "bytes": 4041,
+      "sha256": "a15f2fb01919740b6a9cbd1c0bb023eb75b06b7b54f7853f33c250fb11f4907d",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 231,
-        "top": 395
+        "left": 230,
+        "top": 487
       },
       "size": {
-        "width": 365,
-        "height": 173
+        "width": 413,
+        "height": 109
       }
     },
     {
       "file": "command-post-rear-MOB-E.avif",
       "kind": "build-layer",
       "id": "command-post-rear-MOB-E",
-      "depth": 19.79,
+      "depth": 18.851,
       "slot": "tanks",
-      "bytes": 4322,
-      "sha256": "3fd32d86c045a17b5bac7f11e0348ea7f236a28db3850550ecd9963183e796fd",
+      "bytes": 4199,
+      "sha256": "1b812fa4ce38ff9472587f7ec3105d4e33657af8979c5fc24390c48a453a2de7",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 582,
-        "top": 434
+        "left": 649,
+        "top": 469
       },
       "size": {
-        "width": 271,
-        "height": 143
+        "width": 233,
+        "height": 145
       }
     },
     {
       "file": "command-post-rear-MOB-F.avif",
       "kind": "build-layer",
       "id": "command-post-rear-MOB-F",
-      "depth": 22.129,
+      "depth": 20.768,
       "slot": "powerpack",
-      "bytes": 2128,
-      "sha256": "531b866f5569a9aee343868a24b26667b14ec2cdf85a609a91087be43f2cb14b",
+      "bytes": 1987,
+      "sha256": "d4582632a6e0f1b37bab89825c2a5dcfa15850bf302351b758a912917c3a83ec",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 297,
-        "top": 268
+        "left": 234,
+        "top": 309
       },
       "size": {
-        "width": 98,
-        "height": 64
+        "width": 155,
+        "height": 59
       }
     },
     {
       "file": "command-post-rear-MOB-G.avif",
       "kind": "build-layer",
       "id": "command-post-rear-MOB-G",
-      "depth": 21.835,
+      "depth": 20.506,
       "slot": "running",
-      "bytes": 16595,
-      "sha256": "113a2df86faeea9e0bb52906be783512b3ee9259ded2d850def77f6e4f997c42",
+      "bytes": 19262,
+      "sha256": "5e4c0ef0e482d6e85a9ea870e163eb7ca0e50705f03d72f69f4c0780a12f91de",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 226,
-        "top": 401
+        "left": 201,
+        "top": 457
       },
       "size": {
-        "width": 464,
-        "height": 197
+        "width": 561,
+        "height": 178
       }
     },
     {
       "file": "command-post-rear-PRO-A.avif",
       "kind": "build-layer",
       "id": "command-post-rear-PRO-A",
-      "depth": 21.155,
+      "depth": 19.978,
       "slot": "side-armour",
-      "bytes": 9115,
-      "sha256": "06fcf9a827b0ce7c7c4b37c5f9e125d462bbb73ea0a8d0047167b228b881f6d2",
+      "bytes": 10372,
+      "sha256": "063b90ec41b4d1f356c4e228fd1d9d90e8dcd70bc2c3b0b92ac3f51643960707",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 241,
-        "top": 362
+        "left": 233,
+        "top": 397
       },
       "size": {
-        "width": 490,
-        "height": 199
+        "width": 561,
+        "height": 192
       }
     },
     {
       "file": "command-post-rear-PRO-B.avif",
       "kind": "build-layer",
       "id": "command-post-rear-PRO-B",
-      "depth": 23.443,
+      "depth": 21.964,
       "slot": "front-armour",
-      "bytes": 2540,
-      "sha256": "5ddf374ebcf3137b17d9ecfe891ac2545a3bc0025fb784085e8237d901a56d8c",
+      "bytes": 2838,
+      "sha256": "a4f4cbecdf40350c7367659450467f6b370eb49a08d8bcb458fa81a9f5723703",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 210,
-        "top": 280
+        "left": 175,
+        "top": 328
       },
       "size": {
-        "width": 199,
-        "height": 79
+        "width": 211,
+        "height": 89
       }
     },
     {
       "file": "command-post-rear-PRO-C.avif",
       "kind": "build-layer",
       "id": "command-post-rear-PRO-C",
-      "depth": 21.155,
+      "depth": 19.978,
       "slot": "side-armour",
-      "bytes": 7760,
-      "sha256": "6ff08704d278e42260032b5dd0f6dec3d15c8f01e0ce3450c2602f89cad80d4c",
+      "bytes": 8999,
+      "sha256": "88b1b97b5720497b0ee8f7ad62a2f81cba2dee5e4511bc46424e8d33e05b5a00",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 244,
-        "top": 363
+        "left": 239,
+        "top": 402
       },
       "size": {
-        "width": 418,
-        "height": 160
+        "width": 549,
+        "height": 172
       }
     },
     {
       "file": "command-post-rear-PRO-D.avif",
       "kind": "build-layer",
       "id": "command-post-rear-PRO-D",
-      "depth": 22.615,
+      "depth": 21.282,
       "slot": "roof-armour",
-      "bytes": 1145,
-      "sha256": "daf8dbb09c208af8433672cd15f80654f4cbf88daaa9b8cc12eab25efeae06c2",
+      "bytes": 1067,
+      "sha256": "d52dbeb1abbc1604b99bf7a8c6f6cd22c77c66f2965eb5db907728b4ac36bddc",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 340,
-        "top": 281
+        "left": 323,
+        "top": 329
       },
       "size": {
-        "width": 78,
-        "height": 36
+        "width": 84,
+        "height": 30
       }
     },
     {
       "file": "command-post-rear-PRO-E.avif",
       "kind": "build-layer",
       "id": "command-post-rear-PRO-E",
-      "depth": 21.164,
+      "depth": 19.984,
       "slot": "side-armour",
-      "bytes": 11748,
-      "sha256": "48544c593d99a64d0c392fcc12b47b43f89902bd01daf1d23759e3b2af81afa1",
+      "bytes": 12087,
+      "sha256": "f6877088b24ef95b8c2692e347d5bad8e53ea3b911525979d9f05c011689d40d",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 238,
-        "top": 358
+        "left": 230,
+        "top": 407
       },
       "size": {
-        "width": 418,
-        "height": 202
+        "width": 558,
+        "height": 144
       }
     },
     {
       "file": "command-post-rear-PRO-F.avif",
       "kind": "build-layer",
       "id": "command-post-rear-PRO-F",
-      "depth": 21.791,
+      "depth": 20.462,
       "slot": "belly",
-      "bytes": 2599,
-      "sha256": "aa0689ae2c53b6c90e71bbf5529693b0216ffcd18789e5d000662eba21774452",
+      "bytes": 2913,
+      "sha256": "1d9249fb8f6df876ff13462ad919e96492fda628fefc2cc383488aa7dc313b0f",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 300,
-        "top": 472
+        "left": 282,
+        "top": 524
       },
       "size": {
-        "width": 441,
-        "height": 113
+        "width": 506,
+        "height": 96
       }
     },
     {
       "file": "command-post-rear-PRO-G.avif",
       "kind": "build-layer",
       "id": "command-post-rear-PRO-G",
-      "depth": 22.61,
+      "depth": 21.279,
       "slot": "roof-armour",
-      "bytes": 1895,
-      "sha256": "8304d3b4c4159adfdb4c6a2062b10445f832917154d9b4b1764fef6a928d3e3b",
+      "bytes": 1861,
+      "sha256": "a790cf3a4fe8117e0c2dfdc892f36c9160b2b2b048cb97392f9adaa3c95b255f",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 334,
-        "top": 274
+        "left": 319,
+        "top": 323
       },
       "size": {
-        "width": 88,
-        "height": 43
+        "width": 93,
+        "height": 37
       }
     },
     {
       "file": "command-post-rear-SA-A.avif",
       "kind": "build-layer",
       "id": "command-post-rear-SA-A",
-      "depth": 23.45,
+      "depth": 22.107,
       "slot": "optics",
-      "bytes": 2338,
-      "sha256": "2e0318b1efd46937659b995f5077edb02d628664e92b2e7b8a803e49c57458c8",
+      "bytes": 2098,
+      "sha256": "7d2e1c0b9df423557de42dc46af8d3ce82622185f2717d56cab277a78f94c696",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 327,
-        "top": 231
+        "left": 300,
+        "top": 282
       },
       "size": {
-        "width": 110,
-        "height": 93
+        "width": 111,
+        "height": 84
       }
     },
     {
       "file": "command-post-rear-SA-B.avif",
       "kind": "build-layer",
       "id": "command-post-rear-SA-B",
-      "depth": 21.528,
+      "depth": 20.183,
       "slot": "sensor-mast",
-      "bytes": 2570,
-      "sha256": "307c97dc18193aa206dc0970f869b7e746e51529613da7e35aa0387bf2d9a90a",
+      "bytes": 2508,
+      "sha256": "6fc9e2e58666212258b310f6976f16a61f276dad761868f43edad28782e8b10b",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 246,
-        "top": 154
+        "left": 299,
+        "top": 183
       },
       "size": {
-        "width": 125,
-        "height": 174
+        "width": 72,
+        "height": 184
       }
     },
     {
       "file": "command-post-rear-SA-C.avif",
       "kind": "build-layer",
       "id": "command-post-rear-SA-C",
-      "depth": 23.44,
+      "depth": 22.11,
       "slot": "optics",
-      "bytes": 2205,
-      "sha256": "5ccef13ee3a673c33f6c82002c4d787c23dd4426223664689eeef7286f2552f1",
+      "bytes": 1942,
+      "sha256": "d8d34e614e1cbfac6590d5138e7af3658fbd058cd73d99e2974efac319eda1ab",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 337,
-        "top": 223
+        "left": 309,
+        "top": 275
       },
       "size": {
-        "width": 100,
-        "height": 101
+        "width": 102,
+        "height": 84
       }
     },
     {
       "file": "command-post-rear-SA-D.avif",
       "kind": "build-layer",
       "id": "command-post-rear-SA-D",
-      "depth": 21.423,
+      "depth": 20.136,
       "slot": "sensor-mast",
-      "bytes": 3581,
-      "sha256": "9a9a1e508a7822ae224f78a2789cfe259aa4c7099af3d8e8e782138de7f57272",
+      "bytes": 3467,
+      "sha256": "445d71faa6bdeda57ade13620246159f793040f2565f093a13d30f2ef7450f75",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 246,
-        "top": 36
+        "left": 307,
+        "top": 59
       },
       "size": {
-        "width": 126,
-        "height": 294
+        "width": 63,
+        "height": 308
       }
     },
     {
       "file": "command-post-rear-SA-E.avif",
       "kind": "build-layer",
       "id": "command-post-rear-SA-E",
-      "depth": 23.401,
+      "depth": 22.069,
       "slot": "optics",
-      "bytes": 2590,
-      "sha256": "84a04fc1c7c2f6aafccd4a9fd6aa89147ae8c2c8439ca2e07ba90b9366da0745",
+      "bytes": 2308,
+      "sha256": "826e79138771cc18b90c9c72097901defff065146320919aff564f860e275da4",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 328,
-        "top": 214
+        "left": 301,
+        "top": 266
       },
       "size": {
-        "width": 109,
-        "height": 110
+        "width": 110,
+        "height": 99
       }
     },
     {
       "file": "command-post-rear-SA-F.avif",
       "kind": "build-layer",
       "id": "command-post-rear-SA-F",
-      "depth": 21.67,
+      "depth": 20.468,
       "slot": "sensor-pods",
-      "bytes": 4322,
-      "sha256": "8a8a9ce4de5b3b8950e4598597f59afac3be0203081ac256483c6043b930c8c3",
+      "bytes": 4502,
+      "sha256": "63bbcbdca2d9921dc643f808f746067581110c99d2b98b52210e6004050062ba",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 252,
-        "top": 221
+        "left": 243,
+        "top": 279
       },
       "size": {
-        "width": 416,
-        "height": 144
+        "width": 439,
+        "height": 114
       }
     },
     {
       "file": "command-post-rear-SA-G.avif",
       "kind": "build-layer",
       "id": "command-post-rear-SA-G",
-      "depth": 21.681,
+      "depth": 20.473,
       "slot": "sensor-pods",
-      "bytes": 4215,
-      "sha256": "e8b9845fb3ce4dc0d3d48e653541f085c514399872069fb81efb72fa84b087ca",
+      "bytes": 4409,
+      "sha256": "4a8edbeca66d7c0c151dabcbc8b2820104ba5b767e4d44a0bdbfdd52e1263232",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 255,
-        "top": 228
+        "left": 243,
+        "top": 288
       },
       "size": {
-        "width": 410,
-        "height": 137
+        "width": 436,
+        "height": 105
       }
     },
     {
@@ -13556,8 +13750,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "command-post-turntable-00",
       "depth": 12.968,
-      "bytes": 23433,
-      "sha256": "1921da0327a416bb619140a3289d6c38f8afed1845fd28e16841f99c970a043d",
+      "bytes": 23420,
+      "sha256": "bc40a27b584f3213524c2e3dad445f5d082b4a4a1b48088619806f3cd104c6e2",
       "frame": {
         "width": 960,
         "height": 540
@@ -13576,8 +13770,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "command-post-turntable-01",
       "depth": 12.622,
-      "bytes": 24957,
-      "sha256": "086b34962e8484e08fc146c1988b53f74dd88b329ba3fd6499c1eb89561c4d31",
+      "bytes": 24983,
+      "sha256": "f1c9a09154f62976cf159ceb7a314360cde73bd0974abc3aaa6b93c6db9792a2",
       "frame": {
         "width": 960,
         "height": 540
@@ -13595,9 +13789,9 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "file": "command-post-turntable-02.avif",
       "kind": "turntable",
       "id": "command-post-turntable-02",
-      "depth": 12.242,
-      "bytes": 27080,
-      "sha256": "d85596fd602ad5fbdc34f94e60aea7d843c52ca30ea1bdd0798dfc92a1128ea8",
+      "depth": 12.241,
+      "bytes": 27084,
+      "sha256": "bf55fa8cb4e285ab020701b842a895907c966e8a703fe1050564885eddc606a6",
       "frame": {
         "width": 960,
         "height": 540
@@ -13616,8 +13810,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "command-post-turntable-03",
       "depth": 11.388,
-      "bytes": 29192,
-      "sha256": "64c384a825601e4394569545d423d5b6e0073e944d88b152afb4f94a8134c509",
+      "bytes": 29169,
+      "sha256": "970652d5a5d6f1785dcc3d9d5e6b91db4eedcdf4ddb2043da375cd6fba8b3f09",
       "frame": {
         "width": 960,
         "height": 540
@@ -13636,8 +13830,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "command-post-turntable-04",
       "depth": 11.072,
-      "bytes": 26168,
-      "sha256": "b94477308fd0edcb494b7f37dd7b345c8a1d4a338a78ad30b087a8c52ff227be",
+      "bytes": 26115,
+      "sha256": "28f48ca43d5a86842e3baec7e4f063bbc61fe75688ee7ab78b967baa01af99bc",
       "frame": {
         "width": 960,
         "height": 540
@@ -13656,8 +13850,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "command-post-turntable-05",
       "depth": 11.053,
-      "bytes": 19088,
-      "sha256": "c18daab53ade3591f025402fb8db8aa242d795e96c27c3a1ce4d29dd4520eb47",
+      "bytes": 18994,
+      "sha256": "b4b6642c2443794ad85ab39cd2ba80a5cb5b51316e4a4224c488a9aaf14ef69c",
       "frame": {
         "width": 960,
         "height": 540
@@ -13676,8 +13870,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "command-post-turntable-06",
       "depth": 10.785,
-      "bytes": 17219,
-      "sha256": "5564b5af3d0715c9a85399d452f26ed32a8917dff1ffb855cf0e9e2de21f8f2a",
+      "bytes": 17164,
+      "sha256": "9aea9f534abe84b6f1cc7a98e318320670c5292bf765bf45d49277fb1910bc06",
       "frame": {
         "width": 960,
         "height": 540
@@ -13696,8 +13890,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "command-post-turntable-07",
       "depth": 11.052,
-      "bytes": 19765,
-      "sha256": "20a05b072c375d4f8d7961b37e49fbd0feee72373314150035b448f7930fd3ae",
+      "bytes": 19724,
+      "sha256": "a9f5ad919d50aef0e9b390a5d9891bb741f5508a01903e58555aaeb3ab494245",
       "frame": {
         "width": 960,
         "height": 540
@@ -13716,8 +13910,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "command-post-turntable-08",
       "depth": 11.07,
-      "bytes": 26477,
-      "sha256": "8b445cb51aec6f83000f1ccba5a53e653716d724547ad0583e4cf2f8b6217660",
+      "bytes": 26483,
+      "sha256": "e6cd67b63570e6969e70d4ec77d49271e4bca45b66dd1942c544c55bea2c107b",
       "frame": {
         "width": 960,
         "height": 540
@@ -13736,8 +13930,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "command-post-turntable-09",
       "depth": 11.386,
-      "bytes": 29236,
-      "sha256": "8f3eb4535f9a8ac9dbb39ef6648cb75b95616c23238960b14e7afde9424e9d07",
+      "bytes": 29228,
+      "sha256": "590601d620c43998c2679d662c3736f3f90f335e12d5f5df76c756976e9c668b",
       "frame": {
         "width": 960,
         "height": 540
@@ -13756,8 +13950,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "command-post-turntable-10",
       "depth": 12.238,
-      "bytes": 27313,
-      "sha256": "e328a513c2973494fb84f90a99c2fa679e9a99e7a98109f87f9da089ee958f8c",
+      "bytes": 27245,
+      "sha256": "caed0e787967b42981f3db379cf8dded85fc66d07ccb2e4703aef71cc63400da",
       "frame": {
         "width": 960,
         "height": 540
@@ -13776,8 +13970,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "command-post-turntable-11",
       "depth": 12.618,
-      "bytes": 25228,
-      "sha256": "b173e9ba46b34d8ef9a36f410c3a1bbb228aebfdb722c2394c246a0a6b639e5f",
+      "bytes": 25311,
+      "sha256": "dd7d9c322e807814c7002d99e7d9a384e7c3f1f8a1ac17185b5f9e8cc25db5c0",
       "frame": {
         "width": 960,
         "height": 540
@@ -13796,8 +13990,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "command-post-turntable-12",
       "depth": 12.964,
-      "bytes": 23838,
-      "sha256": "5bb242e48f7901def1b210c2376a98035f6c0192695de36538327b8fb054c408",
+      "bytes": 23775,
+      "sha256": "8463939450f19a11ea25b73b11eee532e22a9d8f8bf93d05f19c290e99bd1cb1",
       "frame": {
         "width": 960,
         "height": 540
@@ -13816,8 +14010,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "command-post-turntable-13",
       "depth": 12.779,
-      "bytes": 25359,
-      "sha256": "705780b81e077339f314fbc3ebbf0bb99dde3653da8a78fcef4a0f70dce31794",
+      "bytes": 25178,
+      "sha256": "ede6e68df841defec7e92bfe33470e5dd9349d4513258f46efe60cbc68230ba1",
       "frame": {
         "width": 960,
         "height": 540
@@ -13836,8 +14030,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "command-post-turntable-14",
       "depth": 12.196,
-      "bytes": 27195,
-      "sha256": "c77b4994c1d81e5341d323529d32c02cadaa0bfb5f20555585ef88e970436115",
+      "bytes": 27287,
+      "sha256": "96595aca5133965fa4a2b1e97564706b9684c9c9412d6b244173e8eb716baabb",
       "frame": {
         "width": 960,
         "height": 540
@@ -13856,8 +14050,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "command-post-turntable-15",
       "depth": 11.236,
-      "bytes": 28719,
-      "sha256": "5ef1829b360f456d9bd02ca3f99f2c3401edc8bf5c783986c003ff772b4cb643",
+      "bytes": 28599,
+      "sha256": "6940a25ab1d1f6863a8955d34097fd722f390caeda74cffb5fb69ca1dceb6253",
       "frame": {
         "width": 960,
         "height": 540
@@ -13876,8 +14070,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "command-post-turntable-16",
       "depth": 10.462,
-      "bytes": 25950,
-      "sha256": "b65cd955b54e4d6ba8763c93748ffab6d1bd73de3e43929ee386a0beb4b4a66d",
+      "bytes": 25966,
+      "sha256": "079ff4e8ef21f1f73e74c90a2def342f865498081e0c08cbbef64d41496f3af6",
       "frame": {
         "width": 960,
         "height": 540
@@ -13896,8 +14090,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "command-post-turntable-17",
       "depth": 10.379,
-      "bytes": 17652,
-      "sha256": "e4409ab2046d99e20ee107b22be94748be12b249a2640b9903512911cef3f548",
+      "bytes": 17639,
+      "sha256": "f99098e96339560578b9106b3a4dcf5eb3abf83c1cfca9fc3d45daedb371f4a6",
       "frame": {
         "width": 960,
         "height": 540
@@ -13916,8 +14110,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "command-post-turntable-18",
       "depth": 10.086,
-      "bytes": 15587,
-      "sha256": "78ccdf40bf2594dfd161c93c8b5fb096c7a11f33a515f889fcc1fd675dca4b45",
+      "bytes": 15543,
+      "sha256": "14d53197eaaa26514c020baaf17100419681185cf1f2448ebe448ffd81006954",
       "frame": {
         "width": 960,
         "height": 540
@@ -13936,8 +14130,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "command-post-turntable-19",
       "depth": 10.38,
-      "bytes": 17609,
-      "sha256": "b26ce7d753c4f80ee70b6ebde79612e11ad37fe69af26c8f98febb11affb91e3",
+      "bytes": 17717,
+      "sha256": "f116cb2ad07391e37b5756f7a2bd5c110fa5e68e7e1a8d093209024d777cee33",
       "frame": {
         "width": 960,
         "height": 540
@@ -13956,8 +14150,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "command-post-turntable-20",
       "depth": 10.464,
-      "bytes": 25957,
-      "sha256": "951858faae5f06bde4be7ed8a00695718244c79b18c81a4d451c94494db1edfa",
+      "bytes": 25966,
+      "sha256": "466a170f007cb1e189d3e277f752279e7ffbbc90ea31169af587e365be7461cd",
       "frame": {
         "width": 960,
         "height": 540
@@ -13976,8 +14170,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "command-post-turntable-21",
       "depth": 11.239,
-      "bytes": 27838,
-      "sha256": "e34a1494f9c7c1563187ec4d5a0c260aafc13bb4754fd910cce27848d30233a3",
+      "bytes": 27765,
+      "sha256": "c15e917c5e7255c2da4408cccc267352a207c8a3de54fe2a4ecbb28e31a018fe",
       "frame": {
         "width": 960,
         "height": 540
@@ -13996,8 +14190,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "command-post-turntable-22",
       "depth": 12.199,
-      "bytes": 25863,
-      "sha256": "a8aa19bd77c91adf0e19ee82e0baeeadb6d96898101de5c47f5cb1fd18ceaf26",
+      "bytes": 25967,
+      "sha256": "426fc82a413d97716d9394cd36f2e8a0a567ad7c78a2462312fa5c03708f7a3a",
       "frame": {
         "width": 960,
         "height": 540
@@ -14016,8 +14210,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "command-post-turntable-23",
       "depth": 12.782,
-      "bytes": 23990,
-      "sha256": "36c95cd436442f9a779424d4540780dd5492fbbbb905dee90efab8692e4907ea",
+      "bytes": 24066,
+      "sha256": "db1216733e6f28648928408f481e4a8ea7331520251b91b87c2cb87a4fd390f0",
       "frame": {
         "width": 960,
         "height": 540
@@ -14035,544 +14229,544 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "file": "mine-clearing-front-ACC-A.avif",
       "kind": "build-layer",
       "id": "mine-clearing-front-ACC-A",
-      "depth": 23.081,
+      "depth": 21.187,
       "slot": "rear-kit",
-      "bytes": 1402,
-      "sha256": "28d5e640d79344caf3e7ccdc6914c50c647c7d7c231af0f243ffc40faf25b671",
+      "bytes": 2197,
+      "sha256": "13d31c77eb4d9f46547069a4d2d45f4842d20cef009eb347fa46b7dd674c75f3",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 270,
-        "top": 301
+        "left": 234,
+        "top": 327
       },
       "size": {
-        "width": 83,
-        "height": 135
+        "width": 93,
+        "height": 163
       }
     },
     {
       "file": "mine-clearing-front-ACC-B.avif",
       "kind": "build-layer",
       "id": "mine-clearing-front-ACC-B",
-      "depth": 24.369,
+      "depth": 22.328,
       "slot": "rear-kit",
-      "bytes": 4453,
-      "sha256": "73bfe46aab40d2289ea70975861c53cf106d8087abc076a843715ee590fddb7f",
+      "bytes": 5891,
+      "sha256": "dad71a6bffcce8996209166e3be306ef0652fd11add9e4d71711ad9242609245",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 102,
-        "top": 315
+        "left": 33,
+        "top": 357
       },
       "size": {
-        "width": 223,
-        "height": 176
+        "width": 267,
+        "height": 198
       }
     },
     {
       "file": "mine-clearing-front-ACC-C.avif",
       "kind": "build-layer",
       "id": "mine-clearing-front-ACC-C",
-      "depth": 18.255,
+      "depth": 17.385,
       "slot": "front-kit",
-      "bytes": 9883,
-      "sha256": "2c2231868896deee1e6aa36261f0f112290c747eded35ec6458b4d46816e6cce",
+      "bytes": 9946,
+      "sha256": "cc7314d07ec2ac8580765c9d214bf916950a4cd3f8ffce867c50dfc77becb7c0",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 771,
-        "top": 451
+        "left": 739,
+        "top": 452
       },
       "size": {
-        "width": 374,
-        "height": 251
+        "width": 507,
+        "height": 244
       }
     },
     {
       "file": "mine-clearing-front-ACC-D.avif",
       "kind": "build-layer",
       "id": "mine-clearing-front-ACC-D",
-      "depth": 19.521,
+      "depth": 17.968,
       "slot": "rack",
-      "bytes": 7808,
-      "sha256": "9a98a4d9b59757fd90d544abcfd01b573e7a02a17f8af53d81d8e642bdbd4bac",
+      "bytes": 7521,
+      "sha256": "60c8cc5b671c43326fca77a605af8ef78c51c4f576bf708d94109d9e900ed830",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 322,
-        "top": 287
+        "left": 307,
+        "top": 291
       },
       "size": {
-        "width": 337,
-        "height": 298
+        "width": 338,
+        "height": 180
       }
     },
     {
       "file": "mine-clearing-front-ACC-E.avif",
       "kind": "build-layer",
       "id": "mine-clearing-front-ACC-E",
-      "depth": 18.404,
+      "depth": 17.491,
       "slot": "front-kit",
-      "bytes": 7510,
-      "sha256": "6a984e0c61be8fb903adb69014322b435702c6afd149eafa3e2e93973ee7b660",
+      "bytes": 8591,
+      "sha256": "0fd9abbe5d0d049bd30f999d86efb35fb9e3a10b4ee78694bbf3eb2dbf001dae",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 772,
-        "top": 443
+        "left": 740,
+        "top": 442
       },
       "size": {
-        "width": 305,
-        "height": 244
+        "width": 418,
+        "height": 249
       }
     },
     {
       "file": "mine-clearing-front-ACC-F.avif",
       "kind": "build-layer",
       "id": "mine-clearing-front-ACC-F",
-      "depth": 18.394,
+      "depth": 17.455,
       "slot": "front-kit",
-      "bytes": 5066,
-      "sha256": "bf896bb702e5bb1ed45b7fdb88e853d8360b4de0e73747ee42b5743f92af286b",
+      "bytes": 4495,
+      "sha256": "42d5f9bf70456fa7c8931ad5ae5fd9a4839745ad84010d4f4459dba6ecb50e91",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 770,
-        "top": 454
+        "left": 851,
+        "top": 453
       },
       "size": {
-        "width": 224,
-        "height": 148
+        "width": 223,
+        "height": 166
       }
     },
     {
       "file": "mine-clearing-front-ACC-G.avif",
       "kind": "build-layer",
       "id": "mine-clearing-front-ACC-G",
-      "depth": 19.444,
+      "depth": 17.894,
       "slot": "rack",
-      "bytes": 9216,
-      "sha256": "ee2d51843842dd7f222d53ffa277c7740bb2496dc23d20589d96b01e635a4916",
+      "bytes": 11067,
+      "sha256": "78a3e169132c7fa61aad7f39821edcb0bdd48a59fa829e99995ed76a36a34cc2",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 313,
-        "top": 243
+        "left": 307,
+        "top": 247
       },
       "size": {
-        "width": 346,
-        "height": 341
+        "width": 413,
+        "height": 361
       }
     },
     {
       "file": "mine-clearing-front-base.avif",
       "kind": "build-base",
       "id": "mine-clearing-front-base",
-      "depth": 20.625,
-      "bytes": 20712,
-      "sha256": "14134bc2e74ed891f221e8d197d7bce4daeb5d33a35c5e6f3ac5c413f6f8e55b",
+      "depth": 19.132,
+      "bytes": 22818,
+      "sha256": "949e8f400c2f18ab83840853b098c52e38db121a375a298a626adea8d0e37f5b",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 273,
-        "top": 299
+        "left": 255,
+        "top": 308
       },
       "size": {
-        "width": 669,
-        "height": 347
+        "width": 758,
+        "height": 360
       }
     },
     {
       "file": "mine-clearing-front-CAP-A.avif",
       "kind": "build-layer",
       "id": "mine-clearing-front-CAP-A",
-      "depth": 21.803,
+      "depth": 20.157,
       "slot": "module",
-      "bytes": 4172,
-      "sha256": "14210ba396506836cd5288d74f338f650a9c6981dc2de3ae9ca9050b942d93b5",
+      "bytes": 4498,
+      "sha256": "f7c65b9882c53a6bc2a27a7123166407e17082b9d9dfa051136e8e3126180f87",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 304,
-        "top": 226
+        "left": 296,
+        "top": 245
       },
       "size": {
-        "width": 251,
-        "height": 117
+        "width": 262,
+        "height": 126
       }
     },
     {
       "file": "mine-clearing-front-CAP-B.avif",
       "kind": "build-layer",
       "id": "mine-clearing-front-CAP-B",
-      "depth": 21.792,
+      "depth": 20.15,
       "slot": "module",
-      "bytes": 4452,
-      "sha256": "0ef9c484335a781b02d8e1b46e69f06e7f6ace3986cf42951f78c8abff56cd74",
+      "bytes": 4558,
+      "sha256": "5cca5981fef23ae2cf2adb92b9231dc92420a2802dab51a3b087c319881470f1",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 304,
-        "top": 215
+        "left": 296,
+        "top": 233
       },
       "size": {
-        "width": 255,
-        "height": 128
+        "width": 267,
+        "height": 138
       }
     },
     {
       "file": "mine-clearing-front-CAP-C.avif",
       "kind": "build-layer",
       "id": "mine-clearing-front-CAP-C",
-      "depth": 21.798,
+      "depth": 20.152,
       "slot": "module",
-      "bytes": 5287,
-      "sha256": "47da9f40c376921eb3a7743fb84924aaf2095fb80e5a7f0a0f003f1799a1ee1c",
+      "bytes": 5013,
+      "sha256": "1d16a7e5cd1f091d7375f97247fbeeccd9c17e11b36f1847ac9dfe3fd27f6fc3",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 304,
-        "top": 227
+        "left": 296,
+        "top": 245
       },
       "size": {
-        "width": 240,
-        "height": 116
+        "width": 249,
+        "height": 126
       }
     },
     {
       "file": "mine-clearing-front-CAP-D.avif",
       "kind": "build-layer",
       "id": "mine-clearing-front-CAP-D",
-      "depth": 21.793,
+      "depth": 20.152,
       "slot": "module",
-      "bytes": 5125,
-      "sha256": "cba23db03a961059b0ec26340ff0c195d0418c6d3389873aa85016e86b2e3d50",
+      "bytes": 5513,
+      "sha256": "59761f3f5330dbda953aebf077e7c4b4bf358827d8459a6dabdf273fab0d4170",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 304,
-        "top": 209
+        "left": 296,
+        "top": 227
       },
       "size": {
-        "width": 259,
-        "height": 134
+        "width": 271,
+        "height": 144
       }
     },
     {
       "file": "mine-clearing-front-CAP-E.avif",
       "kind": "build-layer",
       "id": "mine-clearing-front-CAP-E",
-      "depth": 21.803,
+      "depth": 20.157,
       "slot": "module",
-      "bytes": 3849,
-      "sha256": "0cdf794816c421e37ed1919f92b630c6860972f4f353779e363db52a0f5cd0e3",
+      "bytes": 4129,
+      "sha256": "51d93ff8a69399cf54dde79b9eba00cbfefc634f623a05c17626f9e6e4be2d8b",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 304,
-        "top": 226
+        "left": 296,
+        "top": 245
       },
       "size": {
-        "width": 246,
-        "height": 117
+        "width": 256,
+        "height": 126
       }
     },
     {
       "file": "mine-clearing-front-CAP-F.avif",
       "kind": "build-layer",
       "id": "mine-clearing-front-CAP-F",
-      "depth": 21.8,
+      "depth": 20.155,
       "slot": "module",
-      "bytes": 4171,
-      "sha256": "2eff1bba191e8c91e502907e2ae058270d438d8e6a11bda10e00fdb25673395d",
+      "bytes": 4494,
+      "sha256": "46809be543eff1e51a4337c6d346aa024dfad45cd14cc5106f38395ce2833c14",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 304,
-        "top": 221
+        "left": 296,
+        "top": 240
       },
       "size": {
-        "width": 252,
-        "height": 122
+        "width": 263,
+        "height": 131
       }
     },
     {
       "file": "mine-clearing-front-CAP-G.avif",
       "kind": "build-layer",
       "id": "mine-clearing-front-CAP-G",
-      "depth": 21.799,
+      "depth": 20.152,
       "slot": "module",
-      "bytes": 4913,
-      "sha256": "f9050b86c4ccfc84667d14ecfda5fd121bba7f32466417c5b4a28e847c00af06",
+      "bytes": 4866,
+      "sha256": "0ae5d241b2fdbc7c0d7f23177dd05f4d91bd0ebb374f1b6531b87d6241c62d01",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 304,
-        "top": 229
+        "left": 296,
+        "top": 248
       },
       "size": {
-        "width": 245,
-        "height": 114
+        "width": 256,
+        "height": 123
       }
     },
     {
       "file": "mine-clearing-front-COM-A.avif",
       "kind": "build-layer",
       "id": "mine-clearing-front-COM-A",
-      "depth": 22.039,
+      "depth": 20.335,
       "slot": "antenna-left",
-      "bytes": 1910,
-      "sha256": "9170c568d7bf187ddee9e4ea15fc5650ca8481f420a81053ea33c7e2db59aac2",
+      "bytes": 2006,
+      "sha256": "73b1338d8e83466f70c75761dc9d3bef1a28ad953f0627515b13aaca426980f8",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 262,
-        "top": 86
+        "left": 250,
+        "top": 89
       },
       "size": {
-        "width": 76,
-        "height": 244
+        "width": 81,
+        "height": 269
       }
     },
     {
       "file": "mine-clearing-front-COM-B.avif",
       "kind": "build-layer",
       "id": "mine-clearing-front-COM-B",
-      "depth": 23.22,
+      "depth": 21.503,
       "slot": "antenna-right",
-      "bytes": 2265,
-      "sha256": "ca24dcdb7471a76a21aed72f99154fa7247b09711d4f2c4ed1d30bf79a661065",
+      "bytes": 2355,
+      "sha256": "05a7d53037700e22a9c06696c5788589c042cd84d241ecbb8e0dae5e5cc58336",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 384,
-        "top": 42
+        "left": 352,
+        "top": 48
       },
       "size": {
-        "width": 61,
-        "height": 265
+        "width": 65,
+        "height": 289
       }
     },
     {
       "file": "mine-clearing-front-COM-C.avif",
       "kind": "build-layer",
       "id": "mine-clearing-front-COM-C",
-      "depth": 22.135,
+      "depth": 20.379,
       "slot": "antenna-left",
-      "bytes": 1386,
-      "sha256": "b65a5f7037a16d65db59ef129670a8dac588ee04526d6164f2efc5251ad7bd1c",
+      "bytes": 1476,
+      "sha256": "3bc4f0b91043f93e0bd009b8e0fa05d71c3dfa77d0a8922ff775c131424130e0",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 268,
-        "top": 256
+        "left": 256,
+        "top": 273
       },
       "size": {
-        "width": 65,
-        "height": 71
+        "width": 70,
+        "height": 82
       }
     },
     {
       "file": "mine-clearing-front-COM-D.avif",
       "kind": "build-layer",
       "id": "mine-clearing-front-COM-D",
-      "depth": 22.678,
+      "depth": 20.982,
       "slot": "radio-mast",
-      "bytes": 2575,
-      "sha256": "a1c324a1ae8e5e954c1e80496c9f5b17f44396a3ff5b91e98a9e8a3126290bbf",
+      "bytes": 2633,
+      "sha256": "c9e0269ac864ada031937ba5160eae2ea31dd72b2ccda3804f79089369d8d28b",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 328,
-        "top": 32
+        "left": 304,
+        "top": 33
       },
       "size": {
-        "width": 72,
-        "height": 284
+        "width": 77,
+        "height": 309
       }
     },
     {
       "file": "mine-clearing-front-COM-E.avif",
       "kind": "build-layer",
       "id": "mine-clearing-front-COM-E",
-      "depth": 22.674,
+      "depth": 20.982,
       "slot": "radio-mast",
-      "bytes": 2617,
-      "sha256": "21fa757755e305bc32ea556fb70a78aa91ad549d6080b2502f03bafd8eb406f9",
+      "bytes": 2817,
+      "sha256": "e136c923249ad0b79d78c5fbb5f464d72162b9814bc94db37fb345061d64c2b3",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 326,
-        "top": 17
+        "left": 302,
+        "top": 20
       },
       "size": {
-        "width": 76,
-        "height": 299
+        "width": 81,
+        "height": 323
       }
     },
     {
       "file": "mine-clearing-front-COM-F.avif",
       "kind": "build-layer",
       "id": "mine-clearing-front-COM-F",
-      "depth": 22.057,
+      "depth": 20.342,
       "slot": "antenna-left",
-      "bytes": 1801,
-      "sha256": "2555aa9f109da92175c8c7dae98b967ab92296faac9f93976bc3cecd1c4e1e3f",
+      "bytes": 1893,
+      "sha256": "b392a0e3feb8e72aecf5a92c33dfe09630b2f5cdc39b7411d86646210b26d02c",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 261,
-        "top": 118
+        "left": 249,
+        "top": 124
       },
       "size": {
-        "width": 78,
-        "height": 212
+        "width": 83,
+        "height": 234
       }
     },
     {
       "file": "mine-clearing-front-COM-G.avif",
       "kind": "build-layer",
       "id": "mine-clearing-front-COM-G",
-      "depth": 23.293,
+      "depth": 21.542,
       "slot": "antenna-right",
-      "bytes": 1988,
-      "sha256": "bd6201d700fd3d6abb3577906bfc6a2b30e714bdd84d73d76a82929a078e89d5",
+      "bytes": 1993,
+      "sha256": "3cd817d8c49c875272fa9d7dcd3520f2c7217a8dd9f35ce2b3f8cf17c7ee0785",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 379,
-        "top": 136
+        "left": 347,
+        "top": 152
       },
       "size": {
-        "width": 67,
-        "height": 172
+        "width": 71,
+        "height": 185
       }
     },
     {
       "file": "mine-clearing-front-FP-A.avif",
       "kind": "build-layer",
       "id": "mine-clearing-front-FP-A",
-      "depth": 20.294,
+      "depth": 18.906,
       "slot": "weapon",
-      "bytes": 3248,
-      "sha256": "461bcafe04a53825e633ec97ed47068eb5882b06c96671ce50b2b95a5eb330cd",
+      "bytes": 3670,
+      "sha256": "a0df9b9b52b8196ca1b2642491f172d032f1e3bdfb69ab3ff050eac8c5d55c82",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 517,
-        "top": 244
+        "left": 537,
+        "top": 248
       },
       "size": {
-        "width": 160,
-        "height": 106
+        "width": 184,
+        "height": 125
       }
     },
     {
       "file": "mine-clearing-front-FP-B.avif",
       "kind": "build-layer",
       "id": "mine-clearing-front-FP-B",
-      "depth": 20.057,
+      "depth": 18.708,
       "slot": "weapon",
-      "bytes": 3787,
-      "sha256": "a8b451ad254040a1300058655d04b458b8383f015bdc820546db3f06040691bb",
+      "bytes": 3830,
+      "sha256": "974572e2c017fe635a5d980f9927ce5cfd2c15ec4712b5e5f244287300171d27",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 502,
-        "top": 203
+        "left": 528,
+        "top": 209
       },
       "size": {
-        "width": 233,
-        "height": 146
+        "width": 230,
+        "height": 151
       }
     },
     {
       "file": "mine-clearing-front-FP-C.avif",
       "kind": "build-layer",
       "id": "mine-clearing-front-FP-C",
-      "depth": 19.809,
+      "depth": 18.525,
       "slot": "weapon",
-      "bytes": 6045,
-      "sha256": "a60c1d577283807316b82e8d0d0a18d5099ac91eb8e9607904cccf84f7e858f8",
+      "bytes": 5972,
+      "sha256": "750f6a1db13950eb7ef0f044e70043c102efc04a054fbf977443662ab4e21cb1",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 470,
-        "top": 213
+        "left": 489,
+        "top": 222
       },
       "size": {
-        "width": 365,
-        "height": 153
+        "width": 417,
+        "height": 152
       }
     },
     {
       "file": "mine-clearing-front-FP-D.avif",
       "kind": "build-layer",
       "id": "mine-clearing-front-FP-D",
-      "depth": 18.935,
+      "depth": 17.547,
       "slot": "aux-weapon",
-      "bytes": 2706,
-      "sha256": "45b2e666d10ac57c0332d197601d24bc6344a624ca5addda0a9c9d8de290ea7a",
+      "bytes": 2702,
+      "sha256": "19fd06f75e4a20445da71425f602dce3b622075db72d4653c87a343dd69dc961",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 623,
-        "top": 271
+        "left": 664,
+        "top": 273
       },
       "size": {
-        "width": 156,
+        "width": 177,
         "height": 100
       }
     },
@@ -14580,513 +14774,513 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "file": "mine-clearing-front-FP-E.avif",
       "kind": "build-layer",
       "id": "mine-clearing-front-FP-E",
-      "depth": 18.936,
+      "depth": 17.555,
       "slot": "aux-weapon",
-      "bytes": 2511,
-      "sha256": "407cfab7bbba5ee0f51e7f1b7919a7e2c2cb0f0be47edeb33ecc53ad4d482dc3",
+      "bytes": 2571,
+      "sha256": "b4e13d4fa13eec78ca2b4d0849c1375791317e70686b144b58f8f514b3905ceb",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 627,
-        "top": 266
+        "left": 667,
+        "top": 264
       },
       "size": {
-        "width": 152,
-        "height": 105
+        "width": 174,
+        "height": 108
       }
     },
     {
       "file": "mine-clearing-front-FP-F.avif",
       "kind": "build-layer",
       "id": "mine-clearing-front-FP-F",
-      "depth": 19.943,
+      "depth": 18.63,
       "slot": "weapon",
-      "bytes": 5319,
-      "sha256": "aebb7c9bbe5b81afae726cd37accf426b759a4d57f51bb9968828bdb139f5550",
+      "bytes": 5248,
+      "sha256": "4e34e9b436e23e336f3a145b7ebac386480c57e9e5d13e1ea1d58adbddbb9fe3",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 482,
-        "top": 224
+        "left": 502,
+        "top": 228
       },
       "size": {
-        "width": 304,
-        "height": 142
+        "width": 347,
+        "height": 151
       }
     },
     {
       "file": "mine-clearing-front-FP-G.avif",
       "kind": "build-layer",
       "id": "mine-clearing-front-FP-G",
-      "depth": 20.091,
+      "depth": 18.706,
       "slot": "weapon",
-      "bytes": 4603,
-      "sha256": "ab1f0d06e4b17f421268dadf05c102cb743829d5e0f7244b5fb029d1a188e5e7",
+      "bytes": 4668,
+      "sha256": "fce1b007f704c316a18fe2b72535990c5f48fa6f058fc11ed87321cc0c531ec9",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 479,
-        "top": 205
+        "left": 502,
+        "top": 211
       },
       "size": {
-        "width": 259,
-        "height": 148
+        "width": 240,
+        "height": 151
       }
     },
     {
       "file": "mine-clearing-front-MOB-A.avif",
       "kind": "build-layer",
       "id": "mine-clearing-front-MOB-A",
-      "depth": 19.726,
+      "depth": 18.568,
       "slot": "powerpack",
-      "bytes": 2871,
-      "sha256": "dbdea218978f786c710ea2c84286087e5e13faf2833f6df0965f6f6b5050dfa9",
+      "bytes": 3273,
+      "sha256": "d6423348f2f2b4fe3dc7dd34f68a3bde7fbc14eb4669a697c8fd86277024bd39",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 694,
-        "top": 267
+        "left": 729,
+        "top": 270
       },
       "size": {
-        "width": 106,
-        "height": 120
+        "width": 123,
+        "height": 117
       }
     },
     {
       "file": "mine-clearing-front-MOB-B.avif",
       "kind": "build-layer",
       "id": "mine-clearing-front-MOB-B",
-      "depth": 20.694,
+      "depth": 19.177,
       "slot": "running",
-      "bytes": 5769,
-      "sha256": "70be25cde0654f7e30e1393bef03fb0585b08f85b5b8c46383b63a0a555484fb",
+      "bytes": 6575,
+      "sha256": "8c96e7040750d51890d887f208bd559b330997c3031c90af8c88d23f3f749a56",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
         "left": 341,
-        "top": 466
+        "top": 496
       },
       "size": {
-        "width": 442,
-        "height": 134
+        "width": 479,
+        "height": 119
       }
     },
     {
       "file": "mine-clearing-front-MOB-C.avif",
       "kind": "build-layer",
       "id": "mine-clearing-front-MOB-C",
-      "depth": 20.694,
+      "depth": 19.177,
       "slot": "running",
-      "bytes": 25801,
-      "sha256": "7501497c89d2ed24fde3e39a54f684c5d43343136204aa170d0feb4a0d4ab628",
+      "bytes": 29802,
+      "sha256": "6f2ac7938c6609d8a3c71f1ee7aae78d3e6d8c137c9f61448b94b3684bef9457",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 326,
-        "top": 429
+        "left": 320,
+        "top": 457
       },
       "size": {
-        "width": 576,
-        "height": 201
+        "width": 636,
+        "height": 190
       }
     },
     {
       "file": "mine-clearing-front-MOB-D.avif",
       "kind": "build-layer",
       "id": "mine-clearing-front-MOB-D",
-      "depth": 20.604,
+      "depth": 19.149,
       "slot": "running",
-      "bytes": 9746,
-      "sha256": "c58595bd1ca6f6d2d15233fdeed4b084fabfe05b8683eac9846625e41665e1ff",
+      "bytes": 5178,
+      "sha256": "04be2d1b930ecbef624a204924b6adb7e8832ab3214245b72b68ff318832b623",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 344,
-        "top": 433
+        "left": 350,
+        "top": 504
       },
       "size": {
-        "width": 507,
-        "height": 179
+        "width": 553,
+        "height": 107
       }
     },
     {
       "file": "mine-clearing-front-MOB-E.avif",
       "kind": "build-layer",
       "id": "mine-clearing-front-MOB-E",
-      "depth": 22.73,
+      "depth": 20.896,
       "slot": "tanks",
-      "bytes": 2620,
-      "sha256": "3eada9df06dff4e17e183ba731b12b37dfd3bcc91f746a717bddfa8f8deebf32",
+      "bytes": 2648,
+      "sha256": "3cbdfe19867948ea7d5cf0a41d894f39b6c331df1fc4f093b097df42183c5964",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 240,
-        "top": 420
+        "left": 225,
+        "top": 445
       },
       "size": {
-        "width": 178,
-        "height": 125
+        "width": 134,
+        "height": 141
       }
     },
     {
       "file": "mine-clearing-front-MOB-F.avif",
       "kind": "build-layer",
       "id": "mine-clearing-front-MOB-F",
-      "depth": 19.76,
+      "depth": 18.591,
       "slot": "powerpack",
-      "bytes": 1917,
-      "sha256": "6cb2dc3ce83fe8b4eb4c874ad39e8ab8c5baf9c3978d11935643598c434c11b7",
+      "bytes": 2044,
+      "sha256": "5451ad5fd129772ca7622dbfb8408d4ab8c86eda4653d9a7e71e5e6de3fc9ab5",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 709,
-        "top": 299
+        "left": 748,
+        "top": 303
       },
       "size": {
-        "width": 73,
-        "height": 60
+        "width": 85,
+        "height": 69
       }
     },
     {
       "file": "mine-clearing-front-MOB-G.avif",
       "kind": "build-layer",
       "id": "mine-clearing-front-MOB-G",
-      "depth": 20.694,
+      "depth": 19.177,
       "slot": "running",
-      "bytes": 20447,
-      "sha256": "302cdfa1fe0ff22eee3f2745c16bea05039c6cfdb9902fe61a427756ccc367d2",
+      "bytes": 22973,
+      "sha256": "182532a759ff78610fed392b2a5b554b1796d058f46d4b638032d414116badd5",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 322,
-        "top": 428
+        "left": 317,
+        "top": 457
       },
       "size": {
-        "width": 582,
-        "height": 202
+        "width": 635,
+        "height": 190
       }
     },
     {
       "file": "mine-clearing-front-PRO-A.avif",
       "kind": "build-layer",
       "id": "mine-clearing-front-PRO-A",
-      "depth": 20.867,
+      "depth": 19.336,
       "slot": "side-armour",
-      "bytes": 12141,
-      "sha256": "4611cfefa66bc27551800202cd616c317942bd1a88a204d559b57a0d2ac78a3e",
+      "bytes": 14266,
+      "sha256": "95806e959d743a69cd4ae2de895f6acc9369fff899ea0bb8253363fa4ab5afe9",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 260,
-        "top": 359
+        "left": 251,
+        "top": 384
       },
       "size": {
-        "width": 458,
-        "height": 226
+        "width": 555,
+        "height": 223
       }
     },
     {
       "file": "mine-clearing-front-PRO-B.avif",
       "kind": "build-layer",
       "id": "mine-clearing-front-PRO-B",
-      "depth": 18.818,
+      "depth": 17.736,
       "slot": "front-armour",
-      "bytes": 6165,
-      "sha256": "83609d0a3e51f41614efbe85e76f9f6572d7891ae02c6f29c9c10140ba23b68d",
+      "bytes": 6707,
+      "sha256": "b3d76e3b48c0c9df1604fad487f7141ebabb40b83afcbd4cf9c3e529ddab7ea1",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 704,
-        "top": 343
+        "left": 778,
+        "top": 339
       },
       "size": {
-        "width": 242,
-        "height": 168
+        "width": 236,
+        "height": 171
       }
     },
     {
       "file": "mine-clearing-front-PRO-C.avif",
       "kind": "build-layer",
       "id": "mine-clearing-front-PRO-C",
-      "depth": 20.867,
+      "depth": 19.336,
       "slot": "side-armour",
-      "bytes": 10681,
-      "sha256": "34cdbd68883c16ee740a6c62641956db47810bcdfe19dcaf34f9a592ec54c88a",
+      "bytes": 12200,
+      "sha256": "fceaafd0920e83843916653ded547d330ce2f12115d40b97bb52ac087dccdeb6",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 263,
-        "top": 361
+        "left": 258,
+        "top": 384
       },
       "size": {
-        "width": 454,
-        "height": 225
+        "width": 543,
+        "height": 223
       }
     },
     {
       "file": "mine-clearing-front-PRO-D.avif",
       "kind": "build-layer",
       "id": "mine-clearing-front-PRO-D",
-      "depth": 19.275,
+      "depth": 18.066,
       "slot": "roof-armour",
-      "bytes": 999,
-      "sha256": "b957d623b72db8b00532529857311aef5690c3337390f4e5ed36af6379e95bd9",
+      "bytes": 1150,
+      "sha256": "f239f102dab109eb942e8e1d467a1c6f2768ef3b07a3f92b189de565c951975d",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 691,
-        "top": 334
+        "left": 737,
+        "top": 337
       },
       "size": {
-        "width": 66,
-        "height": 33
+        "width": 78,
+        "height": 36
       }
     },
     {
       "file": "mine-clearing-front-PRO-E.avif",
       "kind": "build-layer",
       "id": "mine-clearing-front-PRO-E",
-      "depth": 20.875,
+      "depth": 19.342,
       "slot": "side-armour",
-      "bytes": 14255,
-      "sha256": "c4503b1d67abfeaeaece0482c6d73350cea8398eb6d7edb8529f9cab8b48cbf4",
+      "bytes": 16437,
+      "sha256": "f8e35534488a0c128b1020a88df62c2d529610a6bbb3faf87f236ce261d53085",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 257,
-        "top": 362
+        "left": 248,
+        "top": 385
       },
       "size": {
-        "width": 461,
-        "height": 187
+        "width": 544,
+        "height": 203
       }
     },
     {
       "file": "mine-clearing-front-PRO-F.avif",
       "kind": "build-layer",
       "id": "mine-clearing-front-PRO-F",
-      "depth": 20.836,
+      "depth": 19.29,
       "slot": "belly",
-      "bytes": 2925,
-      "sha256": "84108f6009c5be64c81f99b769349e7415439c5069ff317695f779b929a7727e",
+      "bytes": 2646,
+      "sha256": "674e8008a9f6397595fbb25da74b2e7f06115a5ea099f2ce1eca7476f2be7694",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 403,
-        "top": 506
+        "left": 541,
+        "top": 534
       },
       "size": {
-        "width": 475,
-        "height": 104
+        "width": 400,
+        "height": 93
       }
     },
     {
       "file": "mine-clearing-front-PRO-G.avif",
       "kind": "build-layer",
       "id": "mine-clearing-front-PRO-G",
-      "depth": 19.27,
+      "depth": 18.063,
       "slot": "roof-armour",
-      "bytes": 1764,
-      "sha256": "91f7f21e267a1319fc03f166c2b7650599770bbc7d4bc7d5b295f2dba09e05e2",
+      "bytes": 1912,
+      "sha256": "405972f152b917498b34e74cc1f7e88de1991170b7a1d4017be600db45cf5ab2",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 688,
-        "top": 327
+        "left": 735,
+        "top": 329
       },
       "size": {
-        "width": 74,
-        "height": 41
+        "width": 85,
+        "height": 45
       }
     },
     {
       "file": "mine-clearing-front-SA-A.avif",
       "kind": "build-layer",
       "id": "mine-clearing-front-SA-A",
-      "depth": 18.421,
+      "depth": 17.298,
       "slot": "optics",
-      "bytes": 2021,
-      "sha256": "4052465ca786e4639f850bf0cdf2325ab4dd45a1a7ddd5d25f6fbdbcb75fae36",
+      "bytes": 2219,
+      "sha256": "5b3c20499e141eb10fbf386768d5f29e05cd299d99e516774ba68c6a36a1bdd7",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 695,
-        "top": 303
+        "left": 767,
+        "top": 295
       },
       "size": {
-        "width": 123,
-        "height": 85
+        "width": 131,
+        "height": 91
       }
     },
     {
       "file": "mine-clearing-front-SA-B.avif",
       "kind": "build-layer",
       "id": "mine-clearing-front-SA-B",
-      "depth": 20.212,
+      "depth": 19.111,
       "slot": "sensor-mast",
-      "bytes": 2700,
-      "sha256": "0f9b0ada6609b4ad13dbacc9e83a1140a3b1c261f879f728a302a507f870d518",
+      "bytes": 2694,
+      "sha256": "33db347ee80392c4d88b8c2d585e73d10c332b2f009e02dd06bef023cbefe666",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 725,
+        "left": 762,
         "top": 164
       },
       "size": {
-        "width": 73,
-        "height": 181
+        "width": 78,
+        "height": 189
       }
     },
     {
       "file": "mine-clearing-front-SA-C.avif",
       "kind": "build-layer",
       "id": "mine-clearing-front-SA-C",
-      "depth": 18.403,
+      "depth": 17.27,
       "slot": "optics",
-      "bytes": 1956,
-      "sha256": "905ab59301b224676888cb3b825dfb3bf48ec85e01eac5a69a6584d8c3bc3bb6",
+      "bytes": 2130,
+      "sha256": "fbfdc8c4c7990636b4dc36d28c236d78a8f4878c9046c7dc586cc06945226df9",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 695,
-        "top": 295
+        "left": 767,
+        "top": 286
       },
       "size": {
-        "width": 114,
-        "height": 93
+        "width": 120,
+        "height": 100
       }
     },
     {
       "file": "mine-clearing-front-SA-D.avif",
       "kind": "build-layer",
       "id": "mine-clearing-front-SA-D",
-      "depth": 20.164,
+      "depth": 19.101,
       "slot": "sensor-mast",
-      "bytes": 3350,
-      "sha256": "7a74f73e7a92ed9a282868ef5d535c6b2314dc9c8f7e599f25d65279afa7bb3f",
+      "bytes": 3757,
+      "sha256": "96805712aa867db61ead9752473e0990090f8fd2317198e208f548ba37b68a26",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 728,
-        "top": 43
+        "left": 771,
+        "top": 33
       },
       "size": {
-        "width": 63,
-        "height": 303
+        "width": 57,
+        "height": 320
       }
     },
     {
       "file": "mine-clearing-front-SA-E.avif",
       "kind": "build-layer",
       "id": "mine-clearing-front-SA-E",
-      "depth": 18.435,
+      "depth": 17.311,
       "slot": "optics",
-      "bytes": 2287,
-      "sha256": "05ee45b5bb7461a65146577df2b98eeb5cb7f34e3dcb33aece4b715d26f5c202",
+      "bytes": 2457,
+      "sha256": "26e83fbea0435e11be61d389cdf6b1490a0f360910c6e43e38554904780ff345",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 695,
-        "top": 284
+        "left": 767,
+        "top": 274
       },
       "size": {
-        "width": 122,
-        "height": 104
+        "width": 126,
+        "height": 112
       }
     },
     {
       "file": "mine-clearing-front-SA-F.avif",
       "kind": "build-layer",
       "id": "mine-clearing-front-SA-F",
-      "depth": 20.022,
+      "depth": 18.688,
       "slot": "sensor-pods",
-      "bytes": 4984,
-      "sha256": "f6afe22d5fc4a7b738e002fd8d001770bca2aa369a9cca8238e77c999b5ba3b9",
+      "bytes": 5190,
+      "sha256": "6e10a8b0268ea0fbcbb382e56bdc7769845d7b9412b9d547e07c4205e7512b26",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 413,
-        "top": 270
+        "left": 430,
+        "top": 281
       },
       "size": {
-        "width": 450,
-        "height": 147
+        "width": 479,
+        "height": 120
       }
     },
     {
       "file": "mine-clearing-front-SA-G.avif",
       "kind": "build-layer",
       "id": "mine-clearing-front-SA-G",
-      "depth": 20.028,
+      "depth": 18.693,
       "slot": "sensor-pods",
-      "bytes": 4678,
-      "sha256": "2c8be2fd341ecb9695847d20416b97752972cd8f565dbc21b66e43951c551854",
+      "bytes": 5205,
+      "sha256": "001a8f456cf229173263f92be7efe37f305ba68db4497031dc8ee4a5256fd81e",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 417,
-        "top": 278
+        "left": 434,
+        "top": 292
       },
       "size": {
-        "width": 443,
-        "height": 117
+        "width": 473,
+        "height": 108
       }
     },
     {
       "file": "mine-clearing-hero.avif",
       "kind": "hero",
       "id": "mine-clearing-hero",
-      "depth": 14.864,
-      "bytes": 53256,
-      "sha256": "8ed51e8a26776d4272f14cdb78d0e0a71c0050d5f0f1cc2434ec6b6230e1e072",
+      "depth": 14.862,
+      "bytes": 53694,
+      "sha256": "94c1ed398f8841a7e415262462d932b7e8db5c9f3011f2ab375e55ec45a2939c",
       "frame": {
         "width": 1600,
         "height": 900
@@ -15104,523 +15298,523 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "file": "mine-clearing-rear-ACC-A.avif",
       "kind": "build-layer",
       "id": "mine-clearing-rear-ACC-A",
-      "depth": 19.244,
+      "depth": 18.477,
       "slot": "rear-kit",
-      "bytes": 5499,
-      "sha256": "22ff2ca557054533f8f04a314d8cd756da5428d530b6c773d34e75957bcfa12c",
+      "bytes": 6143,
+      "sha256": "95294334f1b8fc52f9f7720263328a9491a7655ba7b3b2c2fd069e6724dc8b09",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 699,
-        "top": 360
+        "left": 754,
+        "top": 375
       },
       "size": {
-        "width": 157,
-        "height": 180
+        "width": 156,
+        "height": 188
       }
     },
     {
       "file": "mine-clearing-rear-ACC-B.avif",
       "kind": "build-layer",
       "id": "mine-clearing-rear-ACC-B",
-      "depth": 18.634,
+      "depth": 18.011,
       "slot": "rear-kit",
-      "bytes": 10488,
-      "sha256": "a0d2eb0772e342f9de06c379b8bff9627624e82deeecaa27d94940e01837ed05",
+      "bytes": 10788,
+      "sha256": "27a8d6d606914e1ba0e03192fadd4cfa62cc6d4baa07264a17d6b839c6f1d688",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 589,
-        "top": 425
+        "left": 760,
+        "top": 436
       },
       "size": {
-        "width": 558,
-        "height": 295
+        "width": 477,
+        "height": 284
       }
     },
     {
       "file": "mine-clearing-rear-ACC-C.avif",
       "kind": "build-layer",
       "id": "mine-clearing-rear-ACC-C",
-      "depth": 24.972,
+      "depth": 23.248,
       "slot": "front-kit",
-      "bytes": 4039,
-      "sha256": "550755a24bbc2b2ff0987b95ca4df583e70f95ab81215bd0aa575491ada89f02",
+      "bytes": 4700,
+      "sha256": "c3e645f786320d8d3b875bdc0f3d1619bb7199c5ab18bd74cd998c6a2ca366ef",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 96,
-        "top": 361
+        "left": 34,
+        "top": 422
       },
       "size": {
-        "width": 332,
-        "height": 151
+        "width": 386,
+        "height": 154
       }
     },
     {
       "file": "mine-clearing-rear-ACC-D.avif",
       "kind": "build-layer",
       "id": "mine-clearing-rear-ACC-D",
-      "depth": 22.213,
+      "depth": 21.211,
       "slot": "rack",
-      "bytes": 3467,
-      "sha256": "5fc2b10976e8bb982e14727d53debb3d685c7655372377b53071e2f3eeb7a5f8",
+      "bytes": 3596,
+      "sha256": "a4cbcdadaac825e3db75b0b3209edff292a900a8c5231a949beaa12481f4e3e1",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 567,
-        "top": 244
+        "left": 234,
+        "top": 286
       },
       "size": {
-        "width": 174,
-        "height": 79
+        "width": 513,
+        "height": 283
       }
     },
     {
       "file": "mine-clearing-rear-ACC-E.avif",
       "kind": "build-layer",
       "id": "mine-clearing-rear-ACC-E",
-      "depth": 24.676,
+      "depth": 22.961,
       "slot": "front-kit",
-      "bytes": 3264,
-      "sha256": "ac08f20ec7b6246bcd2a42e66ba650bdb6b62ed42f8cac2ef763f80ea6e0ee29",
+      "bytes": 3367,
+      "sha256": "4c00fad1bc9e997cf670eec2880bc2c6651bd2350218b99fbc24bbad38fd3df1",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 121,
-        "top": 355
+        "left": 71,
+        "top": 417
       },
       "size": {
-        "width": 199,
-        "height": 157
+        "width": 150,
+        "height": 142
       }
     },
     {
       "file": "mine-clearing-rear-ACC-F.avif",
       "kind": "build-layer",
       "id": "mine-clearing-rear-ACC-F",
-      "depth": 24.45,
+      "depth": 22.809,
       "slot": "front-kit",
-      "bytes": 1767,
-      "sha256": "796ae2aa4a37eddf36ac26b0a3e204b5c1c26fa5bfe5e8d223a30d4a5e93e6dc",
+      "bytes": 2085,
+      "sha256": "21f706f063dff5171d2bbc7068e599c4125523329a6f417ebb2419d906e6484c",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 191,
-        "top": 354
+        "left": 147,
+        "top": 415
       },
       "size": {
-        "width": 131,
-        "height": 158
+        "width": 172,
+        "height": 162
       }
     },
     {
       "file": "mine-clearing-rear-ACC-G.avif",
       "kind": "build-layer",
       "id": "mine-clearing-rear-ACC-G",
-      "depth": 22.237,
+      "depth": 21.254,
       "slot": "rack",
-      "bytes": 3924,
-      "sha256": "f7bed047d1efa2cee54207c840464e5efc9958072203eca72d808233d7cf5da2",
+      "bytes": 4055,
+      "sha256": "ada00917df5fc711314e7a08f9155132e6c6627da75cc04776da47a95166e1db",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 562,
-        "top": 210
+        "left": 234,
+        "top": 252
       },
       "size": {
-        "width": 187,
-        "height": 114
+        "width": 522,
+        "height": 318
       }
     },
     {
       "file": "mine-clearing-rear-base.avif",
       "kind": "build-base",
       "id": "mine-clearing-rear-base",
-      "depth": 21.542,
-      "bytes": 19372,
-      "sha256": "a51d52046fd913a6b8539459a92da6c6806ebac22f8060cb206e0aaa623800ec",
+      "depth": 20.288,
+      "bytes": 20599,
+      "sha256": "2a4fd5722332b78be9ee20b9858cb2f0951f00c58c4b8ab7a0a1d6d2fc4f4939",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 208,
-        "top": 247
+        "left": 177,
+        "top": 302
       },
       "size": {
-        "width": 627,
-        "height": 376
+        "width": 697,
+        "height": 351
       }
     },
     {
       "file": "mine-clearing-rear-CAP-A.avif",
       "kind": "build-layer",
       "id": "mine-clearing-rear-CAP-A",
-      "depth": 19.891,
+      "depth": 19.005,
       "slot": "module",
-      "bytes": 5369,
-      "sha256": "166a7a8ae4ca60783d648c4a9c831fc971af7d32dd2264f1427b4384d9caee81",
+      "bytes": 4977,
+      "sha256": "0e7e0772b912a3081e6084ba6babaa3394897f5b079ac73663d63c365a2f2282",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 416,
-        "top": 241
+        "left": 504,
+        "top": 270
       },
       "size": {
-        "width": 381,
-        "height": 157
+        "width": 320,
+        "height": 145
       }
     },
     {
       "file": "mine-clearing-rear-CAP-B.avif",
       "kind": "build-layer",
       "id": "mine-clearing-rear-CAP-B",
-      "depth": 19.885,
+      "depth": 19.004,
       "slot": "module",
-      "bytes": 5662,
-      "sha256": "7db7cd0b0d50ead626d054728490d867bd6b0ec6a961bf3c1cfff3caa6f47633",
+      "bytes": 5002,
+      "sha256": "3207a97a8242d7eff836e7d7708b604103775d21d883370298dd790e5ca9bd5f",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 416,
-        "top": 233
+        "left": 504,
+        "top": 259
       },
       "size": {
-        "width": 381,
-        "height": 165
+        "width": 318,
+        "height": 156
       }
     },
     {
       "file": "mine-clearing-rear-CAP-C.avif",
       "kind": "build-layer",
       "id": "mine-clearing-rear-CAP-C",
-      "depth": 19.899,
+      "depth": 19.011,
       "slot": "module",
-      "bytes": 6335,
-      "sha256": "87df4c619fa66d69b8d677c1238b60fd55cafb4058b6504813880242014adda7",
+      "bytes": 5393,
+      "sha256": "718846f21c6788e8e523ab91c0b07a469dac38b65be3a7324fbad3ae90a3bb08",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 545,
-        "top": 241
+        "left": 582,
+        "top": 270
       },
       "size": {
-        "width": 252,
-        "height": 157
+        "width": 242,
+        "height": 144
       }
     },
     {
       "file": "mine-clearing-rear-CAP-D.avif",
       "kind": "build-layer",
       "id": "mine-clearing-rear-CAP-D",
-      "depth": 19.876,
+      "depth": 18.998,
       "slot": "module",
-      "bytes": 6872,
-      "sha256": "32020d04c01c5e9735d071d52e131c1f80274963fde1aea04c4758c6cb8f5ef6",
+      "bytes": 6178,
+      "sha256": "f5fb6cf419b0539d27568386a7f46ae1729d0d7a0ef47ed68e65721b605d43a0",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 416,
-        "top": 222
+        "left": 504,
+        "top": 251
       },
       "size": {
-        "width": 381,
-        "height": 176
+        "width": 322,
+        "height": 164
       }
     },
     {
       "file": "mine-clearing-rear-CAP-E.avif",
       "kind": "build-layer",
       "id": "mine-clearing-rear-CAP-E",
-      "depth": 19.891,
+      "depth": 19.006,
       "slot": "module",
-      "bytes": 4723,
-      "sha256": "cc71791a1c6991cca4e73d74b2d796a981f517f51b591b273fa9f4f20ce84a64",
+      "bytes": 4430,
+      "sha256": "7bd538c6dae8f041aa85de9f92aa070d705a106a16d8a16348c36b77fb4b43d9",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 473,
-        "top": 241
+        "left": 504,
+        "top": 270
       },
       "size": {
-        "width": 324,
-        "height": 157
+        "width": 320,
+        "height": 145
       }
     },
     {
       "file": "mine-clearing-rear-CAP-F.avif",
       "kind": "build-layer",
       "id": "mine-clearing-rear-CAP-F",
-      "depth": 19.886,
+      "depth": 19.003,
       "slot": "module",
-      "bytes": 5435,
-      "sha256": "a7a41fc24e6c3f45d4033cb6a68b46c91e58a4e20929e8ea81e55dc5fb76b2e9",
+      "bytes": 4866,
+      "sha256": "0e8c5bf50a5b2317c803b63ec784a65388ea4cb0ce526dbeb9649fc66d6bd7cb",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 416,
-        "top": 236
+        "left": 504,
+        "top": 264
       },
       "size": {
-        "width": 381,
-        "height": 162
+        "width": 319,
+        "height": 151
       }
     },
     {
       "file": "mine-clearing-rear-CAP-G.avif",
       "kind": "build-layer",
       "id": "mine-clearing-rear-CAP-G",
-      "depth": 19.902,
+      "depth": 19.013,
       "slot": "module",
-      "bytes": 5636,
-      "sha256": "8cecc9983ceee4d99a233e8d224e506d55120ffbf5c3518a24c5c14385109680",
+      "bytes": 5548,
+      "sha256": "9c14997b847dce47b4c011164c2d7f0c1c0ae74e79feced912c585482584ceef",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 539,
-        "top": 249
+        "left": 574,
+        "top": 275
       },
       "size": {
-        "width": 258,
-        "height": 149
+        "width": 250,
+        "height": 140
       }
     },
     {
       "file": "mine-clearing-rear-COM-A.avif",
       "kind": "build-layer",
       "id": "mine-clearing-rear-COM-A",
-      "depth": 19.728,
+      "depth": 19.053,
       "slot": "antenna-left",
-      "bytes": 2351,
-      "sha256": "e870e532fb3d7def9bf953de5e563c787d18efa89984ff3eb66d0ec630adfb75",
+      "bytes": 2575,
+      "sha256": "34a50166b952bb0f0f17735894eed567188c46de22b4f09d5d5de82df0616961",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 769,
-        "top": 96
+        "left": 810,
+        "top": 106
       },
       "size": {
-        "width": 82,
-        "height": 298
+        "width": 77,
+        "height": 414
       }
     },
     {
       "file": "mine-clearing-rear-COM-B.avif",
       "kind": "build-layer",
       "id": "mine-clearing-rear-COM-B",
-      "depth": 18.261,
+      "depth": 17.667,
       "slot": "antenna-right",
-      "bytes": 2912,
-      "sha256": "c1ba95562d682f5335680faaef455a8457a842e5b7fc4a8102a8f5ea8ba4d860",
+      "bytes": 3405,
+      "sha256": "c5ba48e3e78832bb631cbe7175d6a85e1c2478b2d51cd0f585bdd7eb5eba03d5",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 671,
-        "top": 54
+        "left": 741,
+        "top": 49
       },
       "size": {
-        "width": 73,
-        "height": 356
+        "width": 72,
+        "height": 400
       }
     },
     {
       "file": "mine-clearing-rear-COM-C.avif",
       "kind": "build-layer",
       "id": "mine-clearing-rear-COM-C",
-      "depth": 19.891,
+      "depth": 19.129,
       "slot": "antenna-left",
-      "bytes": 1767,
-      "sha256": "dc5d50d903a62c3e1b3a4116ed78aade0c9453dde71b130709f26da3984052b6",
+      "bytes": 1924,
+      "sha256": "649353df843826f88f461a96e69233ccc4074ebd232be79a127cb0f2edca215c",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 771,
-        "top": 285
+        "left": 814,
+        "top": 304
       },
       "size": {
-        "width": 75,
-        "height": 107
+        "width": 68,
+        "height": 216
       }
     },
     {
       "file": "mine-clearing-rear-COM-D.avif",
       "kind": "build-layer",
       "id": "mine-clearing-rear-COM-D",
-      "depth": 18.882,
+      "depth": 18.269,
       "slot": "radio-mast",
-      "bytes": 3757,
-      "sha256": "7a125a0ed50b8c027b622ee6cd1a85901f44dc66fc27c78e1590e215d7a9b45f",
+      "bytes": 3915,
+      "sha256": "e2b85dfc33704575ef61a78f0d52610eb343723dcd1e20befd26af42798cc594",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 673,
-        "top": 37
+        "left": 729,
+        "top": 39
       },
       "size": {
-        "width": 125,
-        "height": 383
+        "width": 122,
+        "height": 398
       }
     },
     {
       "file": "mine-clearing-rear-COM-E.avif",
       "kind": "build-layer",
       "id": "mine-clearing-rear-COM-E",
-      "depth": 18.87,
+      "depth": 18.265,
       "slot": "radio-mast",
-      "bytes": 3820,
-      "sha256": "8b6d7e62c6fbcbbeab8ed786a56d0e1676a0b986f99e3931375da9bbb3a2f6db",
+      "bytes": 4017,
+      "sha256": "944dd476b208d5cc1fc120205a65eb4ca676d8ee40a61c5a02173e3148a87114",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 703,
+        "left": 754,
         "top": 21
       },
       "size": {
-        "width": 97,
-        "height": 399
+        "width": 100,
+        "height": 428
       }
     },
     {
       "file": "mine-clearing-rear-COM-F.avif",
       "kind": "build-layer",
       "id": "mine-clearing-rear-COM-F",
-      "depth": 19.754,
+      "depth": 19.062,
       "slot": "antenna-left",
-      "bytes": 2334,
-      "sha256": "3b618b89276cc9671382e43ce78f97f6796161539afdc50d5bd57bbf7d5482ca",
+      "bytes": 2440,
+      "sha256": "0d3450d6c3e7e3ce2fcf6b352c6dbf2db6eec4c3d6f2eb93cb1072e16f6af869",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 768,
-        "top": 132
+        "left": 809,
+        "top": 143
       },
       "size": {
-        "width": 84,
-        "height": 262
+        "width": 79,
+        "height": 377
       }
     },
     {
       "file": "mine-clearing-rear-COM-G.avif",
       "kind": "build-layer",
       "id": "mine-clearing-rear-COM-G",
-      "depth": 18.327,
+      "depth": 17.683,
       "slot": "antenna-right",
-      "bytes": 3258,
-      "sha256": "a6e57bbe4f4c1b00650cac0863843cf95052dfe6fc2874d1e51e3e0250456a92",
+      "bytes": 3347,
+      "sha256": "c20259f225e55e3d8cf63716991750b8a39223b6353097622c38141a0ee401ab",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 639,
-        "top": 177
+        "left": 704,
+        "top": 175
       },
       "size": {
-        "width": 111,
-        "height": 248
+        "width": 115,
+        "height": 274
       }
     },
     {
       "file": "mine-clearing-rear-FP-A.avif",
       "kind": "build-layer",
       "id": "mine-clearing-rear-FP-A",
-      "depth": 21.339,
+      "depth": 20.192,
       "slot": "weapon",
-      "bytes": 4266,
-      "sha256": "242ae4db9a47d77ce2dc78b505ef68384356f293b2739d8fd6c72bf86177f85b",
+      "bytes": 3877,
+      "sha256": "3cd736313cf887d5b01b2355380f4a8795d1234d1300f5adc4be83803e7c502b",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 246,
-        "top": 225
+        "left": 378,
+        "top": 261
       },
       "size": {
-        "width": 326,
-        "height": 121
+        "width": 209,
+        "height": 110
       }
     },
     {
       "file": "mine-clearing-rear-FP-B.avif",
       "kind": "build-layer",
       "id": "mine-clearing-rear-FP-B",
-      "depth": 21.532,
+      "depth": 20.378,
       "slot": "weapon",
-      "bytes": 3907,
-      "sha256": "e2adc83a77713b9a653c7fbd0fe156b95e08c537255939485edcbe0cc302e68e",
+      "bytes": 3526,
+      "sha256": "bd2a7097171435f62f9bee56a8826d836e429c39ee9ef24c7e3feb7cad0090f7",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 246,
-        "top": 202
+        "left": 390,
+        "top": 230
       },
       "size": {
-        "width": 337,
-        "height": 144
+        "width": 203,
+        "height": 140
       }
     },
     {
       "file": "mine-clearing-rear-FP-C.avif",
       "kind": "build-layer",
       "id": "mine-clearing-rear-FP-C",
-      "depth": 21.837,
+      "depth": 20.62,
       "slot": "weapon",
-      "bytes": 5928,
-      "sha256": "906aafcc7d6d998a3009bde10d4023ba869e1be74f16734cebbf7cb7bd5db8a6",
+      "bytes": 5573,
+      "sha256": "f309e4262ee6eec597a41be4802ba4ae7032492ea4d6cea36fb9a6c95b2d7777",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 246,
-        "top": 213
+        "left": 233,
+        "top": 244
       },
       "size": {
-        "width": 369,
+        "width": 400,
         "height": 145
       }
     },
@@ -15628,525 +15822,525 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "file": "mine-clearing-rear-FP-D.avif",
       "kind": "build-layer",
       "id": "mine-clearing-rear-FP-D",
-      "depth": 22.792,
+      "depth": 21.665,
       "slot": "aux-weapon",
-      "bytes": 2423,
-      "sha256": "eb68ae7f916fb7a9dfcede274b5152da45becd2586356896bbad5046fb36a54c",
+      "bytes": 2579,
+      "sha256": "6a82096d73cb65c8701f60a5878a54b5a5f2f956b61de1dd5e272bbca95a2e80",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 332,
-        "top": 228
+        "left": 318,
+        "top": 268
       },
       "size": {
-        "width": 146,
-        "height": 108
+        "width": 162,
+        "height": 103
       }
     },
     {
       "file": "mine-clearing-rear-FP-E.avif",
       "kind": "build-layer",
       "id": "mine-clearing-rear-FP-E",
-      "depth": 22.779,
+      "depth": 21.651,
       "slot": "aux-weapon",
-      "bytes": 2647,
-      "sha256": "71d1cded3aba65ba95b1cd90b8faa2f66b58efd1f2f5f2ad8993387d06238e67",
+      "bytes": 2524,
+      "sha256": "4b212446f0f2cdbd3924b0a5dd5be5b2b5a58df529cdabb3bef6fe7ffab13843",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 340,
-        "top": 216
+        "left": 320,
+        "top": 261
       },
       "size": {
-        "width": 135,
-        "height": 122
+        "width": 156,
+        "height": 110
       }
     },
     {
       "file": "mine-clearing-rear-FP-F.avif",
       "kind": "build-layer",
       "id": "mine-clearing-rear-FP-F",
-      "depth": 21.69,
+      "depth": 20.494,
       "slot": "weapon",
-      "bytes": 5608,
-      "sha256": "21767033f4f34b9790bc8b129beea2ac23c63d4268172bfe93c49fc24c5f3abd",
+      "bytes": 5051,
+      "sha256": "9504c2c9c40226d5296d1b992df7fdb3f242ac314fd7aea11998eaab9d0c728e",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 246,
-        "top": 208
+        "left": 234,
+        "top": 242
       },
       "size": {
-        "width": 358,
-        "height": 149
+        "width": 385,
+        "height": 147
       }
     },
     {
       "file": "mine-clearing-rear-FP-G.avif",
       "kind": "build-layer",
       "id": "mine-clearing-rear-FP-G",
-      "depth": 21.488,
+      "depth": 20.364,
       "slot": "weapon",
-      "bytes": 4745,
-      "sha256": "002ae7805ab1c9ea320d110a47da0a868848a85b6a4cfb77e066a9b20d65a977",
+      "bytes": 4413,
+      "sha256": "e8b5e0d3b5a2673fd9af5d98d3371068478cc6e35f8e4b103b84d9befb9c3da8",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 246,
-        "top": 203
+        "left": 234,
+        "top": 231
       },
       "size": {
-        "width": 359,
-        "height": 140
+        "width": 383,
+        "height": 139
       }
     },
     {
       "file": "mine-clearing-rear-MOB-A.avif",
       "kind": "build-layer",
       "id": "mine-clearing-rear-MOB-A",
-      "depth": 22.115,
+      "depth": 20.765,
       "slot": "powerpack",
-      "bytes": 2888,
-      "sha256": "3a034b7670ccd440f0f1e4aa61f840e758298282fadf853c57a12b66e5dc68cc",
+      "bytes": 2837,
+      "sha256": "cafa34c8dc34cfe702550fee3ffbdbac00dc0eb3af4a69ff0a812f73f45fdd7c",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 248,
-        "top": 243
+        "left": 233,
+        "top": 281
       },
       "size": {
-        "width": 163,
-        "height": 89
+        "width": 174,
+        "height": 88
       }
     },
     {
       "file": "mine-clearing-rear-MOB-B.avif",
       "kind": "build-layer",
       "id": "mine-clearing-rear-MOB-B",
-      "depth": 21.835,
+      "depth": 20.506,
       "slot": "running",
-      "bytes": 4812,
-      "sha256": "deefba6823028db29415aebbacacfddd0d192a30c3cca71f8f7b79fa0effe20a",
+      "bytes": 5447,
+      "sha256": "249de28ccf5e89e1c1ec126b67ba217ab527f48c40418d87d06d4394dcd0d1d3",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 242,
-        "top": 440
+        "left": 222,
+        "top": 494
       },
       "size": {
-        "width": 354,
-        "height": 130
+        "width": 427,
+        "height": 112
       }
     },
     {
       "file": "mine-clearing-rear-MOB-C.avif",
       "kind": "build-layer",
       "id": "mine-clearing-rear-MOB-C",
-      "depth": 21.835,
+      "depth": 20.506,
       "slot": "running",
-      "bytes": 21685,
-      "sha256": "2dbd057934c5d4e0a59d5b1886690cfcfca222bd83303f6daa1b4f0265d78c06",
+      "bytes": 25911,
+      "sha256": "fbede41b1f46a04df036bf19b5584f0acce623142d329ff99acf46e347562440",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 230,
-        "top": 402
+        "left": 204,
+        "top": 458
       },
       "size": {
-        "width": 486,
-        "height": 196
+        "width": 564,
+        "height": 177
       }
     },
     {
       "file": "mine-clearing-rear-MOB-D.avif",
       "kind": "build-layer",
       "id": "mine-clearing-rear-MOB-D",
-      "depth": 21.826,
+      "depth": 20.477,
       "slot": "running",
-      "bytes": 8055,
-      "sha256": "8f7efe254ee1a2ba6e64049e54cb18e278b0fcd8ccf35587628c17229a78630d",
+      "bytes": 4043,
+      "sha256": "a28485491534b2e2091281478913817bd90582e3c9236a90b7771442e98e2487",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 231,
-        "top": 395
+        "left": 230,
+        "top": 487
       },
       "size": {
-        "width": 365,
-        "height": 173
+        "width": 413,
+        "height": 109
       }
     },
     {
       "file": "mine-clearing-rear-MOB-E.avif",
       "kind": "build-layer",
       "id": "mine-clearing-rear-MOB-E",
-      "depth": 19.79,
+      "depth": 18.851,
       "slot": "tanks",
-      "bytes": 4324,
-      "sha256": "c40d2d2b02fd57afe299e79f07ee14c492cdc4f15986d2f740599695dd6763a0",
+      "bytes": 4211,
+      "sha256": "6b9f47abbca1ae44d1b36cb6c4ae3ec8a019c6a3f86904b2b45c5d3fd210db41",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 582,
-        "top": 434
+        "left": 649,
+        "top": 469
       },
       "size": {
-        "width": 271,
-        "height": 143
+        "width": 233,
+        "height": 145
       }
     },
     {
       "file": "mine-clearing-rear-MOB-F.avif",
       "kind": "build-layer",
       "id": "mine-clearing-rear-MOB-F",
-      "depth": 22.129,
+      "depth": 20.768,
       "slot": "powerpack",
-      "bytes": 2133,
-      "sha256": "94a56469a86046069904e53de97c8a55d14bcd5b1b9b83f8e85df8cad8fdeb83",
+      "bytes": 1987,
+      "sha256": "d4582632a6e0f1b37bab89825c2a5dcfa15850bf302351b758a912917c3a83ec",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 297,
-        "top": 268
+        "left": 234,
+        "top": 309
       },
       "size": {
-        "width": 98,
-        "height": 64
+        "width": 155,
+        "height": 59
       }
     },
     {
       "file": "mine-clearing-rear-MOB-G.avif",
       "kind": "build-layer",
       "id": "mine-clearing-rear-MOB-G",
-      "depth": 21.835,
+      "depth": 20.506,
       "slot": "running",
-      "bytes": 16614,
-      "sha256": "7eb21a03e472134d48447787233fdcd2d40f36ee69c4186eed7f923361a96aa2",
+      "bytes": 19268,
+      "sha256": "3e31ad3f3a4fe62b9d35c3aabc20b69a9e29fd18ca76e9a5849736752fdeb64e",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 226,
-        "top": 401
+        "left": 201,
+        "top": 457
       },
       "size": {
-        "width": 464,
-        "height": 197
+        "width": 561,
+        "height": 178
       }
     },
     {
       "file": "mine-clearing-rear-PRO-A.avif",
       "kind": "build-layer",
       "id": "mine-clearing-rear-PRO-A",
-      "depth": 21.155,
+      "depth": 19.978,
       "slot": "side-armour",
-      "bytes": 9096,
-      "sha256": "754467d1c26fc8f274251e9ad2ea119b2993fe74d253a72123818ff43e7eac09",
+      "bytes": 10366,
+      "sha256": "ed2133d1d9e1cf6c30a8d9efb1954ed422ff9b0a61ed8c185f320198acd9092d",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 241,
-        "top": 362
+        "left": 233,
+        "top": 397
       },
       "size": {
-        "width": 490,
-        "height": 199
+        "width": 561,
+        "height": 192
       }
     },
     {
       "file": "mine-clearing-rear-PRO-B.avif",
       "kind": "build-layer",
       "id": "mine-clearing-rear-PRO-B",
-      "depth": 23.443,
+      "depth": 21.964,
       "slot": "front-armour",
-      "bytes": 2537,
-      "sha256": "4c82a1839e56aac0c6fed612c9e6ed674b0c4f48e2ce835d04aae9ddfd74d7ca",
+      "bytes": 2848,
+      "sha256": "9415158fb51ab641af588098e53cd3c503256e87f96f374aa6bff8b7ebd97f6f",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 210,
-        "top": 280
+        "left": 175,
+        "top": 328
       },
       "size": {
-        "width": 199,
-        "height": 79
+        "width": 211,
+        "height": 89
       }
     },
     {
       "file": "mine-clearing-rear-PRO-C.avif",
       "kind": "build-layer",
       "id": "mine-clearing-rear-PRO-C",
-      "depth": 21.155,
+      "depth": 19.978,
       "slot": "side-armour",
-      "bytes": 7809,
-      "sha256": "f050266f32c278d86a3bf5f416dd01db90462a056763888368dbb63cccd3bb7b",
+      "bytes": 9020,
+      "sha256": "b5e2353ee5f55d85674a26111400e8886bcc12b5cabd5b46a7af2b99d9cf607b",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 244,
-        "top": 363
+        "left": 239,
+        "top": 402
       },
       "size": {
-        "width": 418,
-        "height": 160
+        "width": 549,
+        "height": 172
       }
     },
     {
       "file": "mine-clearing-rear-PRO-D.avif",
       "kind": "build-layer",
       "id": "mine-clearing-rear-PRO-D",
-      "depth": 22.615,
+      "depth": 21.282,
       "slot": "roof-armour",
-      "bytes": 1145,
-      "sha256": "daf8dbb09c208af8433672cd15f80654f4cbf88daaa9b8cc12eab25efeae06c2",
+      "bytes": 1060,
+      "sha256": "2059fb181d91b1134c5b7814b3309a71e45f5ccde5656f656029ebb2d94d2293",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 340,
-        "top": 281
+        "left": 323,
+        "top": 329
       },
       "size": {
-        "width": 78,
-        "height": 36
+        "width": 84,
+        "height": 30
       }
     },
     {
       "file": "mine-clearing-rear-PRO-E.avif",
       "kind": "build-layer",
       "id": "mine-clearing-rear-PRO-E",
-      "depth": 21.164,
+      "depth": 19.984,
       "slot": "side-armour",
-      "bytes": 11696,
-      "sha256": "042a17f7bb08c26b078c6b6465027196b5eaed0543a89561d1643207a5470e4d",
+      "bytes": 12044,
+      "sha256": "760531743f0b4b4424160e8d8498993f62fcd13544cddf3e0fc72b68a401248a",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 238,
-        "top": 358
+        "left": 230,
+        "top": 407
       },
       "size": {
-        "width": 418,
-        "height": 202
+        "width": 558,
+        "height": 144
       }
     },
     {
       "file": "mine-clearing-rear-PRO-F.avif",
       "kind": "build-layer",
       "id": "mine-clearing-rear-PRO-F",
-      "depth": 21.791,
+      "depth": 20.462,
       "slot": "belly",
-      "bytes": 2598,
-      "sha256": "68ed9b47f9cd318b981bf453d2c74683c21385f691a2ad03a506ace6a9272902",
+      "bytes": 2921,
+      "sha256": "ca775f8703d9f0d12fec4b1d66da3c576e183181a5da25a16309af9a36bebf7b",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 300,
-        "top": 472
+        "left": 282,
+        "top": 524
       },
       "size": {
-        "width": 441,
-        "height": 113
+        "width": 506,
+        "height": 96
       }
     },
     {
       "file": "mine-clearing-rear-PRO-G.avif",
       "kind": "build-layer",
       "id": "mine-clearing-rear-PRO-G",
-      "depth": 22.61,
+      "depth": 21.279,
       "slot": "roof-armour",
-      "bytes": 1911,
-      "sha256": "eb9a399818748aeeb641c32771772d2304071c6a7b957f5a2981e4ac77f4b5ec",
+      "bytes": 1857,
+      "sha256": "1525d02103632938ecc3ccbc1407f131375a58a3ea3756ecac32a6d0b4de39d4",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 334,
-        "top": 274
+        "left": 319,
+        "top": 323
       },
       "size": {
-        "width": 88,
-        "height": 43
+        "width": 93,
+        "height": 37
       }
     },
     {
       "file": "mine-clearing-rear-SA-A.avif",
       "kind": "build-layer",
       "id": "mine-clearing-rear-SA-A",
-      "depth": 23.45,
+      "depth": 22.107,
       "slot": "optics",
-      "bytes": 2331,
-      "sha256": "76c690578ca6f62662485cd6333831c28a935daa7cd3e92a17d211174425e23f",
+      "bytes": 2095,
+      "sha256": "3aa0b98c9d76688c7216876c3e7b3680939003208b86f1c1ae8922af1a36072e",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 327,
-        "top": 231
+        "left": 300,
+        "top": 282
       },
       "size": {
-        "width": 110,
-        "height": 93
+        "width": 111,
+        "height": 84
       }
     },
     {
       "file": "mine-clearing-rear-SA-B.avif",
       "kind": "build-layer",
       "id": "mine-clearing-rear-SA-B",
-      "depth": 21.528,
+      "depth": 20.183,
       "slot": "sensor-mast",
-      "bytes": 2571,
-      "sha256": "3a3eac24a76adbf4a294958a572721dd26facf2fc21aaae27c0c9f81e218c115",
+      "bytes": 2519,
+      "sha256": "a86097fecceb245d5e45fbd93246d9ddafd61792c0e2f16e8e50dbb8c8bd9469",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 246,
-        "top": 154
+        "left": 299,
+        "top": 183
       },
       "size": {
-        "width": 125,
-        "height": 174
+        "width": 72,
+        "height": 184
       }
     },
     {
       "file": "mine-clearing-rear-SA-C.avif",
       "kind": "build-layer",
       "id": "mine-clearing-rear-SA-C",
-      "depth": 23.44,
+      "depth": 22.11,
       "slot": "optics",
-      "bytes": 2205,
-      "sha256": "3a9b3a84ad6c3916cf25627fcfadf52e012af6fd3d2df446e52e9500bf5a3c20",
+      "bytes": 1952,
+      "sha256": "055e854555bbe19c1047e126bfac67619254154a34717ec4536f033367640901",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 337,
-        "top": 223
+        "left": 309,
+        "top": 275
       },
       "size": {
-        "width": 100,
-        "height": 101
+        "width": 102,
+        "height": 84
       }
     },
     {
       "file": "mine-clearing-rear-SA-D.avif",
       "kind": "build-layer",
       "id": "mine-clearing-rear-SA-D",
-      "depth": 21.423,
+      "depth": 20.136,
       "slot": "sensor-mast",
-      "bytes": 3582,
-      "sha256": "43f349f6343e096198c4a318e35dcd7203a0d5c3bca24340863dfaac8a65c1cd",
+      "bytes": 3467,
+      "sha256": "98e331c356a6c653b9a0b20327af966725a9cb5cee59e91ab9debb05ef6471bc",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 246,
-        "top": 36
+        "left": 307,
+        "top": 59
       },
       "size": {
-        "width": 126,
-        "height": 294
+        "width": 63,
+        "height": 308
       }
     },
     {
       "file": "mine-clearing-rear-SA-E.avif",
       "kind": "build-layer",
       "id": "mine-clearing-rear-SA-E",
-      "depth": 23.401,
+      "depth": 22.069,
       "slot": "optics",
-      "bytes": 2594,
-      "sha256": "dd124f7142c437b51eafdbf19e587dc21a48a2bc95a0bcd32867300f3fe9349b",
+      "bytes": 2292,
+      "sha256": "3982488ac460646631feddd09323aee127f955f0ddccab5e3b185d25e765ce6c",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 328,
-        "top": 214
+        "left": 301,
+        "top": 266
       },
       "size": {
-        "width": 109,
-        "height": 110
+        "width": 110,
+        "height": 99
       }
     },
     {
       "file": "mine-clearing-rear-SA-F.avif",
       "kind": "build-layer",
       "id": "mine-clearing-rear-SA-F",
-      "depth": 21.67,
+      "depth": 20.468,
       "slot": "sensor-pods",
-      "bytes": 4327,
-      "sha256": "49ac5b15ed9f30db8d073cf9c9d9ab7880f90a66a97017b92e922bea26f29430",
+      "bytes": 4506,
+      "sha256": "03df8e9a5ea1887fc09e22e7a43485ef82b8fd4c691308062c95725735ae6a04",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 252,
-        "top": 221
+        "left": 243,
+        "top": 279
       },
       "size": {
-        "width": 416,
-        "height": 144
+        "width": 439,
+        "height": 114
       }
     },
     {
       "file": "mine-clearing-rear-SA-G.avif",
       "kind": "build-layer",
       "id": "mine-clearing-rear-SA-G",
-      "depth": 21.681,
+      "depth": 20.473,
       "slot": "sensor-pods",
-      "bytes": 4214,
-      "sha256": "902c471092fa42bba531bb3a9cdfead67527bccddd8afe006d3c5eb5d5231a83",
+      "bytes": 4409,
+      "sha256": "2fcf15876964fa7fb3d4a64801e111ab93f8de55b739af25f65781326da448ce",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 255,
-        "top": 228
+        "left": 243,
+        "top": 288
       },
       "size": {
-        "width": 410,
-        "height": 137
+        "width": 436,
+        "height": 105
       }
     },
     {
@@ -16154,8 +16348,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "mine-clearing-turntable-00",
       "depth": 12.968,
-      "bytes": 23422,
-      "sha256": "9bd7c522d53e1f4536f8353ead50cd12eaea8dc1b16632d4c29aae9a4517f3a1",
+      "bytes": 23397,
+      "sha256": "9f5e49edc5345bd6cbb36312354a7144fef0fc874172e22bbea6142527e3c6e1",
       "frame": {
         "width": 960,
         "height": 540
@@ -16175,7 +16369,7 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "id": "mine-clearing-turntable-01",
       "depth": 12.622,
       "bytes": 24955,
-      "sha256": "910c7b2e7946660785c8f97cb2a7b08119493d372902fb441774b2570418e491",
+      "sha256": "01aba2a78525286ef7be909e8fc10107d0ff2d3562b0b391a4c09d1b4ef16795",
       "frame": {
         "width": 960,
         "height": 540
@@ -16193,9 +16387,9 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "file": "mine-clearing-turntable-02.avif",
       "kind": "turntable",
       "id": "mine-clearing-turntable-02",
-      "depth": 12.242,
-      "bytes": 27085,
-      "sha256": "81d8803b69f0a5fe4fb3effadf23c32d3b4150c6cbff0570ef785da4e380633e",
+      "depth": 12.241,
+      "bytes": 27113,
+      "sha256": "763fd6555ca878f8e395bb5b9950f1b87e03909d94cd92478f4593cf9fd17527",
       "frame": {
         "width": 960,
         "height": 540
@@ -16214,8 +16408,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "mine-clearing-turntable-03",
       "depth": 11.388,
-      "bytes": 29227,
-      "sha256": "da659a8af0989a9c5d71e7b26a1efdb4efe13aceb08762b389d067454077f517",
+      "bytes": 29178,
+      "sha256": "a59a06956d72f74d7112fd3d815021cbf9460e6d8ab759ce0250fd8ad906de31",
       "frame": {
         "width": 960,
         "height": 540
@@ -16234,8 +16428,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "mine-clearing-turntable-04",
       "depth": 11.072,
-      "bytes": 26125,
-      "sha256": "da0d0ea3abe41c73312e0f48550f3a6b05406ba2f27d3ce2cfa2215589fde191",
+      "bytes": 26165,
+      "sha256": "d8a010886f33402a459e54a4be8d3dcc56bfa18f224f527038a8220df21bdf1c",
       "frame": {
         "width": 960,
         "height": 540
@@ -16254,8 +16448,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "mine-clearing-turntable-05",
       "depth": 11.053,
-      "bytes": 19087,
-      "sha256": "bcec0e25926cc6b14f4f9197440de24b5f6b6206b7960a015e197ac0ab364df3",
+      "bytes": 18995,
+      "sha256": "fe87bca57ee06068452c3740f2d8c9f8ba79691841f440406c7a1d1345fe48f8",
       "frame": {
         "width": 960,
         "height": 540
@@ -16274,8 +16468,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "mine-clearing-turntable-06",
       "depth": 10.785,
-      "bytes": 17199,
-      "sha256": "71590d91203950f4109c404bbc08c7e6bbaadeb1316b05cb7229a7ad660bfb56",
+      "bytes": 17152,
+      "sha256": "7b95accdaecf2da62b1c6124269ce19306e4fc03e4463e60148cb06150ff3bf7",
       "frame": {
         "width": 960,
         "height": 540
@@ -16294,8 +16488,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "mine-clearing-turntable-07",
       "depth": 11.052,
-      "bytes": 19768,
-      "sha256": "e2e07f338566ad4ea1e009a6f85649313f344ce73c0f0c6de13a6cf4b270b978",
+      "bytes": 19724,
+      "sha256": "badfc7f9aa499c2325260cc0d0291db09aa87c9eb97b67073d6d994ad7ab0681",
       "frame": {
         "width": 960,
         "height": 540
@@ -16314,8 +16508,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "mine-clearing-turntable-08",
       "depth": 11.07,
-      "bytes": 26513,
-      "sha256": "d63deb5fe684c154772c2ed8b4a4addbe378ce933dadb7740e569e7817bc2507",
+      "bytes": 26447,
+      "sha256": "d1ee6e02eea809f5b3ea822c0b3bf269ab62f84e4f8e2cd0b9a6ad32626c6984",
       "frame": {
         "width": 960,
         "height": 540
@@ -16334,8 +16528,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "mine-clearing-turntable-09",
       "depth": 11.386,
-      "bytes": 29295,
-      "sha256": "4f703e62f9a8710752110aaa1e0ae8b89507c5ccd9e8bb0581dba236984da78f",
+      "bytes": 29242,
+      "sha256": "6dbfca92f186c0b776a4b1ba376215b4b6a0704ae29296e2dcb3e0d23757d333",
       "frame": {
         "width": 960,
         "height": 540
@@ -16354,8 +16548,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "mine-clearing-turntable-10",
       "depth": 12.238,
-      "bytes": 27279,
-      "sha256": "3621e96670e54761f27fba77a3f1d7a147a52b8873884a9c79191426dafb15fe",
+      "bytes": 27245,
+      "sha256": "c2dc814c3569311ae008c47cfd6bb6febf23426fc4a53f292b8b09939f595884",
       "frame": {
         "width": 960,
         "height": 540
@@ -16374,8 +16568,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "mine-clearing-turntable-11",
       "depth": 12.618,
-      "bytes": 25296,
-      "sha256": "ba54c0fce7bb2a7c5371ea55e7026d7d1c5c6e7524fa787288e169e7c7ff7146",
+      "bytes": 25281,
+      "sha256": "f1eeab7896d5a476728708a691c60688c4bf89066cae0de73330bc9a9d5966a3",
       "frame": {
         "width": 960,
         "height": 540
@@ -16394,8 +16588,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "mine-clearing-turntable-12",
       "depth": 12.964,
-      "bytes": 23885,
-      "sha256": "c41cb2acc67ee1d774833a380570524e33aebaf962af0c8f10abf1b975ab0a59",
+      "bytes": 23775,
+      "sha256": "cdc6c01866f7c55dedfdea0b23cc56ee214d79170a0550ce1762680355550d2b",
       "frame": {
         "width": 960,
         "height": 540
@@ -16414,8 +16608,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "mine-clearing-turntable-13",
       "depth": 12.779,
-      "bytes": 25391,
-      "sha256": "1c219e8744d39a0d6be59609eddfe3dea4941016ed362d06933775217e71355f",
+      "bytes": 25181,
+      "sha256": "1a5de1d8ea399a065a90c04cba3f6c435012b7502ac224580bb878734d1f697e",
       "frame": {
         "width": 960,
         "height": 540
@@ -16434,8 +16628,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "mine-clearing-turntable-14",
       "depth": 12.196,
-      "bytes": 27215,
-      "sha256": "d07b1bc7cb7d6855aaa1d066132cd4630e24b6a614612f3659dbc76473b3e09a",
+      "bytes": 27251,
+      "sha256": "d8328b38ec1e8b1507744966557e291373910f907607f2c88ef74b4dad14d735",
       "frame": {
         "width": 960,
         "height": 540
@@ -16454,8 +16648,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "mine-clearing-turntable-15",
       "depth": 11.236,
-      "bytes": 28703,
-      "sha256": "52230f7458bab68af9a897255a6a01d98b584d130f36ebe2645a703ce55a4392",
+      "bytes": 28690,
+      "sha256": "a75be39d92e924223d840b1904b755e11f8e3be3118a0835a8755c37ea10d767",
       "frame": {
         "width": 960,
         "height": 540
@@ -16474,8 +16668,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "mine-clearing-turntable-16",
       "depth": 10.462,
-      "bytes": 25941,
-      "sha256": "f6b9de6275728d7df1f6a0a8a059ed1cc0ec0d4a32cdbfc7262f7d04c4c5a09e",
+      "bytes": 25966,
+      "sha256": "3227e10f51645acee71882986cf0ebf1de360529b9bc533159ade79a7bce21bd",
       "frame": {
         "width": 960,
         "height": 540
@@ -16494,8 +16688,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "mine-clearing-turntable-17",
       "depth": 10.379,
-      "bytes": 17640,
-      "sha256": "1195a435048662afdc473fcd91561ddaff5f4f9cb83f01f041904fd21b845691",
+      "bytes": 17657,
+      "sha256": "3109c05ca2749ea1a383b72b3d4359cbf410d2de8d52a74e5aea9f50ae29e576",
       "frame": {
         "width": 960,
         "height": 540
@@ -16514,8 +16708,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "mine-clearing-turntable-18",
       "depth": 10.086,
-      "bytes": 15563,
-      "sha256": "03778ba6aa36444338ff14da6708edb46a08e94f1bc60f06169cbe3d32dad416",
+      "bytes": 15543,
+      "sha256": "b0b1d4848d7f0edbe32d3730a53792a4f1bf41fddbb2439b9cbeaa64de243956",
       "frame": {
         "width": 960,
         "height": 540
@@ -16534,8 +16728,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "mine-clearing-turntable-19",
       "depth": 10.38,
-      "bytes": 17610,
-      "sha256": "c178aceaf9cf99001ce2dbf568ca4138e76e44cfa5062ef4c02d8f239cbb74df",
+      "bytes": 17715,
+      "sha256": "533771a9b1c4639706b0b4b4e46df28c18511dad284c349233b0a313801ffaff",
       "frame": {
         "width": 960,
         "height": 540
@@ -16554,8 +16748,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "mine-clearing-turntable-20",
       "depth": 10.464,
-      "bytes": 25945,
-      "sha256": "961f2affc31f19f2c347e8cbe92b9b0075b9439bcdf27656892e7286e3c62c58",
+      "bytes": 25972,
+      "sha256": "abc6cbb7962f49d1b07ebd6661fdf2995e172c757dfd8f16b0e16445e1e735db",
       "frame": {
         "width": 960,
         "height": 540
@@ -16574,8 +16768,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "mine-clearing-turntable-21",
       "depth": 11.239,
-      "bytes": 27785,
-      "sha256": "a24ce1be58de5bd11d86e585e10269f36408e9bffd6eb0c6697e0e6bead91391",
+      "bytes": 27829,
+      "sha256": "5de1cf4472297483351ff0049288835b0c2d9dd1c8482fd0798056124f60574d",
       "frame": {
         "width": 960,
         "height": 540
@@ -16594,8 +16788,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "mine-clearing-turntable-22",
       "depth": 12.199,
-      "bytes": 25843,
-      "sha256": "bfcd99b128619b83cba37197b6314fe25d0571a9c9ed63ddceb48a410b7c3165",
+      "bytes": 25961,
+      "sha256": "66bb604ebaa0afe051a8632b6870ac5b437e5ae1b2c855625983da540ae951a4",
       "frame": {
         "width": 960,
         "height": 540
@@ -16614,8 +16808,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "mine-clearing-turntable-23",
       "depth": 12.782,
-      "bytes": 23949,
-      "sha256": "69aee5b7d2f44d936b8396363c4ac6d0e70a8ec2b2eb1e90d21716332e5af121",
+      "bytes": 24074,
+      "sha256": "e7444545c87457037b5878f68f7b8b246f9b4e5c006128540d5a7d244e9b6e25",
       "frame": {
         "width": 960,
         "height": 540
@@ -16633,838 +16827,838 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "file": "recce-front-ACC-A.avif",
       "kind": "build-layer",
       "id": "recce-front-ACC-A",
-      "depth": 23.081,
+      "depth": 21.187,
       "slot": "rear-kit",
-      "bytes": 1410,
-      "sha256": "e362847551fdee9f0bb9bd4de835579736921ca774673c39ad1941bb3dc586eb",
+      "bytes": 2183,
+      "sha256": "30adcc4e79c9e4507fe0a7d7a010c91ee03cace25a35832e2c3a5651a25c483d",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 270,
-        "top": 301
+        "left": 234,
+        "top": 327
       },
       "size": {
-        "width": 83,
-        "height": 135
+        "width": 93,
+        "height": 163
       }
     },
     {
       "file": "recce-front-ACC-B.avif",
       "kind": "build-layer",
       "id": "recce-front-ACC-B",
-      "depth": 24.369,
+      "depth": 22.328,
       "slot": "rear-kit",
-      "bytes": 4422,
-      "sha256": "02d5af6994d21b22cb8a14dfe3811672052bacd0972d546b125f40144c416521",
+      "bytes": 5893,
+      "sha256": "c31861d91b4ab057e0b5a80c38b35af87a2425e1a7b8e2443b1058242562ad91",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 102,
-        "top": 315
+        "left": 33,
+        "top": 357
       },
       "size": {
-        "width": 223,
-        "height": 176
+        "width": 267,
+        "height": 198
       }
     },
     {
       "file": "recce-front-ACC-C.avif",
       "kind": "build-layer",
       "id": "recce-front-ACC-C",
-      "depth": 18.256,
+      "depth": 17.385,
       "slot": "front-kit",
-      "bytes": 9880,
-      "sha256": "5e5923c355ea51c1af14374d929621dc48e83d72b5f7a9006caa04afade69317",
+      "bytes": 9991,
+      "sha256": "0de4e283395bd1821a9164d2b7e76086ea8834265df6b4e3870fb7614a1df9eb",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 772,
-        "top": 451
+        "left": 739,
+        "top": 452
       },
       "size": {
-        "width": 373,
-        "height": 251
+        "width": 507,
+        "height": 244
       }
     },
     {
       "file": "recce-front-ACC-D.avif",
       "kind": "build-layer",
       "id": "recce-front-ACC-D",
-      "depth": 19.521,
+      "depth": 17.968,
       "slot": "rack",
-      "bytes": 7843,
-      "sha256": "80205eb75decc1e08405cc1ba22b27d3c5ff61df460d56cd0fc67c6f1b5cccee",
+      "bytes": 7520,
+      "sha256": "29d4750274566ed8daad2a62d14c0b4fd52449a05719be10ce404a703b69c2f6",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 322,
-        "top": 287
+        "left": 307,
+        "top": 291
       },
       "size": {
-        "width": 337,
-        "height": 298
+        "width": 338,
+        "height": 180
       }
     },
     {
       "file": "recce-front-ACC-E.avif",
       "kind": "build-layer",
       "id": "recce-front-ACC-E",
-      "depth": 18.404,
+      "depth": 17.491,
       "slot": "front-kit",
-      "bytes": 7558,
-      "sha256": "00018a80104964cbb32730cb9d6a32aaee364465844637b9407629664ab75c21",
+      "bytes": 8656,
+      "sha256": "41c181f76972dcde1a284b6e2abbbde360c8eed054ab3d87e7f0afb61268d543",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 772,
-        "top": 443
+        "left": 740,
+        "top": 442
       },
       "size": {
-        "width": 305,
-        "height": 244
+        "width": 418,
+        "height": 249
       }
     },
     {
       "file": "recce-front-ACC-F.avif",
       "kind": "build-layer",
       "id": "recce-front-ACC-F",
-      "depth": 18.394,
+      "depth": 17.455,
       "slot": "front-kit",
-      "bytes": 5073,
-      "sha256": "eccccc1742ff8c9ad400066ec7619d68f1de14ec3fabbf7b1201f229bfd92f79",
+      "bytes": 4492,
+      "sha256": "cdc27f35c4d58ae96f70e95167d1a932efd83d5fa6954356ed996c1b945b0e01",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 770,
-        "top": 454
+        "left": 851,
+        "top": 453
       },
       "size": {
-        "width": 224,
-        "height": 148
+        "width": 223,
+        "height": 166
       }
     },
     {
       "file": "recce-front-ACC-G.avif",
       "kind": "build-layer",
       "id": "recce-front-ACC-G",
-      "depth": 19.444,
+      "depth": 17.894,
       "slot": "rack",
-      "bytes": 9207,
-      "sha256": "06897763b65fadd770803205f7a9dfabaf30267faddc956b75a80e7d6427ed13",
+      "bytes": 11062,
+      "sha256": "d97382af12577702385b8c8b22afcedebd32274e55329e6074082a696b5f69f6",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 313,
-        "top": 243
+        "left": 307,
+        "top": 247
       },
       "size": {
-        "width": 346,
-        "height": 341
+        "width": 413,
+        "height": 361
       }
     },
     {
       "file": "recce-front-base.avif",
       "kind": "build-base",
       "id": "recce-front-base",
-      "depth": 20.626,
-      "bytes": 20754,
-      "sha256": "41fba0ce62a7527b266ce3f87bfb959a69c52c9cc6daee5fbbe61f645fecfb9e",
+      "depth": 19.132,
+      "bytes": 22597,
+      "sha256": "20b98c9e16be9a08ec42169a71993c8ca0298e00a9e458fdcd3b0e1898feca10",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 273,
-        "top": 299
+        "left": 255,
+        "top": 308
       },
       "size": {
-        "width": 669,
-        "height": 347
+        "width": 758,
+        "height": 360
       }
     },
     {
       "file": "recce-front-CAP-A.avif",
       "kind": "build-layer",
       "id": "recce-front-CAP-A",
-      "depth": 21.804,
+      "depth": 20.157,
       "slot": "module",
-      "bytes": 4193,
-      "sha256": "11437f35815e4fb2411bbf87c5ae7e0e982e74f91adfe8671fd664ff38fc7f9c",
+      "bytes": 4507,
+      "sha256": "19a1a2b00be09302a562a9358a93a12249497c6a20b9632c5df713774c8506ec",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 304,
-        "top": 226
+        "left": 296,
+        "top": 245
       },
       "size": {
-        "width": 251,
-        "height": 117
+        "width": 262,
+        "height": 126
       }
     },
     {
       "file": "recce-front-CAP-B.avif",
       "kind": "build-layer",
       "id": "recce-front-CAP-B",
-      "depth": 21.792,
+      "depth": 20.15,
       "slot": "module",
-      "bytes": 4440,
-      "sha256": "123cbe86a8af2d70acbc216f66b673c19302ec447230cdd26ffe8e6f57e6939a",
+      "bytes": 4547,
+      "sha256": "7c802c2076a661ef107788d1f63d34fa395ec512350b181a105933c0ae695f7a",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 304,
-        "top": 215
+        "left": 296,
+        "top": 233
       },
       "size": {
-        "width": 255,
-        "height": 128
+        "width": 267,
+        "height": 138
       }
     },
     {
       "file": "recce-front-CAP-C.avif",
       "kind": "build-layer",
       "id": "recce-front-CAP-C",
-      "depth": 21.798,
+      "depth": 20.152,
       "slot": "module",
-      "bytes": 5263,
-      "sha256": "787c2ed0031d06713ed71ed48730cfec8fbdba18cdd7666ee9db9d45a1b27281",
+      "bytes": 5014,
+      "sha256": "74c67a9fcbeaead0c8ab9a65e6b2197a9081d2240d57ad47b13202ae1ec6a48a",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 304,
-        "top": 227
+        "left": 296,
+        "top": 245
       },
       "size": {
-        "width": 240,
-        "height": 116
+        "width": 249,
+        "height": 126
       }
     },
     {
       "file": "recce-front-CAP-D.avif",
       "kind": "build-layer",
       "id": "recce-front-CAP-D",
-      "depth": 21.793,
+      "depth": 20.152,
       "slot": "module",
-      "bytes": 5149,
-      "sha256": "4783a40d283178e4594374a4dd9799f1f22de92b6065eb996c896edf425ce81c",
+      "bytes": 5513,
+      "sha256": "9c9c13acfa1720631e223abc859148278166c07b9d540c39c66d4564cfc999ff",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 304,
-        "top": 209
+        "left": 296,
+        "top": 227
       },
       "size": {
-        "width": 259,
-        "height": 134
+        "width": 271,
+        "height": 144
       }
     },
     {
       "file": "recce-front-CAP-E.avif",
       "kind": "build-layer",
       "id": "recce-front-CAP-E",
-      "depth": 21.803,
+      "depth": 20.157,
       "slot": "module",
-      "bytes": 3865,
-      "sha256": "52ff2afb0f227a808c46cd565e2fbaa377967addb698b8e532a3ac7c61f78173",
+      "bytes": 4114,
+      "sha256": "973aac8214eb85175c74f79d6bb08ef01803e434e34ca99aea11f8ca5b9af6af",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 304,
-        "top": 226
+        "left": 296,
+        "top": 245
       },
       "size": {
-        "width": 246,
-        "height": 117
+        "width": 256,
+        "height": 126
       }
     },
     {
       "file": "recce-front-CAP-F.avif",
       "kind": "build-layer",
       "id": "recce-front-CAP-F",
-      "depth": 21.8,
+      "depth": 20.155,
       "slot": "module",
-      "bytes": 4145,
-      "sha256": "d56888de4a04fa707a8611a4ac43733ead88388a824179fe85dbf655358785d8",
+      "bytes": 4464,
+      "sha256": "a6bdd5069d1989e5ea679f70ee91e9594564b4ee0f2d749d2b5218a8e2c0c92b",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 304,
-        "top": 221
+        "left": 296,
+        "top": 240
       },
       "size": {
-        "width": 252,
-        "height": 122
+        "width": 263,
+        "height": 131
       }
     },
     {
       "file": "recce-front-CAP-G.avif",
       "kind": "build-layer",
       "id": "recce-front-CAP-G",
-      "depth": 21.799,
+      "depth": 20.152,
       "slot": "module",
-      "bytes": 4993,
-      "sha256": "a04c26ce128872110c9275eb2ab1d349d1adb405b326e48e9352e06d172a9bde",
+      "bytes": 4858,
+      "sha256": "04b8d410fb7a0f3a87ee87a943526459ef9887583411760a1283ff923bbd52af",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 304,
-        "top": 229
+        "left": 296,
+        "top": 248
       },
       "size": {
-        "width": 245,
-        "height": 114
+        "width": 256,
+        "height": 123
       }
     },
     {
       "file": "recce-front-COM-A.avif",
       "kind": "build-layer",
       "id": "recce-front-COM-A",
-      "depth": 22.04,
+      "depth": 20.335,
       "slot": "antenna-left",
-      "bytes": 1921,
-      "sha256": "ac368032e38d7a591260e19c0f4528fceed471be62043ac679cf49003db50674",
+      "bytes": 1974,
+      "sha256": "2208e921d0253c5e884a0ef2d33b5ac33b2ebb3f3a6c71e0317ba293c9c34e2d",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 262,
-        "top": 86
+        "left": 250,
+        "top": 89
       },
       "size": {
-        "width": 76,
-        "height": 244
+        "width": 81,
+        "height": 269
       }
     },
     {
       "file": "recce-front-COM-B.avif",
       "kind": "build-layer",
       "id": "recce-front-COM-B",
-      "depth": 23.221,
+      "depth": 21.503,
       "slot": "antenna-right",
-      "bytes": 2285,
-      "sha256": "dd12e79091741c1cff8e334a6959893f8e537b9b7a29cbe88ef6a875453d99df",
+      "bytes": 2357,
+      "sha256": "e718c865677cdbe3aae31f3cea5d9c6cdcaced7e2a81423bd372cc9b29d8185e",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 384,
-        "top": 42
+        "left": 352,
+        "top": 48
       },
       "size": {
-        "width": 61,
-        "height": 265
+        "width": 65,
+        "height": 289
       }
     },
     {
       "file": "recce-front-COM-C.avif",
       "kind": "build-layer",
       "id": "recce-front-COM-C",
-      "depth": 22.135,
+      "depth": 20.379,
       "slot": "antenna-left",
-      "bytes": 1389,
-      "sha256": "1305e4c7ac050d5cca122fb753455ebd9598f5b2e8dd244062bd88613c41b0e2",
+      "bytes": 1475,
+      "sha256": "6e8baf22675ee88f2f84f5d66d38c90fb697b6d37143f51e3bf485387ce034c5",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 268,
-        "top": 256
+        "left": 256,
+        "top": 273
       },
       "size": {
-        "width": 65,
-        "height": 71
+        "width": 70,
+        "height": 82
       }
     },
     {
       "file": "recce-front-COM-D.avif",
       "kind": "build-layer",
       "id": "recce-front-COM-D",
-      "depth": 22.678,
+      "depth": 20.982,
       "slot": "radio-mast",
-      "bytes": 2614,
-      "sha256": "f5e4fe38cae1bb7660b5bbed31ce92dac3196dbf20ad61af794cac24f5331d08",
+      "bytes": 2635,
+      "sha256": "2073b95eff32cd9e75eb32e92efb12f764c80a5b52c349384257919a4cd7458a",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 328,
-        "top": 32
+        "left": 304,
+        "top": 33
       },
       "size": {
-        "width": 72,
-        "height": 284
+        "width": 77,
+        "height": 309
       }
     },
     {
       "file": "recce-front-COM-E.avif",
       "kind": "build-layer",
       "id": "recce-front-COM-E",
-      "depth": 22.674,
+      "depth": 20.982,
       "slot": "radio-mast",
-      "bytes": 2614,
-      "sha256": "cb9470453d5c70ffd1f394fa4b7fe41976f412b52856c3b0c6e5b7d0f9fa50a4",
+      "bytes": 2826,
+      "sha256": "d47aaba48395b605b717eea07b063ab4e4f28b248a00b38536f86e01bbb81947",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 326,
-        "top": 17
+        "left": 302,
+        "top": 20
       },
       "size": {
-        "width": 76,
-        "height": 299
+        "width": 81,
+        "height": 323
       }
     },
     {
       "file": "recce-front-COM-F.avif",
       "kind": "build-layer",
       "id": "recce-front-COM-F",
-      "depth": 22.057,
+      "depth": 20.342,
       "slot": "antenna-left",
-      "bytes": 1788,
-      "sha256": "901f254c9112ae9f5f28ee4233955808492ab2fcfd0b1015c42aa32ec2ea98e1",
+      "bytes": 1879,
+      "sha256": "9ca56b0cc43772e41e32620f086c7ca6a372fc52147e51b38206cb4215874e84",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 261,
-        "top": 118
+        "left": 249,
+        "top": 124
       },
       "size": {
-        "width": 78,
-        "height": 212
+        "width": 83,
+        "height": 234
       }
     },
     {
       "file": "recce-front-COM-G.avif",
       "kind": "build-layer",
       "id": "recce-front-COM-G",
-      "depth": 23.293,
+      "depth": 21.542,
       "slot": "antenna-right",
-      "bytes": 1980,
-      "sha256": "87bc3902d7cafd79a1823afb4330c79df598da2ee42c3c4218af92902ba43ff3",
+      "bytes": 2001,
+      "sha256": "9b5192f0af03f158cbd05dbd4b9f4736d3045e001c5ea5ef1b0aff6606b927cf",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 379,
-        "top": 136
+        "left": 347,
+        "top": 152
       },
       "size": {
-        "width": 67,
-        "height": 172
+        "width": 71,
+        "height": 185
       }
     },
     {
       "file": "recce-front-FP-A.avif",
       "kind": "build-layer",
       "id": "recce-front-FP-A",
-      "depth": 20.294,
+      "depth": 18.906,
       "slot": "weapon",
-      "bytes": 3261,
-      "sha256": "221a4eb00ac83be81638a5f383877af0c3ff0dc47f8cf932fea9fc6206c8efe1",
+      "bytes": 3661,
+      "sha256": "e1a068a3ea531fed5ab15913832ad7a371205e254e7525f56a6318283dce0045",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 517,
-        "top": 244
+        "left": 537,
+        "top": 248
       },
       "size": {
-        "width": 160,
-        "height": 106
+        "width": 184,
+        "height": 125
       }
     },
     {
       "file": "recce-front-FP-B.avif",
       "kind": "build-layer",
       "id": "recce-front-FP-B",
-      "depth": 20.057,
+      "depth": 18.708,
       "slot": "weapon",
-      "bytes": 3763,
-      "sha256": "ed09fcc61d8857c938c0eef3d8445940cd9c01a0b479340c620b205c6ffff149",
+      "bytes": 3825,
+      "sha256": "0a96943b718db63301028fe5115210f4b94cedae29f501011fd365165ae1441e",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 502,
-        "top": 203
+        "left": 528,
+        "top": 209
       },
       "size": {
-        "width": 233,
-        "height": 146
+        "width": 230,
+        "height": 151
       }
     },
     {
       "file": "recce-front-FP-C.avif",
       "kind": "build-layer",
       "id": "recce-front-FP-C",
-      "depth": 19.809,
+      "depth": 18.525,
       "slot": "weapon",
-      "bytes": 6055,
-      "sha256": "fabf5559fea7095580194f61b096ebbd8b89e722f54e573ff38986e17a3676a0",
+      "bytes": 6053,
+      "sha256": "c92b63de00931156f1cde3cf6f76f7406798a7e1c3750950c4add3214cb2bfb1",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 470,
-        "top": 213
+        "left": 489,
+        "top": 222
       },
       "size": {
-        "width": 365,
-        "height": 153
+        "width": 417,
+        "height": 152
       }
     },
     {
       "file": "recce-front-FP-D.avif",
       "kind": "build-layer",
       "id": "recce-front-FP-D",
-      "depth": 18.935,
+      "depth": 17.557,
       "slot": "aux-weapon",
-      "bytes": 2849,
-      "sha256": "5ae6575c4e38844ed2cd79d0687ce84a8903ba5e80913fff35777898661c2067",
+      "bytes": 3037,
+      "sha256": "f5189301c65df2826a0ad9429f7aaf6947bb8cf4e7162902d8b0fd623710d6a9",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 623,
-        "top": 271
+        "left": 664,
+        "top": 260
       },
       "size": {
-        "width": 179,
-        "height": 108
+        "width": 200,
+        "height": 121
       }
     },
     {
       "file": "recce-front-FP-E.avif",
       "kind": "build-layer",
       "id": "recce-front-FP-E",
-      "depth": 18.936,
+      "depth": 17.557,
       "slot": "aux-weapon",
-      "bytes": 2414,
-      "sha256": "9021f0fb4ec6b4f5ea6af169c6afb02b3ed5bd13528832a94bb074b6ffa224ab",
+      "bytes": 2840,
+      "sha256": "b61f89f1ef9bc8799eb381ac6c116f0be3dbb22b8ba5215ca287ed746556c513",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 627,
-        "top": 266
+        "left": 665,
+        "top": 251
       },
       "size": {
-        "width": 116,
-        "height": 100
+        "width": 199,
+        "height": 130
       }
     },
     {
       "file": "recce-front-FP-F.avif",
       "kind": "build-layer",
       "id": "recce-front-FP-F",
-      "depth": 19.944,
+      "depth": 18.63,
       "slot": "weapon",
-      "bytes": 5343,
-      "sha256": "0483a4b8faa6505186fda53668bac2c6750d8d09a5f9ffd89a674eb1a2fdfdb0",
+      "bytes": 5318,
+      "sha256": "55d8bb8ad391e65ea95c4c8a789099e1ab4aff359441dda682037fcec6f97f39",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 482,
-        "top": 224
+        "left": 502,
+        "top": 228
       },
       "size": {
-        "width": 304,
-        "height": 142
+        "width": 347,
+        "height": 151
       }
     },
     {
       "file": "recce-front-FP-G.avif",
       "kind": "build-layer",
       "id": "recce-front-FP-G",
-      "depth": 20.091,
+      "depth": 18.706,
       "slot": "weapon",
-      "bytes": 4618,
-      "sha256": "262ca635e4e4684882e0849a8c8d7e6a2cbe9c14109dc064be904d86be0a3279",
+      "bytes": 4642,
+      "sha256": "fe1f32db4281e48f66b81b0d7a073d4b4839a02d68c51f2f11073f934fc5235b",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 479,
-        "top": 205
+        "left": 502,
+        "top": 211
       },
       "size": {
-        "width": 259,
-        "height": 148
+        "width": 236,
+        "height": 151
       }
     },
     {
       "file": "recce-front-MOB-A.avif",
       "kind": "build-layer",
       "id": "recce-front-MOB-A",
-      "depth": 19.726,
+      "depth": 18.568,
       "slot": "powerpack",
-      "bytes": 3197,
-      "sha256": "90423ea31f935aad9c813d5080cabfdd2fe459a7f6e745df0a4c3eddcba84971",
-      "frame": {
-        "width": 1280,
-        "height": 720
-      },
-      "offset": {
-        "left": 657,
-        "top": 267
-      },
-      "size": {
-        "width": 143,
-        "height": 119
-      }
-    },
-    {
-      "file": "recce-front-MOB-B.avif",
-      "kind": "build-layer",
-      "id": "recce-front-MOB-B",
-      "depth": 20.694,
-      "slot": "running",
-      "bytes": 5714,
-      "sha256": "ab1f14f459bb0bb04a67846661ed1814b66db064ce930f2095c94629f4adfd21",
-      "frame": {
-        "width": 1280,
-        "height": 720
-      },
-      "offset": {
-        "left": 341,
-        "top": 466
-      },
-      "size": {
-        "width": 442,
-        "height": 134
-      }
-    },
-    {
-      "file": "recce-front-MOB-C.avif",
-      "kind": "build-layer",
-      "id": "recce-front-MOB-C",
-      "depth": 20.694,
-      "slot": "running",
-      "bytes": 25735,
-      "sha256": "f50571fe5871f126b860312fc27d84d70a7ccf420400a66405c8a1051300f18e",
-      "frame": {
-        "width": 1280,
-        "height": 720
-      },
-      "offset": {
-        "left": 326,
-        "top": 429
-      },
-      "size": {
-        "width": 576,
-        "height": 201
-      }
-    },
-    {
-      "file": "recce-front-MOB-D.avif",
-      "kind": "build-layer",
-      "id": "recce-front-MOB-D",
-      "depth": 20.604,
-      "slot": "running",
-      "bytes": 9752,
-      "sha256": "1d473528f0ee743e452c021ea4b90006440b65d60161b310fc9cb15f96ce296b",
-      "frame": {
-        "width": 1280,
-        "height": 720
-      },
-      "offset": {
-        "left": 344,
-        "top": 433
-      },
-      "size": {
-        "width": 507,
-        "height": 179
-      }
-    },
-    {
-      "file": "recce-front-MOB-E.avif",
-      "kind": "build-layer",
-      "id": "recce-front-MOB-E",
-      "depth": 22.73,
-      "slot": "tanks",
-      "bytes": 2343,
-      "sha256": "193bf37fd24a8f11caa1cd89a639e3d1ca44cf3eaa3773dd4aedb191468f7bc4",
-      "frame": {
-        "width": 1280,
-        "height": 720
-      },
-      "offset": {
-        "left": 240,
-        "top": 420
-      },
-      "size": {
-        "width": 120,
-        "height": 125
-      }
-    },
-    {
-      "file": "recce-front-MOB-F.avif",
-      "kind": "build-layer",
-      "id": "recce-front-MOB-F",
-      "depth": 19.761,
-      "slot": "powerpack",
-      "bytes": 1958,
-      "sha256": "12a4b3699f9d863d91d236988fdb929db07401495ca7e704cadd4a26bcd4cc78",
+      "bytes": 3545,
+      "sha256": "aeb6807f265ff70b0ecd2fff54ed435e9b050c27e764520a0e035b2f0f0c1101",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
         "left": 709,
-        "top": 299
+        "top": 270
       },
       "size": {
-        "width": 73,
-        "height": 68
+        "width": 183,
+        "height": 117
+      }
+    },
+    {
+      "file": "recce-front-MOB-B.avif",
+      "kind": "build-layer",
+      "id": "recce-front-MOB-B",
+      "depth": 19.177,
+      "slot": "running",
+      "bytes": 6655,
+      "sha256": "74d84eab0aa28da775ba8ecf8a6096d44a9b0e7619401284d58e4d33ceeed26a",
+      "frame": {
+        "width": 1280,
+        "height": 720
+      },
+      "offset": {
+        "left": 341,
+        "top": 496
+      },
+      "size": {
+        "width": 479,
+        "height": 119
+      }
+    },
+    {
+      "file": "recce-front-MOB-C.avif",
+      "kind": "build-layer",
+      "id": "recce-front-MOB-C",
+      "depth": 19.177,
+      "slot": "running",
+      "bytes": 29779,
+      "sha256": "644c89d504adbbd6edf17e1c68b9aa821cae94d6dda4fa555dd5feb8af9897a6",
+      "frame": {
+        "width": 1280,
+        "height": 720
+      },
+      "offset": {
+        "left": 320,
+        "top": 457
+      },
+      "size": {
+        "width": 636,
+        "height": 190
+      }
+    },
+    {
+      "file": "recce-front-MOB-D.avif",
+      "kind": "build-layer",
+      "id": "recce-front-MOB-D",
+      "depth": 19.149,
+      "slot": "running",
+      "bytes": 5194,
+      "sha256": "93cb039d1479abeb7abc98c6d8cf14e4baaf366b9445b3308395fba62825066d",
+      "frame": {
+        "width": 1280,
+        "height": 720
+      },
+      "offset": {
+        "left": 350,
+        "top": 504
+      },
+      "size": {
+        "width": 553,
+        "height": 107
+      }
+    },
+    {
+      "file": "recce-front-MOB-E.avif",
+      "kind": "build-layer",
+      "id": "recce-front-MOB-E",
+      "depth": 20.896,
+      "slot": "tanks",
+      "bytes": 2651,
+      "sha256": "bd0ef7702fa763525d5f62dc2a8e3659f42b6e2e0e37611d6e3e44bfb6d190e4",
+      "frame": {
+        "width": 1280,
+        "height": 720
+      },
+      "offset": {
+        "left": 225,
+        "top": 445
+      },
+      "size": {
+        "width": 134,
+        "height": 141
+      }
+    },
+    {
+      "file": "recce-front-MOB-F.avif",
+      "kind": "build-layer",
+      "id": "recce-front-MOB-F",
+      "depth": 18.591,
+      "slot": "powerpack",
+      "bytes": 2059,
+      "sha256": "79c014d6fd1209b8f2fefcd2623a1f28ef11ef105a1592473b99805a2f4f6d2d",
+      "frame": {
+        "width": 1280,
+        "height": 720
+      },
+      "offset": {
+        "left": 748,
+        "top": 303
+      },
+      "size": {
+        "width": 85,
+        "height": 69
       }
     },
     {
       "file": "recce-front-MOB-G.avif",
       "kind": "build-layer",
       "id": "recce-front-MOB-G",
-      "depth": 20.694,
+      "depth": 19.177,
       "slot": "running",
-      "bytes": 20403,
-      "sha256": "4a77d0a8c7450691bbc3b5a8c235dd7ed78f920a071d40fd01f3cbb6feb196ca",
+      "bytes": 23021,
+      "sha256": "651b48d0287df272cb4ef22b9d23f18b8599b310f456774b1d0e3016d5ec13f9",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 322,
-        "top": 428
+        "left": 317,
+        "top": 457
       },
       "size": {
-        "width": 582,
-        "height": 202
+        "width": 635,
+        "height": 190
       }
     },
     {
       "file": "recce-front-PRO-A.avif",
       "kind": "build-layer",
       "id": "recce-front-PRO-A",
-      "depth": 20.867,
+      "depth": 19.336,
       "slot": "side-armour",
-      "bytes": 12184,
-      "sha256": "98d895e668388a4d1c4df5311889ad573969975e243bd315c25628f6c6d4e790",
+      "bytes": 14296,
+      "sha256": "7a16a89aa7576e7b1880f0da899b1c34af6b4763828585c007f378856889b7c5",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 260,
-        "top": 359
+        "left": 251,
+        "top": 384
       },
       "size": {
-        "width": 458,
-        "height": 226
+        "width": 555,
+        "height": 223
       }
     },
     {
       "file": "recce-front-PRO-B.avif",
       "kind": "build-layer",
       "id": "recce-front-PRO-B",
-      "depth": 18.818,
+      "depth": 17.736,
       "slot": "front-armour",
-      "bytes": 6361,
-      "sha256": "8eb36cf2d6b870845d1edf09194bf0030e10ae2d1747391465a779b1ee9b6b8a",
+      "bytes": 6479,
+      "sha256": "c2f420f8be293fcfaaafa521fd9eb3ada0f4a3b1402249a256512b44f4c0918c",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 703,
-        "top": 343
+        "left": 778,
+        "top": 339
       },
       "size": {
-        "width": 243,
-        "height": 168
+        "width": 236,
+        "height": 171
       }
     },
     {
       "file": "recce-front-PRO-C.avif",
       "kind": "build-layer",
       "id": "recce-front-PRO-C",
-      "depth": 20.867,
+      "depth": 19.336,
       "slot": "side-armour",
-      "bytes": 10616,
-      "sha256": "715177f2170c7d52d07612bfe072bfd9296724afca841e61f9abd6f3e53f5c37",
+      "bytes": 12306,
+      "sha256": "721eeddfa4a8f5ba09b1506d5a68e282e0c33e8018996463a8ea5462e6c47295",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 263,
-        "top": 361
+        "left": 258,
+        "top": 384
       },
       "size": {
-        "width": 452,
-        "height": 224
+        "width": 543,
+        "height": 223
       }
     },
     {
       "file": "recce-front-PRO-D.avif",
       "kind": "build-layer",
       "id": "recce-front-PRO-D",
-      "depth": 19.275,
+      "depth": 18.066,
       "slot": "roof-armour",
-      "bytes": 1075,
-      "sha256": "29febca6743ad1293ea305396682fb82284abfc007299b441f951960866f15a8",
+      "bytes": 1156,
+      "sha256": "8cab5573dd12ac13b13c0efdd351b7c0f98b2b3bf2f26e201daa91a7b6ded10d",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 691,
-        "top": 334
+        "left": 736,
+        "top": 337
       },
       "size": {
-        "width": 66,
+        "width": 79,
         "height": 36
       }
     },
@@ -17472,219 +17666,219 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "file": "recce-front-PRO-E.avif",
       "kind": "build-layer",
       "id": "recce-front-PRO-E",
-      "depth": 20.875,
+      "depth": 19.342,
       "slot": "side-armour",
-      "bytes": 14183,
-      "sha256": "4af797b2d77721ae9a7d31dcf184b2ea95b98c628ed6bcb31491071b3b80abdd",
+      "bytes": 16485,
+      "sha256": "00f6d652fcc4a0aef788469dc082d3430560ecb1ded3e5a22298885414360d8b",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 257,
-        "top": 362
+        "left": 248,
+        "top": 385
       },
       "size": {
-        "width": 452,
-        "height": 187
+        "width": 544,
+        "height": 203
       }
     },
     {
       "file": "recce-front-PRO-F.avif",
       "kind": "build-layer",
       "id": "recce-front-PRO-F",
-      "depth": 20.836,
+      "depth": 19.291,
       "slot": "belly",
-      "bytes": 2947,
-      "sha256": "7d9fd83a8ceebd27363797780d52114a2a03a7682143c323ad9212f6f40632f5",
+      "bytes": 2640,
+      "sha256": "8c97487028d56101e4a58f2393f848149677f236f846a2f9e3795f2de8eb7514",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 403,
-        "top": 506
+        "left": 541,
+        "top": 534
       },
       "size": {
-        "width": 475,
-        "height": 104
+        "width": 400,
+        "height": 93
       }
     },
     {
       "file": "recce-front-PRO-G.avif",
       "kind": "build-layer",
       "id": "recce-front-PRO-G",
-      "depth": 19.27,
+      "depth": 18.063,
       "slot": "roof-armour",
-      "bytes": 1858,
-      "sha256": "5bff718911a34005c00ee136cfa7b467fec12394faff894206df04ed577c0d81",
+      "bytes": 2038,
+      "sha256": "d82b04e18465afb607321926c9c5bf89f5815131c487ad642bd42a4a07eb427d",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 688,
-        "top": 327
+        "left": 732,
+        "top": 329
       },
       "size": {
-        "width": 115,
-        "height": 45
+        "width": 133,
+        "height": 46
       }
     },
     {
       "file": "recce-front-SA-A.avif",
       "kind": "build-layer",
       "id": "recce-front-SA-A",
-      "depth": 18.421,
+      "depth": 17.298,
       "slot": "optics",
-      "bytes": 2095,
-      "sha256": "519eeef4de0aeac957a148a347a701e4c2268a328babc69ef9f96c0a93e5332b",
+      "bytes": 2234,
+      "sha256": "bf6beca6e694be6f27395cf3f3d8f2f203539181c213021073f11fb1c3d28a38",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 695,
-        "top": 303
+        "left": 767,
+        "top": 295
       },
       "size": {
-        "width": 123,
-        "height": 85
+        "width": 131,
+        "height": 91
       }
     },
     {
       "file": "recce-front-SA-B.avif",
       "kind": "build-layer",
       "id": "recce-front-SA-B",
-      "depth": 20.213,
+      "depth": 19.111,
       "slot": "sensor-mast",
-      "bytes": 2712,
-      "sha256": "98c20664db24be23d4c7f7827f4a5db3855609341b99c6605f82634f617f5139",
+      "bytes": 2699,
+      "sha256": "fde408e9a37d109fa1ac75eae97ce511987f7104f60636174ebb66aa46234338",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 725,
+        "left": 762,
         "top": 164
       },
       "size": {
-        "width": 73,
-        "height": 181
+        "width": 78,
+        "height": 189
       }
     },
     {
       "file": "recce-front-SA-C.avif",
       "kind": "build-layer",
       "id": "recce-front-SA-C",
-      "depth": 18.404,
+      "depth": 17.27,
       "slot": "optics",
-      "bytes": 2040,
-      "sha256": "ab3d1838d4ef0e49b5490a4486350c3008045f0a25f89d523519a6e8c3ff602e",
+      "bytes": 2179,
+      "sha256": "e2c2dac4082b8e1a1d539839c1c9661ba805604f559c8167111b210bea63537d",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 695,
-        "top": 295
+        "left": 767,
+        "top": 286
       },
       "size": {
-        "width": 114,
-        "height": 93
+        "width": 120,
+        "height": 100
       }
     },
     {
       "file": "recce-front-SA-D.avif",
       "kind": "build-layer",
       "id": "recce-front-SA-D",
-      "depth": 20.164,
+      "depth": 19.102,
       "slot": "sensor-mast",
-      "bytes": 3334,
-      "sha256": "afa843b1a22b5bb42938e4a626dbd79e72ef42325bc39de024f7ddca662d416f",
+      "bytes": 3739,
+      "sha256": "77054f6bff6494a6f6dc5a698662cc6ae415ef186c17ce72a1d0d577a336df0e",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 728,
-        "top": 43
+        "left": 771,
+        "top": 33
       },
       "size": {
-        "width": 63,
-        "height": 303
+        "width": 57,
+        "height": 320
       }
     },
     {
       "file": "recce-front-SA-E.avif",
       "kind": "build-layer",
       "id": "recce-front-SA-E",
-      "depth": 18.435,
+      "depth": 17.311,
       "slot": "optics",
-      "bytes": 2343,
-      "sha256": "cae4efd2cffabfe54ff9cc9b2efc418db82aee85e625445f872bc9a69e538e9d",
+      "bytes": 2484,
+      "sha256": "ff211042db87eb409af2e562ba2e0fb549757dfb8ed9fbef97d2354375195edc",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 695,
-        "top": 284
+        "left": 767,
+        "top": 274
       },
       "size": {
-        "width": 122,
-        "height": 104
+        "width": 126,
+        "height": 112
       }
     },
     {
       "file": "recce-front-SA-F.avif",
       "kind": "build-layer",
       "id": "recce-front-SA-F",
-      "depth": 20.023,
+      "depth": 18.688,
       "slot": "sensor-pods",
-      "bytes": 4306,
-      "sha256": "4b272547411ff5a85f2bcf6b3f4e02da0cbb0d84e80479274a058a9ea341d69a",
+      "bytes": 4898,
+      "sha256": "fbebb5490c6541383f5382bfdb0747a910c43263b250ccc8d7cdef69f9f36b32",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 413,
-        "top": 270
+        "left": 430,
+        "top": 281
       },
       "size": {
-        "width": 450,
-        "height": 113
+        "width": 479,
+        "height": 115
       }
     },
     {
       "file": "recce-front-SA-G.avif",
       "kind": "build-layer",
       "id": "recce-front-SA-G",
-      "depth": 20.028,
+      "depth": 18.693,
       "slot": "sensor-pods",
-      "bytes": 4210,
-      "sha256": "a592f79f12f4990db2b861be8bfb13fb63d7ffc33c9e81a133916d237ab0aec4",
+      "bytes": 4819,
+      "sha256": "d4ed8c5350422b1bb41dce50db11831bdc0d3b975fa1792d49434562e6153df8",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 417,
-        "top": 278
+        "left": 434,
+        "top": 292
       },
       "size": {
-        "width": 443,
-        "height": 105
+        "width": 473,
+        "height": 104
       }
     },
     {
       "file": "recce-hero.avif",
       "kind": "hero",
       "id": "recce-hero",
-      "depth": 17.794,
-      "bytes": 41483,
-      "sha256": "5f58fd0e0cd9c03b54bd4eed689d16de17c156bd2a397bd350e5cb6c56177eef",
+      "depth": 17.792,
+      "bytes": 41714,
+      "sha256": "8645794be117442bd4d0a603fd92564cfa7df9de6df31f94b47f37398a5de0a2",
       "frame": {
         "width": 1600,
         "height": 900
@@ -17702,523 +17896,523 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "file": "recce-rear-ACC-A.avif",
       "kind": "build-layer",
       "id": "recce-rear-ACC-A",
-      "depth": 19.244,
+      "depth": 18.477,
       "slot": "rear-kit",
-      "bytes": 5515,
-      "sha256": "e356b49126f2742f551dd879917e9298ad27d564bd48bb2c1e3cbdf013e0d053",
+      "bytes": 6176,
+      "sha256": "777369e6fc142e6dd3ac355286f8072f36bafede62831f9aeaf6e91db6d244ab",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 699,
-        "top": 360
+        "left": 754,
+        "top": 375
       },
       "size": {
-        "width": 157,
-        "height": 180
+        "width": 156,
+        "height": 188
       }
     },
     {
       "file": "recce-rear-ACC-B.avif",
       "kind": "build-layer",
       "id": "recce-rear-ACC-B",
-      "depth": 18.633,
+      "depth": 18.011,
       "slot": "rear-kit",
-      "bytes": 10542,
-      "sha256": "59136adeb900886bdb0ab8164c9f5b221e27b97b94bf1fcb9f68a535f47afee1",
+      "bytes": 10717,
+      "sha256": "9c0877d62b2e585b71eade37a98aff82f626ac6363728142da26b25d5e6b092f",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 589,
-        "top": 425
+        "left": 760,
+        "top": 436
       },
       "size": {
-        "width": 558,
-        "height": 295
+        "width": 477,
+        "height": 284
       }
     },
     {
       "file": "recce-rear-ACC-C.avif",
       "kind": "build-layer",
       "id": "recce-rear-ACC-C",
-      "depth": 24.972,
+      "depth": 23.248,
       "slot": "front-kit",
-      "bytes": 4034,
-      "sha256": "eb090c228802a009c093161129cf90d9c4cd735296d9aff2706ac30b83abb68f",
+      "bytes": 4696,
+      "sha256": "cbe0583f28abf788864ccc29ee06013f5a2d9cd17e38355f182d63628cddd969",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 96,
-        "top": 361
+        "left": 34,
+        "top": 422
       },
       "size": {
-        "width": 332,
-        "height": 151
+        "width": 386,
+        "height": 154
       }
     },
     {
       "file": "recce-rear-ACC-D.avif",
       "kind": "build-layer",
       "id": "recce-rear-ACC-D",
-      "depth": 22.213,
+      "depth": 21.211,
       "slot": "rack",
-      "bytes": 3467,
-      "sha256": "cde9959eb7ce31b9c94c23fe17ceb5ab6d2dc3020878adf2dfc628de9023f40b",
+      "bytes": 3601,
+      "sha256": "3afa7b877f9a5b21375abcec1c860c8a224d0e11fb374c1c0ed8e484b689b748",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 567,
-        "top": 244
+        "left": 234,
+        "top": 286
       },
       "size": {
-        "width": 174,
-        "height": 79
+        "width": 513,
+        "height": 283
       }
     },
     {
       "file": "recce-rear-ACC-E.avif",
       "kind": "build-layer",
       "id": "recce-rear-ACC-E",
-      "depth": 24.676,
+      "depth": 22.961,
       "slot": "front-kit",
-      "bytes": 3322,
-      "sha256": "0f88cd228cd2e4eb8e0b5b3790ab53d36234a2454177dd2916d6e868d5db449b",
+      "bytes": 3380,
+      "sha256": "3e38dda0d2cefef18ee51a2bfcb6eaf44c25817a00b7a550b610be7053fe202b",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 121,
-        "top": 355
+        "left": 71,
+        "top": 417
       },
       "size": {
-        "width": 199,
-        "height": 157
+        "width": 150,
+        "height": 142
       }
     },
     {
       "file": "recce-rear-ACC-F.avif",
       "kind": "build-layer",
       "id": "recce-rear-ACC-F",
-      "depth": 24.45,
+      "depth": 22.809,
       "slot": "front-kit",
-      "bytes": 1789,
-      "sha256": "edcb1a95d059d5af07561dc64a7a150e9eb6df4093e134a9008de5b3ec8da2fa",
+      "bytes": 2093,
+      "sha256": "ce039539cffefb854a4b6a3c1fb40cef40c4185266d4e335bed7ef2181485eb8",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 191,
-        "top": 354
+        "left": 147,
+        "top": 415
       },
       "size": {
-        "width": 131,
-        "height": 158
+        "width": 172,
+        "height": 162
       }
     },
     {
       "file": "recce-rear-ACC-G.avif",
       "kind": "build-layer",
       "id": "recce-rear-ACC-G",
-      "depth": 22.236,
+      "depth": 21.254,
       "slot": "rack",
-      "bytes": 3904,
-      "sha256": "c7cc7bae8e6988df40b47accb5eb0cadbb124d265af90a8c4cc9a9fe38f05355",
+      "bytes": 4069,
+      "sha256": "28bb11f818e4c122044ec745ed7888a16c15b18f027a4c62d42bc4875826f198",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 562,
-        "top": 210
+        "left": 234,
+        "top": 252
       },
       "size": {
-        "width": 187,
-        "height": 114
+        "width": 522,
+        "height": 318
       }
     },
     {
       "file": "recce-rear-base.avif",
       "kind": "build-base",
       "id": "recce-rear-base",
-      "depth": 21.542,
-      "bytes": 19423,
-      "sha256": "0729de38c4309fc9d770a11247667615d272833eee22a05281e6293fb7583ec2",
+      "depth": 20.288,
+      "bytes": 20848,
+      "sha256": "b2461a0fbe449ce3c3464d35e4e750fe71dd242c4f58f2df5b5bf572deaf105b",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 208,
-        "top": 247
+        "left": 177,
+        "top": 302
       },
       "size": {
-        "width": 627,
-        "height": 376
+        "width": 697,
+        "height": 351
       }
     },
     {
       "file": "recce-rear-CAP-A.avif",
       "kind": "build-layer",
       "id": "recce-rear-CAP-A",
-      "depth": 19.891,
+      "depth": 19.005,
       "slot": "module",
-      "bytes": 5372,
-      "sha256": "52f36ba1a917733f42ca3996a4c3d456f961cdfbff77270e82e22d08e4182af0",
+      "bytes": 4973,
+      "sha256": "3d0a2c6d71cb43d16dcf7106695fb92d64d13cb82aef6e3b1616568b319e4626",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 416,
-        "top": 241
+        "left": 504,
+        "top": 270
       },
       "size": {
-        "width": 381,
-        "height": 157
+        "width": 320,
+        "height": 145
       }
     },
     {
       "file": "recce-rear-CAP-B.avif",
       "kind": "build-layer",
       "id": "recce-rear-CAP-B",
-      "depth": 19.885,
+      "depth": 19.004,
       "slot": "module",
-      "bytes": 5620,
-      "sha256": "7d6459ced0d40284873b986e77002ef9804fef8b1bcba20ea07dbf3bedeb4c8b",
+      "bytes": 5000,
+      "sha256": "36ebc53c3c97969e29855c5ac0b5dc496e2b49b543bd3afe969be1670fb32416",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 416,
-        "top": 233
+        "left": 504,
+        "top": 259
       },
       "size": {
-        "width": 381,
-        "height": 165
+        "width": 318,
+        "height": 156
       }
     },
     {
       "file": "recce-rear-CAP-C.avif",
       "kind": "build-layer",
       "id": "recce-rear-CAP-C",
-      "depth": 19.899,
+      "depth": 19.011,
       "slot": "module",
-      "bytes": 6292,
-      "sha256": "65d6ef7bc08dfa074517c5d8b5925c72d43a5fae57048151061a8e5aae604752",
+      "bytes": 5389,
+      "sha256": "3d980bebadd532573ccba47874d28add9f51ff94239b5c7315e857ba0d70b4f7",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 545,
-        "top": 241
+        "left": 582,
+        "top": 270
       },
       "size": {
-        "width": 252,
-        "height": 157
+        "width": 242,
+        "height": 144
       }
     },
     {
       "file": "recce-rear-CAP-D.avif",
       "kind": "build-layer",
       "id": "recce-rear-CAP-D",
-      "depth": 19.876,
+      "depth": 18.998,
       "slot": "module",
-      "bytes": 6877,
-      "sha256": "b77b7c933791394f53cbe71c6b592a1ba9bd75096f8defe655afaa04c5f6c5a2",
+      "bytes": 6227,
+      "sha256": "f4ecba316af72b15a64f273d3302c96c66073097e89f9532807ae668ef3e04df",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 416,
-        "top": 222
+        "left": 504,
+        "top": 251
       },
       "size": {
-        "width": 381,
-        "height": 176
+        "width": 322,
+        "height": 164
       }
     },
     {
       "file": "recce-rear-CAP-E.avif",
       "kind": "build-layer",
       "id": "recce-rear-CAP-E",
-      "depth": 19.891,
+      "depth": 19.006,
       "slot": "module",
-      "bytes": 4732,
-      "sha256": "8d43bb890a64b9706c2f401e6ece8c8dadacdd30d474667b577fe67efd5bfe2b",
+      "bytes": 4388,
+      "sha256": "b38a13976d9aceec138ebd723e56881a4112864e81a924019cef4cb4ea8a322b",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 473,
-        "top": 241
+        "left": 504,
+        "top": 270
       },
       "size": {
-        "width": 324,
-        "height": 157
+        "width": 320,
+        "height": 145
       }
     },
     {
       "file": "recce-rear-CAP-F.avif",
       "kind": "build-layer",
       "id": "recce-rear-CAP-F",
-      "depth": 19.886,
+      "depth": 19.003,
       "slot": "module",
-      "bytes": 5445,
-      "sha256": "31096ac9db7a540bde4b8e4c27937d336f482c3d49bb1c8d8fc2086e54876fa9",
+      "bytes": 4869,
+      "sha256": "de51d08e41027857ce76e01afb0a3df9cec330b2bb55f785d0bcf752dbdb39ca",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 416,
-        "top": 236
+        "left": 504,
+        "top": 264
       },
       "size": {
-        "width": 381,
-        "height": 162
+        "width": 319,
+        "height": 151
       }
     },
     {
       "file": "recce-rear-CAP-G.avif",
       "kind": "build-layer",
       "id": "recce-rear-CAP-G",
-      "depth": 19.902,
+      "depth": 19.013,
       "slot": "module",
-      "bytes": 5724,
-      "sha256": "31484f87f05d640164c8d2f47097510ac5703edba136c9b7045d0e82ff2c34dc",
+      "bytes": 5492,
+      "sha256": "199ea443e0d05f8b29b1d55f21ed1e5aec610854e1b9b1192967709bd479d9ee",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 539,
-        "top": 249
+        "left": 574,
+        "top": 275
       },
       "size": {
-        "width": 258,
-        "height": 149
+        "width": 250,
+        "height": 140
       }
     },
     {
       "file": "recce-rear-COM-A.avif",
       "kind": "build-layer",
       "id": "recce-rear-COM-A",
-      "depth": 19.728,
+      "depth": 19.053,
       "slot": "antenna-left",
-      "bytes": 2389,
-      "sha256": "5b62cf6ca5201fe6c3130accaf1bcfc7259f0359ff519ccb93cff1dbbc2a3a34",
+      "bytes": 2593,
+      "sha256": "a716744113f42af9b2f2a2bf16257c06fb6b03d7a32762730f45237a76c648fd",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 769,
-        "top": 96
+        "left": 810,
+        "top": 106
       },
       "size": {
-        "width": 82,
-        "height": 298
+        "width": 77,
+        "height": 414
       }
     },
     {
       "file": "recce-rear-COM-B.avif",
       "kind": "build-layer",
       "id": "recce-rear-COM-B",
-      "depth": 18.261,
+      "depth": 17.667,
       "slot": "antenna-right",
-      "bytes": 2881,
-      "sha256": "f59cec88250892544483e8abead7a333b3e2eaf3820a9d19e2d1c3521ba75a79",
+      "bytes": 3359,
+      "sha256": "147982331382645b4a5cbb653a82fa16323e5c0343f8da5584e8d08435f58ca1",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 671,
-        "top": 54
+        "left": 741,
+        "top": 49
       },
       "size": {
-        "width": 73,
-        "height": 356
+        "width": 72,
+        "height": 386
       }
     },
     {
       "file": "recce-rear-COM-C.avif",
       "kind": "build-layer",
       "id": "recce-rear-COM-C",
-      "depth": 19.891,
+      "depth": 19.129,
       "slot": "antenna-left",
-      "bytes": 1772,
-      "sha256": "0d170a2efa9495e66453a78675deed9c6e3389f5825be148c90e8f6e18c9c9d5",
+      "bytes": 1901,
+      "sha256": "af110d5d43436f37bdbf72ec45af6da1f217b58febcab01ef01881811e8d2cc2",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 771,
-        "top": 285
+        "left": 814,
+        "top": 304
       },
       "size": {
-        "width": 75,
-        "height": 107
+        "width": 68,
+        "height": 216
       }
     },
     {
       "file": "recce-rear-COM-D.avif",
       "kind": "build-layer",
       "id": "recce-rear-COM-D",
-      "depth": 18.882,
+      "depth": 18.268,
       "slot": "radio-mast",
-      "bytes": 3768,
-      "sha256": "ca8a4250b26c3eb9578c04aa74dd58bc0640163e18d1f54a8481c78d0db2f666",
+      "bytes": 3901,
+      "sha256": "cfd7a32582f5094ed77a817e6dc928d721971f168ec89f55455dd8bb4e333538",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 673,
-        "top": 37
+        "left": 729,
+        "top": 39
       },
       "size": {
-        "width": 125,
-        "height": 383
+        "width": 122,
+        "height": 398
       }
     },
     {
       "file": "recce-rear-COM-E.avif",
       "kind": "build-layer",
       "id": "recce-rear-COM-E",
-      "depth": 18.87,
+      "depth": 18.265,
       "slot": "radio-mast",
-      "bytes": 3852,
-      "sha256": "bedde9722058be466786403b5be4aab15fa2e8588acb28b9026a29bbadc97f7f",
+      "bytes": 3822,
+      "sha256": "6513d54dfc135d62a47e241cdc9092ad496ac9a224fb9832d0f854b02a9caae1",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 703,
+        "left": 760,
         "top": 21
       },
       "size": {
-        "width": 97,
-        "height": 399
+        "width": 94,
+        "height": 416
       }
     },
     {
       "file": "recce-rear-COM-F.avif",
       "kind": "build-layer",
       "id": "recce-rear-COM-F",
-      "depth": 19.753,
+      "depth": 19.062,
       "slot": "antenna-left",
-      "bytes": 2366,
-      "sha256": "1eea28efcfc34ae94b4e012825dcfd7ee715be875247c0206037503c99edc23b",
+      "bytes": 2444,
+      "sha256": "488d631de8a8109f3d736d5a5c0a54b3f79b4eb0d46189b9281f6e1bd40c352d",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 768,
-        "top": 132
+        "left": 809,
+        "top": 143
       },
       "size": {
-        "width": 84,
-        "height": 262
+        "width": 79,
+        "height": 377
       }
     },
     {
       "file": "recce-rear-COM-G.avif",
       "kind": "build-layer",
       "id": "recce-rear-COM-G",
-      "depth": 18.326,
+      "depth": 17.682,
       "slot": "antenna-right",
-      "bytes": 3236,
-      "sha256": "9a80069548a004b06173f851a66334532132b28056cc0b1befe57b7c48d77684",
+      "bytes": 3354,
+      "sha256": "6f4b6de1fca9f1d508c560d82af589bae1c6e6c1e403f9410df56ab077b0fc24",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 639,
-        "top": 177
+        "left": 704,
+        "top": 175
       },
       "size": {
-        "width": 111,
-        "height": 248
+        "width": 115,
+        "height": 274
       }
     },
     {
       "file": "recce-rear-FP-A.avif",
       "kind": "build-layer",
       "id": "recce-rear-FP-A",
-      "depth": 21.339,
+      "depth": 20.191,
       "slot": "weapon",
-      "bytes": 4282,
-      "sha256": "7a394a06ade322bc06f0d53f26679c635422934e74ec314d786913b26fe25b6d",
+      "bytes": 3877,
+      "sha256": "eb2ec5d466dd923c92933fefc0102b650eb9c6e1fde069774766bb83a9df5882",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 246,
-        "top": 225
+        "left": 378,
+        "top": 261
       },
       "size": {
-        "width": 326,
-        "height": 121
+        "width": 209,
+        "height": 110
       }
     },
     {
       "file": "recce-rear-FP-B.avif",
       "kind": "build-layer",
       "id": "recce-rear-FP-B",
-      "depth": 21.532,
+      "depth": 20.378,
       "slot": "weapon",
-      "bytes": 3885,
-      "sha256": "1e772eaa2b6db31f2d1b47ed888f7936823a244c47ee098b022f4768760b3896",
+      "bytes": 3544,
+      "sha256": "665ab6ec046dcadad0df07356db3e189d1af77b4880ff2ec17eb0c0b67e0107f",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 246,
-        "top": 202
+        "left": 390,
+        "top": 230
       },
       "size": {
-        "width": 337,
-        "height": 144
+        "width": 203,
+        "height": 140
       }
     },
     {
       "file": "recce-rear-FP-C.avif",
       "kind": "build-layer",
       "id": "recce-rear-FP-C",
-      "depth": 21.837,
+      "depth": 20.62,
       "slot": "weapon",
-      "bytes": 5921,
-      "sha256": "ed8a936e814ed272fbb1173176f097fd2f5e507282be29fcc01b639f65ec1507",
+      "bytes": 5567,
+      "sha256": "de41098d01aaf396210c924cfbe26470fa0af1b330d0aed097e47d47c96807b4",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 246,
-        "top": 213
+        "left": 233,
+        "top": 244
       },
       "size": {
-        "width": 369,
+        "width": 400,
         "height": 145
       }
     },
@@ -18226,525 +18420,525 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "file": "recce-rear-FP-D.avif",
       "kind": "build-layer",
       "id": "recce-rear-FP-D",
-      "depth": 22.792,
+      "depth": 21.642,
       "slot": "aux-weapon",
-      "bytes": 2424,
-      "sha256": "b9d26ca904c4fe5fda94967ef3f0c8bb59346f3b082022a575bb7e43b68f5a92",
+      "bytes": 2568,
+      "sha256": "83b4722a6e3c701448eef7f7fcbdc8b27b8d22f297d47d05fb194323cefb5333",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 320,
-        "top": 228
+        "left": 310,
+        "top": 257
       },
       "size": {
-        "width": 158,
-        "height": 108
+        "width": 170,
+        "height": 102
       }
     },
     {
       "file": "recce-rear-FP-E.avif",
       "kind": "build-layer",
       "id": "recce-rear-FP-E",
-      "depth": 22.779,
+      "depth": 21.638,
       "slot": "aux-weapon",
-      "bytes": 2607,
-      "sha256": "73defb3a896ecd1f92ae99ebae8e0586411a9cff0a38c767ca4067218abc466c",
+      "bytes": 2546,
+      "sha256": "1849995fa0050f57ee9cd4ac017d74eb3f4a27108cc3afa50cc12d0e46ec3d34",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 331,
-        "top": 216
+        "left": 313,
+        "top": 250
       },
       "size": {
-        "width": 144,
-        "height": 121
+        "width": 166,
+        "height": 108
       }
     },
     {
       "file": "recce-rear-FP-F.avif",
       "kind": "build-layer",
       "id": "recce-rear-FP-F",
-      "depth": 21.69,
+      "depth": 20.494,
       "slot": "weapon",
-      "bytes": 5624,
-      "sha256": "9b51c5b25b0d9096297a64b61be8df0f8c600f2f8a4c531a118d9010dda9744f",
+      "bytes": 5033,
+      "sha256": "f7149c63513cdaa58371e5c265f67040b781401df6c6de5acb5bdc78530bf1d9",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 246,
-        "top": 208
+        "left": 234,
+        "top": 242
       },
       "size": {
-        "width": 358,
-        "height": 149
+        "width": 385,
+        "height": 147
       }
     },
     {
       "file": "recce-rear-FP-G.avif",
       "kind": "build-layer",
       "id": "recce-rear-FP-G",
-      "depth": 21.488,
+      "depth": 20.364,
       "slot": "weapon",
-      "bytes": 4671,
-      "sha256": "cdc957ab89e29385a2a225dc8f96aba3f78cad3ea5f082e0ede92a1449497e1a",
+      "bytes": 4392,
+      "sha256": "21ff84fe65140b87406076cf464e689de959c7351b2afd89a0ee598fe032d6c7",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 246,
-        "top": 203
+        "left": 234,
+        "top": 231
       },
       "size": {
-        "width": 359,
-        "height": 140
+        "width": 383,
+        "height": 139
       }
     },
     {
       "file": "recce-rear-MOB-A.avif",
       "kind": "build-layer",
       "id": "recce-rear-MOB-A",
-      "depth": 22.115,
+      "depth": 20.765,
       "slot": "powerpack",
-      "bytes": 3068,
-      "sha256": "d54a20ee83bf00c874531c49231812699fcfe01af8916341db79b3ac0cd85396",
+      "bytes": 2811,
+      "sha256": "17ebf86506826fcaded7d4c1d102680b5754ca4579e30c5c405671dc6a2187fe",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 249,
-        "top": 243
+        "left": 233,
+        "top": 281
       },
       "size": {
-        "width": 191,
-        "height": 89
+        "width": 174,
+        "height": 88
       }
     },
     {
       "file": "recce-rear-MOB-B.avif",
       "kind": "build-layer",
       "id": "recce-rear-MOB-B",
-      "depth": 21.835,
+      "depth": 20.506,
       "slot": "running",
-      "bytes": 4819,
-      "sha256": "17ac316cc786cd6b05056a550221a00b9d91aa8f60a35f85c2fe59976e874247",
+      "bytes": 5418,
+      "sha256": "bab72018e6cb81f7c6a84f392b9892a01bec637da641472160bfe5398d761784",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 242,
-        "top": 440
+        "left": 222,
+        "top": 494
       },
       "size": {
-        "width": 354,
-        "height": 130
+        "width": 427,
+        "height": 112
       }
     },
     {
       "file": "recce-rear-MOB-C.avif",
       "kind": "build-layer",
       "id": "recce-rear-MOB-C",
-      "depth": 21.834,
+      "depth": 20.505,
       "slot": "running",
-      "bytes": 21740,
-      "sha256": "5d5dc2ccbf058e5eff2022eb32b89b67c0f6c285aa919d1a0b37c45674eb9562",
+      "bytes": 26002,
+      "sha256": "228b2e9c500fbcc1aecd1cd524b1fe6e5322a6c32a0a8890dc881ff897711b87",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 230,
-        "top": 402
+        "left": 204,
+        "top": 458
       },
       "size": {
-        "width": 486,
-        "height": 196
+        "width": 564,
+        "height": 177
       }
     },
     {
       "file": "recce-rear-MOB-D.avif",
       "kind": "build-layer",
       "id": "recce-rear-MOB-D",
-      "depth": 21.826,
+      "depth": 20.477,
       "slot": "running",
-      "bytes": 8083,
-      "sha256": "609aee8201ee544781c2ad1421f8181821895381207f1b6a064e7a0423312351",
+      "bytes": 4011,
+      "sha256": "7d17c27ea13074c8f5e1b79c54fc52aa5d32b309cc370bc0f94f8e7f97ee69e2",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 231,
-        "top": 395
+        "left": 230,
+        "top": 487
       },
       "size": {
-        "width": 365,
-        "height": 173
+        "width": 413,
+        "height": 109
       }
     },
     {
       "file": "recce-rear-MOB-E.avif",
       "kind": "build-layer",
       "id": "recce-rear-MOB-E",
-      "depth": 19.79,
+      "depth": 18.851,
       "slot": "tanks",
-      "bytes": 4334,
-      "sha256": "eb3af15046846787bfafbc947592343344762e6b609ed0d075b998577be803a8",
+      "bytes": 4198,
+      "sha256": "d351a72c6ab2c1b71847686167d3761cdd35ed29430ea81ddf44aba2340978a0",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 582,
-        "top": 434
+        "left": 649,
+        "top": 469
       },
       "size": {
-        "width": 271,
-        "height": 143
+        "width": 233,
+        "height": 145
       }
     },
     {
       "file": "recce-rear-MOB-F.avif",
       "kind": "build-layer",
       "id": "recce-rear-MOB-F",
-      "depth": 22.129,
+      "depth": 20.767,
       "slot": "powerpack",
-      "bytes": 2198,
-      "sha256": "66012f9b2cde41888a14fe9aec41fd10c4b52add11fc8dee897fd9745d84dcb9",
+      "bytes": 1996,
+      "sha256": "c9a37dea010467d68dc17e8336f9058dcd4e7876712e517b4130aa69d6dd8cb8",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 309,
-        "top": 268
+        "left": 234,
+        "top": 309
       },
       "size": {
-        "width": 111,
-        "height": 64
+        "width": 155,
+        "height": 59
       }
     },
     {
       "file": "recce-rear-MOB-G.avif",
       "kind": "build-layer",
       "id": "recce-rear-MOB-G",
-      "depth": 21.834,
+      "depth": 20.505,
       "slot": "running",
-      "bytes": 16536,
-      "sha256": "3a0072ca8515eabaf59c5e0bbe8249081cb977d9200ade9475dc111e80143dbb",
+      "bytes": 19286,
+      "sha256": "2070fd1e5b0b023b5a0ef0f6a973acd03247fe89288e21c0e8381a327f6e21ca",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 226,
-        "top": 401
+        "left": 201,
+        "top": 457
       },
       "size": {
-        "width": 465,
-        "height": 197
+        "width": 561,
+        "height": 178
       }
     },
     {
       "file": "recce-rear-PRO-A.avif",
       "kind": "build-layer",
       "id": "recce-rear-PRO-A",
-      "depth": 21.155,
+      "depth": 19.978,
       "slot": "side-armour",
-      "bytes": 9151,
-      "sha256": "ee0e52db6f13b0b637bdf497320ffc9cf363f40ffbbaf1f68e667c0b7cee645a",
+      "bytes": 10352,
+      "sha256": "4286cc2cebd3194140df40ec84ed11fe71037559d1fbf764f4c60d09671e146b",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 241,
-        "top": 362
+        "left": 233,
+        "top": 397
       },
       "size": {
-        "width": 490,
-        "height": 199
+        "width": 561,
+        "height": 192
       }
     },
     {
       "file": "recce-rear-PRO-B.avif",
       "kind": "build-layer",
       "id": "recce-rear-PRO-B",
-      "depth": 23.443,
+      "depth": 21.963,
       "slot": "front-armour",
-      "bytes": 2655,
-      "sha256": "a5aa6e21ee5f12ecee222361485611a1cfb0f9ffdd4f3ed917e2843cd9eb728a",
+      "bytes": 2978,
+      "sha256": "06c59892c0982bf979315bbcdcc12651d5ed23e109f6716ef2569a7dbb17c5f1",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 210,
-        "top": 280
+        "left": 175,
+        "top": 328
       },
       "size": {
-        "width": 199,
-        "height": 78
+        "width": 212,
+        "height": 89
       }
     },
     {
       "file": "recce-rear-PRO-C.avif",
       "kind": "build-layer",
       "id": "recce-rear-PRO-C",
-      "depth": 21.155,
+      "depth": 19.978,
       "slot": "side-armour",
-      "bytes": 7750,
-      "sha256": "6b80f4e1c0167513b6cae8fb04dfc9961125fb3d2a55526d44d1b2a7531e46a0",
+      "bytes": 8990,
+      "sha256": "673c96a592be2f681103b358219a58955c7b1254d627393e3c028ba920d4df35",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 244,
-        "top": 363
+        "left": 239,
+        "top": 402
       },
       "size": {
-        "width": 418,
-        "height": 160
+        "width": 549,
+        "height": 172
       }
     },
     {
       "file": "recce-rear-PRO-D.avif",
       "kind": "build-layer",
       "id": "recce-rear-PRO-D",
-      "depth": 22.614,
+      "depth": 21.282,
       "slot": "roof-armour",
-      "bytes": 1116,
-      "sha256": "2fa1b6de294950d86be97b38e652b7288f60457f2a797dc2ceaf441ceaa65bd3",
+      "bytes": 1014,
+      "sha256": "953f31c7c2c37f55e06ae0879f4475ef3cb9650ba5ae54526584c262049b6985",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 362,
-        "top": 281
+        "left": 347,
+        "top": 329
       },
       "size": {
         "width": 60,
-        "height": 36
+        "height": 30
       }
     },
     {
       "file": "recce-rear-PRO-E.avif",
       "kind": "build-layer",
       "id": "recce-rear-PRO-E",
-      "depth": 21.164,
+      "depth": 19.984,
       "slot": "side-armour",
-      "bytes": 11224,
-      "sha256": "52053ba007ce72d08bc90582f1edc04b03223645441e5dc1be6b0514d62e41d8",
+      "bytes": 11721,
+      "sha256": "05a3b9076d41eec444467e57da7fbf99017b38c91a7b3e9efd95f2d5f02b7743",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 238,
-        "top": 358
+        "left": 230,
+        "top": 407
       },
       "size": {
-        "width": 418,
-        "height": 149
+        "width": 493,
+        "height": 131
       }
     },
     {
       "file": "recce-rear-PRO-F.avif",
       "kind": "build-layer",
       "id": "recce-rear-PRO-F",
-      "depth": 21.791,
+      "depth": 20.462,
       "slot": "belly",
-      "bytes": 2636,
-      "sha256": "bb377cd4bc3dd316e99ccb766a59b9bf84ae4c831d7336827c3fb11a1ef2740d",
+      "bytes": 2892,
+      "sha256": "7c72a5abfc53f4829baebefa59d5ca9115caa2a6a49bb11a1a9ad807de22077e",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 300,
-        "top": 472
+        "left": 282,
+        "top": 524
       },
       "size": {
-        "width": 441,
-        "height": 113
+        "width": 506,
+        "height": 96
       }
     },
     {
       "file": "recce-rear-PRO-G.avif",
       "kind": "build-layer",
       "id": "recce-rear-PRO-G",
-      "depth": 22.609,
+      "depth": 21.279,
       "slot": "roof-armour",
-      "bytes": 1914,
-      "sha256": "dfc6a2e9a10b2c6d5e9df6c9b4a750fc223ea2ce7ff4919c64af622fe80d284d",
+      "bytes": 1709,
+      "sha256": "10782afe13c8d077898c470bfc693547ad724f9765cbff50b43294dcff102dbf",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 332,
-        "top": 274
+        "left": 342,
+        "top": 323
       },
       "size": {
-        "width": 91,
-        "height": 44
+        "width": 70,
+        "height": 37
       }
     },
     {
       "file": "recce-rear-SA-A.avif",
       "kind": "build-layer",
       "id": "recce-rear-SA-A",
-      "depth": 23.449,
+      "depth": 22.107,
       "slot": "optics",
-      "bytes": 2557,
-      "sha256": "fdb9aa21de7260a2f507c199a9fa80d49d97a77abfaf1d4923a1b7fbf22f152e",
+      "bytes": 2096,
+      "sha256": "d1cac03f16928ee0c2a12739b0e25a998b29d26400a90ef1f9abc0b28eee841c",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 325,
-        "top": 231
+        "left": 300,
+        "top": 282
       },
       "size": {
-        "width": 112,
-        "height": 95
+        "width": 111,
+        "height": 84
       }
     },
     {
       "file": "recce-rear-SA-B.avif",
       "kind": "build-layer",
       "id": "recce-rear-SA-B",
-      "depth": 21.527,
+      "depth": 20.183,
       "slot": "sensor-mast",
-      "bytes": 2579,
-      "sha256": "960d8843be558c27c3add7cdf05d9ccd210f3f84d6e26378475127fecd7b667e",
+      "bytes": 2530,
+      "sha256": "72e4be7ef5d5792676a36f2dbc3f283d6a06266d4a5ace910e106e370942e149",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 246,
-        "top": 154
+        "left": 299,
+        "top": 183
       },
       "size": {
-        "width": 125,
-        "height": 174
+        "width": 72,
+        "height": 185
       }
     },
     {
       "file": "recce-rear-SA-C.avif",
       "kind": "build-layer",
       "id": "recce-rear-SA-C",
-      "depth": 23.439,
+      "depth": 22.11,
       "slot": "optics",
-      "bytes": 2349,
-      "sha256": "099a4e35603a5854a5a6e0364c36ccbfcdd991cfdf92c571d386bb1f2107836b",
+      "bytes": 2009,
+      "sha256": "befc5284c06d5809f7ab2fc1563abdfa84d5e47b8226052e8529894ec3c5f725",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 337,
-        "top": 223
+        "left": 309,
+        "top": 275
       },
       "size": {
-        "width": 100,
-        "height": 101
+        "width": 102,
+        "height": 84
       }
     },
     {
       "file": "recce-rear-SA-D.avif",
       "kind": "build-layer",
       "id": "recce-rear-SA-D",
-      "depth": 21.423,
+      "depth": 20.135,
       "slot": "sensor-mast",
-      "bytes": 3591,
-      "sha256": "2c6e70813659f1f06ad1d1e9b93c6dda7195f855c5811f5e01a1b2322a777734",
+      "bytes": 3495,
+      "sha256": "9df93e15d5252fc9244cad3262490d5a8c9f13deb9c4f17eaaad50861ce3a127",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 246,
-        "top": 36
+        "left": 307,
+        "top": 59
       },
       "size": {
-        "width": 126,
-        "height": 294
+        "width": 63,
+        "height": 308
       }
     },
     {
       "file": "recce-rear-SA-E.avif",
       "kind": "build-layer",
       "id": "recce-rear-SA-E",
-      "depth": 23.4,
+      "depth": 22.069,
       "slot": "optics",
-      "bytes": 2657,
-      "sha256": "a354b4adb39a8853cf1a799d81eb7649f00000f231c04c25f5a12c334b5ad671",
+      "bytes": 2392,
+      "sha256": "17a9b4c1573689c127d0710b9d39cf19354836e257be142ad8f8dbfbd5e37938",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 328,
-        "top": 214
+        "left": 301,
+        "top": 266
       },
       "size": {
-        "width": 109,
-        "height": 110
+        "width": 110,
+        "height": 100
       }
     },
     {
       "file": "recce-rear-SA-F.avif",
       "kind": "build-layer",
       "id": "recce-rear-SA-F",
-      "depth": 21.67,
+      "depth": 20.468,
       "slot": "sensor-pods",
-      "bytes": 4376,
-      "sha256": "eb5eda0a7e747a11f6dc4e0202b9c81b844422aed1f45c77863d4729130221ed",
+      "bytes": 4552,
+      "sha256": "9b96204260e3d8988a8e881f6d172934e7595b8dcb27617a68848815b47b73c6",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 252,
-        "top": 221
+        "left": 243,
+        "top": 279
       },
       "size": {
-        "width": 416,
-        "height": 144
+        "width": 439,
+        "height": 114
       }
     },
     {
       "file": "recce-rear-SA-G.avif",
       "kind": "build-layer",
       "id": "recce-rear-SA-G",
-      "depth": 21.681,
+      "depth": 20.472,
       "slot": "sensor-pods",
-      "bytes": 4222,
-      "sha256": "a8960033eac5e889e9ad3d108fe07834eefec37a3faa3f325bab2b4e60381fab",
+      "bytes": 4565,
+      "sha256": "37d0e076eed92b216985cff9e2820ea0a48e693ed4f738f235d87f4f8304f9db",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 255,
-        "top": 228
+        "left": 243,
+        "top": 288
       },
       "size": {
-        "width": 410,
-        "height": 137
+        "width": 436,
+        "height": 105
       }
     },
     {
@@ -18752,18 +18946,18 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "recce-turntable-00",
       "depth": 12.967,
-      "bytes": 23561,
-      "sha256": "140c518f06be14303a3b6a5257fcc3a227aec6d349bf6d0c200dfbaf5fd9e0e7",
+      "bytes": 23419,
+      "sha256": "f940551af823e7a13cd7e3e67fcc932e54fff9db8d1ba7a726540b17d960b017",
       "frame": {
         "width": 960,
         "height": 540
       },
       "offset": {
-        "left": 29,
+        "left": 28,
         "top": 90
       },
       "size": {
-        "width": 890,
+        "width": 891,
         "height": 364
       }
     },
@@ -18772,8 +18966,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "recce-turntable-01",
       "depth": 12.623,
-      "bytes": 24854,
-      "sha256": "d42b50382a3b5729e1dcb1a9d7a572e3833f9a24bf4305ee3c9e9786d166a9d4",
+      "bytes": 24819,
+      "sha256": "edc99c376c30edc77128d637f1fe1e1f65aa4571e4c455d441f29ab5a112afb7",
       "frame": {
         "width": 960,
         "height": 540
@@ -18792,8 +18986,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "recce-turntable-02",
       "depth": 12.244,
-      "bytes": 26819,
-      "sha256": "efa708496101ae7d75defa593e3e1a6f51edd2fd37e823cc438508174265c376",
+      "bytes": 26876,
+      "sha256": "be91477be1b74125d1dd4465c0ede0face9aba93283530983b0d2f953aef7dae",
       "frame": {
         "width": 960,
         "height": 540
@@ -18812,8 +19006,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "recce-turntable-03",
       "depth": 11.391,
-      "bytes": 28941,
-      "sha256": "c40170ed793afc0fc4957a23bc564904e8d17d66a4fc500fc396ea98d65633c9",
+      "bytes": 29038,
+      "sha256": "7b69e99ad98bde09ce22d5bd5d60154c407a504bda0d4dc74da133012dcd62bf",
       "frame": {
         "width": 960,
         "height": 540
@@ -18832,8 +19026,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "recce-turntable-04",
       "depth": 11.076,
-      "bytes": 25968,
-      "sha256": "69317ea0aaefda8767ec472f4581b1a91f073c731bb06f2ccf2e1a57a75350cc",
+      "bytes": 25915,
+      "sha256": "01d99abc704485488fbb6346b1731b428b13d06c1dcbf7dcc06d8743239d8363",
       "frame": {
         "width": 960,
         "height": 540
@@ -18852,8 +19046,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "recce-turntable-05",
       "depth": 11.058,
-      "bytes": 18811,
-      "sha256": "20857bea29348e7d59429d32f5c50ecd4d15d99d26e818919bb70304b174fddd",
+      "bytes": 18735,
+      "sha256": "45fae5c1371db9fd3dac75c1b54c8f89db58115a1b1799fad46521f0437799eb",
       "frame": {
         "width": 960,
         "height": 540
@@ -18871,9 +19065,9 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "file": "recce-turntable-06.avif",
       "kind": "turntable",
       "id": "recce-turntable-06",
-      "depth": 10.789,
-      "bytes": 16906,
-      "sha256": "d2171d6a19d4c7de033f4bc614d223dfa4605d3f73a2a5e6c282b8ca654726f1",
+      "depth": 10.79,
+      "bytes": 16861,
+      "sha256": "1ca7078e2c74255708da2ffedf041ec85626060dc79b7d1a37ac4064ca4a377e",
       "frame": {
         "width": 960,
         "height": 540
@@ -18892,8 +19086,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "recce-turntable-07",
       "depth": 11.057,
-      "bytes": 19424,
-      "sha256": "aab387249855a4e24f6fc6d3d684e560c2c6258d2ee182ccef53a555dc3036de",
+      "bytes": 19446,
+      "sha256": "ad684ef9bac593cdb6482081b7b539385ae83c2c5ebb208b5fa6bd45a2b838c9",
       "frame": {
         "width": 960,
         "height": 540
@@ -18912,8 +19106,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "recce-turntable-08",
       "depth": 11.075,
-      "bytes": 26563,
-      "sha256": "465bcaea5300465781568987cd9befd05acfc03273eac333f43f2583c2f5007f",
+      "bytes": 26503,
+      "sha256": "db79ebc3a638608be242344bf9cd1a51e7978e9e75c4ef4923b19692ecb0ba13",
       "frame": {
         "width": 960,
         "height": 540
@@ -18931,9 +19125,9 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "file": "recce-turntable-09.avif",
       "kind": "turntable",
       "id": "recce-turntable-09",
-      "depth": 11.389,
-      "bytes": 29384,
-      "sha256": "68a7f36a5cbe4c3d625aaaf2691a2ec40d08d3296ef044bb84bfc4d8e91c7619",
+      "depth": 11.39,
+      "bytes": 29424,
+      "sha256": "49bc858d34e71aba1bba53a893b84a1c8387a334ec3181ea227c9509a7b297d6",
       "frame": {
         "width": 960,
         "height": 540
@@ -18952,8 +19146,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "recce-turntable-10",
       "depth": 12.241,
-      "bytes": 27251,
-      "sha256": "353684c40fc9dd23b9bf78d4c1429db885b9f88ffe656af198d1434a2469f78c",
+      "bytes": 27209,
+      "sha256": "ea93fb54247e8e001c4316561e32fe3f8bd6363ea182296ab8f5c373106fafe0",
       "frame": {
         "width": 960,
         "height": 540
@@ -18972,8 +19166,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "recce-turntable-11",
       "depth": 12.62,
-      "bytes": 25280,
-      "sha256": "810992846084533ede876f63b3da781f7961eff7057fd0d482d4781b4072c8c6",
+      "bytes": 25291,
+      "sha256": "be82a9e9c0ad050a867b2893868ff6f65b88b6f2891240467b60c369dc1a6a42",
       "frame": {
         "width": 960,
         "height": 540
@@ -18992,8 +19186,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "recce-turntable-12",
       "depth": 12.964,
-      "bytes": 24137,
-      "sha256": "d5df84e81ecda8c1515dba5de8874860fe5f4f036a1da93f1cd4396ab267ff00",
+      "bytes": 24127,
+      "sha256": "805c6f05bd9c8ab0813c2a2df11209fa6c4215fa984d37033e30ce5103fba2b6",
       "frame": {
         "width": 960,
         "height": 540
@@ -19012,8 +19206,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "recce-turntable-13",
       "depth": 12.778,
-      "bytes": 25615,
-      "sha256": "5cd3ea07869ae97ec87267f64993c6d6891ae0b759af9637b5831e441abc49a0",
+      "bytes": 25666,
+      "sha256": "127cfea9877a4ae69c35ac1af4eece0659da812f9c5aa5dc8a8527151a9aef07",
       "frame": {
         "width": 960,
         "height": 540
@@ -19032,8 +19226,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "recce-turntable-14",
       "depth": 12.194,
-      "bytes": 27456,
-      "sha256": "c5b413edb6f2a5d06b990c4d6bfa2465bd78043683ebcd043e06b0cffd6e8ea3",
+      "bytes": 27444,
+      "sha256": "73317fcff35c46f8ff9252c376dd73ba02634c007d635f258c544dcdfbd044e2",
       "frame": {
         "width": 960,
         "height": 540
@@ -19052,8 +19246,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "recce-turntable-15",
       "depth": 11.233,
-      "bytes": 28863,
-      "sha256": "d98996868dbf6e5f8005ea3afc790e5887be47e81badbc8d22f25d1ff7cefb16",
+      "bytes": 28961,
+      "sha256": "149fd27612b38722c18edaf29cf42c4d5eb3c068b6e70343c70b51562e8e1293",
       "frame": {
         "width": 960,
         "height": 540
@@ -19072,8 +19266,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "recce-turntable-16",
       "depth": 10.458,
-      "bytes": 26356,
-      "sha256": "d464430cf003490b5f0961738e6ae51f17b7a6c77af2aa4445c46d6c330bad44",
+      "bytes": 26250,
+      "sha256": "caff5fefa68a88b20d1f05962337e998e38c1f5e4dd127efc2d91f1701e0e641",
       "frame": {
         "width": 960,
         "height": 540
@@ -19092,8 +19286,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "recce-turntable-17",
       "depth": 10.375,
-      "bytes": 17956,
-      "sha256": "655fdc8d1e2b738c468868ecd21efcd943eeb29790846b4ad72b2541a8284cf5",
+      "bytes": 17965,
+      "sha256": "4e527667003235f2d226ac458942ef171836e260a5cb4f3106dbceec1b7a5bfa",
       "frame": {
         "width": 960,
         "height": 540
@@ -19112,8 +19306,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "recce-turntable-18",
       "depth": 10.082,
-      "bytes": 15733,
-      "sha256": "23d1297785d9b50b2214963dc1fe81a25538fc09e489b90f5be4ca5cd2cce4df",
+      "bytes": 15811,
+      "sha256": "8ff29c1f5303fe193d4b05b8120e0f69191b5516834138f572adf7caf3dd2dde",
       "frame": {
         "width": 960,
         "height": 540
@@ -19132,8 +19326,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "recce-turntable-19",
       "depth": 10.375,
-      "bytes": 17790,
-      "sha256": "a64e0b1237f8d22d25e47a4032b7006e5fae9307834f42bcb4db3eb1cdf4acbf",
+      "bytes": 17804,
+      "sha256": "537e703cb17ba8e61c16ab15f938e39573e6892c09c2bb32cbd8deae9d677647",
       "frame": {
         "width": 960,
         "height": 540
@@ -19152,8 +19346,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "recce-turntable-20",
       "depth": 10.459,
-      "bytes": 26203,
-      "sha256": "26b7c3cc539e04868439f5211cb1167eb75f1b493f889e57fd2f6f26b566fe7c",
+      "bytes": 26176,
+      "sha256": "9ada8502b13cd2871809d3f8eb10064629d2e77bb88dbb837a42d712a9f0919b",
       "frame": {
         "width": 960,
         "height": 540
@@ -19172,18 +19366,18 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "recce-turntable-21",
       "depth": 11.235,
-      "bytes": 28088,
-      "sha256": "bc3fe5c92dc938092273883f3890451bd540d034504562fc639880ff953bcfa2",
+      "bytes": 28181,
+      "sha256": "bd3cdd8509bf3f1f2b591d6947bad7fc825b4393a6b4af9af381e4b1b2d5e5fb",
       "frame": {
         "width": 960,
         "height": 540
       },
       "offset": {
-        "left": 30,
+        "left": 29,
         "top": 32
       },
       "size": {
-        "width": 881,
+        "width": 882,
         "height": 490
       }
     },
@@ -19192,8 +19386,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "recce-turntable-22",
       "depth": 12.196,
-      "bytes": 26187,
-      "sha256": "5dabb5352ff5f49202db419eecdb61ea7ef9f1f59885070a951487ecdc2f39ff",
+      "bytes": 26153,
+      "sha256": "3db7647a4b423790995a9983132accf6e7d5a28846f79aecd15f90108ffe84ac",
       "frame": {
         "width": 960,
         "height": 540
@@ -19212,8 +19406,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "recce-turntable-23",
       "depth": 12.781,
-      "bytes": 24254,
-      "sha256": "426c003d614e0ef2201be583ee104ff929ba64a202df17ff8119a23b098e309c",
+      "bytes": 24334,
+      "sha256": "c654c58f15f76c236d5551f874912273dd0a832cee14e0b8b348352ffd9a4baf",
       "frame": {
         "width": 960,
         "height": 540
@@ -19231,1058 +19425,1058 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "file": "recovery-front-ACC-A.avif",
       "kind": "build-layer",
       "id": "recovery-front-ACC-A",
-      "depth": 23.077,
+      "depth": 21.182,
       "slot": "rear-kit",
-      "bytes": 1380,
-      "sha256": "89bffe571fc25911c497bf3b8f9c5d5966081261c47cc4d58e48e9b4a096336b",
+      "bytes": 2003,
+      "sha256": "395195a28b8d72c784c57843261f4ff9d7b32cb7f44510e167c18e30b31cf7ec",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 270,
-        "top": 301
+        "left": 234,
+        "top": 327
       },
       "size": {
-        "width": 83,
-        "height": 135
+        "width": 93,
+        "height": 169
       }
     },
     {
       "file": "recovery-front-ACC-B.avif",
       "kind": "build-layer",
       "id": "recovery-front-ACC-B",
-      "depth": 24.365,
+      "depth": 22.325,
       "slot": "rear-kit",
-      "bytes": 4661,
-      "sha256": "e9ec601fbe6496e4fbe89c22d790f4c4cd5c2db60288ef0cc5c29603170388a6",
+      "bytes": 6160,
+      "sha256": "ef21492faf5a310ae9d4a5d8df8962e574a39913458b7339ba086dddedddfea4",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 102,
-        "top": 240
+        "left": 33,
+        "top": 254
       },
       "size": {
-        "width": 239,
-        "height": 251
+        "width": 271,
+        "height": 302
       }
     },
     {
       "file": "recovery-front-ACC-C.avif",
       "kind": "build-layer",
       "id": "recovery-front-ACC-C",
-      "depth": 18.251,
+      "depth": 17.382,
       "slot": "front-kit",
-      "bytes": 9923,
-      "sha256": "190608a19f435b1ee63152b65a10c516e3b959f180db11713f05e2c412600cb9",
+      "bytes": 10012,
+      "sha256": "03392f08d44dab3706eb76366ba3f3f6d3bc2aec6052bf75803bbe3b5123f18f",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 772,
-        "top": 451
+        "left": 740,
+        "top": 452
       },
       "size": {
-        "width": 373,
-        "height": 251
+        "width": 506,
+        "height": 244
       }
     },
     {
       "file": "recovery-front-ACC-D.avif",
       "kind": "build-layer",
       "id": "recovery-front-ACC-D",
-      "depth": 19.517,
+      "depth": 17.965,
       "slot": "rack",
-      "bytes": 7835,
-      "sha256": "a5b99ba45c05cc4197a1d02426b3fafd8a4fbe50def36090a341541260edc7d2",
+      "bytes": 7496,
+      "sha256": "f63ec0e547279166a237c12b6a6782e7b7bf716fcd979022f9d89cd62f93af27",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 322,
-        "top": 287
+        "left": 307,
+        "top": 291
       },
       "size": {
-        "width": 337,
-        "height": 298
+        "width": 338,
+        "height": 180
       }
     },
     {
       "file": "recovery-front-ACC-E.avif",
       "kind": "build-layer",
       "id": "recovery-front-ACC-E",
-      "depth": 18.4,
+      "depth": 17.488,
       "slot": "front-kit",
-      "bytes": 7622,
-      "sha256": "dbeb9f7484121dbacddf65de2ae37072807aea175e62d40b58f92dde5f7aedbb",
+      "bytes": 8529,
+      "sha256": "f7525c3aefc12f76faf74b3797a766c823053912a17f44d91274d21beaea91ee",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 772,
-        "top": 443
+        "left": 817,
+        "top": 442
       },
       "size": {
-        "width": 305,
-        "height": 244
+        "width": 341,
+        "height": 249
       }
     },
     {
       "file": "recovery-front-ACC-F.avif",
       "kind": "build-layer",
       "id": "recovery-front-ACC-F",
-      "depth": 18.39,
+      "depth": 17.452,
       "slot": "front-kit",
-      "bytes": 4929,
-      "sha256": "7d197ba60f5b7c54a27bffc887d7b05472f3f9fef0a1555e33630f0a85148dc7",
+      "bytes": 4521,
+      "sha256": "09429992f89b459a95a327a21f8e06a134dd0a1806a5aa0b12270360c3275c52",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 771,
-        "top": 454
+        "left": 851,
+        "top": 453
       },
       "size": {
         "width": 223,
-        "height": 148
+        "height": 166
       }
     },
     {
       "file": "recovery-front-ACC-G.avif",
       "kind": "build-layer",
       "id": "recovery-front-ACC-G",
-      "depth": 19.44,
+      "depth": 17.891,
       "slot": "rack",
-      "bytes": 9224,
-      "sha256": "2114e10be2bb7f00fb5aa365a68e84bce0f1aab8a0fb59c6e13696c4303c5307",
+      "bytes": 11031,
+      "sha256": "5550b814cdb3df0a51e2e0a60bc330cec1b0a10a880070756fab9deee6d57249",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 313,
-        "top": 243
+        "left": 307,
+        "top": 247
       },
       "size": {
-        "width": 346,
-        "height": 341
+        "width": 413,
+        "height": 361
       }
     },
     {
       "file": "recovery-front-base.avif",
       "kind": "build-base",
       "id": "recovery-front-base",
-      "depth": 21.178,
-      "bytes": 24851,
-      "sha256": "346a4a1d6fe7b529c1a6226595dae34a1e53cb81a6d159cd7ebc6a6472dfc0f9",
+      "depth": 19.605,
+      "bytes": 27845,
+      "sha256": "49546652919fa4dd6d16bd5010f3c75137c85ad4a1b066e375e632aa2a88d604",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 205,
-        "top": 141
+        "left": 154,
+        "top": 161
       },
       "size": {
-        "width": 737,
-        "height": 505
+        "width": 859,
+        "height": 507
       }
     },
     {
       "file": "recovery-front-CAP-A.avif",
       "kind": "build-layer",
       "id": "recovery-front-CAP-A",
-      "depth": 21.323,
+      "depth": 19.752,
       "slot": "module",
-      "bytes": 3926,
-      "sha256": "8e71c87a70c7389dd4e240354baa54c7e0d676becdd38bd79c62f7b14275221f",
+      "bytes": 4299,
+      "sha256": "3c67a578a18d152337287fa1877ccf4025688fde09d55c50ec8a15bb1fea7d99",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 364,
-        "top": 231
+        "left": 316,
+        "top": 247
       },
       "size": {
-        "width": 222,
-        "height": 114
+        "width": 278,
+        "height": 124
       }
     },
     {
       "file": "recovery-front-CAP-B.avif",
       "kind": "build-layer",
       "id": "recovery-front-CAP-B",
-      "depth": 21.313,
+      "depth": 19.745,
       "slot": "module",
-      "bytes": 4254,
-      "sha256": "36371d9755eb3f44136be891b3b65d27a970c8a33304f0a5c04582d2d89b0d4a",
+      "bytes": 4389,
+      "sha256": "68286591a43c1eb2dce27023021b2b0a184acc17eec266dd207c5091a874f31e",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 364,
-        "top": 220
+        "left": 316,
+        "top": 235
       },
       "size": {
-        "width": 226,
-        "height": 126
+        "width": 282,
+        "height": 136
       }
     },
     {
       "file": "recovery-front-CAP-C.avif",
       "kind": "build-layer",
       "id": "recovery-front-CAP-C",
-      "depth": 21.32,
+      "depth": 19.748,
       "slot": "module",
-      "bytes": 4984,
-      "sha256": "6e049df93b5088f17c6de1b9e91617dfd495f81475690afcf598cf92f2e9c227",
+      "bytes": 4951,
+      "sha256": "708749b8ca98a734391edcee624a1e6cd273e6c38bd00ce66f69754b21bbe843",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 384,
-        "top": 232
+        "left": 370,
+        "top": 247
       },
       "size": {
-        "width": 194,
-        "height": 112
+        "width": 215,
+        "height": 124
       }
     },
     {
       "file": "recovery-front-CAP-D.avif",
       "kind": "build-layer",
       "id": "recovery-front-CAP-D",
-      "depth": 21.312,
+      "depth": 19.746,
       "slot": "module",
-      "bytes": 4883,
-      "sha256": "ecbdc01258d15bc43f4fdf4df1574da7c7846ec2469d34920acb771cc9bb6084",
+      "bytes": 5164,
+      "sha256": "ccf24f479ef2bc427082dfaae773816968c12830511b5f294f56dfd51fa4bc59",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 363,
-        "top": 214
+        "left": 316,
+        "top": 229
       },
       "size": {
-        "width": 230,
-        "height": 133
+        "width": 285,
+        "height": 142
       }
     },
     {
       "file": "recovery-front-CAP-E.avif",
       "kind": "build-layer",
       "id": "recovery-front-CAP-E",
-      "depth": 21.323,
+      "depth": 19.752,
       "slot": "module",
-      "bytes": 3738,
-      "sha256": "e7e47e56127d6b18b22ff3e9c85f53fdb13f45a8283edaf822a8860767027c52",
+      "bytes": 3956,
+      "sha256": "c7bbeecc1c8e9380c6b8d3ea78c9dd0aa34ae082a3bb2176dbf254a5272612bb",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 364,
-        "top": 232
+        "left": 316,
+        "top": 247
       },
       "size": {
-        "width": 219,
-        "height": 113
+        "width": 275,
+        "height": 124
       }
     },
     {
       "file": "recovery-front-CAP-F.avif",
       "kind": "build-layer",
       "id": "recovery-front-CAP-F",
-      "depth": 21.32,
+      "depth": 19.75,
       "slot": "module",
-      "bytes": 3812,
-      "sha256": "0ad7d47a72ca261aed00f18d0aa30a205d19a71b61d210648ca8a7bce41adc26",
+      "bytes": 4210,
+      "sha256": "7d80fd8f66eaff0481998c8809846cf6065d85619a39311e2eaebff9d6004fbb",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 364,
-        "top": 227
+        "left": 316,
+        "top": 242
       },
       "size": {
-        "width": 223,
-        "height": 119
+        "width": 279,
+        "height": 129
       }
     },
     {
       "file": "recovery-front-CAP-G.avif",
       "kind": "build-layer",
       "id": "recovery-front-CAP-G",
-      "depth": 21.321,
+      "depth": 19.749,
       "slot": "module",
-      "bytes": 4667,
-      "sha256": "50d6fba05309fd7741a8f6afa24e3a9c8fb96528b24fa255cd5f110bd5836025",
+      "bytes": 4738,
+      "sha256": "292d20c944c049c36fb72267bfc09eed6ff7341600f57c56594fc7984195b07c",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
         "left": 371,
-        "top": 234
+        "top": 250
       },
       "size": {
-        "width": 211,
-        "height": 120
+        "width": 219,
+        "height": 121
       }
     },
     {
       "file": "recovery-front-COM-A.avif",
       "kind": "build-layer",
       "id": "recovery-front-COM-A",
-      "depth": 22.035,
+      "depth": 20.302,
       "slot": "antenna-left",
-      "bytes": 1946,
-      "sha256": "4b525014654a15fff3d829ac021dd42a0f3c9de8bca0adf364d65b816731e156",
+      "bytes": 2085,
+      "sha256": "95023b253802d8c95b8d98f7ade498bd8ac188647a4e9d99626555fe6af5600e",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 262,
-        "top": 86
+        "left": 247,
+        "top": 89
       },
       "size": {
-        "width": 85,
-        "height": 244
+        "width": 94,
+        "height": 270
       }
     },
     {
       "file": "recovery-front-COM-B.avif",
       "kind": "build-layer",
       "id": "recovery-front-COM-B",
-      "depth": 23.216,
+      "depth": 21.5,
       "slot": "antenna-right",
-      "bytes": 1346,
-      "sha256": "8d59be5ad50abcb7c4002f00ce26c40ea51aa5f4647b3cae25b8af247fc445c9",
+      "bytes": 1222,
+      "sha256": "e74e432c0ec966da6e06e7e199e9c591069d5c06d001a4a1ef68d8b47011220b",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 390,
-        "top": 42
+        "left": 362,
+        "top": 48
       },
       "size": {
-        "width": 55,
-        "height": 260
+        "width": 36,
+        "height": 194
       }
     },
     {
       "file": "recovery-front-COM-C.avif",
       "kind": "build-layer",
       "id": "recovery-front-COM-C",
-      "depth": 22.131,
+      "depth": 20.346,
       "slot": "antenna-left",
-      "bytes": 1394,
-      "sha256": "53ee987bcfd266a63c4778ee4a92ed9b6875e223f1baa6a3b044cab7bc142a77",
+      "bytes": 1561,
+      "sha256": "ffb8492ab50c09be2dbc9b58ada43210685b6af9220914eca479cc0e60dea49c",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 268,
-        "top": 256
+        "left": 254,
+        "top": 274
       },
       "size": {
-        "width": 72,
-        "height": 71
+        "width": 80,
+        "height": 83
       }
     },
     {
       "file": "recovery-front-COM-D.avif",
       "kind": "build-layer",
       "id": "recovery-front-COM-D",
-      "depth": 22.674,
+      "depth": 20.979,
       "slot": "radio-mast",
-      "bytes": 2181,
-      "sha256": "8bd1c6ed747f2f2fc4586396c88ae35d934267ce0a2cd8b3cccf97f42770bb33",
+      "bytes": 2328,
+      "sha256": "e5bf7148fe37fb5ac4813a046f217335ab7c44cd1139142eca88d3e24ee6c23a",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 328,
-        "top": 31
+        "left": 304,
+        "top": 33
       },
       "size": {
-        "width": 58,
-        "height": 285
+        "width": 62,
+        "height": 309
       }
     },
     {
       "file": "recovery-front-COM-E.avif",
       "kind": "build-layer",
       "id": "recovery-front-COM-E",
-      "depth": 22.67,
+      "depth": 20.979,
       "slot": "radio-mast",
-      "bytes": 2152,
-      "sha256": "17e1a5d957ef9c5c195b062813f0a729373a957bb517bc60394d04c6c1f7074e",
+      "bytes": 2206,
+      "sha256": "feb458fb5b42f0127bbfd676d83de9ffca95e09efc40593828bd44390d4f0ed3",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 326,
-        "top": 17
+        "left": 302,
+        "top": 20
       },
       "size": {
-        "width": 62,
-        "height": 299
+        "width": 66,
+        "height": 323
       }
     },
     {
       "file": "recovery-front-COM-F.avif",
       "kind": "build-layer",
       "id": "recovery-front-COM-F",
-      "depth": 22.053,
+      "depth": 20.309,
       "slot": "antenna-left",
-      "bytes": 1832,
-      "sha256": "eebe59d3d0473ed91408857d52749ba602d674deafa7c9edbbc2fcc51931684d",
+      "bytes": 2113,
+      "sha256": "70326190c3ae3b89e4b357207330d3442b973288bae3ab408b425e5c2a48976a",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 261,
-        "top": 118
+        "left": 246,
+        "top": 124
       },
       "size": {
-        "width": 88,
-        "height": 212
+        "width": 98,
+        "height": 236
       }
     },
     {
       "file": "recovery-front-COM-G.avif",
       "kind": "build-layer",
       "id": "recovery-front-COM-G",
-      "depth": 23.289,
+      "depth": 21.539,
       "slot": "antenna-right",
-      "bytes": 980,
-      "sha256": "5c3fac89359a42ea084883adcb67f2cac144af32076f503821f404d7ffc46cb0",
+      "bytes": 968,
+      "sha256": "2863e295603dd6d4415c755efcd8a8713d61b89b1c152928bf7c4409b273f82d",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 416,
-        "top": 136
+        "left": 351,
+        "top": 152
       },
       "size": {
-        "width": 30,
-        "height": 166
+        "width": 53,
+        "height": 175
       }
     },
     {
       "file": "recovery-front-FP-A.avif",
       "kind": "build-layer",
       "id": "recovery-front-FP-A",
-      "depth": 20.011,
+      "depth": 18.68,
       "slot": "weapon",
-      "bytes": 3733,
-      "sha256": "e6a3ebea813d776ba32087b04e128f3d3c30fe6751d36b126c40a05b629f79b2",
+      "bytes": 3799,
+      "sha256": "ace424a121057b3fe7afe8e9ba304dd804362298915aa72cc1f147b5c55a99b5",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 549,
-        "top": 248
+        "left": 552,
+        "top": 249
       },
       "size": {
-        "width": 203,
-        "height": 107
+        "width": 212,
+        "height": 124
       }
     },
     {
       "file": "recovery-front-FP-B.avif",
       "kind": "build-layer",
       "id": "recovery-front-FP-B",
-      "depth": 19.777,
+      "depth": 18.487,
       "slot": "weapon",
-      "bytes": 4110,
-      "sha256": "171290ac87b980f04bcd8a7e13abff3603187524e7c31bc3ca9d4daf99354730",
+      "bytes": 3984,
+      "sha256": "8ec0084d97554f06e442ec874e09c0c4dc086004666c44b9d73cba0fdaf75b09",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 511,
-        "top": 205
+        "left": 551,
+        "top": 210
       },
       "size": {
-        "width": 241,
-        "height": 161
+        "width": 250,
+        "height": 164
       }
     },
     {
       "file": "recovery-front-FP-C.avif",
       "kind": "build-layer",
       "id": "recovery-front-FP-C",
-      "depth": 19.537,
+      "depth": 18.314,
       "slot": "weapon",
-      "bytes": 6209,
-      "sha256": "f259f7b8fcd86a116defb856e1613524afe1e058b31b734f721b17fd6171ca2e",
+      "bytes": 6222,
+      "sha256": "d9bb9f8287919988b04a83fbee84317fb4b6ea04d399f99c2c5d2a99de97ac0b",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 502,
-        "top": 216
+        "left": 527,
+        "top": 222
       },
       "size": {
-        "width": 374,
-        "height": 150
+        "width": 426,
+        "height": 157
       }
     },
     {
       "file": "recovery-front-FP-D.avif",
       "kind": "build-layer",
       "id": "recovery-front-FP-D",
-      "depth": 18.825,
+      "depth": 17.472,
       "slot": "aux-weapon",
-      "bytes": 2803,
-      "sha256": "e5232354edd5f19eb94f16230c9a43f2ff8821cb3eafd20f359e066efb4d2a47",
+      "bytes": 2845,
+      "sha256": "117f98415242b1f0d1fb74ce54fa1828daaaba07085cb0e07685c24755974eed",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 637,
-        "top": 272
+        "left": 682,
+        "top": 260
       },
       "size": {
-        "width": 201,
-        "height": 131
+        "width": 133,
+        "height": 116
       }
     },
     {
       "file": "recovery-front-FP-E.avif",
       "kind": "build-layer",
       "id": "recovery-front-FP-E",
-      "depth": 18.826,
+      "depth": 17.472,
       "slot": "aux-weapon",
-      "bytes": 2532,
-      "sha256": "33aec4c67aeece03bf97f2ca28b824c0215642826ac801ef47282ceb3220c72d",
+      "bytes": 2801,
+      "sha256": "a5ea49029f3d76588c210306598f8eaa8cac984c66f9334c4cf910a5294d8f0f",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 641,
-        "top": 268
+        "left": 682,
+        "top": 251
       },
       "size": {
-        "width": 197,
-        "height": 135
+        "width": 134,
+        "height": 125
       }
     },
     {
       "file": "recovery-front-FP-F.avif",
       "kind": "build-layer",
       "id": "recovery-front-FP-F",
-      "depth": 19.668,
+      "depth": 18.415,
       "slot": "weapon",
-      "bytes": 5559,
-      "sha256": "6a2563e49416716096f570d683a51d8baaf224b9edfce87c6487dcce5b2c815d",
+      "bytes": 5469,
+      "sha256": "97a46f4116d45f7037407040564323b588686d340c3bb511014c14ea52cc157d",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 511,
-        "top": 227
+        "left": 541,
+        "top": 229
       },
       "size": {
-        "width": 315,
-        "height": 157
+        "width": 353,
+        "height": 150
       }
     },
     {
       "file": "recovery-front-FP-G.avif",
       "kind": "build-layer",
       "id": "recovery-front-FP-G",
-      "depth": 19.807,
+      "depth": 18.48,
       "slot": "weapon",
-      "bytes": 4986,
-      "sha256": "5aaaa67c31515bdd15a43a089866390b8d0b7da78ee9a05f5892dd173a9622a2",
+      "bytes": 4913,
+      "sha256": "a2e07da1b29a35a6a02059d0796e52db4d3f20c9428a2a2affe024f7026d80c7",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 511,
-        "top": 208
+        "left": 542,
+        "top": 212
       },
       "size": {
-        "width": 267,
-        "height": 158
+        "width": 242,
+        "height": 162
       }
     },
     {
       "file": "recovery-front-MOB-A.avif",
       "kind": "build-layer",
       "id": "recovery-front-MOB-A",
-      "depth": 19.721,
+      "depth": 18.565,
       "slot": "powerpack",
-      "bytes": 3221,
-      "sha256": "af02f97c96d516b244762d6f2112fd4dd1f2a80f4a88a872b0c7a05720300439",
+      "bytes": 3527,
+      "sha256": "62652c54dd5d357208f704d43412ccd3ca1c14844c01fd90b897b614a6e6b57a",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 657,
-        "top": 267
+        "left": 691,
+        "top": 270
       },
       "size": {
-        "width": 143,
-        "height": 119
+        "width": 201,
+        "height": 117
       }
     },
     {
       "file": "recovery-front-MOB-B.avif",
       "kind": "build-layer",
       "id": "recovery-front-MOB-B",
-      "depth": 20.69,
+      "depth": 19.174,
       "slot": "running",
-      "bytes": 5717,
-      "sha256": "2093c41f994426b210ec64e70f7321ab17d8758e1b16c8f26c915615bddaf44a",
+      "bytes": 6604,
+      "sha256": "e95a6568fef0ea17cf9a922ae2eed474935a58aa04831583e6842996f93c5cdd",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
         "left": 341,
-        "top": 466
+        "top": 496
       },
       "size": {
-        "width": 442,
-        "height": 134
+        "width": 479,
+        "height": 119
       }
     },
     {
       "file": "recovery-front-MOB-C.avif",
       "kind": "build-layer",
       "id": "recovery-front-MOB-C",
-      "depth": 20.689,
+      "depth": 19.174,
       "slot": "running",
-      "bytes": 25893,
-      "sha256": "3b61843898af14890578b447f0fc89088bfb35d29b5d0da05b21a85163b4898d",
+      "bytes": 29726,
+      "sha256": "2003bcdc4169e40d0b66edff68e532a6a863d6dc7b4229c7b80873ca0b417d2e",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 326,
-        "top": 429
+        "left": 320,
+        "top": 457
       },
       "size": {
-        "width": 576,
-        "height": 201
+        "width": 636,
+        "height": 190
       }
     },
     {
       "file": "recovery-front-MOB-D.avif",
       "kind": "build-layer",
       "id": "recovery-front-MOB-D",
-      "depth": 20.599,
+      "depth": 19.145,
       "slot": "running",
-      "bytes": 9706,
-      "sha256": "d4cd6e7b0c9f7cf9dded84a31356be7bab3a2ca7e7031bb0cdd5b940cf05aa0b",
+      "bytes": 5132,
+      "sha256": "6bc3b877a2b0ec39a1b99bed384020f0bcefe2ef20f227a8a95d01d576197e07",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 344,
-        "top": 433
+        "left": 350,
+        "top": 504
       },
       "size": {
-        "width": 508,
-        "height": 179
+        "width": 553,
+        "height": 107
       }
     },
     {
       "file": "recovery-front-MOB-E.avif",
       "kind": "build-layer",
       "id": "recovery-front-MOB-E",
-      "depth": 22.725,
+      "depth": 20.893,
       "slot": "tanks",
-      "bytes": 2678,
-      "sha256": "9f0722b5aa827b9bbc7acfb792a663589d42ce4c0f4a03752370fed631dbe40e",
+      "bytes": 2761,
+      "sha256": "8324c892de6f51ca1661b8e492eee99faf240164f934bb6b0415f361aa607c8d",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 240,
-        "top": 420
+        "left": 225,
+        "top": 445
       },
       "size": {
-        "width": 178,
-        "height": 125
+        "width": 135,
+        "height": 141
       }
     },
     {
       "file": "recovery-front-MOB-F.avif",
       "kind": "build-layer",
       "id": "recovery-front-MOB-F",
-      "depth": 19.756,
+      "depth": 18.588,
       "slot": "powerpack",
-      "bytes": 1921,
-      "sha256": "b99d59b18038f08269535910f1197afda700d97f3044844577241f420e1549ab",
+      "bytes": 2031,
+      "sha256": "4b7e0f8a46bdabbee9b3a132e026b02ed65ad811bcea2a7eb44b73383594990d",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 709,
-        "top": 299
+        "left": 748,
+        "top": 303
       },
       "size": {
-        "width": 73,
-        "height": 67
+        "width": 85,
+        "height": 69
       }
     },
     {
       "file": "recovery-front-MOB-G.avif",
       "kind": "build-layer",
       "id": "recovery-front-MOB-G",
-      "depth": 20.689,
+      "depth": 19.174,
       "slot": "running",
-      "bytes": 20486,
-      "sha256": "4392dbd1f064c4d7667e3ee1b1f42195f9d7e0ade44a2e1c03b08068c75519f2",
+      "bytes": 23013,
+      "sha256": "2c76ec728f9519295a7b43e35058a95f22bd53e07a0d1c6691f9fdd000c8928a",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 322,
-        "top": 428
+        "left": 317,
+        "top": 457
       },
       "size": {
-        "width": 582,
-        "height": 202
+        "width": 635,
+        "height": 190
       }
     },
     {
       "file": "recovery-front-PRO-A.avif",
       "kind": "build-layer",
       "id": "recovery-front-PRO-A",
-      "depth": 20.863,
+      "depth": 19.333,
       "slot": "side-armour",
-      "bytes": 12298,
-      "sha256": "fd171184f84cbd241beafd99bed29df650be5816b374fc9871fa696b1c3a6620",
+      "bytes": 14436,
+      "sha256": "4169d308a087ae5e78b00f6c332326891c24453fdf070ace36c81fa6a9a0d002",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 259,
-        "top": 359
+        "left": 251,
+        "top": 383
       },
       "size": {
-        "width": 459,
-        "height": 226
+        "width": 555,
+        "height": 224
       }
     },
     {
       "file": "recovery-front-PRO-B.avif",
       "kind": "build-layer",
       "id": "recovery-front-PRO-B",
-      "depth": 18.814,
+      "depth": 17.733,
       "slot": "front-armour",
-      "bytes": 6334,
-      "sha256": "d18d318c38a438ae8b38cacfbe98bf2d4e8ad927f8cc5e054562ad61461c525d",
+      "bytes": 6514,
+      "sha256": "445bddc69e92d6aaa7a403e5cc783a1ad9c5ec70edebaa465bec4ffa78bc8908",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 703,
-        "top": 343
+        "left": 777,
+        "top": 339
       },
       "size": {
-        "width": 243,
-        "height": 168
+        "width": 237,
+        "height": 171
       }
     },
     {
       "file": "recovery-front-PRO-C.avif",
       "kind": "build-layer",
       "id": "recovery-front-PRO-C",
-      "depth": 20.863,
+      "depth": 19.333,
       "slot": "side-armour",
-      "bytes": 10727,
-      "sha256": "8679116a2ebe4277470cc68b015ffaffce44a9dc5a878895f5e0564fb32559f5",
+      "bytes": 12203,
+      "sha256": "77992d0fe6acdc83c43fb3edbff9d9223c22ba39fc9935e62f57919bcaa59fdf",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 263,
-        "top": 361
+        "left": 258,
+        "top": 384
       },
       "size": {
-        "width": 452,
-        "height": 225
+        "width": 543,
+        "height": 223
       }
     },
     {
       "file": "recovery-front-PRO-D.avif",
       "kind": "build-layer",
       "id": "recovery-front-PRO-D",
-      "depth": 19.219,
+      "depth": 18.024,
       "slot": "roof-armour",
-      "bytes": 960,
-      "sha256": "f0238bce6a2dc1f88d0650d173a3a82415c6caf7819a1e490c35c01ba33dd589",
+      "bytes": 935,
+      "sha256": "1d462d7d91f9dd1c6e2e8de42dd5d8c2788730231e5ac03682fae17b08375777",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 706,
-        "top": 336
+        "left": 754,
+        "top": 338
       },
       "size": {
-        "width": 51,
-        "height": 34
+        "width": 61,
+        "height": 35
       }
     },
     {
       "file": "recovery-front-PRO-E.avif",
       "kind": "build-layer",
       "id": "recovery-front-PRO-E",
-      "depth": 20.871,
+      "depth": 19.339,
       "slot": "side-armour",
-      "bytes": 14326,
-      "sha256": "55ecc07b15a9229b0e1555fa3b045a479735b69cd2d42ce5cbf2f6eaca4e4149",
+      "bytes": 16454,
+      "sha256": "81ff290908636aa43adb0adfcddac9f72ace995727d6387725c4a85536387c85",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 257,
-        "top": 362
+        "left": 248,
+        "top": 384
       },
       "size": {
-        "width": 451,
-        "height": 189
+        "width": 540,
+        "height": 204
       }
     },
     {
       "file": "recovery-front-PRO-F.avif",
       "kind": "build-layer",
       "id": "recovery-front-PRO-F",
-      "depth": 20.832,
+      "depth": 19.287,
       "slot": "belly",
-      "bytes": 2885,
-      "sha256": "8e41ffd3b945130d45d2746c4818b4680c3eff8d6a3b96c47d2cf03e2515fa67",
+      "bytes": 2632,
+      "sha256": "9f0b2d420953540573c3ec16386d70013cb24a51780a9d0089513c31c98dd869",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 403,
-        "top": 506
+        "left": 541,
+        "top": 534
       },
       "size": {
-        "width": 475,
-        "height": 104
+        "width": 400,
+        "height": 93
       }
     },
     {
       "file": "recovery-front-PRO-G.avif",
       "kind": "build-layer",
       "id": "recovery-front-PRO-G",
-      "depth": 19.214,
+      "depth": 18.021,
       "slot": "roof-armour",
-      "bytes": 1667,
-      "sha256": "c60be6216d1e28ae0729490f76fed2287b5fb7eb40bf25d5a858a517eed0402d",
+      "bytes": 1721,
+      "sha256": "b79d035bc01f147ebb8049aeedcdf9cd30ae39ec565a4e6f49acbac31adb51ae",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 703,
-        "top": 329
+        "left": 748,
+        "top": 330
       },
       "size": {
-        "width": 99,
-        "height": 50
+        "width": 115,
+        "height": 51
       }
     },
     {
       "file": "recovery-front-SA-A.avif",
       "kind": "build-layer",
       "id": "recovery-front-SA-A",
-      "depth": 18.417,
+      "depth": 17.295,
       "slot": "optics",
-      "bytes": 2144,
-      "sha256": "9ee28ff80631cd89406d792b09daba85ee4aa3a7585c98611d7e70ce499bb457",
+      "bytes": 2241,
+      "sha256": "810e6bd7a8d5c2dfdbd5a93b660a730c4a7cfcc479e56be0ffe21d29583f30cd",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 694,
-        "top": 303
+        "left": 767,
+        "top": 295
       },
       "size": {
-        "width": 125,
-        "height": 85
+        "width": 131,
+        "height": 91
       }
     },
     {
       "file": "recovery-front-SA-B.avif",
       "kind": "build-layer",
       "id": "recovery-front-SA-B",
-      "depth": 20.208,
+      "depth": 19.108,
       "slot": "sensor-mast",
-      "bytes": 2691,
-      "sha256": "090498b6a9eb363c1b93b20f0e93754de4dfde329275a05c1f7a0f528ef88585",
+      "bytes": 2745,
+      "sha256": "e351333ca40882fadc4b9732a91578ebe61b15ce288fd3ea8c40bf64ec0fcaa5",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 725,
-        "top": 164
+        "left": 762,
+        "top": 163
       },
       "size": {
-        "width": 73,
-        "height": 181
+        "width": 78,
+        "height": 190
       }
     },
     {
       "file": "recovery-front-SA-C.avif",
       "kind": "build-layer",
       "id": "recovery-front-SA-C",
-      "depth": 18.399,
+      "depth": 17.267,
       "slot": "optics",
-      "bytes": 2056,
-      "sha256": "480cc52c8c154bd3fddb5f9f445eaf07efe81dd3bf8a85fe2d00eb091a040e34",
+      "bytes": 2207,
+      "sha256": "307cf506b1ba5b26019c3434cd04ccff579df32850e5db58f740ab1c0aee587a",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 694,
-        "top": 295
+        "left": 767,
+        "top": 286
       },
       "size": {
-        "width": 115,
-        "height": 93
+        "width": 120,
+        "height": 100
       }
     },
     {
       "file": "recovery-front-SA-D.avif",
       "kind": "build-layer",
       "id": "recovery-front-SA-D",
-      "depth": 20.16,
+      "depth": 19.098,
       "slot": "sensor-mast",
-      "bytes": 3312,
-      "sha256": "948ad02f7ae9bd6a4d4eda69785ed01dcddbe12402065b06a723420a6a8d1c78",
+      "bytes": 3751,
+      "sha256": "15320c6165cc2c60fd7e8811537a8a2912af5ec0a5ab385355531e8991065c8a",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 728,
-        "top": 43
+        "left": 771,
+        "top": 33
       },
       "size": {
-        "width": 63,
-        "height": 303
+        "width": 57,
+        "height": 320
       }
     },
     {
       "file": "recovery-front-SA-E.avif",
       "kind": "build-layer",
       "id": "recovery-front-SA-E",
-      "depth": 18.431,
+      "depth": 17.308,
       "slot": "optics",
-      "bytes": 2396,
-      "sha256": "d12d05eff528ccc1974449ca4724a7f54646130b01ca978765dd512aec4920aa",
+      "bytes": 2500,
+      "sha256": "9f973bd71aaab7710e217fe7792a8ef7099cc7f61647c62dd21892ce1466826b",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 694,
-        "top": 284
+        "left": 767,
+        "top": 274
       },
       "size": {
-        "width": 123,
-        "height": 104
+        "width": 126,
+        "height": 112
       }
     },
     {
       "file": "recovery-front-SA-F.avif",
       "kind": "build-layer",
       "id": "recovery-front-SA-F",
-      "depth": 20.343,
+      "depth": 19.064,
       "slot": "sensor-pods",
-      "bytes": 4544,
-      "sha256": "9870d6a2e870aa999941e977107b0286a64fb28c8b5f9d372eddb688e72f870a",
+      "bytes": 4829,
+      "sha256": "ec03cf6a824255c0594870e265f6d181e89e54c657a2fd9d57f6226800be09a0",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 333,
-        "top": 262
+        "left": 308,
+        "top": 281
       },
       "size": {
-        "width": 530,
-        "height": 122
+        "width": 601,
+        "height": 115
       }
     },
     {
       "file": "recovery-front-SA-G.avif",
       "kind": "build-layer",
       "id": "recovery-front-SA-G",
-      "depth": 20.347,
+      "depth": 19.069,
       "slot": "sensor-pods",
-      "bytes": 4446,
-      "sha256": "c465c4ab6b8a6b81005e8b9510b07e048dc475b2813dcf112bdfe61be3c89da9",
+      "bytes": 4629,
+      "sha256": "baca796fa67abfed743db0bdbef1f4e2f3182b8b7fc0818d5e13b7f2fb3a5a1e",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 337,
-        "top": 270
+        "left": 312,
+        "top": 292
       },
       "size": {
-        "width": 523,
-        "height": 114
+        "width": 595,
+        "height": 104
       }
     },
     {
       "file": "recovery-hero.avif",
       "kind": "hero",
       "id": "recovery-hero",
-      "depth": 18.587,
-      "bytes": 43399,
-      "sha256": "b10a94309991f09916f97bd1e44dbffd374298b01b9d935de85e8b2181f8cc6b",
+      "depth": 18.602,
+      "bytes": 43650,
+      "sha256": "c9afad0cc003c704478d32186208083897816ba1ae48044c6ea133e00a9715ec",
       "frame": {
         "width": 1600,
         "height": 900
@@ -20300,660 +20494,849 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "file": "recovery-rear-ACC-A.avif",
       "kind": "build-layer",
       "id": "recovery-rear-ACC-A",
-      "depth": 19.248,
+      "depth": 18.478,
       "slot": "rear-kit",
-      "bytes": 5926,
-      "sha256": "b646918055e1e631d3098d5fca61d41c9cdca92e2df8e72f38f66cb00ac6a277",
+      "bytes": 6595,
+      "sha256": "7e645ffaaf1fedb906f18d3d1865a902ec8a1dce9130cb75893e0a54b3cdf52d",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 698,
-        "top": 360
+        "left": 752,
+        "top": 297
       },
       "size": {
         "width": 158,
-        "height": 188
+        "height": 264
       }
     },
     {
       "file": "recovery-rear-ACC-B.avif",
       "kind": "build-layer",
       "id": "recovery-rear-ACC-B",
-      "depth": 18.638,
+      "depth": 18.014,
       "slot": "rear-kit",
-      "bytes": 9775,
-      "sha256": "289d2070446ea6d5d985cd2201630af98253e9418c90c2d57b064a63e4f10e83",
-      "frame": {
-        "width": 1280,
-        "height": 720
-      },
-      "offset": {
-        "left": 731,
-        "top": 333
-      },
-      "size": {
-        "width": 416,
-        "height": 387
-      }
-    },
-    {
-      "file": "recovery-rear-ACC-C.avif",
-      "kind": "build-layer",
-      "id": "recovery-rear-ACC-C",
-      "depth": 24.976,
-      "slot": "front-kit",
-      "bytes": 4000,
-      "sha256": "03461d3ed16ed808cf43c604edbaedcec8c38d9f30d6d980b43b8bed91a5fa39",
-      "frame": {
-        "width": 1280,
-        "height": 720
-      },
-      "offset": {
-        "left": 96,
-        "top": 361
-      },
-      "size": {
-        "width": 332,
-        "height": 151
-      }
-    },
-    {
-      "file": "recovery-rear-ACC-D.avif",
-      "kind": "build-layer",
-      "id": "recovery-rear-ACC-D",
-      "depth": 22.217,
-      "slot": "rack",
-      "bytes": 2271,
-      "sha256": "4eeff0415c5f0eb189c4956f0e07ecb2e1937a9f775b846cc10349864ddf7196",
-      "frame": {
-        "width": 1280,
-        "height": 720
-      },
-      "offset": {
-        "left": 567,
-        "top": 244
-      },
-      "size": {
-        "width": 143,
-        "height": 68
-      }
-    },
-    {
-      "file": "recovery-rear-ACC-E.avif",
-      "kind": "build-layer",
-      "id": "recovery-rear-ACC-E",
-      "depth": 24.68,
-      "slot": "front-kit",
-      "bytes": 3259,
-      "sha256": "8c29693b935728f72b461d568001add2306e52ae5a6bf9caff906e5ebda14e0f",
-      "frame": {
-        "width": 1280,
-        "height": 720
-      },
-      "offset": {
-        "left": 122,
-        "top": 355
-      },
-      "size": {
-        "width": 198,
-        "height": 157
-      }
-    },
-    {
-      "file": "recovery-rear-ACC-F.avif",
-      "kind": "build-layer",
-      "id": "recovery-rear-ACC-F",
-      "depth": 24.454,
-      "slot": "front-kit",
-      "bytes": 1774,
-      "sha256": "3f39fbdda81435e68a016e47231e10bc8a19d506e45b52a41fcd74636ecbfc2c",
-      "frame": {
-        "width": 1280,
-        "height": 720
-      },
-      "offset": {
-        "left": 191,
-        "top": 354
-      },
-      "size": {
-        "width": 131,
-        "height": 158
-      }
-    },
-    {
-      "file": "recovery-rear-ACC-G.avif",
-      "kind": "build-layer",
-      "id": "recovery-rear-ACC-G",
-      "depth": 22.241,
-      "slot": "rack",
-      "bytes": 2592,
-      "sha256": "1e026bc566776d9d7e388d60a021e31e7dbbe3fe0f3b78781796d2366dbc5740",
-      "frame": {
-        "width": 1280,
-        "height": 720
-      },
-      "offset": {
-        "left": 562,
-        "top": 210
-      },
-      "size": {
-        "width": 145,
-        "height": 102
-      }
-    },
-    {
-      "file": "recovery-rear-base.avif",
-      "kind": "build-base",
-      "id": "recovery-rear-base",
-      "depth": 20.696,
-      "bytes": 25041,
-      "sha256": "d9a6f64472ab34caadb622f57de2dc7e81f5c949d5c5f5e7942618fa92b38a24",
-      "frame": {
-        "width": 1280,
-        "height": 720
-      },
-      "offset": {
-        "left": 208,
-        "top": 193
-      },
-      "size": {
-        "width": 787,
-        "height": 437
-      }
-    },
-    {
-      "file": "recovery-rear-CAP-A.avif",
-      "kind": "build-layer",
-      "id": "recovery-rear-CAP-A",
-      "depth": 20.323,
-      "slot": "module",
-      "bytes": 4367,
-      "sha256": "781d7817635e1821e390195a9bd85ee41af94819e9947cf4633cd9e87c1c853a",
-      "frame": {
-        "width": 1280,
-        "height": 720
-      },
-      "offset": {
-        "left": 413,
-        "top": 237
-      },
-      "size": {
-        "width": 357,
-        "height": 132
-      }
-    },
-    {
-      "file": "recovery-rear-CAP-B.avif",
-      "kind": "build-layer",
-      "id": "recovery-rear-CAP-B",
-      "depth": 20.316,
-      "slot": "module",
-      "bytes": 4900,
-      "sha256": "6e7de4229c0f1fc63d2743de71a95ca5f9591e8d48de67d2dce574bd22785215",
-      "frame": {
-        "width": 1280,
-        "height": 720
-      },
-      "offset": {
-        "left": 413,
-        "top": 229
-      },
-      "size": {
-        "width": 357,
-        "height": 140
-      }
-    },
-    {
-      "file": "recovery-rear-CAP-C.avif",
-      "kind": "build-layer",
-      "id": "recovery-rear-CAP-C",
-      "depth": 20.329,
-      "slot": "module",
-      "bytes": 5161,
-      "sha256": "3ecaff7ef27890d7a7b68daaa74a54795d282eeb07be4ab2b82f0da8cbee3527",
-      "frame": {
-        "width": 1280,
-        "height": 720
-      },
-      "offset": {
-        "left": 473,
-        "top": 237
-      },
-      "size": {
-        "width": 216,
-        "height": 132
-      }
-    },
-    {
-      "file": "recovery-rear-CAP-D.avif",
-      "kind": "build-layer",
-      "id": "recovery-rear-CAP-D",
-      "depth": 20.308,
-      "slot": "module",
-      "bytes": 5526,
-      "sha256": "31c563104124628ea90c73b53eefb4d47cd6c21bf2cbd78e8cd9e41f67461218",
-      "frame": {
-        "width": 1280,
-        "height": 720
-      },
-      "offset": {
-        "left": 413,
-        "top": 219
-      },
-      "size": {
-        "width": 357,
-        "height": 150
-      }
-    },
-    {
-      "file": "recovery-rear-CAP-E.avif",
-      "kind": "build-layer",
-      "id": "recovery-rear-CAP-E",
-      "depth": 20.323,
-      "slot": "module",
-      "bytes": 3967,
-      "sha256": "e763d577d7f686153fadbec5bf9711ac734d4b41f144087a90bcd9f4fc97b54a",
-      "frame": {
-        "width": 1280,
-        "height": 720
-      },
-      "offset": {
-        "left": 413,
-        "top": 237
-      },
-      "size": {
-        "width": 357,
-        "height": 132
-      }
-    },
-    {
-      "file": "recovery-rear-CAP-F.avif",
-      "kind": "build-layer",
-      "id": "recovery-rear-CAP-F",
-      "depth": 20.318,
-      "slot": "module",
-      "bytes": 4372,
-      "sha256": "03be72fbe457d2da28db0ae3873b285cff5733eaf93a165d1bf77afc12cbbfbe",
-      "frame": {
-        "width": 1280,
-        "height": 720
-      },
-      "offset": {
-        "left": 413,
-        "top": 232
-      },
-      "size": {
-        "width": 357,
-        "height": 137
-      }
-    },
-    {
-      "file": "recovery-rear-CAP-G.avif",
-      "kind": "build-layer",
-      "id": "recovery-rear-CAP-G",
-      "depth": 20.332,
-      "slot": "module",
-      "bytes": 4464,
-      "sha256": "428671f95c92b741a6c6f24b0833317b3e5a242876bf5eca5e8223c16d0d000f",
-      "frame": {
-        "width": 1280,
-        "height": 720
-      },
-      "offset": {
-        "left": 473,
-        "top": 243
-      },
-      "size": {
-        "width": 222,
-        "height": 126
-      }
-    },
-    {
-      "file": "recovery-rear-COM-A.avif",
-      "kind": "build-layer",
-      "id": "recovery-rear-COM-A",
-      "depth": 19.732,
-      "slot": "antenna-left",
-      "bytes": 2480,
-      "sha256": "106afbd0311f417a81b5925beffdb2d692e297c1a8db867f07edbbab670e4b22",
-      "frame": {
-        "width": 1280,
-        "height": 720
-      },
-      "offset": {
-        "left": 766,
-        "top": 96
-      },
-      "size": {
-        "width": 85,
-        "height": 298
-      }
-    },
-    {
-      "file": "recovery-rear-COM-B.avif",
-      "kind": "build-layer",
-      "id": "recovery-rear-COM-B",
-      "depth": 18.265,
-      "slot": "antenna-right",
-      "bytes": 3159,
-      "sha256": "316ef14ee74d7f4a406abb2841d12f9dbec861ffe601432eb383a0e0107bb1df",
-      "frame": {
-        "width": 1280,
-        "height": 720
-      },
-      "offset": {
-        "left": 671,
-        "top": 54
-      },
-      "size": {
-        "width": 73,
-        "height": 357
-      }
-    },
-    {
-      "file": "recovery-rear-COM-C.avif",
-      "kind": "build-layer",
-      "id": "recovery-rear-COM-C",
-      "depth": 19.895,
-      "slot": "antenna-left",
-      "bytes": 1799,
-      "sha256": "fad5405ef50f6014723bea392444532af7689900739ea9949805c261bb31592b",
-      "frame": {
-        "width": 1280,
-        "height": 720
-      },
-      "offset": {
-        "left": 771,
-        "top": 286
-      },
-      "size": {
-        "width": 75,
-        "height": 106
-      }
-    },
-    {
-      "file": "recovery-rear-COM-D.avif",
-      "kind": "build-layer",
-      "id": "recovery-rear-COM-D",
-      "depth": 18.886,
-      "slot": "radio-mast",
-      "bytes": 4386,
-      "sha256": "994a49f2855f56b20aa4830f493b97b0734d32ca9be369f4cf43b01e84ba818f",
-      "frame": {
-        "width": 1280,
-        "height": 720
-      },
-      "offset": {
-        "left": 683,
-        "top": 37
-      },
-      "size": {
-        "width": 115,
-        "height": 383
-      }
-    },
-    {
-      "file": "recovery-rear-COM-E.avif",
-      "kind": "build-layer",
-      "id": "recovery-rear-COM-E",
-      "depth": 18.874,
-      "slot": "radio-mast",
-      "bytes": 4205,
-      "sha256": "e974fbf859a36d2f79968c0c59eff176246ef17256cff984b408d22ca95c7d85",
+      "bytes": 11927,
+      "sha256": "8d47c8d624cd9c503b69a17009d529c389d0416d9e77826d07aca08f7c36c1df",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
         "left": 703,
-        "top": 22
+        "top": 330
       },
       "size": {
-        "width": 97,
-        "height": 398
+        "width": 534,
+        "height": 390
+      }
+    },
+    {
+      "file": "recovery-rear-ACC-C.avif",
+      "kind": "build-layer",
+      "id": "recovery-rear-ACC-C",
+      "depth": 23.251,
+      "slot": "front-kit",
+      "bytes": 4644,
+      "sha256": "5316abb099233670002546505440b9e7be147b09726e646c34aa6e9b7aa6bcb8",
+      "frame": {
+        "width": 1280,
+        "height": 720
+      },
+      "offset": {
+        "left": 34,
+        "top": 422
+      },
+      "size": {
+        "width": 386,
+        "height": 154
+      }
+    },
+    {
+      "file": "recovery-rear-ACC-D.avif",
+      "kind": "build-layer",
+      "id": "recovery-rear-ACC-D",
+      "depth": 21.214,
+      "slot": "rack",
+      "bytes": 2986,
+      "sha256": "34ba3791e161cfe5e08724480e0f5a594d568c58f0effc292291c0fc0d1f2916",
+      "frame": {
+        "width": 1280,
+        "height": 720
+      },
+      "offset": {
+        "left": 234,
+        "top": 286
+      },
+      "size": {
+        "width": 474,
+        "height": 283
+      }
+    },
+    {
+      "file": "recovery-rear-ACC-E.avif",
+      "kind": "build-layer",
+      "id": "recovery-rear-ACC-E",
+      "depth": 22.964,
+      "slot": "front-kit",
+      "bytes": 3878,
+      "sha256": "5ec35373adf1fd09591cb4b63c392d6bfeb6d76a838d2c8c31ffc9af835e2d66",
+      "frame": {
+        "width": 1280,
+        "height": 720
+      },
+      "offset": {
+        "left": 71,
+        "top": 417
+      },
+      "size": {
+        "width": 321,
+        "height": 158
+      }
+    },
+    {
+      "file": "recovery-rear-ACC-F.avif",
+      "kind": "build-layer",
+      "id": "recovery-rear-ACC-F",
+      "depth": 22.812,
+      "slot": "front-kit",
+      "bytes": 2103,
+      "sha256": "c5ad5babe7807574034dadba255754ca7016349a0f189e1788af52a004e1803a",
+      "frame": {
+        "width": 1280,
+        "height": 720
+      },
+      "offset": {
+        "left": 148,
+        "top": 415
+      },
+      "size": {
+        "width": 171,
+        "height": 162
+      }
+    },
+    {
+      "file": "recovery-rear-ACC-G.avif",
+      "kind": "build-layer",
+      "id": "recovery-rear-ACC-G",
+      "depth": 21.257,
+      "slot": "rack",
+      "bytes": 3241,
+      "sha256": "b2053d2b3af2ef1d71f7f74a733d6a2ac1ecae548f5cbe99b43627dfca65170b",
+      "frame": {
+        "width": 1280,
+        "height": 720
+      },
+      "offset": {
+        "left": 233,
+        "top": 252
+      },
+      "size": {
+        "width": 480,
+        "height": 318
+      }
+    },
+    {
+      "file": "recovery-rear-base.avif",
+      "kind": "build-base",
+      "id": "recovery-rear-base",
+      "depth": 19.617,
+      "bytes": 27142,
+      "sha256": "2756d4b9eaca6e012068047b6eb80927e72666e2adec05d19f53cd2379d0f702",
+      "frame": {
+        "width": 1280,
+        "height": 720
+      },
+      "offset": {
+        "left": 177,
+        "top": 186
+      },
+      "size": {
+        "width": 895,
+        "height": 472
+      }
+    },
+    {
+      "file": "recovery-rear-CAP-A.avif",
+      "kind": "build-layer",
+      "id": "recovery-rear-CAP-A",
+      "depth": 19.351,
+      "slot": "module",
+      "bytes": 4131,
+      "sha256": "3af3b9c886ebae162e83597dd90082fe0656c883681fa80884ef1946e979548a",
+      "frame": {
+        "width": 1280,
+        "height": 720
+      },
+      "offset": {
+        "left": 432,
+        "top": 268
+      },
+      "size": {
+        "width": 292,
+        "height": 126
+      }
+    },
+    {
+      "file": "recovery-rear-CAP-B.avif",
+      "kind": "build-layer",
+      "id": "recovery-rear-CAP-B",
+      "depth": 19.348,
+      "slot": "module",
+      "bytes": 4524,
+      "sha256": "03d65bda0d920f6b17367e1ed60fe7231d222d96aa0d29d3d9ac06362a3b6111",
+      "frame": {
+        "width": 1280,
+        "height": 720
+      },
+      "offset": {
+        "left": 431,
+        "top": 258
+      },
+      "size": {
+        "width": 295,
+        "height": 136
+      }
+    },
+    {
+      "file": "recovery-rear-CAP-C.avif",
+      "kind": "build-layer",
+      "id": "recovery-rear-CAP-C",
+      "depth": 19.355,
+      "slot": "module",
+      "bytes": 4276,
+      "sha256": "ac19341cc3eb9c21aa353c9ec679c3e91985d162e3fdfe8692e04b795a2c7c72",
+      "frame": {
+        "width": 1280,
+        "height": 720
+      },
+      "offset": {
+        "left": 504,
+        "top": 269
+      },
+      "size": {
+        "width": 210,
+        "height": 124
+      }
+    },
+    {
+      "file": "recovery-rear-CAP-D.avif",
+      "kind": "build-layer",
+      "id": "recovery-rear-CAP-D",
+      "depth": 19.344,
+      "slot": "module",
+      "bytes": 5091,
+      "sha256": "7d7fe22b85cd18dec02a8c6eaf07692ce53e452966837b76c177afee4985a47b",
+      "frame": {
+        "width": 1280,
+        "height": 720
+      },
+      "offset": {
+        "left": 431,
+        "top": 250
+      },
+      "size": {
+        "width": 299,
+        "height": 144
+      }
+    },
+    {
+      "file": "recovery-rear-CAP-E.avif",
+      "kind": "build-layer",
+      "id": "recovery-rear-CAP-E",
+      "depth": 19.351,
+      "slot": "module",
+      "bytes": 3744,
+      "sha256": "e1e64c9592f61983393a47a36419f85137fd7764e47b1be22e49efb6ea291b6b",
+      "frame": {
+        "width": 1280,
+        "height": 720
+      },
+      "offset": {
+        "left": 432,
+        "top": 268
+      },
+      "size": {
+        "width": 292,
+        "height": 126
+      }
+    },
+    {
+      "file": "recovery-rear-CAP-F.avif",
+      "kind": "build-layer",
+      "id": "recovery-rear-CAP-F",
+      "depth": 19.349,
+      "slot": "module",
+      "bytes": 4168,
+      "sha256": "4a9a517b569f6b7498287856657217fca4605725b5bca8e66ac431480002dca9",
+      "frame": {
+        "width": 1280,
+        "height": 720
+      },
+      "offset": {
+        "left": 431,
+        "top": 263
+      },
+      "size": {
+        "width": 293,
+        "height": 130
+      }
+    },
+    {
+      "file": "recovery-rear-CAP-G.avif",
+      "kind": "build-layer",
+      "id": "recovery-rear-CAP-G",
+      "depth": 19.357,
+      "slot": "module",
+      "bytes": 4274,
+      "sha256": "79de2784897f17426a902261f646b325b3ad39ec2edf88b335e2b6e16504d16d",
+      "frame": {
+        "width": 1280,
+        "height": 720
+      },
+      "offset": {
+        "left": 504,
+        "top": 273
+      },
+      "size": {
+        "width": 212,
+        "height": 120
+      }
+    },
+    {
+      "file": "recovery-rear-COM-A.avif",
+      "kind": "build-layer",
+      "id": "recovery-rear-COM-A",
+      "depth": 19.093,
+      "slot": "antenna-left",
+      "bytes": 2854,
+      "sha256": "caeb9ae0c94000cdc304ec96563fbd57cddf1225dcae8d0ebff10cabbcf9ac53",
+      "frame": {
+        "width": 1280,
+        "height": 720
+      },
+      "offset": {
+        "left": 800,
+        "top": 106
+      },
+      "size": {
+        "width": 89,
+        "height": 326
+      }
+    },
+    {
+      "file": "recovery-rear-COM-B.avif",
+      "kind": "build-layer",
+      "id": "recovery-rear-COM-B",
+      "depth": 17.67,
+      "slot": "antenna-right",
+      "bytes": 3507,
+      "sha256": "53ec97f66d0f32854ece07a773f178dc6350f1ddd6500246bc1bbca9d051415d",
+      "frame": {
+        "width": 1280,
+        "height": 720
+      },
+      "offset": {
+        "left": 629,
+        "top": 49
+      },
+      "size": {
+        "width": 184,
+        "height": 452
+      }
+    },
+    {
+      "file": "recovery-rear-COM-C.avif",
+      "kind": "build-layer",
+      "id": "recovery-rear-COM-C",
+      "depth": 19.168,
+      "slot": "antenna-left",
+      "bytes": 2100,
+      "sha256": "479e0cf7569395ff9f9940cd788107a39c2b426e0a8f47d7e1f44aac1bbafcd1",
+      "frame": {
+        "width": 1280,
+        "height": 720
+      },
+      "offset": {
+        "left": 804,
+        "top": 299
+      },
+      "size": {
+        "width": 79,
+        "height": 131
+      }
+    },
+    {
+      "file": "recovery-rear-COM-D.avif",
+      "kind": "build-layer",
+      "id": "recovery-rear-COM-D",
+      "depth": 18.271,
+      "slot": "radio-mast",
+      "bytes": 4605,
+      "sha256": "a68999ff910b6885defeab0dc06e705fb1ea99d93916156da20c6d169f68c98a",
+      "frame": {
+        "width": 1280,
+        "height": 720
+      },
+      "offset": {
+        "left": 735,
+        "top": 39
+      },
+      "size": {
+        "width": 131,
+        "height": 409
+      }
+    },
+    {
+      "file": "recovery-rear-COM-E.avif",
+      "kind": "build-layer",
+      "id": "recovery-rear-COM-E",
+      "depth": 18.268,
+      "slot": "radio-mast",
+      "bytes": 4442,
+      "sha256": "8d6a828937a0a624e61fe8183afa86e226a6e6422b49b8b960c518789bcd0c45",
+      "frame": {
+        "width": 1280,
+        "height": 720
+      },
+      "offset": {
+        "left": 758,
+        "top": 21
+      },
+      "size": {
+        "width": 109,
+        "height": 427
       }
     },
     {
       "file": "recovery-rear-COM-F.avif",
       "kind": "build-layer",
       "id": "recovery-rear-COM-F",
-      "depth": 19.757,
+      "depth": 19.102,
       "slot": "antenna-left",
-      "bytes": 2500,
-      "sha256": "0a60a0e16f6943966a00e5037e16ba914ae78df3f9736cf6011419fe55361b80",
+      "bytes": 2711,
+      "sha256": "2ea15889cf045d75c0ea1b951f1073fbbeaebe7bc15eaeb76ac63aedd87b68b7",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 761,
-        "top": 132
+        "left": 799,
+        "top": 143
       },
       "size": {
         "width": 91,
-        "height": 277
+        "height": 289
       }
     },
     {
       "file": "recovery-rear-COM-G.avif",
       "kind": "build-layer",
       "id": "recovery-rear-COM-G",
-      "depth": 18.331,
+      "depth": 17.686,
       "slot": "antenna-right",
-      "bytes": 3424,
-      "sha256": "6c6cef26d7a53b144210add6b0b5ec2196f453514dc7bb4031d4ce314ba0edab",
+      "bytes": 3609,
+      "sha256": "283601e87e2e7a991de7acd2ef01dff3397444be10f7fad4846168cdee4a5b6b",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 669,
-        "top": 177
+        "left": 629,
+        "top": 175
       },
       "size": {
-        "width": 133,
-        "height": 248
+        "width": 248,
+        "height": 326
       }
     },
     {
       "file": "recovery-rear-FP-A.avif",
       "kind": "build-layer",
       "id": "recovery-rear-FP-A",
-      "depth": 21.645,
+      "depth": 20.45,
       "slot": "weapon",
-      "bytes": 4411,
-      "sha256": "d9eb1aaf1918d07de9362c4533312a280c98fa42fdff073d662b53c5229e0ade",
+      "bytes": 4015,
+      "sha256": "59a7880e1b176898e4c71cb3d4c574cf134077476a2e63ec356f90d045e155f5",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 246,
-        "top": 222
+        "left": 233,
+        "top": 260
       },
       "size": {
-        "width": 295,
-        "height": 124
+        "width": 317,
+        "height": 122
       }
     },
     {
       "file": "recovery-rear-FP-B.avif",
       "kind": "build-layer",
       "id": "recovery-rear-FP-B",
-      "depth": 21.841,
+      "depth": 20.64,
       "slot": "weapon",
-      "bytes": 3931,
-      "sha256": "ee6b1285dc948137136819e5e2e1261a50c92aba940611b0dc767c9b944592ee",
+      "bytes": 3889,
+      "sha256": "08bc06f93671eaf210484a0f4bebe3b45425a83caf0bf4509153ad62373e1d3e",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 246,
-        "top": 199
+        "left": 234,
+        "top": 229
       },
       "size": {
-        "width": 306,
-        "height": 148
+        "width": 467,
+        "height": 140
       }
     },
     {
       "file": "recovery-rear-FP-C.avif",
       "kind": "build-layer",
       "id": "recovery-rear-FP-C",
-      "depth": 22.152,
+      "depth": 20.89,
       "slot": "weapon",
-      "bytes": 6017,
-      "sha256": "1f90b2f92abab4dc9d03fd9bb7c86c386d5ba45ad4ba46426055c61885b1f614",
+      "bytes": 5762,
+      "sha256": "21cd33fd51a84451d277b44d790c19e05c2e47ddcb68d87b717606667477ebfa",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 246,
-        "top": 210
+        "left": 233,
+        "top": 244
       },
       "size": {
-        "width": 412,
-        "height": 139
+        "width": 468,
+        "height": 140
       }
     },
     {
       "file": "recovery-rear-FP-D.avif",
       "kind": "build-layer",
       "id": "recovery-rear-FP-D",
-      "depth": 22.921,
+      "depth": 21.752,
       "slot": "aux-weapon",
-      "bytes": 2440,
-      "sha256": "85b488cc18106ffd5991e91ebf819b911993b421411986a9dac50e2dc71a8fc3",
+      "bytes": 2657,
+      "sha256": "11743b4bfcccb853dae2fe1b7d0f370de8de6450ea3db59aa1eb3ef1fac13e4f",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 368,
-        "top": 226
+        "left": 347,
+        "top": 257
       },
       "size": {
-        "width": 99,
-        "height": 109
+        "width": 119,
+        "height": 114
       }
     },
     {
       "file": "recovery-rear-FP-E.avif",
       "kind": "build-layer",
       "id": "recovery-rear-FP-E",
-      "depth": 22.908,
+      "depth": 21.748,
       "slot": "aux-weapon",
-      "bytes": 2582,
-      "sha256": "728ce5e7a4b1a0119b9d8aaccbb367fab83f8d19837351e2d779d9d41c82e05e",
+      "bytes": 2540,
+      "sha256": "b557ac75fb97f5ba69e1f363c42948c1302a7173ccac1464f7687e49313abc67",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 367,
-        "top": 215
+        "left": 364,
+        "top": 250
       },
       "size": {
-        "width": 97,
-        "height": 122
+        "width": 102,
+        "height": 118
       }
     },
     {
       "file": "recovery-rear-FP-F.avif",
       "kind": "build-layer",
       "id": "recovery-rear-FP-F",
-      "depth": 22.002,
+      "depth": 20.76,
       "slot": "weapon",
-      "bytes": 5782,
-      "sha256": "9cdb19ffe149a6339e7a242fe4a8ff95b9535d7e18816bf5ed872ba6ef078308",
+      "bytes": 5088,
+      "sha256": "4f3d5e6a8127681d14191981c69468c2a3709285f1582f8bfbf6ab4164328ae6",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 246,
-        "top": 205
+        "left": 233,
+        "top": 241
       },
       "size": {
-        "width": 412,
-        "height": 144
+        "width": 349,
+        "height": 132
       }
     },
     {
       "file": "recovery-rear-FP-G.avif",
       "kind": "build-layer",
       "id": "recovery-rear-FP-G",
-      "depth": 21.793,
+      "depth": 20.622,
       "slot": "weapon",
-      "bytes": 5010,
-      "sha256": "f7a25168a26a17e947053e6d539b2c264a02c33403d0e7ee02a131ea051f4ed8",
+      "bytes": 4467,
+      "sha256": "f96d78443baf3bda8ac88f56f06060819fdba5d48aaf6505b71e2994f44c67ca",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 246,
-        "top": 200
+        "left": 234,
+        "top": 230
       },
       "size": {
-        "width": 412,
-        "height": 148
+        "width": 346,
+        "height": 138
       }
     },
     {
       "file": "recovery-rear-MOB-A.avif",
       "kind": "build-layer",
       "id": "recovery-rear-MOB-A",
-      "depth": 22.119,
+      "depth": 20.768,
       "slot": "powerpack",
-      "bytes": 3000,
-      "sha256": "386d738fea5ef73fbba424495c45527682566cde87fe43be0a0cd9ec6c7609f4",
+      "bytes": 3025,
+      "sha256": "b50155531cc1645955d467b0b397cd386138f47a445937dd64358b94758fdce9",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 249,
-        "top": 243
+        "left": 233,
+        "top": 281
       },
       "size": {
-        "width": 191,
-        "height": 104
+        "width": 195,
+        "height": 100
       }
     },
     {
       "file": "recovery-rear-MOB-B.avif",
       "kind": "build-layer",
       "id": "recovery-rear-MOB-B",
-      "depth": 21.839,
+      "depth": 20.509,
       "slot": "running",
-      "bytes": 4834,
-      "sha256": "d9bbe575a0e9df53f5dd0efe1969ff3a19e696d62ffc786b18a66a78eb209220",
+      "bytes": 5418,
+      "sha256": "59b13326b1a4d4373378333325c170ce5b5c2930ab5b0a42b671f7348fd17447",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 242,
-        "top": 440
+        "left": 222,
+        "top": 494
       },
       "size": {
-        "width": 354,
-        "height": 130
+        "width": 427,
+        "height": 112
       }
     },
     {
       "file": "recovery-rear-MOB-C.avif",
       "kind": "build-layer",
       "id": "recovery-rear-MOB-C",
-      "depth": 21.839,
+      "depth": 20.509,
       "slot": "running",
-      "bytes": 21586,
-      "sha256": "be08726e2418563ee5cca2531380b72b8e975d6f3732ee2795eeae8ecf06aa46",
+      "bytes": 25874,
+      "sha256": "ceea01bf5b2f418e90fd5dbeae628245c3bc1778a14e87302ec8118ab7c2f1be",
+      "frame": {
+        "width": 1280,
+        "height": 720
+      },
+      "offset": {
+        "left": 204,
+        "top": 458
+      },
+      "size": {
+        "width": 564,
+        "height": 177
+      }
+    },
+    {
+      "file": "recovery-rear-MOB-D.avif",
+      "kind": "build-layer",
+      "id": "recovery-rear-MOB-D",
+      "depth": 20.48,
+      "slot": "running",
+      "bytes": 4230,
+      "sha256": "0d019cf7bcbc389840a1496b49022f87f11bb35a1b20818844f706112f729d81",
+      "frame": {
+        "width": 1280,
+        "height": 720
+      },
+      "offset": {
+        "left": 230,
+        "top": 474
+      },
+      "size": {
+        "width": 413,
+        "height": 122
+      }
+    },
+    {
+      "file": "recovery-rear-MOB-E.avif",
+      "kind": "build-layer",
+      "id": "recovery-rear-MOB-E",
+      "depth": 18.854,
+      "slot": "tanks",
+      "bytes": 4494,
+      "sha256": "2b6d76ffe23fccf1483d77e3be744bf4808e52b292f34e1a13e05c1bf62d7866",
+      "frame": {
+        "width": 1280,
+        "height": 720
+      },
+      "offset": {
+        "left": 649,
+        "top": 469
+      },
+      "size": {
+        "width": 233,
+        "height": 175
+      }
+    },
+    {
+      "file": "recovery-rear-MOB-F.avif",
+      "kind": "build-layer",
+      "id": "recovery-rear-MOB-F",
+      "depth": 20.771,
+      "slot": "powerpack",
+      "bytes": 2064,
+      "sha256": "3879c52c0c9f1004484ff2497ffacbb75cdca0fae658b442f0e1a6a28784974d",
+      "frame": {
+        "width": 1280,
+        "height": 720
+      },
+      "offset": {
+        "left": 234,
+        "top": 309
+      },
+      "size": {
+        "width": 189,
+        "height": 59
+      }
+    },
+    {
+      "file": "recovery-rear-MOB-G.avif",
+      "kind": "build-layer",
+      "id": "recovery-rear-MOB-G",
+      "depth": 20.509,
+      "slot": "running",
+      "bytes": 19206,
+      "sha256": "15574129b7792e715991ea821539f39b296361c2714505acde46248f3c1fe426",
+      "frame": {
+        "width": 1280,
+        "height": 720
+      },
+      "offset": {
+        "left": 201,
+        "top": 457
+      },
+      "size": {
+        "width": 561,
+        "height": 178
+      }
+    },
+    {
+      "file": "recovery-rear-PRO-A.avif",
+      "kind": "build-layer",
+      "id": "recovery-rear-PRO-A",
+      "depth": 19.981,
+      "slot": "side-armour",
+      "bytes": 10222,
+      "sha256": "68277321c3586ffa5d411926d61769ecc388226cbfa961608a9c6f01d6db3075",
+      "frame": {
+        "width": 1280,
+        "height": 720
+      },
+      "offset": {
+        "left": 233,
+        "top": 397
+      },
+      "size": {
+        "width": 486,
+        "height": 208
+      }
+    },
+    {
+      "file": "recovery-rear-PRO-B.avif",
+      "kind": "build-layer",
+      "id": "recovery-rear-PRO-B",
+      "depth": 21.966,
+      "slot": "front-armour",
+      "bytes": 2961,
+      "sha256": "7bab690d0d198c8bf48652544db89eebd30a5ba72936773c8450cd02a0b0297d",
+      "frame": {
+        "width": 1280,
+        "height": 720
+      },
+      "offset": {
+        "left": 175,
+        "top": 328
+      },
+      "size": {
+        "width": 212,
+        "height": 89
+      }
+    },
+    {
+      "file": "recovery-rear-PRO-C.avif",
+      "kind": "build-layer",
+      "id": "recovery-rear-PRO-C",
+      "depth": 19.981,
+      "slot": "side-armour",
+      "bytes": 8667,
+      "sha256": "3a8512726071f27ebab1b855bd8c6c6232910e28c4b0fee388daea2ac6537721",
+      "frame": {
+        "width": 1280,
+        "height": 720
+      },
+      "offset": {
+        "left": 239,
+        "top": 402
+      },
+      "size": {
+        "width": 479,
+        "height": 172
+      }
+    },
+    {
+      "file": "recovery-rear-PRO-D.avif",
+      "kind": "build-layer",
+      "id": "recovery-rear-PRO-D",
+      "depth": 21.34,
+      "slot": "roof-armour",
+      "bytes": 916,
+      "sha256": "51f3aa979fb940b840eb3603cc57769d555a490bffd38593ea1b616c5aefd571",
+      "frame": {
+        "width": 1280,
+        "height": 720
+      },
+      "offset": {
+        "left": 347,
+        "top": 329
+      },
+      "size": {
+        "width": 47,
+        "height": 28
+      }
+    },
+    {
+      "file": "recovery-rear-PRO-E.avif",
+      "kind": "build-layer",
+      "id": "recovery-rear-PRO-E",
+      "depth": 19.987,
+      "slot": "side-armour",
+      "bytes": 12369,
+      "sha256": "63a3badb4b447a5d431ca523d8afe4db28227d62d8d0dc11d28d32f5400a8150",
       "frame": {
         "width": 1280,
         "height": 720
@@ -20963,395 +21346,206 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
         "top": 402
       },
       "size": {
-        "width": 416,
-        "height": 196
-      }
-    },
-    {
-      "file": "recovery-rear-MOB-D.avif",
-      "kind": "build-layer",
-      "id": "recovery-rear-MOB-D",
-      "depth": 21.83,
-      "slot": "running",
-      "bytes": 8037,
-      "sha256": "231b50ed6e07bfc3eb817148bd2cec3971e54caae9cfcb2f075226db37c9458e",
-      "frame": {
-        "width": 1280,
-        "height": 720
-      },
-      "offset": {
-        "left": 231,
-        "top": 395
-      },
-      "size": {
-        "width": 365,
-        "height": 173
-      }
-    },
-    {
-      "file": "recovery-rear-MOB-E.avif",
-      "kind": "build-layer",
-      "id": "recovery-rear-MOB-E",
-      "depth": 19.794,
-      "slot": "tanks",
-      "bytes": 4449,
-      "sha256": "d22ccd001d5f43eff2370bf39b695ef0dab07923818578207ab9e18813cc6d94",
-      "frame": {
-        "width": 1280,
-        "height": 720
-      },
-      "offset": {
-        "left": 582,
-        "top": 434
-      },
-      "size": {
-        "width": 271,
-        "height": 181
-      }
-    },
-    {
-      "file": "recovery-rear-MOB-F.avif",
-      "kind": "build-layer",
-      "id": "recovery-rear-MOB-F",
-      "depth": 22.133,
-      "slot": "powerpack",
-      "bytes": 2214,
-      "sha256": "d7a05e380720c541a784cd1e0b08b34b239b344d496b6a48bbb087c91f4159f5",
-      "frame": {
-        "width": 1280,
-        "height": 720
-      },
-      "offset": {
-        "left": 309,
-        "top": 268
-      },
-      "size": {
-        "width": 111,
-        "height": 64
-      }
-    },
-    {
-      "file": "recovery-rear-MOB-G.avif",
-      "kind": "build-layer",
-      "id": "recovery-rear-MOB-G",
-      "depth": 21.839,
-      "slot": "running",
-      "bytes": 16401,
-      "sha256": "9323f98e2948783a0cbf4c7187b8acabf8aae7a9e803841addb23deb28db5f41",
-      "frame": {
-        "width": 1280,
-        "height": 720
-      },
-      "offset": {
-        "left": 226,
-        "top": 401
-      },
-      "size": {
-        "width": 466,
-        "height": 197
-      }
-    },
-    {
-      "file": "recovery-rear-PRO-A.avif",
-      "kind": "build-layer",
-      "id": "recovery-rear-PRO-A",
-      "depth": 21.159,
-      "slot": "side-armour",
-      "bytes": 9110,
-      "sha256": "4fd4d4186c663522fdc85d1f1ed34ca17deb95fb5c2a4458ac5b588bf4cac05d",
-      "frame": {
-        "width": 1280,
-        "height": 720
-      },
-      "offset": {
-        "left": 241,
-        "top": 362
-      },
-      "size": {
-        "width": 490,
-        "height": 199
-      }
-    },
-    {
-      "file": "recovery-rear-PRO-B.avif",
-      "kind": "build-layer",
-      "id": "recovery-rear-PRO-B",
-      "depth": 23.447,
-      "slot": "front-armour",
-      "bytes": 2672,
-      "sha256": "83499044b2a3efcdb80a525d9cdde760a2d3ed3e574c33b41406112c94db6462",
-      "frame": {
-        "width": 1280,
-        "height": 720
-      },
-      "offset": {
-        "left": 210,
-        "top": 280
-      },
-      "size": {
-        "width": 199,
-        "height": 78
-      }
-    },
-    {
-      "file": "recovery-rear-PRO-C.avif",
-      "kind": "build-layer",
-      "id": "recovery-rear-PRO-C",
-      "depth": 21.159,
-      "slot": "side-armour",
-      "bytes": 8088,
-      "sha256": "9afea0129344ca8dbf2a46484d34e1a050311628d479e32928122cf783d56608",
-      "frame": {
-        "width": 1280,
-        "height": 720
-      },
-      "offset": {
-        "left": 244,
-        "top": 364
-      },
-      "size": {
-        "width": 487,
-        "height": 172
-      }
-    },
-    {
-      "file": "recovery-rear-PRO-D.avif",
-      "kind": "build-layer",
-      "id": "recovery-rear-PRO-D",
-      "depth": 22.682,
-      "slot": "roof-armour",
-      "bytes": 1004,
-      "sha256": "45d93cabccbef5fc8a8eaa0f7cc3f1909f2c7912a212daaa2092cf278405c45e",
-      "frame": {
-        "width": 1280,
-        "height": 720
-      },
-      "offset": {
-        "left": 362,
-        "top": 281
-      },
-      "size": {
-        "width": 47,
-        "height": 33
-      }
-    },
-    {
-      "file": "recovery-rear-PRO-E.avif",
-      "kind": "build-layer",
-      "id": "recovery-rear-PRO-E",
-      "depth": 21.168,
-      "slot": "side-armour",
-      "bytes": 11708,
-      "sha256": "dceff9eb1bf1d48915435d60f1df010c0b5132f4506481088f8129272d72954c",
-      "frame": {
-        "width": 1280,
-        "height": 720
-      },
-      "offset": {
-        "left": 238,
-        "top": 358
-      },
-      "size": {
-        "width": 418,
-        "height": 202
+        "width": 493,
+        "height": 171
       }
     },
     {
       "file": "recovery-rear-PRO-F.avif",
       "kind": "build-layer",
       "id": "recovery-rear-PRO-F",
-      "depth": 21.795,
+      "depth": 20.465,
       "slot": "belly",
-      "bytes": 2436,
-      "sha256": "08e0aede62d49260cd122e9dc65fcee7d66dda5e7da478d4c0541b2120bd7bf4",
+      "bytes": 2982,
+      "sha256": "92f3db42cedd56b1ba7b06ad1946c48f3a12b9972cd2ccbaec33e204186336d8",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 300,
-        "top": 472
+        "left": 282,
+        "top": 524
       },
       "size": {
-        "width": 444,
-        "height": 113
+        "width": 513,
+        "height": 97
       }
     },
     {
       "file": "recovery-rear-PRO-G.avif",
       "kind": "build-layer",
       "id": "recovery-rear-PRO-G",
-      "depth": 22.677,
+      "depth": 21.337,
       "slot": "roof-armour",
-      "bytes": 1726,
-      "sha256": "3d8424a7d1af9db98ae844b50aa8f29af2dcff1ba5e9070dc50d36c6ebb54b2a",
+      "bytes": 1591,
+      "sha256": "88714d9ba0ce17d8c0e21602b3c1278dd358a085c2c8fcbbc0f603e64e63c5da",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 331,
-        "top": 274
+        "left": 313,
+        "top": 323
       },
       "size": {
-        "width": 79,
-        "height": 44
+        "width": 85,
+        "height": 37
       }
     },
     {
       "file": "recovery-rear-SA-A.avif",
       "kind": "build-layer",
       "id": "recovery-rear-SA-A",
-      "depth": 23.453,
+      "depth": 22.11,
       "slot": "optics",
-      "bytes": 2562,
-      "sha256": "c3a23798534960a17806dc8d5481f9332d9482229ecea12b315f7b188bc53cf4",
+      "bytes": 2178,
+      "sha256": "5598e68d7123ec050c0a54f6df47fe36f1ac30f5bb6593defa2a268e944afd5f",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 325,
-        "top": 231
+        "left": 300,
+        "top": 282
       },
       "size": {
-        "width": 113,
-        "height": 93
+        "width": 111,
+        "height": 84
       }
     },
     {
       "file": "recovery-rear-SA-B.avif",
       "kind": "build-layer",
       "id": "recovery-rear-SA-B",
-      "depth": 21.531,
+      "depth": 20.186,
       "slot": "sensor-mast",
-      "bytes": 2593,
-      "sha256": "c0356350feeefaed37f5b9073589cf878c12164d50048bdd7b191f4379a5a1d8",
+      "bytes": 2449,
+      "sha256": "b8fd122a683d94f147dc5dae650ee0ecfdc60b58290543a50797976955e944de",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 246,
-        "top": 154
+        "left": 299,
+        "top": 183
       },
       "size": {
-        "width": 125,
-        "height": 174
+        "width": 72,
+        "height": 184
       }
     },
     {
       "file": "recovery-rear-SA-C.avif",
       "kind": "build-layer",
       "id": "recovery-rear-SA-C",
-      "depth": 23.443,
+      "depth": 22.113,
       "slot": "optics",
-      "bytes": 2389,
-      "sha256": "32a7ca4e548ae6a5b7a6185e0a00493e8196a29b0eb1969253a600185726539f",
+      "bytes": 2023,
+      "sha256": "b20bbfc777fcf33ba9fcf5ff652554f124c3e278b1fbabe2aeb05f2ceb66d3d5",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 337,
-        "top": 223
+        "left": 309,
+        "top": 275
       },
       "size": {
-        "width": 101,
-        "height": 101
+        "width": 102,
+        "height": 84
       }
     },
     {
       "file": "recovery-rear-SA-D.avif",
       "kind": "build-layer",
       "id": "recovery-rear-SA-D",
-      "depth": 21.427,
+      "depth": 20.138,
       "slot": "sensor-mast",
-      "bytes": 3596,
-      "sha256": "83686c8bc48f3e790db2ff3b4bbfeb0f941b69935baaaf0ec3a13b14b27c770b",
+      "bytes": 3481,
+      "sha256": "f5445a8b6745fee70fa861f0e2095657149a847146bc1fa45e48bfbc7326d36d",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 246,
-        "top": 36
+        "left": 307,
+        "top": 59
       },
       "size": {
-        "width": 126,
-        "height": 294
+        "width": 63,
+        "height": 308
       }
     },
     {
       "file": "recovery-rear-SA-E.avif",
       "kind": "build-layer",
       "id": "recovery-rear-SA-E",
-      "depth": 23.404,
+      "depth": 22.072,
       "slot": "optics",
-      "bytes": 2829,
-      "sha256": "493d1bc67dd7d65a7d7f5ff69a1c322edec14167281f35f8437d2897a6707d80",
+      "bytes": 2394,
+      "sha256": "d5e22ce84eaeab68f417421bf0f55580a02821d42b9e8a8c0ca652a640a750d9",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 328,
-        "top": 214
+        "left": 301,
+        "top": 266
       },
       "size": {
         "width": 110,
-        "height": 115
+        "height": 100
       }
     },
     {
       "file": "recovery-rear-SA-F.avif",
       "kind": "build-layer",
       "id": "recovery-rear-SA-F",
-      "depth": 21.322,
+      "depth": 20.044,
       "slot": "sensor-pods",
-      "bytes": 3789,
-      "sha256": "95cf96c40749ca6be7ead6698814cb7f14183830b9744a4245d30c72303c4e1b",
+      "bytes": 4370,
+      "sha256": "60530ec989da89cc94af38c4900c1b53f1be594d3c27ce3fde245c7e2d84819f",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 252,
-        "top": 221
+        "left": 243,
+        "top": 279
       },
       "size": {
-        "width": 421,
-        "height": 178
+        "width": 568,
+        "height": 110
       }
     },
     {
       "file": "recovery-rear-SA-G.avif",
       "kind": "build-layer",
       "id": "recovery-rear-SA-G",
-      "depth": 21.335,
+      "depth": 20.048,
       "slot": "sensor-pods",
-      "bytes": 3228,
-      "sha256": "e1bcd986b6ec8859126e7dbe291f8bb29a31789c8424db2461570e3af9b60173",
+      "bytes": 4071,
+      "sha256": "c6556fdf113da324746a87408062dbd167bd71e49ef036d59c6db232f25a1d26",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 255,
-        "top": 228
+        "left": 243,
+        "top": 288
       },
       "size": {
-        "width": 372,
-        "height": 143
+        "width": 565,
+        "height": 101
       }
     },
     {
       "file": "recovery-turntable-00.avif",
       "kind": "turntable",
       "id": "recovery-turntable-00",
-      "depth": 16.25,
-      "bytes": 22681,
-      "sha256": "1cc51c4c14bc18027abc0b7c97e89e11840d5ad432e9a8c03ccc28aec9d9cf90",
+      "depth": 16.249,
+      "bytes": 23196,
+      "sha256": "12ebd0db19fe931965c2ae9230b934f12fad02ea27e7d022593fafeb937f8227",
       "frame": {
         "width": 960,
         "height": 540
@@ -21369,9 +21563,9 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "file": "recovery-turntable-01.avif",
       "kind": "turntable",
       "id": "recovery-turntable-01",
-      "depth": 15.309,
-      "bytes": 25336,
-      "sha256": "8ab38ec84ab8b83a224919bbfd5c253c95d4ddacfe7538e589714b3af3cb01b9",
+      "depth": 15.308,
+      "bytes": 25858,
+      "sha256": "782b30fa57a2c0e0e29eb8d79f3621998715556fef95f26434ceae53a856730c",
       "frame": {
         "width": 960,
         "height": 540
@@ -21390,8 +21584,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "recovery-turntable-02",
       "depth": 14.654,
-      "bytes": 27421,
-      "sha256": "3873202864c97fe112276a0291770324211c8df93a8a6b67e379ccd50c7e5000",
+      "bytes": 27997,
+      "sha256": "f3e16499edd451a159046ea42c681d843ab2eab68338bb85565ee3601fbe3606",
       "frame": {
         "width": 960,
         "height": 540
@@ -21410,8 +21604,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "recovery-turntable-03",
       "depth": 15.238,
-      "bytes": 25049,
-      "sha256": "58f29dcdd45d2223a57830aaff4c99e4ccdae7857841b97b2aab672db1da0035",
+      "bytes": 25386,
+      "sha256": "2ba781a13b22fd07a507d7a5800913afd388213e1d2f79acd8a51087e9553956",
       "frame": {
         "width": 960,
         "height": 540
@@ -21430,8 +21624,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "recovery-turntable-04",
       "depth": 15.584,
-      "bytes": 20880,
-      "sha256": "450266557f3937360a75ab49b09c0754fe8ab10255584ec359f833de26cb5cc8",
+      "bytes": 21326,
+      "sha256": "9e8198ee712a6e2f69f8049696fe8b544ad84c8b46031d79377c7528012a19e5",
       "frame": {
         "width": 960,
         "height": 540
@@ -21450,8 +21644,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "recovery-turntable-05",
       "depth": 15.648,
-      "bytes": 16346,
-      "sha256": "0da1eb935dddf7bd790691f3c8fd1c3f6709a250197a4acf97b4c25de8212859",
+      "bytes": 16573,
+      "sha256": "9df082155e8e087ea3d2901ee923d1e32cce7a787f7bf489e149b32c8db36669",
       "frame": {
         "width": 960,
         "height": 540
@@ -21470,8 +21664,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "recovery-turntable-06",
       "depth": 15.425,
-      "bytes": 13875,
-      "sha256": "78bfe7bc4c3d991a7ba80d7f3a19daf3cd2c3f281730bc6eb836ea15578f7bd0",
+      "bytes": 13998,
+      "sha256": "e87160d39b826fabc9d4fcece295091e46945ba7cc8b805bd0801d9650e8562c",
       "frame": {
         "width": 960,
         "height": 540
@@ -21490,8 +21684,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "recovery-turntable-07",
       "depth": 15.647,
-      "bytes": 16773,
-      "sha256": "9ef2c055dbaeb8b8d32de3576adc9b0792ec934aa8a56aba2b2dab55bbf20ab6",
+      "bytes": 16963,
+      "sha256": "f72d3445b48d2e6c4dad5ea20004523b0d40d4b3565494f1fb8a943786a80c28",
       "frame": {
         "width": 960,
         "height": 540
@@ -21510,8 +21704,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "recovery-turntable-08",
       "depth": 15.583,
-      "bytes": 22132,
-      "sha256": "cd0185f2e0bd8015d5ad2f151d7f40f94a95e1cf640c6dcbead09c48133e3601",
+      "bytes": 22290,
+      "sha256": "d083280f9b09926a8916ef32f7bde975377b232427f160a91c901a99386aea00",
       "frame": {
         "width": 960,
         "height": 540
@@ -21530,8 +21724,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "recovery-turntable-09",
       "depth": 15.237,
-      "bytes": 25807,
-      "sha256": "931a032f7a1326ff6f54708774d80ca58c248c77a7d9fa7308a982e82cbd5ddf",
+      "bytes": 25670,
+      "sha256": "48769087cd8307deb10348c2debeea813ec86187b345d3f9a5e3db56aaa939e2",
       "frame": {
         "width": 960,
         "height": 540
@@ -21549,9 +21743,9 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "file": "recovery-turntable-10.avif",
       "kind": "turntable",
       "id": "recovery-turntable-10",
-      "depth": 14.652,
-      "bytes": 27662,
-      "sha256": "7404e6ab481cde554c4f60a65bf075f96b1950538fadcdaaf0af5f8ecc7c735e",
+      "depth": 14.653,
+      "bytes": 27584,
+      "sha256": "a8709faeb4b9bc10444dec66400358fb93664a8e902857cc5cc0f96893586c9d",
       "frame": {
         "width": 960,
         "height": 540
@@ -21569,9 +21763,9 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "file": "recovery-turntable-11.avif",
       "kind": "turntable",
       "id": "recovery-turntable-11",
-      "depth": 15.306,
-      "bytes": 25339,
-      "sha256": "1ae43cc69e4c441b7b8394ca63f2cbe783b34b036e1e59d9c1f2ce0d3e209219",
+      "depth": 15.307,
+      "bytes": 25272,
+      "sha256": "6c8c3d87b01d499f5c34aadac4875bc96ab522d12c959b0eddf53738ece2d28d",
       "frame": {
         "width": 960,
         "height": 540
@@ -21589,9 +21783,9 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "file": "recovery-turntable-12.avif",
       "kind": "turntable",
       "id": "recovery-turntable-12",
-      "depth": 16.247,
-      "bytes": 22855,
-      "sha256": "f2c4caca7d15aef469729ea6dbdbeee6f053f43b4ae2d60d489d1d3fe84fa581",
+      "depth": 16.248,
+      "bytes": 22823,
+      "sha256": "ad982cce79de334e3375ca1a2fee657f8060c0df853791840268c2556e1b6a86",
       "frame": {
         "width": 960,
         "height": 540
@@ -21610,8 +21804,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "recovery-turntable-13",
       "depth": 16.238,
-      "bytes": 23896,
-      "sha256": "4c7e2582a2e86b504ae9e021476c3fc32641310d84c9ab4dcae3c3e120248a15",
+      "bytes": 23814,
+      "sha256": "0f9911fc29e8fcfb244eb8f50704d2dfe3d53a252a78f1d6e24f36d115b11c63",
       "frame": {
         "width": 960,
         "height": 540
@@ -21630,8 +21824,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "recovery-turntable-14",
       "depth": 15.211,
-      "bytes": 25930,
-      "sha256": "80faf1b1bcd0d4d9f471c26bbc24ca86ef954ffa1bb6d780f0ff8315d50ec634",
+      "bytes": 26217,
+      "sha256": "9bc9df9f9c637eacd78dcc2f54b438ab4cc6ddbb42e17f72f4e86496382dfebe",
       "frame": {
         "width": 960,
         "height": 540
@@ -21649,9 +21843,9 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "file": "recovery-turntable-15.avif",
       "kind": "turntable",
       "id": "recovery-turntable-15",
-      "depth": 13.975,
-      "bytes": 26939,
-      "sha256": "fde48fd872ae7bd02d42dc29ed6375026ce88b00fe50135879592d8139032b15",
+      "depth": 13.976,
+      "bytes": 27411,
+      "sha256": "dd6dcf0858060ebe8f5882a8932fadf896af04bbdcc2412eba67e293dce30e06",
       "frame": {
         "width": 960,
         "height": 540
@@ -21670,8 +21864,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "recovery-turntable-16",
       "depth": 14.027,
-      "bytes": 23726,
-      "sha256": "54720a260d0b0d6a43207240a932015963accd5babc85da509e8351a0000cb52",
+      "bytes": 24411,
+      "sha256": "65480931b0f964e25e6542d1a279d28051f41b6a5d55b28771fe36d8d392627d",
       "frame": {
         "width": 960,
         "height": 540
@@ -21690,8 +21884,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "recovery-turntable-17",
       "depth": 13.97,
-      "bytes": 17551,
-      "sha256": "b3b0275764dd31aad3c12d5137fcc323498223a6d8ae6509ea86d6dcc4324568",
+      "bytes": 17743,
+      "sha256": "9336fb6e6bd01ffcb53b766d5d6df512508844c6a91cb9f91d7db9bd101f14f3",
       "frame": {
         "width": 960,
         "height": 540
@@ -21710,8 +21904,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "recovery-turntable-18",
       "depth": 13.777,
-      "bytes": 13469,
-      "sha256": "dc5062e460ac11ae68ba4116d1ec750b706e584ef0e20dd2e41ea1da99d5461a",
+      "bytes": 13702,
+      "sha256": "5e6fd58b36ead31d07ee996d755a26374f63e347378dfe30a19dbf50b1f2fdd0",
       "frame": {
         "width": 960,
         "height": 540
@@ -21730,8 +21924,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "recovery-turntable-19",
       "depth": 13.971,
-      "bytes": 17268,
-      "sha256": "4befe83714235a4b3a048bd0cf65ba815f8b6c9c700ef875d351356fc491794f",
+      "bytes": 17300,
+      "sha256": "9950ed0ac1e1b53c7eda08092d8bf607b0eccad9ddf4c252f3d6caf02aca6961",
       "frame": {
         "width": 960,
         "height": 540
@@ -21749,9 +21943,9 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "file": "recovery-turntable-20.avif",
       "kind": "turntable",
       "id": "recovery-turntable-20",
-      "depth": 14.029,
-      "bytes": 23177,
-      "sha256": "ecc00e4870a966f1540301e7dd2e058a1725d7581ae28f1b5d3030b8fb22dde1",
+      "depth": 14.028,
+      "bytes": 23243,
+      "sha256": "722c4b30e805ee9b3510c9eba96ce3119c4005bd7314cd74cf310a8fc22bbe31",
       "frame": {
         "width": 960,
         "height": 540
@@ -21770,8 +21964,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "recovery-turntable-21",
       "depth": 13.977,
-      "bytes": 26547,
-      "sha256": "d2b549525b6c87383080cfae18f9c15aace0fe140638c460ecf2a33f43c44216",
+      "bytes": 26713,
+      "sha256": "723abf74be547bae553720a2dbed0600ce838fffbce3788273d1b3f98b86c63a",
       "frame": {
         "width": 960,
         "height": 540
@@ -21782,7 +21976,7 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       },
       "size": {
         "width": 827,
-        "height": 519
+        "height": 520
       }
     },
     {
@@ -21790,8 +21984,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "recovery-turntable-22",
       "depth": 15.213,
-      "bytes": 25238,
-      "sha256": "b1a4d22c9f1ddc6114da502adca2c2e3208aaf2378c3500f8508eb66df9bd18d",
+      "bytes": 25426,
+      "sha256": "c1405a900db25fdc75524dad52df2224ae60c061e6735f953221660986f69606",
       "frame": {
         "width": 960,
         "height": 540
@@ -21810,8 +22004,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "recovery-turntable-23",
       "depth": 16.24,
-      "bytes": 22842,
-      "sha256": "2018d04f80754c0db6f8e97519fc1d184b64ff806d8d0c7de4589cd798598028",
+      "bytes": 23016,
+      "sha256": "368d855c044b73277861c6b3da0688fbf5ca2321ccccb3fa90bb99e7be0d4671",
       "frame": {
         "width": 960,
         "height": 540
@@ -21829,838 +22023,838 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "file": "troop-carrier-front-ACC-A.avif",
       "kind": "build-layer",
       "id": "troop-carrier-front-ACC-A",
-      "depth": 23.08,
+      "depth": 21.235,
       "slot": "rear-kit",
-      "bytes": 1147,
-      "sha256": "245221c64b9b1ffee31e31132e958b7c6ad0575acb23299e3610ab17712e9125",
+      "bytes": 2319,
+      "sha256": "df695830f2879470e2ea48c2769591f9c297d6327a6f3f1fb0f2bdbf36d22dcd",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 270,
-        "top": 301
+        "left": 229,
+        "top": 334
       },
       "size": {
-        "width": 83,
-        "height": 135
+        "width": 89,
+        "height": 206
       }
     },
     {
       "file": "troop-carrier-front-ACC-B.avif",
       "kind": "build-layer",
       "id": "troop-carrier-front-ACC-B",
-      "depth": 24.368,
+      "depth": 22.346,
       "slot": "rear-kit",
-      "bytes": 4395,
-      "sha256": "4371295b761df3f578128f22a60800c221110406a8713b0d445ee5183415a234",
+      "bytes": 6043,
+      "sha256": "20e9a75cb1a39d0de687b01c5b3603636bb666fee0ab328f2e1c190bd243050e",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 102,
-        "top": 315
+        "left": 33,
+        "top": 357
       },
       "size": {
-        "width": 232,
-        "height": 176
+        "width": 304,
+        "height": 204
       }
     },
     {
       "file": "troop-carrier-front-ACC-C.avif",
       "kind": "build-layer",
       "id": "troop-carrier-front-ACC-C",
-      "depth": 18.255,
+      "depth": 17.385,
       "slot": "front-kit",
-      "bytes": 9857,
-      "sha256": "9eeaa8e10554785e2265b7e4f0f420478751b9ec7c8b6a50057122dfce292361",
+      "bytes": 9408,
+      "sha256": "638d8f22512dad054a9c49e1ce5adcf25802a4e91d1a0c00b05dbd34b84ed99e",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 772,
-        "top": 451
+        "left": 864,
+        "top": 452
       },
       "size": {
-        "width": 373,
-        "height": 251
+        "width": 381,
+        "height": 244
       }
     },
     {
       "file": "troop-carrier-front-ACC-D.avif",
       "kind": "build-layer",
       "id": "troop-carrier-front-ACC-D",
-      "depth": 19.52,
+      "depth": 17.967,
       "slot": "rack",
-      "bytes": 7926,
-      "sha256": "0f0d38bd85f43034b4b02be9ada82e99ffc9ec979c75a11725b1b62e8ef72599",
+      "bytes": 7525,
+      "sha256": "6a979298b570501789736afd8e08307a656bbfb92133c04c8464402571b8886d",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 322,
-        "top": 287
+        "left": 307,
+        "top": 291
       },
       "size": {
         "width": 337,
-        "height": 298
+        "height": 180
       }
     },
     {
       "file": "troop-carrier-front-ACC-E.avif",
       "kind": "build-layer",
       "id": "troop-carrier-front-ACC-E",
-      "depth": 18.403,
+      "depth": 17.491,
       "slot": "front-kit",
-      "bytes": 7516,
-      "sha256": "873dc1e66c78c5de5afa6ae942cecabee719b4fc5c765dc650e83a0c3526320b",
+      "bytes": 8476,
+      "sha256": "e96fed9f12b7983a797d3df823c31f93a92b0e14825c104910c504d3d11c746c",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 772,
-        "top": 443
+        "left": 817,
+        "top": 442
       },
       "size": {
-        "width": 305,
-        "height": 244
+        "width": 341,
+        "height": 249
       }
     },
     {
       "file": "troop-carrier-front-ACC-F.avif",
       "kind": "build-layer",
       "id": "troop-carrier-front-ACC-F",
-      "depth": 18.394,
+      "depth": 17.454,
       "slot": "front-kit",
-      "bytes": 5018,
-      "sha256": "c48c41048fd1bd3a1a588926f8543849f090ecbbb8d0550c594df533c16acf7b",
+      "bytes": 4468,
+      "sha256": "0bf27527c1c28b1d3b3e896e64db42368738a0b263d2b619ceb95788e96503de",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 770,
-        "top": 454
+        "left": 851,
+        "top": 453
       },
       "size": {
-        "width": 224,
-        "height": 148
+        "width": 223,
+        "height": 166
       }
     },
     {
       "file": "troop-carrier-front-ACC-G.avif",
       "kind": "build-layer",
       "id": "troop-carrier-front-ACC-G",
-      "depth": 19.443,
+      "depth": 17.894,
       "slot": "rack",
-      "bytes": 9323,
-      "sha256": "7bf4e3be618e4b18fed6edc223bbf855c0bfc37ba4d053f7a5ba7b9bbcd5daae",
+      "bytes": 11761,
+      "sha256": "aae049c9eb8e396ffce515b74dcb59109898a4978a9e2108389a2171be4f6c53",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 313,
-        "top": 243
+        "left": 307,
+        "top": 247
       },
       "size": {
-        "width": 346,
-        "height": 341
+        "width": 483,
+        "height": 361
       }
     },
     {
       "file": "troop-carrier-front-base.avif",
       "kind": "build-base",
       "id": "troop-carrier-front-base",
-      "depth": 20.944,
-      "bytes": 21301,
-      "sha256": "416a31acccadf0030c83e25d07dc2138370c21d6c31453e0a5a8c93fcabfa48b",
+      "depth": 19.392,
+      "bytes": 23624,
+      "sha256": "08ff1adae54c4a725f6251c851847af1adb01f22173943ee86039e465a7144fb",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 240,
-        "top": 298
+        "left": 202,
+        "top": 308
       },
       "size": {
-        "width": 702,
-        "height": 348
+        "width": 811,
+        "height": 360
       }
     },
     {
       "file": "troop-carrier-front-CAP-A.avif",
       "kind": "build-layer",
       "id": "troop-carrier-front-CAP-A",
-      "depth": 21.803,
+      "depth": 20.157,
       "slot": "module",
-      "bytes": 4153,
-      "sha256": "b8a28f88edf1b9c8346bdb6f61e86a15053e3f415971c26c3f95f3c3801fee6c",
+      "bytes": 4506,
+      "sha256": "1058308c29c58c82e3456049c60a15552986cd733c3b84c40de0c72791567b84",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 304,
-        "top": 226
+        "left": 296,
+        "top": 245
       },
       "size": {
-        "width": 251,
-        "height": 117
+        "width": 262,
+        "height": 125
       }
     },
     {
       "file": "troop-carrier-front-CAP-B.avif",
       "kind": "build-layer",
       "id": "troop-carrier-front-CAP-B",
-      "depth": 21.791,
+      "depth": 20.149,
       "slot": "module",
-      "bytes": 4421,
-      "sha256": "521c5f77597730f7cb292067436adc6e8fb148372af7254c1bcc2b5ece18322c",
+      "bytes": 4506,
+      "sha256": "9691ac56b70aa7e1f493edc6a4fba31efdb73c953b00c567ce44f5ddbdd79509",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 304,
-        "top": 215
+        "left": 296,
+        "top": 233
       },
       "size": {
-        "width": 255,
-        "height": 128
+        "width": 267,
+        "height": 137
       }
     },
     {
       "file": "troop-carrier-front-CAP-C.avif",
       "kind": "build-layer",
       "id": "troop-carrier-front-CAP-C",
-      "depth": 21.797,
+      "depth": 20.151,
       "slot": "module",
-      "bytes": 5261,
-      "sha256": "725c1511ba973d152b769517cdb8680febd79cec4fc6d1d1295c77bec82124c3",
+      "bytes": 5023,
+      "sha256": "11cd817da0060ec0e52d33f09db41373f8868269c2d38dbba10e0eed487dcba1",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 304,
-        "top": 227
+        "left": 296,
+        "top": 245
       },
       "size": {
-        "width": 240,
-        "height": 116
+        "width": 249,
+        "height": 125
       }
     },
     {
       "file": "troop-carrier-front-CAP-D.avif",
       "kind": "build-layer",
       "id": "troop-carrier-front-CAP-D",
-      "depth": 21.792,
+      "depth": 20.151,
       "slot": "module",
-      "bytes": 5185,
-      "sha256": "4bcef79d50392829db4d191a09161e324f97099e2038d596802c8649993c4877",
+      "bytes": 5491,
+      "sha256": "d79b1a5300e9335110f0155859d45f00ddcb22a0e24be66dd2f2692254b0bb9f",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 304,
-        "top": 209
+        "left": 296,
+        "top": 227
       },
       "size": {
-        "width": 259,
-        "height": 134
+        "width": 271,
+        "height": 143
       }
     },
     {
       "file": "troop-carrier-front-CAP-E.avif",
       "kind": "build-layer",
       "id": "troop-carrier-front-CAP-E",
-      "depth": 21.803,
+      "depth": 20.156,
       "slot": "module",
-      "bytes": 3881,
-      "sha256": "53dcef83ae9c32f251f8fbeb58f164723d2108f472b1ee9a00ce503acec235f0",
+      "bytes": 4156,
+      "sha256": "995e0f7c9095dbf9c2fddd0ec8ac617778f6b23648d77d67f479504d61a2d203",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 304,
-        "top": 226
+        "left": 296,
+        "top": 245
       },
       "size": {
-        "width": 246,
-        "height": 117
+        "width": 256,
+        "height": 125
       }
     },
     {
       "file": "troop-carrier-front-CAP-F.avif",
       "kind": "build-layer",
       "id": "troop-carrier-front-CAP-F",
-      "depth": 21.799,
+      "depth": 20.155,
       "slot": "module",
-      "bytes": 4195,
-      "sha256": "7b7c522fceac8fd0c83357e187d2804c0ea18f51681a3ed981fe2cb1957143c2",
+      "bytes": 4476,
+      "sha256": "630270fc876705431598b1c548921b85f057348ba8f7170824a66f2d3adf0c0b",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 304,
-        "top": 221
+        "left": 296,
+        "top": 240
       },
       "size": {
-        "width": 252,
-        "height": 122
+        "width": 263,
+        "height": 130
       }
     },
     {
       "file": "troop-carrier-front-CAP-G.avif",
       "kind": "build-layer",
       "id": "troop-carrier-front-CAP-G",
-      "depth": 21.798,
+      "depth": 20.152,
       "slot": "module",
-      "bytes": 4988,
-      "sha256": "8392e2dc251526fc955f568e51003b9dec0de4f4bc06fc4669285d5be8141c62",
+      "bytes": 4896,
+      "sha256": "74a7f82a64ae55f66f01c223140d680149d35de56f132b4e7539d03cd0acd2e4",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 304,
-        "top": 229
+        "left": 296,
+        "top": 248
       },
       "size": {
-        "width": 245,
-        "height": 114
+        "width": 256,
+        "height": 122
       }
     },
     {
       "file": "troop-carrier-front-COM-A.avif",
       "kind": "build-layer",
       "id": "troop-carrier-front-COM-A",
-      "depth": 22.039,
+      "depth": 20.335,
       "slot": "antenna-left",
-      "bytes": 1924,
-      "sha256": "a8924a557ee67a000200ec7cb2d78145ee13c0746300e67cc31d03baf0ae88a6",
+      "bytes": 2000,
+      "sha256": "740a669363537698c2857b0e5617f399f527657d231bc13871f99b43a3130eca",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 262,
-        "top": 86
+        "left": 250,
+        "top": 89
       },
       "size": {
-        "width": 76,
-        "height": 244
+        "width": 81,
+        "height": 267
       }
     },
     {
       "file": "troop-carrier-front-COM-B.avif",
       "kind": "build-layer",
       "id": "troop-carrier-front-COM-B",
-      "depth": 23.22,
+      "depth": 21.502,
       "slot": "antenna-right",
-      "bytes": 2314,
-      "sha256": "c30d958ade76b8fe2b9d97d3dd8a825bc28c89d1a0fcf874a36225f9273b4e50",
+      "bytes": 2352,
+      "sha256": "754cf2fd24016d64f9e3bd99fb4a83cb7f4ea3fb50167c6decffe529dd77295c",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 384,
-        "top": 42
+        "left": 352,
+        "top": 48
       },
       "size": {
-        "width": 61,
-        "height": 265
+        "width": 65,
+        "height": 288
       }
     },
     {
       "file": "troop-carrier-front-COM-C.avif",
       "kind": "build-layer",
       "id": "troop-carrier-front-COM-C",
-      "depth": 22.135,
+      "depth": 20.379,
       "slot": "antenna-left",
-      "bytes": 1388,
-      "sha256": "4007d0e5b1b26be09c62b639560f73d0653f9f1bcac6ba93210351c685982816",
+      "bytes": 1490,
+      "sha256": "f938864937ff23b9e8b7beb8c31b5a575cc3c7a4aaf889b09b7c674a688082a5",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 268,
-        "top": 256
+        "left": 256,
+        "top": 273
       },
       "size": {
-        "width": 65,
-        "height": 71
+        "width": 70,
+        "height": 81
       }
     },
     {
       "file": "troop-carrier-front-COM-D.avif",
       "kind": "build-layer",
       "id": "troop-carrier-front-COM-D",
-      "depth": 22.678,
+      "depth": 20.981,
       "slot": "radio-mast",
-      "bytes": 2590,
-      "sha256": "7963501ed6b44057e0dc95cbde629aa13cab561be036e00c807bc94397e24424",
+      "bytes": 2624,
+      "sha256": "9eb8e2e2189fd3148a85d0ee34970194beada41f07e14ec19fc83d227f634a4c",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 328,
-        "top": 31
+        "left": 304,
+        "top": 33
       },
       "size": {
-        "width": 72,
-        "height": 285
+        "width": 77,
+        "height": 309
       }
     },
     {
       "file": "troop-carrier-front-COM-E.avif",
       "kind": "build-layer",
       "id": "troop-carrier-front-COM-E",
-      "depth": 22.673,
+      "depth": 20.982,
       "slot": "radio-mast",
-      "bytes": 2632,
-      "sha256": "c5d567ef4e9af42048081b3306b81d04ed8c4b385ddd7ec708b58128d5895d42",
+      "bytes": 2779,
+      "sha256": "6b130ed086328d5b61875e264c7f4c7784ca10d23d06741b4b4591631527c333",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 326,
-        "top": 17
+        "left": 302,
+        "top": 20
       },
       "size": {
-        "width": 76,
-        "height": 299
+        "width": 81,
+        "height": 322
       }
     },
     {
       "file": "troop-carrier-front-COM-F.avif",
       "kind": "build-layer",
       "id": "troop-carrier-front-COM-F",
-      "depth": 22.056,
+      "depth": 20.342,
       "slot": "antenna-left",
-      "bytes": 1747,
-      "sha256": "4ce4407846fadb0883dd313b379b6b9b471a4a05d5aa7d5a712575f867df207a",
+      "bytes": 1897,
+      "sha256": "c4ff1ee5d02934808dd8d988673eb9cdf4636aa95f8af15b035b88edcfe17df1",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 261,
-        "top": 118
+        "left": 249,
+        "top": 124
       },
       "size": {
-        "width": 78,
-        "height": 212
+        "width": 83,
+        "height": 233
       }
     },
     {
       "file": "troop-carrier-front-COM-G.avif",
       "kind": "build-layer",
       "id": "troop-carrier-front-COM-G",
-      "depth": 23.293,
+      "depth": 21.541,
       "slot": "antenna-right",
-      "bytes": 1973,
-      "sha256": "cebf0460d8b99dff2af50233d2d0e273d02d497067e2cffcdc5a8c39a1cb26f1",
+      "bytes": 1974,
+      "sha256": "092d3c638a2b4c883e9ecfb753f33631e7113712c352f825603d60a606433b28",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 379,
-        "top": 136
+        "left": 347,
+        "top": 152
       },
       "size": {
-        "width": 67,
-        "height": 172
+        "width": 71,
+        "height": 185
       }
     },
     {
       "file": "troop-carrier-front-FP-A.avif",
       "kind": "build-layer",
       "id": "troop-carrier-front-FP-A",
-      "depth": 20.107,
+      "depth": 18.756,
       "slot": "weapon",
-      "bytes": 3728,
-      "sha256": "802484397add221a2111dabb6807423c159aa9a94ff9f474068acd51a1a17deb",
+      "bytes": 3877,
+      "sha256": "0eca5cf287b6ec7fb374cfa7c0c114af1bf671a78d06aa63514ef0381cc512d0",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 512,
-        "top": 247
+        "left": 552,
+        "top": 249
       },
       "size": {
-        "width": 226,
-        "height": 119
+        "width": 208,
+        "height": 124
       }
     },
     {
       "file": "troop-carrier-front-FP-B.avif",
       "kind": "build-layer",
       "id": "troop-carrier-front-FP-B",
-      "depth": 19.872,
+      "depth": 18.561,
       "slot": "weapon",
-      "bytes": 3982,
-      "sha256": "011eea1f86bdf15b431402ce71a82eb0b26ac076adcb6e68f3de0779199c45e9",
+      "bytes": 4027,
+      "sha256": "6d6ce74c71d5aa5057610a414f1eba73effef064beaf5204b2d12ff64e6561dd",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 512,
-        "top": 204
+        "left": 551,
+        "top": 210
       },
       "size": {
-        "width": 223,
-        "height": 162
+        "width": 236,
+        "height": 163
       }
     },
     {
       "file": "troop-carrier-front-FP-C.avif",
       "kind": "build-layer",
       "id": "troop-carrier-front-FP-C",
-      "depth": 19.629,
+      "depth": 18.385,
       "slot": "weapon",
-      "bytes": 6315,
-      "sha256": "0f6ec24631316d5ae42a6f1c04da225666c96f74a021692fd464a33a9637a1e8",
+      "bytes": 6222,
+      "sha256": "e20f136c5b14e1276124e0a2de454b84bcfdb7959c01b930a7dfff744752a125",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 492,
-        "top": 215
+        "left": 514,
+        "top": 222
       },
       "size": {
-        "width": 370,
-        "height": 169
+        "width": 423,
+        "height": 157
       }
     },
     {
       "file": "troop-carrier-front-FP-D.avif",
       "kind": "build-layer",
       "id": "troop-carrier-front-FP-D",
-      "depth": 18.934,
+      "depth": 17.556,
       "slot": "aux-weapon",
-      "bytes": 2859,
-      "sha256": "3704b641cca25a0f99a5ba552b39b00f28edd921b94a382e6530c64aa22c603d",
+      "bytes": 3098,
+      "sha256": "8c3dd20b929af3bf44717d3c072f1a7a684e0fd8d0ce38d616422a5bb37b5c4c",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 623,
-        "top": 271
+        "left": 664,
+        "top": 260
       },
       "size": {
-        "width": 179,
-        "height": 108
+        "width": 201,
+        "height": 121
       }
     },
     {
       "file": "troop-carrier-front-FP-E.avif",
       "kind": "build-layer",
       "id": "troop-carrier-front-FP-E",
-      "depth": 18.935,
+      "depth": 17.556,
       "slot": "aux-weapon",
-      "bytes": 2710,
-      "sha256": "fa1076403a0731d4497e69b1e76ee3304771f190bcd9c10f2c8261524fc42afd",
+      "bytes": 2835,
+      "sha256": "d8c486352d2225a390228bd244da78c922242071ac88e954fe2ed0e3774b87c6",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 627,
-        "top": 266
+        "left": 665,
+        "top": 251
       },
       "size": {
-        "width": 211,
-        "height": 137
+        "width": 199,
+        "height": 130
       }
     },
     {
       "file": "troop-carrier-front-FP-F.avif",
       "kind": "build-layer",
       "id": "troop-carrier-front-FP-F",
-      "depth": 19.762,
+      "depth": 18.487,
       "slot": "weapon",
-      "bytes": 5612,
-      "sha256": "7e3258b3d475a996b2d10b80a5558952399a67f8e0c8a10f8b9ad37988d0c7bb",
+      "bytes": 5396,
+      "sha256": "9ba358d16a8078dbb44f645fe61d99bed14eff8dcfcbd92cc00a880679928b84",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 504,
-        "top": 226
+        "left": 528,
+        "top": 228
       },
       "size": {
-        "width": 308,
-        "height": 158
+        "width": 351,
+        "height": 151
       }
     },
     {
       "file": "troop-carrier-front-FP-G.avif",
       "kind": "build-layer",
       "id": "troop-carrier-front-FP-G",
-      "depth": 19.903,
+      "depth": 18.556,
       "slot": "weapon",
-      "bytes": 4958,
-      "sha256": "19fb0d7fca7339e6f411156c9d828104f3853a4488af92cb1a653cc46af3c211",
+      "bytes": 4770,
+      "sha256": "d941efff020747cfb9a3d4c3e95847354b11008a1f7d4076a53a46c429fe98c0",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 500,
-        "top": 207
+        "left": 529,
+        "top": 212
       },
       "size": {
-        "width": 269,
-        "height": 159
+        "width": 235,
+        "height": 162
       }
     },
     {
       "file": "troop-carrier-front-MOB-A.avif",
       "kind": "build-layer",
       "id": "troop-carrier-front-MOB-A",
-      "depth": 19.725,
+      "depth": 18.567,
       "slot": "powerpack",
-      "bytes": 3212,
-      "sha256": "a5c2a36e91ae51763ff2fb85940f4d314d336dd9969a727207cd5fe7bbee089e",
-      "frame": {
-        "width": 1280,
-        "height": 720
-      },
-      "offset": {
-        "left": 657,
-        "top": 267
-      },
-      "size": {
-        "width": 143,
-        "height": 119
-      }
-    },
-    {
-      "file": "troop-carrier-front-MOB-B.avif",
-      "kind": "build-layer",
-      "id": "troop-carrier-front-MOB-B",
-      "depth": 20.694,
-      "slot": "running",
-      "bytes": 5700,
-      "sha256": "39b47b22f7e11be181ec047c078d484207f88b86a55672ee10f3854b20c79b56",
-      "frame": {
-        "width": 1280,
-        "height": 720
-      },
-      "offset": {
-        "left": 341,
-        "top": 466
-      },
-      "size": {
-        "width": 442,
-        "height": 134
-      }
-    },
-    {
-      "file": "troop-carrier-front-MOB-C.avif",
-      "kind": "build-layer",
-      "id": "troop-carrier-front-MOB-C",
-      "depth": 20.693,
-      "slot": "running",
-      "bytes": 25845,
-      "sha256": "9549ea7745f420e865c61b509e3fe806e4f1b5743fe7ba00c3e37691e635418e",
-      "frame": {
-        "width": 1280,
-        "height": 720
-      },
-      "offset": {
-        "left": 326,
-        "top": 429
-      },
-      "size": {
-        "width": 576,
-        "height": 201
-      }
-    },
-    {
-      "file": "troop-carrier-front-MOB-D.avif",
-      "kind": "build-layer",
-      "id": "troop-carrier-front-MOB-D",
-      "depth": 20.603,
-      "slot": "running",
-      "bytes": 9677,
-      "sha256": "82fb02081265fc446416c13dfd923b5ce573715704b3c1e40002575104aca138",
-      "frame": {
-        "width": 1280,
-        "height": 720
-      },
-      "offset": {
-        "left": 344,
-        "top": 433
-      },
-      "size": {
-        "width": 507,
-        "height": 179
-      }
-    },
-    {
-      "file": "troop-carrier-front-MOB-E.avif",
-      "kind": "build-layer",
-      "id": "troop-carrier-front-MOB-E",
-      "depth": 22.729,
-      "slot": "tanks",
-      "bytes": 2863,
-      "sha256": "cd2bdeb83d00624538c2ec72b8f0ae82b90e837d7cbf016307e47ccdc52f5f4c",
-      "frame": {
-        "width": 1280,
-        "height": 720
-      },
-      "offset": {
-        "left": 240,
-        "top": 410
-      },
-      "size": {
-        "width": 178,
-        "height": 135
-      }
-    },
-    {
-      "file": "troop-carrier-front-MOB-F.avif",
-      "kind": "build-layer",
-      "id": "troop-carrier-front-MOB-F",
-      "depth": 19.76,
-      "slot": "powerpack",
-      "bytes": 1946,
-      "sha256": "c82860c11d570d0fd0ce469402d2aae1137d85fd2a97d4163b93293160646556",
+      "bytes": 3557,
+      "sha256": "3cf560de280e502f8805bfda31e240b2f553bc13d39473e3ff59020275d53f1c",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
         "left": 709,
-        "top": 299
+        "top": 270
       },
       "size": {
-        "width": 73,
-        "height": 68
+        "width": 183,
+        "height": 117
+      }
+    },
+    {
+      "file": "troop-carrier-front-MOB-B.avif",
+      "kind": "build-layer",
+      "id": "troop-carrier-front-MOB-B",
+      "depth": 19.177,
+      "slot": "running",
+      "bytes": 6666,
+      "sha256": "c414044d10aec70efd200c3fa5b3593754f48e6ca1c8cbe94c95065b71432867",
+      "frame": {
+        "width": 1280,
+        "height": 720
+      },
+      "offset": {
+        "left": 341,
+        "top": 496
+      },
+      "size": {
+        "width": 479,
+        "height": 119
+      }
+    },
+    {
+      "file": "troop-carrier-front-MOB-C.avif",
+      "kind": "build-layer",
+      "id": "troop-carrier-front-MOB-C",
+      "depth": 19.176,
+      "slot": "running",
+      "bytes": 29834,
+      "sha256": "f02717e3bede630ba0ada126d756b93d841fc94c31df34b470ed92780ab9cc01",
+      "frame": {
+        "width": 1280,
+        "height": 720
+      },
+      "offset": {
+        "left": 320,
+        "top": 457
+      },
+      "size": {
+        "width": 636,
+        "height": 190
+      }
+    },
+    {
+      "file": "troop-carrier-front-MOB-D.avif",
+      "kind": "build-layer",
+      "id": "troop-carrier-front-MOB-D",
+      "depth": 19.148,
+      "slot": "running",
+      "bytes": 5192,
+      "sha256": "706e87366613f20022f8d596b5bd43b4129bc7f35d76419800b702ddb1122a5f",
+      "frame": {
+        "width": 1280,
+        "height": 720
+      },
+      "offset": {
+        "left": 350,
+        "top": 504
+      },
+      "size": {
+        "width": 553,
+        "height": 107
+      }
+    },
+    {
+      "file": "troop-carrier-front-MOB-E.avif",
+      "kind": "build-layer",
+      "id": "troop-carrier-front-MOB-E",
+      "depth": 20.896,
+      "slot": "tanks",
+      "bytes": 2922,
+      "sha256": "96a96d125fe4b92e77109e46b308f785f68c5a9214e6526dc180bb6aeda1791f",
+      "frame": {
+        "width": 1280,
+        "height": 720
+      },
+      "offset": {
+        "left": 225,
+        "top": 440
+      },
+      "size": {
+        "width": 134,
+        "height": 146
+      }
+    },
+    {
+      "file": "troop-carrier-front-MOB-F.avif",
+      "kind": "build-layer",
+      "id": "troop-carrier-front-MOB-F",
+      "depth": 18.591,
+      "slot": "powerpack",
+      "bytes": 2099,
+      "sha256": "df02f7258e30bea6c235fb5dce147376d20275edd61d6bbcef4e4d5d31c9fbfc",
+      "frame": {
+        "width": 1280,
+        "height": 720
+      },
+      "offset": {
+        "left": 748,
+        "top": 303
+      },
+      "size": {
+        "width": 144,
+        "height": 69
       }
     },
     {
       "file": "troop-carrier-front-MOB-G.avif",
       "kind": "build-layer",
       "id": "troop-carrier-front-MOB-G",
-      "depth": 20.693,
+      "depth": 19.176,
       "slot": "running",
-      "bytes": 20462,
-      "sha256": "f55c8a56058a227e5aa13a1ee6ea4ad2e5df6bc5693ca2c6c653fe50125a420e",
+      "bytes": 22946,
+      "sha256": "b884564ca31a88ac522822e76f5b3e2bd9dfff907b65a16f75344162e850f738",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 322,
-        "top": 428
+        "left": 317,
+        "top": 457
       },
       "size": {
-        "width": 582,
-        "height": 202
+        "width": 635,
+        "height": 190
       }
     },
     {
       "file": "troop-carrier-front-PRO-A.avif",
       "kind": "build-layer",
       "id": "troop-carrier-front-PRO-A",
-      "depth": 20.866,
+      "depth": 19.336,
       "slot": "side-armour",
-      "bytes": 12178,
-      "sha256": "f374b2afa3cd15f10f52aa8e5231a0ef0e1d0bf08e0e356c8b67c133950ff129",
+      "bytes": 14639,
+      "sha256": "b8adc2f8a6dfe13cb10c9347bdc4444d5101c609f6aa9105eb2b3ed299730a4f",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 260,
-        "top": 359
+        "left": 251,
+        "top": 378
       },
       "size": {
-        "width": 458,
-        "height": 226
+        "width": 555,
+        "height": 229
       }
     },
     {
       "file": "troop-carrier-front-PRO-B.avif",
       "kind": "build-layer",
       "id": "troop-carrier-front-PRO-B",
-      "depth": 18.818,
+      "depth": 17.735,
       "slot": "front-armour",
-      "bytes": 6364,
-      "sha256": "17d9a6caef9d5078d4ab2df5ba636f28c046bfb8ff478936d7d5bfbea657f963",
+      "bytes": 6554,
+      "sha256": "6c98a8bab7d3aa6ccdf2fe03020cede3a61d54b857000d9fdf56cfe814f2a437",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 703,
-        "top": 343
+        "left": 778,
+        "top": 339
       },
       "size": {
-        "width": 243,
-        "height": 168
+        "width": 236,
+        "height": 171
       }
     },
     {
       "file": "troop-carrier-front-PRO-C.avif",
       "kind": "build-layer",
       "id": "troop-carrier-front-PRO-C",
-      "depth": 20.866,
+      "depth": 19.336,
       "slot": "side-armour",
-      "bytes": 10758,
-      "sha256": "b26d4c2aaf0de1f1dff091f14f2f06d5d371c0002a557b47e39abec3246f4bd7",
+      "bytes": 12293,
+      "sha256": "327928d4bdb9fc70cdccd4aca316a2190a01b688b22b7ab0432c9cce89da335b",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 263,
-        "top": 361
+        "left": 258,
+        "top": 384
       },
       "size": {
-        "width": 455,
-        "height": 225
+        "width": 543,
+        "height": 223
       }
     },
     {
       "file": "troop-carrier-front-PRO-D.avif",
       "kind": "build-layer",
       "id": "troop-carrier-front-PRO-D",
-      "depth": 19.274,
+      "depth": 18.066,
       "slot": "roof-armour",
-      "bytes": 1081,
-      "sha256": "431ef50724f681744d098b290db227d9c4d1e2ea9f756e44554c9a24a5d17034",
+      "bytes": 1150,
+      "sha256": "9f92df97857f22d1c5c7bfff08135dc7c06a582d93d96a699950c10895e97019",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 691,
-        "top": 334
+        "left": 736,
+        "top": 337
       },
       "size": {
-        "width": 66,
+        "width": 79,
         "height": 36
       }
     },
@@ -22668,219 +22862,219 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "file": "troop-carrier-front-PRO-E.avif",
       "kind": "build-layer",
       "id": "troop-carrier-front-PRO-E",
-      "depth": 20.874,
+      "depth": 19.341,
       "slot": "side-armour",
-      "bytes": 14265,
-      "sha256": "c1f5682f639ad0b2445bea28e589c5429fbc4d5f29e94277a44362cb17320262",
+      "bytes": 16788,
+      "sha256": "5197936d79e213236ccc791a9887c772e6557c403051e606e3f835b0403b6db7",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 257,
-        "top": 362
+        "left": 248,
+        "top": 384
       },
       "size": {
-        "width": 461,
-        "height": 188
+        "width": 555,
+        "height": 204
       }
     },
     {
       "file": "troop-carrier-front-PRO-F.avif",
       "kind": "build-layer",
       "id": "troop-carrier-front-PRO-F",
-      "depth": 20.835,
+      "depth": 19.29,
       "slot": "belly",
-      "bytes": 2770,
-      "sha256": "5a3ab2cadb51392bc821edbb967662b1195c736c80bf7635d63119aa95ed15ed",
+      "bytes": 2648,
+      "sha256": "6a7265c496d2e50141b3e09d416eaa1962ca9535fb59518ee2a35a6ccac3dfad",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 407,
-        "top": 506
+        "left": 541,
+        "top": 533
       },
       "size": {
-        "width": 471,
-        "height": 104
+        "width": 400,
+        "height": 94
       }
     },
     {
       "file": "troop-carrier-front-PRO-G.avif",
       "kind": "build-layer",
       "id": "troop-carrier-front-PRO-G",
-      "depth": 19.269,
+      "depth": 18.063,
       "slot": "roof-armour",
-      "bytes": 1862,
-      "sha256": "74d3e9d900457f80df3e40b00d877cbd7097c35613d22fb079e3af858db39cb2",
+      "bytes": 2031,
+      "sha256": "2b51d49d09d867d258af79945f6b8b41d96f8931ad521dc1e5296b8a0e74ff12",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 688,
-        "top": 327
+        "left": 732,
+        "top": 329
       },
       "size": {
-        "width": 113,
-        "height": 44
+        "width": 133,
+        "height": 46
       }
     },
     {
       "file": "troop-carrier-front-SA-A.avif",
       "kind": "build-layer",
       "id": "troop-carrier-front-SA-A",
-      "depth": 18.42,
+      "depth": 17.297,
       "slot": "optics",
-      "bytes": 2107,
-      "sha256": "edab6b266aec823d786a63e33bee099de1aa1df743fb428acc1b34c28a88907c",
+      "bytes": 2247,
+      "sha256": "3504b160ec1f69e7d15215f99512336f53cbe1553af26dab1dfcf691e734cc2b",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 695,
-        "top": 303
+        "left": 767,
+        "top": 295
       },
       "size": {
-        "width": 123,
-        "height": 85
+        "width": 131,
+        "height": 91
       }
     },
     {
       "file": "troop-carrier-front-SA-B.avif",
       "kind": "build-layer",
       "id": "troop-carrier-front-SA-B",
-      "depth": 20.212,
+      "depth": 19.11,
       "slot": "sensor-mast",
-      "bytes": 2705,
-      "sha256": "7f3ebf855a7bfcdc0c2670ee592c816b986e5695ae12f2f0d42670c75333e0f1",
+      "bytes": 2697,
+      "sha256": "a7e37b2dea951b915c82493cd3690775911f2ca4d052965546734a46d3752285",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 725,
+        "left": 762,
         "top": 164
       },
       "size": {
-        "width": 73,
-        "height": 181
+        "width": 78,
+        "height": 189
       }
     },
     {
       "file": "troop-carrier-front-SA-C.avif",
       "kind": "build-layer",
       "id": "troop-carrier-front-SA-C",
-      "depth": 18.403,
+      "depth": 17.269,
       "slot": "optics",
-      "bytes": 2063,
-      "sha256": "a78e1bb061d7fb75fd22036cd5e7720126be5499dfc58276923d691ea1bd8ba8",
+      "bytes": 2202,
+      "sha256": "765c1c1e014ee5c5b14da74eaa1f2d1a2dc4922108570177ca7987117845d0e4",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 695,
-        "top": 295
+        "left": 767,
+        "top": 286
       },
       "size": {
-        "width": 114,
-        "height": 93
+        "width": 120,
+        "height": 100
       }
     },
     {
       "file": "troop-carrier-front-SA-D.avif",
       "kind": "build-layer",
       "id": "troop-carrier-front-SA-D",
-      "depth": 20.164,
+      "depth": 19.101,
       "slot": "sensor-mast",
-      "bytes": 3365,
-      "sha256": "508da0922a6a94553c141742b1a74274965a07e68d556a44a173952ea4a5b79d",
+      "bytes": 3761,
+      "sha256": "09067ba44add5b43aea42421b516996a54707310f5106eddf23ea196e2834cae",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 728,
-        "top": 43
+        "left": 771,
+        "top": 33
       },
       "size": {
-        "width": 63,
-        "height": 303
+        "width": 57,
+        "height": 320
       }
     },
     {
       "file": "troop-carrier-front-SA-E.avif",
       "kind": "build-layer",
       "id": "troop-carrier-front-SA-E",
-      "depth": 18.435,
+      "depth": 17.31,
       "slot": "optics",
-      "bytes": 2361,
-      "sha256": "66d191ec5c6ff37ad7e331c004f5cf6bc82a25c3c9f7e8bf0c4c02b73523dd46",
+      "bytes": 2491,
+      "sha256": "94309172c134d0ae012d3e61f7c203e9bed8985b2de476b8de33e4e5ff2df958",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 695,
-        "top": 284
+        "left": 767,
+        "top": 274
       },
       "size": {
-        "width": 122,
-        "height": 104
+        "width": 126,
+        "height": 112
       }
     },
     {
       "file": "troop-carrier-front-SA-F.avif",
       "kind": "build-layer",
       "id": "troop-carrier-front-SA-F",
-      "depth": 20.022,
+      "depth": 18.688,
       "slot": "sensor-pods",
-      "bytes": 4299,
-      "sha256": "72caee98e92c2847a624c6c64afefbf62988e50db5e86cc27707a676b25dddab",
+      "bytes": 4969,
+      "sha256": "13b693291a4fa9a06a076c9cb6120bbaaa8ab02d15baf51c6988ff5eb0ff2bbf",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 413,
-        "top": 270
+        "left": 430,
+        "top": 281
       },
       "size": {
-        "width": 450,
-        "height": 113
+        "width": 479,
+        "height": 115
       }
     },
     {
       "file": "troop-carrier-front-SA-G.avif",
       "kind": "build-layer",
       "id": "troop-carrier-front-SA-G",
-      "depth": 20.028,
+      "depth": 18.692,
       "slot": "sensor-pods",
-      "bytes": 4251,
-      "sha256": "4c4d7d7490f50a138f1c3d95fbf76678ed4b0ce07d807268c702cdd27cd1fc30",
+      "bytes": 4866,
+      "sha256": "4e9f24e499a33f12845c2ab1fe0d09a58ee1722a9c0020689fdcf9429585f9ae",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 417,
-        "top": 278
+        "left": 434,
+        "top": 292
       },
       "size": {
-        "width": 443,
-        "height": 105
+        "width": 473,
+        "height": 104
       }
     },
     {
       "file": "troop-carrier-hero.avif",
       "kind": "hero",
       "id": "troop-carrier-hero",
-      "depth": 16.451,
-      "bytes": 48079,
-      "sha256": "3cc00969fd17be91ae28916dc64aec3c1bd2e42274124d6b97db017d63cc4144",
+      "depth": 16.438,
+      "bytes": 47644,
+      "sha256": "bbd2205dd4deb3232d08b0e78803c48288e6a06a487d9521bd704e7ccceb9e99",
       "frame": {
         "width": 1600,
         "height": 900
@@ -22898,1049 +23092,1049 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "file": "troop-carrier-rear-ACC-A.avif",
       "kind": "build-layer",
       "id": "troop-carrier-rear-ACC-A",
-      "depth": 19.245,
+      "depth": 18.5,
       "slot": "rear-kit",
-      "bytes": 6300,
-      "sha256": "d95b65a164dff18f0bdaa8544bfa2c68ce5103dd9ab5ba520cabedc81cf6f8f9",
+      "bytes": 7373,
+      "sha256": "74667e1b9476b393374de12d8d7c5826aa1bb4c61b2fc3b3caf560981221566e",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 700,
-        "top": 360
+        "left": 746,
+        "top": 378
       },
       "size": {
-        "width": 156,
-        "height": 196
+        "width": 164,
+        "height": 238
       }
     },
     {
       "file": "troop-carrier-rear-ACC-B.avif",
       "kind": "build-layer",
       "id": "troop-carrier-rear-ACC-B",
-      "depth": 18.634,
+      "depth": 17.999,
       "slot": "rear-kit",
-      "bytes": 10765,
-      "sha256": "76aa16240f0ac4543aa2208176320d716a5c096c56b1a8845b1b0d00413626fa",
+      "bytes": 12107,
+      "sha256": "dd06ac30098b96890a0d62608a09331a18e44e8acb039906a4acb6cdb95daae8",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 711,
-        "top": 425
+        "left": 748,
+        "top": 436
       },
       "size": {
-        "width": 436,
-        "height": 295
+        "width": 489,
+        "height": 284
       }
     },
     {
       "file": "troop-carrier-rear-ACC-C.avif",
       "kind": "build-layer",
       "id": "troop-carrier-rear-ACC-C",
-      "depth": 24.973,
+      "depth": 23.249,
       "slot": "front-kit",
-      "bytes": 4019,
-      "sha256": "8afcc6ef9eef41087773bf6aade28794a5855fba66c3613b7a913335540829f2",
+      "bytes": 4588,
+      "sha256": "249d38629e3ba51e95026f3de9d44c495e8fef36c54f35c7a22bbad0d5d4493d",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 96,
-        "top": 361
+        "left": 34,
+        "top": 422
       },
       "size": {
-        "width": 332,
-        "height": 151
+        "width": 384,
+        "height": 153
       }
     },
     {
       "file": "troop-carrier-rear-ACC-D.avif",
       "kind": "build-layer",
       "id": "troop-carrier-rear-ACC-D",
-      "depth": 22.214,
+      "depth": 21.212,
       "slot": "rack",
-      "bytes": 3475,
-      "sha256": "1f3ffa8c064f2d4066227649233a36ba0e272361440fc263c89d81c1de6e04f1",
+      "bytes": 3621,
+      "sha256": "4fe72fbfeedfe7e740e9dcb2121d5f8a79a41bc2b3da8e2091fee3f19dcc627f",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 567,
-        "top": 244
+        "left": 234,
+        "top": 286
       },
       "size": {
-        "width": 174,
-        "height": 79
+        "width": 513,
+        "height": 283
       }
     },
     {
       "file": "troop-carrier-rear-ACC-E.avif",
       "kind": "build-layer",
       "id": "troop-carrier-rear-ACC-E",
-      "depth": 24.677,
+      "depth": 22.962,
       "slot": "front-kit",
-      "bytes": 3286,
-      "sha256": "dcfe69090a672b5c5f0f1169e4227fcac451082dbe181b530e87de98ad7f4991",
+      "bytes": 3393,
+      "sha256": "c37473e0da67d7b3c0190ba752fd7c1f52afbcb348737729f1849aaa1c13de71",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 121,
-        "top": 355
+        "left": 71,
+        "top": 417
       },
       "size": {
-        "width": 199,
-        "height": 157
+        "width": 150,
+        "height": 142
       }
     },
     {
       "file": "troop-carrier-rear-ACC-F.avif",
       "kind": "build-layer",
       "id": "troop-carrier-rear-ACC-F",
-      "depth": 24.451,
+      "depth": 22.809,
       "slot": "front-kit",
-      "bytes": 1775,
-      "sha256": "67fb83a0c93ca42eeee6edf9ba8a9b20064b877c7e65414904678c2f8d390362",
+      "bytes": 2086,
+      "sha256": "11c86dc2001a5d6078510ac2610c73b1cd864f108ee3b4932f2058caf7816f69",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 191,
-        "top": 354
+        "left": 147,
+        "top": 415
       },
       "size": {
-        "width": 131,
-        "height": 158
+        "width": 173,
+        "height": 162
       }
     },
     {
       "file": "troop-carrier-rear-ACC-G.avif",
       "kind": "build-layer",
       "id": "troop-carrier-rear-ACC-G",
-      "depth": 22.237,
+      "depth": 21.255,
       "slot": "rack",
-      "bytes": 3947,
-      "sha256": "57eeaa56bb97ed190e73f2eccc4a9001df278312180edd104f16b539d83e80b2",
+      "bytes": 4019,
+      "sha256": "4504133552a14c5e752a2ba5a610571c0cb0af9a83bb11a67c4affae11d94998",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 562,
-        "top": 210
+        "left": 234,
+        "top": 252
       },
       "size": {
-        "width": 187,
-        "height": 114
+        "width": 522,
+        "height": 318
       }
     },
     {
       "file": "troop-carrier-rear-base.avif",
       "kind": "build-base",
       "id": "troop-carrier-rear-base",
-      "depth": 21.215,
-      "bytes": 22542,
-      "sha256": "3a84e54d561965d7ca5cb3405ed54f0de481623320e2694024b3f3805bb853e5",
+      "depth": 20.014,
+      "bytes": 23587,
+      "sha256": "a9b2bb8b272f90de54f5a9bc9707fdbb95cd253baa56c8926b941272eb6b04af",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 208,
-        "top": 247
+        "left": 177,
+        "top": 302
       },
       "size": {
-        "width": 702,
-        "height": 390
+        "width": 793,
+        "height": 355
       }
     },
     {
       "file": "troop-carrier-rear-CAP-A.avif",
       "kind": "build-layer",
       "id": "troop-carrier-rear-CAP-A",
-      "depth": 19.892,
+      "depth": 19.006,
       "slot": "module",
-      "bytes": 5405,
-      "sha256": "acbfa8fcd0aa9098a9631b47320fc67de0d377051a5feb73bbf05145d872eeb3",
+      "bytes": 4923,
+      "sha256": "de76d2e1dcd4034bf5a977999c4756b511a26767b57e63318822bbc918e48f2e",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 430,
-        "top": 241
+        "left": 435,
+        "top": 270
       },
       "size": {
-        "width": 367,
-        "height": 157
+        "width": 380,
+        "height": 144
       }
     },
     {
       "file": "troop-carrier-rear-CAP-B.avif",
       "kind": "build-layer",
       "id": "troop-carrier-rear-CAP-B",
-      "depth": 19.886,
+      "depth": 19.004,
       "slot": "module",
-      "bytes": 5613,
-      "sha256": "94720178374b325975a361849abe1a37d3b5bfe92c3694e4840b7f5c9c3899e5",
+      "bytes": 4998,
+      "sha256": "1d89bd14cdc68d8e58c4c941ecf3f701d411cf03609a2c1a73202678c46717cc",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 416,
-        "top": 233
+        "left": 435,
+        "top": 259
       },
       "size": {
-        "width": 377,
-        "height": 165
+        "width": 386,
+        "height": 156
       }
     },
     {
       "file": "troop-carrier-rear-CAP-C.avif",
       "kind": "build-layer",
       "id": "troop-carrier-rear-CAP-C",
-      "depth": 19.9,
+      "depth": 19.012,
       "slot": "module",
-      "bytes": 6281,
-      "sha256": "6484f8a53332a147df09738a0092b734e721fcda05d38bdb35752e14e5292d70",
-      "frame": {
-        "width": 1280,
-        "height": 720
-      },
-      "offset": {
-        "left": 545,
-        "top": 241
-      },
-      "size": {
-        "width": 252,
-        "height": 155
-      }
-    },
-    {
-      "file": "troop-carrier-rear-CAP-D.avif",
-      "kind": "build-layer",
-      "id": "troop-carrier-rear-CAP-D",
-      "depth": 19.877,
-      "slot": "module",
-      "bytes": 6847,
-      "sha256": "020199bc825ba4047006bdfb67dc53f7587f0c4b2c1cf061a01d6ee886c6dd27",
-      "frame": {
-        "width": 1280,
-        "height": 720
-      },
-      "offset": {
-        "left": 416,
-        "top": 222
-      },
-      "size": {
-        "width": 377,
-        "height": 176
-      }
-    },
-    {
-      "file": "troop-carrier-rear-CAP-E.avif",
-      "kind": "build-layer",
-      "id": "troop-carrier-rear-CAP-E",
-      "depth": 19.892,
-      "slot": "module",
-      "bytes": 4665,
-      "sha256": "2dabe03116f47f3df08cc1de1f30d0a980973f4825c336f96626a203363d4104",
-      "frame": {
-        "width": 1280,
-        "height": 720
-      },
-      "offset": {
-        "left": 473,
-        "top": 241
-      },
-      "size": {
-        "width": 320,
-        "height": 157
-      }
-    },
-    {
-      "file": "troop-carrier-rear-CAP-F.avif",
-      "kind": "build-layer",
-      "id": "troop-carrier-rear-CAP-F",
-      "depth": 19.887,
-      "slot": "module",
-      "bytes": 5435,
-      "sha256": "1c5f84037c43267a769edaeee2ac7b7665f0a2bb4699956a984486ff7297a770",
-      "frame": {
-        "width": 1280,
-        "height": 720
-      },
-      "offset": {
-        "left": 416,
-        "top": 236
-      },
-      "size": {
-        "width": 377,
-        "height": 162
-      }
-    },
-    {
-      "file": "troop-carrier-rear-CAP-G.avif",
-      "kind": "build-layer",
-      "id": "troop-carrier-rear-CAP-G",
-      "depth": 19.903,
-      "slot": "module",
-      "bytes": 5658,
-      "sha256": "a147540ae8c656916e4f9334edeb363a66616290efe93e2308392d635d0cda25",
-      "frame": {
-        "width": 1280,
-        "height": 720
-      },
-      "offset": {
-        "left": 539,
-        "top": 249
-      },
-      "size": {
-        "width": 258,
-        "height": 149
-      }
-    },
-    {
-      "file": "troop-carrier-rear-COM-A.avif",
-      "kind": "build-layer",
-      "id": "troop-carrier-rear-COM-A",
-      "depth": 19.729,
-      "slot": "antenna-left",
-      "bytes": 2224,
-      "sha256": "16fb8c6d57970b515d0c994f930a2d0c69b34e4968f0c38cd379fb562668e9c5",
-      "frame": {
-        "width": 1280,
-        "height": 720
-      },
-      "offset": {
-        "left": 773,
-        "top": 96
-      },
-      "size": {
-        "width": 78,
-        "height": 277
-      }
-    },
-    {
-      "file": "troop-carrier-rear-COM-B.avif",
-      "kind": "build-layer",
-      "id": "troop-carrier-rear-COM-B",
-      "depth": 18.262,
-      "slot": "antenna-right",
-      "bytes": 2933,
-      "sha256": "ab80b1c3b20deaa98430243b4b361e594296220ff4242c4f15085744a2552fe4",
-      "frame": {
-        "width": 1280,
-        "height": 720
-      },
-      "offset": {
-        "left": 671,
-        "top": 54
-      },
-      "size": {
-        "width": 73,
-        "height": 356
-      }
-    },
-    {
-      "file": "troop-carrier-rear-COM-C.avif",
-      "kind": "build-layer",
-      "id": "troop-carrier-rear-COM-C",
-      "depth": 19.892,
-      "slot": "antenna-left",
-      "bytes": 1608,
-      "sha256": "667adae191379a10c12e2db0a201c98507d15ca2eb91dfdc1bd6a708cad13632",
-      "frame": {
-        "width": 1280,
-        "height": 720
-      },
-      "offset": {
-        "left": 777,
-        "top": 285
-      },
-      "size": {
-        "width": 69,
-        "height": 88
-      }
-    },
-    {
-      "file": "troop-carrier-rear-COM-D.avif",
-      "kind": "build-layer",
-      "id": "troop-carrier-rear-COM-D",
-      "depth": 18.883,
-      "slot": "radio-mast",
-      "bytes": 3563,
-      "sha256": "53f8793744501bd9a282df6e4ecde945a10557f8daa9aff96e270e5a66ddb349",
-      "frame": {
-        "width": 1280,
-        "height": 720
-      },
-      "offset": {
-        "left": 673,
-        "top": 37
-      },
-      "size": {
-        "width": 125,
-        "height": 382
-      }
-    },
-    {
-      "file": "troop-carrier-rear-COM-E.avif",
-      "kind": "build-layer",
-      "id": "troop-carrier-rear-COM-E",
-      "depth": 18.871,
-      "slot": "radio-mast",
-      "bytes": 3609,
-      "sha256": "ee0ff12c79ae4cf74a63e056b8ba76494eab1c77fc1cb74d4ea4526367a2cd7a",
-      "frame": {
-        "width": 1280,
-        "height": 720
-      },
-      "offset": {
-        "left": 699,
-        "top": 21
-      },
-      "size": {
-        "width": 101,
-        "height": 399
-      }
-    },
-    {
-      "file": "troop-carrier-rear-COM-F.avif",
-      "kind": "build-layer",
-      "id": "troop-carrier-rear-COM-F",
-      "depth": 19.754,
-      "slot": "antenna-left",
-      "bytes": 2193,
-      "sha256": "537950a6a9060524ecb9b446b4df64090bc653622d1ab235c1bb68b111687999",
-      "frame": {
-        "width": 1280,
-        "height": 720
-      },
-      "offset": {
-        "left": 772,
-        "top": 132
-      },
-      "size": {
-        "width": 80,
-        "height": 241
-      }
-    },
-    {
-      "file": "troop-carrier-rear-COM-G.avif",
-      "kind": "build-layer",
-      "id": "troop-carrier-rear-COM-G",
-      "depth": 18.327,
-      "slot": "antenna-right",
-      "bytes": 3299,
-      "sha256": "7da64e66fab810211b005fcf694eb4a3f34c95efc7901bb3def9aa238b455596",
-      "frame": {
-        "width": 1280,
-        "height": 720
-      },
-      "offset": {
-        "left": 639,
-        "top": 177
-      },
-      "size": {
-        "width": 111,
-        "height": 248
-      }
-    },
-    {
-      "file": "troop-carrier-rear-FP-A.avif",
-      "kind": "build-layer",
-      "id": "troop-carrier-rear-FP-A",
-      "depth": 21.541,
-      "slot": "weapon",
-      "bytes": 4467,
-      "sha256": "3038e3f22462d8d965ee1c20498f4b0ea5aa2105bedd8f856fb1fd02ca02cc76",
-      "frame": {
-        "width": 1280,
-        "height": 720
-      },
-      "offset": {
-        "left": 246,
-        "top": 223
-      },
-      "size": {
-        "width": 305,
-        "height": 123
-      }
-    },
-    {
-      "file": "troop-carrier-rear-FP-B.avif",
-      "kind": "build-layer",
-      "id": "troop-carrier-rear-FP-B",
-      "depth": 21.736,
-      "slot": "weapon",
-      "bytes": 3945,
-      "sha256": "d5842d658901f8ea992d4d105ae17dd73690abc9b6bc91edf7be3bbb4080f228",
-      "frame": {
-        "width": 1280,
-        "height": 720
-      },
-      "offset": {
-        "left": 246,
-        "top": 200
-      },
-      "size": {
-        "width": 316,
-        "height": 146
-      }
-    },
-    {
-      "file": "troop-carrier-rear-FP-C.avif",
-      "kind": "build-layer",
-      "id": "troop-carrier-rear-FP-C",
-      "depth": 22.044,
-      "slot": "weapon",
-      "bytes": 6100,
-      "sha256": "42b61b9fab7692fb2c0c6f869d8ab7ccc2ab066a9c354009c7e2a296f24f4a3a",
-      "frame": {
-        "width": 1280,
-        "height": 720
-      },
-      "offset": {
-        "left": 246,
-        "top": 211
-      },
-      "size": {
-        "width": 348,
-        "height": 144
-      }
-    },
-    {
-      "file": "troop-carrier-rear-FP-D.avif",
-      "kind": "build-layer",
-      "id": "troop-carrier-rear-FP-D",
-      "depth": 22.793,
-      "slot": "aux-weapon",
-      "bytes": 2449,
-      "sha256": "6ab376dcdcf61f8b571c2945efc0663e16e06c43735a51ed8ceeaa13beadba92",
-      "frame": {
-        "width": 1280,
-        "height": 720
-      },
-      "offset": {
-        "left": 320,
-        "top": 228
-      },
-      "size": {
-        "width": 158,
-        "height": 108
-      }
-    },
-    {
-      "file": "troop-carrier-rear-FP-E.avif",
-      "kind": "build-layer",
-      "id": "troop-carrier-rear-FP-E",
-      "depth": 22.78,
-      "slot": "aux-weapon",
-      "bytes": 2626,
-      "sha256": "7984ea61c4eb26515bc4c278eff61113da6497a527585cf38432db9abc9ab5cd",
-      "frame": {
-        "width": 1280,
-        "height": 720
-      },
-      "offset": {
-        "left": 330,
-        "top": 216
-      },
-      "size": {
-        "width": 145,
-        "height": 122
-      }
-    },
-    {
-      "file": "troop-carrier-rear-FP-F.avif",
-      "kind": "build-layer",
-      "id": "troop-carrier-rear-FP-F",
-      "depth": 21.895,
-      "slot": "weapon",
-      "bytes": 5603,
-      "sha256": "3be3ba1a3380e26d08a86ecfe5ffa9b911b76427c9d2e57a9e0a405cae79eb15",
-      "frame": {
-        "width": 1280,
-        "height": 720
-      },
-      "offset": {
-        "left": 246,
-        "top": 206
-      },
-      "size": {
-        "width": 336,
-        "height": 143
-      }
-    },
-    {
-      "file": "troop-carrier-rear-FP-G.avif",
-      "kind": "build-layer",
-      "id": "troop-carrier-rear-FP-G",
-      "depth": 21.689,
-      "slot": "weapon",
-      "bytes": 4738,
-      "sha256": "b069599d42fe733a9265ef6e253b1b938ce817e5db2cb01b0d92de5a69b40890",
-      "frame": {
-        "width": 1280,
-        "height": 720
-      },
-      "offset": {
-        "left": 246,
-        "top": 201
-      },
-      "size": {
-        "width": 338,
-        "height": 144
-      }
-    },
-    {
-      "file": "troop-carrier-rear-MOB-A.avif",
-      "kind": "build-layer",
-      "id": "troop-carrier-rear-MOB-A",
-      "depth": 22.116,
-      "slot": "powerpack",
-      "bytes": 3082,
-      "sha256": "e381caf12cc7b963eafea63b8cffb47f7b26a55b7077a6f91ab5beb893ea2064",
-      "frame": {
-        "width": 1280,
-        "height": 720
-      },
-      "offset": {
-        "left": 248,
-        "top": 243
-      },
-      "size": {
-        "width": 191,
-        "height": 104
-      }
-    },
-    {
-      "file": "troop-carrier-rear-MOB-B.avif",
-      "kind": "build-layer",
-      "id": "troop-carrier-rear-MOB-B",
-      "depth": 21.836,
-      "slot": "running",
-      "bytes": 4707,
-      "sha256": "9f5eb26f0d4f62b11981cf52dfa9b0a0708ee8cc2b0c8dfc1742d76eb6e3492b",
-      "frame": {
-        "width": 1280,
-        "height": 720
-      },
-      "offset": {
-        "left": 242,
-        "top": 440
-      },
-      "size": {
-        "width": 354,
-        "height": 130
-      }
-    },
-    {
-      "file": "troop-carrier-rear-MOB-C.avif",
-      "kind": "build-layer",
-      "id": "troop-carrier-rear-MOB-C",
-      "depth": 21.835,
-      "slot": "running",
-      "bytes": 21710,
-      "sha256": "73967c602995715da27185f8eae65d7a03fcc3fdc15a0c40c835f513a3f3c3ff",
-      "frame": {
-        "width": 1280,
-        "height": 720
-      },
-      "offset": {
-        "left": 230,
-        "top": 402
-      },
-      "size": {
-        "width": 485,
-        "height": 197
-      }
-    },
-    {
-      "file": "troop-carrier-rear-MOB-D.avif",
-      "kind": "build-layer",
-      "id": "troop-carrier-rear-MOB-D",
-      "depth": 21.827,
-      "slot": "running",
-      "bytes": 8112,
-      "sha256": "2e2da9bf9bfcee6d9ce6967354bf9f9af62546bb1f47addd65f0c5dea0c09593",
-      "frame": {
-        "width": 1280,
-        "height": 720
-      },
-      "offset": {
-        "left": 231,
-        "top": 395
-      },
-      "size": {
-        "width": 365,
-        "height": 173
-      }
-    },
-    {
-      "file": "troop-carrier-rear-MOB-E.avif",
-      "kind": "build-layer",
-      "id": "troop-carrier-rear-MOB-E",
-      "depth": 19.791,
-      "slot": "tanks",
-      "bytes": 4153,
-      "sha256": "63364306dda9b5ca32e44a5249f12cc521a4ab94b26439c45d73f5943683fc4f",
+      "bytes": 5368,
+      "sha256": "244398470895fa19d3d40ae5cf5a3884d7dea2d75039f7b6c2b87ca581133c87",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
         "left": 582,
-        "top": 435
+        "top": 270
       },
       "size": {
-        "width": 271,
-        "height": 184
+        "width": 219,
+        "height": 143
+      }
+    },
+    {
+      "file": "troop-carrier-rear-CAP-D.avif",
+      "kind": "build-layer",
+      "id": "troop-carrier-rear-CAP-D",
+      "depth": 18.999,
+      "slot": "module",
+      "bytes": 6227,
+      "sha256": "78ce52733d30f0698c5020da932642385bc7af413aa115583909195ab66c5d7c",
+      "frame": {
+        "width": 1280,
+        "height": 720
+      },
+      "offset": {
+        "left": 435,
+        "top": 251
+      },
+      "size": {
+        "width": 389,
+        "height": 164
+      }
+    },
+    {
+      "file": "troop-carrier-rear-CAP-E.avif",
+      "kind": "build-layer",
+      "id": "troop-carrier-rear-CAP-E",
+      "depth": 19.006,
+      "slot": "module",
+      "bytes": 4383,
+      "sha256": "593885f6ea2b8bb778b9ccba482f84b7d94fc8dfe740b6ec5e5aba59ad746a6f",
+      "frame": {
+        "width": 1280,
+        "height": 720
+      },
+      "offset": {
+        "left": 504,
+        "top": 270
+      },
+      "size": {
+        "width": 304,
+        "height": 144
+      }
+    },
+    {
+      "file": "troop-carrier-rear-CAP-F.avif",
+      "kind": "build-layer",
+      "id": "troop-carrier-rear-CAP-F",
+      "depth": 19.004,
+      "slot": "module",
+      "bytes": 4938,
+      "sha256": "81f19a805d7edfeb9b94f0614dece3a38f273443630bb5131cf26e22b2ce0bda",
+      "frame": {
+        "width": 1280,
+        "height": 720
+      },
+      "offset": {
+        "left": 435,
+        "top": 264
+      },
+      "size": {
+        "width": 380,
+        "height": 150
+      }
+    },
+    {
+      "file": "troop-carrier-rear-CAP-G.avif",
+      "kind": "build-layer",
+      "id": "troop-carrier-rear-CAP-G",
+      "depth": 19.014,
+      "slot": "module",
+      "bytes": 5527,
+      "sha256": "4a81b9ad8050e7b7be0ea6753e3664020217c58982f48cccbd45b13e92b4ac37",
+      "frame": {
+        "width": 1280,
+        "height": 720
+      },
+      "offset": {
+        "left": 574,
+        "top": 275
+      },
+      "size": {
+        "width": 235,
+        "height": 140
+      }
+    },
+    {
+      "file": "troop-carrier-rear-COM-A.avif",
+      "kind": "build-layer",
+      "id": "troop-carrier-rear-COM-A",
+      "depth": 19.054,
+      "slot": "antenna-left",
+      "bytes": 2721,
+      "sha256": "7145ece54876e17870e3a7f8ddd84ace38958dd67c616acac649fb3519af1c92",
+      "frame": {
+        "width": 1280,
+        "height": 720
+      },
+      "offset": {
+        "left": 708,
+        "top": 106
+      },
+      "size": {
+        "width": 179,
+        "height": 475
+      }
+    },
+    {
+      "file": "troop-carrier-rear-COM-B.avif",
+      "kind": "build-layer",
+      "id": "troop-carrier-rear-COM-B",
+      "depth": 17.667,
+      "slot": "antenna-right",
+      "bytes": 3374,
+      "sha256": "e66d37b090956bae26225562fd197a297238991855132992f284dce920b7a154",
+      "frame": {
+        "width": 1280,
+        "height": 720
+      },
+      "offset": {
+        "left": 741,
+        "top": 49
+      },
+      "size": {
+        "width": 72,
+        "height": 400
+      }
+    },
+    {
+      "file": "troop-carrier-rear-COM-C.avif",
+      "kind": "build-layer",
+      "id": "troop-carrier-rear-COM-C",
+      "depth": 19.13,
+      "slot": "antenna-left",
+      "bytes": 2022,
+      "sha256": "78245b384a4bb48efdf50423962c8851830d0825233b6ea1939528298d658996",
+      "frame": {
+        "width": 1280,
+        "height": 720
+      },
+      "offset": {
+        "left": 708,
+        "top": 304
+      },
+      "size": {
+        "width": 174,
+        "height": 277
+      }
+    },
+    {
+      "file": "troop-carrier-rear-COM-D.avif",
+      "kind": "build-layer",
+      "id": "troop-carrier-rear-COM-D",
+      "depth": 18.269,
+      "slot": "radio-mast",
+      "bytes": 3753,
+      "sha256": "7927de7b5a7ae474b4a10c59395da176dd639de399b8c83d601d0347a1dae95f",
+      "frame": {
+        "width": 1280,
+        "height": 720
+      },
+      "offset": {
+        "left": 729,
+        "top": 39
+      },
+      "size": {
+        "width": 122,
+        "height": 396
+      }
+    },
+    {
+      "file": "troop-carrier-rear-COM-E.avif",
+      "kind": "build-layer",
+      "id": "troop-carrier-rear-COM-E",
+      "depth": 18.265,
+      "slot": "radio-mast",
+      "bytes": 3906,
+      "sha256": "83f6cb5ad1c13afa2bb5c319cb3091f36a96d3bf50ce51c53e846b9f99a05373",
+      "frame": {
+        "width": 1280,
+        "height": 720
+      },
+      "offset": {
+        "left": 754,
+        "top": 21
+      },
+      "size": {
+        "width": 100,
+        "height": 428
+      }
+    },
+    {
+      "file": "troop-carrier-rear-COM-F.avif",
+      "kind": "build-layer",
+      "id": "troop-carrier-rear-COM-F",
+      "depth": 19.063,
+      "slot": "antenna-left",
+      "bytes": 2453,
+      "sha256": "4f910c0139e87de4e9279fde3c770c9d1f50f207afff797c49720acba651f365",
+      "frame": {
+        "width": 1280,
+        "height": 720
+      },
+      "offset": {
+        "left": 708,
+        "top": 143
+      },
+      "size": {
+        "width": 180,
+        "height": 438
+      }
+    },
+    {
+      "file": "troop-carrier-rear-COM-G.avif",
+      "kind": "build-layer",
+      "id": "troop-carrier-rear-COM-G",
+      "depth": 17.683,
+      "slot": "antenna-right",
+      "bytes": 3351,
+      "sha256": "4d77b870efdb3d9748571c22c0614277541344e0da62e241120cb3dee4cc1ae5",
+      "frame": {
+        "width": 1280,
+        "height": 720
+      },
+      "offset": {
+        "left": 704,
+        "top": 175
+      },
+      "size": {
+        "width": 115,
+        "height": 369
+      }
+    },
+    {
+      "file": "troop-carrier-rear-FP-A.avif",
+      "kind": "build-layer",
+      "id": "troop-carrier-rear-FP-A",
+      "depth": 20.362,
+      "slot": "weapon",
+      "bytes": 3878,
+      "sha256": "096ca8b7734386a2130e3101b3324c562a09ecd3f6b7f49863f4c9cf27741fc0",
+      "frame": {
+        "width": 1280,
+        "height": 720
+      },
+      "offset": {
+        "left": 246,
+        "top": 260
+      },
+      "size": {
+        "width": 316,
+        "height": 122
+      }
+    },
+    {
+      "file": "troop-carrier-rear-FP-B.avif",
+      "kind": "build-layer",
+      "id": "troop-carrier-rear-FP-B",
+      "depth": 20.55,
+      "slot": "weapon",
+      "bytes": 3576,
+      "sha256": "76f2a51b30496f681239b64350f3202270029d90a2fb7c2fe1395c045fb7c0c3",
+      "frame": {
+        "width": 1280,
+        "height": 720
+      },
+      "offset": {
+        "left": 367,
+        "top": 229
+      },
+      "size": {
+        "width": 202,
+        "height": 140
+      }
+    },
+    {
+      "file": "troop-carrier-rear-FP-C.avif",
+      "kind": "build-layer",
+      "id": "troop-carrier-rear-FP-C",
+      "depth": 20.798,
+      "slot": "weapon",
+      "bytes": 5722,
+      "sha256": "7286b90cf6d2aa190e2a6758b2aec365878e6762ef76852098f96c29d190c12e",
+      "frame": {
+        "width": 1280,
+        "height": 720
+      },
+      "offset": {
+        "left": 233,
+        "top": 244
+      },
+      "size": {
+        "width": 374,
+        "height": 145
+      }
+    },
+    {
+      "file": "troop-carrier-rear-FP-D.avif",
+      "kind": "build-layer",
+      "id": "troop-carrier-rear-FP-D",
+      "depth": 21.643,
+      "slot": "aux-weapon",
+      "bytes": 2567,
+      "sha256": "10e5bb1632924753f0d6236236bc021e1db9f5f294a7a7f8575d3dcbc3134ece",
+      "frame": {
+        "width": 1280,
+        "height": 720
+      },
+      "offset": {
+        "left": 310,
+        "top": 257
+      },
+      "size": {
+        "width": 170,
+        "height": 102
+      }
+    },
+    {
+      "file": "troop-carrier-rear-FP-E.avif",
+      "kind": "build-layer",
+      "id": "troop-carrier-rear-FP-E",
+      "depth": 21.639,
+      "slot": "aux-weapon",
+      "bytes": 2512,
+      "sha256": "f8b5643fa4c6eec812299afb8b99140c16b50ab65358a44aecf4c24ec9bb57bd",
+      "frame": {
+        "width": 1280,
+        "height": 720
+      },
+      "offset": {
+        "left": 314,
+        "top": 250
+      },
+      "size": {
+        "width": 165,
+        "height": 108
+      }
+    },
+    {
+      "file": "troop-carrier-rear-FP-F.avif",
+      "kind": "build-layer",
+      "id": "troop-carrier-rear-FP-F",
+      "depth": 20.669,
+      "slot": "weapon",
+      "bytes": 5161,
+      "sha256": "6ca13974ce0a2c2a8acdd34120af3e71b8a5138276c1e9a196c0fb53a20f2c3b",
+      "frame": {
+        "width": 1280,
+        "height": 720
+      },
+      "offset": {
+        "left": 233,
+        "top": 241
+      },
+      "size": {
+        "width": 361,
+        "height": 139
+      }
+    },
+    {
+      "file": "troop-carrier-rear-FP-G.avif",
+      "kind": "build-layer",
+      "id": "troop-carrier-rear-FP-G",
+      "depth": 20.534,
+      "slot": "weapon",
+      "bytes": 4480,
+      "sha256": "6f536ec9f2d037199304e03f425bfdb44d61d2fc1a5fb423d753b0e8aea4d24c",
+      "frame": {
+        "width": 1280,
+        "height": 720
+      },
+      "offset": {
+        "left": 234,
+        "top": 231
+      },
+      "size": {
+        "width": 358,
+        "height": 137
+      }
+    },
+    {
+      "file": "troop-carrier-rear-MOB-A.avif",
+      "kind": "build-layer",
+      "id": "troop-carrier-rear-MOB-A",
+      "depth": 20.766,
+      "slot": "powerpack",
+      "bytes": 2917,
+      "sha256": "5f4b2a3d71ce89bca59029a6ff96953944be11cc4f707ac03946b82294b48710",
+      "frame": {
+        "width": 1280,
+        "height": 720
+      },
+      "offset": {
+        "left": 233,
+        "top": 281
+      },
+      "size": {
+        "width": 174,
+        "height": 100
+      }
+    },
+    {
+      "file": "troop-carrier-rear-MOB-B.avif",
+      "kind": "build-layer",
+      "id": "troop-carrier-rear-MOB-B",
+      "depth": 20.507,
+      "slot": "running",
+      "bytes": 5401,
+      "sha256": "69f17d8ac813fdb202343cf11990f595d837571730409043bdd89fd0db70fa43",
+      "frame": {
+        "width": 1280,
+        "height": 720
+      },
+      "offset": {
+        "left": 222,
+        "top": 494
+      },
+      "size": {
+        "width": 427,
+        "height": 112
+      }
+    },
+    {
+      "file": "troop-carrier-rear-MOB-C.avif",
+      "kind": "build-layer",
+      "id": "troop-carrier-rear-MOB-C",
+      "depth": 20.506,
+      "slot": "running",
+      "bytes": 25862,
+      "sha256": "86ba45892ca5119c7baf938be8993b21289d82508fa4164a55c22d20aa5ed8e4",
+      "frame": {
+        "width": 1280,
+        "height": 720
+      },
+      "offset": {
+        "left": 204,
+        "top": 458
+      },
+      "size": {
+        "width": 564,
+        "height": 177
+      }
+    },
+    {
+      "file": "troop-carrier-rear-MOB-D.avif",
+      "kind": "build-layer",
+      "id": "troop-carrier-rear-MOB-D",
+      "depth": 20.478,
+      "slot": "running",
+      "bytes": 4078,
+      "sha256": "dc21088365ef97e534edb3aba989881089c8fb65d3d3f0d8d36a89bf642279dd",
+      "frame": {
+        "width": 1280,
+        "height": 720
+      },
+      "offset": {
+        "left": 230,
+        "top": 487
+      },
+      "size": {
+        "width": 413,
+        "height": 109
+      }
+    },
+    {
+      "file": "troop-carrier-rear-MOB-E.avif",
+      "kind": "build-layer",
+      "id": "troop-carrier-rear-MOB-E",
+      "depth": 18.852,
+      "slot": "tanks",
+      "bytes": 4177,
+      "sha256": "4df838f6acd1674fb2d30c761f23574ff8329b8584f7ce4df75badbd9a7c9cfb",
+      "frame": {
+        "width": 1280,
+        "height": 720
+      },
+      "offset": {
+        "left": 649,
+        "top": 471
+      },
+      "size": {
+        "width": 234,
+        "height": 175
       }
     },
     {
       "file": "troop-carrier-rear-MOB-F.avif",
       "kind": "build-layer",
       "id": "troop-carrier-rear-MOB-F",
-      "depth": 22.13,
+      "depth": 20.768,
       "slot": "powerpack",
-      "bytes": 2197,
-      "sha256": "1c4439d4bda7932f2935ae4f08b984613f23634816d88f538ac160a465ea475b",
+      "bytes": 1997,
+      "sha256": "1492631cf9e958d3d9ea083d802d43aa1b4debefdf73a37af9cb0a20af2939c1",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 309,
-        "top": 268
+        "left": 234,
+        "top": 309
       },
       "size": {
-        "width": 111,
-        "height": 64
+        "width": 155,
+        "height": 59
       }
     },
     {
       "file": "troop-carrier-rear-MOB-G.avif",
       "kind": "build-layer",
       "id": "troop-carrier-rear-MOB-G",
-      "depth": 21.835,
+      "depth": 20.506,
       "slot": "running",
-      "bytes": 16491,
-      "sha256": "96744775c876ef86e1012b17621d1a8928595cf51f9bff2b6c9e9a7133acd0a7",
+      "bytes": 19202,
+      "sha256": "9fa5fc8350036139765f3092697179d3b2c9ea518f7f22467312d7ffd1ed622e",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 226,
-        "top": 401
+        "left": 201,
+        "top": 457
       },
       "size": {
-        "width": 482,
-        "height": 197
+        "width": 561,
+        "height": 178
       }
     },
     {
       "file": "troop-carrier-rear-PRO-A.avif",
       "kind": "build-layer",
       "id": "troop-carrier-rear-PRO-A",
-      "depth": 21.156,
+      "depth": 19.979,
       "slot": "side-armour",
-      "bytes": 8589,
-      "sha256": "c6934295da6c18cf55d6ee6012463c90e4b85aeb2e26fcf584e329f377174a42",
+      "bytes": 10219,
+      "sha256": "da30346f2151e3c0e4a228eb00037984706af2b45f9459cdc200f2495d7f777e",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 241,
-        "top": 362
+        "left": 233,
+        "top": 397
       },
       "size": {
-        "width": 434,
-        "height": 172
+        "width": 499,
+        "height": 192
       }
     },
     {
       "file": "troop-carrier-rear-PRO-B.avif",
       "kind": "build-layer",
       "id": "troop-carrier-rear-PRO-B",
-      "depth": 23.443,
+      "depth": 21.964,
       "slot": "front-armour",
-      "bytes": 2662,
-      "sha256": "3d2acb4b1ca6225c03951c09345bac9d4917cbe753be5575256e24c0775f543d",
+      "bytes": 2978,
+      "sha256": "5fca191859452bce5c34a86f6228a3e56a2b414c57da408047804ef33479273b",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 210,
-        "top": 280
+        "left": 175,
+        "top": 328
       },
       "size": {
-        "width": 199,
-        "height": 78
+        "width": 212,
+        "height": 89
       }
     },
     {
       "file": "troop-carrier-rear-PRO-C.avif",
       "kind": "build-layer",
       "id": "troop-carrier-rear-PRO-C",
-      "depth": 21.156,
+      "depth": 19.979,
       "slot": "side-armour",
-      "bytes": 7918,
-      "sha256": "f9601205c0eb601aa27d4d13a0bbc480c156d03ec8ce4480e8ad704e73a94c96",
+      "bytes": 8785,
+      "sha256": "0d7dd82d85a7dddb43bad55bd81d54ee1ecdbf4f79e9d08628ee09791874fc96",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 244,
-        "top": 363
+        "left": 239,
+        "top": 402
       },
       "size": {
-        "width": 419,
-        "height": 161
+        "width": 479,
+        "height": 172
       }
     },
     {
       "file": "troop-carrier-rear-PRO-D.avif",
       "kind": "build-layer",
       "id": "troop-carrier-rear-PRO-D",
-      "depth": 22.615,
+      "depth": 21.283,
       "slot": "roof-armour",
-      "bytes": 1172,
-      "sha256": "8ee36ee9e33c8e68f80426858330fd3cab09abd2bd9c6e6b0174c16256c014d9",
+      "bytes": 996,
+      "sha256": "27511d5f0bdab04657c97dd577103eb281bda6130d4aba6866c325a47ff22d46",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 362,
-        "top": 281
+        "left": 347,
+        "top": 329
       },
       "size": {
         "width": 60,
-        "height": 36
+        "height": 30
       }
     },
     {
       "file": "troop-carrier-rear-PRO-E.avif",
       "kind": "build-layer",
       "id": "troop-carrier-rear-PRO-E",
-      "depth": 21.165,
+      "depth": 19.985,
       "slot": "side-armour",
-      "bytes": 11946,
-      "sha256": "28afb724e7208f9b5e16ee045d7ceaf8bf7351a7ab0acb438ff825072394a452",
+      "bytes": 11907,
+      "sha256": "c5d55c88161cc5685b76389289e05ed6332c99913fc6af6d588cc30a87224c60",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 238,
-        "top": 358
+        "left": 230,
+        "top": 407
       },
       "size": {
-        "width": 418,
-        "height": 202
+        "width": 493,
+        "height": 140
       }
     },
     {
       "file": "troop-carrier-rear-PRO-F.avif",
       "kind": "build-layer",
       "id": "troop-carrier-rear-PRO-F",
-      "depth": 21.792,
+      "depth": 20.462,
       "slot": "belly",
-      "bytes": 2547,
-      "sha256": "eeab4ec75cba696369767fe567b314d3f5a55a2a5dd8dc48bb5d50b2b9e17e8e",
+      "bytes": 2969,
+      "sha256": "a6b6a07b7d14b51c8f8af3f4cf57132f64d85f3184a868ac7f4824af389b3e5b",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 301,
-        "top": 472
+        "left": 282,
+        "top": 524
       },
       "size": {
-        "width": 446,
-        "height": 114
+        "width": 515,
+        "height": 97
       }
     },
     {
       "file": "troop-carrier-rear-PRO-G.avif",
       "kind": "build-layer",
       "id": "troop-carrier-rear-PRO-G",
-      "depth": 22.61,
+      "depth": 21.28,
       "slot": "roof-armour",
-      "bytes": 1899,
-      "sha256": "5a21657ea25ac890613cb2d45538e7cff70790c49b54820b19ac1c8f65480ced",
+      "bytes": 1708,
+      "sha256": "ac763d70e3477e19015d4d69a21a8426f95c778d154fcc0ff07120a6933533bb",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 332,
-        "top": 274
+        "left": 342,
+        "top": 323
       },
       "size": {
-        "width": 91,
-        "height": 44
+        "width": 70,
+        "height": 37
       }
     },
     {
       "file": "troop-carrier-rear-SA-A.avif",
       "kind": "build-layer",
       "id": "troop-carrier-rear-SA-A",
-      "depth": 23.45,
+      "depth": 22.107,
       "slot": "optics",
-      "bytes": 2462,
-      "sha256": "9e1aaab3ab2ed7c335c948bebd5fb426b3b0e95cf85a15b7d0d88eb178f34c4e",
+      "bytes": 2151,
+      "sha256": "0728f7eb24b52666d52850ad14d80f004314b1420feaf134bd6ccefbf457e95e",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 325,
-        "top": 231
+        "left": 300,
+        "top": 282
       },
       "size": {
-        "width": 112,
-        "height": 93
+        "width": 111,
+        "height": 84
       }
     },
     {
       "file": "troop-carrier-rear-SA-B.avif",
       "kind": "build-layer",
       "id": "troop-carrier-rear-SA-B",
-      "depth": 21.528,
+      "depth": 20.184,
       "slot": "sensor-mast",
-      "bytes": 2587,
-      "sha256": "fed9ef8f57aa9adc10aa60bdeeef0d0a664d62264135f26dd07d95e4bbf99ea4",
+      "bytes": 2470,
+      "sha256": "6e55acd32170c47acd09b225da315efb32db05f06d60d20adeed7927c0895543",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 246,
-        "top": 154
+        "left": 299,
+        "top": 183
       },
       "size": {
-        "width": 125,
-        "height": 174
+        "width": 72,
+        "height": 184
       }
     },
     {
       "file": "troop-carrier-rear-SA-C.avif",
       "kind": "build-layer",
       "id": "troop-carrier-rear-SA-C",
-      "depth": 23.44,
+      "depth": 22.11,
       "slot": "optics",
-      "bytes": 2343,
-      "sha256": "67ece0efd35f78ed971294414217d4c389aae16e4ee80e7fabf5e2d388735e69",
+      "bytes": 2015,
+      "sha256": "7a53f31757d429c8bfc64390ccfc5aed13e10de815fc4a3d3409e00885dfbb61",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 337,
-        "top": 223
+        "left": 309,
+        "top": 275
       },
       "size": {
-        "width": 100,
-        "height": 101
+        "width": 102,
+        "height": 84
       }
     },
     {
       "file": "troop-carrier-rear-SA-D.avif",
       "kind": "build-layer",
       "id": "troop-carrier-rear-SA-D",
-      "depth": 21.424,
+      "depth": 20.136,
       "slot": "sensor-mast",
-      "bytes": 3591,
-      "sha256": "c732fd90efdc02f8102336796af62a4c240ab9ebecb069b1a18a3f38e640c08b",
+      "bytes": 3470,
+      "sha256": "6fd20e02eb00d51b107407e52c624b78ecf02d174b7cde3efa3e5ec7e7a323a6",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 246,
-        "top": 36
+        "left": 307,
+        "top": 59
       },
       "size": {
-        "width": 126,
-        "height": 294
+        "width": 63,
+        "height": 308
       }
     },
     {
       "file": "troop-carrier-rear-SA-E.avif",
       "kind": "build-layer",
       "id": "troop-carrier-rear-SA-E",
-      "depth": 23.401,
+      "depth": 22.07,
       "slot": "optics",
-      "bytes": 2749,
-      "sha256": "b28a0199dd820758e9c4ff3f73b55f16feda54f7f7844b97562b1de1dd5c011e",
+      "bytes": 2380,
+      "sha256": "c70ce2855c0c76c38b6a7465fd246f490351ea425f487779c39f00bcbd6bdbba",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 328,
-        "top": 214
+        "left": 301,
+        "top": 266
       },
       "size": {
-        "width": 109,
-        "height": 115
+        "width": 110,
+        "height": 100
       }
     },
     {
       "file": "troop-carrier-rear-SA-F.avif",
       "kind": "build-layer",
       "id": "troop-carrier-rear-SA-F",
-      "depth": 21.671,
+      "depth": 20.469,
       "slot": "sensor-pods",
-      "bytes": 4383,
-      "sha256": "802a1bab6aad3d59ba0139015e6bd4439b738f1fd8590151709d6225881cb1f5",
+      "bytes": 4570,
+      "sha256": "3d7ebc9e4c90695ffaeb37c41a30723e90927f6d07670eda12956652e4d111d8",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 252,
-        "top": 221
+        "left": 243,
+        "top": 279
       },
       "size": {
-        "width": 416,
-        "height": 144
+        "width": 439,
+        "height": 114
       }
     },
     {
       "file": "troop-carrier-rear-SA-G.avif",
       "kind": "build-layer",
       "id": "troop-carrier-rear-SA-G",
-      "depth": 21.681,
+      "depth": 20.473,
       "slot": "sensor-pods",
-      "bytes": 4261,
-      "sha256": "7e795c07707c0761f55d841aa845058555207f357cb691e38c0750abfe1dd814",
+      "bytes": 4546,
+      "sha256": "49b5550393d833b9252e00b002c302ed2347051bc7a2d67792028b122d64d9bf",
       "frame": {
         "width": 1280,
         "height": 720
       },
       "offset": {
-        "left": 255,
-        "top": 228
+        "left": 243,
+        "top": 288
       },
       "size": {
-        "width": 410,
-        "height": 137
+        "width": 436,
+        "height": 105
       }
     },
     {
@@ -23948,8 +24142,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "troop-carrier-turntable-00",
       "depth": 14.588,
-      "bytes": 22694,
-      "sha256": "f33cf02c165d7fc8e7fc7d2c1db7f5f4888c0dc83fc9bf409ed4acc1d5672bca",
+      "bytes": 22833,
+      "sha256": "468dc156f82c65e452f317c910349254c17377bced607e80f900d50dd861b463",
       "frame": {
         "width": 960,
         "height": 540
@@ -23968,8 +24162,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "troop-carrier-turntable-01",
       "depth": 13.924,
-      "bytes": 23539,
-      "sha256": "750d4f920d30462c17914c58727e58a5a5d804686cc2df5276f416ddade658bb",
+      "bytes": 23496,
+      "sha256": "670da9464b9074e997c35cd1a6bc8ea8df46db2d840152187a869d789a43b8f5",
       "frame": {
         "width": 960,
         "height": 540
@@ -23988,8 +24182,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "troop-carrier-turntable-02",
       "depth": 13.081,
-      "bytes": 26374,
-      "sha256": "2331a61180e365ce28c96485efd15b84e8ee36068a0de9b8dd842595d9b9cbcd",
+      "bytes": 26178,
+      "sha256": "c2b87f873675cd85b8391af8b765fbff2dbfe86bea8bd336bb57b19658fefb22",
       "frame": {
         "width": 960,
         "height": 540
@@ -24008,8 +24202,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "troop-carrier-turntable-03",
       "depth": 11.773,
-      "bytes": 29438,
-      "sha256": "c8a5c3a3d7d1a229ad11bda3c3050fe1c256f297c539dd51c42ce60123da0368",
+      "bytes": 29552,
+      "sha256": "3b1005a7152b9c5bb757a3ed41a8d92e0108b773e57a3023f3ad71a4a920653f",
       "frame": {
         "width": 960,
         "height": 540
@@ -24028,8 +24222,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "troop-carrier-turntable-04",
       "depth": 11.536,
-      "bytes": 25757,
-      "sha256": "025220e9fe5552c7aeb3b2b6cd183fbe1736d5a6ed3d75999078f7350b0db473",
+      "bytes": 25653,
+      "sha256": "5028bed7224b513a08a6395d7ee6bb5bc1523bb27835da2eb92ab17f4f99dfbb",
       "frame": {
         "width": 960,
         "height": 540
@@ -24048,8 +24242,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "troop-carrier-turntable-05",
       "depth": 11.558,
-      "bytes": 18804,
-      "sha256": "e01e876dd9717b80dbfd891c6b840d2925196c04fcc19588758ae07a408f57a6",
+      "bytes": 18688,
+      "sha256": "6cb27492aad236ed193bd9f5a42035930036bf2db2ba0228c687e6e28cd876ef",
       "frame": {
         "width": 960,
         "height": 540
@@ -24068,8 +24262,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "troop-carrier-turntable-06",
       "depth": 11.299,
-      "bytes": 16985,
-      "sha256": "5b6bfbc4f455eca4b0cc1b7e542aa19905b6cdf4eee80a66698ddc8e3d03fac0",
+      "bytes": 16723,
+      "sha256": "be83254bb49f11f59cfd1477086f9cc833e899f4170dca590e1cb7ac972baba6",
       "frame": {
         "width": 960,
         "height": 540
@@ -24087,9 +24281,9 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "file": "troop-carrier-turntable-07.avif",
       "kind": "turntable",
       "id": "troop-carrier-turntable-07",
-      "depth": 11.557,
-      "bytes": 19353,
-      "sha256": "60a3eedcbef44bc014e1083a6a8cd51120c5d78d3635626595a981a5c9d422e0",
+      "depth": 11.558,
+      "bytes": 19465,
+      "sha256": "713f3a79d576b8cd870a00a0355c93993f8a988b6937ff4300df7a9e280fa104",
       "frame": {
         "width": 960,
         "height": 540
@@ -24108,8 +24302,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "troop-carrier-turntable-08",
       "depth": 11.535,
-      "bytes": 26473,
-      "sha256": "d1d2b1ad6be7449e8f7ef861e2eaea78cae02ad3da87fc5c2f4d7eadabe9e277",
+      "bytes": 26455,
+      "sha256": "f43eea0722f6b53106dfd99bc36abe298e77d7956e112a608ce332d0d55614d1",
       "frame": {
         "width": 960,
         "height": 540
@@ -24128,8 +24322,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "troop-carrier-turntable-09",
       "depth": 11.772,
-      "bytes": 29633,
-      "sha256": "a1d0be5d28062e7d29131455ad23e70d9f706c374429fc0f048715bd9821c15a",
+      "bytes": 29676,
+      "sha256": "df9105673b457335db45c2c6539044621db548a961420935dc28fb385d74339a",
       "frame": {
         "width": 960,
         "height": 540
@@ -24140,7 +24334,7 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       },
       "size": {
         "width": 871,
-        "height": 487
+        "height": 486
       }
     },
     {
@@ -24148,8 +24342,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "troop-carrier-turntable-10",
       "depth": 13.08,
-      "bytes": 26389,
-      "sha256": "cecb5085fb237fc3a07c4a272793876ecbacaaa39909deeee943cc36e53e7aff",
+      "bytes": 26291,
+      "sha256": "712e2b91516fcb3a0d82ccd9e966b13b6eacb3cbc6ffed23de4376f642a57b98",
       "frame": {
         "width": 960,
         "height": 540
@@ -24159,7 +24353,7 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
         "top": 70
       },
       "size": {
-        "width": 902,
+        "width": 901,
         "height": 394
       }
     },
@@ -24168,8 +24362,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "troop-carrier-turntable-11",
       "depth": 13.922,
-      "bytes": 23674,
-      "sha256": "d6c99c00a9db5c98cbba55476db60963ef12b9b5a64e3ed110f5c2b5a6d98255",
+      "bytes": 23802,
+      "sha256": "5b8ed1712206beef25537b5c11591ed47ef02c459f6c1ff3ca4d7e90bf6a5062",
       "frame": {
         "width": 960,
         "height": 540
@@ -24188,19 +24382,19 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "troop-carrier-turntable-12",
       "depth": 14.586,
-      "bytes": 22516,
-      "sha256": "802ceb2e1a2327e41affc981fc1932713f39e03b7ebfbf7ed5700a413f46f826",
+      "bytes": 22471,
+      "sha256": "30e62d2b5111491ce151197821c6d17175dd01c5520f0c69048e5dedde69d796",
       "frame": {
         "width": 960,
         "height": 540
       },
       "offset": {
         "left": 39,
-        "top": 108
+        "top": 109
       },
       "size": {
         "width": 893,
-        "height": 330
+        "height": 329
       }
     },
     {
@@ -24208,8 +24402,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "troop-carrier-turntable-13",
       "depth": 14.366,
-      "bytes": 24449,
-      "sha256": "b9756d47dd18f52a5b63f616435a86acd825aeca418609eafb7c55ffbfb45c53",
+      "bytes": 24433,
+      "sha256": "2a211f0ee5cf1ab0bdbed428e641a09afb182e947e60799f654e224ffec80794",
       "frame": {
         "width": 960,
         "height": 540
@@ -24228,8 +24422,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "troop-carrier-turntable-14",
       "depth": 13.705,
-      "bytes": 26267,
-      "sha256": "eb22194314942116c204fd0252d35228673f819c56e934ec10a8dc1101c6c69e",
+      "bytes": 26326,
+      "sha256": "a2d771e63fe1e6ab76e1b54bcb85a55f3fe7abf5c8c82f785594099697c73081",
       "frame": {
         "width": 960,
         "height": 540
@@ -24248,8 +24442,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "troop-carrier-turntable-15",
       "depth": 12.246,
-      "bytes": 28441,
-      "sha256": "32291eb08f30d47e55eca06aab595d16368c47d22a349614e12fadf4c6db55a7",
+      "bytes": 28509,
+      "sha256": "03b164bdb9ef27ce11c5a829f67091159a443ccf62fd498d82f720628620d417",
       "frame": {
         "width": 960,
         "height": 540
@@ -24268,8 +24462,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "troop-carrier-turntable-16",
       "depth": 11.449,
-      "bytes": 26586,
-      "sha256": "a845b147fed46b45f9cc85d446dfa4a9294226b440bf5bd30a97bdec2b28f13b",
+      "bytes": 26479,
+      "sha256": "c544b3903b30086e59963e414c366dad8196da0d1405ce62f3ce00a441e183be",
       "frame": {
         "width": 960,
         "height": 540
@@ -24287,9 +24481,9 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "file": "troop-carrier-turntable-17.avif",
       "kind": "turntable",
       "id": "troop-carrier-turntable-17",
-      "depth": 11.634,
-      "bytes": 18619,
-      "sha256": "f3d58d2d4ecb83272e69e91958bf697198ceb5bd18a602a305ed22334199a49b",
+      "depth": 11.633,
+      "bytes": 18685,
+      "sha256": "4dd53c8a99528f3ad3bb357ff53e7f295b17337c81eafc2e661bbb360fac8414",
       "frame": {
         "width": 960,
         "height": 540
@@ -24308,8 +24502,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "troop-carrier-turntable-18",
       "depth": 11.53,
-      "bytes": 13918,
-      "sha256": "e018c0bf233fe0bd69eebb66a62de9202ab3e654e778fd299960ddd367fecda3",
+      "bytes": 13934,
+      "sha256": "2556cfca6d345796ea5a686fbc6aa9a805dbd9414f7bf59c8d6d38995973091d",
       "frame": {
         "width": 960,
         "height": 540
@@ -24328,8 +24522,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "troop-carrier-turntable-19",
       "depth": 11.634,
-      "bytes": 18822,
-      "sha256": "ae4ea0a91f723be9e804224a7a463161dd614d4418919b1e0b0bc5be5443a3aa",
+      "bytes": 18883,
+      "sha256": "649f33cd8833c8c9c4577aae301caef9293cf83ff3e797e1890b9c63455d743e",
       "frame": {
         "width": 960,
         "height": 540
@@ -24347,9 +24541,9 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "file": "troop-carrier-turntable-20.avif",
       "kind": "turntable",
       "id": "troop-carrier-turntable-20",
-      "depth": 11.45,
-      "bytes": 26477,
-      "sha256": "89b122cfd7af41da80a6335f53b986ea3d64d007f158f7d7ee960139df804dba",
+      "depth": 11.449,
+      "bytes": 26502,
+      "sha256": "d96e68ecd3d1483692ebc76b1ef149a7e5fefe61baac925bf858b85e4df7eaef",
       "frame": {
         "width": 960,
         "height": 540
@@ -24368,8 +24562,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "troop-carrier-turntable-21",
       "depth": 12.247,
-      "bytes": 28001,
-      "sha256": "de8af6cf8621fb79b9db50a71c2ed357b3f706bc8d68aa2e2354c853b703bbcb",
+      "bytes": 28029,
+      "sha256": "bae1dc6b748295a9f37eb1409635ae03295a5059cee5ae94266c2fde53a06db2",
       "frame": {
         "width": 960,
         "height": 540
@@ -24388,8 +24582,8 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "kind": "turntable",
       "id": "troop-carrier-turntable-22",
       "depth": 13.706,
-      "bytes": 25334,
-      "sha256": "8d082217e115beec5e06b1d2256aa4f048f0de8d684096f80327f66aff59a721",
+      "bytes": 25331,
+      "sha256": "e56d6a04865c2f00661447bdb3aba0ba4978501bf7190b6fc0941d88a52cec1e",
       "frame": {
         "width": 960,
         "height": 540
@@ -24407,9 +24601,9 @@ Paths: `content/renders/manifest.json`. SHA-256 `eb4b0fbe29ad67f4d3b25590548bc52
       "file": "troop-carrier-turntable-23.avif",
       "kind": "turntable",
       "id": "troop-carrier-turntable-23",
-      "depth": 14.368,
-      "bytes": 23760,
-      "sha256": "09589fadc26ff4e272b00af20cefa4761acbeca035ec6b5da301ba6c59c9fd9c",
+      "depth": 14.367,
+      "bytes": 23775,
+      "sha256": "159aff16f1db25e01e076a9db944ceb71691700c79519f70dbeb22c8ef1f24f5",
       "frame": {
         "width": 960,
         "height": 540
@@ -25311,12 +25505,12 @@ Exportez une sauvegarde par **Menu → Exporter une sauvegarde** après la confi
 
 ### docs/HANDOVER.md
 
-Paths: `docs/HANDOVER.md`. SHA-256 `4eecd5f3eb3d0cebf80b071946fa2ee4980e3ee1fb652db0eb19af82495504de`, 5038 bytes.
+Paths: `docs/HANDOVER.md`. SHA-256 `7e3144a6b8ad23c7e6b9b525fe62fd4eb36e9247a0b8533b103a428a63f07219`, 6392 bytes.
 
 ```markdown
 # Handover
 
-Updated 2026-10-11 (America/Toronto). Specification: [MPES](MPES.md) 4.3.0. Evidence: [verification/0.5.1.0.md](verification/0.5.1.0.md), [verification/0.5.0.0.md](verification/0.5.0.0.md), [verification/spike-visual.md](verification/spike-visual.md).
+Updated 2026-10-11 (America/Toronto). Specification: [MPES](MPES.md) 4.4.0. Evidence: [verification/0.5.1.0.md](verification/0.5.1.0.md), [verification/0.5.0.0.md](verification/0.5.0.0.md), [verification/spike-visual.md](verification/spike-visual.md).
 
 ## 1. Version and milestone
 
@@ -25348,8 +25542,10 @@ Shared rules for every goal: `AGENTS.md`. KPIs and priority: MPES §1.4.
   - MPES has no code and names every file, script, pin, CSP directive and goal (`tests/unit/mpes.test.ts`); a Codex session given only MPES wrote a rebuild plan and its gaps were fixed (`docs/verification/0.5.1.0.md`);
   - `npm run codebase` writes `docs/CODEBASE.md`, which rebuilds every tracked file (`tests/unit/codebase.test.ts`);
   - `npm run archive:prep` (dry run; `--apply` only on the owner's cleanup request) and `RESTORE.md` (`tests/unit/archive.test.ts`);
-  - `AGENTS.md` rule 21: driving Codex headless.
-- **Imagery and 3D:** 821 AVIF stills (7.8 MB) and one packed model (all six vehicles, every part), Blender pipeline in [art/README.md](../art/README.md); the game parses only the team's vehicle; paced drawing (≤ 30 fps, ≤ half the machine); stills fallback without WebGL 2.
+  - `AGENTS.md` rule 21: driving Codex headless;
+  - owner FIX 1: build stills at yaw 30° pitch 6° and 210° pitch 6°, chosen by `art/tools/angles.ts`; `art/blender/fit.py` fails any part inside or outboard of a tyre or not attached, and the art passes it and `overlap.py` (MOB-D rebuilt inboard, rack, troop rear kit, recovery sensors, fasteners; `docs/verification/0.5.1.0.md`);
+  - sibling sweep of parts against hull fittings: 11 visible clashes (glacis armour over the vision blocks, nose kits through the tow shackles, a weapon station on the driver's hatch, rear kits over the door, and others) fixed and re-checked (`docs/verification/0.5.1.0.md`).
+- **Imagery and 3D:** 821 AVIF stills (7.6 MB) and one packed model (23.9 MB, 7.9 MB deflated) (all six vehicles, every part), Blender pipeline in [art/README.md](../art/README.md); the game parses only the team's vehicle; paced drawing (≤ 30 fps, ≤ half the machine); stills fallback without WebGL 2.
 - **Tests:** `npm run verify` (typecheck, lint, unit, build check, Playwright in Chromium, Firefox and Edge, then perf alone). 3D tests spoof a hardware renderer with `withGpu()` (`tests/e2e/helpers.ts`).
 
 ## 3. Not done
@@ -25361,7 +25557,7 @@ Shared rules for every goal: `AGENTS.md`. KPIs and priority: MPES §1.4.
 
 ## 4. In-progress work
 
-None. Run only one Blender or Codex job at a time: the owner uses this PC.
+Owner FIX 1 art fixes, the sibling sweep and the new `fit.py` overhang check are done and checked (fit, overlap, budgets, close-ups in `.artifacts/renders/closeups-hatch/`, `.artifacts/tmp/cu-sweep2/` and `cu-sweep3/`; two Codex reviews; `docs/verification/0.5.1.0.md`). The final re-render (`.artifacts/renders/v4`, log `.artifacts/logs/render-v4.log`) is encoded into `content/renders`, the model exported and packed into `content/models/showcase.glb`, and `npm run verify` passes; earlier render runs are in `_archive/recycle/2026-10-11/`. Left: commit and push, two green CI runs, the gallery and the owner GO, then merge, tag and the Pages check. Run only one Blender job at a time: the owner uses this PC. Codex sessions that do not run Blender (reviews, drafts) may run alongside it.
 
 ## 5. Next action
 
@@ -25619,7 +25815,7 @@ The three Firefox failures are browser-internal and appeared only under full loc
 
 ### docs/verification/0.5.1.0.md
 
-Paths: `docs/verification/0.5.1.0.md`. SHA-256 `8f006a3a35f4a34acfc55d75f3539720e1fa08312841e9dab78139377c246b94`, 6474 bytes.
+Paths: `docs/verification/0.5.1.0.md`. SHA-256 `a93b276784b79617adbab74a7a81fc268c28c01a8f00243fe635d3c0ccfe06c0`, 15045 bytes.
 
 ```markdown
 # Verification record: 0.5.1.0 beta (goal G2)
@@ -25646,9 +25842,9 @@ Goal G2: owner fixes and the documentation regime. Branch `goal2b/foundation`, f
 |---|---|---|
 | Types | `npm run typecheck` | PASS |
 | Lint | `npm run lint` | PASS |
-| Unit and property | `npm test` | PASS, 18 files, 196 tests |
+| Unit and property | `npm test` | PASS, 18 files, 203 tests |
 | Domain coverage | `npm run coverage` | PASS, 98.5% of lines (≥ 95%) |
-| Full gate | `npm run verify` (typecheck, lint, unit, build check, build, Playwright in Chromium, Firefox and Edge, then perf) | VERIFY_RESULT |
+| Full gate | `npm run verify` (typecheck, lint, unit, build check, build, Playwright in Chromium, Firefox and Edge, then perf) | PASS, 2026-10-11 after the final re-render: 203 unit tests; 124 Playwright tests passed, 48 skipped by design (pixel baselines and axe run in Chromium only); perf: model ready 562 ms, showcase update ≤ 48 ms, model memory 58 MB (`.artifacts/logs/g2-verify-sweep.log`). The twelve still baselines (`showcase-*-front`, `-rear`) were re-recorded for the new angles and geometry. |
 | CI, two consecutive green runs on one head | GitHub Actions `ci.yml` | CI_RESULT |
 | Owner visual check | `npm run gallery` → `.artifacts/review/0.5.1.0.html` | GALLERY_RESULT |
 
@@ -25681,6 +25877,51 @@ A Codex session reviewed the whole diff from `v0.5.0.0` (`.artifacts/codex-revie
 | 5 | The gallery built a tag with this checkout's `node_modules` | Confirmed; the tag runs `npm ci` when its lockfile differs |
 | 6 | README called the release tagged before the tag exists | Reworded; this record's results are filled at close-out |
 
+## Owner FIX 1: still angles and physical fit
+
+The owner asked for the best still angles and then spotted dampers modelled outside the tyres; they asked that sibling issues be found and fixed too.
+
+- Angles: `art/tools/angles.ts` renders the packed model from a yaw and pitch grid, framed as a build still, and counts each part's visible pixels with only the base in front. Yaw 30° pitch 6° (front) with yaw 210° pitch 6° (rear) hides the fewest parts across both stills and frames the vehicle larger than the former 38°/10° and 218°/12°.
+- Fit: `art/blender/fit.py` builds every vehicle with one part at a time and reports geometry inside a tyre or outboard of its sidewall beyond the hub, and any object more than 15 mm from the hull or from an attached object of its part. Its first run found the MOB-D dampers and a set of siblings: floating fasteners and straps (CAP-A, B, D, F front and bow panels; ACC-D and ACC-G cases, jerrycans and bands), wheel lugs and studs off their faces, FP, COM and SA parts on air, rack feet beside the hull, and the recovery hull's rear sensor seats over the roof chamfer.
+- Fixes: MOB-D rebuilt inboard (hub, ventilated brake, upright, double wishbones, canted coil-over); its card shows the station from inboard. Every fastener and strap now sits on its face. The roof rack's front bracket bolts to the flat roof outboard of the turret-mount flange; its rear bracket stands on a pad on the roof chamfer, behind the pioneer tools and clear of the module deck; both are braced from the sponson. The recovery rear sensors stand on the flat roof between cabin and crane.
+- Troop carrier: its rear ramp is lowered in the stills, so rear-slot parts were checked against the doorway. ACC-A's legs stand off the door pillars with the ropes over them and the towing eye trails behind the head, below the deck's radio masts; ACC-B's drawbar splits to a receiver on each pillar.
+- Codex review of this change (`.artifacts/codex/review-fit/review.md`, five findings): (1) `fit.py` treated a batched object as one piece, so one attached piece could carry floating ones: confirmed, it now splits every mesh into connected pieces, which found three more floaters per hull (FP-C roof bolts off the sloping roof, an FP-F louvre above the rear door, PRO-C end-bracket bolts off the light plate), all fixed; (2) MOB-D's inboard brake had no spindle to the hub: added; (3) the trailer lunette lies flat: rejected, a lunette drops over a vertical pintle, so its ring is horizontal by design; (4) the tyre test used vertices only: confirmed, it now samples surfaces (no new finding); (5) the rotor wear face stood 3.5 mm off the rotor: fixed; the calliper straddling the rotor edge is how a calliper fits, not a clash.
+- Results: `fit.py` all vehicles, all parts: PASS, 0 findings. `overlap.py`: PASS, 0 intersecting pairs (its first run after the rack change found 67 pairs between the rack feet and the modules, and 2 between ACC-A's towing eye and the COM-D and COM-E masts; all fixed). Close-ups were inspected for MOB-D, the troop carrier's rear, the rack and the recovery sensors.
+
+### Sibling sweep: parts against hull fittings
+
+A sweep (`.artifacts/tmp/basehit.py`) built every vehicle with one part at a time and listed each part object that intersects a hull object: 2,507 grouped hits over 493 part-and-fitting pairs, most of them feet and shoes seated on the hull. A Codex triage (`.artifacts/codex/triage-basehit/triage.md`) sorted them into seats (hidden or intended contacts: mounting soles, running gear on the base wheels, snow chains, parts beneath a module) and 11 visible clashes, each confirmed on a close-up. A Codex session fixed them, one Blender process at a time, and the fixes were re-checked on new close-ups:
+
+| # | Part | Clash | Fix |
+|---:|---|---|---|
+| 1 | PRO-B | Tiles over the vision blocks, grab loops and lamp cages; shoes on the nose hinges | Guarded openings over the vision blocks, notches round the grab loops and lamp cages, shoes moved clear (the card keeps its solid face) |
+| 2 | ACC-C | Beam through the tow shackles | Beam relieved round each shackle |
+| 3 | ACC-E | Crossbeam and arm pivots through the tow shackles | Crossbeam split round the shackles, supports outboard, nose pads |
+| 4 | ACC-F | Winch bed and hose through the tow shackles | Bed split round the shackles, feet inboard, hose rerouted |
+| 5 | FP-D, FP-E | Auxiliary weapon station on the driver's hatch | The driver's hatch moved outboard, under the station; the station stands on a hat-shaped adapter over the closed hatch, ammunition to the outside (command post and mine clearer, without the hatch, keep the station on the roof) |
+| 6 | ACC-A | Rear brackets over the personnel door; rope hangers through the troop carrier's tail lights | Legs and coils at the rear corners, braced; hangers on the leg line |
+| 7 | ACC-B | Receiver and drawbar across the personnel door | A receiver at each rear corner (the troop carrier keeps its pillar pair) |
+| 8 | PRO-G | Canopy foot on the hatch gasket | Clear once the hatch moved outboard; the foot stays at the eave |
+| 9 | COM-D, COM-E | Recovery crane ram through the radio rack; a whip through the boom | Ram beside the boom on longer pins; the whip on the far tray corner |
+| 10 | MOB-E | Tank hangers and straps through the arch guard | Hangers inboard, straps outboard |
+| 11 | PRO-E | Top slat into the jerrycan tray | Rows 20 mm lower |
+
+A Codex review of the fixes found three faults (the station over the roof chamfer, the wrong canopy foot moved, a rope-hanger support across the troop carrier's ramp); all three are fixed by the hatch move and per-side hangers. Results after the fixes: the sweep of these 13 parts leaves only seats (shoes, feet, pads and race rings on the hull or nose, the troop carrier's brackets on its door pillars, deck shoes on the troop compartment). `fit.py` all vehicles, all parts: PASS, 0 findings. `overlap.py`: PASS, 0 pairs. `tris.py`: PASS, no layer over budget.
+
+### Overhang check and its sweep
+
+A final Codex review (`.artifacts/codex/review-final/`) found the SA-G hub foot half over the recovery hull's roof chamfer (accepted) and asked for the ramp towing eye to face aft (rejected: on the ramp the eye's loop already trails aft). `fit.py` gained a check for that class: a downward face seated on a level surface must not have more than 10% of its sole more than 40 mm over a slope or an edge, unless the part's own bracing (a knee, a strut) stands within 300 mm beneath it; running gear on the base's wheels is exempt. Its first run found the same fault on other parts, all fixed:
+
+| Part | Fault | Fix |
+|---|---|---|
+| SA-F, SA-G | Hub foot and front corner feet over the roof chamfer | Feet inboard of the roof edge; on the recovery hull a narrower foot between the edge and the rear service plate |
+| SA-B, SA-D | Feet and anchors over the roof edge at the sensor mast | Narrow feet and anchors in a lane between the roof edge and the engine deck; the engine deck grille narrowed to make the lane |
+| COM-A to COM-G | Rear trays' shoes cantilevered over the rear face | A knee under each shoe to its end, on the hull's rear face (2 mm off it, clear of the troop compartment); the outer trays inboard of the roof edge, the recovery left tray 40 mm further in to clear the crane ram |
+
+A second Codex review (GPT-6.1 Sol, medium; `.artifacts/codex/review-final/review2.md`, `disposition2.md`) found five more faults, all accepted and fixed: FP-D's ammunition box into its camera on the vehicle (camera to the other side, as on the card); a COM-E whip floating beside the radio (back on the lid); SA-F and SA-G front corner feet 25 mm over the chamfer (45 mm inboard); and two loopholes in the overhang check (a sole split into faces is now judged as one sole; only solid bracing touching the sole holds it, not a loose surface lower down), proved on a synthetic case.
+
+Results: `fit.py` all vehicles, all parts: PASS, 0 findings. `overlap.py`: PASS, 0 pairs. `tris.py`: PASS. The part-against-hull sweep of COM-A to COM-G, SA-B, SA-D, SA-F, SA-G, FP-D, FP-E, PRO-G and ACC-A on the six vehicles leaves only seats. Close-ups: `.artifacts/tmp/cu-sweep2/sheet.jpg`.
+
 ## Local browser runs and the GPU
 
 During this goal the owner's local language model (`llama-server`) held about 15.4 of 16.3 GB of the RTX 5060 Ti's memory at 92–100% use. Under that load headless Firefox failed with "RenderCompositorSWGL failed mapping default framebuffer" and four Firefox tests (`rehearsal.spec.ts:43`, `slice.spec.ts:8`, `showcase.spec.ts:32`, `showcase.spec.ts:226`) timed out in the full run; run alone, the same nine Firefox tests passed (`.artifacts/logs/g2-firefox-rerun.log`). The cause is outside the project and is not called a flake; CI, on its own runner, is the authoritative browser run.
@@ -25688,6 +25929,7 @@ During this goal the owner's local language model (`llama-server`) held about 15
 ## Residual risks (unchanged)
 
 Real learners (S3); Narrator and NVDA users; no physical laptop test (D-16); CI runs Windows Server, not Windows 11; art quality is the owner's judgement (`docs/owner/art-review.md`, BLOCKED-owner).
+
 ```
 
 ### docs/verification/source-fidelity.md
@@ -39637,828 +39879,828 @@ Keys and the commands that make each kind again:
 
 | Path | Bytes | SHA-256 | Key |
 |---|---:|---|---|
-| `content/models/showcase.glb` | 23880460 | `cd3d8b79b62883ed5ee895c3bcf3323f31cebe0544059a6d48aaff37536d5bd4` | M |
-| `content/renders/card-ACC-A.avif` | 9720 | `b71ca22c8544c147a61247225ad72f1748515007a3520315ddfe7afacf02e120` | R |
-| `content/renders/card-ACC-B.avif` | 10454 | `8c4b38acc728babb8f5436627e0c55ecb2c5c4d53647b88c73e45d36f198c26a` | R |
-| `content/renders/card-ACC-C.avif` | 14738 | `798ceff23ffbe70a2f6c4c03765dd4ad91149d2dce0a5b4bfc87a963ede5de4a` | R |
-| `content/renders/card-ACC-D.avif` | 11619 | `21f81b869dd0cac74d6e8569228271faf456e0b6c5b64584a6ec1477b0346d7e` | R |
-| `content/renders/card-ACC-E.avif` | 8815 | `5a8bbfbf5e3a550088dbed5b8e6eef3f59bcd975196f00a8381496ddc121f460` | R |
-| `content/renders/card-ACC-F.avif` | 13637 | `ca365dedad2230bfeb6e39d8d4fd3f0c7ac4a06a7ee31875b3c62583ca10eb7c` | R |
-| `content/renders/card-ACC-G.avif` | 13686 | `8718f5b28c6b8816908780581d89388f56278ced3049941bc42734eddf3dd888` | R |
-| `content/renders/card-CAP-A.avif` | 7358 | `e51f5a1bb15fe0ad8b6ddaf11fb13d5300069379b6939b4c55c47f938ce49e23` | R |
-| `content/renders/card-CAP-B.avif` | 12367 | `8b8eeb63d9c2cbbbcf09bc199d4fe55496f8f710396279c8ef0f5f9ca0bf4b8c` | R |
-| `content/renders/card-CAP-C.avif` | 16757 | `7360e67628ae4687567e37ed45c16e040559825f273ad35fa7195fb922beba42` | R |
-| `content/renders/card-CAP-D.avif` | 15223 | `1465db6ef22670d0a7c52d99b9f285f460154ebf05a2f1508db35b5b6142e32b` | R |
-| `content/renders/card-CAP-E.avif` | 12402 | `c8afb7961fdce0684b1cfbd8d18c43d2f521b0d8ed1ac15a1e9a33c169ca6a7d` | R |
-| `content/renders/card-CAP-F.avif` | 12712 | `58ad042da7f8cefda34b0c071aafd2b70d30fe820d7b117c024c0f758c2cc38f` | R |
-| `content/renders/card-CAP-G.avif` | 16160 | `89c34bb682e4f6cbc961df8c229f1c4c717823d0b89a657ee135bfef9105298c` | R |
-| `content/renders/card-COM-A.avif` | 7684 | `dde7bd49fb4b034a31b8db32345bdfb42a219681326b00a151895ac2dc174ccc` | R |
-| `content/renders/card-COM-B.avif` | 6961 | `1e086ac4304d79934ab48fb23341e4e5683408db184c3193c6ca1721a8c3937a` | R |
-| `content/renders/card-COM-C.avif` | 9708 | `8121857350c72a433a13128acae0652e586e12cb45cfc2f20a1ed8c5e7d34bd4` | R |
-| `content/renders/card-COM-D.avif` | 8176 | `05aa3c64dc9f79369a3923a89ac4c2c8c1d7bfb45f2623801ffa44ff067f4cb4` | R |
-| `content/renders/card-COM-E.avif` | 7992 | `487ee3cf27f172227b85136708c6b95bd70e6e45f861c35053454acaea05edef` | R |
-| `content/renders/card-COM-F.avif` | 7660 | `dada2454544655c228ec59bc44cb9d4100916ad9d3d3ef47d62f2f4a59d4b649` | R |
-| `content/renders/card-COM-G.avif` | 11184 | `38501ce72f6e681211a7a9bbeb73bfc934336e4a4f625aa1cda21046f95f8de2` | R |
-| `content/renders/card-FP-A.avif` | 9875 | `068667f15e2ee7a0ee8dffa8e392ba9639d06e8b5bab1ddcd37d45177fa8c5a2` | R |
-| `content/renders/card-FP-B.avif` | 8746 | `bbbe62e9025f57b8eebcbe2c1ec091d534ef88b27aebeec28916dd4a0c7229d9` | R |
-| `content/renders/card-FP-C.avif` | 7227 | `b22c664b818eb4cf00e10b5497ce8d9db34230a733129900db5b0081cb233723` | R |
-| `content/renders/card-FP-D.avif` | 10380 | `d367fefea76e082b25c693f9fee677b719d19fc88ad0d3d9f7507ea5b7903333` | R |
-| `content/renders/card-FP-E.avif` | 10852 | `d58f781b0f1e00e337a0fbc7d73a2a4b412558df93bdb7a1ae37855244f4b378` | R |
-| `content/renders/card-FP-F.avif` | 8069 | `a8e002239f301026a6514ec9c3c16ff5582633ad5371b61c0a7c8631da6ea11d` | R |
-| `content/renders/card-FP-G.avif` | 10577 | `dfc6ed14d55239dd8eeec6958266553ef92238da7ef53c60604807e9f31ef8f7` | R |
-| `content/renders/card-MOB-A.avif` | 15757 | `8b6a0c13263124de4d60295d254a6d9062ede33104fec889040013191520a0b3` | R |
-| `content/renders/card-MOB-B.avif` | 9591 | `3a37adde2c954d540b5cb1288fe0259ddc2fa6bb433856fb6a3046cf1b2a375b` | R |
-| `content/renders/card-MOB-C.avif` | 13615 | `ccfb5b297ed5e2db106f22b8dbf34a1105867dfae6693a4a93797a0915961218` | R |
-| `content/renders/card-MOB-D.avif` | 12193 | `506b5be486e87060bf84ff5e2ffa7663493da9033fe6884a952a9754353c30e0` | R |
-| `content/renders/card-MOB-E.avif` | 10027 | `e6c9eccb243a76721c8840595020b3a589e3d808af16b79c38a31329f97b7e59` | R |
-| `content/renders/card-MOB-F.avif` | 17798 | `aab49e0bc9f0e8620477f3ccdaa1a50bfd5ab0c106d46d54190f66275b980207` | R |
-| `content/renders/card-MOB-G.avif` | 15989 | `7ef32fae1c6639a1aa9e9c981ab36d470435aea6ce950b5248b34ecbbe727ec9` | R |
-| `content/renders/card-PRO-A.avif` | 13347 | `70a96da7cbe606001846691692db82fdf5bd6c26e5906d422f9dc11bb1438a9b` | R |
-| `content/renders/card-PRO-B.avif` | 13616 | `12a543f76e4e0ade7156d7721fa3dee53e2b234d58d4b19b54d491f126d97fd2` | R |
-| `content/renders/card-PRO-C.avif` | 11137 | `0249edc26d32aed3515b4106b67ff93d3053cee64f8596be9a67b4534a89672b` | R |
-| `content/renders/card-PRO-D.avif` | 8813 | `b4a5f1fe8dc31fd807d8db7680140da764363ab897d4d7155bc7ae8e6ebdadba` | R |
-| `content/renders/card-PRO-E.avif` | 20757 | `f390d53cbe9d7823100faec39a14df1e82028cc51ab817c0bf8357f6732fa7f1` | R |
-| `content/renders/card-PRO-F.avif` | 8682 | `28b1e5babec6ff3c798d495e54744e18cc57fe671f298616e20ea09b102ca9e1` | R |
-| `content/renders/card-PRO-G.avif` | 21095 | `65bebf80e08c731ad956b9a69ab6d47b75582523991f30da497a76b7d006a7a2` | R |
-| `content/renders/card-SA-A.avif` | 7638 | `84905decd5d85d53695d1a6222a788b6af8941abfa5b7fa6384c1230179cd3e1` | R |
-| `content/renders/card-SA-B.avif` | 7278 | `c6940b89c116c912bf5f8dbe3a6033f30e156ff04441f0d4ce7b0a696b5afa93` | R |
-| `content/renders/card-SA-C.avif` | 10396 | `5704e3c44b134085c68fceb6c0cff569545cb58d5692ada0d13a751d0c801dd2` | R |
-| `content/renders/card-SA-D.avif` | 7473 | `7143877362f243a42e5df466dad9909898fa5db3940b93555f05b38b772476a5` | R |
-| `content/renders/card-SA-E.avif` | 12306 | `bf36e7399521ca16aa4cd3dc069e1f23c563259a179cbf4384994ed5e2dcfbff` | R |
-| `content/renders/card-SA-F.avif` | 11218 | `038f00a76d8e38ca258d84d8be6d9053b5aa83525f0027c0e23ba0b7961fc930` | R |
-| `content/renders/card-SA-G.avif` | 10980 | `4682951d92680f08ebe2e0b1c054b3eacb22cef2d07acd9ae8ae333a5142253a` | R |
-| `content/renders/card-SE-A.avif` | 10527 | `270640b93d82c94a9ead018e20a6ba8e07afc29fa01846410b66928afd48276f` | R |
-| `content/renders/card-SE-B.avif` | 11297 | `154a8a4dd2b060544f084ba8d46a2faea7dc2ddf1f5cf66b443cb27137368738` | R |
-| `content/renders/card-SE-C.avif` | 11591 | `a2b7aa0fe835d35d11c9eeb87ad422a38137aa8c3c2969e7f49be24cdb715b3f` | R |
-| `content/renders/card-SE-D.avif` | 8701 | `2fc81a13aa7a5173067ed9b27947a34e22fdccc94ac7ea280810c32ace3ba99b` | R |
-| `content/renders/card-SE-E.avif` | 12424 | `9852828aab44ac1299c71e88e89996f32c469b69c557b2aba8eaf1215258a1c6` | R |
-| `content/renders/card-SE-F.avif` | 10862 | `1160486ab19d7e11a3e690e301df676706139cc8d4f9d18a86de072416010660` | R |
-| `content/renders/card-SE-G.avif` | 12787 | `5db801f50dab69744202967c1fda255645a44f847a283c6febf989019e0a6f41` | R |
-| `content/renders/card-SE-H.avif` | 10286 | `319335764019a3e1215341354350799b1b6b1c6939fb9a43c698a652a470f82c` | R |
-| `content/renders/card-SE-I.avif` | 8582 | `04f76e6eac9ede3b8676a758b6fc63b8e2544627fd35f77305c2348ddb592e4e` | R |
-| `content/renders/card-SE-J.avif` | 10835 | `4d335e0db5a7bc30d34fa2b6f1a8ce0e963b4bbe87a6bd0a3a8bb30c4fe6a260` | R |
-| `content/renders/card-SE-K.avif` | 9551 | `0295ce6dcc8db53b68714161baeda56c833bf85bd662fd7248b21960b76c3c1f` | R |
-| `content/renders/card-SE-L.avif` | 9589 | `2816cd42558cb26ad150ec690675abaac564760dbdc16fcd492cdb169ad9d398` | R |
-| `content/renders/card-SE-M.avif` | 10280 | `34ea36de5255120051e608b91d9775bf49c29d697be8508e39c38bda71fd5a16` | R |
-| `content/renders/card-SE-N.avif` | 8637 | `bfa16debd837f51965d40cce28820c413a7a1f0ae2b05444b5fad2b0b85e0e76` | R |
-| `content/renders/card-SE-O.avif` | 10773 | `e172a26ffef33f7d9f4618c5c98f5f88a231d56de61167f49c85881fe45cac1c` | R |
-| `content/renders/card-SE-P.avif` | 11526 | `418a46d69561e30aa3a988d4402ba3df1fd43367db3dd2037091c7138e3f92a0` | R |
-| `content/renders/card-SE-Q.avif` | 10341 | `065575e794b791a947dabaf0abb9056b4609dafeedf0b0e24cfff3a5fa8567ab` | R |
-| `content/renders/card-SE-R.avif` | 10341 | `21b72bd5c49c0dcbd7c84f2cc08a030f999d63ef8554522a466bb9cb2f21a847` | R |
-| `content/renders/card-SE-S.avif` | 10678 | `0e25fbf3180d6c799da3a20a5234b3e65deef8f52c5927d8a31642cd7419dad3` | R |
-| `content/renders/card-SE-T.avif` | 11400 | `f1eb06b497ce882fa58efc48fc1acb19b6e6707c0ab54c2f194bc4b875386346` | R |
-| `content/renders/card-SE-U.avif` | 12084 | `cb70fcd42aeb66effa4ea0e84fd79e500dde4985ba0c108a4e64452de54446de` | R |
-| `content/renders/card-TRAIN-CAP.avif` | 6712 | `d82b20e07f77b7f00b1aa26e820966bf2ab600d71964e21d50f5ec55c6131592` | R |
-| `content/renders/combat-front-ACC-A.avif` | 1408 | `c60f1d7975c28871d0aac2096d5c3a3c9788c062a6f2ec281dc0a359b56cbd2c` | R |
-| `content/renders/combat-front-ACC-B.avif` | 4433 | `3d7ec648dff74f01e5c26348dcff6e5293958bfcdc97c433a7cd7af8628f1ec6` | R |
-| `content/renders/combat-front-ACC-C.avif` | 9955 | `832ff83a7588d6f9f99df10ecfd71c8b67ca9dd40d8f229f8f005360e4e5c24e` | R |
-| `content/renders/combat-front-ACC-D.avif` | 7826 | `dd4d0849369a739eef4819d2ec769046c97797a90f38e24fe647e4633b2424e6` | R |
-| `content/renders/combat-front-ACC-E.avif` | 7577 | `05ebb9967f4657ffad5890e76feb868c262c21a5600a17518bc4697e4a0df400` | R |
-| `content/renders/combat-front-ACC-F.avif` | 5064 | `cc10b16e3bc2587eba80f87ae4712a977aa12adb74bc9c59ac25fe312471a33d` | R |
-| `content/renders/combat-front-ACC-G.avif` | 9214 | `11f7a8b4bb17992a47da73859eea43d4e0460554908f6e1eaa0e57b5f0196c02` | R |
-| `content/renders/combat-front-CAP-A.avif` | 4240 | `c05e2beb61d18a2b6237e65425d7b9fccd93cd8ace472d3a0eac0352e1964fcf` | R |
-| `content/renders/combat-front-CAP-B.avif` | 4528 | `f5997e89f2aad570c7401a36abeca7921201e463ea56dd15e56519b699068214` | R |
-| `content/renders/combat-front-CAP-C.avif` | 5299 | `b70da6308160a3cfd962c179ea2596fafc5daa44c60135901d28fbb788a5b3e7` | R |
-| `content/renders/combat-front-CAP-D.avif` | 5190 | `72996349422aafc7fc30466a1491bea54ebf7918cbec9f4a0ba9aebefe4c1f27` | R |
-| `content/renders/combat-front-CAP-E.avif` | 3886 | `432df0b3a4a0df04394269f3ef6a8e187a6f7f0557b2784a2b0952d9d05be17a` | R |
-| `content/renders/combat-front-CAP-F.avif` | 4255 | `8ab699b619fab2cdf7666af4d4f08bf29330e981fbcbc6d37ed20aea44b5a39f` | R |
-| `content/renders/combat-front-CAP-G.avif` | 4931 | `dde239119cb14ea6ae7488d4bff2879d4be5d0cca0e4ef871d59f245df0c95cd` | R |
-| `content/renders/combat-front-COM-A.avif` | 1933 | `23d7220c90c950e3f18f496e018693b4ddc62cf9f58e08405a5a17e7d20c068b` | R |
-| `content/renders/combat-front-COM-B.avif` | 2276 | `bf917bbf8e32209f4ac51dcfe57f05b3797dde5172881b357ad372b7c6561beb` | R |
-| `content/renders/combat-front-COM-C.avif` | 1402 | `954935e36422b954b2c835901e84e2697a7dcd96f05fb5c83a74b170220b8b7a` | R |
-| `content/renders/combat-front-COM-D.avif` | 2590 | `ff857d5487d6d336dd423d3fd82b7b8888210905c13d5f0ed485c006b5d95dab` | R |
-| `content/renders/combat-front-COM-E.avif` | 2607 | `95d5ceb2390302825c9738cd339be90a21382063e41126ef79fee0e16be0c202` | R |
-| `content/renders/combat-front-COM-F.avif` | 1793 | `5724dab895f07e9293a769cf6e7e213eb1d1dc1a66d47d607b911e6401c72a39` | R |
-| `content/renders/combat-front-COM-G.avif` | 1968 | `09fd3b9ebdab86861040e94a4128ad59820dbe75d24f622eab892bf287b6a8c0` | R |
-| `content/renders/combat-front-FP-A.avif` | 3317 | `7590ac36bab7fa45a47927124be12a54f4e393a4607f4dcbc9ffb36810958d79` | R |
-| `content/renders/combat-front-FP-B.avif` | 3851 | `f3de1520e754b2635ae78204b2a2f8e6813bbbbe243b7ed354f3da8c609afc79` | R |
-| `content/renders/combat-front-FP-C.avif` | 6216 | `c0b5e8ff3e5e1717f5e3eb16db497a3e050d4a12556fd5b2f4e8daa6793f8563` | R |
-| `content/renders/combat-front-FP-D.avif` | 2849 | `76851088d5b7fdc75aef68aaf6624632aeb789ae6fc8fff14d7b3902d78a8b88` | R |
-| `content/renders/combat-front-FP-E.avif` | 2417 | `5a40ef834688c1b18fe4751aad0fe09d709f114f75a74927074a696909921d02` | R |
-| `content/renders/combat-front-FP-F.avif` | 5543 | `f9152483255a2c1e7da2eadf6bab8b6b9dfa67a96497348961e44891ab587adc` | R |
-| `content/renders/combat-front-FP-G.avif` | 4833 | `aaa21ec8760dfe383c92682d02b4611736f7098d2b932dd5ece52e09b011aded` | R |
-| `content/renders/combat-front-MOB-A.avif` | 3224 | `c6a3420ae3d22802985558d98f03417239359ac65905ee0f006affe91660149e` | R |
-| `content/renders/combat-front-MOB-B.avif` | 5735 | `8dc0003116b882768edac1b5e510073ecf970272ba442a79f5261642e826194c` | R |
-| `content/renders/combat-front-MOB-C.avif` | 25865 | `e98840d77c5a0690026fb3c2b4187f75555d139513f522e8554ded528c7b3323` | R |
-| `content/renders/combat-front-MOB-D.avif` | 9727 | `8922096e5b81a9b6f807a3c11dc2340d962e3047702ac44f408e0e2b4ecceda3` | R |
-| `content/renders/combat-front-MOB-E.avif` | 2335 | `28df1d765a127de9d216dc92d1edf517cb09e302a3c42855eb3eb72b4cc1168b` | R |
-| `content/renders/combat-front-MOB-F.avif` | 1937 | `ab21e05c64e9cfb8b0527b0f3fcbc615a5c8613802c0d476efb4a38a06c224c4` | R |
-| `content/renders/combat-front-MOB-G.avif` | 20433 | `e58d3d48a49b10055ad43935beff9cfab43b91efdacdedb6a00183e6bd02b0f2` | R |
-| `content/renders/combat-front-PRO-A.avif` | 12163 | `5b5e16cca00e86d79bf05acba73ed99e8434aafc46c947edb4c6146959631f02` | R |
-| `content/renders/combat-front-PRO-B.avif` | 6376 | `db6fc1ee102296f35405de22168b82f25078348e9f5a8722dcabe8a51b3b5073` | R |
-| `content/renders/combat-front-PRO-C.avif` | 10665 | `53cc3f1435f3e3c508bd8d8d6d274ebf6d96f8328ae42bc057900266327c7003` | R |
-| `content/renders/combat-front-PRO-D.avif` | 1083 | `fbceb7fd41650b68448f083f4aeab7e6470bbe34f5d1c26e8fe62573a0ce534b` | R |
-| `content/renders/combat-front-PRO-E.avif` | 14137 | `6f60b7739cc993af440b6d1f94315b514c8aeb439a55d2d61cf565855c92ecd1` | R |
-| `content/renders/combat-front-PRO-F.avif` | 2920 | `31f2559b932fed4c0955767eaf0b34faf879e6ae770a6af09be7b4392371f115` | R |
-| `content/renders/combat-front-PRO-G.avif` | 1862 | `bf72adc112146c3317ec99518a4acb30c7b1ef4c5751a817e049594c7574ca11` | R |
-| `content/renders/combat-front-SA-A.avif` | 2094 | `9b02924ff5e950e1621f4cc7e9c061722f5fe9f794fd6b98ef2c04b3604c1c6b` | R |
-| `content/renders/combat-front-SA-B.avif` | 2715 | `57430f1ba947402fe26c60bd6759f4738cb731f28ed17c0e8d5f6777aed74d2f` | R |
-| `content/renders/combat-front-SA-C.avif` | 2053 | `f0587e9e9872b9d181736d8a658a86943b7c36e4403b570e2549a840134cd23c` | R |
-| `content/renders/combat-front-SA-D.avif` | 3347 | `5463889e0e439e4ae18125d5298ed8916e70e4f03c2c603b4007dc17ff162fa4` | R |
-| `content/renders/combat-front-SA-E.avif` | 2351 | `d2f1f413187a5cf1d58228d895f7c033a923fbe0907863649772c07640a66892` | R |
-| `content/renders/combat-front-SA-F.avif` | 4303 | `9f3363a53af62a3ac601ae64867a14a322611e1fca1f7d2cda484668a3141aaa` | R |
-| `content/renders/combat-front-SA-G.avif` | 4203 | `fadf81d8c4e8086bbcd72c208c6910b0f3ca8287fe752f10b626593ca21a79f0` | R |
-| `content/renders/combat-front-base.avif` | 20984 | `531d9c912f6ef27d0c1b92568e150ddd5ff0df7713a391d8ddd7278ee620d622` | R |
-| `content/renders/combat-hero.avif` | 44903 | `ba47ee56c163eff0f8a19907944ebe3c88cccc0d81fd71574397811795f2819d` | R |
-| `content/renders/combat-rear-ACC-A.avif` | 5489 | `8e5bfe7c9f7c99f644e7a517aaf5383bdd40224c61eaea6c717186ea02823288` | R |
-| `content/renders/combat-rear-ACC-B.avif` | 10559 | `c3bba242217e859c5bb81dca91558f1af4886b13454260b688f678cb7f40c809` | R |
-| `content/renders/combat-rear-ACC-C.avif` | 4028 | `ebe0e335bafc38b176df41a7ff3062b82ec59bcab414c7d1f89c940e7c101f79` | R |
-| `content/renders/combat-rear-ACC-D.avif` | 3433 | `f6ee6790f82867c0ea742055feb1693037b0d76180995c68d166310728bcd4ef` | R |
-| `content/renders/combat-rear-ACC-E.avif` | 3316 | `7afa41717ef68f2a7f03d4bce255786a594ffad1097e6342077cf929746bf521` | R |
-| `content/renders/combat-rear-ACC-F.avif` | 1772 | `d9432d4ca4220a7313cca21ee07849fa7eb35ab333bcc5e109dd8c1a7c9436d9` | R |
-| `content/renders/combat-rear-ACC-G.avif` | 3962 | `ccf50af97e7bde1076076e6b5a44d8cb50fc7e4b78d204e0709e826c09f2a629` | R |
-| `content/renders/combat-rear-CAP-A.avif` | 5382 | `585d0327705390523206ee64b43fd06b460f2ae92cc6d46ab4e60457ae04e84a` | R |
-| `content/renders/combat-rear-CAP-B.avif` | 5648 | `ab2b61a07e61805af8ea001768d0f8fa02bc7da036943f70a40d87e93916f586` | R |
-| `content/renders/combat-rear-CAP-C.avif` | 6318 | `efb9d2315e784a19629d9f1a775517ae8e52a1e101cd52fc2bddef0f9847cbe6` | R |
-| `content/renders/combat-rear-CAP-D.avif` | 6864 | `39083543b075fea6b946ef97b227d5fd1ec1881be587c116cc69aaaac21c250d` | R |
-| `content/renders/combat-rear-CAP-E.avif` | 4729 | `dadc04752af8ca6be0fc2aec8022fc3f696fcddd85399c8a6dce0ded866fb4e8` | R |
-| `content/renders/combat-rear-CAP-F.avif` | 5437 | `adfd4f832ce00b9d2b7c6f255852c95127d1fb393fdacbdd16616f326011d27d` | R |
-| `content/renders/combat-rear-CAP-G.avif` | 5725 | `19cc93bc97775382952cc04f64e9aa5ea553d2c15ce94aaba7f4e95b70301e11` | R |
-| `content/renders/combat-rear-COM-A.avif` | 2352 | `069ae167b2d132c20966c56cb4e9bbac194f43f21dfc983ec081869f41ef4a27` | R |
-| `content/renders/combat-rear-COM-B.avif` | 2878 | `0f4c430fb76c0cfdf2c1effe5ce628c43251f8da6ab94657367d856e41bbd476` | R |
-| `content/renders/combat-rear-COM-C.avif` | 1773 | `c89d8c95d53844e8aee204951c27e4e958d27e62d4221ea85ed95f6f14b5ed68` | R |
-| `content/renders/combat-rear-COM-D.avif` | 3730 | `ea2f610113c719ae2875496cd68b0b6f5f0cb4da19544b5197f6e7a93629953f` | R |
-| `content/renders/combat-rear-COM-E.avif` | 3843 | `f6551442e06b51ad683b1345fb142df3ca3077e41257850daf67ae1f0d0cc8e0` | R |
-| `content/renders/combat-rear-COM-F.avif` | 2345 | `8aecba80c55b224d9ae054d02b3a497cb20d6db1963bdbd06580fc0901130b18` | R |
-| `content/renders/combat-rear-COM-G.avif` | 3247 | `ba3415e2dff9f0938f64fc1622d425030213032a1bbd0c66cfff12cf6fa4a72b` | R |
-| `content/renders/combat-rear-FP-A.avif` | 4287 | `4f6a182a9c3e04a37c3abcf41c540cd172bd2849321c60ce85ca921240530bab` | R |
-| `content/renders/combat-rear-FP-B.avif` | 3871 | `558307834bccd2493194d1c21f290d26e6f0ff5f9ac010c21a604f90bd31310d` | R |
-| `content/renders/combat-rear-FP-C.avif` | 6157 | `63eb7f146158b84be0c2824992826d27129883d550a73f0748929f4d36f82783` | R |
-| `content/renders/combat-rear-FP-D.avif` | 2613 | `ffeef82d5c459af4ca29dd22f178d1e62b5453a8830d6cb0f5cdad20e30862ea` | R |
-| `content/renders/combat-rear-FP-E.avif` | 2745 | `23a6c2d14682d72633d4f1e7c1dc14003a93fef0f784a67bcfa7020681d5b7c4` | R |
-| `content/renders/combat-rear-FP-F.avif` | 5873 | `878d9e3b29f2be2e140ae978332036554991af8f8ae2963a74e482255767936c` | R |
-| `content/renders/combat-rear-FP-G.avif` | 4829 | `519d438427f340640cf24782b22aaab7a34a10f83e9fa58f1d1874bb93dd4726` | R |
-| `content/renders/combat-rear-MOB-A.avif` | 3121 | `4b265e78768dc16d0ebe5395bf13ab29947148a1f7e442c55b2e66545db13c79` | R |
-| `content/renders/combat-rear-MOB-B.avif` | 4811 | `d87dfeaff09ea6ff534f9730511b03340670daa5baa20be3f3a39c7a6fc6094e` | R |
-| `content/renders/combat-rear-MOB-C.avif` | 21749 | `2a5f4c31e419187dc0df78ca87c8f1f00567f501f6f00e651d4ba3915a85af26` | R |
-| `content/renders/combat-rear-MOB-D.avif` | 8076 | `61a3e6807c1efe9a4cd22614410f2c176da9ed80438c459abb23c321f2fe2db6` | R |
-| `content/renders/combat-rear-MOB-E.avif` | 4323 | `5d3df9cd284e733d7a1b2405ae8d3a7d31bc17068413732c782b8bd5f98d5e8e` | R |
-| `content/renders/combat-rear-MOB-F.avif` | 2252 | `7702b2ba649b722288cd6a1e760ddb81dbc7998f8a4a40609e3775031c4e0de5` | R |
-| `content/renders/combat-rear-MOB-G.avif` | 16562 | `ca625d4656f5ad236f3d11f6778dda640643c8dc3db2ca858e66350f5b4a5a0e` | R |
-| `content/renders/combat-rear-PRO-A.avif` | 9189 | `822782952dc1a5129f99b8e7e3bc77e24e08af5b447d662bda59a95901ce3e44` | R |
-| `content/renders/combat-rear-PRO-B.avif` | 2642 | `2e6254ea147bd50a172a69ca09c6df48cdf4f562c65b437b697ecd5dd8da407c` | R |
-| `content/renders/combat-rear-PRO-C.avif` | 7828 | `84c616117757211cc88ef134c6c57188f8b1c11c71b85ea002809c53ee102031` | R |
-| `content/renders/combat-rear-PRO-D.avif` | 1133 | `5648a1a8234735574ba65da23ac3db091274c55d6f0731006142dc7dfa8688c8` | R |
-| `content/renders/combat-rear-PRO-E.avif` | 11207 | `f1d0dc231753d963c2a8a2aa3ae0457c6e4b2cc92a0b4e3b4b4aa72837aa3ff0` | R |
-| `content/renders/combat-rear-PRO-F.avif` | 2616 | `d854991e85cc5261de3a83a27325d10f21410d36c42c117951c2ccf096206b59` | R |
-| `content/renders/combat-rear-PRO-G.avif` | 1931 | `be87bb2ebbc4c8b711fe2113a7fe300eab96e79dffcbdc8f7e01e9a076ec0a1a` | R |
-| `content/renders/combat-rear-SA-A.avif` | 2545 | `3242ad6558917265c4291e932f3b3473f1db1f9c074717ab6dc87c70ac173c9b` | R |
-| `content/renders/combat-rear-SA-B.avif` | 2592 | `b97a25ba69085a500a9ebe575aedfb5f6f6736763ad9c1bb0e5a9699ca5886bf` | R |
-| `content/renders/combat-rear-SA-C.avif` | 2353 | `66927b74b08dd2b9d2a8ba7b2d468af65fac1cb879fbfffae31f8c821b793917` | R |
-| `content/renders/combat-rear-SA-D.avif` | 3603 | `e103bbda9c00308909f06296de643083ef32a6e2fa8146e8fd8ade92ae916ebf` | R |
-| `content/renders/combat-rear-SA-E.avif` | 2661 | `dc566d530c1ab840bc61ee5916a7b5c1fa6920fa1ee4218961b6426af4bec5f0` | R |
-| `content/renders/combat-rear-SA-F.avif` | 4459 | `3b112eda371671926fbaa1a9c9a8cdbf4088e1942d4585d828506832bbc3668a` | R |
-| `content/renders/combat-rear-SA-G.avif` | 4280 | `26b3b0366b0e8b81d74133582afceab8563c4c4b8743ab4163f7647aa1cfa205` | R |
-| `content/renders/combat-rear-base.avif` | 19684 | `32b7fa8d4eb3439185176df3db14b8eaee8114a7d4ee4f0e80358399840947ff` | R |
-| `content/renders/combat-turntable-00.avif` | 23752 | `a79ace12e0f2a72692a386d6d89c245dcc4ca63a755582ed26d8832358089424` | R |
-| `content/renders/combat-turntable-01.avif` | 25114 | `64bc47dd6d363d6ad4f3edf83bc4c68f566a44f4c2c2c392891d16b82b4bec9d` | R |
-| `content/renders/combat-turntable-02.avif` | 27038 | `b5fee93583e1920ac8e011734c7cff884faefd6618e75b87a19b409b9df22c5a` | R |
-| `content/renders/combat-turntable-03.avif` | 29152 | `415c7a89ba36fbd869e1f2f692460c4c62664dc12b15a58d12a398ef3dc3ae11` | R |
-| `content/renders/combat-turntable-04.avif` | 26012 | `492461dd04333fb44a37f414b6428d3484fc86382f13dd5e68ec8fcfdcb02fda` | R |
-| `content/renders/combat-turntable-05.avif` | 18852 | `3733f2ed7f7d1902dda8d153e11b9106beadc2a6a1f4cd0b4136575f2a4f8c3c` | R |
-| `content/renders/combat-turntable-06.avif` | 17009 | `807f2f13b96c8c3f94f96ae036f8621670e294ea8bd8c6ed90fbb8db11417f39` | R |
-| `content/renders/combat-turntable-07.avif` | 19341 | `cfffba3344527841a10d7c36e3d644199c8dd5b53bb6d299a55f251b4d7647aa` | R |
-| `content/renders/combat-turntable-08.avif` | 26645 | `086ae0d0362cf2e9f3bc5730ad8472cf73f3276e9653e2f74e65b56debe62c62` | R |
-| `content/renders/combat-turntable-09.avif` | 29449 | `404b8714ca6e05efb44870f40ac2be77a9148b261c821d87ac06d93500d0f636` | R |
-| `content/renders/combat-turntable-10.avif` | 27426 | `96d531bcf922a29b3e23013e69d26aefdf9d514f50eb0cfaacba5ff5d823d726` | R |
-| `content/renders/combat-turntable-11.avif` | 25417 | `e4a35532ec382015eba92e9746ad5955b73c7072bee4caa0e01a45d9ac589ad0` | R |
-| `content/renders/combat-turntable-12.avif` | 24389 | `f0fa899abad749a35a97594173a7e32ff0725ab7ea0a81a9892da9e55056ec5b` | R |
-| `content/renders/combat-turntable-13.avif` | 25843 | `f637d38082bdccd7d6d403786ae04b208bc7334029fffa6d5f59a3d3990855e4` | R |
-| `content/renders/combat-turntable-14.avif` | 27638 | `18d9e33596cb047c2eee2fe700319e85b25ed9f6b1f595a4d2af6e78b8105648` | R |
-| `content/renders/combat-turntable-15.avif` | 28960 | `ffb2f69201248c1db45d74b633bf5ddf7d667ff5df5176a13e93b124c41691db` | R |
-| `content/renders/combat-turntable-16.avif` | 26455 | `615231d2e58c91a94a506c6c9c80152e136e93a183dff8d515b6fd5ab41a6604` | R |
-| `content/renders/combat-turntable-17.avif` | 17990 | `d6c866863c30c8f4272a9a1dbcebfa6a3a49834ae0e939e4c4a235e65bad2d96` | R |
-| `content/renders/combat-turntable-18.avif` | 15911 | `45a05cbeec7db5c7f50e9b287b34783c617762cfe408f4d1e0f134dcba4e829f` | R |
-| `content/renders/combat-turntable-19.avif` | 17915 | `4442c6aec5642bd27b60dd5bb330c809ca0dc8d0992310fbdb09f6fa81118c33` | R |
-| `content/renders/combat-turntable-20.avif` | 26250 | `d7ed867c8324db00e19ebc94e39db0ba3d13128664473fa8877b0b68cf8f4c34` | R |
-| `content/renders/combat-turntable-21.avif` | 28172 | `fa6c3c6cc7825598f68ce7b1dd1b4bd7754f731d67bbd90925f53f6c162cd2bb` | R |
-| `content/renders/combat-turntable-22.avif` | 26302 | `df946f854949bdea08cdd3d73506a1eadcb973df05f1d41f9704938dc65b7605` | R |
-| `content/renders/combat-turntable-23.avif` | 24547 | `2185f3f491051b3a56449a600829793d4828cceef9af8594cd5181782de3307d` | R |
-| `content/renders/command-post-front-ACC-A.avif` | 1402 | `555e69115eb04ff82d7bd68c4e2815823d3c11b4e392c75c815d0fa1c85270d7` | R |
-| `content/renders/command-post-front-ACC-B.avif` | 4474 | `23d2ac155f9832bfa1b3226bd437f5f4cc06138ac0c53bab4ad9b2b940852672` | R |
-| `content/renders/command-post-front-ACC-C.avif` | 9900 | `c89831ac54234681888fd81f3c780bfce181576f8430d6559e1157202d0ccff9` | R |
-| `content/renders/command-post-front-ACC-D.avif` | 7813 | `24188b8c46224fef8d978c5aaf6c9d97769e38096ce57de7ab7b808be8a93b4b` | R |
-| `content/renders/command-post-front-ACC-E.avif` | 7544 | `446481a7b49227468f9794a381d76d95bdd99bb97db6a325f7ef5772acecceca` | R |
-| `content/renders/command-post-front-ACC-F.avif` | 5068 | `3d6948357985901c65cb56420f9c7796c3ba90f0a60d205cd8f48808c08ba127` | R |
-| `content/renders/command-post-front-ACC-G.avif` | 9210 | `485d5d6d26dc00033ba05f266ff654c8d4a0157749de88deec3b7b86d4fb4a01` | R |
-| `content/renders/command-post-front-CAP-A.avif` | 4172 | `8ffb9e8596cb8ed0f9d1696017c5de5ed1ccd8b726799e7964d2c0790e00de34` | R |
-| `content/renders/command-post-front-CAP-B.avif` | 4451 | `55335692bdee3c74d5b72f8691770c857699d537ad5d65c198fe8b67e1924927` | R |
-| `content/renders/command-post-front-CAP-C.avif` | 5282 | `3f346201cdafef35748a294deefaff12cd4acbbaeeec72efe6e99ee483723c99` | R |
-| `content/renders/command-post-front-CAP-D.avif` | 5138 | `b390b62670fa2c81df4df48332e9ae7588aa0ea99235f670684bc6596e80892c` | R |
-| `content/renders/command-post-front-CAP-E.avif` | 3846 | `75f7b10003fe8c7f8d6cb44a9e5a5946e4d7471ba89cdc5eb4b0e807e81138ad` | R |
-| `content/renders/command-post-front-CAP-F.avif` | 4171 | `c63170718bbf216bdd3138070af50e56ca13a0a5a83d208492972b067f8edcd7` | R |
-| `content/renders/command-post-front-CAP-G.avif` | 4944 | `904a197cf4c75fd4486b824579668f0c03fcb4a86dd692a3b55fdd2378500150` | R |
-| `content/renders/command-post-front-COM-A.avif` | 1910 | `6b6eb6c47c3e4cb674b369d6d3a832f2d0bf5832e0f98558ad3baffa9005e4db` | R |
-| `content/renders/command-post-front-COM-B.avif` | 2279 | `1d172ccb422928170680ff265991f961bfe73fd6cc93aa9c4412d44b97e74238` | R |
-| `content/renders/command-post-front-COM-C.avif` | 1386 | `b65a5f7037a16d65db59ef129670a8dac588ee04526d6164f2efc5251ad7bd1c` | R |
-| `content/renders/command-post-front-COM-D.avif` | 2581 | `2b604535713019c8a80d44107fa1ff3db14533e0c97fda47d1a2cdc068df5e11` | R |
-| `content/renders/command-post-front-COM-E.avif` | 2618 | `6b962ce013278c45bb9525379cf240483a49e1b08bc17bff823673722e444361` | R |
-| `content/renders/command-post-front-COM-F.avif` | 1802 | `3d02d791dbf5a9545289882f204b1ffc2a8c0353384ecb066f3b6046ccddc836` | R |
-| `content/renders/command-post-front-COM-G.avif` | 1993 | `7a8a7a17ea6018a9d04053062b170f85c8ef914c2402f59192a65d50e84f5bbf` | R |
-| `content/renders/command-post-front-FP-A.avif` | 3259 | `3a74c0e7a3cd9ca5c4b526af2c913d7faf033f7640cc36f70625096c1a9162f4` | R |
-| `content/renders/command-post-front-FP-B.avif` | 3793 | `a675dc3a8a3f4fc74bc1e67ddab2076e1e12d373c8d1812a309a34cfa5d1518c` | R |
-| `content/renders/command-post-front-FP-C.avif` | 6071 | `356236122a3c627de2dbad4a379b5db124257b0069ced5f838ee6c4ddaf043ad` | R |
-| `content/renders/command-post-front-FP-D.avif` | 2706 | `45b2e666d10ac57c0332d197601d24bc6344a624ca5addda0a9c9d8de290ea7a` | R |
-| `content/renders/command-post-front-FP-E.avif` | 2511 | `5e3caf7bec0f2b498591c8523d7b8a179fe75d3b88a12c5c310432486d896d4d` | R |
-| `content/renders/command-post-front-FP-F.avif` | 5324 | `2da559783d1758b63b0e33539e6cf8892eb6bd5c513ff951494d74afbbc24c62` | R |
-| `content/renders/command-post-front-FP-G.avif` | 4615 | `3b095c628b42097a3bc80858f15a00f1742ff2b2aeadd35ee1b4f960fcbb5618` | R |
-| `content/renders/command-post-front-MOB-A.avif` | 2902 | `498c741d2c57a0d554804f91bb2fe81dd2bab690d9c04cc1e2a89fc65a3327f9` | R |
-| `content/renders/command-post-front-MOB-B.avif` | 5742 | `1a6b158158e1140477b93a78464485a1fb114c2a7f49743a29fe98efc88ec8db` | R |
-| `content/renders/command-post-front-MOB-C.avif` | 25815 | `f71e2db3dc24a328926c009a807282fa87dacf40a2fc2d877da0a77620364af3` | R |
-| `content/renders/command-post-front-MOB-D.avif` | 9712 | `2c733dddadb5846b323ac9af94e85d8821098175f3aba14094a5fc79f82224ab` | R |
-| `content/renders/command-post-front-MOB-E.avif` | 2620 | `3eada9df06dff4e17e183ba731b12b37dfd3bcc91f746a717bddfa8f8deebf32` | R |
-| `content/renders/command-post-front-MOB-F.avif` | 1918 | `4b7a3f879f29353b361b3d09f5d498c7783d6dd87f0c0cfa1e27b1426bb75444` | R |
-| `content/renders/command-post-front-MOB-G.avif` | 20399 | `16bf02fd3e65b5ba3b8b0dbb8f05049eba15260dcfaf130e067af7d279021137` | R |
-| `content/renders/command-post-front-PRO-A.avif` | 12110 | `8432a17f129037729cdd70051cc180cadf75368cf0948050e6efa63121bfbc35` | R |
-| `content/renders/command-post-front-PRO-B.avif` | 6167 | `9b8e1c15e420883bbc16423df9dc9f8b0b04df40e580451c4600e02d5d20e2b4` | R |
-| `content/renders/command-post-front-PRO-C.avif` | 10690 | `f761e5fb920ee0e3510433e2f7c9e4efc477a7f1fa32fc09e5efb1acab19c66f` | R |
-| `content/renders/command-post-front-PRO-D.avif` | 999 | `b957d623b72db8b00532529857311aef5690c3337390f4e5ed36af6379e95bd9` | R |
-| `content/renders/command-post-front-PRO-E.avif` | 14269 | `116df8e857792198bf959066f6bc2e89adf63e8cafb4dd1c5261cdd46e9bf96c` | R |
-| `content/renders/command-post-front-PRO-F.avif` | 2913 | `ba9a32a87a894942a25a19b0969667502738c34cac39803d80a7b3d469ea847a` | R |
-| `content/renders/command-post-front-PRO-G.avif` | 1764 | `8aafbf1b358bb39b3bbeb4c6cd2fd6554c02be29964cf6c9ed51e8f39fac44b5` | R |
-| `content/renders/command-post-front-SA-A.avif` | 2016 | `d3dca9ab2345c9aea56471c67e319b587eb277d8d763a161dbf90066c56da473` | R |
-| `content/renders/command-post-front-SA-B.avif` | 2700 | `9e53ff019e4e423d828022f9a62b44dafb228c8bb2ce0005015c291b3a7cefae` | R |
-| `content/renders/command-post-front-SA-C.avif` | 1956 | `905ab59301b224676888cb3b825dfb3bf48ec85e01eac5a69a6584d8c3bc3bb6` | R |
-| `content/renders/command-post-front-SA-D.avif` | 3339 | `863e834ea241ee8b6100398e732c2f2bc48e2830c489d19cf4eeded53672512d` | R |
-| `content/renders/command-post-front-SA-E.avif` | 2287 | `05ee45b5bb7461a65146577df2b98eeb5cb7f34e3dcb33aece4b715d26f5c202` | R |
-| `content/renders/command-post-front-SA-F.avif` | 4989 | `366097aecf13e927c65913ed56e29c38f8f7e78c7895f40005cbd6ce71253345` | R |
-| `content/renders/command-post-front-SA-G.avif` | 4673 | `c11bc6a4687b5c3343631e4a6b9390b9ca7f1d51b7237c9370a70c8b502444ea` | R |
-| `content/renders/command-post-front-base.avif` | 20790 | `5411c4f11425006f7e0be62bfc3cd70d6a8839cdfedcd662ca811b3e9bcf14eb` | R |
-| `content/renders/command-post-hero.avif` | 40846 | `ce05b0d5bd541859acd8eed2c80b377f62bd8750d1bd91fc65965366d706deae` | R |
-| `content/renders/command-post-rear-ACC-A.avif` | 5510 | `a0080a62ac28c7ab22f46b7f893dcaec713286c562500c658c81e026cd9bf526` | R |
-| `content/renders/command-post-rear-ACC-B.avif` | 10520 | `3de75b9ef541ff9afaf4e98bd95695b8bae9d88a9ac2fd1d54ee5b68ba145c29` | R |
-| `content/renders/command-post-rear-ACC-C.avif` | 4038 | `1d7cbfa00ab40c03044ce0ab22a9ca94efecba3c64b03a7d7d38bf0886b1713f` | R |
-| `content/renders/command-post-rear-ACC-D.avif` | 3473 | `2e6d9efc6c88ed7052a78f00e6cd424680299c22206f25781e09825157a2f07f` | R |
-| `content/renders/command-post-rear-ACC-E.avif` | 3268 | `28e5f216f06ce07bbdf3843cec36d39fdd416c0eea9f272455e39bc7e701d39e` | R |
-| `content/renders/command-post-rear-ACC-F.avif` | 1767 | `796ae2aa4a37eddf36ac26b0a3e204b5c1c26fa5bfe5e8d223a30d4a5e93e6dc` | R |
-| `content/renders/command-post-rear-ACC-G.avif` | 3953 | `f5fc69b0b613695027982e048079ab1de693929b48fced44c15b49cb1e4f72eb` | R |
-| `content/renders/command-post-rear-CAP-A.avif` | 5359 | `dfb4a600261aa4c970dd7dc23a36a09b1aaaa42cbcb1a02274e7fdf5fbec1531` | R |
-| `content/renders/command-post-rear-CAP-B.avif` | 5638 | `d4c4c35fa92cd9fcdd9710831e38249df51114e8c0aaa1405ce28f3a9e822bdf` | R |
-| `content/renders/command-post-rear-CAP-C.avif` | 6321 | `a6072bb4088cc07446f88e892800345bfe4b44c4b8f6f3ba1d7b066f9145c472` | R |
-| `content/renders/command-post-rear-CAP-D.avif` | 6901 | `0dd7f2ee07e6a17817b0911f7cbcbf34619a46a85c71d866965f68dd3e943f13` | R |
-| `content/renders/command-post-rear-CAP-E.avif` | 4718 | `a5bc5c43ec83f5336f91d9f68d3ad62342b7319fe9e30af286f8894e929e2893` | R |
-| `content/renders/command-post-rear-CAP-F.avif` | 5435 | `a7a41fc24e6c3f45d4033cb6a68b46c91e58a4e20929e8ea81e55dc5fb76b2e9` | R |
-| `content/renders/command-post-rear-CAP-G.avif` | 5657 | `35fe53e749e4dc633e7be29494e674e018f312f2ccd19d5507099d40b1aba105` | R |
-| `content/renders/command-post-rear-COM-A.avif` | 2359 | `265cfbe87daaee700a9e1630a1fe394bc1d4a4ae29bd4d1ab9aa29991f6ebcc2` | R |
-| `content/renders/command-post-rear-COM-B.avif` | 2893 | `9298950a2620d802d81f59a9487d9fbbc301a2553f5783a293c9136e72ecc02e` | R |
-| `content/renders/command-post-rear-COM-C.avif` | 1767 | `dc5d50d903a62c3e1b3a4116ed78aade0c9453dde71b130709f26da3984052b6` | R |
-| `content/renders/command-post-rear-COM-D.avif` | 3749 | `a5c42481c8f56841ae935791692f2eab72701f917826cf4c36e083248672981a` | R |
-| `content/renders/command-post-rear-COM-E.avif` | 3832 | `5358d663000a76089bf975e9b73b2caabbc8bb975732318f648a858850a308a7` | R |
-| `content/renders/command-post-rear-COM-F.avif` | 2336 | `dcdd41fae6950410e0c65d9f35901fcd1f73b1b2585b1ab47aa1720e5c3e3814` | R |
-| `content/renders/command-post-rear-COM-G.avif` | 3251 | `51ad40ef7cf7268e0d567563d19b9db9aad733d93b7e4390d785ff447d183cb1` | R |
-| `content/renders/command-post-rear-FP-A.avif` | 4278 | `51fda2df0717be9104a0185c8c9a03486fdf791838e3cc47e861fec6f1ce51fe` | R |
-| `content/renders/command-post-rear-FP-B.avif` | 3922 | `e36d3570f90f6b6fe12ec9caeec52844c2677ec0e5c3d60a7c1c19bfedc961e0` | R |
-| `content/renders/command-post-rear-FP-C.avif` | 5955 | `0d5bc5213f8720b13b86b855d14a25f5931bd813c9aab9533d4b373ab5059cf2` | R |
-| `content/renders/command-post-rear-FP-D.avif` | 2420 | `20a982ff0c998b3ec46d106a8886f5a23ab8bf7be294d6038c705bbb0ab29883` | R |
-| `content/renders/command-post-rear-FP-E.avif` | 2647 | `71d1cded3aba65ba95b1cd90b8faa2f66b58efd1f2f5f2ad8993387d06238e67` | R |
-| `content/renders/command-post-rear-FP-F.avif` | 5623 | `bf94e67cec0eba4b0d21ca5e2c4fa93cfbbe86160490f1d754d1d98f3341aa80` | R |
-| `content/renders/command-post-rear-FP-G.avif` | 4731 | `85185671ae6fc183f3b31e11f577b75e87a03646428b8ca219db5e06031d3fdb` | R |
-| `content/renders/command-post-rear-MOB-A.avif` | 2891 | `e9525da0ea0344c4e6035583c9da2c4b08862eb371243ef46fbdd00d7c4f4e5a` | R |
-| `content/renders/command-post-rear-MOB-B.avif` | 4798 | `609bdc46ae5a114fe2450a3aac5c3af45e2f0810f59e87ba486de591a9bcf5a9` | R |
-| `content/renders/command-post-rear-MOB-C.avif` | 21699 | `ac6093d48f1d0030ebbecde2b022e18957a40d0dca75fe30255c023a9c00ceb6` | R |
-| `content/renders/command-post-rear-MOB-D.avif` | 8062 | `044f0fe0aca50b3d1e833b53dface33fdbe8d1a127394eb80169981747487cee` | R |
-| `content/renders/command-post-rear-MOB-E.avif` | 4322 | `3fd32d86c045a17b5bac7f11e0348ea7f236a28db3850550ecd9963183e796fd` | R |
-| `content/renders/command-post-rear-MOB-F.avif` | 2128 | `531b866f5569a9aee343868a24b26667b14ec2cdf85a609a91087be43f2cb14b` | R |
-| `content/renders/command-post-rear-MOB-G.avif` | 16595 | `113a2df86faeea9e0bb52906be783512b3ee9259ded2d850def77f6e4f997c42` | R |
-| `content/renders/command-post-rear-PRO-A.avif` | 9115 | `06fcf9a827b0ce7c7c4b37c5f9e125d462bbb73ea0a8d0047167b228b881f6d2` | R |
-| `content/renders/command-post-rear-PRO-B.avif` | 2540 | `5ddf374ebcf3137b17d9ecfe891ac2545a3bc0025fb784085e8237d901a56d8c` | R |
-| `content/renders/command-post-rear-PRO-C.avif` | 7760 | `6ff08704d278e42260032b5dd0f6dec3d15c8f01e0ce3450c2602f89cad80d4c` | R |
-| `content/renders/command-post-rear-PRO-D.avif` | 1145 | `daf8dbb09c208af8433672cd15f80654f4cbf88daaa9b8cc12eab25efeae06c2` | R |
-| `content/renders/command-post-rear-PRO-E.avif` | 11748 | `48544c593d99a64d0c392fcc12b47b43f89902bd01daf1d23759e3b2af81afa1` | R |
-| `content/renders/command-post-rear-PRO-F.avif` | 2599 | `aa0689ae2c53b6c90e71bbf5529693b0216ffcd18789e5d000662eba21774452` | R |
-| `content/renders/command-post-rear-PRO-G.avif` | 1895 | `8304d3b4c4159adfdb4c6a2062b10445f832917154d9b4b1764fef6a928d3e3b` | R |
-| `content/renders/command-post-rear-SA-A.avif` | 2338 | `2e0318b1efd46937659b995f5077edb02d628664e92b2e7b8a803e49c57458c8` | R |
-| `content/renders/command-post-rear-SA-B.avif` | 2570 | `307c97dc18193aa206dc0970f869b7e746e51529613da7e35aa0387bf2d9a90a` | R |
-| `content/renders/command-post-rear-SA-C.avif` | 2205 | `5ccef13ee3a673c33f6c82002c4d787c23dd4426223664689eeef7286f2552f1` | R |
-| `content/renders/command-post-rear-SA-D.avif` | 3581 | `9a9a1e508a7822ae224f78a2789cfe259aa4c7099af3d8e8e782138de7f57272` | R |
-| `content/renders/command-post-rear-SA-E.avif` | 2590 | `84a04fc1c7c2f6aafccd4a9fd6aa89147ae8c2c8439ca2e07ba90b9366da0745` | R |
-| `content/renders/command-post-rear-SA-F.avif` | 4322 | `8a8a9ce4de5b3b8950e4598597f59afac3be0203081ac256483c6043b930c8c3` | R |
-| `content/renders/command-post-rear-SA-G.avif` | 4215 | `e8b9845fb3ce4dc0d3d48e653541f085c514399872069fb81efb72fa84b087ca` | R |
-| `content/renders/command-post-rear-base.avif` | 19373 | `944fc5013b9ea22c609af13dcad32130067ba6a12b21927101205bba81d9db91` | R |
-| `content/renders/command-post-turntable-00.avif` | 23433 | `1921da0327a416bb619140a3289d6c38f8afed1845fd28e16841f99c970a043d` | R |
-| `content/renders/command-post-turntable-01.avif` | 24957 | `086b34962e8484e08fc146c1988b53f74dd88b329ba3fd6499c1eb89561c4d31` | R |
-| `content/renders/command-post-turntable-02.avif` | 27080 | `d85596fd602ad5fbdc34f94e60aea7d843c52ca30ea1bdd0798dfc92a1128ea8` | R |
-| `content/renders/command-post-turntable-03.avif` | 29192 | `64c384a825601e4394569545d423d5b6e0073e944d88b152afb4f94a8134c509` | R |
-| `content/renders/command-post-turntable-04.avif` | 26168 | `b94477308fd0edcb494b7f37dd7b345c8a1d4a338a78ad30b087a8c52ff227be` | R |
-| `content/renders/command-post-turntable-05.avif` | 19088 | `c18daab53ade3591f025402fb8db8aa242d795e96c27c3a1ce4d29dd4520eb47` | R |
-| `content/renders/command-post-turntable-06.avif` | 17219 | `5564b5af3d0715c9a85399d452f26ed32a8917dff1ffb855cf0e9e2de21f8f2a` | R |
-| `content/renders/command-post-turntable-07.avif` | 19765 | `20a05b072c375d4f8d7961b37e49fbd0feee72373314150035b448f7930fd3ae` | R |
-| `content/renders/command-post-turntable-08.avif` | 26477 | `8b445cb51aec6f83000f1ccba5a53e653716d724547ad0583e4cf2f8b6217660` | R |
-| `content/renders/command-post-turntable-09.avif` | 29236 | `8f3eb4535f9a8ac9dbb39ef6648cb75b95616c23238960b14e7afde9424e9d07` | R |
-| `content/renders/command-post-turntable-10.avif` | 27313 | `e328a513c2973494fb84f90a99c2fa679e9a99e7a98109f87f9da089ee958f8c` | R |
-| `content/renders/command-post-turntable-11.avif` | 25228 | `b173e9ba46b34d8ef9a36f410c3a1bbb228aebfdb722c2394c246a0a6b639e5f` | R |
-| `content/renders/command-post-turntable-12.avif` | 23838 | `5bb242e48f7901def1b210c2376a98035f6c0192695de36538327b8fb054c408` | R |
-| `content/renders/command-post-turntable-13.avif` | 25359 | `705780b81e077339f314fbc3ebbf0bb99dde3653da8a78fcef4a0f70dce31794` | R |
-| `content/renders/command-post-turntable-14.avif` | 27195 | `c77b4994c1d81e5341d323529d32c02cadaa0bfb5f20555585ef88e970436115` | R |
-| `content/renders/command-post-turntable-15.avif` | 28719 | `5ef1829b360f456d9bd02ca3f99f2c3401edc8bf5c783986c003ff772b4cb643` | R |
-| `content/renders/command-post-turntable-16.avif` | 25950 | `b65cd955b54e4d6ba8763c93748ffab6d1bd73de3e43929ee386a0beb4b4a66d` | R |
-| `content/renders/command-post-turntable-17.avif` | 17652 | `e4409ab2046d99e20ee107b22be94748be12b249a2640b9903512911cef3f548` | R |
-| `content/renders/command-post-turntable-18.avif` | 15587 | `78ccdf40bf2594dfd161c93c8b5fb096c7a11f33a515f889fcc1fd675dca4b45` | R |
-| `content/renders/command-post-turntable-19.avif` | 17609 | `b26ce7d753c4f80ee70b6ebde79612e11ad37fe69af26c8f98febb11affb91e3` | R |
-| `content/renders/command-post-turntable-20.avif` | 25957 | `951858faae5f06bde4be7ed8a00695718244c79b18c81a4d451c94494db1edfa` | R |
-| `content/renders/command-post-turntable-21.avif` | 27838 | `e34a1494f9c7c1563187ec4d5a0c260aafc13bb4754fd910cce27848d30233a3` | R |
-| `content/renders/command-post-turntable-22.avif` | 25863 | `a8aa19bd77c91adf0e19ee82e0baeeadb6d96898101de5c47f5cb1fd18ceaf26` | R |
-| `content/renders/command-post-turntable-23.avif` | 23990 | `36c95cd436442f9a779424d4540780dd5492fbbbb905dee90efab8692e4907ea` | R |
-| `content/renders/mine-clearing-front-ACC-A.avif` | 1402 | `28d5e640d79344caf3e7ccdc6914c50c647c7d7c231af0f243ffc40faf25b671` | R |
-| `content/renders/mine-clearing-front-ACC-B.avif` | 4453 | `73bfe46aab40d2289ea70975861c53cf106d8087abc076a843715ee590fddb7f` | R |
-| `content/renders/mine-clearing-front-ACC-C.avif` | 9883 | `2c2231868896deee1e6aa36261f0f112290c747eded35ec6458b4d46816e6cce` | R |
-| `content/renders/mine-clearing-front-ACC-D.avif` | 7808 | `9a98a4d9b59757fd90d544abcfd01b573e7a02a17f8af53d81d8e642bdbd4bac` | R |
-| `content/renders/mine-clearing-front-ACC-E.avif` | 7510 | `6a984e0c61be8fb903adb69014322b435702c6afd149eafa3e2e93973ee7b660` | R |
-| `content/renders/mine-clearing-front-ACC-F.avif` | 5066 | `bf896bb702e5bb1ed45b7fdb88e853d8360b4de0e73747ee42b5743f92af286b` | R |
-| `content/renders/mine-clearing-front-ACC-G.avif` | 9216 | `ee2d51843842dd7f222d53ffa277c7740bb2496dc23d20589d96b01e635a4916` | R |
-| `content/renders/mine-clearing-front-CAP-A.avif` | 4172 | `14210ba396506836cd5288d74f338f650a9c6981dc2de3ae9ca9050b942d93b5` | R |
-| `content/renders/mine-clearing-front-CAP-B.avif` | 4452 | `0ef9c484335a781b02d8e1b46e69f06e7f6ace3986cf42951f78c8abff56cd74` | R |
-| `content/renders/mine-clearing-front-CAP-C.avif` | 5287 | `47da9f40c376921eb3a7743fb84924aaf2095fb80e5a7f0a0f003f1799a1ee1c` | R |
-| `content/renders/mine-clearing-front-CAP-D.avif` | 5125 | `cba23db03a961059b0ec26340ff0c195d0418c6d3389873aa85016e86b2e3d50` | R |
-| `content/renders/mine-clearing-front-CAP-E.avif` | 3849 | `0cdf794816c421e37ed1919f92b630c6860972f4f353779e363db52a0f5cd0e3` | R |
-| `content/renders/mine-clearing-front-CAP-F.avif` | 4171 | `2eff1bba191e8c91e502907e2ae058270d438d8e6a11bda10e00fdb25673395d` | R |
-| `content/renders/mine-clearing-front-CAP-G.avif` | 4913 | `f9050b86c4ccfc84667d14ecfda5fd121bba7f32466417c5b4a28e847c00af06` | R |
-| `content/renders/mine-clearing-front-COM-A.avif` | 1910 | `9170c568d7bf187ddee9e4ea15fc5650ca8481f420a81053ea33c7e2db59aac2` | R |
-| `content/renders/mine-clearing-front-COM-B.avif` | 2265 | `ca24dcdb7471a76a21aed72f99154fa7247b09711d4f2c4ed1d30bf79a661065` | R |
-| `content/renders/mine-clearing-front-COM-C.avif` | 1386 | `b65a5f7037a16d65db59ef129670a8dac588ee04526d6164f2efc5251ad7bd1c` | R |
-| `content/renders/mine-clearing-front-COM-D.avif` | 2575 | `a1c324a1ae8e5e954c1e80496c9f5b17f44396a3ff5b91e98a9e8a3126290bbf` | R |
-| `content/renders/mine-clearing-front-COM-E.avif` | 2617 | `21fa757755e305bc32ea556fb70a78aa91ad549d6080b2502f03bafd8eb406f9` | R |
-| `content/renders/mine-clearing-front-COM-F.avif` | 1801 | `2555aa9f109da92175c8c7dae98b967ab92296faac9f93976bc3cecd1c4e1e3f` | R |
-| `content/renders/mine-clearing-front-COM-G.avif` | 1988 | `bd6201d700fd3d6abb3577906bfc6a2b30e714bdd84d73d76a82929a078e89d5` | R |
-| `content/renders/mine-clearing-front-FP-A.avif` | 3248 | `461bcafe04a53825e633ec97ed47068eb5882b06c96671ce50b2b95a5eb330cd` | R |
-| `content/renders/mine-clearing-front-FP-B.avif` | 3787 | `a8b451ad254040a1300058655d04b458b8383f015bdc820546db3f06040691bb` | R |
-| `content/renders/mine-clearing-front-FP-C.avif` | 6045 | `a60c1d577283807316b82e8d0d0a18d5099ac91eb8e9607904cccf84f7e858f8` | R |
-| `content/renders/mine-clearing-front-FP-D.avif` | 2706 | `45b2e666d10ac57c0332d197601d24bc6344a624ca5addda0a9c9d8de290ea7a` | R |
-| `content/renders/mine-clearing-front-FP-E.avif` | 2511 | `407cfab7bbba5ee0f51e7f1b7919a7e2c2cb0f0be47edeb33ecc53ad4d482dc3` | R |
-| `content/renders/mine-clearing-front-FP-F.avif` | 5319 | `aebb7c9bbe5b81afae726cd37accf426b759a4d57f51bb9968828bdb139f5550` | R |
-| `content/renders/mine-clearing-front-FP-G.avif` | 4603 | `ab1f0d06e4b17f421268dadf05c102cb743829d5e0f7244b5fb029d1a188e5e7` | R |
-| `content/renders/mine-clearing-front-MOB-A.avif` | 2871 | `dbdea218978f786c710ea2c84286087e5e13faf2833f6df0965f6f6b5050dfa9` | R |
-| `content/renders/mine-clearing-front-MOB-B.avif` | 5769 | `70be25cde0654f7e30e1393bef03fb0585b08f85b5b8c46383b63a0a555484fb` | R |
-| `content/renders/mine-clearing-front-MOB-C.avif` | 25801 | `7501497c89d2ed24fde3e39a54f684c5d43343136204aa170d0feb4a0d4ab628` | R |
-| `content/renders/mine-clearing-front-MOB-D.avif` | 9746 | `c58595bd1ca6f6d2d15233fdeed4b084fabfe05b8683eac9846625e41665e1ff` | R |
-| `content/renders/mine-clearing-front-MOB-E.avif` | 2620 | `3eada9df06dff4e17e183ba731b12b37dfd3bcc91f746a717bddfa8f8deebf32` | R |
-| `content/renders/mine-clearing-front-MOB-F.avif` | 1917 | `6cb2dc3ce83fe8b4eb4c874ad39e8ab8c5baf9c3978d11935643598c434c11b7` | R |
-| `content/renders/mine-clearing-front-MOB-G.avif` | 20447 | `302cdfa1fe0ff22eee3f2745c16bea05039c6cfdb9902fe61a427756ccc367d2` | R |
-| `content/renders/mine-clearing-front-PRO-A.avif` | 12141 | `4611cfefa66bc27551800202cd616c317942bd1a88a204d559b57a0d2ac78a3e` | R |
-| `content/renders/mine-clearing-front-PRO-B.avif` | 6165 | `83609d0a3e51f41614efbe85e76f9f6572d7891ae02c6f29c9c10140ba23b68d` | R |
-| `content/renders/mine-clearing-front-PRO-C.avif` | 10681 | `34cdbd68883c16ee740a6c62641956db47810bcdfe19dcaf34f9a592ec54c88a` | R |
-| `content/renders/mine-clearing-front-PRO-D.avif` | 999 | `b957d623b72db8b00532529857311aef5690c3337390f4e5ed36af6379e95bd9` | R |
-| `content/renders/mine-clearing-front-PRO-E.avif` | 14255 | `c4503b1d67abfeaeaece0482c6d73350cea8398eb6d7edb8529f9cab8b48cbf4` | R |
-| `content/renders/mine-clearing-front-PRO-F.avif` | 2925 | `84108f6009c5be64c81f99b769349e7415439c5069ff317695f779b929a7727e` | R |
-| `content/renders/mine-clearing-front-PRO-G.avif` | 1764 | `91f7f21e267a1319fc03f166c2b7650599770bbc7d4bc7d5b295f2dba09e05e2` | R |
-| `content/renders/mine-clearing-front-SA-A.avif` | 2021 | `4052465ca786e4639f850bf0cdf2325ab4dd45a1a7ddd5d25f6fbdbcb75fae36` | R |
-| `content/renders/mine-clearing-front-SA-B.avif` | 2700 | `0f9b0ada6609b4ad13dbacc9e83a1140a3b1c261f879f728a302a507f870d518` | R |
-| `content/renders/mine-clearing-front-SA-C.avif` | 1956 | `905ab59301b224676888cb3b825dfb3bf48ec85e01eac5a69a6584d8c3bc3bb6` | R |
-| `content/renders/mine-clearing-front-SA-D.avif` | 3350 | `7a74f73e7a92ed9a282868ef5d535c6b2314dc9c8f7e599f25d65279afa7bb3f` | R |
-| `content/renders/mine-clearing-front-SA-E.avif` | 2287 | `05ee45b5bb7461a65146577df2b98eeb5cb7f34e3dcb33aece4b715d26f5c202` | R |
-| `content/renders/mine-clearing-front-SA-F.avif` | 4984 | `f6afe22d5fc4a7b738e002fd8d001770bca2aa369a9cca8238e77c999b5ba3b9` | R |
-| `content/renders/mine-clearing-front-SA-G.avif` | 4678 | `2c8be2fd341ecb9695847d20416b97752972cd8f565dbc21b66e43951c551854` | R |
-| `content/renders/mine-clearing-front-base.avif` | 20712 | `14134bc2e74ed891f221e8d197d7bce4daeb5d33a35c5e6f3ac5c413f6f8e55b` | R |
-| `content/renders/mine-clearing-hero.avif` | 53256 | `8ed51e8a26776d4272f14cdb78d0e0a71c0050d5f0f1cc2434ec6b6230e1e072` | R |
-| `content/renders/mine-clearing-rear-ACC-A.avif` | 5499 | `22ff2ca557054533f8f04a314d8cd756da5428d530b6c773d34e75957bcfa12c` | R |
-| `content/renders/mine-clearing-rear-ACC-B.avif` | 10488 | `a0d2eb0772e342f9de06c379b8bff9627624e82deeecaa27d94940e01837ed05` | R |
-| `content/renders/mine-clearing-rear-ACC-C.avif` | 4039 | `550755a24bbc2b2ff0987b95ca4df583e70f95ab81215bd0aa575491ada89f02` | R |
-| `content/renders/mine-clearing-rear-ACC-D.avif` | 3467 | `5fc2b10976e8bb982e14727d53debb3d685c7655372377b53071e2f3eeb7a5f8` | R |
-| `content/renders/mine-clearing-rear-ACC-E.avif` | 3264 | `ac08f20ec7b6246bcd2a42e66ba650bdb6b62ed42f8cac2ef763f80ea6e0ee29` | R |
-| `content/renders/mine-clearing-rear-ACC-F.avif` | 1767 | `796ae2aa4a37eddf36ac26b0a3e204b5c1c26fa5bfe5e8d223a30d4a5e93e6dc` | R |
-| `content/renders/mine-clearing-rear-ACC-G.avif` | 3924 | `f7bed047d1efa2cee54207c840464e5efc9958072203eca72d808233d7cf5da2` | R |
-| `content/renders/mine-clearing-rear-CAP-A.avif` | 5369 | `166a7a8ae4ca60783d648c4a9c831fc971af7d32dd2264f1427b4384d9caee81` | R |
-| `content/renders/mine-clearing-rear-CAP-B.avif` | 5662 | `7db7cd0b0d50ead626d054728490d867bd6b0ec6a961bf3c1cfff3caa6f47633` | R |
-| `content/renders/mine-clearing-rear-CAP-C.avif` | 6335 | `87df4c619fa66d69b8d677c1238b60fd55cafb4058b6504813880242014adda7` | R |
-| `content/renders/mine-clearing-rear-CAP-D.avif` | 6872 | `32020d04c01c5e9735d071d52e131c1f80274963fde1aea04c4758c6cb8f5ef6` | R |
-| `content/renders/mine-clearing-rear-CAP-E.avif` | 4723 | `cc71791a1c6991cca4e73d74b2d796a981f517f51b591b273fa9f4f20ce84a64` | R |
-| `content/renders/mine-clearing-rear-CAP-F.avif` | 5435 | `a7a41fc24e6c3f45d4033cb6a68b46c91e58a4e20929e8ea81e55dc5fb76b2e9` | R |
-| `content/renders/mine-clearing-rear-CAP-G.avif` | 5636 | `8cecc9983ceee4d99a233e8d224e506d55120ffbf5c3518a24c5c14385109680` | R |
-| `content/renders/mine-clearing-rear-COM-A.avif` | 2351 | `e870e532fb3d7def9bf953de5e563c787d18efa89984ff3eb66d0ec630adfb75` | R |
-| `content/renders/mine-clearing-rear-COM-B.avif` | 2912 | `c1ba95562d682f5335680faaef455a8457a842e5b7fc4a8102a8f5ea8ba4d860` | R |
-| `content/renders/mine-clearing-rear-COM-C.avif` | 1767 | `dc5d50d903a62c3e1b3a4116ed78aade0c9453dde71b130709f26da3984052b6` | R |
-| `content/renders/mine-clearing-rear-COM-D.avif` | 3757 | `7a125a0ed50b8c027b622ee6cd1a85901f44dc66fc27c78e1590e215d7a9b45f` | R |
-| `content/renders/mine-clearing-rear-COM-E.avif` | 3820 | `8b6d7e62c6fbcbbeab8ed786a56d0e1676a0b986f99e3931375da9bbb3a2f6db` | R |
-| `content/renders/mine-clearing-rear-COM-F.avif` | 2334 | `3b618b89276cc9671382e43ce78f97f6796161539afdc50d5bd57bbf7d5482ca` | R |
-| `content/renders/mine-clearing-rear-COM-G.avif` | 3258 | `a6e57bbe4f4c1b00650cac0863843cf95052dfe6fc2874d1e51e3e0250456a92` | R |
-| `content/renders/mine-clearing-rear-FP-A.avif` | 4266 | `242ae4db9a47d77ce2dc78b505ef68384356f293b2739d8fd6c72bf86177f85b` | R |
-| `content/renders/mine-clearing-rear-FP-B.avif` | 3907 | `e2adc83a77713b9a653c7fbd0fe156b95e08c537255939485edcbe0cc302e68e` | R |
-| `content/renders/mine-clearing-rear-FP-C.avif` | 5928 | `906aafcc7d6d998a3009bde10d4023ba869e1be74f16734cebbf7cb7bd5db8a6` | R |
-| `content/renders/mine-clearing-rear-FP-D.avif` | 2423 | `eb68ae7f916fb7a9dfcede274b5152da45becd2586356896bbad5046fb36a54c` | R |
-| `content/renders/mine-clearing-rear-FP-E.avif` | 2647 | `71d1cded3aba65ba95b1cd90b8faa2f66b58efd1f2f5f2ad8993387d06238e67` | R |
-| `content/renders/mine-clearing-rear-FP-F.avif` | 5608 | `21767033f4f34b9790bc8b129beea2ac23c63d4268172bfe93c49fc24c5f3abd` | R |
-| `content/renders/mine-clearing-rear-FP-G.avif` | 4745 | `002ae7805ab1c9ea320d110a47da0a868848a85b6a4cfb77e066a9b20d65a977` | R |
-| `content/renders/mine-clearing-rear-MOB-A.avif` | 2888 | `3a034b7670ccd440f0f1e4aa61f840e758298282fadf853c57a12b66e5dc68cc` | R |
-| `content/renders/mine-clearing-rear-MOB-B.avif` | 4812 | `deefba6823028db29415aebbacacfddd0d192a30c3cca71f8f7b79fa0effe20a` | R |
-| `content/renders/mine-clearing-rear-MOB-C.avif` | 21685 | `2dbd057934c5d4e0a59d5b1886690cfcfca222bd83303f6daa1b4f0265d78c06` | R |
-| `content/renders/mine-clearing-rear-MOB-D.avif` | 8055 | `8f7efe254ee1a2ba6e64049e54cb18e278b0fcd8ccf35587628c17229a78630d` | R |
-| `content/renders/mine-clearing-rear-MOB-E.avif` | 4324 | `c40d2d2b02fd57afe299e79f07ee14c492cdc4f15986d2f740599695dd6763a0` | R |
-| `content/renders/mine-clearing-rear-MOB-F.avif` | 2133 | `94a56469a86046069904e53de97c8a55d14bcd5b1b9b83f8e85df8cad8fdeb83` | R |
-| `content/renders/mine-clearing-rear-MOB-G.avif` | 16614 | `7eb21a03e472134d48447787233fdcd2d40f36ee69c4186eed7f923361a96aa2` | R |
-| `content/renders/mine-clearing-rear-PRO-A.avif` | 9096 | `754467d1c26fc8f274251e9ad2ea119b2993fe74d253a72123818ff43e7eac09` | R |
-| `content/renders/mine-clearing-rear-PRO-B.avif` | 2537 | `4c82a1839e56aac0c6fed612c9e6ed674b0c4f48e2ce835d04aae9ddfd74d7ca` | R |
-| `content/renders/mine-clearing-rear-PRO-C.avif` | 7809 | `f050266f32c278d86a3bf5f416dd01db90462a056763888368dbb63cccd3bb7b` | R |
-| `content/renders/mine-clearing-rear-PRO-D.avif` | 1145 | `daf8dbb09c208af8433672cd15f80654f4cbf88daaa9b8cc12eab25efeae06c2` | R |
-| `content/renders/mine-clearing-rear-PRO-E.avif` | 11696 | `042a17f7bb08c26b078c6b6465027196b5eaed0543a89561d1643207a5470e4d` | R |
-| `content/renders/mine-clearing-rear-PRO-F.avif` | 2598 | `68ed9b47f9cd318b981bf453d2c74683c21385f691a2ad03a506ace6a9272902` | R |
-| `content/renders/mine-clearing-rear-PRO-G.avif` | 1911 | `eb9a399818748aeeb641c32771772d2304071c6a7b957f5a2981e4ac77f4b5ec` | R |
-| `content/renders/mine-clearing-rear-SA-A.avif` | 2331 | `76c690578ca6f62662485cd6333831c28a935daa7cd3e92a17d211174425e23f` | R |
-| `content/renders/mine-clearing-rear-SA-B.avif` | 2571 | `3a3eac24a76adbf4a294958a572721dd26facf2fc21aaae27c0c9f81e218c115` | R |
-| `content/renders/mine-clearing-rear-SA-C.avif` | 2205 | `3a9b3a84ad6c3916cf25627fcfadf52e012af6fd3d2df446e52e9500bf5a3c20` | R |
-| `content/renders/mine-clearing-rear-SA-D.avif` | 3582 | `43f349f6343e096198c4a318e35dcd7203a0d5c3bca24340863dfaac8a65c1cd` | R |
-| `content/renders/mine-clearing-rear-SA-E.avif` | 2594 | `dd124f7142c437b51eafdbf19e587dc21a48a2bc95a0bcd32867300f3fe9349b` | R |
-| `content/renders/mine-clearing-rear-SA-F.avif` | 4327 | `49ac5b15ed9f30db8d073cf9c9d9ab7880f90a66a97017b92e922bea26f29430` | R |
-| `content/renders/mine-clearing-rear-SA-G.avif` | 4214 | `902c471092fa42bba531bb3a9cdfead67527bccddd8afe006d3c5eb5d5231a83` | R |
-| `content/renders/mine-clearing-rear-base.avif` | 19372 | `a51d52046fd913a6b8539459a92da6c6806ebac22f8060cb206e0aaa623800ec` | R |
-| `content/renders/mine-clearing-turntable-00.avif` | 23422 | `9bd7c522d53e1f4536f8353ead50cd12eaea8dc1b16632d4c29aae9a4517f3a1` | R |
-| `content/renders/mine-clearing-turntable-01.avif` | 24955 | `910c7b2e7946660785c8f97cb2a7b08119493d372902fb441774b2570418e491` | R |
-| `content/renders/mine-clearing-turntable-02.avif` | 27085 | `81d8803b69f0a5fe4fb3effadf23c32d3b4150c6cbff0570ef785da4e380633e` | R |
-| `content/renders/mine-clearing-turntable-03.avif` | 29227 | `da659a8af0989a9c5d71e7b26a1efdb4efe13aceb08762b389d067454077f517` | R |
-| `content/renders/mine-clearing-turntable-04.avif` | 26125 | `da0d0ea3abe41c73312e0f48550f3a6b05406ba2f27d3ce2cfa2215589fde191` | R |
-| `content/renders/mine-clearing-turntable-05.avif` | 19087 | `bcec0e25926cc6b14f4f9197440de24b5f6b6206b7960a015e197ac0ab364df3` | R |
-| `content/renders/mine-clearing-turntable-06.avif` | 17199 | `71590d91203950f4109c404bbc08c7e6bbaadeb1316b05cb7229a7ad660bfb56` | R |
-| `content/renders/mine-clearing-turntable-07.avif` | 19768 | `e2e07f338566ad4ea1e009a6f85649313f344ce73c0f0c6de13a6cf4b270b978` | R |
-| `content/renders/mine-clearing-turntable-08.avif` | 26513 | `d63deb5fe684c154772c2ed8b4a4addbe378ce933dadb7740e569e7817bc2507` | R |
-| `content/renders/mine-clearing-turntable-09.avif` | 29295 | `4f703e62f9a8710752110aaa1e0ae8b89507c5ccd9e8bb0581dba236984da78f` | R |
-| `content/renders/mine-clearing-turntable-10.avif` | 27279 | `3621e96670e54761f27fba77a3f1d7a147a52b8873884a9c79191426dafb15fe` | R |
-| `content/renders/mine-clearing-turntable-11.avif` | 25296 | `ba54c0fce7bb2a7c5371ea55e7026d7d1c5c6e7524fa787288e169e7c7ff7146` | R |
-| `content/renders/mine-clearing-turntable-12.avif` | 23885 | `c41cb2acc67ee1d774833a380570524e33aebaf962af0c8f10abf1b975ab0a59` | R |
-| `content/renders/mine-clearing-turntable-13.avif` | 25391 | `1c219e8744d39a0d6be59609eddfe3dea4941016ed362d06933775217e71355f` | R |
-| `content/renders/mine-clearing-turntable-14.avif` | 27215 | `d07b1bc7cb7d6855aaa1d066132cd4630e24b6a614612f3659dbc76473b3e09a` | R |
-| `content/renders/mine-clearing-turntable-15.avif` | 28703 | `52230f7458bab68af9a897255a6a01d98b584d130f36ebe2645a703ce55a4392` | R |
-| `content/renders/mine-clearing-turntable-16.avif` | 25941 | `f6b9de6275728d7df1f6a0a8a059ed1cc0ec0d4a32cdbfc7262f7d04c4c5a09e` | R |
-| `content/renders/mine-clearing-turntable-17.avif` | 17640 | `1195a435048662afdc473fcd91561ddaff5f4f9cb83f01f041904fd21b845691` | R |
-| `content/renders/mine-clearing-turntable-18.avif` | 15563 | `03778ba6aa36444338ff14da6708edb46a08e94f1bc60f06169cbe3d32dad416` | R |
-| `content/renders/mine-clearing-turntable-19.avif` | 17610 | `c178aceaf9cf99001ce2dbf568ca4138e76e44cfa5062ef4c02d8f239cbb74df` | R |
-| `content/renders/mine-clearing-turntable-20.avif` | 25945 | `961f2affc31f19f2c347e8cbe92b9b0075b9439bcdf27656892e7286e3c62c58` | R |
-| `content/renders/mine-clearing-turntable-21.avif` | 27785 | `a24ce1be58de5bd11d86e585e10269f36408e9bffd6eb0c6697e0e6bead91391` | R |
-| `content/renders/mine-clearing-turntable-22.avif` | 25843 | `bfcd99b128619b83cba37197b6314fe25d0571a9c9ed63ddceb48a410b7c3165` | R |
-| `content/renders/mine-clearing-turntable-23.avif` | 23949 | `69aee5b7d2f44d936b8396363c4ac6d0e70a8ec2b2eb1e90d21716332e5af121` | R |
-| `content/renders/recce-front-ACC-A.avif` | 1410 | `e362847551fdee9f0bb9bd4de835579736921ca774673c39ad1941bb3dc586eb` | R |
-| `content/renders/recce-front-ACC-B.avif` | 4422 | `02d5af6994d21b22cb8a14dfe3811672052bacd0972d546b125f40144c416521` | R |
-| `content/renders/recce-front-ACC-C.avif` | 9880 | `5e5923c355ea51c1af14374d929621dc48e83d72b5f7a9006caa04afade69317` | R |
-| `content/renders/recce-front-ACC-D.avif` | 7843 | `80205eb75decc1e08405cc1ba22b27d3c5ff61df460d56cd0fc67c6f1b5cccee` | R |
-| `content/renders/recce-front-ACC-E.avif` | 7558 | `00018a80104964cbb32730cb9d6a32aaee364465844637b9407629664ab75c21` | R |
-| `content/renders/recce-front-ACC-F.avif` | 5073 | `eccccc1742ff8c9ad400066ec7619d68f1de14ec3fabbf7b1201f229bfd92f79` | R |
-| `content/renders/recce-front-ACC-G.avif` | 9207 | `06897763b65fadd770803205f7a9dfabaf30267faddc956b75a80e7d6427ed13` | R |
-| `content/renders/recce-front-CAP-A.avif` | 4193 | `11437f35815e4fb2411bbf87c5ae7e0e982e74f91adfe8671fd664ff38fc7f9c` | R |
-| `content/renders/recce-front-CAP-B.avif` | 4440 | `123cbe86a8af2d70acbc216f66b673c19302ec447230cdd26ffe8e6f57e6939a` | R |
-| `content/renders/recce-front-CAP-C.avif` | 5263 | `787c2ed0031d06713ed71ed48730cfec8fbdba18cdd7666ee9db9d45a1b27281` | R |
-| `content/renders/recce-front-CAP-D.avif` | 5149 | `4783a40d283178e4594374a4dd9799f1f22de92b6065eb996c896edf425ce81c` | R |
-| `content/renders/recce-front-CAP-E.avif` | 3865 | `52ff2afb0f227a808c46cd565e2fbaa377967addb698b8e532a3ac7c61f78173` | R |
-| `content/renders/recce-front-CAP-F.avif` | 4145 | `d56888de4a04fa707a8611a4ac43733ead88388a824179fe85dbf655358785d8` | R |
-| `content/renders/recce-front-CAP-G.avif` | 4993 | `a04c26ce128872110c9275eb2ab1d349d1adb405b326e48e9352e06d172a9bde` | R |
-| `content/renders/recce-front-COM-A.avif` | 1921 | `ac368032e38d7a591260e19c0f4528fceed471be62043ac679cf49003db50674` | R |
-| `content/renders/recce-front-COM-B.avif` | 2285 | `dd12e79091741c1cff8e334a6959893f8e537b9b7a29cbe88ef6a875453d99df` | R |
-| `content/renders/recce-front-COM-C.avif` | 1389 | `1305e4c7ac050d5cca122fb753455ebd9598f5b2e8dd244062bd88613c41b0e2` | R |
-| `content/renders/recce-front-COM-D.avif` | 2614 | `f5e4fe38cae1bb7660b5bbed31ce92dac3196dbf20ad61af794cac24f5331d08` | R |
-| `content/renders/recce-front-COM-E.avif` | 2614 | `cb9470453d5c70ffd1f394fa4b7fe41976f412b52856c3b0c6e5b7d0f9fa50a4` | R |
-| `content/renders/recce-front-COM-F.avif` | 1788 | `901f254c9112ae9f5f28ee4233955808492ab2fcfd0b1015c42aa32ec2ea98e1` | R |
-| `content/renders/recce-front-COM-G.avif` | 1980 | `87bc3902d7cafd79a1823afb4330c79df598da2ee42c3c4218af92902ba43ff3` | R |
-| `content/renders/recce-front-FP-A.avif` | 3261 | `221a4eb00ac83be81638a5f383877af0c3ff0dc47f8cf932fea9fc6206c8efe1` | R |
-| `content/renders/recce-front-FP-B.avif` | 3763 | `ed09fcc61d8857c938c0eef3d8445940cd9c01a0b479340c620b205c6ffff149` | R |
-| `content/renders/recce-front-FP-C.avif` | 6055 | `fabf5559fea7095580194f61b096ebbd8b89e722f54e573ff38986e17a3676a0` | R |
-| `content/renders/recce-front-FP-D.avif` | 2849 | `5ae6575c4e38844ed2cd79d0687ce84a8903ba5e80913fff35777898661c2067` | R |
-| `content/renders/recce-front-FP-E.avif` | 2414 | `9021f0fb4ec6b4f5ea6af169c6afb02b3ed5bd13528832a94bb074b6ffa224ab` | R |
-| `content/renders/recce-front-FP-F.avif` | 5343 | `0483a4b8faa6505186fda53668bac2c6750d8d09a5f9ffd89a674eb1a2fdfdb0` | R |
-| `content/renders/recce-front-FP-G.avif` | 4618 | `262ca635e4e4684882e0849a8c8d7e6a2cbe9c14109dc064be904d86be0a3279` | R |
-| `content/renders/recce-front-MOB-A.avif` | 3197 | `90423ea31f935aad9c813d5080cabfdd2fe459a7f6e745df0a4c3eddcba84971` | R |
-| `content/renders/recce-front-MOB-B.avif` | 5714 | `ab1f14f459bb0bb04a67846661ed1814b66db064ce930f2095c94629f4adfd21` | R |
-| `content/renders/recce-front-MOB-C.avif` | 25735 | `f50571fe5871f126b860312fc27d84d70a7ccf420400a66405c8a1051300f18e` | R |
-| `content/renders/recce-front-MOB-D.avif` | 9752 | `1d473528f0ee743e452c021ea4b90006440b65d60161b310fc9cb15f96ce296b` | R |
-| `content/renders/recce-front-MOB-E.avif` | 2343 | `193bf37fd24a8f11caa1cd89a639e3d1ca44cf3eaa3773dd4aedb191468f7bc4` | R |
-| `content/renders/recce-front-MOB-F.avif` | 1958 | `12a4b3699f9d863d91d236988fdb929db07401495ca7e704cadd4a26bcd4cc78` | R |
-| `content/renders/recce-front-MOB-G.avif` | 20403 | `4a77d0a8c7450691bbc3b5a8c235dd7ed78f920a071d40fd01f3cbb6feb196ca` | R |
-| `content/renders/recce-front-PRO-A.avif` | 12184 | `98d895e668388a4d1c4df5311889ad573969975e243bd315c25628f6c6d4e790` | R |
-| `content/renders/recce-front-PRO-B.avif` | 6361 | `8eb36cf2d6b870845d1edf09194bf0030e10ae2d1747391465a779b1ee9b6b8a` | R |
-| `content/renders/recce-front-PRO-C.avif` | 10616 | `715177f2170c7d52d07612bfe072bfd9296724afca841e61f9abd6f3e53f5c37` | R |
-| `content/renders/recce-front-PRO-D.avif` | 1075 | `29febca6743ad1293ea305396682fb82284abfc007299b441f951960866f15a8` | R |
-| `content/renders/recce-front-PRO-E.avif` | 14183 | `4af797b2d77721ae9a7d31dcf184b2ea95b98c628ed6bcb31491071b3b80abdd` | R |
-| `content/renders/recce-front-PRO-F.avif` | 2947 | `7d9fd83a8ceebd27363797780d52114a2a03a7682143c323ad9212f6f40632f5` | R |
-| `content/renders/recce-front-PRO-G.avif` | 1858 | `5bff718911a34005c00ee136cfa7b467fec12394faff894206df04ed577c0d81` | R |
-| `content/renders/recce-front-SA-A.avif` | 2095 | `519eeef4de0aeac957a148a347a701e4c2268a328babc69ef9f96c0a93e5332b` | R |
-| `content/renders/recce-front-SA-B.avif` | 2712 | `98c20664db24be23d4c7f7827f4a5db3855609341b99c6605f82634f617f5139` | R |
-| `content/renders/recce-front-SA-C.avif` | 2040 | `ab3d1838d4ef0e49b5490a4486350c3008045f0a25f89d523519a6e8c3ff602e` | R |
-| `content/renders/recce-front-SA-D.avif` | 3334 | `afa843b1a22b5bb42938e4a626dbd79e72ef42325bc39de024f7ddca662d416f` | R |
-| `content/renders/recce-front-SA-E.avif` | 2343 | `cae4efd2cffabfe54ff9cc9b2efc418db82aee85e625445f872bc9a69e538e9d` | R |
-| `content/renders/recce-front-SA-F.avif` | 4306 | `4b272547411ff5a85f2bcf6b3f4e02da0cbb0d84e80479274a058a9ea341d69a` | R |
-| `content/renders/recce-front-SA-G.avif` | 4210 | `a592f79f12f4990db2b861be8bfb13fb63d7ffc33c9e81a133916d237ab0aec4` | R |
-| `content/renders/recce-front-base.avif` | 20754 | `41fba0ce62a7527b266ce3f87bfb959a69c52c9cc6daee5fbbe61f645fecfb9e` | R |
-| `content/renders/recce-hero.avif` | 41483 | `5f58fd0e0cd9c03b54bd4eed689d16de17c156bd2a397bd350e5cb6c56177eef` | R |
-| `content/renders/recce-rear-ACC-A.avif` | 5515 | `e356b49126f2742f551dd879917e9298ad27d564bd48bb2c1e3cbdf013e0d053` | R |
-| `content/renders/recce-rear-ACC-B.avif` | 10542 | `59136adeb900886bdb0ab8164c9f5b221e27b97b94bf1fcb9f68a535f47afee1` | R |
-| `content/renders/recce-rear-ACC-C.avif` | 4034 | `eb090c228802a009c093161129cf90d9c4cd735296d9aff2706ac30b83abb68f` | R |
-| `content/renders/recce-rear-ACC-D.avif` | 3467 | `cde9959eb7ce31b9c94c23fe17ceb5ab6d2dc3020878adf2dfc628de9023f40b` | R |
-| `content/renders/recce-rear-ACC-E.avif` | 3322 | `0f88cd228cd2e4eb8e0b5b3790ab53d36234a2454177dd2916d6e868d5db449b` | R |
-| `content/renders/recce-rear-ACC-F.avif` | 1789 | `edcb1a95d059d5af07561dc64a7a150e9eb6df4093e134a9008de5b3ec8da2fa` | R |
-| `content/renders/recce-rear-ACC-G.avif` | 3904 | `c7cc7bae8e6988df40b47accb5eb0cadbb124d265af90a8c4cc9a9fe38f05355` | R |
-| `content/renders/recce-rear-CAP-A.avif` | 5372 | `52f36ba1a917733f42ca3996a4c3d456f961cdfbff77270e82e22d08e4182af0` | R |
-| `content/renders/recce-rear-CAP-B.avif` | 5620 | `7d6459ced0d40284873b986e77002ef9804fef8b1bcba20ea07dbf3bedeb4c8b` | R |
-| `content/renders/recce-rear-CAP-C.avif` | 6292 | `65d6ef7bc08dfa074517c5d8b5925c72d43a5fae57048151061a8e5aae604752` | R |
-| `content/renders/recce-rear-CAP-D.avif` | 6877 | `b77b7c933791394f53cbe71c6b592a1ba9bd75096f8defe655afaa04c5f6c5a2` | R |
-| `content/renders/recce-rear-CAP-E.avif` | 4732 | `8d43bb890a64b9706c2f401e6ece8c8dadacdd30d474667b577fe67efd5bfe2b` | R |
-| `content/renders/recce-rear-CAP-F.avif` | 5445 | `31096ac9db7a540bde4b8e4c27937d336f482c3d49bb1c8d8fc2086e54876fa9` | R |
-| `content/renders/recce-rear-CAP-G.avif` | 5724 | `31484f87f05d640164c8d2f47097510ac5703edba136c9b7045d0e82ff2c34dc` | R |
-| `content/renders/recce-rear-COM-A.avif` | 2389 | `5b62cf6ca5201fe6c3130accaf1bcfc7259f0359ff519ccb93cff1dbbc2a3a34` | R |
-| `content/renders/recce-rear-COM-B.avif` | 2881 | `f59cec88250892544483e8abead7a333b3e2eaf3820a9d19e2d1c3521ba75a79` | R |
-| `content/renders/recce-rear-COM-C.avif` | 1772 | `0d170a2efa9495e66453a78675deed9c6e3389f5825be148c90e8f6e18c9c9d5` | R |
-| `content/renders/recce-rear-COM-D.avif` | 3768 | `ca8a4250b26c3eb9578c04aa74dd58bc0640163e18d1f54a8481c78d0db2f666` | R |
-| `content/renders/recce-rear-COM-E.avif` | 3852 | `bedde9722058be466786403b5be4aab15fa2e8588acb28b9026a29bbadc97f7f` | R |
-| `content/renders/recce-rear-COM-F.avif` | 2366 | `1eea28efcfc34ae94b4e012825dcfd7ee715be875247c0206037503c99edc23b` | R |
-| `content/renders/recce-rear-COM-G.avif` | 3236 | `9a80069548a004b06173f851a66334532132b28056cc0b1befe57b7c48d77684` | R |
-| `content/renders/recce-rear-FP-A.avif` | 4282 | `7a394a06ade322bc06f0d53f26679c635422934e74ec314d786913b26fe25b6d` | R |
-| `content/renders/recce-rear-FP-B.avif` | 3885 | `1e772eaa2b6db31f2d1b47ed888f7936823a244c47ee098b022f4768760b3896` | R |
-| `content/renders/recce-rear-FP-C.avif` | 5921 | `ed8a936e814ed272fbb1173176f097fd2f5e507282be29fcc01b639f65ec1507` | R |
-| `content/renders/recce-rear-FP-D.avif` | 2424 | `b9d26ca904c4fe5fda94967ef3f0c8bb59346f3b082022a575bb7e43b68f5a92` | R |
-| `content/renders/recce-rear-FP-E.avif` | 2607 | `73defb3a896ecd1f92ae99ebae8e0586411a9cff0a38c767ca4067218abc466c` | R |
-| `content/renders/recce-rear-FP-F.avif` | 5624 | `9b51c5b25b0d9096297a64b61be8df0f8c600f2f8a4c531a118d9010dda9744f` | R |
-| `content/renders/recce-rear-FP-G.avif` | 4671 | `cdc957ab89e29385a2a225dc8f96aba3f78cad3ea5f082e0ede92a1449497e1a` | R |
-| `content/renders/recce-rear-MOB-A.avif` | 3068 | `d54a20ee83bf00c874531c49231812699fcfe01af8916341db79b3ac0cd85396` | R |
-| `content/renders/recce-rear-MOB-B.avif` | 4819 | `17ac316cc786cd6b05056a550221a00b9d91aa8f60a35f85c2fe59976e874247` | R |
-| `content/renders/recce-rear-MOB-C.avif` | 21740 | `5d5dc2ccbf058e5eff2022eb32b89b67c0f6c285aa919d1a0b37c45674eb9562` | R |
-| `content/renders/recce-rear-MOB-D.avif` | 8083 | `609aee8201ee544781c2ad1421f8181821895381207f1b6a064e7a0423312351` | R |
-| `content/renders/recce-rear-MOB-E.avif` | 4334 | `eb3af15046846787bfafbc947592343344762e6b609ed0d075b998577be803a8` | R |
-| `content/renders/recce-rear-MOB-F.avif` | 2198 | `66012f9b2cde41888a14fe9aec41fd10c4b52add11fc8dee897fd9745d84dcb9` | R |
-| `content/renders/recce-rear-MOB-G.avif` | 16536 | `3a0072ca8515eabaf59c5e0bbe8249081cb977d9200ade9475dc111e80143dbb` | R |
-| `content/renders/recce-rear-PRO-A.avif` | 9151 | `ee0e52db6f13b0b637bdf497320ffc9cf363f40ffbbaf1f68e667c0b7cee645a` | R |
-| `content/renders/recce-rear-PRO-B.avif` | 2655 | `a5aa6e21ee5f12ecee222361485611a1cfb0f9ffdd4f3ed917e2843cd9eb728a` | R |
-| `content/renders/recce-rear-PRO-C.avif` | 7750 | `6b80f4e1c0167513b6cae8fb04dfc9961125fb3d2a55526d44d1b2a7531e46a0` | R |
-| `content/renders/recce-rear-PRO-D.avif` | 1116 | `2fa1b6de294950d86be97b38e652b7288f60457f2a797dc2ceaf441ceaa65bd3` | R |
-| `content/renders/recce-rear-PRO-E.avif` | 11224 | `52053ba007ce72d08bc90582f1edc04b03223645441e5dc1be6b0514d62e41d8` | R |
-| `content/renders/recce-rear-PRO-F.avif` | 2636 | `bb377cd4bc3dd316e99ccb766a59b9bf84ae4c831d7336827c3fb11a1ef2740d` | R |
-| `content/renders/recce-rear-PRO-G.avif` | 1914 | `dfc6a2e9a10b2c6d5e9df6c9b4a750fc223ea2ce7ff4919c64af622fe80d284d` | R |
-| `content/renders/recce-rear-SA-A.avif` | 2557 | `fdb9aa21de7260a2f507c199a9fa80d49d97a77abfaf1d4923a1b7fbf22f152e` | R |
-| `content/renders/recce-rear-SA-B.avif` | 2579 | `960d8843be558c27c3add7cdf05d9ccd210f3f84d6e26378475127fecd7b667e` | R |
-| `content/renders/recce-rear-SA-C.avif` | 2349 | `099a4e35603a5854a5a6e0364c36ccbfcdd991cfdf92c571d386bb1f2107836b` | R |
-| `content/renders/recce-rear-SA-D.avif` | 3591 | `2c6e70813659f1f06ad1d1e9b93c6dda7195f855c5811f5e01a1b2322a777734` | R |
-| `content/renders/recce-rear-SA-E.avif` | 2657 | `a354b4adb39a8853cf1a799d81eb7649f00000f231c04c25f5a12c334b5ad671` | R |
-| `content/renders/recce-rear-SA-F.avif` | 4376 | `eb5eda0a7e747a11f6dc4e0202b9c81b844422aed1f45c77863d4729130221ed` | R |
-| `content/renders/recce-rear-SA-G.avif` | 4222 | `a8960033eac5e889e9ad3d108fe07834eefec37a3faa3f325bab2b4e60381fab` | R |
-| `content/renders/recce-rear-base.avif` | 19423 | `0729de38c4309fc9d770a11247667615d272833eee22a05281e6293fb7583ec2` | R |
-| `content/renders/recce-turntable-00.avif` | 23561 | `140c518f06be14303a3b6a5257fcc3a227aec6d349bf6d0c200dfbaf5fd9e0e7` | R |
-| `content/renders/recce-turntable-01.avif` | 24854 | `d42b50382a3b5729e1dcb1a9d7a572e3833f9a24bf4305ee3c9e9786d166a9d4` | R |
-| `content/renders/recce-turntable-02.avif` | 26819 | `efa708496101ae7d75defa593e3e1a6f51edd2fd37e823cc438508174265c376` | R |
-| `content/renders/recce-turntable-03.avif` | 28941 | `c40170ed793afc0fc4957a23bc564904e8d17d66a4fc500fc396ea98d65633c9` | R |
-| `content/renders/recce-turntable-04.avif` | 25968 | `69317ea0aaefda8767ec472f4581b1a91f073c731bb06f2ccf2e1a57a75350cc` | R |
-| `content/renders/recce-turntable-05.avif` | 18811 | `20857bea29348e7d59429d32f5c50ecd4d15d99d26e818919bb70304b174fddd` | R |
-| `content/renders/recce-turntable-06.avif` | 16906 | `d2171d6a19d4c7de033f4bc614d223dfa4605d3f73a2a5e6c282b8ca654726f1` | R |
-| `content/renders/recce-turntable-07.avif` | 19424 | `aab387249855a4e24f6fc6d3d684e560c2c6258d2ee182ccef53a555dc3036de` | R |
-| `content/renders/recce-turntable-08.avif` | 26563 | `465bcaea5300465781568987cd9befd05acfc03273eac333f43f2583c2f5007f` | R |
-| `content/renders/recce-turntable-09.avif` | 29384 | `68a7f36a5cbe4c3d625aaaf2691a2ec40d08d3296ef044bb84bfc4d8e91c7619` | R |
-| `content/renders/recce-turntable-10.avif` | 27251 | `353684c40fc9dd23b9bf78d4c1429db885b9f88ffe656af198d1434a2469f78c` | R |
-| `content/renders/recce-turntable-11.avif` | 25280 | `810992846084533ede876f63b3da781f7961eff7057fd0d482d4781b4072c8c6` | R |
-| `content/renders/recce-turntable-12.avif` | 24137 | `d5df84e81ecda8c1515dba5de8874860fe5f4f036a1da93f1cd4396ab267ff00` | R |
-| `content/renders/recce-turntable-13.avif` | 25615 | `5cd3ea07869ae97ec87267f64993c6d6891ae0b759af9637b5831e441abc49a0` | R |
-| `content/renders/recce-turntable-14.avif` | 27456 | `c5b413edb6f2a5d06b990c4d6bfa2465bd78043683ebcd043e06b0cffd6e8ea3` | R |
-| `content/renders/recce-turntable-15.avif` | 28863 | `d98996868dbf6e5f8005ea3afc790e5887be47e81badbc8d22f25d1ff7cefb16` | R |
-| `content/renders/recce-turntable-16.avif` | 26356 | `d464430cf003490b5f0961738e6ae51f17b7a6c77af2aa4445c46d6c330bad44` | R |
-| `content/renders/recce-turntable-17.avif` | 17956 | `655fdc8d1e2b738c468868ecd21efcd943eeb29790846b4ad72b2541a8284cf5` | R |
-| `content/renders/recce-turntable-18.avif` | 15733 | `23d1297785d9b50b2214963dc1fe81a25538fc09e489b90f5be4ca5cd2cce4df` | R |
-| `content/renders/recce-turntable-19.avif` | 17790 | `a64e0b1237f8d22d25e47a4032b7006e5fae9307834f42bcb4db3eb1cdf4acbf` | R |
-| `content/renders/recce-turntable-20.avif` | 26203 | `26b7c3cc539e04868439f5211cb1167eb75f1b493f889e57fd2f6f26b566fe7c` | R |
-| `content/renders/recce-turntable-21.avif` | 28088 | `bc3fe5c92dc938092273883f3890451bd540d034504562fc639880ff953bcfa2` | R |
-| `content/renders/recce-turntable-22.avif` | 26187 | `5dabb5352ff5f49202db419eecdb61ea7ef9f1f59885070a951487ecdc2f39ff` | R |
-| `content/renders/recce-turntable-23.avif` | 24254 | `426c003d614e0ef2201be583ee104ff929ba64a202df17ff8119a23b098e309c` | R |
-| `content/renders/recovery-front-ACC-A.avif` | 1380 | `89bffe571fc25911c497bf3b8f9c5d5966081261c47cc4d58e48e9b4a096336b` | R |
-| `content/renders/recovery-front-ACC-B.avif` | 4661 | `e9ec601fbe6496e4fbe89c22d790f4c4cd5c2db60288ef0cc5c29603170388a6` | R |
-| `content/renders/recovery-front-ACC-C.avif` | 9923 | `190608a19f435b1ee63152b65a10c516e3b959f180db11713f05e2c412600cb9` | R |
-| `content/renders/recovery-front-ACC-D.avif` | 7835 | `a5b99ba45c05cc4197a1d02426b3fafd8a4fbe50def36090a341541260edc7d2` | R |
-| `content/renders/recovery-front-ACC-E.avif` | 7622 | `dbeb9f7484121dbacddf65de2ae37072807aea175e62d40b58f92dde5f7aedbb` | R |
-| `content/renders/recovery-front-ACC-F.avif` | 4929 | `7d197ba60f5b7c54a27bffc887d7b05472f3f9fef0a1555e33630f0a85148dc7` | R |
-| `content/renders/recovery-front-ACC-G.avif` | 9224 | `2114e10be2bb7f00fb5aa365a68e84bce0f1aab8a0fb59c6e13696c4303c5307` | R |
-| `content/renders/recovery-front-CAP-A.avif` | 3926 | `8e71c87a70c7389dd4e240354baa54c7e0d676becdd38bd79c62f7b14275221f` | R |
-| `content/renders/recovery-front-CAP-B.avif` | 4254 | `36371d9755eb3f44136be891b3b65d27a970c8a33304f0a5c04582d2d89b0d4a` | R |
-| `content/renders/recovery-front-CAP-C.avif` | 4984 | `6e049df93b5088f17c6de1b9e91617dfd495f81475690afcf598cf92f2e9c227` | R |
-| `content/renders/recovery-front-CAP-D.avif` | 4883 | `ecbdc01258d15bc43f4fdf4df1574da7c7846ec2469d34920acb771cc9bb6084` | R |
-| `content/renders/recovery-front-CAP-E.avif` | 3738 | `e7e47e56127d6b18b22ff3e9c85f53fdb13f45a8283edaf822a8860767027c52` | R |
-| `content/renders/recovery-front-CAP-F.avif` | 3812 | `0ad7d47a72ca261aed00f18d0aa30a205d19a71b61d210648ca8a7bce41adc26` | R |
-| `content/renders/recovery-front-CAP-G.avif` | 4667 | `50d6fba05309fd7741a8f6afa24e3a9c8fb96528b24fa255cd5f110bd5836025` | R |
-| `content/renders/recovery-front-COM-A.avif` | 1946 | `4b525014654a15fff3d829ac021dd42a0f3c9de8bca0adf364d65b816731e156` | R |
-| `content/renders/recovery-front-COM-B.avif` | 1346 | `8d59be5ad50abcb7c4002f00ce26c40ea51aa5f4647b3cae25b8af247fc445c9` | R |
-| `content/renders/recovery-front-COM-C.avif` | 1394 | `53ee987bcfd266a63c4778ee4a92ed9b6875e223f1baa6a3b044cab7bc142a77` | R |
-| `content/renders/recovery-front-COM-D.avif` | 2181 | `8bd1c6ed747f2f2fc4586396c88ae35d934267ce0a2cd8b3cccf97f42770bb33` | R |
-| `content/renders/recovery-front-COM-E.avif` | 2152 | `17e1a5d957ef9c5c195b062813f0a729373a957bb517bc60394d04c6c1f7074e` | R |
-| `content/renders/recovery-front-COM-F.avif` | 1832 | `eebe59d3d0473ed91408857d52749ba602d674deafa7c9edbbc2fcc51931684d` | R |
-| `content/renders/recovery-front-COM-G.avif` | 980 | `5c3fac89359a42ea084883adcb67f2cac144af32076f503821f404d7ffc46cb0` | R |
-| `content/renders/recovery-front-FP-A.avif` | 3733 | `e6a3ebea813d776ba32087b04e128f3d3c30fe6751d36b126c40a05b629f79b2` | R |
-| `content/renders/recovery-front-FP-B.avif` | 4110 | `171290ac87b980f04bcd8a7e13abff3603187524e7c31bc3ca9d4daf99354730` | R |
-| `content/renders/recovery-front-FP-C.avif` | 6209 | `f259f7b8fcd86a116defb856e1613524afe1e058b31b734f721b17fd6171ca2e` | R |
-| `content/renders/recovery-front-FP-D.avif` | 2803 | `e5232354edd5f19eb94f16230c9a43f2ff8821cb3eafd20f359e066efb4d2a47` | R |
-| `content/renders/recovery-front-FP-E.avif` | 2532 | `33aec4c67aeece03bf97f2ca28b824c0215642826ac801ef47282ceb3220c72d` | R |
-| `content/renders/recovery-front-FP-F.avif` | 5559 | `6a2563e49416716096f570d683a51d8baaf224b9edfce87c6487dcce5b2c815d` | R |
-| `content/renders/recovery-front-FP-G.avif` | 4986 | `5aaaa67c31515bdd15a43a089866390b8d0b7da78ee9a05f5892dd173a9622a2` | R |
-| `content/renders/recovery-front-MOB-A.avif` | 3221 | `af02f97c96d516b244762d6f2112fd4dd1f2a80f4a88a872b0c7a05720300439` | R |
-| `content/renders/recovery-front-MOB-B.avif` | 5717 | `2093c41f994426b210ec64e70f7321ab17d8758e1b16c8f26c915615bddaf44a` | R |
-| `content/renders/recovery-front-MOB-C.avif` | 25893 | `3b61843898af14890578b447f0fc89088bfb35d29b5d0da05b21a85163b4898d` | R |
-| `content/renders/recovery-front-MOB-D.avif` | 9706 | `d4cd6e7b0c9f7cf9dded84a31356be7bab3a2ca7e7031bb0cdd5b940cf05aa0b` | R |
-| `content/renders/recovery-front-MOB-E.avif` | 2678 | `9f0722b5aa827b9bbc7acfb792a663589d42ce4c0f4a03752370fed631dbe40e` | R |
-| `content/renders/recovery-front-MOB-F.avif` | 1921 | `b99d59b18038f08269535910f1197afda700d97f3044844577241f420e1549ab` | R |
-| `content/renders/recovery-front-MOB-G.avif` | 20486 | `4392dbd1f064c4d7667e3ee1b1f42195f9d7e0ade44a2e1c03b08068c75519f2` | R |
-| `content/renders/recovery-front-PRO-A.avif` | 12298 | `fd171184f84cbd241beafd99bed29df650be5816b374fc9871fa696b1c3a6620` | R |
-| `content/renders/recovery-front-PRO-B.avif` | 6334 | `d18d318c38a438ae8b38cacfbe98bf2d4e8ad927f8cc5e054562ad61461c525d` | R |
-| `content/renders/recovery-front-PRO-C.avif` | 10727 | `8679116a2ebe4277470cc68b015ffaffce44a9dc5a878895f5e0564fb32559f5` | R |
-| `content/renders/recovery-front-PRO-D.avif` | 960 | `f0238bce6a2dc1f88d0650d173a3a82415c6caf7819a1e490c35c01ba33dd589` | R |
-| `content/renders/recovery-front-PRO-E.avif` | 14326 | `55ecc07b15a9229b0e1555fa3b045a479735b69cd2d42ce5cbf2f6eaca4e4149` | R |
-| `content/renders/recovery-front-PRO-F.avif` | 2885 | `8e41ffd3b945130d45d2746c4818b4680c3eff8d6a3b96c47d2cf03e2515fa67` | R |
-| `content/renders/recovery-front-PRO-G.avif` | 1667 | `c60be6216d1e28ae0729490f76fed2287b5fb7eb40bf25d5a858a517eed0402d` | R |
-| `content/renders/recovery-front-SA-A.avif` | 2144 | `9ee28ff80631cd89406d792b09daba85ee4aa3a7585c98611d7e70ce499bb457` | R |
-| `content/renders/recovery-front-SA-B.avif` | 2691 | `090498b6a9eb363c1b93b20f0e93754de4dfde329275a05c1f7a0f528ef88585` | R |
-| `content/renders/recovery-front-SA-C.avif` | 2056 | `480cc52c8c154bd3fddb5f9f445eaf07efe81dd3bf8a85fe2d00eb091a040e34` | R |
-| `content/renders/recovery-front-SA-D.avif` | 3312 | `948ad02f7ae9bd6a4d4eda69785ed01dcddbe12402065b06a723420a6a8d1c78` | R |
-| `content/renders/recovery-front-SA-E.avif` | 2396 | `d12d05eff528ccc1974449ca4724a7f54646130b01ca978765dd512aec4920aa` | R |
-| `content/renders/recovery-front-SA-F.avif` | 4544 | `9870d6a2e870aa999941e977107b0286a64fb28c8b5f9d372eddb688e72f870a` | R |
-| `content/renders/recovery-front-SA-G.avif` | 4446 | `c465c4ab6b8a6b81005e8b9510b07e048dc475b2813dcf112bdfe61be3c89da9` | R |
-| `content/renders/recovery-front-base.avif` | 24851 | `346a4a1d6fe7b529c1a6226595dae34a1e53cb81a6d159cd7ebc6a6472dfc0f9` | R |
-| `content/renders/recovery-hero.avif` | 43399 | `b10a94309991f09916f97bd1e44dbffd374298b01b9d935de85e8b2181f8cc6b` | R |
-| `content/renders/recovery-rear-ACC-A.avif` | 5926 | `b646918055e1e631d3098d5fca61d41c9cdca92e2df8e72f38f66cb00ac6a277` | R |
-| `content/renders/recovery-rear-ACC-B.avif` | 9775 | `289d2070446ea6d5d985cd2201630af98253e9418c90c2d57b064a63e4f10e83` | R |
-| `content/renders/recovery-rear-ACC-C.avif` | 4000 | `03461d3ed16ed808cf43c604edbaedcec8c38d9f30d6d980b43b8bed91a5fa39` | R |
-| `content/renders/recovery-rear-ACC-D.avif` | 2271 | `4eeff0415c5f0eb189c4956f0e07ecb2e1937a9f775b846cc10349864ddf7196` | R |
-| `content/renders/recovery-rear-ACC-E.avif` | 3259 | `8c29693b935728f72b461d568001add2306e52ae5a6bf9caff906e5ebda14e0f` | R |
-| `content/renders/recovery-rear-ACC-F.avif` | 1774 | `3f39fbdda81435e68a016e47231e10bc8a19d506e45b52a41fcd74636ecbfc2c` | R |
-| `content/renders/recovery-rear-ACC-G.avif` | 2592 | `1e026bc566776d9d7e388d60a021e31e7dbbe3fe0f3b78781796d2366dbc5740` | R |
-| `content/renders/recovery-rear-CAP-A.avif` | 4367 | `781d7817635e1821e390195a9bd85ee41af94819e9947cf4633cd9e87c1c853a` | R |
-| `content/renders/recovery-rear-CAP-B.avif` | 4900 | `6e7de4229c0f1fc63d2743de71a95ca5f9591e8d48de67d2dce574bd22785215` | R |
-| `content/renders/recovery-rear-CAP-C.avif` | 5161 | `3ecaff7ef27890d7a7b68daaa74a54795d282eeb07be4ab2b82f0da8cbee3527` | R |
-| `content/renders/recovery-rear-CAP-D.avif` | 5526 | `31c563104124628ea90c73b53eefb4d47cd6c21bf2cbd78e8cd9e41f67461218` | R |
-| `content/renders/recovery-rear-CAP-E.avif` | 3967 | `e763d577d7f686153fadbec5bf9711ac734d4b41f144087a90bcd9f4fc97b54a` | R |
-| `content/renders/recovery-rear-CAP-F.avif` | 4372 | `03be72fbe457d2da28db0ae3873b285cff5733eaf93a165d1bf77afc12cbbfbe` | R |
-| `content/renders/recovery-rear-CAP-G.avif` | 4464 | `428671f95c92b741a6c6f24b0833317b3e5a242876bf5eca5e8223c16d0d000f` | R |
-| `content/renders/recovery-rear-COM-A.avif` | 2480 | `106afbd0311f417a81b5925beffdb2d692e297c1a8db867f07edbbab670e4b22` | R |
-| `content/renders/recovery-rear-COM-B.avif` | 3159 | `316ef14ee74d7f4a406abb2841d12f9dbec861ffe601432eb383a0e0107bb1df` | R |
-| `content/renders/recovery-rear-COM-C.avif` | 1799 | `fad5405ef50f6014723bea392444532af7689900739ea9949805c261bb31592b` | R |
-| `content/renders/recovery-rear-COM-D.avif` | 4386 | `994a49f2855f56b20aa4830f493b97b0734d32ca9be369f4cf43b01e84ba818f` | R |
-| `content/renders/recovery-rear-COM-E.avif` | 4205 | `e974fbf859a36d2f79968c0c59eff176246ef17256cff984b408d22ca95c7d85` | R |
-| `content/renders/recovery-rear-COM-F.avif` | 2500 | `0a60a0e16f6943966a00e5037e16ba914ae78df3f9736cf6011419fe55361b80` | R |
-| `content/renders/recovery-rear-COM-G.avif` | 3424 | `6c6cef26d7a53b144210add6b0b5ec2196f453514dc7bb4031d4ce314ba0edab` | R |
-| `content/renders/recovery-rear-FP-A.avif` | 4411 | `d9eb1aaf1918d07de9362c4533312a280c98fa42fdff073d662b53c5229e0ade` | R |
-| `content/renders/recovery-rear-FP-B.avif` | 3931 | `ee6b1285dc948137136819e5e2e1261a50c92aba940611b0dc767c9b944592ee` | R |
-| `content/renders/recovery-rear-FP-C.avif` | 6017 | `1f90b2f92abab4dc9d03fd9bb7c86c386d5ba45ad4ba46426055c61885b1f614` | R |
-| `content/renders/recovery-rear-FP-D.avif` | 2440 | `85b488cc18106ffd5991e91ebf819b911993b421411986a9dac50e2dc71a8fc3` | R |
-| `content/renders/recovery-rear-FP-E.avif` | 2582 | `728ce5e7a4b1a0119b9d8aaccbb367fab83f8d19837351e2d779d9d41c82e05e` | R |
-| `content/renders/recovery-rear-FP-F.avif` | 5782 | `9cdb19ffe149a6339e7a242fe4a8ff95b9535d7e18816bf5ed872ba6ef078308` | R |
-| `content/renders/recovery-rear-FP-G.avif` | 5010 | `f7a25168a26a17e947053e6d539b2c264a02c33403d0e7ee02a131ea051f4ed8` | R |
-| `content/renders/recovery-rear-MOB-A.avif` | 3000 | `386d738fea5ef73fbba424495c45527682566cde87fe43be0a0cd9ec6c7609f4` | R |
-| `content/renders/recovery-rear-MOB-B.avif` | 4834 | `d9bbe575a0e9df53f5dd0efe1969ff3a19e696d62ffc786b18a66a78eb209220` | R |
-| `content/renders/recovery-rear-MOB-C.avif` | 21586 | `be08726e2418563ee5cca2531380b72b8e975d6f3732ee2795eeae8ecf06aa46` | R |
-| `content/renders/recovery-rear-MOB-D.avif` | 8037 | `231b50ed6e07bfc3eb817148bd2cec3971e54caae9cfcb2f075226db37c9458e` | R |
-| `content/renders/recovery-rear-MOB-E.avif` | 4449 | `d22ccd001d5f43eff2370bf39b695ef0dab07923818578207ab9e18813cc6d94` | R |
-| `content/renders/recovery-rear-MOB-F.avif` | 2214 | `d7a05e380720c541a784cd1e0b08b34b239b344d496b6a48bbb087c91f4159f5` | R |
-| `content/renders/recovery-rear-MOB-G.avif` | 16401 | `9323f98e2948783a0cbf4c7187b8acabf8aae7a9e803841addb23deb28db5f41` | R |
-| `content/renders/recovery-rear-PRO-A.avif` | 9110 | `4fd4d4186c663522fdc85d1f1ed34ca17deb95fb5c2a4458ac5b588bf4cac05d` | R |
-| `content/renders/recovery-rear-PRO-B.avif` | 2672 | `83499044b2a3efcdb80a525d9cdde760a2d3ed3e574c33b41406112c94db6462` | R |
-| `content/renders/recovery-rear-PRO-C.avif` | 8088 | `9afea0129344ca8dbf2a46484d34e1a050311628d479e32928122cf783d56608` | R |
-| `content/renders/recovery-rear-PRO-D.avif` | 1004 | `45d93cabccbef5fc8a8eaa0f7cc3f1909f2c7912a212daaa2092cf278405c45e` | R |
-| `content/renders/recovery-rear-PRO-E.avif` | 11708 | `dceff9eb1bf1d48915435d60f1df010c0b5132f4506481088f8129272d72954c` | R |
-| `content/renders/recovery-rear-PRO-F.avif` | 2436 | `08e0aede62d49260cd122e9dc65fcee7d66dda5e7da478d4c0541b2120bd7bf4` | R |
-| `content/renders/recovery-rear-PRO-G.avif` | 1726 | `3d8424a7d1af9db98ae844b50aa8f29af2dcff1ba5e9070dc50d36c6ebb54b2a` | R |
-| `content/renders/recovery-rear-SA-A.avif` | 2562 | `c3a23798534960a17806dc8d5481f9332d9482229ecea12b315f7b188bc53cf4` | R |
-| `content/renders/recovery-rear-SA-B.avif` | 2593 | `c0356350feeefaed37f5b9073589cf878c12164d50048bdd7b191f4379a5a1d8` | R |
-| `content/renders/recovery-rear-SA-C.avif` | 2389 | `32a7ca4e548ae6a5b7a6185e0a00493e8196a29b0eb1969253a600185726539f` | R |
-| `content/renders/recovery-rear-SA-D.avif` | 3596 | `83686c8bc48f3e790db2ff3b4bbfeb0f941b69935baaaf0ec3a13b14b27c770b` | R |
-| `content/renders/recovery-rear-SA-E.avif` | 2829 | `493d1bc67dd7d65a7d7f5ff69a1c322edec14167281f35f8437d2897a6707d80` | R |
-| `content/renders/recovery-rear-SA-F.avif` | 3789 | `95cf96c40749ca6be7ead6698814cb7f14183830b9744a4245d30c72303c4e1b` | R |
-| `content/renders/recovery-rear-SA-G.avif` | 3228 | `e1bcd986b6ec8859126e7dbe291f8bb29a31789c8424db2461570e3af9b60173` | R |
-| `content/renders/recovery-rear-base.avif` | 25041 | `d9a6f64472ab34caadb622f57de2dc7e81f5c949d5c5f5e7942618fa92b38a24` | R |
-| `content/renders/recovery-turntable-00.avif` | 22681 | `1cc51c4c14bc18027abc0b7c97e89e11840d5ad432e9a8c03ccc28aec9d9cf90` | R |
-| `content/renders/recovery-turntable-01.avif` | 25336 | `8ab38ec84ab8b83a224919bbfd5c253c95d4ddacfe7538e589714b3af3cb01b9` | R |
-| `content/renders/recovery-turntable-02.avif` | 27421 | `3873202864c97fe112276a0291770324211c8df93a8a6b67e379ccd50c7e5000` | R |
-| `content/renders/recovery-turntable-03.avif` | 25049 | `58f29dcdd45d2223a57830aaff4c99e4ccdae7857841b97b2aab672db1da0035` | R |
-| `content/renders/recovery-turntable-04.avif` | 20880 | `450266557f3937360a75ab49b09c0754fe8ab10255584ec359f833de26cb5cc8` | R |
-| `content/renders/recovery-turntable-05.avif` | 16346 | `0da1eb935dddf7bd790691f3c8fd1c3f6709a250197a4acf97b4c25de8212859` | R |
-| `content/renders/recovery-turntable-06.avif` | 13875 | `78bfe7bc4c3d991a7ba80d7f3a19daf3cd2c3f281730bc6eb836ea15578f7bd0` | R |
-| `content/renders/recovery-turntable-07.avif` | 16773 | `9ef2c055dbaeb8b8d32de3576adc9b0792ec934aa8a56aba2b2dab55bbf20ab6` | R |
-| `content/renders/recovery-turntable-08.avif` | 22132 | `cd0185f2e0bd8015d5ad2f151d7f40f94a95e1cf640c6dcbead09c48133e3601` | R |
-| `content/renders/recovery-turntable-09.avif` | 25807 | `931a032f7a1326ff6f54708774d80ca58c248c77a7d9fa7308a982e82cbd5ddf` | R |
-| `content/renders/recovery-turntable-10.avif` | 27662 | `7404e6ab481cde554c4f60a65bf075f96b1950538fadcdaaf0af5f8ecc7c735e` | R |
-| `content/renders/recovery-turntable-11.avif` | 25339 | `1ae43cc69e4c441b7b8394ca63f2cbe783b34b036e1e59d9c1f2ce0d3e209219` | R |
-| `content/renders/recovery-turntable-12.avif` | 22855 | `f2c4caca7d15aef469729ea6dbdbeee6f053f43b4ae2d60d489d1d3fe84fa581` | R |
-| `content/renders/recovery-turntable-13.avif` | 23896 | `4c7e2582a2e86b504ae9e021476c3fc32641310d84c9ab4dcae3c3e120248a15` | R |
-| `content/renders/recovery-turntable-14.avif` | 25930 | `80faf1b1bcd0d4d9f471c26bbc24ca86ef954ffa1bb6d780f0ff8315d50ec634` | R |
-| `content/renders/recovery-turntable-15.avif` | 26939 | `fde48fd872ae7bd02d42dc29ed6375026ce88b00fe50135879592d8139032b15` | R |
-| `content/renders/recovery-turntable-16.avif` | 23726 | `54720a260d0b0d6a43207240a932015963accd5babc85da509e8351a0000cb52` | R |
-| `content/renders/recovery-turntable-17.avif` | 17551 | `b3b0275764dd31aad3c12d5137fcc323498223a6d8ae6509ea86d6dcc4324568` | R |
-| `content/renders/recovery-turntable-18.avif` | 13469 | `dc5062e460ac11ae68ba4116d1ec750b706e584ef0e20dd2e41ea1da99d5461a` | R |
-| `content/renders/recovery-turntable-19.avif` | 17268 | `4befe83714235a4b3a048bd0cf65ba815f8b6c9c700ef875d351356fc491794f` | R |
-| `content/renders/recovery-turntable-20.avif` | 23177 | `ecc00e4870a966f1540301e7dd2e058a1725d7581ae28f1b5d3030b8fb22dde1` | R |
-| `content/renders/recovery-turntable-21.avif` | 26547 | `d2b549525b6c87383080cfae18f9c15aace0fe140638c460ecf2a33f43c44216` | R |
-| `content/renders/recovery-turntable-22.avif` | 25238 | `b1a4d22c9f1ddc6114da502adca2c2e3208aaf2378c3500f8508eb66df9bd18d` | R |
-| `content/renders/recovery-turntable-23.avif` | 22842 | `2018d04f80754c0db6f8e97519fc1d184b64ff806d8d0c7de4589cd798598028` | R |
-| `content/renders/troop-carrier-front-ACC-A.avif` | 1147 | `245221c64b9b1ffee31e31132e958b7c6ad0575acb23299e3610ab17712e9125` | R |
-| `content/renders/troop-carrier-front-ACC-B.avif` | 4395 | `4371295b761df3f578128f22a60800c221110406a8713b0d445ee5183415a234` | R |
-| `content/renders/troop-carrier-front-ACC-C.avif` | 9857 | `9eeaa8e10554785e2265b7e4f0f420478751b9ec7c8b6a50057122dfce292361` | R |
-| `content/renders/troop-carrier-front-ACC-D.avif` | 7926 | `0f0d38bd85f43034b4b02be9ada82e99ffc9ec979c75a11725b1b62e8ef72599` | R |
-| `content/renders/troop-carrier-front-ACC-E.avif` | 7516 | `873dc1e66c78c5de5afa6ae942cecabee719b4fc5c765dc650e83a0c3526320b` | R |
-| `content/renders/troop-carrier-front-ACC-F.avif` | 5018 | `c48c41048fd1bd3a1a588926f8543849f090ecbbb8d0550c594df533c16acf7b` | R |
-| `content/renders/troop-carrier-front-ACC-G.avif` | 9323 | `7bf4e3be618e4b18fed6edc223bbf855c0bfc37ba4d053f7a5ba7b9bbcd5daae` | R |
-| `content/renders/troop-carrier-front-CAP-A.avif` | 4153 | `b8a28f88edf1b9c8346bdb6f61e86a15053e3f415971c26c3f95f3c3801fee6c` | R |
-| `content/renders/troop-carrier-front-CAP-B.avif` | 4421 | `521c5f77597730f7cb292067436adc6e8fb148372af7254c1bcc2b5ece18322c` | R |
-| `content/renders/troop-carrier-front-CAP-C.avif` | 5261 | `725c1511ba973d152b769517cdb8680febd79cec4fc6d1d1295c77bec82124c3` | R |
-| `content/renders/troop-carrier-front-CAP-D.avif` | 5185 | `4bcef79d50392829db4d191a09161e324f97099e2038d596802c8649993c4877` | R |
-| `content/renders/troop-carrier-front-CAP-E.avif` | 3881 | `53dcef83ae9c32f251f8fbeb58f164723d2108f472b1ee9a00ce503acec235f0` | R |
-| `content/renders/troop-carrier-front-CAP-F.avif` | 4195 | `7b7c522fceac8fd0c83357e187d2804c0ea18f51681a3ed981fe2cb1957143c2` | R |
-| `content/renders/troop-carrier-front-CAP-G.avif` | 4988 | `8392e2dc251526fc955f568e51003b9dec0de4f4bc06fc4669285d5be8141c62` | R |
-| `content/renders/troop-carrier-front-COM-A.avif` | 1924 | `a8924a557ee67a000200ec7cb2d78145ee13c0746300e67cc31d03baf0ae88a6` | R |
-| `content/renders/troop-carrier-front-COM-B.avif` | 2314 | `c30d958ade76b8fe2b9d97d3dd8a825bc28c89d1a0fcf874a36225f9273b4e50` | R |
-| `content/renders/troop-carrier-front-COM-C.avif` | 1388 | `4007d0e5b1b26be09c62b639560f73d0653f9f1bcac6ba93210351c685982816` | R |
-| `content/renders/troop-carrier-front-COM-D.avif` | 2590 | `7963501ed6b44057e0dc95cbde629aa13cab561be036e00c807bc94397e24424` | R |
-| `content/renders/troop-carrier-front-COM-E.avif` | 2632 | `c5d567ef4e9af42048081b3306b81d04ed8c4b385ddd7ec708b58128d5895d42` | R |
-| `content/renders/troop-carrier-front-COM-F.avif` | 1747 | `4ce4407846fadb0883dd313b379b6b9b471a4a05d5aa7d5a712575f867df207a` | R |
-| `content/renders/troop-carrier-front-COM-G.avif` | 1973 | `cebf0460d8b99dff2af50233d2d0e273d02d497067e2cffcdc5a8c39a1cb26f1` | R |
-| `content/renders/troop-carrier-front-FP-A.avif` | 3728 | `802484397add221a2111dabb6807423c159aa9a94ff9f474068acd51a1a17deb` | R |
-| `content/renders/troop-carrier-front-FP-B.avif` | 3982 | `011eea1f86bdf15b431402ce71a82eb0b26ac076adcb6e68f3de0779199c45e9` | R |
-| `content/renders/troop-carrier-front-FP-C.avif` | 6315 | `0f6ec24631316d5ae42a6f1c04da225666c96f74a021692fd464a33a9637a1e8` | R |
-| `content/renders/troop-carrier-front-FP-D.avif` | 2859 | `3704b641cca25a0f99a5ba552b39b00f28edd921b94a382e6530c64aa22c603d` | R |
-| `content/renders/troop-carrier-front-FP-E.avif` | 2710 | `fa1076403a0731d4497e69b1e76ee3304771f190bcd9c10f2c8261524fc42afd` | R |
-| `content/renders/troop-carrier-front-FP-F.avif` | 5612 | `7e3258b3d475a996b2d10b80a5558952399a67f8e0c8a10f8b9ad37988d0c7bb` | R |
-| `content/renders/troop-carrier-front-FP-G.avif` | 4958 | `19fb0d7fca7339e6f411156c9d828104f3853a4488af92cb1a653cc46af3c211` | R |
-| `content/renders/troop-carrier-front-MOB-A.avif` | 3212 | `a5c2a36e91ae51763ff2fb85940f4d314d336dd9969a727207cd5fe7bbee089e` | R |
-| `content/renders/troop-carrier-front-MOB-B.avif` | 5700 | `39b47b22f7e11be181ec047c078d484207f88b86a55672ee10f3854b20c79b56` | R |
-| `content/renders/troop-carrier-front-MOB-C.avif` | 25845 | `9549ea7745f420e865c61b509e3fe806e4f1b5743fe7ba00c3e37691e635418e` | R |
-| `content/renders/troop-carrier-front-MOB-D.avif` | 9677 | `82fb02081265fc446416c13dfd923b5ce573715704b3c1e40002575104aca138` | R |
-| `content/renders/troop-carrier-front-MOB-E.avif` | 2863 | `cd2bdeb83d00624538c2ec72b8f0ae82b90e837d7cbf016307e47ccdc52f5f4c` | R |
-| `content/renders/troop-carrier-front-MOB-F.avif` | 1946 | `c82860c11d570d0fd0ce469402d2aae1137d85fd2a97d4163b93293160646556` | R |
-| `content/renders/troop-carrier-front-MOB-G.avif` | 20462 | `f55c8a56058a227e5aa13a1ee6ea4ad2e5df6bc5693ca2c6c653fe50125a420e` | R |
-| `content/renders/troop-carrier-front-PRO-A.avif` | 12178 | `f374b2afa3cd15f10f52aa8e5231a0ef0e1d0bf08e0e356c8b67c133950ff129` | R |
-| `content/renders/troop-carrier-front-PRO-B.avif` | 6364 | `17d9a6caef9d5078d4ab2df5ba636f28c046bfb8ff478936d7d5bfbea657f963` | R |
-| `content/renders/troop-carrier-front-PRO-C.avif` | 10758 | `b26d4c2aaf0de1f1dff091f14f2f06d5d371c0002a557b47e39abec3246f4bd7` | R |
-| `content/renders/troop-carrier-front-PRO-D.avif` | 1081 | `431ef50724f681744d098b290db227d9c4d1e2ea9f756e44554c9a24a5d17034` | R |
-| `content/renders/troop-carrier-front-PRO-E.avif` | 14265 | `c1f5682f639ad0b2445bea28e589c5429fbc4d5f29e94277a44362cb17320262` | R |
-| `content/renders/troop-carrier-front-PRO-F.avif` | 2770 | `5a3ab2cadb51392bc821edbb967662b1195c736c80bf7635d63119aa95ed15ed` | R |
-| `content/renders/troop-carrier-front-PRO-G.avif` | 1862 | `74d3e9d900457f80df3e40b00d877cbd7097c35613d22fb079e3af858db39cb2` | R |
-| `content/renders/troop-carrier-front-SA-A.avif` | 2107 | `edab6b266aec823d786a63e33bee099de1aa1df743fb428acc1b34c28a88907c` | R |
-| `content/renders/troop-carrier-front-SA-B.avif` | 2705 | `7f3ebf855a7bfcdc0c2670ee592c816b986e5695ae12f2f0d42670c75333e0f1` | R |
-| `content/renders/troop-carrier-front-SA-C.avif` | 2063 | `a78e1bb061d7fb75fd22036cd5e7720126be5499dfc58276923d691ea1bd8ba8` | R |
-| `content/renders/troop-carrier-front-SA-D.avif` | 3365 | `508da0922a6a94553c141742b1a74274965a07e68d556a44a173952ea4a5b79d` | R |
-| `content/renders/troop-carrier-front-SA-E.avif` | 2361 | `66d191ec5c6ff37ad7e331c004f5cf6bc82a25c3c9f7e8bf0c4c02b73523dd46` | R |
-| `content/renders/troop-carrier-front-SA-F.avif` | 4299 | `72caee98e92c2847a624c6c64afefbf62988e50db5e86cc27707a676b25dddab` | R |
-| `content/renders/troop-carrier-front-SA-G.avif` | 4251 | `4c4d7d7490f50a138f1c3d95fbf76678ed4b0ce07d807268c702cdd27cd1fc30` | R |
-| `content/renders/troop-carrier-front-base.avif` | 21301 | `416a31acccadf0030c83e25d07dc2138370c21d6c31453e0a5a8c93fcabfa48b` | R |
-| `content/renders/troop-carrier-hero.avif` | 48079 | `3cc00969fd17be91ae28916dc64aec3c1bd2e42274124d6b97db017d63cc4144` | R |
-| `content/renders/troop-carrier-rear-ACC-A.avif` | 6300 | `d95b65a164dff18f0bdaa8544bfa2c68ce5103dd9ab5ba520cabedc81cf6f8f9` | R |
-| `content/renders/troop-carrier-rear-ACC-B.avif` | 10765 | `76aa16240f0ac4543aa2208176320d716a5c096c56b1a8845b1b0d00413626fa` | R |
-| `content/renders/troop-carrier-rear-ACC-C.avif` | 4019 | `8afcc6ef9eef41087773bf6aade28794a5855fba66c3613b7a913335540829f2` | R |
-| `content/renders/troop-carrier-rear-ACC-D.avif` | 3475 | `1f3ffa8c064f2d4066227649233a36ba0e272361440fc263c89d81c1de6e04f1` | R |
-| `content/renders/troop-carrier-rear-ACC-E.avif` | 3286 | `dcfe69090a672b5c5f0f1169e4227fcac451082dbe181b530e87de98ad7f4991` | R |
-| `content/renders/troop-carrier-rear-ACC-F.avif` | 1775 | `67fb83a0c93ca42eeee6edf9ba8a9b20064b877c7e65414904678c2f8d390362` | R |
-| `content/renders/troop-carrier-rear-ACC-G.avif` | 3947 | `57eeaa56bb97ed190e73f2eccc4a9001df278312180edd104f16b539d83e80b2` | R |
-| `content/renders/troop-carrier-rear-CAP-A.avif` | 5405 | `acbfa8fcd0aa9098a9631b47320fc67de0d377051a5feb73bbf05145d872eeb3` | R |
-| `content/renders/troop-carrier-rear-CAP-B.avif` | 5613 | `94720178374b325975a361849abe1a37d3b5bfe92c3694e4840b7f5c9c3899e5` | R |
-| `content/renders/troop-carrier-rear-CAP-C.avif` | 6281 | `6484f8a53332a147df09738a0092b734e721fcda05d38bdb35752e14e5292d70` | R |
-| `content/renders/troop-carrier-rear-CAP-D.avif` | 6847 | `020199bc825ba4047006bdfb67dc53f7587f0c4b2c1cf061a01d6ee886c6dd27` | R |
-| `content/renders/troop-carrier-rear-CAP-E.avif` | 4665 | `2dabe03116f47f3df08cc1de1f30d0a980973f4825c336f96626a203363d4104` | R |
-| `content/renders/troop-carrier-rear-CAP-F.avif` | 5435 | `1c5f84037c43267a769edaeee2ac7b7665f0a2bb4699956a984486ff7297a770` | R |
-| `content/renders/troop-carrier-rear-CAP-G.avif` | 5658 | `a147540ae8c656916e4f9334edeb363a66616290efe93e2308392d635d0cda25` | R |
-| `content/renders/troop-carrier-rear-COM-A.avif` | 2224 | `16fb8c6d57970b515d0c994f930a2d0c69b34e4968f0c38cd379fb562668e9c5` | R |
-| `content/renders/troop-carrier-rear-COM-B.avif` | 2933 | `ab80b1c3b20deaa98430243b4b361e594296220ff4242c4f15085744a2552fe4` | R |
-| `content/renders/troop-carrier-rear-COM-C.avif` | 1608 | `667adae191379a10c12e2db0a201c98507d15ca2eb91dfdc1bd6a708cad13632` | R |
-| `content/renders/troop-carrier-rear-COM-D.avif` | 3563 | `53f8793744501bd9a282df6e4ecde945a10557f8daa9aff96e270e5a66ddb349` | R |
-| `content/renders/troop-carrier-rear-COM-E.avif` | 3609 | `ee0ff12c79ae4cf74a63e056b8ba76494eab1c77fc1cb74d4ea4526367a2cd7a` | R |
-| `content/renders/troop-carrier-rear-COM-F.avif` | 2193 | `537950a6a9060524ecb9b446b4df64090bc653622d1ab235c1bb68b111687999` | R |
-| `content/renders/troop-carrier-rear-COM-G.avif` | 3299 | `7da64e66fab810211b005fcf694eb4a3f34c95efc7901bb3def9aa238b455596` | R |
-| `content/renders/troop-carrier-rear-FP-A.avif` | 4467 | `3038e3f22462d8d965ee1c20498f4b0ea5aa2105bedd8f856fb1fd02ca02cc76` | R |
-| `content/renders/troop-carrier-rear-FP-B.avif` | 3945 | `d5842d658901f8ea992d4d105ae17dd73690abc9b6bc91edf7be3bbb4080f228` | R |
-| `content/renders/troop-carrier-rear-FP-C.avif` | 6100 | `42b61b9fab7692fb2c0c6f869d8ab7ccc2ab066a9c354009c7e2a296f24f4a3a` | R |
-| `content/renders/troop-carrier-rear-FP-D.avif` | 2449 | `6ab376dcdcf61f8b571c2945efc0663e16e06c43735a51ed8ceeaa13beadba92` | R |
-| `content/renders/troop-carrier-rear-FP-E.avif` | 2626 | `7984ea61c4eb26515bc4c278eff61113da6497a527585cf38432db9abc9ab5cd` | R |
-| `content/renders/troop-carrier-rear-FP-F.avif` | 5603 | `3be3ba1a3380e26d08a86ecfe5ffa9b911b76427c9d2e57a9e0a405cae79eb15` | R |
-| `content/renders/troop-carrier-rear-FP-G.avif` | 4738 | `b069599d42fe733a9265ef6e253b1b938ce817e5db2cb01b0d92de5a69b40890` | R |
-| `content/renders/troop-carrier-rear-MOB-A.avif` | 3082 | `e381caf12cc7b963eafea63b8cffb47f7b26a55b7077a6f91ab5beb893ea2064` | R |
-| `content/renders/troop-carrier-rear-MOB-B.avif` | 4707 | `9f5eb26f0d4f62b11981cf52dfa9b0a0708ee8cc2b0c8dfc1742d76eb6e3492b` | R |
-| `content/renders/troop-carrier-rear-MOB-C.avif` | 21710 | `73967c602995715da27185f8eae65d7a03fcc3fdc15a0c40c835f513a3f3c3ff` | R |
-| `content/renders/troop-carrier-rear-MOB-D.avif` | 8112 | `2e2da9bf9bfcee6d9ce6967354bf9f9af62546bb1f47addd65f0c5dea0c09593` | R |
-| `content/renders/troop-carrier-rear-MOB-E.avif` | 4153 | `63364306dda9b5ca32e44a5249f12cc521a4ab94b26439c45d73f5943683fc4f` | R |
-| `content/renders/troop-carrier-rear-MOB-F.avif` | 2197 | `1c4439d4bda7932f2935ae4f08b984613f23634816d88f538ac160a465ea475b` | R |
-| `content/renders/troop-carrier-rear-MOB-G.avif` | 16491 | `96744775c876ef86e1012b17621d1a8928595cf51f9bff2b6c9e9a7133acd0a7` | R |
-| `content/renders/troop-carrier-rear-PRO-A.avif` | 8589 | `c6934295da6c18cf55d6ee6012463c90e4b85aeb2e26fcf584e329f377174a42` | R |
-| `content/renders/troop-carrier-rear-PRO-B.avif` | 2662 | `3d2acb4b1ca6225c03951c09345bac9d4917cbe753be5575256e24c0775f543d` | R |
-| `content/renders/troop-carrier-rear-PRO-C.avif` | 7918 | `f9601205c0eb601aa27d4d13a0bbc480c156d03ec8ce4480e8ad704e73a94c96` | R |
-| `content/renders/troop-carrier-rear-PRO-D.avif` | 1172 | `8ee36ee9e33c8e68f80426858330fd3cab09abd2bd9c6e6b0174c16256c014d9` | R |
-| `content/renders/troop-carrier-rear-PRO-E.avif` | 11946 | `28afb724e7208f9b5e16ee045d7ceaf8bf7351a7ab0acb438ff825072394a452` | R |
-| `content/renders/troop-carrier-rear-PRO-F.avif` | 2547 | `eeab4ec75cba696369767fe567b314d3f5a55a2a5dd8dc48bb5d50b2b9e17e8e` | R |
-| `content/renders/troop-carrier-rear-PRO-G.avif` | 1899 | `5a21657ea25ac890613cb2d45538e7cff70790c49b54820b19ac1c8f65480ced` | R |
-| `content/renders/troop-carrier-rear-SA-A.avif` | 2462 | `9e1aaab3ab2ed7c335c948bebd5fb426b3b0e95cf85a15b7d0d88eb178f34c4e` | R |
-| `content/renders/troop-carrier-rear-SA-B.avif` | 2587 | `fed9ef8f57aa9adc10aa60bdeeef0d0a664d62264135f26dd07d95e4bbf99ea4` | R |
-| `content/renders/troop-carrier-rear-SA-C.avif` | 2343 | `67ece0efd35f78ed971294414217d4c389aae16e4ee80e7fabf5e2d388735e69` | R |
-| `content/renders/troop-carrier-rear-SA-D.avif` | 3591 | `c732fd90efdc02f8102336796af62a4c240ab9ebecb069b1a18a3f38e640c08b` | R |
-| `content/renders/troop-carrier-rear-SA-E.avif` | 2749 | `b28a0199dd820758e9c4ff3f73b55f16feda54f7f7844b97562b1de1dd5c011e` | R |
-| `content/renders/troop-carrier-rear-SA-F.avif` | 4383 | `802a1bab6aad3d59ba0139015e6bd4439b738f1fd8590151709d6225881cb1f5` | R |
-| `content/renders/troop-carrier-rear-SA-G.avif` | 4261 | `7e795c07707c0761f55d841aa845058555207f357cb691e38c0750abfe1dd814` | R |
-| `content/renders/troop-carrier-rear-base.avif` | 22542 | `3a84e54d561965d7ca5cb3405ed54f0de481623320e2694024b3f3805bb853e5` | R |
-| `content/renders/troop-carrier-turntable-00.avif` | 22694 | `f33cf02c165d7fc8e7fc7d2c1db7f5f4888c0dc83fc9bf409ed4acc1d5672bca` | R |
-| `content/renders/troop-carrier-turntable-01.avif` | 23539 | `750d4f920d30462c17914c58727e58a5a5d804686cc2df5276f416ddade658bb` | R |
-| `content/renders/troop-carrier-turntable-02.avif` | 26374 | `2331a61180e365ce28c96485efd15b84e8ee36068a0de9b8dd842595d9b9cbcd` | R |
-| `content/renders/troop-carrier-turntable-03.avif` | 29438 | `c8a5c3a3d7d1a229ad11bda3c3050fe1c256f297c539dd51c42ce60123da0368` | R |
-| `content/renders/troop-carrier-turntable-04.avif` | 25757 | `025220e9fe5552c7aeb3b2b6cd183fbe1736d5a6ed3d75999078f7350b0db473` | R |
-| `content/renders/troop-carrier-turntable-05.avif` | 18804 | `e01e876dd9717b80dbfd891c6b840d2925196c04fcc19588758ae07a408f57a6` | R |
-| `content/renders/troop-carrier-turntable-06.avif` | 16985 | `5b6bfbc4f455eca4b0cc1b7e542aa19905b6cdf4eee80a66698ddc8e3d03fac0` | R |
-| `content/renders/troop-carrier-turntable-07.avif` | 19353 | `60a3eedcbef44bc014e1083a6a8cd51120c5d78d3635626595a981a5c9d422e0` | R |
-| `content/renders/troop-carrier-turntable-08.avif` | 26473 | `d1d2b1ad6be7449e8f7ef861e2eaea78cae02ad3da87fc5c2f4d7eadabe9e277` | R |
-| `content/renders/troop-carrier-turntable-09.avif` | 29633 | `a1d0be5d28062e7d29131455ad23e70d9f706c374429fc0f048715bd9821c15a` | R |
-| `content/renders/troop-carrier-turntable-10.avif` | 26389 | `cecb5085fb237fc3a07c4a272793876ecbacaaa39909deeee943cc36e53e7aff` | R |
-| `content/renders/troop-carrier-turntable-11.avif` | 23674 | `d6c99c00a9db5c98cbba55476db60963ef12b9b5a64e3ed110f5c2b5a6d98255` | R |
-| `content/renders/troop-carrier-turntable-12.avif` | 22516 | `802ceb2e1a2327e41affc981fc1932713f39e03b7ebfbf7ed5700a413f46f826` | R |
-| `content/renders/troop-carrier-turntable-13.avif` | 24449 | `b9756d47dd18f52a5b63f616435a86acd825aeca418609eafb7c55ffbfb45c53` | R |
-| `content/renders/troop-carrier-turntable-14.avif` | 26267 | `eb22194314942116c204fd0252d35228673f819c56e934ec10a8dc1101c6c69e` | R |
-| `content/renders/troop-carrier-turntable-15.avif` | 28441 | `32291eb08f30d47e55eca06aab595d16368c47d22a349614e12fadf4c6db55a7` | R |
-| `content/renders/troop-carrier-turntable-16.avif` | 26586 | `a845b147fed46b45f9cc85d446dfa4a9294226b440bf5bd30a97bdec2b28f13b` | R |
-| `content/renders/troop-carrier-turntable-17.avif` | 18619 | `f3d58d2d4ecb83272e69e91958bf697198ceb5bd18a602a305ed22334199a49b` | R |
-| `content/renders/troop-carrier-turntable-18.avif` | 13918 | `e018c0bf233fe0bd69eebb66a62de9202ab3e654e778fd299960ddd367fecda3` | R |
-| `content/renders/troop-carrier-turntable-19.avif` | 18822 | `ae4ea0a91f723be9e804224a7a463161dd614d4418919b1e0b0bc5be5443a3aa` | R |
-| `content/renders/troop-carrier-turntable-20.avif` | 26477 | `89b122cfd7af41da80a6335f53b986ea3d64d007f158f7d7ee960139df804dba` | R |
-| `content/renders/troop-carrier-turntable-21.avif` | 28001 | `de8af6cf8621fb79b9db50a71c2ed357b3f706bc8d68aa2e2354c853b703bbcb` | R |
-| `content/renders/troop-carrier-turntable-22.avif` | 25334 | `8d082217e115beec5e06b1d2256aa4f048f0de8d684096f80327f66aff59a721` | R |
-| `content/renders/troop-carrier-turntable-23.avif` | 23760 | `09589fadc26ff4e272b00af20cefa4761acbeca035ec6b5da301ba6c59c9fd9c` | R |
+| `content/models/showcase.glb` | 25031636 | `f39600a910cf948e0e779ccebda421a3c7f1479a189a19a8f4d0d83a2c9ac334` | M |
+| `content/renders/card-ACC-A.avif` | 9908 | `bd060399ff7fa9cbf0851a8fb7be46e3d855170e324c5f0331f0fba80d964ffd` | R |
+| `content/renders/card-ACC-B.avif` | 10461 | `f0b8c283e9b58642b392e98bb8ef0e9e59e92170044f1abbbccc04bf570b8f1d` | R |
+| `content/renders/card-ACC-C.avif` | 14759 | `b64abad38e38d078b9bb64225f633e41fc519bdf106e9f6707d41fbeede90ee2` | R |
+| `content/renders/card-ACC-D.avif` | 11516 | `9dc0b1c4cfc5fd39ad03e24b1e09430458cc6ef506d5cee3768ee8f30406be99` | R |
+| `content/renders/card-ACC-E.avif` | 8802 | `8c87b0ee73b78ab91484ee560e5bac57bd39f6e891281cde30402fced0dce068` | R |
+| `content/renders/card-ACC-F.avif` | 13064 | `62878e1338da5ebb933004aceebc35b9288b434bb90002c5b3acdcb5152225f6` | R |
+| `content/renders/card-ACC-G.avif` | 13571 | `919c4bedc4c06b8326f2cbc13b4c3df9305e18965ebbea737f15bed2df86ee43` | R |
+| `content/renders/card-CAP-A.avif` | 7325 | `fd6542f96c3131eaf8454abb123b437c70c8cb0ed78bc543cc9c90fa936bc4f0` | R |
+| `content/renders/card-CAP-B.avif` | 12248 | `03c98753418711c61a1b57e0cfb41edd6419d8811a3a6ee5f6bbd2ba6a4ef5bd` | R |
+| `content/renders/card-CAP-C.avif` | 16675 | `3f277b70c9c80ef9de6893f857366d0f2ec80401d4eb8a59dd1db08b95898e2f` | R |
+| `content/renders/card-CAP-D.avif` | 15192 | `07c1ef10a11d8b89c3dff636b985ff94849590b7284d56246f35a58cc73d998d` | R |
+| `content/renders/card-CAP-E.avif` | 12408 | `9ef581cf2d263215fcdc061cb85d3ab68c1051ea7ec80b262c22023ab4d529ee` | R |
+| `content/renders/card-CAP-F.avif` | 12881 | `fd3de4fa96223277f825b7db6a3dc8bc4bb985f25eeaebb98be5355a6158c69a` | R |
+| `content/renders/card-CAP-G.avif` | 16036 | `af9837333f00b106a90cbd083a689df5e0e78f696202da369e13ce0f683f181a` | R |
+| `content/renders/card-COM-A.avif` | 7677 | `efcb0250adee3754f9754537baa601c10f20b94826424c6a3bca0caa20914217` | R |
+| `content/renders/card-COM-B.avif` | 6956 | `fd849f8d0c5f4e2eb2b2a1be0d349d3944fba9b960a99a9f493633934c01c6a2` | R |
+| `content/renders/card-COM-C.avif` | 9709 | `2b87e1eb5ba7e5d5a303d99707a340df01cf855cd6f16dc393236c1047042671` | R |
+| `content/renders/card-COM-D.avif` | 8028 | `2219eab56e20f172d4836f0a5482de050ff7b6e650b5c7b448cb8d283c0c764c` | R |
+| `content/renders/card-COM-E.avif` | 8007 | `f2bcb8090d0f54f80de32d8397d2b20bfd3635ad0cb7146691a654721f486e08` | R |
+| `content/renders/card-COM-F.avif` | 7665 | `f382a7370b52db730c8cc0319ec2f540422154d50c3bf69295129885407a7529` | R |
+| `content/renders/card-COM-G.avif` | 11183 | `287364f605308e0e6abc32aa0c93ef60c3b587401f7057b98da5a78d23bf232f` | R |
+| `content/renders/card-FP-A.avif` | 9791 | `e95a72063c3ee7428694491480b1f0d4c003fd33dddd7a8e2fe9bc71a57d7f05` | R |
+| `content/renders/card-FP-B.avif` | 8776 | `aaf751b14ac844bf5c0d73491228ea462564a8a0fd17149540c36472a8ba6efe` | R |
+| `content/renders/card-FP-C.avif` | 7219 | `5029655b7f5bec92253ecbeed200f7b6ed27ca0a8404b335a12d38812a9ca0e3` | R |
+| `content/renders/card-FP-D.avif` | 10314 | `279d3786cc747d0dad2c09e03573a59ffc473305da3ad35b06faa186265cc676` | R |
+| `content/renders/card-FP-E.avif` | 10764 | `b5828b3fe8f2d7c9596ccbc8da8e5730fdf28bb2bc5c5d676f9ef4fa88b4701c` | R |
+| `content/renders/card-FP-F.avif` | 8044 | `4910f199c229a452d37bd88fd02493feae74ed9b16ced233faa2da962f3ffd4d` | R |
+| `content/renders/card-FP-G.avif` | 10610 | `7a1c932ab0aa03a59352b0e6c5cfd0ce95a4f1cbd3e91bd0704d562d2dd3d800` | R |
+| `content/renders/card-MOB-A.avif` | 15743 | `540fd8169796ae279fb5d58d7bdbcbca5f8be72fa2ed6c8b772f4a59f82ae23e` | R |
+| `content/renders/card-MOB-B.avif` | 9575 | `9bc046cecee5038837404d81806fab3d5528113d6004b5fa3a878647551d3e7b` | R |
+| `content/renders/card-MOB-C.avif` | 13624 | `b939342d81296ad3014959b28f185bb4518b0526c6ab6e94ddf97a66d4fe57bd` | R |
+| `content/renders/card-MOB-D.avif` | 10482 | `f40eb80cdd073faed3cfd3c28a5186a28a54701f951c5f3097bcf47bdd718050` | R |
+| `content/renders/card-MOB-E.avif` | 9843 | `f3cd5354f3573df9954a8b918a7fdfa40659724566dff5fda43658501cd8d6d5` | R |
+| `content/renders/card-MOB-F.avif` | 17789 | `33b137af80e2e10d4714d25a00e76e33a0714a53fb924d074b0dab685f98ea0f` | R |
+| `content/renders/card-MOB-G.avif` | 15993 | `66efaae27fcd515d48cfb56047dd62ff84f67bee160a272ee932973684a46670` | R |
+| `content/renders/card-PRO-A.avif` | 13360 | `f692334b2277cffb1dfb9494d84dfefebaa0f9f4e2d822fe415affd6976d20a0` | R |
+| `content/renders/card-PRO-B.avif` | 13577 | `21de525d7bb02af662732cf04ec6686a9c2f8ff1330b7e5af2c9b5e5abe2002a` | R |
+| `content/renders/card-PRO-C.avif` | 10980 | `48a6da92cfd211193a8b710f3f975e182cd811a324da5dba7cc7d25849878e3a` | R |
+| `content/renders/card-PRO-D.avif` | 8817 | `79496db55a6a6b58e2b83cc79e73a77c76ff53191836f99af9199866085e0831` | R |
+| `content/renders/card-PRO-E.avif` | 20961 | `493cc510f4a0022d1473fdc110d9cb26bbdcc7286d0ca187d7d820c98a88f7a5` | R |
+| `content/renders/card-PRO-F.avif` | 8695 | `ff310d2902e62659e6b1c61ca913fcb1eba9cb109758dd6c24e9305cf3b7922b` | R |
+| `content/renders/card-PRO-G.avif` | 21126 | `567b8c27381ca439d4e642a7bbff71e8aced24a3b4eca88dd25d9113a74c9503` | R |
+| `content/renders/card-SA-A.avif` | 7630 | `1ef96b0cb41af732709d61e3f51abd89664f5b456c0fb64d5f267e8b4770c804` | R |
+| `content/renders/card-SA-B.avif` | 7287 | `37c7f7fd5260220b375e4310bae489359de992c486807ff6e377a115d0eb509c` | R |
+| `content/renders/card-SA-C.avif` | 10396 | `59572bc477d85d218c5d349473ecf9d12d278dde3de880cc825d3964a8fcdf52` | R |
+| `content/renders/card-SA-D.avif` | 7478 | `34132e8d3e6d1d7b8f870901526e00c1110a7a352ef2016ff3329599cae4bd32` | R |
+| `content/renders/card-SA-E.avif` | 12306 | `a74e3b27a75d78feeb71be148da707282085ee1a2d89e74e83ea582c2561a6a2` | R |
+| `content/renders/card-SA-F.avif` | 11225 | `536f8266f2e9f35b79ec2039382d4090b51f071721323c082aa2421c7959943f` | R |
+| `content/renders/card-SA-G.avif` | 10973 | `285bd97bfd8d92c22121e6a44b7770dfba93c6cab3d1a6084a077c0a56aac32a` | R |
+| `content/renders/card-SE-A.avif` | 10525 | `520cecd79878a598a7a21b3d6148c4e1606be14f722462f1e21e1f71dc873616` | R |
+| `content/renders/card-SE-B.avif` | 11293 | `fdebda32713396b72570554c03c63071326beb9995b4ba47cd3db2b72341c457` | R |
+| `content/renders/card-SE-C.avif` | 11592 | `bb87c8ff289388b999d05ba5d11cf134c5262024e900f2cdc3baeac4edce9346` | R |
+| `content/renders/card-SE-D.avif` | 8702 | `87d0aa984b70184b5356e53b02a7f1cf4551bd4afbc0f0e68e18a8457ada8fcf` | R |
+| `content/renders/card-SE-E.avif` | 12414 | `d137f84f04397fbbc5a8dffd903de9d75f24b8bf1599abd703c7471cda689806` | R |
+| `content/renders/card-SE-F.avif` | 10878 | `32cf57e776321068759a3b460ad39393dd1b26f971c3602721da66434d0a386e` | R |
+| `content/renders/card-SE-G.avif` | 12780 | `7b42f17b6e2d27797d5dbc8b31ba6cc3aa10988ac8960e6ad1e338a91f3cbb40` | R |
+| `content/renders/card-SE-H.avif` | 10302 | `dba69ad475abeb7b39b332c44a7e3f8f917c1825831472e0dd15fc99caa96209` | R |
+| `content/renders/card-SE-I.avif` | 8568 | `e6f3cf61ba49f16eb87d57f7ebf5355895e2bf1c4192312953dc2a16ac325102` | R |
+| `content/renders/card-SE-J.avif` | 10839 | `f63b6e5610a263a9668ffa0030daebd371a0e8b8af7ee5bc8a4efd99d23fed71` | R |
+| `content/renders/card-SE-K.avif` | 9545 | `7fa91ad5579608b66973812d5dae323954b342452600b1f64faca0f75eaf467b` | R |
+| `content/renders/card-SE-L.avif` | 9593 | `b42e63b2a611966f65908529cb0e076183fa7ba566ac730bfd4009dd1430f4b7` | R |
+| `content/renders/card-SE-M.avif` | 10248 | `8fc71125c44fdb450ca97d67bc89dd4ddb9a9c4583e087555117647a80fb4052` | R |
+| `content/renders/card-SE-N.avif` | 8644 | `bf06615702e3acad33dbfda2ad7c13b5acc01e4857e3ebabb4a0830238c2bbd7` | R |
+| `content/renders/card-SE-O.avif` | 10774 | `1ec3200a0e646df8143d912136dcecfc4d3a491f08e1eee9709d1efe1ecd1cd3` | R |
+| `content/renders/card-SE-P.avif` | 11523 | `0790ee1cf30e9c66f3b762297e872ad01c806adcdae2e4b30a18f462c5198436` | R |
+| `content/renders/card-SE-Q.avif` | 10335 | `436b79f1c80667aede4f3a26a5d2e9e8d359b0edab3c615280b4112129c26c8a` | R |
+| `content/renders/card-SE-R.avif` | 10346 | `e32d9ccea3320cbc296a5f536c58b3b77fa64d84a2f5174e0334ef087ac0b6ec` | R |
+| `content/renders/card-SE-S.avif` | 10678 | `b1748121930a8d5c71aa96067d9f958c014aec38ad0881286964f7d3daf20cf7` | R |
+| `content/renders/card-SE-T.avif` | 11390 | `9ea5c1b549d985d1abecf59fdffe6813e60c3a6fa4d071f544d863e307be94f4` | R |
+| `content/renders/card-SE-U.avif` | 12022 | `7829ae067fa0a3973877c8e2994b49ea7d63d4d299e31f24d8fadd688c75d33e` | R |
+| `content/renders/card-TRAIN-CAP.avif` | 6696 | `5f7ca6b6d98b83625af3968b1cab198ba0f07809eb9b053a0fce090017442559` | R |
+| `content/renders/combat-front-ACC-A.avif` | 2185 | `9f733d46ce25aaf35d6b745cffd6cb9bee059f00970864e7b12c59a1695551e1` | R |
+| `content/renders/combat-front-ACC-B.avif` | 5891 | `e23856b4447f601052a70c2d58a78704ccb6ab56dbc6059d25dac0085c844240` | R |
+| `content/renders/combat-front-ACC-C.avif` | 9961 | `d74827080dbe8c047e471b5cb7696f9a27af7dd587ff860de901d3854986987d` | R |
+| `content/renders/combat-front-ACC-D.avif` | 7547 | `b02375044e1518f48a922ca687d797bcba484efacfc59d0f1bf11707f0e5f0d0` | R |
+| `content/renders/combat-front-ACC-E.avif` | 8592 | `a17ca1946945ce7518c7cedb9a64c537b630122015c39c2fb1f7e2f0f85a7b60` | R |
+| `content/renders/combat-front-ACC-F.avif` | 4518 | `a9d2bd4ff300f72b7927923c86bd56c5913ed101154df419fe82ecab15ca5b8a` | R |
+| `content/renders/combat-front-ACC-G.avif` | 11115 | `f83124b3499bd30486f15ae932be9c76d31b167cea2301ad2848f8c72b5f7c94` | R |
+| `content/renders/combat-front-CAP-A.avif` | 4528 | `042f95d428c6dee5ce77b5b7141574a498892ca17bfc9e76e92076e8300e5fe4` | R |
+| `content/renders/combat-front-CAP-B.avif` | 4634 | `3cfbac9e1b8af00d935bc48963aea8db7f0fb74d4b692bbbc8c9013085ec5893` | R |
+| `content/renders/combat-front-CAP-C.avif` | 5062 | `8ef0f1f2f11bdc80fac042693ce675cffcd6c09f1f25a075d4d625bacfa35b4a` | R |
+| `content/renders/combat-front-CAP-D.avif` | 5563 | `14964d7ef84322a340a520433091c923df7b7045f7da352db84c1e3f3ef22434` | R |
+| `content/renders/combat-front-CAP-E.avif` | 4177 | `4967e8952ca9d3afa51aefbd9d9010e53574b45ff4b6cb2aa182371c8571dee8` | R |
+| `content/renders/combat-front-CAP-F.avif` | 4507 | `58497970390f7d22f42e0ebc33b5273cbbd4cd23cae82943c6a9183382d05a95` | R |
+| `content/renders/combat-front-CAP-G.avif` | 4867 | `dddd0de2f93f8d2ba216358360dc8b229f2ad8b8166e3be4612c4bfcff725cc5` | R |
+| `content/renders/combat-front-COM-A.avif` | 1988 | `4599efc1f04949c980bf266fd34d6e253c11af72a8ef012f2dbe7001adf6bc9e` | R |
+| `content/renders/combat-front-COM-B.avif` | 2356 | `e8552c53bf100f510d05bf0eb03f43944157ab75c1bdd04315772adc96427af1` | R |
+| `content/renders/combat-front-COM-C.avif` | 1470 | `95f6c3e4c084b79ad75fe3dca8e7381f879faf7a6e069c9bcc0bdc50ffde84ad` | R |
+| `content/renders/combat-front-COM-D.avif` | 2633 | `4386c6913ddd1eb57c9e583b66c6561dae7fae958bf90a9028adbe26bf744ea9` | R |
+| `content/renders/combat-front-COM-E.avif` | 2834 | `f412f64c079f1a30ca00f618f7b67c8e2d18bf525777853444d75676554810fd` | R |
+| `content/renders/combat-front-COM-F.avif` | 1889 | `bb18c1b574ff69817e5f79918a35d70152b8e6da84db658e75fa9e5c25d45150` | R |
+| `content/renders/combat-front-COM-G.avif` | 1994 | `7c2122120012791bfa51d6bad6a5d37cdd36633fb51c70eb706655ab45d8d55a` | R |
+| `content/renders/combat-front-FP-A.avif` | 3696 | `272ad2690a16bcbf79926d21701f044ee2ad0992411048cf5d9af172f134fbd1` | R |
+| `content/renders/combat-front-FP-B.avif` | 3912 | `db603510e99da334fc61ed62eac2dd27f39ed12d34e3d50ccc30f1b587af8540` | R |
+| `content/renders/combat-front-FP-C.avif` | 6263 | `3bcfd00c66e9d647ced3ac86ce181eacd0f522472366ff7b369c1f182da16ba9` | R |
+| `content/renders/combat-front-FP-D.avif` | 3132 | `22dfaca42b32aa95566992dfc22cb5d3d1783aac89b657dbcddb78aabd166778` | R |
+| `content/renders/combat-front-FP-E.avif` | 2830 | `0bf6cce4ef43d9ac8c6b658927170662e2bc527fdba1f35a758a45a657dd32cb` | R |
+| `content/renders/combat-front-FP-F.avif` | 5439 | `67ed9147b581be91f3fbad4fe180b0b580d0f03b328072e9c96b9c088d83a7d6` | R |
+| `content/renders/combat-front-FP-G.avif` | 4803 | `bf4f2cc35d1347c69931d9ce1b768c6a421ffa3baeaad15b699eb2eb90a98058` | R |
+| `content/renders/combat-front-MOB-A.avif` | 3545 | `60d1319f5e431a9555aacb18a762a888aa9ba5262bf6219a66cbeae2b184d714` | R |
+| `content/renders/combat-front-MOB-B.avif` | 6597 | `f73f195dfa0b8b097c4d06f958cf96fdd4b7237cbf4ec84942ab8b1bee61bbc6` | R |
+| `content/renders/combat-front-MOB-C.avif` | 29795 | `71b9d6d2576adec5220c56776c7e6bd903009624aa5ae8fc3cd658e2a7fdeeb4` | R |
+| `content/renders/combat-front-MOB-D.avif` | 5165 | `7779cf89b65ccb9e8add6b4c9e8538f3c48427cfcbbedebb7b8a861d84afa7e7` | R |
+| `content/renders/combat-front-MOB-E.avif` | 2660 | `63f6ddb9b0f71d8cfbf84027172199638ce683aff9c75215f3b8264309bc4290` | R |
+| `content/renders/combat-front-MOB-F.avif` | 2061 | `91a91e5f65599c0b68eb954c7db4dd0aff32a6cf4795e49871db6a0cd81cfc26` | R |
+| `content/renders/combat-front-MOB-G.avif` | 23017 | `efcc04637322c67db919d0440ccc5c4b4e9053768fac1f072d27688ec8967d33` | R |
+| `content/renders/combat-front-PRO-A.avif` | 14331 | `0639911666eca4b8f1866884bd66602d2544d3ab1e02cfba0f5e2123580eef88` | R |
+| `content/renders/combat-front-PRO-B.avif` | 6476 | `03d0afa6e9b45437090c0da7ae203c4b8b9d89ac9ba1239bd4a2285a7b7f276c` | R |
+| `content/renders/combat-front-PRO-C.avif` | 12239 | `9cf9e3b27056213ffd915062d5aad3e215d27806f1e5d1b450a256b7a58f9807` | R |
+| `content/renders/combat-front-PRO-D.avif` | 1165 | `32e40b2d5c9ed9ab72dfaf5a0b2ec36c1f4f4505df0ad651e6437170e07aa020` | R |
+| `content/renders/combat-front-PRO-E.avif` | 16495 | `512c221784ad09381a25193cdc518ccd8ee1ff7bea2d3cedd1a58e4adaafb055` | R |
+| `content/renders/combat-front-PRO-F.avif` | 2644 | `72cd72a620400c90c56d2879cf7d03da9c4eed3df18caf66903eb38db7bc4f19` | R |
+| `content/renders/combat-front-PRO-G.avif` | 2038 | `b0e11b48efcb4a923b62f35088696eb832778eef7442d117af0e73cc5d757a1c` | R |
+| `content/renders/combat-front-SA-A.avif` | 2237 | `16961d8bf4c2f10e769c45f0ec05c2ee3bdcb0b587bedacdc3cfe59305cec73e` | R |
+| `content/renders/combat-front-SA-B.avif` | 2709 | `e666eeb9774c503efc4759588b610ded5c6f57a556a86a395c23311e5dde0fd1` | R |
+| `content/renders/combat-front-SA-C.avif` | 2193 | `c33775329b6a8bde116730f206b6837cab5b2f33ee1740f5bd30bb891f918ae3` | R |
+| `content/renders/combat-front-SA-D.avif` | 3742 | `a524e54cd621d53c0a8c29cfb14b3f9ff4c38341e16d117859d93c8371e193fc` | R |
+| `content/renders/combat-front-SA-E.avif` | 2480 | `6561a79df89886bb2067424ef716b67877f8789ff8701739d195e62c2fbc19c4` | R |
+| `content/renders/combat-front-SA-F.avif` | 4872 | `1a62cf874e3af79acb6c183ce987b09700f1face290d2a70e4770e146dc7d9b1` | R |
+| `content/renders/combat-front-SA-G.avif` | 4806 | `3508364830ab0f735457deff7275008d44364306c1ace03c0c8a99982b6cf131` | R |
+| `content/renders/combat-front-base.avif` | 22858 | `fcc37e9681db6d4ea5066c80bf5b4d6d7782f9381920757d3f50da5dbbe9edfc` | R |
+| `content/renders/combat-hero.avif` | 44900 | `72705d98b85762c0963dbbe28a2cc0b484716c028f6836f57599460641dd7306` | R |
+| `content/renders/combat-rear-ACC-A.avif` | 6163 | `c2b036f6ddcdf1800c0ef29b1bca66bf711329dacb018f1e916072fc789663ff` | R |
+| `content/renders/combat-rear-ACC-B.avif` | 10714 | `d00b86e3b76a1a85bc6b89bb5c55cbc4c02b923e9e825964ebd7fa1ee5342e77` | R |
+| `content/renders/combat-rear-ACC-C.avif` | 4690 | `7ea67c516ecbdc3c18aeb5245ceebc1a5f3c1ba85b58980b38387eb4bd11d3a3` | R |
+| `content/renders/combat-rear-ACC-D.avif` | 3621 | `6f45ececd2d76f87b1b4668a34b83c14c35cb919f4f37338bac4628a90f6528b` | R |
+| `content/renders/combat-rear-ACC-E.avif` | 3353 | `65ac7936778abf4ca72956bb14cc545adcb26325f0648de0538af107c69f4702` | R |
+| `content/renders/combat-rear-ACC-F.avif` | 2106 | `ba172ca9db4795fa4596d3a1e94e73edf2ae2d16ae46253fc399dc395273fa94` | R |
+| `content/renders/combat-rear-ACC-G.avif` | 4058 | `4d841738cfc652dc1dcd834520c4297aaf7af828444f554fcd86776876bee2c8` | R |
+| `content/renders/combat-rear-CAP-A.avif` | 4995 | `df7d3b7c5216e532aeb399de8878dd76fcad95408452de3f3e0ab2055dbec30d` | R |
+| `content/renders/combat-rear-CAP-B.avif` | 4994 | `77dad37dda5c1f3291afa982588820e8ee3589f96b3c8dc84e70d37c963a2913` | R |
+| `content/renders/combat-rear-CAP-C.avif` | 5397 | `838bc359618c5f208c0f28da6e0fb525b64ed6bcada7ff60124c47059c8c622c` | R |
+| `content/renders/combat-rear-CAP-D.avif` | 6256 | `e4cdfa868ba353444cf752c99139184184178da58d1f1edf3c85df6567763617` | R |
+| `content/renders/combat-rear-CAP-E.avif` | 4435 | `e6bcd6b435023743c200b74fbc7a34a25559e4c319cb32b3328d9398fdfac3c0` | R |
+| `content/renders/combat-rear-CAP-F.avif` | 4904 | `947e022ddb9f5cd82e6dfc7a8ab5d87c09273e10e6195fa2e844303bff2bc46a` | R |
+| `content/renders/combat-rear-CAP-G.avif` | 5555 | `29aa999f4735fd83f748ce50116b93bb395e5c88c86c2141434af38815599265` | R |
+| `content/renders/combat-rear-COM-A.avif` | 2586 | `73c42dc907164969d248f9705809071b3ba0ae82d0c8f8021d741a07943cb5d3` | R |
+| `content/renders/combat-rear-COM-B.avif` | 3356 | `5164aacc6e78704eb6680d35bbb44153b326f9a5030453560e17a5bf745ab498` | R |
+| `content/renders/combat-rear-COM-C.avif` | 1928 | `241c1c64838632d53c251b2b4e62fc74aa1c383dfddc403296f6b16cc40616e8` | R |
+| `content/renders/combat-rear-COM-D.avif` | 3922 | `d0d89fc92e16adbba317b5eb8dd66544f9d0cd76b8975480d6aa0116c509e8a7` | R |
+| `content/renders/combat-rear-COM-E.avif` | 3793 | `ef5e3829f06d550e941027234c7bfdb393199769cb4d78e7449e0b30059bf979` | R |
+| `content/renders/combat-rear-COM-F.avif` | 2441 | `bedc5510c50e94d1abdb29e76a392d0790e0fbc9a54c843290d5699b98edac36` | R |
+| `content/renders/combat-rear-COM-G.avif` | 3375 | `890709c9341c9641d012b19031be288cad6acdfc0452ec3f6d0a8a5ce7c6a822` | R |
+| `content/renders/combat-rear-FP-A.avif` | 3909 | `5054b1572e1814c511e1a014e2b723fe9ff3c6f8d0c1be3b404def619e037ab0` | R |
+| `content/renders/combat-rear-FP-B.avif` | 3592 | `e1074c1bfee1b4da6aac4e8b215275ebd1a6f4fe2e13af174c1421db98cf6c59` | R |
+| `content/renders/combat-rear-FP-C.avif` | 5683 | `5db4731cb3f4145ceed753c8adbd08be841c891115bb47a29ccd2f11c076bb96` | R |
+| `content/renders/combat-rear-FP-D.avif` | 2771 | `20ef2938b227a897ad8dc48180f709c27fad21ab7fa5a5cab3d2ecf955b7695e` | R |
+| `content/renders/combat-rear-FP-E.avif` | 2780 | `7ee2537a1e8b673668c0f3ba0d9606397863ed84c2cf94d8031e0a259d14bd53` | R |
+| `content/renders/combat-rear-FP-F.avif` | 5166 | `196041b0896b4a1b0e98a52909b785ef767a60328d95ce076b3856467d2a77d7` | R |
+| `content/renders/combat-rear-FP-G.avif` | 4455 | `4ab51560cbf659428b80455023df8287ed95d6a1b62b568270f675ac2880c6b5` | R |
+| `content/renders/combat-rear-MOB-A.avif` | 2991 | `dfdf48e6990e5425f55029800a82704523e3c8c1550ac721277d53ec2fa3b9c7` | R |
+| `content/renders/combat-rear-MOB-B.avif` | 5431 | `ae5afe16e2973b013519a25ebcc885037fb954c505ce9873a038ed724833e14c` | R |
+| `content/renders/combat-rear-MOB-C.avif` | 25953 | `f9128a56645b8812529b8df356b5b49931c3af05687c40caf3e67e9b94ac9e12` | R |
+| `content/renders/combat-rear-MOB-D.avif` | 4003 | `656587e5ce4f1de4fe0b51b537ec28057aa9fc0f91054610769fbb67e8da1a10` | R |
+| `content/renders/combat-rear-MOB-E.avif` | 4191 | `4408803fc854f9ece2f8e76b6bce9a900da3eb588ba150499a6d96d7aad89da1` | R |
+| `content/renders/combat-rear-MOB-F.avif` | 1992 | `35dc846f755faa825e2692d67993c1fc9080e16fedbb573253534c883cb9bbd6` | R |
+| `content/renders/combat-rear-MOB-G.avif` | 19218 | `d0bbfbefff7405100f2201b7c6a4eac261f3a2336c061bf3d86845234d7eed2c` | R |
+| `content/renders/combat-rear-PRO-A.avif` | 10377 | `da046033b295e5dc6f26c46f45f49318f20ba9e83c9a9ea42f8344d5b22f4d4d` | R |
+| `content/renders/combat-rear-PRO-B.avif` | 2980 | `63bff25bd8c4b68d29ce58f820e7215965566c4a6a96b9304541f9b5fa513cb7` | R |
+| `content/renders/combat-rear-PRO-C.avif` | 9028 | `47b1823aab7b522a3b56182b95156c0767572ed52db3cae761f96a7d62a055b0` | R |
+| `content/renders/combat-rear-PRO-D.avif` | 1017 | `338a0bf489048e6cdbaaace64716dacda5c7686a3603cda30d3d0089a184e298` | R |
+| `content/renders/combat-rear-PRO-E.avif` | 11745 | `85bfdaf7e46afd58053dc7393726d7af9cb3b0de90df656dda58069a35de2e7f` | R |
+| `content/renders/combat-rear-PRO-F.avif` | 2882 | `dd7158c198f67d9e5f8931bc285a0e640b465b80ee45798e8fda6305fec1da62` | R |
+| `content/renders/combat-rear-PRO-G.avif` | 1703 | `ab7044b6682440b99ea53189d60dee44471f369c69f17c76ebf8a72370375515` | R |
+| `content/renders/combat-rear-SA-A.avif` | 2128 | `277bdd71de8c30a7defbefe1db786f8bda2bbaa9c7edf997b89ecc890e469b84` | R |
+| `content/renders/combat-rear-SA-B.avif` | 2534 | `59c20be0462e606810877069511c3dcd65d40d45a0e7d1c52623e909d87e84c6` | R |
+| `content/renders/combat-rear-SA-C.avif` | 2036 | `503b26d3b303816e2c723ec0965fa91decc287f9065b0b6d0d6720bbbffb615f` | R |
+| `content/renders/combat-rear-SA-D.avif` | 3487 | `3d07cfa1403c93979bf50a1e46fcc7245a6205a792ed355097528f81c1130813` | R |
+| `content/renders/combat-rear-SA-E.avif` | 2377 | `3764f689b7e845f4cb14038ec76b6836d7a479d26fa2f3fc6ad1c992193b7be6` | R |
+| `content/renders/combat-rear-SA-F.avif` | 4552 | `f1a778a0f424884945a0d042b3e163dd5de60d262cc8b7720781240726d1d47d` | R |
+| `content/renders/combat-rear-SA-G.avif` | 4528 | `8c2c381d662b3cac7b1123421f9c6dccb142e6ac216412929458d4061b0176b9` | R |
+| `content/renders/combat-rear-base.avif` | 21101 | `78b5f48c292bc89eb83746db6baaf0be567d2e0b23dad76c7f55c29272666a64` | R |
+| `content/renders/combat-turntable-00.avif` | 23730 | `1eef52e8ec5e5008f7681a2e169b6548b1afb994dcf5e7574645ae67e2caa608` | R |
+| `content/renders/combat-turntable-01.avif` | 25037 | `8f8e997be6beaf3e48a4006d2590135c428f313ff47ffc8832681aaf61bb626c` | R |
+| `content/renders/combat-turntable-02.avif` | 27154 | `4f9d83fdf4056da1f154b863acefc015255d944f948f7fc729fe48f48503f109` | R |
+| `content/renders/combat-turntable-03.avif` | 29100 | `27fec5200a873c0f8c0e7b480ce47a6967f82955cef219166b47b894c6482ed6` | R |
+| `content/renders/combat-turntable-04.avif` | 25965 | `43fcb66154d9464c8c75172cffaa08e0083915593952cf3e9ed23d2a262cf442` | R |
+| `content/renders/combat-turntable-05.avif` | 18726 | `8c49ac0981806875c56d9e8506bae5c9097ffe9e71f786d5d6f28c9c6408922a` | R |
+| `content/renders/combat-turntable-06.avif` | 16898 | `a9e3f32f6b45f176cf525829a7709f61e78fd94e434c975503df8c618e36bab0` | R |
+| `content/renders/combat-turntable-07.avif` | 19471 | `b11080d5d8450bd488dac2a736c7cc9cc4ca2491ff90373051ee8ed82a7c969f` | R |
+| `content/renders/combat-turntable-08.avif` | 26529 | `873396d51203e9073c0fa0399067fee29d632611fc1757d8138091768bdfe9e2` | R |
+| `content/renders/combat-turntable-09.avif` | 29380 | `0de970fcfc99acb9211ab1bd1e5e8745406fdde71536516c9dc5db0160044a24` | R |
+| `content/renders/combat-turntable-10.avif` | 27446 | `c71331937d6311a4b80a4447347fb516ffa2411c7b96f0c953b2e9262844551a` | R |
+| `content/renders/combat-turntable-11.avif` | 25486 | `ca3cf0d2d3013da7761eee966451359e6dcae98729a6e5df1fcaab3546b0b9d9` | R |
+| `content/renders/combat-turntable-12.avif` | 24281 | `0e64ae1d087f2726eeefc577cb3ed487c188b5ed59f12460fe7cbd4c8f2e7a8b` | R |
+| `content/renders/combat-turntable-13.avif` | 25883 | `ade83e9093bf4a5768a771dffc2f7ff944b99e7947a7f8d19aea904e3ff34514` | R |
+| `content/renders/combat-turntable-14.avif` | 27576 | `4e1bfa10c60358f96b7c247f28cac9b070b5fc11f83c01e6450c361850765512` | R |
+| `content/renders/combat-turntable-15.avif` | 29003 | `9f95bf6c28e6e52736cadd52e30bb5100ae24ef7ab078e9c5eac1873b92f5cae` | R |
+| `content/renders/combat-turntable-16.avif` | 26376 | `f81a5495bb0899b1c353d319440570c97503407defd1f514875e29de8acc81c6` | R |
+| `content/renders/combat-turntable-17.avif` | 18084 | `409e7897c8f2176c1ac13b817203a1d82e03365fd42a56b94e256e590e85e8c6` | R |
+| `content/renders/combat-turntable-18.avif` | 15917 | `e776b8c5bc39939f4679097945186e28a190d5faf000122a96922cb960179c1d` | R |
+| `content/renders/combat-turntable-19.avif` | 17881 | `93e3d229e7fe3a11470ef484c2f722847e9cd2f0bfa4d4ede78a3bce5871e6a4` | R |
+| `content/renders/combat-turntable-20.avif` | 26279 | `f657cc0ce2bdef0328f18c8eb543bad058fd54eb059ae0e747b17c3b988c060c` | R |
+| `content/renders/combat-turntable-21.avif` | 28280 | `5686582a5e01deae531a89ffe274b0f250af7280c810ed2a3b1da4b51ed1ec03` | R |
+| `content/renders/combat-turntable-22.avif` | 26305 | `92f5b189267157d8a74fe783ffd0088380c4de25234863d79f34dfdd4db60df9` | R |
+| `content/renders/combat-turntable-23.avif` | 24565 | `709a7ec12dc02e7722fef4900b35ab1c9b502afa7ba048ccc401cb27096ae6bf` | R |
+| `content/renders/command-post-front-ACC-A.avif` | 2193 | `fb55d43cb088b31d97247e65872e80a4a0732ab59bdd7c6f81a17fcef82fada9` | R |
+| `content/renders/command-post-front-ACC-B.avif` | 5899 | `c2a40643f04f3ac46ff2c754a6da43aa9c5aeb7a1b45156ded11a48e307c8cc0` | R |
+| `content/renders/command-post-front-ACC-C.avif` | 9940 | `f2b83e8ffe43269a61c4082b6f39338b42cfcceb89e33b3737a794e40fd3f4d3` | R |
+| `content/renders/command-post-front-ACC-D.avif` | 7543 | `24d71874d139d719dc0c24754cffc537c8d0a10a1313d89a31b492afabaf4554` | R |
+| `content/renders/command-post-front-ACC-E.avif` | 8593 | `31127c7961e05e31e99f31050ce2609c91da6e385acd469c0850413de1236c3f` | R |
+| `content/renders/command-post-front-ACC-F.avif` | 4496 | `0b508c21808bc4c93bb342be15dbfe4f172e3c1aa6f8c8c36e3b5af4a1e06f59` | R |
+| `content/renders/command-post-front-ACC-G.avif` | 11068 | `81a924a74e1c06360bfe2b3375861f9bcfc689e409a1e8a78a0b7cd1935bbe7d` | R |
+| `content/renders/command-post-front-CAP-A.avif` | 4483 | `0e00acb8aecf8c0393cbb5c5266041b4f8a6e52c5308cbae11aa44022597e3b7` | R |
+| `content/renders/command-post-front-CAP-B.avif` | 4538 | `db40b7d774f453899894dfef9c2914e1f84db6d6c3d6b540b9aa423921596278` | R |
+| `content/renders/command-post-front-CAP-C.avif` | 5049 | `03d03fbab41c743f0141841c471512bea0421a7418b79460c3f2bd6b4d278c4a` | R |
+| `content/renders/command-post-front-CAP-D.avif` | 5495 | `c9325a0bade93110e6a657590993b00c5499b974ff26f2c784c3d4d2ffd20f15` | R |
+| `content/renders/command-post-front-CAP-E.avif` | 4140 | `74ca71618c6894506161da9bbca4f0c16bdfe2618b2a246c41ffbc6b713adb30` | R |
+| `content/renders/command-post-front-CAP-F.avif` | 4522 | `12090d541c797fbca5b11c742a388a6afeb8231225e5326374519d847e3f12dd` | R |
+| `content/renders/command-post-front-CAP-G.avif` | 4869 | `e5f203ea7a95c1371b9b8bae0c6657010f37e4f8d28c71ccd4ebba390ca2362f` | R |
+| `content/renders/command-post-front-COM-A.avif` | 2005 | `a6773c42ca16481b3845341a630b4f6dab40d35d9e7cc01308af507b646cde7f` | R |
+| `content/renders/command-post-front-COM-B.avif` | 2356 | `8b913ce8093c54e120d79d7c3f3713bdc366922e6f82f5f9eef7f20d7cdaf194` | R |
+| `content/renders/command-post-front-COM-C.avif` | 1476 | `3bc4f0b91043f93e0bd009b8e0fa05d71c3dfa77d0a8922ff775c131424130e0` | R |
+| `content/renders/command-post-front-COM-D.avif` | 2630 | `2e5f4cd05efd736ee6ab270b16dead30d4042fbdb4f4576051f73b030510aeb2` | R |
+| `content/renders/command-post-front-COM-E.avif` | 2825 | `1eb9cdecb4b09d59e622c039d3212dd47043d873b9f7e512da346a41697da8ec` | R |
+| `content/renders/command-post-front-COM-F.avif` | 1892 | `e16894a2a1177b7bc46418ffaef89d29f37f43ec0a03363474cb24a8624160c1` | R |
+| `content/renders/command-post-front-COM-G.avif` | 1995 | `51e7a736b666266f89609f2f17de2e3cf2a9ea5b13f1492a4dd9eb2f7a321931` | R |
+| `content/renders/command-post-front-FP-A.avif` | 3660 | `af2b71874c0610ac04d53dab1771dd6f09aacfba211644530fcb6108a2bbf757` | R |
+| `content/renders/command-post-front-FP-B.avif` | 3831 | `e577108419e8581b6adab38bd1b66ec0fef2e0bba0a2880f0a2b03d93252aff3` | R |
+| `content/renders/command-post-front-FP-C.avif` | 5972 | `84e0248874bec6066509fb9a427ef7e931aa78302f6a3c9ffde87e119b761993` | R |
+| `content/renders/command-post-front-FP-D.avif` | 2704 | `5e29ff967e2aaa849d5dce22ee050805f4ac5101e4d10215076d911cfea29329` | R |
+| `content/renders/command-post-front-FP-E.avif` | 2573 | `6a08a8f037d44fd4ce11814ab25829527fe77214595a2c974c70371121380e65` | R |
+| `content/renders/command-post-front-FP-F.avif` | 5241 | `822b2aaef6d5bb224b9429c61998dcd1e6e84ec375aa53a65c233d5276dca3e8` | R |
+| `content/renders/command-post-front-FP-G.avif` | 4662 | `9ec55a48cae34d729cfca2223cf8a133719f50734d4805829748fee8e5d414f8` | R |
+| `content/renders/command-post-front-MOB-A.avif` | 3266 | `dce513437042e0202a7da949839f5149285b3ffc181baaa1403c7fff2a38a32f` | R |
+| `content/renders/command-post-front-MOB-B.avif` | 6597 | `fe172835133d40420e02f7999727e4b0d20dfa9ec421b7eea5f2cb0d8697f771` | R |
+| `content/renders/command-post-front-MOB-C.avif` | 29762 | `30b9540adbde11079a0ff652167c03741d4c31a9034f4735c56c6486ea23dda0` | R |
+| `content/renders/command-post-front-MOB-D.avif` | 5167 | `15ec61401ff3581253024acce192438e4d80a9f0fe9dcd948820eedc1f57b1b3` | R |
+| `content/renders/command-post-front-MOB-E.avif` | 2648 | `3cbdfe19867948ea7d5cf0a41d894f39b6c331df1fc4f093b097df42183c5964` | R |
+| `content/renders/command-post-front-MOB-F.avif` | 2047 | `9725c79483d854ce9fc84f48554998b4c9850d9ac56e2069caab2a136d6b5ee9` | R |
+| `content/renders/command-post-front-MOB-G.avif` | 22964 | `4b77a8aeed2fb6662893775e7fdfccfcf96845d46baab17052950464b19ef41e` | R |
+| `content/renders/command-post-front-PRO-A.avif` | 14270 | `4e6a16babfde7410687349828e759c9b1b835daf0a928fa71fef7a3b8fb73408` | R |
+| `content/renders/command-post-front-PRO-B.avif` | 6724 | `fffeafcc3a2563e969da02f580b2c8338c8f2ad9e4d23c646e41524938c390f2` | R |
+| `content/renders/command-post-front-PRO-C.avif` | 12248 | `b56e8c06924e53d7444db1141483a6edbc5deaca0ef90e7809fd48ecdf035261` | R |
+| `content/renders/command-post-front-PRO-D.avif` | 1151 | `5300425fe9b1e75cb77ca6627f630ef748bf99840e3871fe2ac7c9454f3ca4ed` | R |
+| `content/renders/command-post-front-PRO-E.avif` | 16447 | `f2c4072f82017037cf7a58b8c4cb8d9e639172d5a5240f882f183b55fd3e9b32` | R |
+| `content/renders/command-post-front-PRO-F.avif` | 2636 | `47072af3b7bf4747b725609139a663ef612ad54ee89ee9581f2a8bb26ababa51` | R |
+| `content/renders/command-post-front-PRO-G.avif` | 1911 | `fd5340b684551bc60c53068bf64210f53f93604541e9f06f6cadda2fb21c59a7` | R |
+| `content/renders/command-post-front-SA-A.avif` | 2215 | `0e24b3171634aa46c6165e59667ef7cdcafe03000f12fa1649b4cf7e07c787bd` | R |
+| `content/renders/command-post-front-SA-B.avif` | 2706 | `04dcd1686c2018adcfb29025d9eb3da18c0c5eb6e319324870fe291d6adc5c1a` | R |
+| `content/renders/command-post-front-SA-C.avif` | 2130 | `d9306c5163b109643a5a0b31d99f5cb027fe2afa5292bf24a6d7e0d7ab0a5cc1` | R |
+| `content/renders/command-post-front-SA-D.avif` | 3754 | `d324970c28bfaa4f927be736d6668c27c6a07c950b872e10a02cee173afaa103` | R |
+| `content/renders/command-post-front-SA-E.avif` | 2445 | `8cd47bb1b2891f968bd348e73bb87f83e2a397f658269cb374897a2e4c4577f6` | R |
+| `content/renders/command-post-front-SA-F.avif` | 5192 | `4e3913eaa2dcc7748505d931a1c9160eba9bfdc7e9620545c07306f4fcb3bc4f` | R |
+| `content/renders/command-post-front-SA-G.avif` | 5195 | `3b230b0c3cd46018b5d2033ed0b00745a33f5fdd3c100c35d1fb202963d0121e` | R |
+| `content/renders/command-post-front-base.avif` | 22815 | `a06c789fd36ee60739bf41cab60d5cbdbd30e458216a47b508916a82d06390b5` | R |
+| `content/renders/command-post-hero.avif` | 40931 | `143e79412e0e65af5ba27a3e1bbf38f6987cae824b70f22d2f944336635d8938` | R |
+| `content/renders/command-post-rear-ACC-A.avif` | 6193 | `6c0a59ba1c34ff5b79c9c22dd4f3dd59c955cf03e736a531877dcc26b724a33a` | R |
+| `content/renders/command-post-rear-ACC-B.avif` | 10768 | `622574da78523f357a2fc75ae509505e95ab5653772c459b5b4c08d341252a42` | R |
+| `content/renders/command-post-rear-ACC-C.avif` | 4690 | `4cbda106fa37ac06c53748baf9bd5df3b9c32a51a54cfa762873f77c242db367` | R |
+| `content/renders/command-post-rear-ACC-D.avif` | 3610 | `985e914b52ee515972fdbcbe64366c618dd21148726678e9adba5a09d0c2c528` | R |
+| `content/renders/command-post-rear-ACC-E.avif` | 3362 | `e460beaaf1386b9e729a4717708ca65dcfae9d8ff1e8d4e6dd2c6d795c3d0e44` | R |
+| `content/renders/command-post-rear-ACC-F.avif` | 2085 | `21f706f063dff5171d2bbc7068e599c4125523329a6f417ebb2419d906e6484c` | R |
+| `content/renders/command-post-rear-ACC-G.avif` | 4060 | `48d581940b76c5b5ef799f36d6e668b018eb2f5bb3c6a3b0854dc1ca2920c743` | R |
+| `content/renders/command-post-rear-CAP-A.avif` | 4940 | `f20d465ddb2da0dbaa998c6c1a971ad5f4ceb3141b7bbf2692f3f35114d1bc6d` | R |
+| `content/renders/command-post-rear-CAP-B.avif` | 5002 | `7298ef38e3e025c323c47770eb2852e39fb05cd0ff24b067eb1b14630c3f4eed` | R |
+| `content/renders/command-post-rear-CAP-C.avif` | 5425 | `84f28d4e9cfc4b6087d637657a7f0694f205ca7543c6cf1c6d36083d080d14f3` | R |
+| `content/renders/command-post-rear-CAP-D.avif` | 6187 | `a3b99db9a96f1b4e653a413df9afd79d7e5e4538b6c7d2b2a8ffe0108a6a7a04` | R |
+| `content/renders/command-post-rear-CAP-E.avif` | 4400 | `102993c7edfe2bb54c307168d16123939cc6005dda548d9a70276bcaf0af2608` | R |
+| `content/renders/command-post-rear-CAP-F.avif` | 4877 | `18b7ea9f23cc6ffe47cde1a42d23250a7c42fbfa16934a0e38c1baefe1606d3a` | R |
+| `content/renders/command-post-rear-CAP-G.avif` | 5553 | `1984ab94ecfc8cb4b19fde3658097230df981e1dd8fac689fcbddef9a3a312a9` | R |
+| `content/renders/command-post-rear-COM-A.avif` | 2584 | `69ca0988201b5eaccd68efa3f652763a751cc6ae4a75f142fc3cabc71e4cd8b4` | R |
+| `content/renders/command-post-rear-COM-B.avif` | 3404 | `eb921769a62e5c55d96043ad8721b985e5157936aaa1ded3007d0dd22e270657` | R |
+| `content/renders/command-post-rear-COM-C.avif` | 1919 | `ab616e962b02f89d603071e80937c07edbe20c4b79a7723672e9eca9d4db5682` | R |
+| `content/renders/command-post-rear-COM-D.avif` | 3928 | `4eb4bfccfedfddcc3320c68f2340480608960f9618f094a5b7c0370525301fdf` | R |
+| `content/renders/command-post-rear-COM-E.avif` | 3759 | `0248c6796a3e7c39675c69e64024a6968a48226145c9f1a3362244a99e39721f` | R |
+| `content/renders/command-post-rear-COM-F.avif` | 2446 | `33f78eb0eaf94565398a4f05998c5c6ceb188875409eae52cdbb00b9035bc944` | R |
+| `content/renders/command-post-rear-COM-G.avif` | 3339 | `fe9b5b09320660c5f284942d2b2a8b2db2f4dbfb9ac75660ed80718a9757c31d` | R |
+| `content/renders/command-post-rear-FP-A.avif` | 3848 | `bcd197a7912962ada75ed2d2e08007087d932f6354695786ad6a1a8c726e6a77` | R |
+| `content/renders/command-post-rear-FP-B.avif` | 3499 | `1437bab0693e792b8358192045dd6479892dfcdbd1bb0ad761cb40c82c8ed785` | R |
+| `content/renders/command-post-rear-FP-C.avif` | 5580 | `41f6cdd3f6a44ea4002831d08ca1b75aa7f430a280c839cdb2d898e96e4c3cc7` | R |
+| `content/renders/command-post-rear-FP-D.avif` | 2579 | `e2f96d895b5fa5d1e3d8aa9e266b480a2f82d4a29ce83b1bfb39f4c88a71c8e8` | R |
+| `content/renders/command-post-rear-FP-E.avif` | 2533 | `e4a5b5c7a8c079534dcfd08828c3e86ca373d7b1c58a4497b30ddd9add5dd1a4` | R |
+| `content/renders/command-post-rear-FP-F.avif` | 5040 | `effcd3ecb72b7812febdfd29404e4a71f4fa1ebe91f408e80bf8a36baf1a9ddb` | R |
+| `content/renders/command-post-rear-FP-G.avif` | 4410 | `4ea613a7b5be054f439fe5cc165bec1f597069bd23a99790c273c58be67fe17f` | R |
+| `content/renders/command-post-rear-MOB-A.avif` | 2838 | `7b7e3e62cec4fab1f1f53c1afc81d283fc50116ef0d9a3c723f313737bd7e5b4` | R |
+| `content/renders/command-post-rear-MOB-B.avif` | 5439 | `832e20e8763c78a97fbfba06897536534fa9336d30139ddd3076eb7e0d0aea37` | R |
+| `content/renders/command-post-rear-MOB-C.avif` | 25922 | `5311938e5c5461b54226d29bb9c2e2aced4eca37ab5b024ac13fc68235db2e80` | R |
+| `content/renders/command-post-rear-MOB-D.avif` | 4041 | `a15f2fb01919740b6a9cbd1c0bb023eb75b06b7b54f7853f33c250fb11f4907d` | R |
+| `content/renders/command-post-rear-MOB-E.avif` | 4199 | `1b812fa4ce38ff9472587f7ec3105d4e33657af8979c5fc24390c48a453a2de7` | R |
+| `content/renders/command-post-rear-MOB-F.avif` | 1987 | `d4582632a6e0f1b37bab89825c2a5dcfa15850bf302351b758a912917c3a83ec` | R |
+| `content/renders/command-post-rear-MOB-G.avif` | 19262 | `5e4c0ef0e482d6e85a9ea870e163eb7ca0e50705f03d72f69f4c0780a12f91de` | R |
+| `content/renders/command-post-rear-PRO-A.avif` | 10372 | `063b90ec41b4d1f356c4e228fd1d9d90e8dcd70bc2c3b0b92ac3f51643960707` | R |
+| `content/renders/command-post-rear-PRO-B.avif` | 2838 | `a4f4cbecdf40350c7367659450467f6b370eb49a08d8bcb458fa81a9f5723703` | R |
+| `content/renders/command-post-rear-PRO-C.avif` | 8999 | `88b1b97b5720497b0ee8f7ad62a2f81cba2dee5e4511bc46424e8d33e05b5a00` | R |
+| `content/renders/command-post-rear-PRO-D.avif` | 1067 | `d52dbeb1abbc1604b99bf7a8c6f6cd22c77c66f2965eb5db907728b4ac36bddc` | R |
+| `content/renders/command-post-rear-PRO-E.avif` | 12087 | `f6877088b24ef95b8c2692e347d5bad8e53ea3b911525979d9f05c011689d40d` | R |
+| `content/renders/command-post-rear-PRO-F.avif` | 2913 | `1d9249fb8f6df876ff13462ad919e96492fda628fefc2cc383488aa7dc313b0f` | R |
+| `content/renders/command-post-rear-PRO-G.avif` | 1861 | `a790cf3a4fe8117e0c2dfdc892f36c9160b2b2b048cb97392f9adaa3c95b255f` | R |
+| `content/renders/command-post-rear-SA-A.avif` | 2098 | `7d2e1c0b9df423557de42dc46af8d3ce82622185f2717d56cab277a78f94c696` | R |
+| `content/renders/command-post-rear-SA-B.avif` | 2508 | `6fc9e2e58666212258b310f6976f16a61f276dad761868f43edad28782e8b10b` | R |
+| `content/renders/command-post-rear-SA-C.avif` | 1942 | `d8d34e614e1cbfac6590d5138e7af3658fbd058cd73d99e2974efac319eda1ab` | R |
+| `content/renders/command-post-rear-SA-D.avif` | 3467 | `445d71faa6bdeda57ade13620246159f793040f2565f093a13d30f2ef7450f75` | R |
+| `content/renders/command-post-rear-SA-E.avif` | 2308 | `826e79138771cc18b90c9c72097901defff065146320919aff564f860e275da4` | R |
+| `content/renders/command-post-rear-SA-F.avif` | 4502 | `63bbcbdca2d9921dc643f808f746067581110c99d2b98b52210e6004050062ba` | R |
+| `content/renders/command-post-rear-SA-G.avif` | 4409 | `4a8edbeca66d7c0c151dabcbc8b2820104ba5b767e4d44a0bdbfdd52e1263232` | R |
+| `content/renders/command-post-rear-base.avif` | 20573 | `e9df4975e1f78cb970e13fee35b042b5ee5af25126aef0af28b861159fc1a9b3` | R |
+| `content/renders/command-post-turntable-00.avif` | 23420 | `bc40a27b584f3213524c2e3dad445f5d082b4a4a1b48088619806f3cd104c6e2` | R |
+| `content/renders/command-post-turntable-01.avif` | 24983 | `f1c9a09154f62976cf159ceb7a314360cde73bd0974abc3aaa6b93c6db9792a2` | R |
+| `content/renders/command-post-turntable-02.avif` | 27084 | `bf55fa8cb4e285ab020701b842a895907c966e8a703fe1050564885eddc606a6` | R |
+| `content/renders/command-post-turntable-03.avif` | 29169 | `970652d5a5d6f1785dcc3d9d5e6b91db4eedcdf4ddb2043da375cd6fba8b3f09` | R |
+| `content/renders/command-post-turntable-04.avif` | 26115 | `28f48ca43d5a86842e3baec7e4f063bbc61fe75688ee7ab78b967baa01af99bc` | R |
+| `content/renders/command-post-turntable-05.avif` | 18994 | `b4b6642c2443794ad85ab39cd2ba80a5cb5b51316e4a4224c488a9aaf14ef69c` | R |
+| `content/renders/command-post-turntable-06.avif` | 17164 | `9aea9f534abe84b6f1cc7a98e318320670c5292bf765bf45d49277fb1910bc06` | R |
+| `content/renders/command-post-turntable-07.avif` | 19724 | `a9f5ad919d50aef0e9b390a5d9891bb741f5508a01903e58555aaeb3ab494245` | R |
+| `content/renders/command-post-turntable-08.avif` | 26483 | `e6cd67b63570e6969e70d4ec77d49271e4bca45b66dd1942c544c55bea2c107b` | R |
+| `content/renders/command-post-turntable-09.avif` | 29228 | `590601d620c43998c2679d662c3736f3f90f335e12d5f5df76c756976e9c668b` | R |
+| `content/renders/command-post-turntable-10.avif` | 27245 | `caed0e787967b42981f3db379cf8dded85fc66d07ccb2e4703aef71cc63400da` | R |
+| `content/renders/command-post-turntable-11.avif` | 25311 | `dd7d9c322e807814c7002d99e7d9a384e7c3f1f8a1ac17185b5f9e8cc25db5c0` | R |
+| `content/renders/command-post-turntable-12.avif` | 23775 | `8463939450f19a11ea25b73b11eee532e22a9d8f8bf93d05f19c290e99bd1cb1` | R |
+| `content/renders/command-post-turntable-13.avif` | 25178 | `ede6e68df841defec7e92bfe33470e5dd9349d4513258f46efe60cbc68230ba1` | R |
+| `content/renders/command-post-turntable-14.avif` | 27287 | `96595aca5133965fa4a2b1e97564706b9684c9c9412d6b244173e8eb716baabb` | R |
+| `content/renders/command-post-turntable-15.avif` | 28599 | `6940a25ab1d1f6863a8955d34097fd722f390caeda74cffb5fb69ca1dceb6253` | R |
+| `content/renders/command-post-turntable-16.avif` | 25966 | `079ff4e8ef21f1f73e74c90a2def342f865498081e0c08cbbef64d41496f3af6` | R |
+| `content/renders/command-post-turntable-17.avif` | 17639 | `f99098e96339560578b9106b3a4dcf5eb3abf83c1cfca9fc3d45daedb371f4a6` | R |
+| `content/renders/command-post-turntable-18.avif` | 15543 | `14d53197eaaa26514c020baaf17100419681185cf1f2448ebe448ffd81006954` | R |
+| `content/renders/command-post-turntable-19.avif` | 17717 | `f116cb2ad07391e37b5756f7a2bd5c110fa5e68e7e1a8d093209024d777cee33` | R |
+| `content/renders/command-post-turntable-20.avif` | 25966 | `466a170f007cb1e189d3e277f752279e7ffbbc90ea31169af587e365be7461cd` | R |
+| `content/renders/command-post-turntable-21.avif` | 27765 | `c15e917c5e7255c2da4408cccc267352a207c8a3de54fe2a4ecbb28e31a018fe` | R |
+| `content/renders/command-post-turntable-22.avif` | 25967 | `426fc82a413d97716d9394cd36f2e8a0a567ad7c78a2462312fa5c03708f7a3a` | R |
+| `content/renders/command-post-turntable-23.avif` | 24066 | `db1216733e6f28648928408f481e4a8ea7331520251b91b87c2cb87a4fd390f0` | R |
+| `content/renders/mine-clearing-front-ACC-A.avif` | 2197 | `13d31c77eb4d9f46547069a4d2d45f4842d20cef009eb347fa46b7dd674c75f3` | R |
+| `content/renders/mine-clearing-front-ACC-B.avif` | 5891 | `dad71a6bffcce8996209166e3be306ef0652fd11add9e4d71711ad9242609245` | R |
+| `content/renders/mine-clearing-front-ACC-C.avif` | 9946 | `cc7314d07ec2ac8580765c9d214bf916950a4cd3f8ffce867c50dfc77becb7c0` | R |
+| `content/renders/mine-clearing-front-ACC-D.avif` | 7521 | `60c8cc5b671c43326fca77a605af8ef78c51c4f576bf708d94109d9e900ed830` | R |
+| `content/renders/mine-clearing-front-ACC-E.avif` | 8591 | `0fd9abbe5d0d049bd30f999d86efb35fb9e3a10b4ee78694bbf3eb2dbf001dae` | R |
+| `content/renders/mine-clearing-front-ACC-F.avif` | 4495 | `42d5f9bf70456fa7c8931ad5ae5fd9a4839745ad84010d4f4459dba6ecb50e91` | R |
+| `content/renders/mine-clearing-front-ACC-G.avif` | 11067 | `78a3e169132c7fa61aad7f39821edcb0bdd48a59fa829e99995ed76a36a34cc2` | R |
+| `content/renders/mine-clearing-front-CAP-A.avif` | 4498 | `f7c65b9882c53a6bc2a27a7123166407e17082b9d9dfa051136e8e3126180f87` | R |
+| `content/renders/mine-clearing-front-CAP-B.avif` | 4558 | `5cca5981fef23ae2cf2adb92b9231dc92420a2802dab51a3b087c319881470f1` | R |
+| `content/renders/mine-clearing-front-CAP-C.avif` | 5013 | `1d16a7e5cd1f091d7375f97247fbeeccd9c17e11b36f1847ac9dfe3fd27f6fc3` | R |
+| `content/renders/mine-clearing-front-CAP-D.avif` | 5513 | `59761f3f5330dbda953aebf077e7c4b4bf358827d8459a6dabdf273fab0d4170` | R |
+| `content/renders/mine-clearing-front-CAP-E.avif` | 4129 | `51d93ff8a69399cf54dde79b9eba00cbfefc634f623a05c17626f9e6e4be2d8b` | R |
+| `content/renders/mine-clearing-front-CAP-F.avif` | 4494 | `46809be543eff1e51a4337c6d346aa024dfad45cd14cc5106f38395ce2833c14` | R |
+| `content/renders/mine-clearing-front-CAP-G.avif` | 4866 | `0ae5d241b2fdbc7c0d7f23177dd05f4d91bd0ebb374f1b6531b87d6241c62d01` | R |
+| `content/renders/mine-clearing-front-COM-A.avif` | 2006 | `73b1338d8e83466f70c75761dc9d3bef1a28ad953f0627515b13aaca426980f8` | R |
+| `content/renders/mine-clearing-front-COM-B.avif` | 2355 | `05a7d53037700e22a9c06696c5788589c042cd84d241ecbb8e0dae5e5cc58336` | R |
+| `content/renders/mine-clearing-front-COM-C.avif` | 1476 | `3bc4f0b91043f93e0bd009b8e0fa05d71c3dfa77d0a8922ff775c131424130e0` | R |
+| `content/renders/mine-clearing-front-COM-D.avif` | 2633 | `c9e0269ac864ada031937ba5160eae2ea31dd72b2ccda3804f79089369d8d28b` | R |
+| `content/renders/mine-clearing-front-COM-E.avif` | 2817 | `e136c923249ad0b79d78c5fbb5f464d72162b9814bc94db37fb345061d64c2b3` | R |
+| `content/renders/mine-clearing-front-COM-F.avif` | 1893 | `b392a0e3feb8e72aecf5a92c33dfe09630b2f5cdc39b7411d86646210b26d02c` | R |
+| `content/renders/mine-clearing-front-COM-G.avif` | 1993 | `3cd817d8c49c875272fa9d7dcd3520f2c7217a8dd9f35ce2b3f8cf17c7ee0785` | R |
+| `content/renders/mine-clearing-front-FP-A.avif` | 3670 | `a0df9b9b52b8196ca1b2642491f172d032f1e3bdfb69ab3ff050eac8c5d55c82` | R |
+| `content/renders/mine-clearing-front-FP-B.avif` | 3830 | `974572e2c017fe635a5d980f9927ce5cfd2c15ec4712b5e5f244287300171d27` | R |
+| `content/renders/mine-clearing-front-FP-C.avif` | 5972 | `750f6a1db13950eb7ef0f044e70043c102efc04a054fbf977443662ab4e21cb1` | R |
+| `content/renders/mine-clearing-front-FP-D.avif` | 2702 | `19fd06f75e4a20445da71425f602dce3b622075db72d4653c87a343dd69dc961` | R |
+| `content/renders/mine-clearing-front-FP-E.avif` | 2571 | `b4e13d4fa13eec78ca2b4d0849c1375791317e70686b144b58f8f514b3905ceb` | R |
+| `content/renders/mine-clearing-front-FP-F.avif` | 5248 | `4e34e9b436e23e336f3a145b7ebac386480c57e9e5d13e1ea1d58adbddbb9fe3` | R |
+| `content/renders/mine-clearing-front-FP-G.avif` | 4668 | `fce1b007f704c316a18fe2b72535990c5f48fa6f058fc11ed87321cc0c531ec9` | R |
+| `content/renders/mine-clearing-front-MOB-A.avif` | 3273 | `d6423348f2f2b4fe3dc7dd34f68a3bde7fbc14eb4669a697c8fd86277024bd39` | R |
+| `content/renders/mine-clearing-front-MOB-B.avif` | 6575 | `8c96e7040750d51890d887f208bd559b330997c3031c90af8c88d23f3f749a56` | R |
+| `content/renders/mine-clearing-front-MOB-C.avif` | 29802 | `6f2ac7938c6609d8a3c71f1ee7aae78d3e6d8c137c9f61448b94b3684bef9457` | R |
+| `content/renders/mine-clearing-front-MOB-D.avif` | 5178 | `04be2d1b930ecbef624a204924b6adb7e8832ab3214245b72b68ff318832b623` | R |
+| `content/renders/mine-clearing-front-MOB-E.avif` | 2648 | `3cbdfe19867948ea7d5cf0a41d894f39b6c331df1fc4f093b097df42183c5964` | R |
+| `content/renders/mine-clearing-front-MOB-F.avif` | 2044 | `5451ad5fd129772ca7622dbfb8408d4ab8c86eda4653d9a7e71e5e6de3fc9ab5` | R |
+| `content/renders/mine-clearing-front-MOB-G.avif` | 22973 | `182532a759ff78610fed392b2a5b554b1796d058f46d4b638032d414116badd5` | R |
+| `content/renders/mine-clearing-front-PRO-A.avif` | 14266 | `95806e959d743a69cd4ae2de895f6acc9369fff899ea0bb8253363fa4ab5afe9` | R |
+| `content/renders/mine-clearing-front-PRO-B.avif` | 6707 | `b3d76e3b48c0c9df1604fad487f7141ebabb40b83afcbd4cf9c3e529ddab7ea1` | R |
+| `content/renders/mine-clearing-front-PRO-C.avif` | 12200 | `fceaafd0920e83843916653ded547d330ce2f12115d40b97bb52ac087dccdeb6` | R |
+| `content/renders/mine-clearing-front-PRO-D.avif` | 1150 | `f239f102dab109eb942e8e1d467a1c6f2768ef3b07a3f92b189de565c951975d` | R |
+| `content/renders/mine-clearing-front-PRO-E.avif` | 16437 | `f8e35534488a0c128b1020a88df62c2d529610a6bbb3faf87f236ce261d53085` | R |
+| `content/renders/mine-clearing-front-PRO-F.avif` | 2646 | `674e8008a9f6397595fbb25da74b2e7f06115a5ea099f2ce1eca7476f2be7694` | R |
+| `content/renders/mine-clearing-front-PRO-G.avif` | 1912 | `405972f152b917498b34e74cc1f7e88de1991170b7a1d4017be600db45cf5ab2` | R |
+| `content/renders/mine-clearing-front-SA-A.avif` | 2219 | `5b3c20499e141eb10fbf386768d5f29e05cd299d99e516774ba68c6a36a1bdd7` | R |
+| `content/renders/mine-clearing-front-SA-B.avif` | 2694 | `33db347ee80392c4d88b8c2d585e73d10c332b2f009e02dd06bef023cbefe666` | R |
+| `content/renders/mine-clearing-front-SA-C.avif` | 2130 | `fbfdc8c4c7990636b4dc36d28c236d78a8f4878c9046c7dc586cc06945226df9` | R |
+| `content/renders/mine-clearing-front-SA-D.avif` | 3757 | `96805712aa867db61ead9752473e0990090f8fd2317198e208f548ba37b68a26` | R |
+| `content/renders/mine-clearing-front-SA-E.avif` | 2457 | `26e83fbea0435e11be61d389cdf6b1490a0f360910c6e43e38554904780ff345` | R |
+| `content/renders/mine-clearing-front-SA-F.avif` | 5190 | `6e10a8b0268ea0fbcbb382e56bdc7769845d7b9412b9d547e07c4205e7512b26` | R |
+| `content/renders/mine-clearing-front-SA-G.avif` | 5205 | `001a8f456cf229173263f92be7efe37f305ba68db4497031dc8ee4a5256fd81e` | R |
+| `content/renders/mine-clearing-front-base.avif` | 22818 | `949e8f400c2f18ab83840853b098c52e38db121a375a298a626adea8d0e37f5b` | R |
+| `content/renders/mine-clearing-hero.avif` | 53694 | `94c1ed398f8841a7e415262462d932b7e8db5c9f3011f2ab375e55ec45a2939c` | R |
+| `content/renders/mine-clearing-rear-ACC-A.avif` | 6143 | `95294334f1b8fc52f9f7720263328a9491a7655ba7b3b2c2fd069e6724dc8b09` | R |
+| `content/renders/mine-clearing-rear-ACC-B.avif` | 10788 | `27a8d6d606914e1ba0e03192fadd4cfa62cc6d4baa07264a17d6b839c6f1d688` | R |
+| `content/renders/mine-clearing-rear-ACC-C.avif` | 4700 | `c3e645f786320d8d3b875bdc0f3d1619bb7199c5ab18bd74cd998c6a2ca366ef` | R |
+| `content/renders/mine-clearing-rear-ACC-D.avif` | 3596 | `a4cbcdadaac825e3db75b0b3209edff292a900a8c5231a949beaa12481f4e3e1` | R |
+| `content/renders/mine-clearing-rear-ACC-E.avif` | 3367 | `4c00fad1bc9e997cf670eec2880bc2c6651bd2350218b99fbc24bbad38fd3df1` | R |
+| `content/renders/mine-clearing-rear-ACC-F.avif` | 2085 | `21f706f063dff5171d2bbc7068e599c4125523329a6f417ebb2419d906e6484c` | R |
+| `content/renders/mine-clearing-rear-ACC-G.avif` | 4055 | `ada00917df5fc711314e7a08f9155132e6c6627da75cc04776da47a95166e1db` | R |
+| `content/renders/mine-clearing-rear-CAP-A.avif` | 4977 | `0e7e0772b912a3081e6084ba6babaa3394897f5b079ac73663d63c365a2f2282` | R |
+| `content/renders/mine-clearing-rear-CAP-B.avif` | 5002 | `3207a97a8242d7eff836e7d7708b604103775d21d883370298dd790e5ca9bd5f` | R |
+| `content/renders/mine-clearing-rear-CAP-C.avif` | 5393 | `718846f21c6788e8e523ab91c0b07a469dac38b65be3a7324fbad3ae90a3bb08` | R |
+| `content/renders/mine-clearing-rear-CAP-D.avif` | 6178 | `f5fb6cf419b0539d27568386a7f46ae1729d0d7a0ef47ed68e65721b605d43a0` | R |
+| `content/renders/mine-clearing-rear-CAP-E.avif` | 4430 | `7bd538c6dae8f041aa85de9f92aa070d705a106a16d8a16348c36b77fb4b43d9` | R |
+| `content/renders/mine-clearing-rear-CAP-F.avif` | 4866 | `0e8c5bf50a5b2317c803b63ec784a65388ea4cb0ce526dbeb9649fc66d6bd7cb` | R |
+| `content/renders/mine-clearing-rear-CAP-G.avif` | 5548 | `9c14997b847dce47b4c011164c2d7f0c1c0ae74e79feced912c585482584ceef` | R |
+| `content/renders/mine-clearing-rear-COM-A.avif` | 2575 | `34a50166b952bb0f0f17735894eed567188c46de22b4f09d5d5de82df0616961` | R |
+| `content/renders/mine-clearing-rear-COM-B.avif` | 3405 | `c5ba48e3e78832bb631cbe7175d6a85e1c2478b2d51cd0f585bdd7eb5eba03d5` | R |
+| `content/renders/mine-clearing-rear-COM-C.avif` | 1924 | `649353df843826f88f461a96e69233ccc4074ebd232be79a127cb0f2edca215c` | R |
+| `content/renders/mine-clearing-rear-COM-D.avif` | 3915 | `e2b85dfc33704575ef61a78f0d52610eb343723dcd1e20befd26af42798cc594` | R |
+| `content/renders/mine-clearing-rear-COM-E.avif` | 4017 | `944dd476b208d5cc1fc120205a65eb4ca676d8ee40a61c5a02173e3148a87114` | R |
+| `content/renders/mine-clearing-rear-COM-F.avif` | 2440 | `0d3450d6c3e7e3ce2fcf6b352c6dbf2db6eec4c3d6f2eb93cb1072e16f6af869` | R |
+| `content/renders/mine-clearing-rear-COM-G.avif` | 3347 | `c20259f225e55e3d8cf63716991750b8a39223b6353097622c38141a0ee401ab` | R |
+| `content/renders/mine-clearing-rear-FP-A.avif` | 3877 | `3cd736313cf887d5b01b2355380f4a8795d1234d1300f5adc4be83803e7c502b` | R |
+| `content/renders/mine-clearing-rear-FP-B.avif` | 3526 | `bd2a7097171435f62f9bee56a8826d836e429c39ee9ef24c7e3feb7cad0090f7` | R |
+| `content/renders/mine-clearing-rear-FP-C.avif` | 5573 | `f309e4262ee6eec597a41be4802ba4ae7032492ea4d6cea36fb9a6c95b2d7777` | R |
+| `content/renders/mine-clearing-rear-FP-D.avif` | 2579 | `6a82096d73cb65c8701f60a5878a54b5a5f2f956b61de1dd5e272bbca95a2e80` | R |
+| `content/renders/mine-clearing-rear-FP-E.avif` | 2524 | `4b212446f0f2cdbd3924b0a5dd5be5b2b5a58df529cdabb3bef6fe7ffab13843` | R |
+| `content/renders/mine-clearing-rear-FP-F.avif` | 5051 | `9504c2c9c40226d5296d1b992df7fdb3f242ac314fd7aea11998eaab9d0c728e` | R |
+| `content/renders/mine-clearing-rear-FP-G.avif` | 4413 | `e8b5e0d3b5a2673fd9af5d98d3371068478cc6e35f8e4b103b84d9befb9c3da8` | R |
+| `content/renders/mine-clearing-rear-MOB-A.avif` | 2837 | `cafa34c8dc34cfe702550fee3ffbdbac00dc0eb3af4a69ff0a812f73f45fdd7c` | R |
+| `content/renders/mine-clearing-rear-MOB-B.avif` | 5447 | `249de28ccf5e89e1c1ec126b67ba217ab527f48c40418d87d06d4394dcd0d1d3` | R |
+| `content/renders/mine-clearing-rear-MOB-C.avif` | 25911 | `fbede41b1f46a04df036bf19b5584f0acce623142d329ff99acf46e347562440` | R |
+| `content/renders/mine-clearing-rear-MOB-D.avif` | 4043 | `a28485491534b2e2091281478913817bd90582e3c9236a90b7771442e98e2487` | R |
+| `content/renders/mine-clearing-rear-MOB-E.avif` | 4211 | `6b9f47abbca1ae44d1b36cb6c4ae3ec8a019c6a3f86904b2b45c5d3fd210db41` | R |
+| `content/renders/mine-clearing-rear-MOB-F.avif` | 1987 | `d4582632a6e0f1b37bab89825c2a5dcfa15850bf302351b758a912917c3a83ec` | R |
+| `content/renders/mine-clearing-rear-MOB-G.avif` | 19268 | `3e31ad3f3a4fe62b9d35c3aabc20b69a9e29fd18ca76e9a5849736752fdeb64e` | R |
+| `content/renders/mine-clearing-rear-PRO-A.avif` | 10366 | `ed2133d1d9e1cf6c30a8d9efb1954ed422ff9b0a61ed8c185f320198acd9092d` | R |
+| `content/renders/mine-clearing-rear-PRO-B.avif` | 2848 | `9415158fb51ab641af588098e53cd3c503256e87f96f374aa6bff8b7ebd97f6f` | R |
+| `content/renders/mine-clearing-rear-PRO-C.avif` | 9020 | `b5e2353ee5f55d85674a26111400e8886bcc12b5cabd5b46a7af2b99d9cf607b` | R |
+| `content/renders/mine-clearing-rear-PRO-D.avif` | 1060 | `2059fb181d91b1134c5b7814b3309a71e45f5ccde5656f656029ebb2d94d2293` | R |
+| `content/renders/mine-clearing-rear-PRO-E.avif` | 12044 | `760531743f0b4b4424160e8d8498993f62fcd13544cddf3e0fc72b68a401248a` | R |
+| `content/renders/mine-clearing-rear-PRO-F.avif` | 2921 | `ca775f8703d9f0d12fec4b1d66da3c576e183181a5da25a16309af9a36bebf7b` | R |
+| `content/renders/mine-clearing-rear-PRO-G.avif` | 1857 | `1525d02103632938ecc3ccbc1407f131375a58a3ea3756ecac32a6d0b4de39d4` | R |
+| `content/renders/mine-clearing-rear-SA-A.avif` | 2095 | `3aa0b98c9d76688c7216876c3e7b3680939003208b86f1c1ae8922af1a36072e` | R |
+| `content/renders/mine-clearing-rear-SA-B.avif` | 2519 | `a86097fecceb245d5e45fbd93246d9ddafd61792c0e2f16e8e50dbb8c8bd9469` | R |
+| `content/renders/mine-clearing-rear-SA-C.avif` | 1952 | `055e854555bbe19c1047e126bfac67619254154a34717ec4536f033367640901` | R |
+| `content/renders/mine-clearing-rear-SA-D.avif` | 3467 | `98e331c356a6c653b9a0b20327af966725a9cb5cee59e91ab9debb05ef6471bc` | R |
+| `content/renders/mine-clearing-rear-SA-E.avif` | 2292 | `3982488ac460646631feddd09323aee127f955f0ddccab5e3b185d25e765ce6c` | R |
+| `content/renders/mine-clearing-rear-SA-F.avif` | 4506 | `03df8e9a5ea1887fc09e22e7a43485ef82b8fd4c691308062c95725735ae6a04` | R |
+| `content/renders/mine-clearing-rear-SA-G.avif` | 4409 | `2fcf15876964fa7fb3d4a64801e111ab93f8de55b739af25f65781326da448ce` | R |
+| `content/renders/mine-clearing-rear-base.avif` | 20599 | `2a4fd5722332b78be9ee20b9858cb2f0951f00c58c4b8ab7a0a1d6d2fc4f4939` | R |
+| `content/renders/mine-clearing-turntable-00.avif` | 23397 | `9f5e49edc5345bd6cbb36312354a7144fef0fc874172e22bbea6142527e3c6e1` | R |
+| `content/renders/mine-clearing-turntable-01.avif` | 24955 | `01aba2a78525286ef7be909e8fc10107d0ff2d3562b0b391a4c09d1b4ef16795` | R |
+| `content/renders/mine-clearing-turntable-02.avif` | 27113 | `763fd6555ca878f8e395bb5b9950f1b87e03909d94cd92478f4593cf9fd17527` | R |
+| `content/renders/mine-clearing-turntable-03.avif` | 29178 | `a59a06956d72f74d7112fd3d815021cbf9460e6d8ab759ce0250fd8ad906de31` | R |
+| `content/renders/mine-clearing-turntable-04.avif` | 26165 | `d8a010886f33402a459e54a4be8d3dcc56bfa18f224f527038a8220df21bdf1c` | R |
+| `content/renders/mine-clearing-turntable-05.avif` | 18995 | `fe87bca57ee06068452c3740f2d8c9f8ba79691841f440406c7a1d1345fe48f8` | R |
+| `content/renders/mine-clearing-turntable-06.avif` | 17152 | `7b95accdaecf2da62b1c6124269ce19306e4fc03e4463e60148cb06150ff3bf7` | R |
+| `content/renders/mine-clearing-turntable-07.avif` | 19724 | `badfc7f9aa499c2325260cc0d0291db09aa87c9eb97b67073d6d994ad7ab0681` | R |
+| `content/renders/mine-clearing-turntable-08.avif` | 26447 | `d1ee6e02eea809f5b3ea822c0b3bf269ab62f84e4f8e2cd0b9a6ad32626c6984` | R |
+| `content/renders/mine-clearing-turntable-09.avif` | 29242 | `6dbfca92f186c0b776a4b1ba376215b4b6a0704ae29296e2dcb3e0d23757d333` | R |
+| `content/renders/mine-clearing-turntable-10.avif` | 27245 | `c2dc814c3569311ae008c47cfd6bb6febf23426fc4a53f292b8b09939f595884` | R |
+| `content/renders/mine-clearing-turntable-11.avif` | 25281 | `f1eeab7896d5a476728708a691c60688c4bf89066cae0de73330bc9a9d5966a3` | R |
+| `content/renders/mine-clearing-turntable-12.avif` | 23775 | `cdc6c01866f7c55dedfdea0b23cc56ee214d79170a0550ce1762680355550d2b` | R |
+| `content/renders/mine-clearing-turntable-13.avif` | 25181 | `1a5de1d8ea399a065a90c04cba3f6c435012b7502ac224580bb878734d1f697e` | R |
+| `content/renders/mine-clearing-turntable-14.avif` | 27251 | `d8328b38ec1e8b1507744966557e291373910f907607f2c88ef74b4dad14d735` | R |
+| `content/renders/mine-clearing-turntable-15.avif` | 28690 | `a75be39d92e924223d840b1904b755e11f8e3be3118a0835a8755c37ea10d767` | R |
+| `content/renders/mine-clearing-turntable-16.avif` | 25966 | `3227e10f51645acee71882986cf0ebf1de360529b9bc533159ade79a7bce21bd` | R |
+| `content/renders/mine-clearing-turntable-17.avif` | 17657 | `3109c05ca2749ea1a383b72b3d4359cbf410d2de8d52a74e5aea9f50ae29e576` | R |
+| `content/renders/mine-clearing-turntable-18.avif` | 15543 | `b0b1d4848d7f0edbe32d3730a53792a4f1bf41fddbb2439b9cbeaa64de243956` | R |
+| `content/renders/mine-clearing-turntable-19.avif` | 17715 | `533771a9b1c4639706b0b4b4e46df28c18511dad284c349233b0a313801ffaff` | R |
+| `content/renders/mine-clearing-turntable-20.avif` | 25972 | `abc6cbb7962f49d1b07ebd6661fdf2995e172c757dfd8f16b0e16445e1e735db` | R |
+| `content/renders/mine-clearing-turntable-21.avif` | 27829 | `5de1cf4472297483351ff0049288835b0c2d9dd1c8482fd0798056124f60574d` | R |
+| `content/renders/mine-clearing-turntable-22.avif` | 25961 | `66bb604ebaa0afe051a8632b6870ac5b437e5ae1b2c855625983da540ae951a4` | R |
+| `content/renders/mine-clearing-turntable-23.avif` | 24074 | `e7444545c87457037b5878f68f7b8b246f9b4e5c006128540d5a7d244e9b6e25` | R |
+| `content/renders/recce-front-ACC-A.avif` | 2183 | `30adcc4e79c9e4507fe0a7d7a010c91ee03cace25a35832e2c3a5651a25c483d` | R |
+| `content/renders/recce-front-ACC-B.avif` | 5893 | `c31861d91b4ab057e0b5a80c38b35af87a2425e1a7b8e2443b1058242562ad91` | R |
+| `content/renders/recce-front-ACC-C.avif` | 9991 | `0de4e283395bd1821a9164d2b7e76086ea8834265df6b4e3870fb7614a1df9eb` | R |
+| `content/renders/recce-front-ACC-D.avif` | 7520 | `29d4750274566ed8daad2a62d14c0b4fd52449a05719be10ce404a703b69c2f6` | R |
+| `content/renders/recce-front-ACC-E.avif` | 8656 | `41c181f76972dcde1a284b6e2abbbde360c8eed054ab3d87e7f0afb61268d543` | R |
+| `content/renders/recce-front-ACC-F.avif` | 4492 | `cdc27f35c4d58ae96f70e95167d1a932efd83d5fa6954356ed996c1b945b0e01` | R |
+| `content/renders/recce-front-ACC-G.avif` | 11062 | `d97382af12577702385b8c8b22afcedebd32274e55329e6074082a696b5f69f6` | R |
+| `content/renders/recce-front-CAP-A.avif` | 4507 | `19a1a2b00be09302a562a9358a93a12249497c6a20b9632c5df713774c8506ec` | R |
+| `content/renders/recce-front-CAP-B.avif` | 4547 | `7c802c2076a661ef107788d1f63d34fa395ec512350b181a105933c0ae695f7a` | R |
+| `content/renders/recce-front-CAP-C.avif` | 5014 | `74c67a9fcbeaead0c8ab9a65e6b2197a9081d2240d57ad47b13202ae1ec6a48a` | R |
+| `content/renders/recce-front-CAP-D.avif` | 5513 | `9c9c13acfa1720631e223abc859148278166c07b9d540c39c66d4564cfc999ff` | R |
+| `content/renders/recce-front-CAP-E.avif` | 4114 | `973aac8214eb85175c74f79d6bb08ef01803e434e34ca99aea11f8ca5b9af6af` | R |
+| `content/renders/recce-front-CAP-F.avif` | 4464 | `a6bdd5069d1989e5ea679f70ee91e9594564b4ee0f2d749d2b5218a8e2c0c92b` | R |
+| `content/renders/recce-front-CAP-G.avif` | 4858 | `04b8d410fb7a0f3a87ee87a943526459ef9887583411760a1283ff923bbd52af` | R |
+| `content/renders/recce-front-COM-A.avif` | 1974 | `2208e921d0253c5e884a0ef2d33b5ac33b2ebb3f3a6c71e0317ba293c9c34e2d` | R |
+| `content/renders/recce-front-COM-B.avif` | 2357 | `e718c865677cdbe3aae31f3cea5d9c6cdcaced7e2a81423bd372cc9b29d8185e` | R |
+| `content/renders/recce-front-COM-C.avif` | 1475 | `6e8baf22675ee88f2f84f5d66d38c90fb697b6d37143f51e3bf485387ce034c5` | R |
+| `content/renders/recce-front-COM-D.avif` | 2635 | `2073b95eff32cd9e75eb32e92efb12f764c80a5b52c349384257919a4cd7458a` | R |
+| `content/renders/recce-front-COM-E.avif` | 2826 | `d47aaba48395b605b717eea07b063ab4e4f28b248a00b38536f86e01bbb81947` | R |
+| `content/renders/recce-front-COM-F.avif` | 1879 | `9ca56b0cc43772e41e32620f086c7ca6a372fc52147e51b38206cb4215874e84` | R |
+| `content/renders/recce-front-COM-G.avif` | 2001 | `9b5192f0af03f158cbd05dbd4b9f4736d3045e001c5ea5ef1b0aff6606b927cf` | R |
+| `content/renders/recce-front-FP-A.avif` | 3661 | `e1a068a3ea531fed5ab15913832ad7a371205e254e7525f56a6318283dce0045` | R |
+| `content/renders/recce-front-FP-B.avif` | 3825 | `0a96943b718db63301028fe5115210f4b94cedae29f501011fd365165ae1441e` | R |
+| `content/renders/recce-front-FP-C.avif` | 6053 | `c92b63de00931156f1cde3cf6f76f7406798a7e1c3750950c4add3214cb2bfb1` | R |
+| `content/renders/recce-front-FP-D.avif` | 3037 | `f5189301c65df2826a0ad9429f7aaf6947bb8cf4e7162902d8b0fd623710d6a9` | R |
+| `content/renders/recce-front-FP-E.avif` | 2840 | `b61f89f1ef9bc8799eb381ac6c116f0be3dbb22b8ba5215ca287ed746556c513` | R |
+| `content/renders/recce-front-FP-F.avif` | 5318 | `55d8bb8ad391e65ea95c4c8a789099e1ab4aff359441dda682037fcec6f97f39` | R |
+| `content/renders/recce-front-FP-G.avif` | 4642 | `fe1f32db4281e48f66b81b0d7a073d4b4839a02d68c51f2f11073f934fc5235b` | R |
+| `content/renders/recce-front-MOB-A.avif` | 3545 | `aeb6807f265ff70b0ecd2fff54ed435e9b050c27e764520a0e035b2f0f0c1101` | R |
+| `content/renders/recce-front-MOB-B.avif` | 6655 | `74d84eab0aa28da775ba8ecf8a6096d44a9b0e7619401284d58e4d33ceeed26a` | R |
+| `content/renders/recce-front-MOB-C.avif` | 29779 | `644c89d504adbbd6edf17e1c68b9aa821cae94d6dda4fa555dd5feb8af9897a6` | R |
+| `content/renders/recce-front-MOB-D.avif` | 5194 | `93cb039d1479abeb7abc98c6d8cf14e4baaf366b9445b3308395fba62825066d` | R |
+| `content/renders/recce-front-MOB-E.avif` | 2651 | `bd0ef7702fa763525d5f62dc2a8e3659f42b6e2e0e37611d6e3e44bfb6d190e4` | R |
+| `content/renders/recce-front-MOB-F.avif` | 2059 | `79c014d6fd1209b8f2fefcd2623a1f28ef11ef105a1592473b99805a2f4f6d2d` | R |
+| `content/renders/recce-front-MOB-G.avif` | 23021 | `651b48d0287df272cb4ef22b9d23f18b8599b310f456774b1d0e3016d5ec13f9` | R |
+| `content/renders/recce-front-PRO-A.avif` | 14296 | `7a16a89aa7576e7b1880f0da899b1c34af6b4763828585c007f378856889b7c5` | R |
+| `content/renders/recce-front-PRO-B.avif` | 6479 | `c2f420f8be293fcfaaafa521fd9eb3ada0f4a3b1402249a256512b44f4c0918c` | R |
+| `content/renders/recce-front-PRO-C.avif` | 12306 | `721eeddfa4a8f5ba09b1506d5a68e282e0c33e8018996463a8ea5462e6c47295` | R |
+| `content/renders/recce-front-PRO-D.avif` | 1156 | `8cab5573dd12ac13b13c0efdd351b7c0f98b2b3bf2f26e201daa91a7b6ded10d` | R |
+| `content/renders/recce-front-PRO-E.avif` | 16485 | `00f6d652fcc4a0aef788469dc082d3430560ecb1ded3e5a22298885414360d8b` | R |
+| `content/renders/recce-front-PRO-F.avif` | 2640 | `8c97487028d56101e4a58f2393f848149677f236f846a2f9e3795f2de8eb7514` | R |
+| `content/renders/recce-front-PRO-G.avif` | 2038 | `d82b04e18465afb607321926c9c5bf89f5815131c487ad642bd42a4a07eb427d` | R |
+| `content/renders/recce-front-SA-A.avif` | 2234 | `bf6beca6e694be6f27395cf3f3d8f2f203539181c213021073f11fb1c3d28a38` | R |
+| `content/renders/recce-front-SA-B.avif` | 2699 | `fde408e9a37d109fa1ac75eae97ce511987f7104f60636174ebb66aa46234338` | R |
+| `content/renders/recce-front-SA-C.avif` | 2179 | `e2c2dac4082b8e1a1d539839c1c9661ba805604f559c8167111b210bea63537d` | R |
+| `content/renders/recce-front-SA-D.avif` | 3739 | `77054f6bff6494a6f6dc5a698662cc6ae415ef186c17ce72a1d0d577a336df0e` | R |
+| `content/renders/recce-front-SA-E.avif` | 2484 | `ff211042db87eb409af2e562ba2e0fb549757dfb8ed9fbef97d2354375195edc` | R |
+| `content/renders/recce-front-SA-F.avif` | 4898 | `fbebb5490c6541383f5382bfdb0747a910c43263b250ccc8d7cdef69f9f36b32` | R |
+| `content/renders/recce-front-SA-G.avif` | 4819 | `d4ed8c5350422b1bb41dce50db11831bdc0d3b975fa1792d49434562e6153df8` | R |
+| `content/renders/recce-front-base.avif` | 22597 | `20b98c9e16be9a08ec42169a71993c8ca0298e00a9e458fdcd3b0e1898feca10` | R |
+| `content/renders/recce-hero.avif` | 41714 | `8645794be117442bd4d0a603fd92564cfa7df9de6df31f94b47f37398a5de0a2` | R |
+| `content/renders/recce-rear-ACC-A.avif` | 6176 | `777369e6fc142e6dd3ac355286f8072f36bafede62831f9aeaf6e91db6d244ab` | R |
+| `content/renders/recce-rear-ACC-B.avif` | 10717 | `9c0877d62b2e585b71eade37a98aff82f626ac6363728142da26b25d5e6b092f` | R |
+| `content/renders/recce-rear-ACC-C.avif` | 4696 | `cbe0583f28abf788864ccc29ee06013f5a2d9cd17e38355f182d63628cddd969` | R |
+| `content/renders/recce-rear-ACC-D.avif` | 3601 | `3afa7b877f9a5b21375abcec1c860c8a224d0e11fb374c1c0ed8e484b689b748` | R |
+| `content/renders/recce-rear-ACC-E.avif` | 3380 | `3e38dda0d2cefef18ee51a2bfcb6eaf44c25817a00b7a550b610be7053fe202b` | R |
+| `content/renders/recce-rear-ACC-F.avif` | 2093 | `ce039539cffefb854a4b6a3c1fb40cef40c4185266d4e335bed7ef2181485eb8` | R |
+| `content/renders/recce-rear-ACC-G.avif` | 4069 | `28bb11f818e4c122044ec745ed7888a16c15b18f027a4c62d42bc4875826f198` | R |
+| `content/renders/recce-rear-CAP-A.avif` | 4973 | `3d0a2c6d71cb43d16dcf7106695fb92d64d13cb82aef6e3b1616568b319e4626` | R |
+| `content/renders/recce-rear-CAP-B.avif` | 5000 | `36ebc53c3c97969e29855c5ac0b5dc496e2b49b543bd3afe969be1670fb32416` | R |
+| `content/renders/recce-rear-CAP-C.avif` | 5389 | `3d980bebadd532573ccba47874d28add9f51ff94239b5c7315e857ba0d70b4f7` | R |
+| `content/renders/recce-rear-CAP-D.avif` | 6227 | `f4ecba316af72b15a64f273d3302c96c66073097e89f9532807ae668ef3e04df` | R |
+| `content/renders/recce-rear-CAP-E.avif` | 4388 | `b38a13976d9aceec138ebd723e56881a4112864e81a924019cef4cb4ea8a322b` | R |
+| `content/renders/recce-rear-CAP-F.avif` | 4869 | `de51d08e41027857ce76e01afb0a3df9cec330b2bb55f785d0bcf752dbdb39ca` | R |
+| `content/renders/recce-rear-CAP-G.avif` | 5492 | `199ea443e0d05f8b29b1d55f21ed1e5aec610854e1b9b1192967709bd479d9ee` | R |
+| `content/renders/recce-rear-COM-A.avif` | 2593 | `a716744113f42af9b2f2a2bf16257c06fb6b03d7a32762730f45237a76c648fd` | R |
+| `content/renders/recce-rear-COM-B.avif` | 3359 | `147982331382645b4a5cbb653a82fa16323e5c0343f8da5584e8d08435f58ca1` | R |
+| `content/renders/recce-rear-COM-C.avif` | 1901 | `af110d5d43436f37bdbf72ec45af6da1f217b58febcab01ef01881811e8d2cc2` | R |
+| `content/renders/recce-rear-COM-D.avif` | 3901 | `cfd7a32582f5094ed77a817e6dc928d721971f168ec89f55455dd8bb4e333538` | R |
+| `content/renders/recce-rear-COM-E.avif` | 3822 | `6513d54dfc135d62a47e241cdc9092ad496ac9a224fb9832d0f854b02a9caae1` | R |
+| `content/renders/recce-rear-COM-F.avif` | 2444 | `488d631de8a8109f3d736d5a5c0a54b3f79b4eb0d46189b9281f6e1bd40c352d` | R |
+| `content/renders/recce-rear-COM-G.avif` | 3354 | `6f4b6de1fca9f1d508c560d82af589bae1c6e6c1e403f9410df56ab077b0fc24` | R |
+| `content/renders/recce-rear-FP-A.avif` | 3877 | `eb2ec5d466dd923c92933fefc0102b650eb9c6e1fde069774766bb83a9df5882` | R |
+| `content/renders/recce-rear-FP-B.avif` | 3544 | `665ab6ec046dcadad0df07356db3e189d1af77b4880ff2ec17eb0c0b67e0107f` | R |
+| `content/renders/recce-rear-FP-C.avif` | 5567 | `de41098d01aaf396210c924cfbe26470fa0af1b330d0aed097e47d47c96807b4` | R |
+| `content/renders/recce-rear-FP-D.avif` | 2568 | `83b4722a6e3c701448eef7f7fcbdc8b27b8d22f297d47d05fb194323cefb5333` | R |
+| `content/renders/recce-rear-FP-E.avif` | 2546 | `1849995fa0050f57ee9cd4ac017d74eb3f4a27108cc3afa50cc12d0e46ec3d34` | R |
+| `content/renders/recce-rear-FP-F.avif` | 5033 | `f7149c63513cdaa58371e5c265f67040b781401df6c6de5acb5bdc78530bf1d9` | R |
+| `content/renders/recce-rear-FP-G.avif` | 4392 | `21ff84fe65140b87406076cf464e689de959c7351b2afd89a0ee598fe032d6c7` | R |
+| `content/renders/recce-rear-MOB-A.avif` | 2811 | `17ebf86506826fcaded7d4c1d102680b5754ca4579e30c5c405671dc6a2187fe` | R |
+| `content/renders/recce-rear-MOB-B.avif` | 5418 | `bab72018e6cb81f7c6a84f392b9892a01bec637da641472160bfe5398d761784` | R |
+| `content/renders/recce-rear-MOB-C.avif` | 26002 | `228b2e9c500fbcc1aecd1cd524b1fe6e5322a6c32a0a8890dc881ff897711b87` | R |
+| `content/renders/recce-rear-MOB-D.avif` | 4011 | `7d17c27ea13074c8f5e1b79c54fc52aa5d32b309cc370bc0f94f8e7f97ee69e2` | R |
+| `content/renders/recce-rear-MOB-E.avif` | 4198 | `d351a72c6ab2c1b71847686167d3761cdd35ed29430ea81ddf44aba2340978a0` | R |
+| `content/renders/recce-rear-MOB-F.avif` | 1996 | `c9a37dea010467d68dc17e8336f9058dcd4e7876712e517b4130aa69d6dd8cb8` | R |
+| `content/renders/recce-rear-MOB-G.avif` | 19286 | `2070fd1e5b0b023b5a0ef0f6a973acd03247fe89288e21c0e8381a327f6e21ca` | R |
+| `content/renders/recce-rear-PRO-A.avif` | 10352 | `4286cc2cebd3194140df40ec84ed11fe71037559d1fbf764f4c60d09671e146b` | R |
+| `content/renders/recce-rear-PRO-B.avif` | 2978 | `06c59892c0982bf979315bbcdcc12651d5ed23e109f6716ef2569a7dbb17c5f1` | R |
+| `content/renders/recce-rear-PRO-C.avif` | 8990 | `673c96a592be2f681103b358219a58955c7b1254d627393e3c028ba920d4df35` | R |
+| `content/renders/recce-rear-PRO-D.avif` | 1014 | `953f31c7c2c37f55e06ae0879f4475ef3cb9650ba5ae54526584c262049b6985` | R |
+| `content/renders/recce-rear-PRO-E.avif` | 11721 | `05a3b9076d41eec444467e57da7fbf99017b38c91a7b3e9efd95f2d5f02b7743` | R |
+| `content/renders/recce-rear-PRO-F.avif` | 2892 | `7c72a5abfc53f4829baebefa59d5ca9115caa2a6a49bb11a1a9ad807de22077e` | R |
+| `content/renders/recce-rear-PRO-G.avif` | 1709 | `10782afe13c8d077898c470bfc693547ad724f9765cbff50b43294dcff102dbf` | R |
+| `content/renders/recce-rear-SA-A.avif` | 2096 | `d1cac03f16928ee0c2a12739b0e25a998b29d26400a90ef1f9abc0b28eee841c` | R |
+| `content/renders/recce-rear-SA-B.avif` | 2530 | `72e4be7ef5d5792676a36f2dbc3f283d6a06266d4a5ace910e106e370942e149` | R |
+| `content/renders/recce-rear-SA-C.avif` | 2009 | `befc5284c06d5809f7ab2fc1563abdfa84d5e47b8226052e8529894ec3c5f725` | R |
+| `content/renders/recce-rear-SA-D.avif` | 3495 | `9df93e15d5252fc9244cad3262490d5a8c9f13deb9c4f17eaaad50861ce3a127` | R |
+| `content/renders/recce-rear-SA-E.avif` | 2392 | `17a9b4c1573689c127d0710b9d39cf19354836e257be142ad8f8dbfbd5e37938` | R |
+| `content/renders/recce-rear-SA-F.avif` | 4552 | `9b96204260e3d8988a8e881f6d172934e7595b8dcb27617a68848815b47b73c6` | R |
+| `content/renders/recce-rear-SA-G.avif` | 4565 | `37d0e076eed92b216985cff9e2820ea0a48e693ed4f738f235d87f4f8304f9db` | R |
+| `content/renders/recce-rear-base.avif` | 20848 | `b2461a0fbe449ce3c3464d35e4e750fe71dd242c4f58f2df5b5bf572deaf105b` | R |
+| `content/renders/recce-turntable-00.avif` | 23419 | `f940551af823e7a13cd7e3e67fcc932e54fff9db8d1ba7a726540b17d960b017` | R |
+| `content/renders/recce-turntable-01.avif` | 24819 | `edc99c376c30edc77128d637f1fe1e1f65aa4571e4c455d441f29ab5a112afb7` | R |
+| `content/renders/recce-turntable-02.avif` | 26876 | `be91477be1b74125d1dd4465c0ede0face9aba93283530983b0d2f953aef7dae` | R |
+| `content/renders/recce-turntable-03.avif` | 29038 | `7b69e99ad98bde09ce22d5bd5d60154c407a504bda0d4dc74da133012dcd62bf` | R |
+| `content/renders/recce-turntable-04.avif` | 25915 | `01d99abc704485488fbb6346b1731b428b13d06c1dcbf7dcc06d8743239d8363` | R |
+| `content/renders/recce-turntable-05.avif` | 18735 | `45fae5c1371db9fd3dac75c1b54c8f89db58115a1b1799fad46521f0437799eb` | R |
+| `content/renders/recce-turntable-06.avif` | 16861 | `1ca7078e2c74255708da2ffedf041ec85626060dc79b7d1a37ac4064ca4a377e` | R |
+| `content/renders/recce-turntable-07.avif` | 19446 | `ad684ef9bac593cdb6482081b7b539385ae83c2c5ebb208b5fa6bd45a2b838c9` | R |
+| `content/renders/recce-turntable-08.avif` | 26503 | `db79ebc3a638608be242344bf9cd1a51e7978e9e75c4ef4923b19692ecb0ba13` | R |
+| `content/renders/recce-turntable-09.avif` | 29424 | `49bc858d34e71aba1bba53a893b84a1c8387a334ec3181ea227c9509a7b297d6` | R |
+| `content/renders/recce-turntable-10.avif` | 27209 | `ea93fb54247e8e001c4316561e32fe3f8bd6363ea182296ab8f5c373106fafe0` | R |
+| `content/renders/recce-turntable-11.avif` | 25291 | `be82a9e9c0ad050a867b2893868ff6f65b88b6f2891240467b60c369dc1a6a42` | R |
+| `content/renders/recce-turntable-12.avif` | 24127 | `805c6f05bd9c8ab0813c2a2df11209fa6c4215fa984d37033e30ce5103fba2b6` | R |
+| `content/renders/recce-turntable-13.avif` | 25666 | `127cfea9877a4ae69c35ac1af4eece0659da812f9c5aa5dc8a8527151a9aef07` | R |
+| `content/renders/recce-turntable-14.avif` | 27444 | `73317fcff35c46f8ff9252c376dd73ba02634c007d635f258c544dcdfbd044e2` | R |
+| `content/renders/recce-turntable-15.avif` | 28961 | `149fd27612b38722c18edaf29cf42c4d5eb3c068b6e70343c70b51562e8e1293` | R |
+| `content/renders/recce-turntable-16.avif` | 26250 | `caff5fefa68a88b20d1f05962337e998e38c1f5e4dd127efc2d91f1701e0e641` | R |
+| `content/renders/recce-turntable-17.avif` | 17965 | `4e527667003235f2d226ac458942ef171836e260a5cb4f3106dbceec1b7a5bfa` | R |
+| `content/renders/recce-turntable-18.avif` | 15811 | `8ff29c1f5303fe193d4b05b8120e0f69191b5516834138f572adf7caf3dd2dde` | R |
+| `content/renders/recce-turntable-19.avif` | 17804 | `537e703cb17ba8e61c16ab15f938e39573e6892c09c2bb32cbd8deae9d677647` | R |
+| `content/renders/recce-turntable-20.avif` | 26176 | `9ada8502b13cd2871809d3f8eb10064629d2e77bb88dbb837a42d712a9f0919b` | R |
+| `content/renders/recce-turntable-21.avif` | 28181 | `bd3cdd8509bf3f1f2b591d6947bad7fc825b4393a6b4af9af381e4b1b2d5e5fb` | R |
+| `content/renders/recce-turntable-22.avif` | 26153 | `3db7647a4b423790995a9983132accf6e7d5a28846f79aecd15f90108ffe84ac` | R |
+| `content/renders/recce-turntable-23.avif` | 24334 | `c654c58f15f76c236d5551f874912273dd0a832cee14e0b8b348352ffd9a4baf` | R |
+| `content/renders/recovery-front-ACC-A.avif` | 2003 | `395195a28b8d72c784c57843261f4ff9d7b32cb7f44510e167c18e30b31cf7ec` | R |
+| `content/renders/recovery-front-ACC-B.avif` | 6160 | `ef21492faf5a310ae9d4a5d8df8962e574a39913458b7339ba086dddedddfea4` | R |
+| `content/renders/recovery-front-ACC-C.avif` | 10012 | `03392f08d44dab3706eb76366ba3f3f6d3bc2aec6052bf75803bbe3b5123f18f` | R |
+| `content/renders/recovery-front-ACC-D.avif` | 7496 | `f63ec0e547279166a237c12b6a6782e7b7bf716fcd979022f9d89cd62f93af27` | R |
+| `content/renders/recovery-front-ACC-E.avif` | 8529 | `f7525c3aefc12f76faf74b3797a766c823053912a17f44d91274d21beaea91ee` | R |
+| `content/renders/recovery-front-ACC-F.avif` | 4521 | `09429992f89b459a95a327a21f8e06a134dd0a1806a5aa0b12270360c3275c52` | R |
+| `content/renders/recovery-front-ACC-G.avif` | 11031 | `5550b814cdb3df0a51e2e0a60bc330cec1b0a10a880070756fab9deee6d57249` | R |
+| `content/renders/recovery-front-CAP-A.avif` | 4299 | `3c67a578a18d152337287fa1877ccf4025688fde09d55c50ec8a15bb1fea7d99` | R |
+| `content/renders/recovery-front-CAP-B.avif` | 4389 | `68286591a43c1eb2dce27023021b2b0a184acc17eec266dd207c5091a874f31e` | R |
+| `content/renders/recovery-front-CAP-C.avif` | 4951 | `708749b8ca98a734391edcee624a1e6cd273e6c38bd00ce66f69754b21bbe843` | R |
+| `content/renders/recovery-front-CAP-D.avif` | 5164 | `ccf24f479ef2bc427082dfaae773816968c12830511b5f294f56dfd51fa4bc59` | R |
+| `content/renders/recovery-front-CAP-E.avif` | 3956 | `c7bbeecc1c8e9380c6b8d3ea78c9dd0aa34ae082a3bb2176dbf254a5272612bb` | R |
+| `content/renders/recovery-front-CAP-F.avif` | 4210 | `7d80fd8f66eaff0481998c8809846cf6065d85619a39311e2eaebff9d6004fbb` | R |
+| `content/renders/recovery-front-CAP-G.avif` | 4738 | `292d20c944c049c36fb72267bfc09eed6ff7341600f57c56594fc7984195b07c` | R |
+| `content/renders/recovery-front-COM-A.avif` | 2085 | `95023b253802d8c95b8d98f7ade498bd8ac188647a4e9d99626555fe6af5600e` | R |
+| `content/renders/recovery-front-COM-B.avif` | 1222 | `e74e432c0ec966da6e06e7e199e9c591069d5c06d001a4a1ef68d8b47011220b` | R |
+| `content/renders/recovery-front-COM-C.avif` | 1561 | `ffb8492ab50c09be2dbc9b58ada43210685b6af9220914eca479cc0e60dea49c` | R |
+| `content/renders/recovery-front-COM-D.avif` | 2328 | `e5bf7148fe37fb5ac4813a046f217335ab7c44cd1139142eca88d3e24ee6c23a` | R |
+| `content/renders/recovery-front-COM-E.avif` | 2206 | `feb458fb5b42f0127bbfd676d83de9ffca95e09efc40593828bd44390d4f0ed3` | R |
+| `content/renders/recovery-front-COM-F.avif` | 2113 | `70326190c3ae3b89e4b357207330d3442b973288bae3ab408b425e5c2a48976a` | R |
+| `content/renders/recovery-front-COM-G.avif` | 968 | `2863e295603dd6d4415c755efcd8a8713d61b89b1c152928bf7c4409b273f82d` | R |
+| `content/renders/recovery-front-FP-A.avif` | 3799 | `ace424a121057b3fe7afe8e9ba304dd804362298915aa72cc1f147b5c55a99b5` | R |
+| `content/renders/recovery-front-FP-B.avif` | 3984 | `8ec0084d97554f06e442ec874e09c0c4dc086004666c44b9d73cba0fdaf75b09` | R |
+| `content/renders/recovery-front-FP-C.avif` | 6222 | `d9bb9f8287919988b04a83fbee84317fb4b6ea04d399f99c2c5d2a99de97ac0b` | R |
+| `content/renders/recovery-front-FP-D.avif` | 2845 | `117f98415242b1f0d1fb74ce54fa1828daaaba07085cb0e07685c24755974eed` | R |
+| `content/renders/recovery-front-FP-E.avif` | 2801 | `a5ea49029f3d76588c210306598f8eaa8cac984c66f9334c4cf910a5294d8f0f` | R |
+| `content/renders/recovery-front-FP-F.avif` | 5469 | `97a46f4116d45f7037407040564323b588686d340c3bb511014c14ea52cc157d` | R |
+| `content/renders/recovery-front-FP-G.avif` | 4913 | `a2e07da1b29a35a6a02059d0796e52db4d3f20c9428a2a2affe024f7026d80c7` | R |
+| `content/renders/recovery-front-MOB-A.avif` | 3527 | `62652c54dd5d357208f704d43412ccd3ca1c14844c01fd90b897b614a6e6b57a` | R |
+| `content/renders/recovery-front-MOB-B.avif` | 6604 | `e95a6568fef0ea17cf9a922ae2eed474935a58aa04831583e6842996f93c5cdd` | R |
+| `content/renders/recovery-front-MOB-C.avif` | 29726 | `2003bcdc4169e40d0b66edff68e532a6a863d6dc7b4229c7b80873ca0b417d2e` | R |
+| `content/renders/recovery-front-MOB-D.avif` | 5132 | `6bc3b877a2b0ec39a1b99bed384020f0bcefe2ef20f227a8a95d01d576197e07` | R |
+| `content/renders/recovery-front-MOB-E.avif` | 2761 | `8324c892de6f51ca1661b8e492eee99faf240164f934bb6b0415f361aa607c8d` | R |
+| `content/renders/recovery-front-MOB-F.avif` | 2031 | `4b7e0f8a46bdabbee9b3a132e026b02ed65ad811bcea2a7eb44b73383594990d` | R |
+| `content/renders/recovery-front-MOB-G.avif` | 23013 | `2c76ec728f9519295a7b43e35058a95f22bd53e07a0d1c6691f9fdd000c8928a` | R |
+| `content/renders/recovery-front-PRO-A.avif` | 14436 | `4169d308a087ae5e78b00f6c332326891c24453fdf070ace36c81fa6a9a0d002` | R |
+| `content/renders/recovery-front-PRO-B.avif` | 6514 | `445bddc69e92d6aaa7a403e5cc783a1ad9c5ec70edebaa465bec4ffa78bc8908` | R |
+| `content/renders/recovery-front-PRO-C.avif` | 12203 | `77992d0fe6acdc83c43fb3edbff9d9223c22ba39fc9935e62f57919bcaa59fdf` | R |
+| `content/renders/recovery-front-PRO-D.avif` | 935 | `1d462d7d91f9dd1c6e2e8de42dd5d8c2788730231e5ac03682fae17b08375777` | R |
+| `content/renders/recovery-front-PRO-E.avif` | 16454 | `81ff290908636aa43adb0adfcddac9f72ace995727d6387725c4a85536387c85` | R |
+| `content/renders/recovery-front-PRO-F.avif` | 2632 | `9f0b2d420953540573c3ec16386d70013cb24a51780a9d0089513c31c98dd869` | R |
+| `content/renders/recovery-front-PRO-G.avif` | 1721 | `b79d035bc01f147ebb8049aeedcdf9cd30ae39ec565a4e6f49acbac31adb51ae` | R |
+| `content/renders/recovery-front-SA-A.avif` | 2241 | `810e6bd7a8d5c2dfdbd5a93b660a730c4a7cfcc479e56be0ffe21d29583f30cd` | R |
+| `content/renders/recovery-front-SA-B.avif` | 2745 | `e351333ca40882fadc4b9732a91578ebe61b15ce288fd3ea8c40bf64ec0fcaa5` | R |
+| `content/renders/recovery-front-SA-C.avif` | 2207 | `307cf506b1ba5b26019c3434cd04ccff579df32850e5db58f740ab1c0aee587a` | R |
+| `content/renders/recovery-front-SA-D.avif` | 3751 | `15320c6165cc2c60fd7e8811537a8a2912af5ec0a5ab385355531e8991065c8a` | R |
+| `content/renders/recovery-front-SA-E.avif` | 2500 | `9f973bd71aaab7710e217fe7792a8ef7099cc7f61647c62dd21892ce1466826b` | R |
+| `content/renders/recovery-front-SA-F.avif` | 4829 | `ec03cf6a824255c0594870e265f6d181e89e54c657a2fd9d57f6226800be09a0` | R |
+| `content/renders/recovery-front-SA-G.avif` | 4629 | `baca796fa67abfed743db0bdbef1f4e2f3182b8b7fc0818d5e13b7f2fb3a5a1e` | R |
+| `content/renders/recovery-front-base.avif` | 27845 | `49546652919fa4dd6d16bd5010f3c75137c85ad4a1b066e375e632aa2a88d604` | R |
+| `content/renders/recovery-hero.avif` | 43650 | `c9afad0cc003c704478d32186208083897816ba1ae48044c6ea133e00a9715ec` | R |
+| `content/renders/recovery-rear-ACC-A.avif` | 6595 | `7e645ffaaf1fedb906f18d3d1865a902ec8a1dce9130cb75893e0a54b3cdf52d` | R |
+| `content/renders/recovery-rear-ACC-B.avif` | 11927 | `8d47c8d624cd9c503b69a17009d529c389d0416d9e77826d07aca08f7c36c1df` | R |
+| `content/renders/recovery-rear-ACC-C.avif` | 4644 | `5316abb099233670002546505440b9e7be147b09726e646c34aa6e9b7aa6bcb8` | R |
+| `content/renders/recovery-rear-ACC-D.avif` | 2986 | `34ba3791e161cfe5e08724480e0f5a594d568c58f0effc292291c0fc0d1f2916` | R |
+| `content/renders/recovery-rear-ACC-E.avif` | 3878 | `5ec35373adf1fd09591cb4b63c392d6bfeb6d76a838d2c8c31ffc9af835e2d66` | R |
+| `content/renders/recovery-rear-ACC-F.avif` | 2103 | `c5ad5babe7807574034dadba255754ca7016349a0f189e1788af52a004e1803a` | R |
+| `content/renders/recovery-rear-ACC-G.avif` | 3241 | `b2053d2b3af2ef1d71f7f74a733d6a2ac1ecae548f5cbe99b43627dfca65170b` | R |
+| `content/renders/recovery-rear-CAP-A.avif` | 4131 | `3af3b9c886ebae162e83597dd90082fe0656c883681fa80884ef1946e979548a` | R |
+| `content/renders/recovery-rear-CAP-B.avif` | 4524 | `03d65bda0d920f6b17367e1ed60fe7231d222d96aa0d29d3d9ac06362a3b6111` | R |
+| `content/renders/recovery-rear-CAP-C.avif` | 4276 | `ac19341cc3eb9c21aa353c9ec679c3e91985d162e3fdfe8692e04b795a2c7c72` | R |
+| `content/renders/recovery-rear-CAP-D.avif` | 5091 | `7d7fe22b85cd18dec02a8c6eaf07692ce53e452966837b76c177afee4985a47b` | R |
+| `content/renders/recovery-rear-CAP-E.avif` | 3744 | `e1e64c9592f61983393a47a36419f85137fd7764e47b1be22e49efb6ea291b6b` | R |
+| `content/renders/recovery-rear-CAP-F.avif` | 4168 | `4a9a517b569f6b7498287856657217fca4605725b5bca8e66ac431480002dca9` | R |
+| `content/renders/recovery-rear-CAP-G.avif` | 4274 | `79de2784897f17426a902261f646b325b3ad39ec2edf88b335e2b6e16504d16d` | R |
+| `content/renders/recovery-rear-COM-A.avif` | 2854 | `caeb9ae0c94000cdc304ec96563fbd57cddf1225dcae8d0ebff10cabbcf9ac53` | R |
+| `content/renders/recovery-rear-COM-B.avif` | 3507 | `53ec97f66d0f32854ece07a773f178dc6350f1ddd6500246bc1bbca9d051415d` | R |
+| `content/renders/recovery-rear-COM-C.avif` | 2100 | `479e0cf7569395ff9f9940cd788107a39c2b426e0a8f47d7e1f44aac1bbafcd1` | R |
+| `content/renders/recovery-rear-COM-D.avif` | 4605 | `a68999ff910b6885defeab0dc06e705fb1ea99d93916156da20c6d169f68c98a` | R |
+| `content/renders/recovery-rear-COM-E.avif` | 4442 | `8d6a828937a0a624e61fe8183afa86e226a6e6422b49b8b960c518789bcd0c45` | R |
+| `content/renders/recovery-rear-COM-F.avif` | 2711 | `2ea15889cf045d75c0ea1b951f1073fbbeaebe7bc15eaeb76ac63aedd87b68b7` | R |
+| `content/renders/recovery-rear-COM-G.avif` | 3609 | `283601e87e2e7a991de7acd2ef01dff3397444be10f7fad4846168cdee4a5b6b` | R |
+| `content/renders/recovery-rear-FP-A.avif` | 4015 | `59a7880e1b176898e4c71cb3d4c574cf134077476a2e63ec356f90d045e155f5` | R |
+| `content/renders/recovery-rear-FP-B.avif` | 3889 | `08bc06f93671eaf210484a0f4bebe3b45425a83caf0bf4509153ad62373e1d3e` | R |
+| `content/renders/recovery-rear-FP-C.avif` | 5762 | `21cd33fd51a84451d277b44d790c19e05c2e47ddcb68d87b717606667477ebfa` | R |
+| `content/renders/recovery-rear-FP-D.avif` | 2657 | `11743b4bfcccb853dae2fe1b7d0f370de8de6450ea3db59aa1eb3ef1fac13e4f` | R |
+| `content/renders/recovery-rear-FP-E.avif` | 2540 | `b557ac75fb97f5ba69e1f363c42948c1302a7173ccac1464f7687e49313abc67` | R |
+| `content/renders/recovery-rear-FP-F.avif` | 5088 | `4f3d5e6a8127681d14191981c69468c2a3709285f1582f8bfbf6ab4164328ae6` | R |
+| `content/renders/recovery-rear-FP-G.avif` | 4467 | `f96d78443baf3bda8ac88f56f06060819fdba5d48aaf6505b71e2994f44c67ca` | R |
+| `content/renders/recovery-rear-MOB-A.avif` | 3025 | `b50155531cc1645955d467b0b397cd386138f47a445937dd64358b94758fdce9` | R |
+| `content/renders/recovery-rear-MOB-B.avif` | 5418 | `59b13326b1a4d4373378333325c170ce5b5c2930ab5b0a42b671f7348fd17447` | R |
+| `content/renders/recovery-rear-MOB-C.avif` | 25874 | `ceea01bf5b2f418e90fd5dbeae628245c3bc1778a14e87302ec8118ab7c2f1be` | R |
+| `content/renders/recovery-rear-MOB-D.avif` | 4230 | `0d019cf7bcbc389840a1496b49022f87f11bb35a1b20818844f706112f729d81` | R |
+| `content/renders/recovery-rear-MOB-E.avif` | 4494 | `2b6d76ffe23fccf1483d77e3be744bf4808e52b292f34e1a13e05c1bf62d7866` | R |
+| `content/renders/recovery-rear-MOB-F.avif` | 2064 | `3879c52c0c9f1004484ff2497ffacbb75cdca0fae658b442f0e1a6a28784974d` | R |
+| `content/renders/recovery-rear-MOB-G.avif` | 19206 | `15574129b7792e715991ea821539f39b296361c2714505acde46248f3c1fe426` | R |
+| `content/renders/recovery-rear-PRO-A.avif` | 10222 | `68277321c3586ffa5d411926d61769ecc388226cbfa961608a9c6f01d6db3075` | R |
+| `content/renders/recovery-rear-PRO-B.avif` | 2961 | `7bab690d0d198c8bf48652544db89eebd30a5ba72936773c8450cd02a0b0297d` | R |
+| `content/renders/recovery-rear-PRO-C.avif` | 8667 | `3a8512726071f27ebab1b855bd8c6c6232910e28c4b0fee388daea2ac6537721` | R |
+| `content/renders/recovery-rear-PRO-D.avif` | 916 | `51f3aa979fb940b840eb3603cc57769d555a490bffd38593ea1b616c5aefd571` | R |
+| `content/renders/recovery-rear-PRO-E.avif` | 12369 | `63a3badb4b447a5d431ca523d8afe4db28227d62d8d0dc11d28d32f5400a8150` | R |
+| `content/renders/recovery-rear-PRO-F.avif` | 2982 | `92f3db42cedd56b1ba7b06ad1946c48f3a12b9972cd2ccbaec33e204186336d8` | R |
+| `content/renders/recovery-rear-PRO-G.avif` | 1591 | `88714d9ba0ce17d8c0e21602b3c1278dd358a085c2c8fcbbc0f603e64e63c5da` | R |
+| `content/renders/recovery-rear-SA-A.avif` | 2178 | `5598e68d7123ec050c0a54f6df47fe36f1ac30f5bb6593defa2a268e944afd5f` | R |
+| `content/renders/recovery-rear-SA-B.avif` | 2449 | `b8fd122a683d94f147dc5dae650ee0ecfdc60b58290543a50797976955e944de` | R |
+| `content/renders/recovery-rear-SA-C.avif` | 2023 | `b20bbfc777fcf33ba9fcf5ff652554f124c3e278b1fbabe2aeb05f2ceb66d3d5` | R |
+| `content/renders/recovery-rear-SA-D.avif` | 3481 | `f5445a8b6745fee70fa861f0e2095657149a847146bc1fa45e48bfbc7326d36d` | R |
+| `content/renders/recovery-rear-SA-E.avif` | 2394 | `d5e22ce84eaeab68f417421bf0f55580a02821d42b9e8a8c0ca652a640a750d9` | R |
+| `content/renders/recovery-rear-SA-F.avif` | 4370 | `60530ec989da89cc94af38c4900c1b53f1be594d3c27ce3fde245c7e2d84819f` | R |
+| `content/renders/recovery-rear-SA-G.avif` | 4071 | `c6556fdf113da324746a87408062dbd167bd71e49ef036d59c6db232f25a1d26` | R |
+| `content/renders/recovery-rear-base.avif` | 27142 | `2756d4b9eaca6e012068047b6eb80927e72666e2adec05d19f53cd2379d0f702` | R |
+| `content/renders/recovery-turntable-00.avif` | 23196 | `12ebd0db19fe931965c2ae9230b934f12fad02ea27e7d022593fafeb937f8227` | R |
+| `content/renders/recovery-turntable-01.avif` | 25858 | `782b30fa57a2c0e0e29eb8d79f3621998715556fef95f26434ceae53a856730c` | R |
+| `content/renders/recovery-turntable-02.avif` | 27997 | `f3e16499edd451a159046ea42c681d843ab2eab68338bb85565ee3601fbe3606` | R |
+| `content/renders/recovery-turntable-03.avif` | 25386 | `2ba781a13b22fd07a507d7a5800913afd388213e1d2f79acd8a51087e9553956` | R |
+| `content/renders/recovery-turntable-04.avif` | 21326 | `9e8198ee712a6e2f69f8049696fe8b544ad84c8b46031d79377c7528012a19e5` | R |
+| `content/renders/recovery-turntable-05.avif` | 16573 | `9df082155e8e087ea3d2901ee923d1e32cce7a787f7bf489e149b32c8db36669` | R |
+| `content/renders/recovery-turntable-06.avif` | 13998 | `e87160d39b826fabc9d4fcece295091e46945ba7cc8b805bd0801d9650e8562c` | R |
+| `content/renders/recovery-turntable-07.avif` | 16963 | `f72d3445b48d2e6c4dad5ea20004523b0d40d4b3565494f1fb8a943786a80c28` | R |
+| `content/renders/recovery-turntable-08.avif` | 22290 | `d083280f9b09926a8916ef32f7bde975377b232427f160a91c901a99386aea00` | R |
+| `content/renders/recovery-turntable-09.avif` | 25670 | `48769087cd8307deb10348c2debeea813ec86187b345d3f9a5e3db56aaa939e2` | R |
+| `content/renders/recovery-turntable-10.avif` | 27584 | `a8709faeb4b9bc10444dec66400358fb93664a8e902857cc5cc0f96893586c9d` | R |
+| `content/renders/recovery-turntable-11.avif` | 25272 | `6c8c3d87b01d499f5c34aadac4875bc96ab522d12c959b0eddf53738ece2d28d` | R |
+| `content/renders/recovery-turntable-12.avif` | 22823 | `ad982cce79de334e3375ca1a2fee657f8060c0df853791840268c2556e1b6a86` | R |
+| `content/renders/recovery-turntable-13.avif` | 23814 | `0f9911fc29e8fcfb244eb8f50704d2dfe3d53a252a78f1d6e24f36d115b11c63` | R |
+| `content/renders/recovery-turntable-14.avif` | 26217 | `9bc9df9f9c637eacd78dcc2f54b438ab4cc6ddbb42e17f72f4e86496382dfebe` | R |
+| `content/renders/recovery-turntable-15.avif` | 27411 | `dd6dcf0858060ebe8f5882a8932fadf896af04bbdcc2412eba67e293dce30e06` | R |
+| `content/renders/recovery-turntable-16.avif` | 24411 | `65480931b0f964e25e6542d1a279d28051f41b6a5d55b28771fe36d8d392627d` | R |
+| `content/renders/recovery-turntable-17.avif` | 17743 | `9336fb6e6bd01ffcb53b766d5d6df512508844c6a91cb9f91d7db9bd101f14f3` | R |
+| `content/renders/recovery-turntable-18.avif` | 13702 | `5e6fd58b36ead31d07ee996d755a26374f63e347378dfe30a19dbf50b1f2fdd0` | R |
+| `content/renders/recovery-turntable-19.avif` | 17300 | `9950ed0ac1e1b53c7eda08092d8bf607b0eccad9ddf4c252f3d6caf02aca6961` | R |
+| `content/renders/recovery-turntable-20.avif` | 23243 | `722c4b30e805ee9b3510c9eba96ce3119c4005bd7314cd74cf310a8fc22bbe31` | R |
+| `content/renders/recovery-turntable-21.avif` | 26713 | `723abf74be547bae553720a2dbed0600ce838fffbce3788273d1b3f98b86c63a` | R |
+| `content/renders/recovery-turntable-22.avif` | 25426 | `c1405a900db25fdc75524dad52df2224ae60c061e6735f953221660986f69606` | R |
+| `content/renders/recovery-turntable-23.avif` | 23016 | `368d855c044b73277861c6b3da0688fbf5ca2321ccccb3fa90bb99e7be0d4671` | R |
+| `content/renders/troop-carrier-front-ACC-A.avif` | 2319 | `df695830f2879470e2ea48c2769591f9c297d6327a6f3f1fb0f2bdbf36d22dcd` | R |
+| `content/renders/troop-carrier-front-ACC-B.avif` | 6043 | `20e9a75cb1a39d0de687b01c5b3603636bb666fee0ab328f2e1c190bd243050e` | R |
+| `content/renders/troop-carrier-front-ACC-C.avif` | 9408 | `638d8f22512dad054a9c49e1ce5adcf25802a4e91d1a0c00b05dbd34b84ed99e` | R |
+| `content/renders/troop-carrier-front-ACC-D.avif` | 7525 | `6a979298b570501789736afd8e08307a656bbfb92133c04c8464402571b8886d` | R |
+| `content/renders/troop-carrier-front-ACC-E.avif` | 8476 | `e96fed9f12b7983a797d3df823c31f93a92b0e14825c104910c504d3d11c746c` | R |
+| `content/renders/troop-carrier-front-ACC-F.avif` | 4468 | `0bf27527c1c28b1d3b3e896e64db42368738a0b263d2b619ceb95788e96503de` | R |
+| `content/renders/troop-carrier-front-ACC-G.avif` | 11761 | `aae049c9eb8e396ffce515b74dcb59109898a4978a9e2108389a2171be4f6c53` | R |
+| `content/renders/troop-carrier-front-CAP-A.avif` | 4506 | `1058308c29c58c82e3456049c60a15552986cd733c3b84c40de0c72791567b84` | R |
+| `content/renders/troop-carrier-front-CAP-B.avif` | 4506 | `9691ac56b70aa7e1f493edc6a4fba31efdb73c953b00c567ce44f5ddbdd79509` | R |
+| `content/renders/troop-carrier-front-CAP-C.avif` | 5023 | `11cd817da0060ec0e52d33f09db41373f8868269c2d38dbba10e0eed487dcba1` | R |
+| `content/renders/troop-carrier-front-CAP-D.avif` | 5491 | `d79b1a5300e9335110f0155859d45f00ddcb22a0e24be66dd2f2692254b0bb9f` | R |
+| `content/renders/troop-carrier-front-CAP-E.avif` | 4156 | `995e0f7c9095dbf9c2fddd0ec8ac617778f6b23648d77d67f479504d61a2d203` | R |
+| `content/renders/troop-carrier-front-CAP-F.avif` | 4476 | `630270fc876705431598b1c548921b85f057348ba8f7170824a66f2d3adf0c0b` | R |
+| `content/renders/troop-carrier-front-CAP-G.avif` | 4896 | `74a7f82a64ae55f66f01c223140d680149d35de56f132b4e7539d03cd0acd2e4` | R |
+| `content/renders/troop-carrier-front-COM-A.avif` | 2000 | `740a669363537698c2857b0e5617f399f527657d231bc13871f99b43a3130eca` | R |
+| `content/renders/troop-carrier-front-COM-B.avif` | 2352 | `754cf2fd24016d64f9e3bd99fb4a83cb7f4ea3fb50167c6decffe529dd77295c` | R |
+| `content/renders/troop-carrier-front-COM-C.avif` | 1490 | `f938864937ff23b9e8b7beb8c31b5a575cc3c7a4aaf889b09b7c674a688082a5` | R |
+| `content/renders/troop-carrier-front-COM-D.avif` | 2624 | `9eb8e2e2189fd3148a85d0ee34970194beada41f07e14ec19fc83d227f634a4c` | R |
+| `content/renders/troop-carrier-front-COM-E.avif` | 2779 | `6b130ed086328d5b61875e264c7f4c7784ca10d23d06741b4b4591631527c333` | R |
+| `content/renders/troop-carrier-front-COM-F.avif` | 1897 | `c4ff1ee5d02934808dd8d988673eb9cdf4636aa95f8af15b035b88edcfe17df1` | R |
+| `content/renders/troop-carrier-front-COM-G.avif` | 1974 | `092d3c638a2b4c883e9ecfb753f33631e7113712c352f825603d60a606433b28` | R |
+| `content/renders/troop-carrier-front-FP-A.avif` | 3877 | `0eca5cf287b6ec7fb374cfa7c0c114af1bf671a78d06aa63514ef0381cc512d0` | R |
+| `content/renders/troop-carrier-front-FP-B.avif` | 4027 | `6d6ce74c71d5aa5057610a414f1eba73effef064beaf5204b2d12ff64e6561dd` | R |
+| `content/renders/troop-carrier-front-FP-C.avif` | 6222 | `e20f136c5b14e1276124e0a2de454b84bcfdb7959c01b930a7dfff744752a125` | R |
+| `content/renders/troop-carrier-front-FP-D.avif` | 3098 | `8c3dd20b929af3bf44717d3c072f1a7a684e0fd8d0ce38d616422a5bb37b5c4c` | R |
+| `content/renders/troop-carrier-front-FP-E.avif` | 2835 | `d8c486352d2225a390228bd244da78c922242071ac88e954fe2ed0e3774b87c6` | R |
+| `content/renders/troop-carrier-front-FP-F.avif` | 5396 | `9ba358d16a8078dbb44f645fe61d99bed14eff8dcfcbd92cc00a880679928b84` | R |
+| `content/renders/troop-carrier-front-FP-G.avif` | 4770 | `d941efff020747cfb9a3d4c3e95847354b11008a1f7d4076a53a46c429fe98c0` | R |
+| `content/renders/troop-carrier-front-MOB-A.avif` | 3557 | `3cf560de280e502f8805bfda31e240b2f553bc13d39473e3ff59020275d53f1c` | R |
+| `content/renders/troop-carrier-front-MOB-B.avif` | 6666 | `c414044d10aec70efd200c3fa5b3593754f48e6ca1c8cbe94c95065b71432867` | R |
+| `content/renders/troop-carrier-front-MOB-C.avif` | 29834 | `f02717e3bede630ba0ada126d756b93d841fc94c31df34b470ed92780ab9cc01` | R |
+| `content/renders/troop-carrier-front-MOB-D.avif` | 5192 | `706e87366613f20022f8d596b5bd43b4129bc7f35d76419800b702ddb1122a5f` | R |
+| `content/renders/troop-carrier-front-MOB-E.avif` | 2922 | `96a96d125fe4b92e77109e46b308f785f68c5a9214e6526dc180bb6aeda1791f` | R |
+| `content/renders/troop-carrier-front-MOB-F.avif` | 2099 | `df02f7258e30bea6c235fb5dce147376d20275edd61d6bbcef4e4d5d31c9fbfc` | R |
+| `content/renders/troop-carrier-front-MOB-G.avif` | 22946 | `b884564ca31a88ac522822e76f5b3e2bd9dfff907b65a16f75344162e850f738` | R |
+| `content/renders/troop-carrier-front-PRO-A.avif` | 14639 | `b8adc2f8a6dfe13cb10c9347bdc4444d5101c609f6aa9105eb2b3ed299730a4f` | R |
+| `content/renders/troop-carrier-front-PRO-B.avif` | 6554 | `6c98a8bab7d3aa6ccdf2fe03020cede3a61d54b857000d9fdf56cfe814f2a437` | R |
+| `content/renders/troop-carrier-front-PRO-C.avif` | 12293 | `327928d4bdb9fc70cdccd4aca316a2190a01b688b22b7ab0432c9cce89da335b` | R |
+| `content/renders/troop-carrier-front-PRO-D.avif` | 1150 | `9f92df97857f22d1c5c7bfff08135dc7c06a582d93d96a699950c10895e97019` | R |
+| `content/renders/troop-carrier-front-PRO-E.avif` | 16788 | `5197936d79e213236ccc791a9887c772e6557c403051e606e3f835b0403b6db7` | R |
+| `content/renders/troop-carrier-front-PRO-F.avif` | 2648 | `6a7265c496d2e50141b3e09d416eaa1962ca9535fb59518ee2a35a6ccac3dfad` | R |
+| `content/renders/troop-carrier-front-PRO-G.avif` | 2031 | `2b51d49d09d867d258af79945f6b8b41d96f8931ad521dc1e5296b8a0e74ff12` | R |
+| `content/renders/troop-carrier-front-SA-A.avif` | 2247 | `3504b160ec1f69e7d15215f99512336f53cbe1553af26dab1dfcf691e734cc2b` | R |
+| `content/renders/troop-carrier-front-SA-B.avif` | 2697 | `a7e37b2dea951b915c82493cd3690775911f2ca4d052965546734a46d3752285` | R |
+| `content/renders/troop-carrier-front-SA-C.avif` | 2202 | `765c1c1e014ee5c5b14da74eaa1f2d1a2dc4922108570177ca7987117845d0e4` | R |
+| `content/renders/troop-carrier-front-SA-D.avif` | 3761 | `09067ba44add5b43aea42421b516996a54707310f5106eddf23ea196e2834cae` | R |
+| `content/renders/troop-carrier-front-SA-E.avif` | 2491 | `94309172c134d0ae012d3e61f7c203e9bed8985b2de476b8de33e4e5ff2df958` | R |
+| `content/renders/troop-carrier-front-SA-F.avif` | 4969 | `13b693291a4fa9a06a076c9cb6120bbaaa8ab02d15baf51c6988ff5eb0ff2bbf` | R |
+| `content/renders/troop-carrier-front-SA-G.avif` | 4866 | `4e9f24e499a33f12845c2ab1fe0d09a58ee1722a9c0020689fdcf9429585f9ae` | R |
+| `content/renders/troop-carrier-front-base.avif` | 23624 | `08ff1adae54c4a725f6251c851847af1adb01f22173943ee86039e465a7144fb` | R |
+| `content/renders/troop-carrier-hero.avif` | 47644 | `bbd2205dd4deb3232d08b0e78803c48288e6a06a487d9521bd704e7ccceb9e99` | R |
+| `content/renders/troop-carrier-rear-ACC-A.avif` | 7373 | `74667e1b9476b393374de12d8d7c5826aa1bb4c61b2fc3b3caf560981221566e` | R |
+| `content/renders/troop-carrier-rear-ACC-B.avif` | 12107 | `dd06ac30098b96890a0d62608a09331a18e44e8acb039906a4acb6cdb95daae8` | R |
+| `content/renders/troop-carrier-rear-ACC-C.avif` | 4588 | `249d38629e3ba51e95026f3de9d44c495e8fef36c54f35c7a22bbad0d5d4493d` | R |
+| `content/renders/troop-carrier-rear-ACC-D.avif` | 3621 | `4fe72fbfeedfe7e740e9dcb2121d5f8a79a41bc2b3da8e2091fee3f19dcc627f` | R |
+| `content/renders/troop-carrier-rear-ACC-E.avif` | 3393 | `c37473e0da67d7b3c0190ba752fd7c1f52afbcb348737729f1849aaa1c13de71` | R |
+| `content/renders/troop-carrier-rear-ACC-F.avif` | 2086 | `11c86dc2001a5d6078510ac2610c73b1cd864f108ee3b4932f2058caf7816f69` | R |
+| `content/renders/troop-carrier-rear-ACC-G.avif` | 4019 | `4504133552a14c5e752a2ba5a610571c0cb0af9a83bb11a67c4affae11d94998` | R |
+| `content/renders/troop-carrier-rear-CAP-A.avif` | 4923 | `de76d2e1dcd4034bf5a977999c4756b511a26767b57e63318822bbc918e48f2e` | R |
+| `content/renders/troop-carrier-rear-CAP-B.avif` | 4998 | `1d89bd14cdc68d8e58c4c941ecf3f701d411cf03609a2c1a73202678c46717cc` | R |
+| `content/renders/troop-carrier-rear-CAP-C.avif` | 5368 | `244398470895fa19d3d40ae5cf5a3884d7dea2d75039f7b6c2b87ca581133c87` | R |
+| `content/renders/troop-carrier-rear-CAP-D.avif` | 6227 | `78ce52733d30f0698c5020da932642385bc7af413aa115583909195ab66c5d7c` | R |
+| `content/renders/troop-carrier-rear-CAP-E.avif` | 4383 | `593885f6ea2b8bb778b9ccba482f84b7d94fc8dfe740b6ec5e5aba59ad746a6f` | R |
+| `content/renders/troop-carrier-rear-CAP-F.avif` | 4938 | `81f19a805d7edfeb9b94f0614dece3a38f273443630bb5131cf26e22b2ce0bda` | R |
+| `content/renders/troop-carrier-rear-CAP-G.avif` | 5527 | `4a81b9ad8050e7b7be0ea6753e3664020217c58982f48cccbd45b13e92b4ac37` | R |
+| `content/renders/troop-carrier-rear-COM-A.avif` | 2721 | `7145ece54876e17870e3a7f8ddd84ace38958dd67c616acac649fb3519af1c92` | R |
+| `content/renders/troop-carrier-rear-COM-B.avif` | 3374 | `e66d37b090956bae26225562fd197a297238991855132992f284dce920b7a154` | R |
+| `content/renders/troop-carrier-rear-COM-C.avif` | 2022 | `78245b384a4bb48efdf50423962c8851830d0825233b6ea1939528298d658996` | R |
+| `content/renders/troop-carrier-rear-COM-D.avif` | 3753 | `7927de7b5a7ae474b4a10c59395da176dd639de399b8c83d601d0347a1dae95f` | R |
+| `content/renders/troop-carrier-rear-COM-E.avif` | 3906 | `83f6cb5ad1c13afa2bb5c319cb3091f36a96d3bf50ce51c53e846b9f99a05373` | R |
+| `content/renders/troop-carrier-rear-COM-F.avif` | 2453 | `4f910c0139e87de4e9279fde3c770c9d1f50f207afff797c49720acba651f365` | R |
+| `content/renders/troop-carrier-rear-COM-G.avif` | 3351 | `4d77b870efdb3d9748571c22c0614277541344e0da62e241120cb3dee4cc1ae5` | R |
+| `content/renders/troop-carrier-rear-FP-A.avif` | 3878 | `096ca8b7734386a2130e3101b3324c562a09ecd3f6b7f49863f4c9cf27741fc0` | R |
+| `content/renders/troop-carrier-rear-FP-B.avif` | 3576 | `76f2a51b30496f681239b64350f3202270029d90a2fb7c2fe1395c045fb7c0c3` | R |
+| `content/renders/troop-carrier-rear-FP-C.avif` | 5722 | `7286b90cf6d2aa190e2a6758b2aec365878e6762ef76852098f96c29d190c12e` | R |
+| `content/renders/troop-carrier-rear-FP-D.avif` | 2567 | `10e5bb1632924753f0d6236236bc021e1db9f5f294a7a7f8575d3dcbc3134ece` | R |
+| `content/renders/troop-carrier-rear-FP-E.avif` | 2512 | `f8b5643fa4c6eec812299afb8b99140c16b50ab65358a44aecf4c24ec9bb57bd` | R |
+| `content/renders/troop-carrier-rear-FP-F.avif` | 5161 | `6ca13974ce0a2c2a8acdd34120af3e71b8a5138276c1e9a196c0fb53a20f2c3b` | R |
+| `content/renders/troop-carrier-rear-FP-G.avif` | 4480 | `6f536ec9f2d037199304e03f425bfdb44d61d2fc1a5fb423d753b0e8aea4d24c` | R |
+| `content/renders/troop-carrier-rear-MOB-A.avif` | 2917 | `5f4b2a3d71ce89bca59029a6ff96953944be11cc4f707ac03946b82294b48710` | R |
+| `content/renders/troop-carrier-rear-MOB-B.avif` | 5401 | `69f17d8ac813fdb202343cf11990f595d837571730409043bdd89fd0db70fa43` | R |
+| `content/renders/troop-carrier-rear-MOB-C.avif` | 25862 | `86ba45892ca5119c7baf938be8993b21289d82508fa4164a55c22d20aa5ed8e4` | R |
+| `content/renders/troop-carrier-rear-MOB-D.avif` | 4078 | `dc21088365ef97e534edb3aba989881089c8fb65d3d3f0d8d36a89bf642279dd` | R |
+| `content/renders/troop-carrier-rear-MOB-E.avif` | 4177 | `4df838f6acd1674fb2d30c761f23574ff8329b8584f7ce4df75badbd9a7c9cfb` | R |
+| `content/renders/troop-carrier-rear-MOB-F.avif` | 1997 | `1492631cf9e958d3d9ea083d802d43aa1b4debefdf73a37af9cb0a20af2939c1` | R |
+| `content/renders/troop-carrier-rear-MOB-G.avif` | 19202 | `9fa5fc8350036139765f3092697179d3b2c9ea518f7f22467312d7ffd1ed622e` | R |
+| `content/renders/troop-carrier-rear-PRO-A.avif` | 10219 | `da30346f2151e3c0e4a228eb00037984706af2b45f9459cdc200f2495d7f777e` | R |
+| `content/renders/troop-carrier-rear-PRO-B.avif` | 2978 | `5fca191859452bce5c34a86f6228a3e56a2b414c57da408047804ef33479273b` | R |
+| `content/renders/troop-carrier-rear-PRO-C.avif` | 8785 | `0d7dd82d85a7dddb43bad55bd81d54ee1ecdbf4f79e9d08628ee09791874fc96` | R |
+| `content/renders/troop-carrier-rear-PRO-D.avif` | 996 | `27511d5f0bdab04657c97dd577103eb281bda6130d4aba6866c325a47ff22d46` | R |
+| `content/renders/troop-carrier-rear-PRO-E.avif` | 11907 | `c5d55c88161cc5685b76389289e05ed6332c99913fc6af6d588cc30a87224c60` | R |
+| `content/renders/troop-carrier-rear-PRO-F.avif` | 2969 | `a6b6a07b7d14b51c8f8af3f4cf57132f64d85f3184a868ac7f4824af389b3e5b` | R |
+| `content/renders/troop-carrier-rear-PRO-G.avif` | 1708 | `ac763d70e3477e19015d4d69a21a8426f95c778d154fcc0ff07120a6933533bb` | R |
+| `content/renders/troop-carrier-rear-SA-A.avif` | 2151 | `0728f7eb24b52666d52850ad14d80f004314b1420feaf134bd6ccefbf457e95e` | R |
+| `content/renders/troop-carrier-rear-SA-B.avif` | 2470 | `6e55acd32170c47acd09b225da315efb32db05f06d60d20adeed7927c0895543` | R |
+| `content/renders/troop-carrier-rear-SA-C.avif` | 2015 | `7a53f31757d429c8bfc64390ccfc5aed13e10de815fc4a3d3409e00885dfbb61` | R |
+| `content/renders/troop-carrier-rear-SA-D.avif` | 3470 | `6fd20e02eb00d51b107407e52c624b78ecf02d174b7cde3efa3e5ec7e7a323a6` | R |
+| `content/renders/troop-carrier-rear-SA-E.avif` | 2380 | `c70ce2855c0c76c38b6a7465fd246f490351ea425f487779c39f00bcbd6bdbba` | R |
+| `content/renders/troop-carrier-rear-SA-F.avif` | 4570 | `3d7ebc9e4c90695ffaeb37c41a30723e90927f6d07670eda12956652e4d111d8` | R |
+| `content/renders/troop-carrier-rear-SA-G.avif` | 4546 | `49b5550393d833b9252e00b002c302ed2347051bc7a2d67792028b122d64d9bf` | R |
+| `content/renders/troop-carrier-rear-base.avif` | 23587 | `a9b2bb8b272f90de54f5a9bc9707fdbb95cd253baa56c8926b941272eb6b04af` | R |
+| `content/renders/troop-carrier-turntable-00.avif` | 22833 | `468dc156f82c65e452f317c910349254c17377bced607e80f900d50dd861b463` | R |
+| `content/renders/troop-carrier-turntable-01.avif` | 23496 | `670da9464b9074e997c35cd1a6bc8ea8df46db2d840152187a869d789a43b8f5` | R |
+| `content/renders/troop-carrier-turntable-02.avif` | 26178 | `c2b87f873675cd85b8391af8b765fbff2dbfe86bea8bd336bb57b19658fefb22` | R |
+| `content/renders/troop-carrier-turntable-03.avif` | 29552 | `3b1005a7152b9c5bb757a3ed41a8d92e0108b773e57a3023f3ad71a4a920653f` | R |
+| `content/renders/troop-carrier-turntable-04.avif` | 25653 | `5028bed7224b513a08a6395d7ee6bb5bc1523bb27835da2eb92ab17f4f99dfbb` | R |
+| `content/renders/troop-carrier-turntable-05.avif` | 18688 | `6cb27492aad236ed193bd9f5a42035930036bf2db2ba0228c687e6e28cd876ef` | R |
+| `content/renders/troop-carrier-turntable-06.avif` | 16723 | `be83254bb49f11f59cfd1477086f9cc833e899f4170dca590e1cb7ac972baba6` | R |
+| `content/renders/troop-carrier-turntable-07.avif` | 19465 | `713f3a79d576b8cd870a00a0355c93993f8a988b6937ff4300df7a9e280fa104` | R |
+| `content/renders/troop-carrier-turntable-08.avif` | 26455 | `f43eea0722f6b53106dfd99bc36abe298e77d7956e112a608ce332d0d55614d1` | R |
+| `content/renders/troop-carrier-turntable-09.avif` | 29676 | `df9105673b457335db45c2c6539044621db548a961420935dc28fb385d74339a` | R |
+| `content/renders/troop-carrier-turntable-10.avif` | 26291 | `712e2b91516fcb3a0d82ccd9e966b13b6eacb3cbc6ffed23de4376f642a57b98` | R |
+| `content/renders/troop-carrier-turntable-11.avif` | 23802 | `5b8ed1712206beef25537b5c11591ed47ef02c459f6c1ff3ca4d7e90bf6a5062` | R |
+| `content/renders/troop-carrier-turntable-12.avif` | 22471 | `30e62d2b5111491ce151197821c6d17175dd01c5520f0c69048e5dedde69d796` | R |
+| `content/renders/troop-carrier-turntable-13.avif` | 24433 | `2a211f0ee5cf1ab0bdbed428e641a09afb182e947e60799f654e224ffec80794` | R |
+| `content/renders/troop-carrier-turntable-14.avif` | 26326 | `a2d771e63fe1e6ab76e1b54bcb85a55f3fe7abf5c8c82f785594099697c73081` | R |
+| `content/renders/troop-carrier-turntable-15.avif` | 28509 | `03b164bdb9ef27ce11c5a829f67091159a443ccf62fd498d82f720628620d417` | R |
+| `content/renders/troop-carrier-turntable-16.avif` | 26479 | `c544b3903b30086e59963e414c366dad8196da0d1405ce62f3ce00a441e183be` | R |
+| `content/renders/troop-carrier-turntable-17.avif` | 18685 | `4dd53c8a99528f3ad3bb357ff53e7f295b17337c81eafc2e661bbb360fac8414` | R |
+| `content/renders/troop-carrier-turntable-18.avif` | 13934 | `2556cfca6d345796ea5a686fbc6aa9a805dbd9414f7bf59c8d6d38995973091d` | R |
+| `content/renders/troop-carrier-turntable-19.avif` | 18883 | `649f33cd8833c8c9c4577aae301caef9293cf83ff3e797e1890b9c63455d743e` | R |
+| `content/renders/troop-carrier-turntable-20.avif` | 26502 | `d96e68ecd3d1483692ebc76b1ef149a7e5fefe61baac925bf858b85e4df7eaef` | R |
+| `content/renders/troop-carrier-turntable-21.avif` | 28029 | `bae1dc6b748295a9f37eb1409635ae03295a5059cee5ae94266c2fde53a06db2` | R |
+| `content/renders/troop-carrier-turntable-22.avif` | 25331 | `e56d6a04865c2f00661447bdb3aba0ba4978501bf7190b6fc0941d88a52cec1e` | R |
+| `content/renders/troop-carrier-turntable-23.avif` | 23775 | `159aff16f1db25e01e076a9db944ceb71691700c79519f70dbeb22c8ef1f24f5` | R |
 | `tests/e2e/visual.spec.ts-snapshots/about-1366-chromium-win32.png` | 69482 | `5daf6ca3e32b5c761787ef787a9d55c813f8fe715d238420b387dca5d40d1dfa` | S |
 | `tests/e2e/visual.spec.ts-snapshots/about-320-chromium-win32.png` | 28853 | `a212f588b8beed5fce31e4b18ea08508bacf7df0a399b01b9de4762bb9668546` | S |
 | `tests/e2e/visual.spec.ts-snapshots/chooser-dark-chromium-win32.png` | 377817 | `a83a0067c4cc8f0ac4e3fbaad6af0f07981e2f5ba92905903b1b2c2552d203c5` | S |
@@ -40468,23 +40710,23 @@ Keys and the commands that make each kind again:
 | `tests/e2e/visual.spec.ts-snapshots/instructor-closed-chromium-win32.png` | 271457 | `a55a8fbede873b65f4a3e8d794d06f4ee20735e3797099f8283e680207ac6c5e` | S |
 | `tests/e2e/visual.spec.ts-snapshots/instructor-planning-chromium-win32.png` | 206886 | `a8954f58b46943735d47836a562f8d195c9d6ef5776c88be13e604e2cb11896e` | S |
 | `tests/e2e/visual.spec.ts-snapshots/instructor-setup-chromium-win32.png` | 184481 | `ddf90eac3489ff2f917a46a5db537e43072c489a0c4ade7f171e3ab27b07dc69` | S |
-| `tests/e2e/visual.spec.ts-snapshots/showcase-combat-front-chromium-win32.png` | 78074 | `53fd76aac2083deb791d25dd0ec27fcf760bc02039792d180a9bf7fa01dd2ae0` | S |
-| `tests/e2e/visual.spec.ts-snapshots/showcase-combat-rear-chromium-win32.png` | 75503 | `9bceb14f227478460ab77ce77e2896590192ade8552c49b8ddc05287844f115d` | S |
+| `tests/e2e/visual.spec.ts-snapshots/showcase-combat-front-chromium-win32.png` | 77356 | `e774dbfa8beadaa071af1d7c02f2bca9dfab3c1fdd6188d346515ab23a809ff8` | S |
+| `tests/e2e/visual.spec.ts-snapshots/showcase-combat-rear-chromium-win32.png` | 72433 | `821603fc95d86e6654c71b76eec57612b90214934830511a03886860bc458715` | S |
 | `tests/e2e/visual.spec.ts-snapshots/showcase-combat-turntable-chromium-win32.png` | 77294 | `37021f24c8449ca01ef1ecb20f147986ca74c9772e2320cd372b03bb3f5b22a1` | S |
-| `tests/e2e/visual.spec.ts-snapshots/showcase-command-front-chromium-win32.png` | 78087 | `c8003700f4442b7e88e9bfb48afd166ce11779538885ffe679ae5c507476f325` | S |
-| `tests/e2e/visual.spec.ts-snapshots/showcase-command-rear-chromium-win32.png` | 75372 | `9e89576d96c2b6026444fc5dee921121bfcbcfc7cf427098d6c40f3677a23785` | S |
+| `tests/e2e/visual.spec.ts-snapshots/showcase-command-front-chromium-win32.png` | 77549 | `1552ea7428bfc669aec6bce734f89637e2592af6f74822d4ccf1ff70a58134f0` | S |
+| `tests/e2e/visual.spec.ts-snapshots/showcase-command-rear-chromium-win32.png` | 72157 | `9b63f8a9b7c6f9439a9fb7261303b68643a787dc4bcf44554f0d94eba08898f4` | S |
 | `tests/e2e/visual.spec.ts-snapshots/showcase-command-turntable-chromium-win32.png` | 76519 | `4ad2c2f1977d7e4b0f8a03dd22b405554354dab4eff17fe29edf1ada6ea48551` | S |
-| `tests/e2e/visual.spec.ts-snapshots/showcase-mine-front-chromium-win32.png` | 78277 | `3a57a43cb06f4226c2644e6ed64d0d1e738834f3998e6a0c6169d4377179ae73` | S |
-| `tests/e2e/visual.spec.ts-snapshots/showcase-mine-rear-chromium-win32.png` | 75088 | `1b8f6f2c50d41d3ea7f241af424136dd1cabb9c2fe5f7dc12fc39fa06ccc4435` | S |
+| `tests/e2e/visual.spec.ts-snapshots/showcase-mine-front-chromium-win32.png` | 77333 | `aaf5011ec4891be46ecc71cbbac6bc2c6c6df0f6a4a45da55a8043398e4aef20` | S |
+| `tests/e2e/visual.spec.ts-snapshots/showcase-mine-rear-chromium-win32.png` | 72047 | `aa7805bf8a062565e5c5ab33a4a318894a4b843b9bfd172d8b992916ced64e32` | S |
 | `tests/e2e/visual.spec.ts-snapshots/showcase-mine-turntable-chromium-win32.png` | 76545 | `390e52482c46c9ea2cbd15ae6539f8137f1fdd826058f97c503d2efae7c1aadf` | S |
-| `tests/e2e/visual.spec.ts-snapshots/showcase-recce-front-chromium-win32.png` | 78474 | `5c56a2852d9e2f62907f5de1e73cfaa7db755939674f84b66855a090581007b5` | S |
-| `tests/e2e/visual.spec.ts-snapshots/showcase-recce-rear-chromium-win32.png` | 75482 | `d167239b8d9b442df9b96c725b3578ab7009e4179c0f644cd98d45029c0d7e99` | S |
+| `tests/e2e/visual.spec.ts-snapshots/showcase-recce-front-chromium-win32.png` | 77241 | `6979312ac7e4310d0092e7846d16eed40d36663ac73c8300e8abf15e2dab70ab` | S |
+| `tests/e2e/visual.spec.ts-snapshots/showcase-recce-rear-chromium-win32.png` | 72356 | `2db53db22318619bbf3a641725fe55d40ed9d64a81c3fbaaaef6d8ca44fac808` | S |
 | `tests/e2e/visual.spec.ts-snapshots/showcase-recce-turntable-chromium-win32.png` | 77083 | `d43e82bd3157e3502509d3e761dfbf05f4bedd8a6ea713bad516a237c7faa392` | S |
-| `tests/e2e/visual.spec.ts-snapshots/showcase-recovery-front-chromium-win32.png` | 81443 | `9ac10ee3360871d58869c9076b8690fbe2594004cc3066ed45cc8eef46073a15` | S |
-| `tests/e2e/visual.spec.ts-snapshots/showcase-recovery-rear-chromium-win32.png` | 79125 | `d14c460611670f718638382d0ad7803add8c1cd6408e6e8aad5d94772d4cb1c0` | S |
+| `tests/e2e/visual.spec.ts-snapshots/showcase-recovery-front-chromium-win32.png` | 80997 | `ba18e02faf936b242d8f2019ea9a4d2f4a6e1d93d89a49a7d6368a5a4abf99bf` | S |
+| `tests/e2e/visual.spec.ts-snapshots/showcase-recovery-rear-chromium-win32.png` | 75929 | `fae1f1d1a426b9613b461546a53e103497ac0abe05055282a248e4c0d7317184` | S |
 | `tests/e2e/visual.spec.ts-snapshots/showcase-recovery-turntable-chromium-win32.png` | 76330 | `e7ec3fda8d0595f48e384eb8c7fc50e8ba2fa2d3f2d005e026e7be83a6d5af18` | S |
-| `tests/e2e/visual.spec.ts-snapshots/showcase-troop-front-chromium-win32.png` | 78576 | `13c4df0ef2a8b820a34ab73adf8b6303a6376d653c0fe373d1304963bbaa9398` | S |
-| `tests/e2e/visual.spec.ts-snapshots/showcase-troop-rear-chromium-win32.png` | 78356 | `e8c43de4c8e8c68168ceadf2603a7aa56032c87eea2ea75ef4845a3a5cd49aa6` | S |
+| `tests/e2e/visual.spec.ts-snapshots/showcase-troop-front-chromium-win32.png` | 77959 | `b1c3043b949b7af77feee79125ac6eb3bdb90331b04a18a46cc4779398df1c3b` | S |
+| `tests/e2e/visual.spec.ts-snapshots/showcase-troop-rear-chromium-win32.png` | 74603 | `eb4e8b2d33d4f3ca705d9e9c001ab653833fda85dad60afff922d701775b2d8a` | S |
 | `tests/e2e/visual.spec.ts-snapshots/showcase-troop-turntable-chromium-win32.png` | 73763 | `0183e591c0efdbe7df676ac7d6ac554d57837945ccdd4acebe3af319f284658a` | S |
 | `tests/e2e/visual.spec.ts-snapshots/student-auction-chromium-win32.png` | 387198 | `862fb5f6204d9c755623d7d51fd05700fadd5fa501c85c9a5aa8af691482a087` | S |
 | `tests/e2e/visual.spec.ts-snapshots/student-build-chromium-win32.png` | 218407 | `304f21f4b777a37cd7f74b100811c7cbc8f2e3adf59427cb723b1b0f8de01e06` | S |
@@ -40496,5 +40738,5 @@ Keys and the commands that make each kind again:
 
 | Path | Bytes | SHA-256 | Why |
 |---|---:|---|---|
-| `docs/MPES.md` | 148588 | `f94545fecf0c971d5b3dde3755e2e0a976d36e4e556aaee495f42154b9b0cfa8` | The specification, a clean-room document of its own (Omni 5.1.1 §333). |
+| `docs/MPES.md` | 150515 | `bf7bdada0cdb9cda825648ce51ef0f1789bd0afba7ecfb53fecc03c3e4af36eb` | The specification, a clean-room document of its own (Omni 5.1.1 §333). |
 | `docs/CODEBASE.md` | | | This file. |

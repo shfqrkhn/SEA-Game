@@ -1,6 +1,6 @@
 # Handover
 
-Updated 2026-10-11 (America/Toronto). Specification: [MPES](MPES.md) 4.3.0. Evidence: [verification/0.5.1.0.md](verification/0.5.1.0.md), [verification/0.5.0.0.md](verification/0.5.0.0.md), [verification/spike-visual.md](verification/spike-visual.md).
+Updated 2026-10-11 (America/Toronto). Specification: [MPES](MPES.md) 4.4.0. Evidence: [verification/0.5.1.0.md](verification/0.5.1.0.md), [verification/0.5.0.0.md](verification/0.5.0.0.md), [verification/spike-visual.md](verification/spike-visual.md).
 
 ## 1. Version and milestone
 
@@ -32,8 +32,10 @@ Shared rules for every goal: `AGENTS.md`. KPIs and priority: MPES §1.4.
   - MPES has no code and names every file, script, pin, CSP directive and goal (`tests/unit/mpes.test.ts`); a Codex session given only MPES wrote a rebuild plan and its gaps were fixed (`docs/verification/0.5.1.0.md`);
   - `npm run codebase` writes `docs/CODEBASE.md`, which rebuilds every tracked file (`tests/unit/codebase.test.ts`);
   - `npm run archive:prep` (dry run; `--apply` only on the owner's cleanup request) and `RESTORE.md` (`tests/unit/archive.test.ts`);
-  - `AGENTS.md` rule 21: driving Codex headless.
-- **Imagery and 3D:** 821 AVIF stills (7.8 MB) and one packed model (all six vehicles, every part), Blender pipeline in [art/README.md](../art/README.md); the game parses only the team's vehicle; paced drawing (≤ 30 fps, ≤ half the machine); stills fallback without WebGL 2.
+  - `AGENTS.md` rule 21: driving Codex headless;
+  - owner FIX 1: build stills at yaw 30° pitch 6° and 210° pitch 6°, chosen by `art/tools/angles.ts`; `art/blender/fit.py` fails any part inside or outboard of a tyre or not attached, and the art passes it and `overlap.py` (MOB-D rebuilt inboard, rack, troop rear kit, recovery sensors, fasteners; `docs/verification/0.5.1.0.md`);
+  - sibling sweep of parts against hull fittings: 11 visible clashes (glacis armour over the vision blocks, nose kits through the tow shackles, a weapon station on the driver's hatch, rear kits over the door, and others) fixed and re-checked (`docs/verification/0.5.1.0.md`).
+- **Imagery and 3D:** 821 AVIF stills (7.6 MB) and one packed model (23.9 MB, 7.9 MB deflated) (all six vehicles, every part), Blender pipeline in [art/README.md](../art/README.md); the game parses only the team's vehicle; paced drawing (≤ 30 fps, ≤ half the machine); stills fallback without WebGL 2.
 - **Tests:** `npm run verify` (typecheck, lint, unit, build check, Playwright in Chromium, Firefox and Edge, then perf alone). 3D tests spoof a hardware renderer with `withGpu()` (`tests/e2e/helpers.ts`).
 
 ## 3. Not done
@@ -45,7 +47,7 @@ Shared rules for every goal: `AGENTS.md`. KPIs and priority: MPES §1.4.
 
 ## 4. In-progress work
 
-None. Run only one Blender or Codex job at a time: the owner uses this PC.
+Owner FIX 1 art fixes, the sibling sweep and the new `fit.py` overhang check are done and checked (fit, overlap, budgets, close-ups in `.artifacts/renders/closeups-hatch/`, `.artifacts/tmp/cu-sweep2/` and `cu-sweep3/`; two Codex reviews; `docs/verification/0.5.1.0.md`). The final re-render (`.artifacts/renders/v4`, log `.artifacts/logs/render-v4.log`) is encoded into `content/renders`, the model exported and packed into `content/models/showcase.glb`, and `npm run verify` passes; earlier render runs are in `_archive/recycle/2026-10-11/`. Left: commit and push, two green CI runs, the gallery and the owner GO, then merge, tag and the Pages check. Run only one Blender job at a time: the owner uses this PC. Codex sessions that do not run Blender (reviews, drafts) may run alongside it.
 
 ## 5. Next action
 

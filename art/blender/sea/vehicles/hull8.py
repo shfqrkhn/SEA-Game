@@ -357,9 +357,15 @@ def _front(b, mission):
         b.box('mirror-face',(.012,.148,.252),c+Vector((-.037,0,0)),'glass',bevel=.014)
 
 
+def _aux_x(mission):
+    """The auxiliary weapon mount's x, ahead of the main weapon ring; it stands outboard of the roof armour bay."""
+    return ROOF_FRONT-(.77 if mission=='RECOVERY' else .95)
+
+
 def _roof(b, mission):
     """Low-profile deck service hatches and vents; all mission equipment remains separate."""
-    _grille(b,'engine-deck',(1.40,.62,TOP+.002),(1,0,0),(0,1,0),(.90,.70))
+    # Inboard of the sensor-mast lane (y .85 to the roof edge).
+    _grille(b,'engine-deck',(1.40,.545,TOP+.002),(1,0,0),(0,1,0),(.90,.55))
     _panel(b,'engine-access',(.22,.27,TOP),(1,0,0),(0,1,0),(.63,.70))
     # Deck centre and edges have only flush seams; no smoke tubes or equipment racks.
     seams=Batch(b,'deck-seams','paint_dark')
@@ -367,10 +373,12 @@ def _roof(b, mission):
         seams.box((.008,1.99,.003),(x,0,TOP+.001))
     seams.done()
     if mission not in ('COMMAND','MINE'):
-        b.cyl('driver-hatch-gasket',.295,.018,(1.56,-.56,TOP+.009),'rubber',verts=48,bevel=0)
-        b.cyl('driver-hatch',.278,.025,(1.56,-.56,TOP+.028),'paint',verts=48,bevel=.008)
-        b.cyl('hatch-hinge',.027,.22,(1.285,-.56,TOP+.04),'gunmetal',rot=(PI/2,0,0),verts=12,bevel=.003)
-        b.tube('hatch-grab',[(1.62,-.66,TOP+.043),(1.62,-.66,TOP+.09),(1.62,-.46,TOP+.09),(1.62,-.46,TOP+.043)],.012,'paint_dark',smooth=False)
+        # Under the auxiliary weapon mount, whose station stands on this hatch ring (owner FIX 1 sweep).
+        hx,hy=_aux_x(mission)+.16,-.78
+        b.cyl('driver-hatch-gasket',.295,.018,(hx,hy,TOP+.009),'rubber',verts=48,bevel=0)
+        b.cyl('driver-hatch',.278,.025,(hx,hy,TOP+.028),'paint',verts=48,bevel=.008)
+        b.cyl('hatch-hinge',.027,.22,(hx-.255,hy,TOP+.04),'gunmetal',rot=(PI/2,0,0),verts=12,bevel=.003)
+        b.tube('hatch-grab',[(hx+.06,hy-.10,TOP+.043),(hx+.06,hy-.10,TOP+.09),(hx+.06,hy+.10,TOP+.09),(hx+.06,hy+.10,TOP+.043)],.012,'paint_dark',smooth=False)
     for y in (-.51,.51):
         _panel(b,'rear-service',(-3.02,y-.39,TOP),(1,0,0),(0,1,0),(.78,.78))
         for dx in (-2.93,-2.47):
@@ -431,12 +439,12 @@ def _crane(b):
             b.box('boom-service-cover',(.36,.028,.25),pivot+d*along+Vector((0,side*.21,0)),'paint_dark',rot=rot,bevel=.01)
             for dx in (-.13,.13):
                 b.cyl('boom-cover-bolt',.019,.018,pivot+d*(along+dx)+Vector((0,side*.234,0)),'steel',rot=(PI/2,0,0),verts=6,bevel=0)
-    low=pivot+Vector((.12,0,-.41)); high=pivot+d*1.38+Vector((0,0,-.23))
+    low=pivot+Vector((.12,-.40,-.41)); high=pivot+d*1.38+Vector((0,-.40,-.23))
     delta=high-low
     b.tube('lift-cylinder',[low,low+delta*.65],.087,'paint_dark',smooth=False)
     b.tube('lift-piston',[low+delta*.57,high],.044,'chrome',smooth=False)
     for endpoint in (low,high):
-        b.cyl('ram-pin',.065,.29,endpoint,'gunmetal',rot=(PI/2,0,0),verts=16,bevel=.006)
+        b.cyl('ram-pin',.065,.46,endpoint,'gunmetal',rot=(PI/2,0,0),verts=16,bevel=.006)
     for side in (-1,1):
         b.tube('hydraulic-hose',[pivot+Vector((.22,side*.25,-.38)),pivot+Vector((.42,side*.25,-.13)),
                                pivot+d*.45+Vector((0,side*.235,.23)),pivot+d*1.80+Vector((0,side*.235,.23))],.015,'cable')
@@ -474,13 +482,14 @@ def _mounts(mission, top=TOP):
     if mission == 'RECOVERY':
         # Reserve the rear crane circle, then cabin, then the full-size weapon ring.
         deck_x, deck_length, roof_x = -1.55, 1.4, .15
-        rear_sensor_x, rear_sensor_y = -2.15, 1.18
+        # Rear sensors stand on the flat roof between the cabin and the crane, not out over the chamfer (fit.py).
+        rear_sensor_x, rear_sensor_y = -2.62, 1.0
     if mission == 'TROOP':
         roof_x = 0.0
     return Mounts(
         front=FRONT + 0.05, back=BACK, axles=AXLES, wheel_r=R, track=TRACK, tyre_w=TYRE_W,
         deck=(deck_x, top), deck_size=(deck_length, 2.1),
-        roof=(roof_x, 0.0, top), roof2=(ROOF_FRONT - (0.77 if mission == 'RECOVERY' else 0.95), -0.45, top),
+        roof=(roof_x, 0.0, top), roof2=(_aux_x(mission), -0.72, top),
         side=(BACK + 0.4, ROOF_FRONT - 0.1, SPONSON_Z0 + 0.04, SPONSON_Z1, SPONSON + 0.04),
         front_face=(GLACIS_X + 0.2, 1.05, GLACIS_Z - 0.05, 1.05),
         roof_span=(BACK + 0.2, ROOF_FRONT - 0.05, top, 1.15), belly=(BACK + 0.4, GLACIS_X, 0.52, 0.75),
@@ -489,7 +498,7 @@ def _mounts(mission, top=TOP):
         optics=(ROOF_FRONT - 0.25, -0.85, top), sensor_mast=(ROOF_FRONT - 0.7, 0.97, top),
         corners=((ROOF_FRONT - 0.1, -1.05, top), (ROOF_FRONT - 0.1, 1.05, top), (rear_sensor_x, -rear_sensor_y, top), (rear_sensor_x, rear_sensor_y, top)),
         bumper=(FRONT + 0.05, 1.15), hitch=(BACK - 0.1, 0.82), rack=(BACK + 2.75, 0.0, top),
-        extra={'armoured': True, 'module_h': 1.15},
+        extra={'armoured': True, 'module_h': 1.15, 'rear_ramp': mission == 'TROOP', 'recovery': mission == 'RECOVERY', 'driver_hatch': mission not in ('COMMAND', 'MINE')},
     )
 
 
