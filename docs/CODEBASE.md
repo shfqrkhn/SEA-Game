@@ -187,7 +187,7 @@ THE SOFTWARE.
 
 ### README.md
 
-Paths: `README.md`. SHA-256 `72c9ed6ba0491ccd7a2d511e8fab1c2ae9df530ae64984b9453ae8749374bf07`, 3317 bytes.
+Paths: `README.md`. SHA-256 `36167b7fc0f64f8e337c72986ee18c5c9152eaa5adfbf59c5b55d12a023425d6`, 3377 bytes.
 
 ````markdown
 # SEA Game: Systems Engineering Awareness
@@ -196,6 +196,7 @@ A bilingual (English/French) classroom auction game. Teams plan a vehicle for a 
 
 - **Play:** open the game file (`SEA-Game-<version>.html` in a release package, or `dist/index.html` after a build) in a current Chrome, Edge or Firefox on **Windows 11** (the only supported platform). No installation, no network, no account.
 - **Status:** 0.5.1.0 beta, tagged `v0.5.1.0` when its PR merges (G2: owner fixes, six-vehicle chooser, muzzle sightline check, component legibility rules, review gallery, code-free specification, codebase file, backup preparation); not yet release-qualified. Next: G3 (proxy and runtime, 0.6.0.0). The rollback is tag `v4.1.0-dev.1`.
+- **Created by:** Shafiqur Rahman Khan, with AI assistance.
 - **Licence:** MIT, see [LICENSE](LICENSE).
 - **Specification:** [docs/MPES.md](docs/MPES.md). **Current state and next steps:** [docs/HANDOVER.md](docs/HANDOVER.md). **Working rules:** [AGENTS.md](AGENTS.md).
 - **Guides:** [classroom quick start](docs/CLASSROOM_QUICK_START.md), [recovery guide](docs/RECOVERY_GUIDE.md).
@@ -25960,7 +25961,7 @@ Paths: `content/renders/manifest.json`. SHA-256 `6525544fa7b2c0b623e3970093ba2ef
 
 ### content/strings.en.json
 
-Paths: `content/strings.en.json`. SHA-256 `6ec300860973357089fe02003a74b095161573b63d55d5267933a0dc1fe39f4d`, 20596 bytes.
+Paths: `content/strings.en.json`. SHA-256 `2a848edc5150bfd8e50e7ca34c35e0ddd44ebde32181c2ddc559ad4088795862`, 20682 bytes.
 
 ```json
 {
@@ -25976,7 +25977,7 @@ Paths: `content/strings.en.json`. SHA-256 `6ec300860973357089fe02003a74b09516157
   "chooser.handoff": "Each role keeps its own saved work in this browser tab. The apps do not connect: the instructor announces results aloud.",
   "chooser.privacy": "Use fictional team names only. Do not enter personal or operational information.",
   "chooser.unknownRole": "That link asked for an unknown role. Choose a role below.",
-  "chooser.version": "Version {version}. One file, works offline.",
+  "chooser.version": "Version {version}, created by Shafiqur Rahman Khan. One file, works offline.",
   "chooser.lineup": "Mission vehicles",
   "chooser.still.COMBAT": "Combat vehicle: eight-wheeled armoured vehicle with a gun turret",
   "chooser.still.RECCE": "RECCE vehicle with a raised sensor mast and a remote weapon station",
@@ -25986,7 +25987,7 @@ Paths: `content/strings.en.json`. SHA-256 `6ec300860973357089fe02003a74b09516157
   "chooser.still.MINE": "Mine clearing vehicle with a front mine roller and a remote weapon station",
   "about.open": "About and licences",
   "about.title": "About this game",
-  "about.body": "SEA Game {version}. Original code and illustrations are MIT licensed. All values are instructional, not real equipment data. The game makes no network connections.",
+  "about.body": "SEA Game {version}. Created by Shafiqur Rahman Khan, with AI assistance. Original code and illustrations are MIT licensed. All values are instructional, not real equipment data. The game makes no network connections.",
   "about.licence": "Licence",
   "about.notices": "Third-party notices",
   "about.close": "Close",
@@ -26358,7 +26359,7 @@ Paths: `content/strings.en.json`. SHA-256 `6ec300860973357089fe02003a74b09516157
 
 ### content/strings.fr.json
 
-Paths: `content/strings.fr.json`. SHA-256 `bd129e41ca4214b29e09b51a273247c2240eca93216f4fe31dd523cbbc278fcd`, 23606 bytes.
+Paths: `content/strings.fr.json`. SHA-256 `7f299d8843e23b9910208885ea85de61530d5b0e9a3407eff8467cb6edc889da`, 23697 bytes.
 
 ```json
 {
@@ -26374,7 +26375,7 @@ Paths: `content/strings.fr.json`. SHA-256 `bd129e41ca4214b29e09b51a273247c2240ec
   "chooser.handoff": "Chaque rôle conserve son travail dans cet onglet du navigateur. Les applications ne sont pas reliées : l’instructeur annonce les résultats à voix haute.",
   "chooser.privacy": "Utilisez uniquement des noms d’équipe fictifs. N’inscrivez aucune information personnelle ou opérationnelle.",
   "chooser.unknownRole": "Ce lien demandait un rôle inconnu. Choisissez un rôle ci-dessous.",
-  "chooser.version": "Version {version}. Un seul fichier, fonctionne hors ligne.",
+  "chooser.version": "Version {version}, créé par Shafiqur Rahman Khan. Un seul fichier, fonctionne hors ligne.",
   "chooser.lineup": "Véhicules de mission",
   "chooser.still.COMBAT": "Véhicule de combat : blindé à huit roues avec une tourelle canon",
   "chooser.still.RECCE": "Véhicule de reconnaissance avec un mât de capteurs déployé et un tourelleau téléopéré",
@@ -26384,7 +26385,7 @@ Paths: `content/strings.fr.json`. SHA-256 `bd129e41ca4214b29e09b51a273247c2240ec
   "chooser.still.MINE": "Véhicule de déminage avec un rouleau de déminage avant et un tourelleau téléopéré",
   "about.open": "À propos et licences",
   "about.title": "À propos de ce jeu",
-  "about.body": "SEA Game {version}. Le code et les illustrations originaux sont sous licence MIT. Toutes les valeurs sont pédagogiques et ne décrivent aucun équipement réel. Le jeu n’établit aucune connexion réseau.",
+  "about.body": "SEA Game {version}. Créé par Shafiqur Rahman Khan, avec l’aide de l’IA. Le code et les illustrations originaux sont sous licence MIT. Toutes les valeurs sont pédagogiques et ne décrivent aucun équipement réel. Le jeu n’établit aucune connexion réseau.",
   "about.licence": "Licence",
   "about.notices": "Avis de tiers",
   "about.close": "Fermer",
@@ -26842,7 +26843,7 @@ Exportez une sauvegarde par **Menu → Exporter une sauvegarde** après la confi
 
 ### docs/HANDOVER.md
 
-Paths: `docs/HANDOVER.md`. SHA-256 `c229b85ae4b3a449448fa9e10b547a3360af3bcb8b4d871d268769c145a770e9`, 9255 bytes.
+Paths: `docs/HANDOVER.md`. SHA-256 `38de1fa5a909b4bf0c9f91665d2d59529301b06bd6b1538d55b3a7614208a230`, 9453 bytes.
 
 ```markdown
 # Handover
@@ -26871,7 +26872,7 @@ Shared rules for every goal: `AGENTS.md`. KPIs and priority: MPES §1.4.
 - **Game:** all of MPES §6 for both roles, all eight phases, EN/FR, schema-3 saves and backups, private entry, degraded states. Legacy 4.1 backups import.
 - **V2:** war-room HUD on every view with a projector theme; setup defaults first; bid increment chosen at setup; live lot fits 1280×720; debrief chart and questions; `dist/` not committed, `npm run check` compares two builds, CI deploys `main` to Pages for QA only.
 - **G2:**
-  - no personal name in the game or its sources (owner, 2026-10-12): `LICENSE` and `library/LICENSE` read "Copyright (c) 2026 SEA Game authors", `package.json` has no author (`tests/unit/build.test.ts` "names no person");
+  - creator credit (owner, 2026-10-12): "Created by Shafiqur Rahman Khan, with AI assistance." in About and "created by Shafiqur Rahman Khan" on the chooser's version line (EN/FR), the README and the instructor guide, nowhere else; `LICENSE` and `library/LICENSE` read "Copyright (c) 2026 SEA Game authors", `package.json` has no author, no account handle in the game (`tests/unit/build.test.ts` "credits the creator");
   - About shows the licence and notices reflowed (`source/ui/reflow.ts`, `tests/unit/reflow.test.ts`, visual baselines at 1366×768 and 320 px);
   - the chooser shows all six vehicles as a lineup of hero stills, selected one large, keyboard and touch, EN/FR (`tests/e2e/chooser.spec.ts`, visual baselines);
   - `DecodedImages` never evicts an image on screen or a prepared one (`tests/unit/showcase.test.ts`);
@@ -27000,7 +27001,7 @@ Rough notes are fine. The agent turns them into changes and asks for nothing els
 
 ### docs/owner/instructor-review.md
 
-Paths: `docs/owner/instructor-review.md`. SHA-256 `11da86de8fa82864a4a5e2670b9c0cda71a8bbd4c142dbd16ed2f447cb9b75e0`, 2438 bytes.
+Paths: `docs/owner/instructor-review.md`. SHA-256 `bc2c212eb38e86ddb69ab60d653ac64a2ad07c912f23379c078260cb14c2b2c4`, 2503 bytes.
 
 ```markdown
 # Instructor review of the prototype (about 20 minutes)
@@ -27035,7 +27036,7 @@ The two tabs do not connect: in class the instructor announces each result aloud
 
 **Reply** with rough notes, a few lines are fine, or screenshots of anything that looks wrong.
 
-Prototype version 0.5.1.0.
+SEA Game is created by Shafiqur Rahman Khan, with AI assistance. Prototype version 0.5.1.0.
 ```
 
 ### docs/verification/0.5.0.0.md
@@ -27200,7 +27201,7 @@ The three Firefox failures are browser-internal and appeared only under full loc
 
 ### docs/verification/0.5.1.0.md
 
-Paths: `docs/verification/0.5.1.0.md`. SHA-256 `bdf56e40587133cf1644a56c55340e84514532354e63bb13a610dfe18676aa83`, 32277 bytes.
+Paths: `docs/verification/0.5.1.0.md`. SHA-256 `9ff685fa9d9898b2bfa9c1294158200bf86c13fe6bcc0854d6434b1b6b37cb3e`, 33918 bytes.
 
 ```markdown
 # Verification record: 0.5.1.0 beta (goal G2)
@@ -27211,7 +27212,7 @@ Goal G2: owner fixes and the documentation regime. Branch `goal2b/foundation`, f
 
 | Item | What | Test | Result |
 |---|---|---|---|
-| 1 | Copyright notice in `LICENSE`, About and notices (superseded 2026-10-12: no personal name, see "Owner request: no name") | `tests/unit/build.test.ts` | PASS |
+| 1 | Copyright notice in `LICENSE`, About and notices (superseded 2026-10-12: see "Owner request: no name" and "Creator credit") | `tests/unit/build.test.ts` | PASS |
 | 2 | About licence and notices reflowed for display; files verbatim | `tests/unit/reflow.test.ts`; `tests/e2e/visual.spec.ts` at 1366×768 and 320 px | PASS |
 | 3 | Chooser shows all six vehicles: lineup of hero stills, selected one large, keyboard and touch, EN/FR | `tests/e2e/chooser.spec.ts`, `tests/e2e/visual.spec.ts` | PASS |
 | 4 | `npm run gallery`: every view, both roles, EN/FR, laptop and projector, six vehicles in stills and 3D | `tests/unit/gallery.test.ts`; the page `.artifacts/review/0.5.1.0.html` | PASS; owner GO: see below |
@@ -27416,6 +27417,12 @@ Codex reviewed `library/` against the repository and official sources; it reprod
 | 13 | Two green runs claimed to rule out flakiness. | Fixed: described as a cheap gate; prevention practices listed. |
 | 14 | Project policies presented as universal. | Fixed: versioning, branching, single-file delivery and the integrated-GPU proxy marked as SEA Game examples; proxy residual risk stated; usability testing added; three-theme rule aligned with the two shipped themes. |
 | 15 | "Vetted" overstated; licence lost when the folder is copied. | Fixed: entries described as candidates to audit before shipping; `library/LICENSE` added. |
+
+## Creator credit (owner, 2026-10-12)
+
+The owner then asked for their name back, as creator, without placing it everywhere. The game credits them in two places, in English and French: the About paragraph ("SEA Game {version}. Created by Shafiqur Rahman Khan, with AI assistance. …") and the chooser's small version line ("Version {version}, created by Shafiqur Rahman Khan. One file, works offline."). The README and the instructor guide carry the same credit. The licence stays "Copyright (c) 2026 SEA Game authors" and `package.json` has no author: a credit names the creator; the MIT text disclaims warranty and liability either way. The account handle stays out of the game. Because the name is wanted, no history rewrite is planned. Check: `tests/unit/build.test.ts` "credits the creator in About and the chooser only" (the name exactly once in each of the two strings per language, four times in the built game, nowhere outside a named list of files) and `tests/e2e/chooser.spec.ts` (credit visible in About and on the chooser). Visual baselines that show either line were compared side by side and regenerated (below).
+
+Baselines: `npx playwright test tests/e2e/visual.spec.ts --project=chromium` failed only "first screen, light theme" and "first screen, dark theme". Expected, actual and diff were compared: the version line, now longer and below the fold at 1280×720, makes the right column taller, so the left showcase panel grows and the hero still and thumbnails sit a few pixels lower; nothing else changed. Both baselines were regenerated (`--update-snapshots -g "first screen"`); the About baselines passed unchanged.
 ```
 
 ### docs/verification/legibility.md
@@ -37935,7 +37942,7 @@ for (const lang of ['en', 'fr'] as const) {
 
 ### tests/e2e/chooser.spec.ts
 
-Paths: `tests/e2e/chooser.spec.ts`. SHA-256 `58413637d2032b708cba57e70ab2c8ffa382d663564a1e451586d96a1674948d`, 10614 bytes.
+Paths: `tests/e2e/chooser.spec.ts`. SHA-256 `147964c0aac1a6a0b80bcf26d45a527ebd2dc1ce27161e10680e354aa6418f78`, 10823 bytes.
 
 ```ts
 import { expect, test } from '@playwright/test';
@@ -37996,6 +38003,8 @@ test.describe('role chooser over file:// (RQ-01, RQ-19, RQ-20)', () => {
       const dialog = page.getByRole('dialog', { name: 'About this game' });
       for (const name of ['Licence', 'Third-party notices']) await dialog.locator('summary', { hasText: name }).click();
       await expect(dialog).toContainText('Copyright (c) 2026 SEA Game authors');
+      await expect(dialog).toContainText('Created by Shafiqur Rahman Khan, with AI assistance.');
+      await expect(page.getByText('created by Shafiqur Rahman Khan. One file, works offline.')).toBeVisible();
       await expect(dialog).toContainText('Permission is hereby granted, free of charge, to any person obtaining a copy of this software');
       await expect(dialog.locator('pre')).toHaveCount(0);
       await expect(dialog.getByRole('heading', { name: 'three.js 0.186.1' })).toBeVisible();
@@ -40374,7 +40383,7 @@ describe('archive:prep', () => {
 
 ### tests/unit/build.test.ts
 
-Paths: `tests/unit/build.test.ts`. SHA-256 `95bdeb793185ef39f1e6431aaa3236f0c85c92a0855f2fddec3b011a57f7bbb3`, 6383 bytes.
+Paths: `tests/unit/build.test.ts`. SHA-256 `16548ff979212567db5302369023b5871b1ebc91952c73a827e41a7df43bb47a`, 7201 bytes.
 
 ```ts
 import { execFileSync } from 'node:child_process';
@@ -40433,21 +40442,29 @@ describe('single-file build (RQ-01, RQ-24, RQ-25, RQ-27)', async () => {
     expect(html).toContain(COPYRIGHT);
     expect(Buffer.byteLength(html)).toBeLessThanOrEqual(MAX_BYTES);
   });
-  // No personal name anywhere in the game or its sources (owner, 2026-10-12): the licence names "SEA Game authors",
-  // the package has no author, and no tracked file or the built game holds the owner's name or handle.
-  it('names no person: the licence names SEA Game authors', () => {
+  // Creator credit (owner, 2026-10-12): the owner's name appears once in About and once on the chooser, in each language,
+  // and in a few named documents; nowhere else. The licence names "SEA Game authors", the package has no author, and the
+  // game never holds the owner's account handle.
+  it('credits the creator in About and the chooser only; the licence names SEA Game authors', () => {
     for (const file of ['LICENSE', 'library/LICENSE']) expect(readFileSync(file, 'utf8'), file).toContain(COPYRIGHT);
     expect((JSON.parse(readFileSync('package.json', 'utf8')) as { author?: string }).author).toBeUndefined();
     const name = new RegExp(['sha' + 'fiq', 'rah' + 'man khan'].join('|'), 'i'); // split so this file does not match itself
     const tracked = execFileSync('git', ['ls-files', '-z'], { encoding: 'utf8' }).split(String.fromCharCode(0))
       .filter(file => file && file !== 'docs/CODEBASE.md' && existsSync(file) && !/\.(png|avif|glb|zip|blend)$/.test(file));
-    for (const file of tracked) expect(name.test(readFileSync(file, 'utf8')), file).toBe(false);
-    expect(name.test(html), 'dist/index.html').toBe(false);
-    expect(new RegExp('shfq' + 'rkhn', 'i').test(html), 'dist/index.html').toBe(false);
+    const credited = ['content/strings.en.json', 'content/strings.fr.json', 'README.md', 'docs/owner/instructor-review.md',
+      'docs/MPES.md', 'docs/HANDOVER.md', 'docs/verification/0.5.1.0.md', 'tests/e2e/chooser.spec.ts'];
+    for (const file of tracked) if (!credited.includes(file)) expect(name.test(readFileSync(file, 'utf8')), file).toBe(false);
+    const full = new RegExp(['Sha' + 'fiqur', 'Rah' + 'man', 'Khan'].join(' '), 'g');
     for (const lang of ['en', 'fr']) {
       const strings = JSON.parse(readFileSync(`content/strings.${lang}.json`, 'utf8')) as Record<string, string>;
       expect(strings['about.body'], lang).toContain('MIT');
+      expect(strings['about.body']!.match(full), lang).toHaveLength(1);
+      expect(strings['chooser.version']!.match(full), lang).toHaveLength(1);
+      const others = Object.entries(strings).filter(([key]) => key !== 'about.body' && key !== 'chooser.version');
+      for (const [key, value] of others) expect(name.test(value), `${lang} ${key}`).toBe(false);
     }
+    expect(html.match(full), 'dist/index.html').toHaveLength(4);
+    expect(new RegExp('shfq' + 'rkhn', 'i').test(html), 'dist/index.html').toBe(false);
   });
   it('embeds the committed renders once, as an inert JSON block of AVIF data URIs matching the manifest (MPES §11)', () => {
     const block = /<script type="application\/json" id="sea-renders">([^<]*)<\/script>/.exec(html)?.[1];
@@ -43071,8 +43088,8 @@ Keys and the commands that make each kind again:
 | `content/renders/troop-carrier-turntable-23.avif` | 23447 | `13c0df5b14955b03374fc2c006fb2245ffb330bbca6b6d9a1b8267f1edf2fc6a` | R |
 | `tests/e2e/visual.spec.ts-snapshots/about-1366-chromium-win32.png` | 69482 | `5daf6ca3e32b5c761787ef787a9d55c813f8fe715d238420b387dca5d40d1dfa` | S |
 | `tests/e2e/visual.spec.ts-snapshots/about-320-chromium-win32.png` | 28836 | `1a982b60d287ed71dafd5d2d10ef20b2fb3c8b4eb0f0f249ce21b0452161063d` | S |
-| `tests/e2e/visual.spec.ts-snapshots/chooser-dark-chromium-win32.png` | 377817 | `a83a0067c4cc8f0ac4e3fbaad6af0f07981e2f5ba92905903b1b2c2552d203c5` | S |
-| `tests/e2e/visual.spec.ts-snapshots/chooser-light-chromium-win32.png` | 405574 | `b9317ca857dfc55ba754956c7ac28e0f6cba4f7b8b322ddcde911cab2c80585b` | S |
+| `tests/e2e/visual.spec.ts-snapshots/chooser-dark-chromium-win32.png` | 378272 | `2adcacb95a01c5714527e9ddf63969835da86e2fc9294d3259436ad1a54d3830` | S |
+| `tests/e2e/visual.spec.ts-snapshots/chooser-light-chromium-win32.png` | 405478 | `1c3bbfc3412676444ee0f3bdc5b951f666aa6d8fbc69e5659aa607e58f5c2bbf` | S |
 | `tests/e2e/visual.spec.ts-snapshots/instructor-auction-open-paused-chromium-win32.png` | 221253 | `578edbae11bb04910a55388308b9b7bc8ab8bcf0f8daec06ce77aa57762989d1` | S |
 | `tests/e2e/visual.spec.ts-snapshots/instructor-build-chromium-win32.png` | 232619 | `aa7463f6cc016a92b7b74f0bcf592aad045aaec21bcc607ec52e63ab1edd59d5` | S |
 | `tests/e2e/visual.spec.ts-snapshots/instructor-closed-chromium-win32.png` | 271457 | `a55a8fbede873b65f4a3e8d794d06f4ee20735e3797099f8283e680207ac6c5e` | S |
@@ -43106,5 +43123,5 @@ Keys and the commands that make each kind again:
 
 | Path | Bytes | SHA-256 | Why |
 |---|---:|---|---|
-| `docs/MPES.md` | 165023 | `039b2ac4daebfa5ef378d02cd93b305e89e2bd0b7b1c15bc1a3bad643a3bad10` | The specification, a clean-room document of its own (Omni 5.1.1 §333). |
+| `docs/MPES.md` | 165307 | `8c117d1a17dc15dabb70443423d38b3029cb66a3c37634523758d392dad78ceb` | The specification, a clean-room document of its own (Omni 5.1.1 §333). |
 | `docs/CODEBASE.md` | | | This file. |

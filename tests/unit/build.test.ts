@@ -54,21 +54,29 @@ describe('single-file build (RQ-01, RQ-24, RQ-25, RQ-27)', async () => {
     expect(html).toContain(COPYRIGHT);
     expect(Buffer.byteLength(html)).toBeLessThanOrEqual(MAX_BYTES);
   });
-  // No personal name anywhere in the game or its sources (owner, 2026-10-12): the licence names "SEA Game authors",
-  // the package has no author, and no tracked file or the built game holds the owner's name or handle.
-  it('names no person: the licence names SEA Game authors', () => {
+  // Creator credit (owner, 2026-10-12): the owner's name appears once in About and once on the chooser, in each language,
+  // and in a few named documents; nowhere else. The licence names "SEA Game authors", the package has no author, and the
+  // game never holds the owner's account handle.
+  it('credits the creator in About and the chooser only; the licence names SEA Game authors', () => {
     for (const file of ['LICENSE', 'library/LICENSE']) expect(readFileSync(file, 'utf8'), file).toContain(COPYRIGHT);
     expect((JSON.parse(readFileSync('package.json', 'utf8')) as { author?: string }).author).toBeUndefined();
     const name = new RegExp(['sha' + 'fiq', 'rah' + 'man khan'].join('|'), 'i'); // split so this file does not match itself
     const tracked = execFileSync('git', ['ls-files', '-z'], { encoding: 'utf8' }).split(String.fromCharCode(0))
       .filter(file => file && file !== 'docs/CODEBASE.md' && existsSync(file) && !/\.(png|avif|glb|zip|blend)$/.test(file));
-    for (const file of tracked) expect(name.test(readFileSync(file, 'utf8')), file).toBe(false);
-    expect(name.test(html), 'dist/index.html').toBe(false);
-    expect(new RegExp('shfq' + 'rkhn', 'i').test(html), 'dist/index.html').toBe(false);
+    const credited = ['content/strings.en.json', 'content/strings.fr.json', 'README.md', 'docs/owner/instructor-review.md',
+      'docs/MPES.md', 'docs/HANDOVER.md', 'docs/verification/0.5.1.0.md', 'tests/e2e/chooser.spec.ts'];
+    for (const file of tracked) if (!credited.includes(file)) expect(name.test(readFileSync(file, 'utf8')), file).toBe(false);
+    const full = new RegExp(['Sha' + 'fiqur', 'Rah' + 'man', 'Khan'].join(' '), 'g');
     for (const lang of ['en', 'fr']) {
       const strings = JSON.parse(readFileSync(`content/strings.${lang}.json`, 'utf8')) as Record<string, string>;
       expect(strings['about.body'], lang).toContain('MIT');
+      expect(strings['about.body']!.match(full), lang).toHaveLength(1);
+      expect(strings['chooser.version']!.match(full), lang).toHaveLength(1);
+      const others = Object.entries(strings).filter(([key]) => key !== 'about.body' && key !== 'chooser.version');
+      for (const [key, value] of others) expect(name.test(value), `${lang} ${key}`).toBe(false);
     }
+    expect(html.match(full), 'dist/index.html').toHaveLength(4);
+    expect(new RegExp('shfq' + 'rkhn', 'i').test(html), 'dist/index.html').toBe(false);
   });
   it('embeds the committed renders once, as an inert JSON block of AVIF data URIs matching the manifest (MPES §11)', () => {
     const block = /<script type="application\/json" id="sea-renders">([^<]*)<\/script>/.exec(html)?.[1];

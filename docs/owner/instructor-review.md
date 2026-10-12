@@ -30,4 +30,4 @@ The two tabs do not connect: in class the instructor announces each result aloud
 
 **Reply** with rough notes, a few lines are fine, or screenshots of anything that looks wrong.
 
-Prototype version 0.5.1.0.
+SEA Game is created by Shafiqur Rahman Khan, with AI assistance. Prototype version 0.5.1.0.

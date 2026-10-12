@@ -715,7 +715,7 @@ A full-screen class view for the instructor's projector: the current lot, a live
 
 ### 7.9 About and licences
 
-- Opened from the chooser and from each role's menu. Title "About this game"; one paragraph (`about.body`): "SEA Game {version}. Original code and illustrations are MIT licensed. All values are instructional, not real equipment data. The game makes no network connections." (French equivalent in `content/strings.fr.json`). No person is named anywhere in the game or its sources (owner, 2026-10-12): `LICENSE` and `library/LICENSE` read "Copyright (c) 2026 SEA Game authors", `package.json` has no author, and a unit test fails on the owner's name in any tracked file or the built game. Then two collapsed sections: the licence and the third-party notices, both embedded at build (§5.5).
+- Opened from the chooser and from each role's menu. Title "About this game"; one paragraph (`about.body`): "SEA Game {version}. Created by Shafiqur Rahman Khan, with AI assistance. Original code and illustrations are MIT licensed. All values are instructional, not real equipment data. The game makes no network connections." (French equivalent in `content/strings.fr.json`). Creator credit (owner, 2026-10-12): the owner is credited as creator in two places only, this paragraph and the chooser's version line ("Version {version}, created by Shafiqur Rahman Khan. One file, works offline."), in each language, plus the README and the instructor guide. `LICENSE` and `library/LICENSE` read "Copyright (c) 2026 SEA Game authors", `package.json` has no author, the game never holds the owner's account handle, and a unit test fails on the name anywhere else. Then two collapsed sections: the licence and the third-party notices, both embedded at build (§5.5).
 - The files stay verbatim. For display only, each is reflowed: the hard-wrapped lines of a paragraph or list item are joined into one, blank lines still separate paragraphs, list items stay separate items, Markdown headings become headings, and a first heading equal to the section's title is dropped. The text then wraps once, at the dialog's width, at 1366×768 and at 320 px alike (G2 owner fix: it used to break both at the file's line ends and at the window's edge).
 
 ---
@@ -1115,7 +1115,7 @@ Gates outside the code:
 | `tests/unit/controller.test.ts` | R-ARCH-2, §8.1, §8.7: commit, save and reset through a memory port. |
 | `tests/unit/format.test.ts` | RQ-05 display, RQ-19 French typography. |
 | `tests/unit/content.test.ts` | RQ-19: EN and FR have the same keys and placeholders, no empty string; content matches Appendix A. |
-| `tests/unit/build.test.ts` | RQ-01, 24, 25, 27: one file, CSP hashes match the inline script and style, no remote reference, size, notices, no personal name in any tracked file or the game, determinism. |
+| `tests/unit/build.test.ts` | RQ-01, 24, 25, 27: one file, CSP hashes match the inline script and style, no remote reference, size, notices, creator credit only in About, the chooser and named documents, determinism. |
 | `tests/unit/renders.test.ts` | §10.2, §11: every subject rendered, every layer with a draw depth and slot, hashes, trims, the 40 MB budget. |
 | `tests/unit/glb.test.ts` | §10, §14: the model holds six vehicles; the game parses one. |
 | `tests/unit/showcase.test.ts` | §10.2, §10.3: draw order, latest part per slot, the decoded-image pool. |
