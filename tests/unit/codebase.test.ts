@@ -2,15 +2,18 @@
 // file states, writes every text file into a temp dir and checks every tracked file's SHA-256 against the repository.
 import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
-import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
-import { describe, expect, it } from 'vitest';
+import { afterAll, describe, expect, it } from 'vitest';
 import { codebase } from '../../scripts/codebase.ts';
 
 const sha = (data: Buffer | string) => createHash('sha256').update(data).digest('hex');
 // Scratch stays inside the project (MPES C-13): .artifacts/tmp, which archive:prep lists as regenerable.
 const TMP = resolve(import.meta.dirname, '../../.artifacts/tmp');
-const scratch = (prefix: string) => { mkdirSync(TMP, { recursive: true }); return mkdtempSync(join(TMP, prefix)); };
+// Removed afterwards, so scratch never piles up (tests/unit/scratch.test.ts).
+const made: string[] = [];
+const scratch = (prefix: string) => { mkdirSync(TMP, { recursive: true }); const dir = mkdtempSync(join(TMP, prefix)); made.push(dir); return dir; };
+afterAll(() => { for (const dir of made) rmSync(dir, { recursive: true, force: true, maxRetries: 5 }); });
 const DOC = readFileSync('docs/CODEBASE.md', 'utf8');
 
 /** Text sections: paths, hash, size and the file content rebuilt from the fenced block. */

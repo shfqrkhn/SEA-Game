@@ -9,7 +9,7 @@ import type { MarketCard } from '../domain/market.ts';
 import { parseAmount } from '../domain/money.ts';
 import { instructorForSave, validateInstructor } from '../domain/saves.ts';
 import { lotVisible, REVEAL_MODES, MIN_BID_SECONDS, MAX_BID_SECONDS, type RevealMode, type TimingMode } from '../domain/session.ts';
-import { cardDetails, complianceText, missionName, missionTable, purchasesTable, cardImage, presentationQuestions } from './components.ts';
+import { cardDetails, complianceText, missionName, missionTable, purchasesTable, cardImage, effectsLine, ID_MARK, presentationQuestions, withId } from './components.ts';
 import { h, type Child } from './dom.ts';
 import { labelled, money, seconds } from './format.ts';
 import type { Language, StringKey } from './i18n.ts';
@@ -148,8 +148,9 @@ function liveLot(v: View, clock: Clock): Child {
   // Offered from the sale that used the last win, so no Next lot is needed first.
   const rest = I.lotsNobodyCanWin(s);
   // The cards it leaves unsold are listed before and after the close: they never come up again (owner, 2026-10-11).
+  // Each with its effects on one line under the title, so a team can re-plan (owner FIX 2, 2026-10-12).
   const cardList = (id: string, cards: readonly MarketCard[]) => h('ul', { class: 'gone-cards', id }, cards.map(card =>
-    h('li', {}, h('span', { class: 'mono small', text: card.id }), ' ', card.title[v.lang])));
+    h('li', {}, h('span', { class: 'mono small', text: card.id }), ' ', card.title[v.lang], ' ', effectsLine(card.e, v.lang))));
   const closeRound: Child[] = rest > 0 ? [
     h('p', { class: 'ok', id: 'round-full', text: t('auction.roundFull', { round: s.round + 1 }) }),
     h('button', { type: 'button', class: 'btn primary', id: 'close-round', text: s.round === 6 ? t('auction.closeLast') : t('auction.closeRound', { round: s.round + 2 }),
@@ -221,7 +222,7 @@ function liveLot(v: View, clock: Clock): Child {
   return h('section', { class: 'panel stack', 'aria-labelledby': 'lot-heading' },
     h('h1', { id: 'lot-heading', text: t('common.roundLot', { round: s.round + 1, lot: s.lot + 1 }) }),
     h('div', { class: 'lot-layout' },
-      visible || outcome ? h('div', { class: 'stack' }, cardDetails(card, v.lang, 'h2'), h('p', { class: 'muted small', text: t('auction.announce', { round: s.round + 1, lot: s.lot + 1, id: card.id }) }))
+      visible || outcome ? h('div', { class: 'stack' }, cardDetails(card, v.lang, 'h2'), h('p', { class: 'muted small' }, ...withId(t('auction.announce', { round: s.round + 1, lot: s.lot + 1, id: ID_MARK }), card.id)))
         : h('p', { class: 'hidden-card', text: t('auction.hidden') }),
       h('div', { class: 'stack lot-controls' }, controls),
     ),

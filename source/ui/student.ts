@@ -90,7 +90,8 @@ function categoryGuide(lang: Language, t: View['t']): Child {
       const values = cards.map(c => c.effects[k]).filter((x): x is number => x !== undefined);
       if (values.length === 0) return [];
       const min = Math.min(...values), max = Math.max(...values);
-      return [`${k} ${min === max ? signed(min) : t('splan.range', { min: signed(min), max: signed(max) })}`];
+      // Value, unit and capability in words, as on the cards (owner FIX 2 sibling: it showed codes such as "MOB +2").
+      return [`${min === max ? signed(min) : t('splan.range', { min: signed(min), max: signed(max) })} ${t(`unit.${k}` as StringKey)} ${t(`cap.${k}` as StringKey)}`];
     });
     const prices = cards.map(c => c.startCents);
     return h('tr', {},

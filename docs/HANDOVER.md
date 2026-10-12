@@ -1,6 +1,6 @@
 # Handover
 
-Updated 2026-10-11 (America/Toronto). Specification: [MPES](MPES.md) 4.4.0. Evidence: [verification/0.5.1.0.md](verification/0.5.1.0.md), [verification/0.5.0.0.md](verification/0.5.0.0.md), [verification/spike-visual.md](verification/spike-visual.md).
+Updated 2026-10-12 (America/Toronto). Specification: [MPES](MPES.md) 4.4.1. Evidence: [verification/0.5.1.0.md](verification/0.5.1.0.md), [verification/0.5.0.0.md](verification/0.5.0.0.md), [verification/spike-visual.md](verification/spike-visual.md).
 
 ## 1. Version and milestone
 
@@ -34,6 +34,7 @@ Shared rules for every goal: `AGENTS.md`. KPIs and priority: MPES §1.4.
   - `npm run archive:prep` (dry run; `--apply` only on the owner's cleanup request) and `RESTORE.md` (`tests/unit/archive.test.ts`);
   - `AGENTS.md` rule 21: driving Codex headless;
   - owner FIX 1: build stills at yaw 30° pitch 6° and 210° pitch 6°, chosen by `art/tools/angles.ts`; `art/blender/fit.py` fails any part inside or outboard of a tyre or not attached, and the art passes it and `overlap.py` (MOB-D rebuilt inboard, rack, troop rear kit, recovery sensors, fasteners; `docs/verification/0.5.1.0.md`);
+  - owner FIX 2: the cards a round leaves unsold are listed below the lot actions with their effects (`effectsLine` in `source/ui/components.ts`, no start price), on the close-round list and the next round's list, in English and French; each card's effects sit on one unbroken line under its ID and title; the purchases tables and the planning guide use the same words instead of raw codes; the live lot gives the card one third and the controls two thirds; card IDs never break at the hyphen (`tests/e2e/close-round.spec.ts`);
   - sibling sweep of parts against hull fittings: 11 visible clashes (glacis armour over the vision blocks, nose kits through the tow shackles, a weapon station on the driver's hatch, rear kits over the door, and others) fixed and re-checked (`docs/verification/0.5.1.0.md`).
 - **Imagery and 3D:** 821 AVIF stills (7.6 MB) and one packed model (23.9 MB, 7.9 MB deflated) (all six vehicles, every part), Blender pipeline in [art/README.md](../art/README.md); the game parses only the team's vehicle; paced drawing (≤ 30 fps, ≤ half the machine); stills fallback without WebGL 2.
 - **Tests:** `npm run verify` (typecheck, lint, unit, build check, Playwright in Chromium, Firefox and Edge, then perf alone). 3D tests spoof a hardware renderer with `withGpu()` (`tests/e2e/helpers.ts`).
@@ -43,11 +44,13 @@ Shared rules for every goal: `AGENTS.md`. KPIs and priority: MPES §1.4.
 - **Owner art judgement:** BLOCKED-owner, script `docs/owner/art-review.md`.
 - **G3–G8:** above. `npm run perf:ref` does not exist yet; it is G3's first step.
 - **Known timing note:** `tests/unit/codebase.test.ts` usually runs in under half a second but once took 7.1 s (2026-10-11, cause unknown, result correct, not reproduced in 22 runs); it has an explicit 60 s bound with that evidence in a comment. Watch for a repeat.
+- **Known timing note 2:** `tests/unit/build.test.ts` "is deterministic" once timed out (63 s against 5 s) while other projects' test runs loaded this PC (2026-10-12); it passed in 5.3 s on re-run. The same day `tests/unit/archive.test.ts` "refuses a path that holds a tracked file" timed out the same way (5 s; 80 ms alone); its scratch clones had piled up in `.artifacts/tmp` and are now removed after each run (`tests/unit/scratch.test.ts`). If either repeats on a quiet machine, find the cause; do not raise the timeout.
+- **Known timing note 3:** with Windows Defender and other projects busy, the local perf project fails a 3D update budget in about half of its runs, at the previous commit as often as now (A/B in `docs/verification/0.5.1.0.md`). Run it on a quiet machine; never raise the budgets. G3's `perf:ref` protocol is meant to settle this.
 - **Residual risks:** real learners (S3); Narrator and NVDA users; no physical laptop test (D-16); CI runs Windows Server, not Windows 11; art quality is the owner's judgement.
 
 ## 4. In-progress work
 
-Owner FIX 1 art fixes, the sibling sweep and the new `fit.py` overhang check are done and checked (fit, overlap, budgets, close-ups in `.artifacts/renders/closeups-hatch/`, `.artifacts/tmp/cu-sweep2/` and `cu-sweep3/`; two Codex reviews; `docs/verification/0.5.1.0.md`). The final re-render (`.artifacts/renders/v4`, log `.artifacts/logs/render-v4.log`) is encoded into `content/renders`, the model exported and packed into `content/models/showcase.glb`, and `npm run verify` passes; earlier render runs are in `_archive/recycle/2026-10-11/`. Left: commit and push, two green CI runs, the gallery and the owner GO, then merge, tag and the Pages check. Run only one Blender job at a time: the owner uses this PC. Codex sessions that do not run Blender (reviews, drafts) may run alongside it.
+Owner FIX 1 (stills and fit) and FIX 2 (one click to close a round nobody can win in; unsold cards listed with their effects) are done and checked (`docs/verification/0.5.1.0.md`). The Codex review of FIX 2 is dispositioned; unit-test scratch now cleans up after itself. Left: commit and push, two green CI runs, the gallery and the owner GO, then merge, tag and the Pages check. Run only one Blender job at a time: the owner uses this PC.
 
 ## 5. Next action
 

@@ -2,9 +2,9 @@
 // clone in a temp dir: install and build, plant what must stay and what may go, apply, then restore by RESTORE.md.
 import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, symlinkSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
-import { describe, expect, it } from 'vitest';
+import { afterAll, describe, expect, it } from 'vitest';
 import { plan, prepare } from '../../scripts/archive-prep.ts';
 import { browsersPath } from '../../scripts/browsers.ts';
 
@@ -12,7 +12,12 @@ const ROOT = resolve(import.meta.dirname, '../..');
 const npm = (cwd: string, ...args: string[]) => execFileSync(process.platform === 'win32' ? 'npm.cmd' : 'npm', args, { cwd, stdio: 'pipe', shell: process.platform === 'win32' });
 const hash = (path: string) => createHash('sha256').update(readFileSync(path)).digest('hex');
 // Scratch stays inside the project (MPES C-13): .artifacts/tmp, which archive:prep lists as regenerable.
-const scratch = (prefix: string) => { mkdirSync(join(ROOT, '.artifacts', 'tmp'), { recursive: true }); return mkdtempSync(join(ROOT, '.artifacts', 'tmp', prefix)); };
+// Each test's folder is removed afterwards: 104 clones (29 with node_modules) had piled up, one set per verify
+// (tests/unit/scratch.test.ts).
+const made: string[] = [];
+const scratch = (prefix: string) => { mkdirSync(join(ROOT, '.artifacts', 'tmp'), { recursive: true }); const dir = mkdtempSync(join(ROOT, '.artifacts', 'tmp', prefix)); made.push(dir); return dir; };
+// Links (junctions) are removed as links, never followed, so nothing outside these folders is touched.
+afterAll(() => { for (const dir of made) rmSync(dir, { recursive: true, force: true, maxRetries: 5 }); });
 const put = (path: string, text = 'x') => { mkdirSync(dirname(path), { recursive: true }); writeFileSync(path, text); };
 
 describe('archive:prep', () => {

@@ -1,6 +1,6 @@
 # SEA Game codebase
 
-Version 0.5.1.0. Written by `npm run codebase` (scripts/codebase.ts); do not edit by hand. It holds all 1013 tracked files of the repository: 157 text files as 155 unique contents, 854 binary files by hash with the command that regenerates them, and 2 documents kept separately. With docs/MPES.md it is enough to rebuild the project.
+Version 0.5.1.0. Written by `npm run codebase` (scripts/codebase.ts); do not edit by hand. It holds all 1014 tracked files of the repository: 158 text files as 156 unique contents, 854 binary files by hash with the command that regenerates them, and 2 documents kept separately. With docs/MPES.md it is enough to rebuild the project.
 
 ## How to rebuild the tree
 
@@ -25459,7 +25459,7 @@ Paths: `content/strings.en.json`. SHA-256 `499d5d0596644ee62affbe61485c79593411f
 
 ### content/strings.fr.json
 
-Paths: `content/strings.fr.json`. SHA-256 `9b83e048c3361f4593a2d402413d60f55b757502e2d946088ca240d50644be7f`, 23651 bytes.
+Paths: `content/strings.fr.json`. SHA-256 `52903f6b9dbde9afaeabbc31e39a20e0b10a893a1ee991f459dd197dd25bd1cb`, 23651 bytes.
 
 ```json
 {
@@ -25754,7 +25754,7 @@ Paths: `content/strings.fr.json`. SHA-256 `9b83e048c3361f4593a2d402413d60f55b757
   "splan.wtp": "Montant total maximal que vous paieriez (dollars)",
   "splan.wtpHint": "Un repère privé, pas un budget.",
   "splan.guide": "Ce que chaque type de carte peut apporter",
-  "splan.range": "De {min} à {max}",
+  "splan.range": "de {min} à {max}",
   "splan.started": "L’instructeur a lancé l’enchère",
   "splan.startedTitle": "Verrouiller votre mission ?",
   "splan.startedBody": "Votre mission sera verrouillée pour le reste de la partie.",
@@ -25943,12 +25943,12 @@ Exportez une sauvegarde par **Menu → Exporter une sauvegarde** après la confi
 
 ### docs/HANDOVER.md
 
-Paths: `docs/HANDOVER.md`. SHA-256 `7e3144a6b8ad23c7e6b9b525fe62fd4eb36e9247a0b8533b103a428a63f07219`, 6392 bytes.
+Paths: `docs/HANDOVER.md`. SHA-256 `a59750174801fbd8cb6fa1f85e18bd5aaa96b77515c6f79d442f94ba51677d98`, 7425 bytes.
 
 ```markdown
 # Handover
 
-Updated 2026-10-11 (America/Toronto). Specification: [MPES](MPES.md) 4.4.0. Evidence: [verification/0.5.1.0.md](verification/0.5.1.0.md), [verification/0.5.0.0.md](verification/0.5.0.0.md), [verification/spike-visual.md](verification/spike-visual.md).
+Updated 2026-10-12 (America/Toronto). Specification: [MPES](MPES.md) 4.4.1. Evidence: [verification/0.5.1.0.md](verification/0.5.1.0.md), [verification/0.5.0.0.md](verification/0.5.0.0.md), [verification/spike-visual.md](verification/spike-visual.md).
 
 ## 1. Version and milestone
 
@@ -25982,6 +25982,7 @@ Shared rules for every goal: `AGENTS.md`. KPIs and priority: MPES §1.4.
   - `npm run archive:prep` (dry run; `--apply` only on the owner's cleanup request) and `RESTORE.md` (`tests/unit/archive.test.ts`);
   - `AGENTS.md` rule 21: driving Codex headless;
   - owner FIX 1: build stills at yaw 30° pitch 6° and 210° pitch 6°, chosen by `art/tools/angles.ts`; `art/blender/fit.py` fails any part inside or outboard of a tyre or not attached, and the art passes it and `overlap.py` (MOB-D rebuilt inboard, rack, troop rear kit, recovery sensors, fasteners; `docs/verification/0.5.1.0.md`);
+  - owner FIX 2: the cards a round leaves unsold are listed below the lot actions with their effects (`effectsLine` in `source/ui/components.ts`, no start price), on the close-round list and the next round's list, in English and French; each card's effects sit on one unbroken line under its ID and title; the purchases tables and the planning guide use the same words instead of raw codes; the live lot gives the card one third and the controls two thirds; card IDs never break at the hyphen (`tests/e2e/close-round.spec.ts`);
   - sibling sweep of parts against hull fittings: 11 visible clashes (glacis armour over the vision blocks, nose kits through the tow shackles, a weapon station on the driver's hatch, rear kits over the door, and others) fixed and re-checked (`docs/verification/0.5.1.0.md`).
 - **Imagery and 3D:** 821 AVIF stills (7.6 MB) and one packed model (23.9 MB, 7.9 MB deflated) (all six vehicles, every part), Blender pipeline in [art/README.md](../art/README.md); the game parses only the team's vehicle; paced drawing (≤ 30 fps, ≤ half the machine); stills fallback without WebGL 2.
 - **Tests:** `npm run verify` (typecheck, lint, unit, build check, Playwright in Chromium, Firefox and Edge, then perf alone). 3D tests spoof a hardware renderer with `withGpu()` (`tests/e2e/helpers.ts`).
@@ -25991,11 +25992,13 @@ Shared rules for every goal: `AGENTS.md`. KPIs and priority: MPES §1.4.
 - **Owner art judgement:** BLOCKED-owner, script `docs/owner/art-review.md`.
 - **G3–G8:** above. `npm run perf:ref` does not exist yet; it is G3's first step.
 - **Known timing note:** `tests/unit/codebase.test.ts` usually runs in under half a second but once took 7.1 s (2026-10-11, cause unknown, result correct, not reproduced in 22 runs); it has an explicit 60 s bound with that evidence in a comment. Watch for a repeat.
+- **Known timing note 2:** `tests/unit/build.test.ts` "is deterministic" once timed out (63 s against 5 s) while other projects' test runs loaded this PC (2026-10-12); it passed in 5.3 s on re-run. The same day `tests/unit/archive.test.ts` "refuses a path that holds a tracked file" timed out the same way (5 s; 80 ms alone); its scratch clones had piled up in `.artifacts/tmp` and are now removed after each run (`tests/unit/scratch.test.ts`). If either repeats on a quiet machine, find the cause; do not raise the timeout.
+- **Known timing note 3:** with Windows Defender and other projects busy, the local perf project fails a 3D update budget in about half of its runs, at the previous commit as often as now (A/B in `docs/verification/0.5.1.0.md`). Run it on a quiet machine; never raise the budgets. G3's `perf:ref` protocol is meant to settle this.
 - **Residual risks:** real learners (S3); Narrator and NVDA users; no physical laptop test (D-16); CI runs Windows Server, not Windows 11; art quality is the owner's judgement.
 
 ## 4. In-progress work
 
-Owner FIX 1 art fixes, the sibling sweep and the new `fit.py` overhang check are done and checked (fit, overlap, budgets, close-ups in `.artifacts/renders/closeups-hatch/`, `.artifacts/tmp/cu-sweep2/` and `cu-sweep3/`; two Codex reviews; `docs/verification/0.5.1.0.md`). The final re-render (`.artifacts/renders/v4`, log `.artifacts/logs/render-v4.log`) is encoded into `content/renders`, the model exported and packed into `content/models/showcase.glb`, and `npm run verify` passes; earlier render runs are in `_archive/recycle/2026-10-11/`. Left: commit and push, two green CI runs, the gallery and the owner GO, then merge, tag and the Pages check. Run only one Blender job at a time: the owner uses this PC. Codex sessions that do not run Blender (reviews, drafts) may run alongside it.
+Owner FIX 1 (stills and fit) and FIX 2 (one click to close a round nobody can win in; unsold cards listed with their effects) are done and checked (`docs/verification/0.5.1.0.md`). The Codex review of FIX 2 is dispositioned; unit-test scratch now cleans up after itself. Left: commit and push, two green CI runs, the gallery and the owner GO, then merge, tag and the Pages check. Run only one Blender job at a time: the owner uses this PC.
 
 ## 5. Next action
 
@@ -26253,7 +26256,7 @@ The three Firefox failures are browser-internal and appeared only under full loc
 
 ### docs/verification/0.5.1.0.md
 
-Paths: `docs/verification/0.5.1.0.md`. SHA-256 `76560faddea9ca7dcc0f66f896e09c7d35244687e43d4827b161c3e5325c8a78`, 15366 bytes.
+Paths: `docs/verification/0.5.1.0.md`. SHA-256 `48d750c79d86899390f742d205379e5c86590369a9587ebbeabab2b1b7ade86a`, 20743 bytes.
 
 ```markdown
 # Verification record: 0.5.1.0 beta (goal G2)
@@ -26361,6 +26364,33 @@ A final Codex review (`.artifacts/codex/review-final/`) found the SA-G hub foot 
 A second Codex review (GPT-6.1 Sol, medium; `.artifacts/codex/review-final/review2.md`, `disposition2.md`) found five more faults, all accepted and fixed: FP-D's ammunition box into its camera on the vehicle (camera to the other side, as on the card); a COM-E whip floating beside the radio (back on the lid); SA-F and SA-G front corner feet 25 mm over the chamfer (45 mm inboard); and two loopholes in the overhang check (a sole split into faces is now judged as one sole; only solid bracing touching the sole holds it, not a loose surface lower down), proved on a synthetic case.
 
 Results: `fit.py` all vehicles, all parts: PASS, 0 findings. `overlap.py`: PASS, 0 pairs. `tris.py`: PASS. The part-against-hull sweep of COM-A to COM-G, SA-B, SA-D, SA-F, SA-G, FP-D, FP-E, PRO-G and ACC-A on the six vehicles leaves only seats. Close-ups: `.artifacts/tmp/cu-sweep2/sheet.jpg`.
+
+## Owner FIX 2: effects of the cards that leave the game
+
+The owner accepted the recommendation (2026-10-12): the two unsold-card lists (before the close; lot 1 of the next round and lot 70) show each card's effects on one line, value, unit and capability in the session language, gains and penalties coloured as on the live lot, with no start price (nobody paid it). They stay below the lot actions, so the close is on screen at 1280×720 (layout settled after the Codex review below). The sibling sweep of card lists found the purchases tables (student tracker, reconcile and debrief; instructor submissions) showing effects as untranslated capability codes ("MOB +2" in French too); they now use the same line. The round's market list keeps ID and title only, so it stays short. Test: `tests/e2e/close-round.spec.ts` checks every listed card's line against `content/cards.json` and the string tables in English and French, the close button in view, and the purchases table in both languages.
+
+### Codex review of FIX 2 (GPT-6.1 Sol, medium, read-only; `.artifacts/tmp/fix2-review.txt`)
+
+| Finding | Disposition and evidence |
+| --- | --- |
+| Rows wrap in the ~370 px controls column at 1280×720, so a card's effects split across lines. | Fixed. Every card was measured in Chromium, Firefox and Edge (`.artifacts/tmp/fix2/measure.spec.ts`). The longest French effects line (FP-D) was 419 px against 371. Moving the lists under the whole lot fit the effects but pushed the list below the fold, so they stay in the controls column instead. Each card shows ID and title, with its effects on one unbreakable line beneath. The live lot gives the card one third and the controls two thirds, and the lists use 13 px type: the longest line is now 389 px of 415. The first row of each list is fully on screen with the actions. |
+| The assertions could pass with wrapped lines, wrong colours, a partly hidden button, and no French close list. | Fixed. The test was first run red against the old build (a row measured 2.04 lines). It now checks that each effects line is under 1.5 line boxes, that the gain or penalty class follows the sign, and that the French close list is correct. From the top of the page it checks that Close and Next lot are fully in view (`ratio: 1`), as are the first listed card and Open bidding on the next round. |
+| The planning guide (`categoryGuide`) still shows codes such as "MOB +…". | Fixed. Effect ranges are now in words ("+1 to +3 points Protection"; French "de +1 à +3 …"). The test checks all eight categories in English and French against the content. |
+| The mission table and gap meter show capability codes. | Kept by design. They are compact column and meter labels with the full name as `title` or `aria-label`, not an effects line. |
+
+A second Codex review of the revised diff (`.artifacts/tmp/fix2b-review.txt`) found only test weaknesses, both fixed:
+- height alone would pass an effects line that overflowed the column or sat beside the title; the test now also checks that the text stays inside the list item and that the line sits below the ID;
+- the on-screen checks ran only in English; they now run in both languages, for the close list and the next round's list.
+
+A sibling found on the new layout: the narrower card column broke "card SA-F." at its hyphen. Card IDs in sentences now sit in no-wrap spans (`withId`; `span.mono, .nowrap`), and the test checks that every ID on the screens it visits is a single line box. Three visual baselines were re-recorded and reviewed: the instructor live lot (new column split) and the student purchases tables (effects in words).
+
+### Unit-test scratch left behind
+
+A full verify under load from other projects timed out `tests/unit/archive.test.ts` "refuses a path that holds a tracked file" (5 s; 80 ms alone; it passes on re-run). Looking for the cause found 104 `sea-archive-*` clones (29 with `node_modules`) and the `sea-codebase-*` folders left in `.artifacts/tmp`, one set per run: the archive and codebase tests never removed their scratch. Both now remove the folders they made in `afterAll`; `tests/unit/scratch.test.ts` fails any unit test that makes a scratch folder without that cleanup. The 135 old folders were moved to `_archive/recycle/2026-10-12/artifacts-tmp/` (one, `sea-archive-5xU8kE`, was locked by another process and stays). The 5 s timeout is unchanged.
+
+### Local perf under load (2026-10-12)
+
+The fifth full verify passed typecheck, lint, 204 unit tests, the build check and 123 browser tests in Chromium, Firefox and Edge. Only the perf project failed: `modelUpdateMaxMs` was 153 against 100. Run alone ten times, alternating with the previous commit (`54724d8`, built in a temporary worktree), both builds failed one budget or another about as often: the previous commit passed 2 of 5 runs, this one 1 of 5. Worst seen, previous commit against this one: showcase update 126 and 131 ms, model ready 864 and 17,149 ms; no pattern by build. In the same minutes Windows Defender (`MsMpEng`) used about 15% of the 24 logical processors, and another project's `cargo mutants` helpers ran too. Earlier quiet runs on this branch measured 31–32 ms. FIX 2 changes no 3D code. Judged as contention, not a regression; budgets unchanged; CI's runner is the gate for this change. G3 measures these budgets on the UHD 770 proxy under a stated protocol (MPES §14).
 
 ## Local browser runs and the GPU
 
@@ -34064,7 +34094,7 @@ export function showAbout(lang: Language, opener: HTMLElement | null = null): Pr
 
 ### source/ui/components.ts
 
-Paths: `source/ui/components.ts`. SHA-256 `e3a40b577a4218bf00194e27cb5038c79f4ef0a49f1a5baaa4a57ba497fa7f37`, 7990 bytes.
+Paths: `source/ui/components.ts`. SHA-256 `e24d103f9573acb9acf66d16338cc75a9fd46bb8d2c8be14f8e3afbdb3440a49`, 8876 bytes.
 
 ```ts
 // Reusable views: cards, effects, mission minimums, gap meter, purchases (MPES §7.4).
@@ -34090,6 +34120,21 @@ export function effectsList(effects: Effects, lang: Language): Child {
       h('span', { class: 'num', text: signed(effects[k]!) }), ' ', `${t(`unit.${k}` as StringKey)} · ${t(`cap.${k}` as StringKey)}`)));
 }
 
+/** Stands for a card ID in a translated sentence, so `withId` can put the ID in a span that never breaks at its hyphen. */
+export const ID_MARK = '\u0000';
+export function withId(text: string, id: string): Child[] {
+  return text.split(ID_MARK).flatMap((part, i) => i ? [h('span', { class: 'nowrap', text: id }), part] : [part]);
+}
+
+/** The same effects on one compact line (value, unit, capability), for lists of cards such as those leaving the game. */
+export function effectsLine(effects: Effects, lang: Language): Child {
+  const t = tr(lang);
+  const items = CAPABILITIES.filter(k => effects[k] !== undefined).map(k =>
+    h('span', { class: (effects[k] ?? 0) < 0 ? 'penalty' : 'gain' },
+      h('span', { class: 'num', text: signed(effects[k]!) }), ' ', `${t(`unit.${k}` as StringKey)} ${t(`cap.${k}` as StringKey)}`));
+  return h('span', { class: 'effects-line' }, items.flatMap((item, i) => i ? [', ', item] : [item]));
+}
+
 /** The card's photoreal render (MPES §11); every card and the practice card has one. */
 export function cardImage(id: string, label: string): HTMLElement | null {
   const render = cardRender(id);
@@ -34101,7 +34146,7 @@ export function cardDetails(card: MarketCard, lang: Language, headingLevel: 'h2'
   return h('figure', { class: 'card-figure', 'data-card': card.id },
     cardImage(card.id, `${card.id} · ${card.title[lang]}`),
     h('figcaption', { class: 'stack' },
-      h('p', { class: 'muted small', text: `${t(`cat.${card.cat}` as StringKey)} · ${card.id}` }),
+      h('p', { class: 'muted small' }, `${t(`cat.${card.cat}` as StringKey)} · `, h('span', { class: 'nowrap', text: card.id })),
       h(headingLevel, { text: card.title[lang] }),
       h('p', {}, labelled(t('common.startPrice'), lang), h('strong', { class: 'num', text: money(card.start, lang) })),
       effectsList(card.e, lang),
@@ -34180,7 +34225,7 @@ export function purchasesTable(purchases: readonly Purchase[], lang: Language, o
     h('tbody', {}, purchases.map(p => h('tr', {},
       h('td', { class: 'num', text: String(p.round) }), h('td', { class: 'num', text: String(p.lot) }),
       h('td', {}, h('span', { class: 'mono small', text: p.id }), ' ', p.title[lang]),
-      h('td', { class: 'small', text: CAPABILITIES.filter(k => p.e[k] !== undefined).map(k => `${k} ${signed(p.e[k]!)}`).join(', ') }),
+      h('td', { class: 'small' }, effectsLine(p.e, lang)),
       h('td', { class: 'num', text: money(p.paid, lang) }),
       value(p),
       action ? h('td', {}, action(p)) : null,
@@ -34415,7 +34460,7 @@ export function detectLanguage(search: string, navigatorLanguage: string | undef
 
 ### source/ui/instructor.ts
 
-Paths: `source/ui/instructor.ts`. SHA-256 `dfd7e72005e1000deeb5c713c94be32fc8f85ea3d4732686443d7fcd515cdfcf`, 37333 bytes.
+Paths: `source/ui/instructor.ts`. SHA-256 `afba1ffa7f22ef2509d6d93bfe60b24de8ff6fe6afa46632a0a3c20ed79a39fd`, 37516 bytes.
 
 ```ts
 // Instructor console (MPES §7.2).
@@ -34429,7 +34474,7 @@ import type { MarketCard } from '../domain/market.ts';
 import { parseAmount } from '../domain/money.ts';
 import { instructorForSave, validateInstructor } from '../domain/saves.ts';
 import { lotVisible, REVEAL_MODES, MIN_BID_SECONDS, MAX_BID_SECONDS, type RevealMode, type TimingMode } from '../domain/session.ts';
-import { cardDetails, complianceText, missionName, missionTable, purchasesTable, cardImage, presentationQuestions } from './components.ts';
+import { cardDetails, complianceText, missionName, missionTable, purchasesTable, cardImage, effectsLine, ID_MARK, presentationQuestions, withId } from './components.ts';
 import { h, type Child } from './dom.ts';
 import { labelled, money, seconds } from './format.ts';
 import type { Language, StringKey } from './i18n.ts';
@@ -34568,8 +34613,9 @@ function liveLot(v: View, clock: Clock): Child {
   // Offered from the sale that used the last win, so no Next lot is needed first.
   const rest = I.lotsNobodyCanWin(s);
   // The cards it leaves unsold are listed before and after the close: they never come up again (owner, 2026-10-11).
+  // Each with its effects on one line under the title, so a team can re-plan (owner FIX 2, 2026-10-12).
   const cardList = (id: string, cards: readonly MarketCard[]) => h('ul', { class: 'gone-cards', id }, cards.map(card =>
-    h('li', {}, h('span', { class: 'mono small', text: card.id }), ' ', card.title[v.lang])));
+    h('li', {}, h('span', { class: 'mono small', text: card.id }), ' ', card.title[v.lang], ' ', effectsLine(card.e, v.lang))));
   const closeRound: Child[] = rest > 0 ? [
     h('p', { class: 'ok', id: 'round-full', text: t('auction.roundFull', { round: s.round + 1 }) }),
     h('button', { type: 'button', class: 'btn primary', id: 'close-round', text: s.round === 6 ? t('auction.closeLast') : t('auction.closeRound', { round: s.round + 2 }),
@@ -34641,7 +34687,7 @@ function liveLot(v: View, clock: Clock): Child {
   return h('section', { class: 'panel stack', 'aria-labelledby': 'lot-heading' },
     h('h1', { id: 'lot-heading', text: t('common.roundLot', { round: s.round + 1, lot: s.lot + 1 }) }),
     h('div', { class: 'lot-layout' },
-      visible || outcome ? h('div', { class: 'stack' }, cardDetails(card, v.lang, 'h2'), h('p', { class: 'muted small', text: t('auction.announce', { round: s.round + 1, lot: s.lot + 1, id: card.id }) }))
+      visible || outcome ? h('div', { class: 'stack' }, cardDetails(card, v.lang, 'h2'), h('p', { class: 'muted small' }, ...withId(t('auction.announce', { round: s.round + 1, lot: s.lot + 1, id: ID_MARK }), card.id)))
         : h('p', { class: 'hidden-card', text: t('auction.hidden') }),
       h('div', { class: 'stack lot-controls' }, controls),
     ),
@@ -35045,7 +35091,7 @@ export function reflow(source: string): Block[] {
 
 ### source/ui/student.ts
 
-Paths: `source/ui/student.ts`. SHA-256 `5c9a36add881baaaf20edd1dd1e36d85f6df5f8c597c9a924ab80cb3c2454627`, 24318 bytes.
+Paths: `source/ui/student.ts`. SHA-256 `2a9963e5f862b10bb6e39ebfe650d511a78b0961dd194d23116957db5e76bc48`, 24493 bytes.
 
 ```ts
 // Student companion (MPES §7.3).
@@ -35140,7 +35186,8 @@ function categoryGuide(lang: Language, t: View['t']): Child {
       const values = cards.map(c => c.effects[k]).filter((x): x is number => x !== undefined);
       if (values.length === 0) return [];
       const min = Math.min(...values), max = Math.max(...values);
-      return [`${k} ${min === max ? signed(min) : t('splan.range', { min: signed(min), max: signed(max) })}`];
+      // Value, unit and capability in words, as on the cards (owner FIX 2 sibling: it showed codes such as "MOB +2").
+      return [`${min === max ? signed(min) : t('splan.range', { min: signed(min), max: signed(max) })} ${t(`unit.${k}` as StringKey)} ${t(`cap.${k}` as StringKey)}`];
     });
     const prices = cards.map(c => c.startCents);
     return h('tr', {},
@@ -35405,7 +35452,7 @@ export function startStudent(root: HTMLElement, lang: Language, storage: Storage
 
 ### source/ui/styles.css
 
-Paths: `source/ui/styles.css`. SHA-256 `220c6d62b5f555c6abdb9933abad1b784c8c364371ccaee03a81d735502c6b27`, 19429 bytes.
+Paths: `source/ui/styles.css`. SHA-256 `c6e8c944d2dfc0d45ddbd94a56a6a476db80f46a6dca9445f61f56675419dd53`, 19888 bytes.
 
 ```css
 /* SEA Game design system (MPES §7.1): one set of tokens for both roles. */
@@ -35471,6 +35518,8 @@ a { color: var(--accent); }
 .small { font-size: .875rem; }
 .num { font-variant-numeric: tabular-nums; white-space: nowrap; }
 .mono { font-family: var(--mono); }
+/* A card ID never breaks at its hyphen ("SA-" then "F" once did in the narrow card column). */
+span.mono, .nowrap { white-space: nowrap; }
 
 /* Controls */
 .btn {
@@ -35577,7 +35626,11 @@ legend { font-weight: 700; padding: 0 .25rem; }
 .btn.leading { border-width: 3px; border-color: var(--accent); }
 .market { list-style: none; margin: 0; padding: 0; display: grid; gap: .25rem; }
 .market li { padding: .3rem .5rem; border-radius: var(--radius); border: 1px solid transparent; }
-.gone-cards { margin: 0; padding-left: 1.2rem; display: grid; gap: .1rem; }
+.gone-cards { margin: 0; padding-left: 1.2rem; display: grid; gap: .1rem; font-size: .8125rem; }
+/* Owner FIX 2: a card's effects stay on one line, under its title in the lists of cards leaving the game. */
+.effects-line { display: inline-block; }
+.effects-line > span { white-space: nowrap; }
+.gone-cards .effects-line { display: block; }
 .market li.current { border-color: var(--accent); background: var(--sunken); font-weight: 600; }
 .ledger { margin: 0; padding-left: 1.5rem; display: grid; gap: .2rem; }
 .hidden-card { display: grid; place-items: center; min-height: 8rem; border: 2px dashed var(--line); border-radius: var(--radius); color: var(--muted); font-weight: 600; }
@@ -35592,8 +35645,8 @@ summary { cursor: pointer; font-weight: 600; min-height: 32px; }
 .card-figure { margin: 0; display: grid; gap: .75rem; grid-template-columns: minmax(0, 1fr); }
 @media (min-width: 40rem) { .card-figure { grid-template-columns: minmax(10rem, 16rem) minmax(0, 1fr); align-items: start; } }
 .effects { list-style: none; margin: 0; padding: 0; display: grid; gap: .15rem; }
-.effects .penalty .num { color: var(--bad); font-weight: 700; }
-.effects .gain .num { color: var(--ok); font-weight: 700; }
+.effects .penalty .num, .effects-line .penalty .num { color: var(--bad); font-weight: 700; }
+.effects .gain .num, .effects-line .gain .num { color: var(--ok); font-weight: 700; }
 
 
 
@@ -35702,7 +35755,7 @@ th { white-space: nowrap; font-size: .75rem; }
 /* Live lot (MPES §7.1): card and controls side by side on wide screens, so every action fits 1280×720. */
 .lot-layout { display: grid; gap: var(--gap); grid-template-columns: minmax(0, 1fr); align-items: start; }
 @media (min-width: 64rem) {
-  .lot-layout { grid-template-columns: minmax(11rem, 2fr) minmax(0, 3fr); }
+  .lot-layout { grid-template-columns: minmax(11rem, 1fr) minmax(0, 2fr); }
   .lot-layout .card-figure { grid-template-columns: minmax(0, 1fr); }
   .lot-layout .card-render { max-width: 13rem; }
   .lot-controls .bid-grid { grid-template-columns: repeat(auto-fill, minmax(5.25rem, 1fr)); }
@@ -36334,14 +36387,72 @@ test.describe('role chooser over file:// (RQ-01, RQ-19, RQ-20)', () => {
 
 ### tests/e2e/close-round.spec.ts
 
-Paths: `tests/e2e/close-round.spec.ts`. SHA-256 `6f01e656bd83d7e3d506afa7c1d846bc68e66a736d809f3dcec056b84d4d4a38`, 3566 bytes.
+Paths: `tests/e2e/close-round.spec.ts`. SHA-256 `431cb8a1fc0163e2731a489a4f6adc4bb40b3d4f210595516047f981cad837a3`, 10299 bytes.
 
 ```ts
 // Owner request 2026-10-11 (MPES §6.5): when every team has its 2 wins in a round, one click records the rest of the
 // round unsold and opens the next; a student whose team has its 2 wins skips to the next round's tracker.
-import { expect, test } from '@playwright/test';
+import { expect, test, type Locator, type Page } from '@playwright/test';
+import { readFileSync } from 'node:fs';
 import { gameUrl, guardNetwork } from './helpers.ts';
 import { confirmDialog, instructorLot, instructorSetup, studentJoin, studentRecord } from './roles.ts';
+
+// Owner FIX 2 (2026-10-12): each listed card shows its effects on one line, so a team can re-plan for what left the
+// game. Expected text from the content, in the order of the capabilities: value, unit, capability; no start price.
+const CAPS = ['CAP', 'MOB', 'FP', 'PRO', 'COM', 'SA', 'REC', 'MC'];
+const CARD_LIST = JSON.parse(readFileSync('content/cards.json', 'utf8')) as { id: string; category: string; startCents: number; effects: Record<string, number> }[];
+const CARDS = new Map(CARD_LIST.map(c => [c.id, c]));
+const STRINGS = { en: JSON.parse(readFileSync('content/strings.en.json', 'utf8')), fr: JSON.parse(readFileSync('content/strings.fr.json', 'utf8')) } as Record<'en' | 'fr', Record<string, string>>;
+function effectsLine(id: string, lang: 'en' | 'fr'): string {
+  const e = CARDS.get(id)!.effects;
+  return CAPS.filter(k => e[k] !== undefined).map(k => `${e[k]! > 0 ? '+' : e[k]! < 0 ? '−' : ''}${Math.abs(e[k]!)} ${STRINGS[lang][`unit.${k}`]} ${STRINGS[lang][`cap.${k}`]}`).join(', ');
+}
+const signed = (n: number) => `${n > 0 ? '+' : n < 0 ? '−' : ''}${Math.abs(n)}`;
+// The planning guide's effects cell for a category: each capability's range in words, joined by " · ".
+function guideLine(category: string, lang: 'en' | 'fr'): string {
+  const cards = CARD_LIST.filter(c => c.category === category);
+  return CAPS.flatMap(k => {
+    const values = cards.map(c => c.effects[k]).filter((x): x is number => x !== undefined);
+    if (!values.length) return [];
+    const min = Math.min(...values), max = Math.max(...values);
+    const range = min === max ? signed(min) : STRINGS[lang]['splan.range']!.replace('{min}', signed(min)).replace('{max}', signed(max));
+    return [`${range} ${STRINGS[lang][`unit.${k}`]} ${STRINGS[lang][`cap.${k}`]}`];
+  }).join(' · ');
+}
+// A card ID never breaks at its hyphen ("SA-" then "F" once did in the narrow card column): one line box each.
+async function expectIdsWhole(page: Page) {
+  const boxes = await page.locator('span.mono, .nowrap').evaluateAll(els => els.map(e => [e.textContent, e.getClientRects().length] as const));
+  expect(boxes.length).toBeGreaterThan(0);
+  for (const [text, n] of boxes) expect(n, `${text}`).toBe(1);
+}
+async function expectOnScreen(page: Page, selectors: string[]) {
+  await page.evaluate(() => window.scrollTo(0, 0));
+  for (const selector of selectors) await expect(page.locator(selector)).toBeInViewport({ ratio: 1 });
+}
+async function expectEffects(list: Locator, lang: 'en' | 'fr') {
+  for (const item of await list.locator('li').all()) {
+    const id = (await item.locator('.mono').textContent())!.trim();
+    await expect(item.locator('.effects-line')).toHaveText(effectsLine(id, lang));
+    await expect(item).not.toContainText('$');
+    // Gains green and penalties red, as on the live lot: the class follows the sign.
+    for (const part of await item.locator('.effects-line > span').all()) {
+      const negative = (await part.locator('.num').textContent())!.startsWith('−');
+      await expect(part).toHaveClass(negative ? 'penalty' : 'gain');
+    }
+  }
+  // Each card's effects on one compact line under its title at 1280×720 (owner FIX 2): never split across lines,
+  // below the ID and title, and inside the list item (no overflow out of the controls column).
+  const boxes = await list.locator('li').evaluateAll(els => els.map(li => {
+    const line = li.querySelector('.effects-line')!, id = li.querySelector('.mono')!;
+    const range = document.createRange(); range.selectNodeContents(line);
+    const text = range.getBoundingClientRect(), box = li.getBoundingClientRect();
+    return { lines: line.getBoundingClientRect().height / parseFloat(getComputedStyle(line).lineHeight),
+      below: line.getBoundingClientRect().top >= id.getBoundingClientRect().bottom - 1,
+      inside: text.left >= box.left - 0.5 && text.right <= box.right + 0.5 };
+  }));
+  for (const b of boxes) expect(b).toEqual({ lines: expect.any(Number), below: true, inside: true });
+  for (const b of boxes) expect(b.lines).toBeLessThan(1.5);
+}
 
 test('the instructor closes a full round in one click and the student skips to the next round', async ({ browser }) => {
   const ip = await (await browser.newContext()).newPage();
@@ -36370,6 +36481,18 @@ test('the instructor closes a full round in one click and the student skips to t
   const goneIds = (await ip.locator('#close-cards li .mono').allTextContents()).map(id => id.trim());
   expect(new Set([...cards, ...goneIds]).size).toBe(10);
   for (const id of goneIds) await expect(ip.locator('.market')).toContainText(id);
+  await expectEffects(ip.locator('#close-cards'), 'en');
+  await expectIdsWhole(ip);
+  await ip.click('#lang-toggle');
+  await expect(ip.locator('#close-heading')).toHaveText(STRINGS.fr['auction.closeCards']!);
+  await expectEffects(ip.locator('#close-cards'), 'fr');
+  await expectIdsWhole(ip);
+  // The lists stay below the lot actions, so the close and Next lot are wholly on screen at 1280×720 from the top
+  // of the page (MPES §7.1), and the list starts on screen too, so the instructor can read it out without scrolling.
+  // In both languages: French is the longer.
+  await expectOnScreen(ip, ['#close-round', '#next-lot', '#close-cards li >> nth=0']);
+  await ip.click('#lang-toggle');
+  await expectOnScreen(ip, ['#close-round', '#next-lot', '#close-cards li >> nth=0']);
   await ip.keyboard.press('n');
   await expect(ip.locator('#lot-heading')).toContainText('Round 2');
   await expect(ip.locator('#lot-heading')).toContainText('Lot 1 of');
@@ -36378,9 +36501,30 @@ test('the instructor closes a full round in one click and the student skips to t
   await expect(ip.locator('#lot-heading')).toContainText('Round 2');
   await expect(ip.locator('#gone-heading')).toHaveText('Not sold in round 1, so out of the game:');
   expect((await ip.locator('#gone-cards li .mono').allTextContents()).map(id => id.trim())).toEqual(goneIds);
+  await expectEffects(ip.locator('#gone-cards'), 'en');
+  await expectOnScreen(ip, ['#open-bidding', '#gone-cards li >> nth=0']);
+  await ip.click('#lang-toggle');
+  await expect(ip.locator('#gone-heading')).toHaveText('Non vendues à la ronde 1, donc hors jeu :');
+  await expectEffects(ip.locator('#gone-cards'), 'fr');
+  await expectIdsWhole(ip);
+  await expectOnScreen(ip, ['#open-bidding', '#gone-cards li >> nth=0']);
 
   await sp.goto(gameUrl('?role=student&lang=en'));
   await studentJoin(sp, code, 2, 'RECCE');
+  // Sibling of FIX 2: the planning guide gives each kind of card's effects in words (it showed codes such as "MOB +2").
+  const categories = [...new Set(CARD_LIST.map(c => c.category))];
+  for (const lang of ['en', 'fr'] as const) {
+    if (lang === 'fr') await sp.click('#lang-toggle');
+    const summary = sp.locator('summary', { hasText: STRINGS[lang]['splan.guide']! });
+    if (!await summary.evaluate(el => (el.parentElement as HTMLDetailsElement).open)) await summary.click();
+    const guide = sp.locator('details[open] table tbody tr');
+    await expect(guide).toHaveCount(categories.length);
+    for (const [i, category] of categories.entries()) {
+      await expect(guide.nth(i).locator('th')).toHaveText(STRINGS[lang][`cat.${category}`]!);
+      await expect(guide.nth(i).locator('td').first()).toHaveText(guideLine(category, lang));
+    }
+  }
+  await sp.click('#lang-toggle');
   await sp.check('#plan-confirm');
   await sp.click('#student-start-auction');
   await confirmDialog(sp);
@@ -36391,6 +36535,15 @@ test('the instructor closes a full round in one click and the student skips to t
   await expect(sp.locator('#next-round')).toHaveCount(0);
   await studentRecord(sp, cards[3]!, prices[3]!);
   await expect(sp.locator('#next-round')).toHaveText('Skip to round 2');
+  // Sibling of FIX 2: the purchases table shows effects the same way (it showed untranslated codes such as "MOB +2").
+  for (const lang of ['en', 'fr'] as const) {
+    if (lang === 'fr') await sp.click('#lang-toggle');
+    const rows = sp.locator('table:has(caption) tbody tr');
+    await expect(rows).toHaveCount(2);
+    for (const [i, id] of [cards[2]!, cards[3]!].entries()) await expect(rows.nth(i).locator('.effects-line')).toHaveText(effectsLine(id, lang));
+    await expectIdsWhole(sp);
+  }
+  await sp.click('#lang-toggle');
   await sp.click('#next-round');
   await expect(sp.locator('#track-heading')).toHaveText('Round 2 · Lot 1 of 10');
   await expect(sp.locator('#next-round')).toHaveCount(0);
@@ -38398,16 +38551,16 @@ Paths: `tests/fixtures/legacy/student-practice.json`. SHA-256 `fbf972503388c8ac6
 
 ### tests/unit/archive.test.ts
 
-Paths: `tests/unit/archive.test.ts`. SHA-256 `aa88f59b4d741d3cfaf80cd1d51ea07e012a21c1b46cb4de0150f812d065dbf4`, 4786 bytes.
+Paths: `tests/unit/archive.test.ts`. SHA-256 `51bf560e0e35ff899918d2cb6e3ba7922621cbb0c09a2f7a17d696496c0643e7`, 5220 bytes.
 
 ```ts
 // G2 item 8: npm run archive:prep -- --apply leaves the smallest folder that restores to the same build. On a fresh
 // clone in a temp dir: install and build, plant what must stay and what may go, apply, then restore by RESTORE.md.
 import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, symlinkSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
-import { describe, expect, it } from 'vitest';
+import { afterAll, describe, expect, it } from 'vitest';
 import { plan, prepare } from '../../scripts/archive-prep.ts';
 import { browsersPath } from '../../scripts/browsers.ts';
 
@@ -38415,7 +38568,12 @@ const ROOT = resolve(import.meta.dirname, '../..');
 const npm = (cwd: string, ...args: string[]) => execFileSync(process.platform === 'win32' ? 'npm.cmd' : 'npm', args, { cwd, stdio: 'pipe', shell: process.platform === 'win32' });
 const hash = (path: string) => createHash('sha256').update(readFileSync(path)).digest('hex');
 // Scratch stays inside the project (MPES C-13): .artifacts/tmp, which archive:prep lists as regenerable.
-const scratch = (prefix: string) => { mkdirSync(join(ROOT, '.artifacts', 'tmp'), { recursive: true }); return mkdtempSync(join(ROOT, '.artifacts', 'tmp', prefix)); };
+// Each test's folder is removed afterwards: 104 clones (29 with node_modules) had piled up, one set per verify
+// (tests/unit/scratch.test.ts).
+const made: string[] = [];
+const scratch = (prefix: string) => { mkdirSync(join(ROOT, '.artifacts', 'tmp'), { recursive: true }); const dir = mkdtempSync(join(ROOT, '.artifacts', 'tmp', prefix)); made.push(dir); return dir; };
+// Links (junctions) are removed as links, never followed, so nothing outside these folders is touched.
+afterAll(() => { for (const dir of made) rmSync(dir, { recursive: true, force: true, maxRetries: 5 }); });
 const put = (path: string, text = 'x') => { mkdirSync(dirname(path), { recursive: true }); writeFileSync(path, text); };
 
 describe('archive:prep', () => {
@@ -38581,22 +38739,25 @@ describe('single-file build (RQ-01, RQ-24, RQ-25, RQ-27)', async () => {
 
 ### tests/unit/codebase.test.ts
 
-Paths: `tests/unit/codebase.test.ts`. SHA-256 `999b9f8ab8b7c1e24145c060d1291d97789969af6ec5a382d6b14f10e48a95fe`, 4244 bytes.
+Paths: `tests/unit/codebase.test.ts`. SHA-256 `a663822ecd3e948fc07a49e5a4c01f4df5af92a1a3b27263e200f63dc2637802`, 4508 bytes.
 
 ```ts
 // G2 item 7: docs/CODEBASE.md rebuilds the tree. This test reads it with its own parser, following only the rules the
 // file states, writes every text file into a temp dir and checks every tracked file's SHA-256 against the repository.
 import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
-import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
-import { describe, expect, it } from 'vitest';
+import { afterAll, describe, expect, it } from 'vitest';
 import { codebase } from '../../scripts/codebase.ts';
 
 const sha = (data: Buffer | string) => createHash('sha256').update(data).digest('hex');
 // Scratch stays inside the project (MPES C-13): .artifacts/tmp, which archive:prep lists as regenerable.
 const TMP = resolve(import.meta.dirname, '../../.artifacts/tmp');
-const scratch = (prefix: string) => { mkdirSync(TMP, { recursive: true }); return mkdtempSync(join(TMP, prefix)); };
+// Removed afterwards, so scratch never piles up (tests/unit/scratch.test.ts).
+const made: string[] = [];
+const scratch = (prefix: string) => { mkdirSync(TMP, { recursive: true }); const dir = mkdtempSync(join(TMP, prefix)); made.push(dir); return dir; };
+afterAll(() => { for (const dir of made) rmSync(dir, { recursive: true, force: true, maxRetries: 5 }); });
 const DOC = readFileSync('docs/CODEBASE.md', 'utf8');
 
 /** Text sections: paths, hash, size and the file content rebuilt from the fenced block. */
@@ -39949,6 +40110,29 @@ describe('stricter state invariants', () => {
 });
 ```
 
+### tests/unit/scratch.test.ts
+
+Paths: `tests/unit/scratch.test.ts`. SHA-256 `4cb44f28bb782807d45907e872c47055f482da2224083ca865ca5bf6719cd9d9`, 967 bytes.
+
+```ts
+// Unit tests that make scratch folders in .artifacts/tmp remove them afterwards: the archive and codebase tests once
+// left 104 clones (29 with node_modules) behind, one set per verify (2026-10-12).
+import { readdirSync, readFileSync } from 'node:fs';
+import { join, resolve } from 'node:path';
+import { describe, expect, it } from 'vitest';
+
+const DIR = resolve(import.meta.dirname);
+
+describe('unit-test scratch', () => {
+  it('every test file that makes a scratch folder removes it in afterAll', () => {
+    const makers = readdirSync(DIR).filter(f => f.endsWith('.ts') && f !== 'scratch.test.ts').map(f => [f, readFileSync(join(DIR, f), 'utf8')] as const)
+      .filter(([, text]) => /mkdtemp(Sync)?\(/.test(text));
+    expect(makers.map(([f]) => f).sort()).toEqual(['archive.test.ts', 'codebase.test.ts']);
+    for (const [f, text] of makers) expect(text, f).toMatch(/afterAll\(\(\) => \{ for \(const dir of made\) rmSync\(dir, \{ recursive: true/);
+  });
+});
+```
+
 ### tests/unit/showcase.test.ts
 
 Paths: `tests/unit/showcase.test.ts`. SHA-256 `4af356e2c3c245fa61d3b62be6b663d5166eb6a3a6fa7a07f828426ef0bb0080`, 4407 bytes.
@@ -41145,7 +41329,7 @@ Keys and the commands that make each kind again:
 | `tests/e2e/visual.spec.ts-snapshots/about-320-chromium-win32.png` | 28853 | `a212f588b8beed5fce31e4b18ea08508bacf7df0a399b01b9de4762bb9668546` | S |
 | `tests/e2e/visual.spec.ts-snapshots/chooser-dark-chromium-win32.png` | 377817 | `a83a0067c4cc8f0ac4e3fbaad6af0f07981e2f5ba92905903b1b2c2552d203c5` | S |
 | `tests/e2e/visual.spec.ts-snapshots/chooser-light-chromium-win32.png` | 405574 | `b9317ca857dfc55ba754956c7ac28e0f6cba4f7b8b322ddcde911cab2c80585b` | S |
-| `tests/e2e/visual.spec.ts-snapshots/instructor-auction-open-paused-chromium-win32.png` | 228500 | `a4fe312b815c9bc859ba62c7fabace3c40f0323f156a162daf80133c6a8966ff` | S |
+| `tests/e2e/visual.spec.ts-snapshots/instructor-auction-open-paused-chromium-win32.png` | 221253 | `578edbae11bb04910a55388308b9b7bc8ab8bcf0f8daec06ce77aa57762989d1` | S |
 | `tests/e2e/visual.spec.ts-snapshots/instructor-build-chromium-win32.png` | 232619 | `aa7463f6cc016a92b7b74f0bcf592aad045aaec21bcc607ec52e63ab1edd59d5` | S |
 | `tests/e2e/visual.spec.ts-snapshots/instructor-closed-chromium-win32.png` | 271457 | `a55a8fbede873b65f4a3e8d794d06f4ee20735e3797099f8283e680207ac6c5e` | S |
 | `tests/e2e/visual.spec.ts-snapshots/instructor-planning-chromium-win32.png` | 206886 | `a8954f58b46943735d47836a562f8d195c9d6ef5776c88be13e604e2cb11896e` | S |
@@ -41168,8 +41352,8 @@ Keys and the commands that make each kind again:
 | `tests/e2e/visual.spec.ts-snapshots/showcase-troop-front-chromium-win32.png` | 77959 | `b1c3043b949b7af77feee79125ac6eb3bdb90331b04a18a46cc4779398df1c3b` | S |
 | `tests/e2e/visual.spec.ts-snapshots/showcase-troop-rear-chromium-win32.png` | 74603 | `eb4e8b2d33d4f3ca705d9e9c001ab653833fda85dad60afff922d701775b2d8a` | S |
 | `tests/e2e/visual.spec.ts-snapshots/showcase-troop-turntable-chromium-win32.png` | 73763 | `0183e591c0efdbe7df676ac7d6ac554d57837945ccdd4acebe3af319f284658a` | S |
-| `tests/e2e/visual.spec.ts-snapshots/student-auction-chromium-win32.png` | 387198 | `862fb5f6204d9c755623d7d51fd05700fadd5fa501c85c9a5aa8af691482a087` | S |
-| `tests/e2e/visual.spec.ts-snapshots/student-build-chromium-win32.png` | 218407 | `304f21f4b777a37cd7f74b100811c7cbc8f2e3adf59427cb723b1b0f8de01e06` | S |
+| `tests/e2e/visual.spec.ts-snapshots/student-auction-chromium-win32.png` | 400071 | `c9d1fbc4563a582791b87a12ac129360726274fd47f5a61b8b536b32f95893f3` | S |
+| `tests/e2e/visual.spec.ts-snapshots/student-build-chromium-win32.png` | 231553 | `8051d3d51d6f75110b487734d0dd6f64ee96652effbf3763b20dc3212bc6d1cd` | S |
 | `tests/e2e/visual.spec.ts-snapshots/student-closed-chromium-win32.png` | 222866 | `b75da5f28ac29f5f88b1463f7f78ff78259808506f6903d77e25e7585ac4bfba` | S |
 | `tests/e2e/visual.spec.ts-snapshots/student-planning-fr-chromium-win32.png` | 281029 | `824925b2e87b71c5d2dadc6ea5dc2b70a1f8953c2c579c92b694541d177cb862` | S |
 | `tests/e2e/visual.spec.ts-snapshots/student-practice-chromium-win32.png` | 235287 | `9a00557825ad355e9da3c135e0a1544666cc67528119af8389273b8560988a16` | S |
@@ -41178,5 +41362,5 @@ Keys and the commands that make each kind again:
 
 | Path | Bytes | SHA-256 | Why |
 |---|---:|---|---|
-| `docs/MPES.md` | 150515 | `bf7bdada0cdb9cda825648ce51ef0f1789bd0afba7ecfb53fecc03c3e4af36eb` | The specification, a clean-room document of its own (Omni 5.1.1 §333). |
+| `docs/MPES.md` | 151838 | `24e88ff8d543430f38a98f3785e2e5943dcda31b15909da811d1a9d7d982fc92` | The specification, a clean-room document of its own (Omni 5.1.1 §333). |
 | `docs/CODEBASE.md` | | | This file. |
