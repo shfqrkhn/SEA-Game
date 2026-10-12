@@ -1,6 +1,6 @@
 # Third-party notices
 
-SEA Game is Copyright (c) 2026 Shafiqur Rahman Khan, its creator, and released under the MIT License (About and licences > Licence).
+SEA Game is released under the MIT License; its copyright notice is in the licence (About and licences > Licence).
 
 The distributed game file bundles one third-party library, three.js (MIT License, below), which draws the interactive vehicle showcase. It bundles no third-party fonts or assets. These notices are also shown in the game under About and licences.
 

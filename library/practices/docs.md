@@ -10,7 +10,7 @@ Write so that another person or agent can resume development, operations and mai
 | Code file (e.g. `docs/CODEBASE.md`) | Every tracked file, text verbatim, binaries by hash; generated, never hand-edited. | A test rebuilds the tree from it and fails when stale. |
 | `docs/verification/<version>.md` | Evidence for each version: every check with command and result, review findings and dispositions. | Text only, never links to CI runs that will disappear. |
 | `docs/owner/*.md` | One-page scripts for anything only a person can do. | Plain words, a few steps, the reply expected. |
-| `README.md`, `THIRD_PARTY_NOTICES.md`, `LICENSE` | Entry point, third-party licences, copyright. | Kept current in the same change. |
+| `README.md`, `THIRD_PARTY_NOTICES.md`, `LICENSE` | Entry point, third-party licences, copyright. | Kept current in the same change. If the owner prefers not to be named, write "Copyright (c) <year> <project> authors" in `LICENSE`, leave the package author empty, and add a test that fails on the owner's name in any tracked file or build output. Keep a copyright line: MIT needs one, and its text already disclaims warranty and liability. |
 
 ## Habits
 

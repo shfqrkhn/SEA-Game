@@ -30,4 +30,4 @@ The two tabs do not connect: in class the instructor announces each result aloud
 
 **Reply** with rough notes, a few lines are fine, or screenshots of anything that looks wrong.
 
-Copyright Shafiqur Rahman Khan. Prototype version 0.5.1.0.
+Prototype version 0.5.1.0.

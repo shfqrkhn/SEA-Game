@@ -55,7 +55,7 @@ test.describe('role chooser over file:// (RQ-01, RQ-19, RQ-20)', () => {
       await page.getByRole('button', { name: 'About and licences' }).click();
       const dialog = page.getByRole('dialog', { name: 'About this game' });
       for (const name of ['Licence', 'Third-party notices']) await dialog.locator('summary', { hasText: name }).click();
-      await expect(dialog).toContainText('Copyright (c) 2026 Shafiqur Rahman Khan');
+      await expect(dialog).toContainText('Copyright (c) 2026 SEA Game authors');
       await expect(dialog).toContainText('Permission is hereby granted, free of charge, to any person obtaining a copy of this software');
       await expect(dialog.locator('pre')).toHaveCount(0);
       await expect(dialog.getByRole('heading', { name: 'three.js 0.186.1' })).toBeVisible();

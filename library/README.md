@@ -2,7 +2,7 @@
 
 Practices, lessons, starter files and a catalogue of candidate free and open-source building blocks (audit the exact version before shipping), drawn from SEA Game and meant for every other project. Copy the whole `library/` folder into a new project (or read it in place); nothing in it depends on SEA Game's code.
 
-Copyright (c) 2026 Shafiqur Rahman Khan. MIT licence: see `LICENSE` in this folder, which travels with it. Third-party material is only referenced here, with its own licence (see `catalogue.md`).
+MIT licence: see `LICENSE` in this folder, which travels with it. Third-party material is only referenced here, with its own licence (see `catalogue.md`).
 
 ## Contents
 

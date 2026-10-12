@@ -1,9 +1,10 @@
-import { readFileSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
+import { existsSync, readFileSync } from 'node:fs';
 import { inflateRawSync } from 'node:zlib';
 import { describe, expect, it } from 'vitest';
 import { MAX_BYTES, MODELS_DIR, RENDERS_DIR, render, sha256 } from '../../build/render.ts';
 
-const COPYRIGHT = 'Copyright (c) 2026 Shafiqur Rahman Khan';
+const COPYRIGHT = 'Copyright (c) 2026 SEA Game authors';
 
 describe('single-file build (RQ-01, RQ-24, RQ-25, RQ-27)', async () => {
   const html = await render();
@@ -53,15 +54,20 @@ describe('single-file build (RQ-01, RQ-24, RQ-25, RQ-27)', async () => {
     expect(html).toContain(COPYRIGHT);
     expect(Buffer.byteLength(html)).toBeLessThanOrEqual(MAX_BYTES);
   });
-  // The owner is the creator and sole copyright holder (G2): the licence, the notices, the package and the About text.
-  it('names the creator as copyright holder everywhere', () => {
-    expect(readFileSync('LICENSE', 'utf8')).toContain(COPYRIGHT);
-    expect(readFileSync('LICENSE', 'utf8')).not.toContain('contributors');
-    expect(readFileSync('THIRD_PARTY_NOTICES.md', 'utf8')).toContain(COPYRIGHT);
-    expect((JSON.parse(readFileSync('package.json', 'utf8')) as { author: string }).author).toBe('Shafiqur Rahman Khan');
+  // No personal name anywhere in the game or its sources (owner, 2026-10-12): the licence names "SEA Game authors",
+  // the package has no author, and no tracked file or the built game holds the owner's name or handle.
+  it('names no person: the licence names SEA Game authors', () => {
+    for (const file of ['LICENSE', 'library/LICENSE']) expect(readFileSync(file, 'utf8'), file).toContain(COPYRIGHT);
+    expect((JSON.parse(readFileSync('package.json', 'utf8')) as { author?: string }).author).toBeUndefined();
+    const name = new RegExp(['sha' + 'fiq', 'rah' + 'man khan'].join('|'), 'i'); // split so this file does not match itself
+    const tracked = execFileSync('git', ['ls-files', '-z'], { encoding: 'utf8' }).split(String.fromCharCode(0))
+      .filter(file => file && file !== 'docs/CODEBASE.md' && existsSync(file) && !/\.(png|avif|glb|zip|blend)$/.test(file));
+    for (const file of tracked) expect(name.test(readFileSync(file, 'utf8')), file).toBe(false);
+    expect(name.test(html), 'dist/index.html').toBe(false);
+    expect(new RegExp('shfq' + 'rkhn', 'i').test(html), 'dist/index.html').toBe(false);
     for (const lang of ['en', 'fr']) {
       const strings = JSON.parse(readFileSync(`content/strings.${lang}.json`, 'utf8')) as Record<string, string>;
-      expect(strings['about.body'], lang).toContain('© 2026 Shafiqur Rahman Khan');
+      expect(strings['about.body'], lang).toContain('MIT');
     }
   });
   it('embeds the committed renders once, as an inert JSON block of AVIF data URIs matching the manifest (MPES §11)', () => {

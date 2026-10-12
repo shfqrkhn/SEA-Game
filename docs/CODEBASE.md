@@ -159,12 +159,12 @@ Read `AGENTS.md`, then `docs/HANDOVER.md`. The specification is `docs/MPES.md`.
 
 ### LICENSE
 
-Paths: `LICENSE`, `library/LICENSE`. SHA-256 `e37ef0fc82d67ef6e3c7af8f832b68d4389deed330ec104038ef26e8507a8792`, 1081 bytes.
+Paths: `LICENSE`, `library/LICENSE`. SHA-256 `1153bdfa65d61833d2430a7e84551be6f4cec5b84dedd36c29b2d090eb4edd98`, 1077 bytes.
 
 ```text
 The MIT License
 
-Copyright (c) 2026 Shafiqur Rahman Khan
+Copyright (c) 2026 SEA Game authors
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -187,7 +187,7 @@ THE SOFTWARE.
 
 ### README.md
 
-Paths: `README.md`. SHA-256 `0749c0896a04d8e670cc0ee78190510f71d5d74f89078896a4947a31794acda8`, 3334 bytes.
+Paths: `README.md`. SHA-256 `72c9ed6ba0491ccd7a2d511e8fab1c2ae9df530ae64984b9453ae8749374bf07`, 3317 bytes.
 
 ````markdown
 # SEA Game: Systems Engineering Awareness
@@ -196,7 +196,7 @@ A bilingual (English/French) classroom auction game. Teams plan a vehicle for a 
 
 - **Play:** open the game file (`SEA-Game-<version>.html` in a release package, or `dist/index.html` after a build) in a current Chrome, Edge or Firefox on **Windows 11** (the only supported platform). No installation, no network, no account.
 - **Status:** 0.5.1.0 beta, tagged `v0.5.1.0` when its PR merges (G2: owner fixes, six-vehicle chooser, muzzle sightline check, component legibility rules, review gallery, code-free specification, codebase file, backup preparation); not yet release-qualified. Next: G3 (proxy and runtime, 0.6.0.0). The rollback is tag `v4.1.0-dev.1`.
-- **Copyright:** (c) 2026 Shafiqur Rahman Khan, the creator.
+- **Licence:** MIT, see [LICENSE](LICENSE).
 - **Specification:** [docs/MPES.md](docs/MPES.md). **Current state and next steps:** [docs/HANDOVER.md](docs/HANDOVER.md). **Working rules:** [AGENTS.md](AGENTS.md).
 - **Guides:** [classroom quick start](docs/CLASSROOM_QUICK_START.md), [recovery guide](docs/RECOVERY_GUIDE.md).
 
@@ -247,12 +247,12 @@ Original code and imagery: [MIT](LICENSE). The game file bundles one third-party
 
 ### THIRD_PARTY_NOTICES.md
 
-Paths: `THIRD_PARTY_NOTICES.md`. SHA-256 `19e027e5bade27eaafad30e9185bcc22cda7e47f20769b2156b82695e704b4c2`, 2146 bytes.
+Paths: `THIRD_PARTY_NOTICES.md`. SHA-256 `d48e77b12f12b43d03fa5bfa176ec6952c08184afb2c392855a800abd527e97a`, 2128 bytes.
 
 ```markdown
 # Third-party notices
 
-SEA Game is Copyright (c) 2026 Shafiqur Rahman Khan, its creator, and released under the MIT License (About and licences > Licence).
+SEA Game is released under the MIT License; its copyright notice is in the licence (About and licences > Licence).
 
 The distributed game file bundles one third-party library, three.js (MIT License, below), which draws the interactive vehicle showcase. It bundles no third-party fonts or assets. These notices are also shown in the game under About and licences.
 
@@ -25960,7 +25960,7 @@ Paths: `content/renders/manifest.json`. SHA-256 `6525544fa7b2c0b623e3970093ba2ef
 
 ### content/strings.en.json
 
-Paths: `content/strings.en.json`. SHA-256 `499d5d0596644ee62affbe61485c79593411f22004b86b8bc060502a52fbc45d`, 20639 bytes.
+Paths: `content/strings.en.json`. SHA-256 `6ec300860973357089fe02003a74b095161573b63d55d5267933a0dc1fe39f4d`, 20596 bytes.
 
 ```json
 {
@@ -25986,7 +25986,7 @@ Paths: `content/strings.en.json`. SHA-256 `499d5d0596644ee62affbe61485c79593411f
   "chooser.still.MINE": "Mine clearing vehicle with a front mine roller and a remote weapon station",
   "about.open": "About and licences",
   "about.title": "About this game",
-  "about.body": "SEA Game {version}, © 2026 Shafiqur Rahman Khan, its creator. Original code and illustrations are MIT licensed. All values are instructional, not real equipment data. The game makes no network connections.",
+  "about.body": "SEA Game {version}. Original code and illustrations are MIT licensed. All values are instructional, not real equipment data. The game makes no network connections.",
   "about.licence": "Licence",
   "about.notices": "Third-party notices",
   "about.close": "Close",
@@ -26358,7 +26358,7 @@ Paths: `content/strings.en.json`. SHA-256 `499d5d0596644ee62affbe61485c79593411f
 
 ### content/strings.fr.json
 
-Paths: `content/strings.fr.json`. SHA-256 `52903f6b9dbde9afaeabbc31e39a20e0b10a893a1ee991f459dd197dd25bd1cb`, 23651 bytes.
+Paths: `content/strings.fr.json`. SHA-256 `bd129e41ca4214b29e09b51a273247c2240eca93216f4fe31dd523cbbc278fcd`, 23606 bytes.
 
 ```json
 {
@@ -26384,7 +26384,7 @@ Paths: `content/strings.fr.json`. SHA-256 `52903f6b9dbde9afaeabbc31e39a20e0b10a8
   "chooser.still.MINE": "Véhicule de déminage avec un rouleau de déminage avant et un tourelleau téléopéré",
   "about.open": "À propos et licences",
   "about.title": "À propos de ce jeu",
-  "about.body": "SEA Game {version}, © 2026 Shafiqur Rahman Khan, son créateur. Le code et les illustrations originaux sont sous licence MIT. Toutes les valeurs sont pédagogiques et ne décrivent aucun équipement réel. Le jeu n’établit aucune connexion réseau.",
+  "about.body": "SEA Game {version}. Le code et les illustrations originaux sont sous licence MIT. Toutes les valeurs sont pédagogiques et ne décrivent aucun équipement réel. Le jeu n’établit aucune connexion réseau.",
   "about.licence": "Licence",
   "about.notices": "Avis de tiers",
   "about.close": "Fermer",
@@ -26842,7 +26842,7 @@ Exportez une sauvegarde par **Menu → Exporter une sauvegarde** après la confi
 
 ### docs/HANDOVER.md
 
-Paths: `docs/HANDOVER.md`. SHA-256 `be4fa0adb4f614d3ec134238eb4718fd3c8f3286a7a8109d553a746df7058f32`, 9158 bytes.
+Paths: `docs/HANDOVER.md`. SHA-256 `c229b85ae4b3a449448fa9e10b547a3360af3bcb8b4d871d268769c145a770e9`, 9255 bytes.
 
 ```markdown
 # Handover
@@ -26871,7 +26871,7 @@ Shared rules for every goal: `AGENTS.md`. KPIs and priority: MPES §1.4.
 - **Game:** all of MPES §6 for both roles, all eight phases, EN/FR, schema-3 saves and backups, private entry, degraded states. Legacy 4.1 backups import.
 - **V2:** war-room HUD on every view with a projector theme; setup defaults first; bid increment chosen at setup; live lot fits 1280×720; debrief chart and questions; `dist/` not committed, `npm run check` compares two builds, CI deploys `main` to Pages for QA only.
 - **G2:**
-  - copyright "Copyright (c) 2026 Shafiqur Rahman Khan" in `LICENSE`, About and `package.json` (`tests/unit/build.test.ts`);
+  - no personal name in the game or its sources (owner, 2026-10-12): `LICENSE` and `library/LICENSE` read "Copyright (c) 2026 SEA Game authors", `package.json` has no author (`tests/unit/build.test.ts` "names no person");
   - About shows the licence and notices reflowed (`source/ui/reflow.ts`, `tests/unit/reflow.test.ts`, visual baselines at 1366×768 and 320 px);
   - the chooser shows all six vehicles as a lineup of hero stills, selected one large, keyboard and touch, EN/FR (`tests/e2e/chooser.spec.ts`, visual baselines);
   - `DecodedImages` never evicts an image on screen or a prepared one (`tests/unit/showcase.test.ts`);
@@ -27000,7 +27000,7 @@ Rough notes are fine. The agent turns them into changes and asks for nothing els
 
 ### docs/owner/instructor-review.md
 
-Paths: `docs/owner/instructor-review.md`. SHA-256 `eba9a2731edde88f0c2e10406392fc9a686088583bce57dc0bf8927568f0792b`, 2470 bytes.
+Paths: `docs/owner/instructor-review.md`. SHA-256 `11da86de8fa82864a4a5e2670b9c0cda71a8bbd4c142dbd16ed2f447cb9b75e0`, 2438 bytes.
 
 ```markdown
 # Instructor review of the prototype (about 20 minutes)
@@ -27035,7 +27035,7 @@ The two tabs do not connect: in class the instructor announces each result aloud
 
 **Reply** with rough notes, a few lines are fine, or screenshots of anything that looks wrong.
 
-Copyright Shafiqur Rahman Khan. Prototype version 0.5.1.0.
+Prototype version 0.5.1.0.
 ```
 
 ### docs/verification/0.5.0.0.md
@@ -27200,7 +27200,7 @@ The three Firefox failures are browser-internal and appeared only under full loc
 
 ### docs/verification/0.5.1.0.md
 
-Paths: `docs/verification/0.5.1.0.md`. SHA-256 `38300e3551ec739e28914ce21c2e85a8d4e9fce43f89316dcbc9efc0ac6b7f11`, 31042 bytes.
+Paths: `docs/verification/0.5.1.0.md`. SHA-256 `bdf56e40587133cf1644a56c55340e84514532354e63bb13a610dfe18676aa83`, 32277 bytes.
 
 ```markdown
 # Verification record: 0.5.1.0 beta (goal G2)
@@ -27211,7 +27211,7 @@ Goal G2: owner fixes and the documentation regime. Branch `goal2b/foundation`, f
 
 | Item | What | Test | Result |
 |---|---|---|---|
-| 1 | "Copyright (c) 2026 Shafiqur Rahman Khan" in `LICENSE`, About, `package.json` author, notices | `tests/unit/build.test.ts` | PASS |
+| 1 | Copyright notice in `LICENSE`, About and notices (superseded 2026-10-12: no personal name, see "Owner request: no name") | `tests/unit/build.test.ts` | PASS |
 | 2 | About licence and notices reflowed for display; files verbatim | `tests/unit/reflow.test.ts`; `tests/e2e/visual.spec.ts` at 1366×768 and 320 px | PASS |
 | 3 | Chooser shows all six vehicles: lineup of hero stills, selected one large, keyboard and touch, EN/FR | `tests/e2e/chooser.spec.ts`, `tests/e2e/visual.spec.ts` | PASS |
 | 4 | `npm run gallery`: every view, both roles, EN/FR, laptop and projector, six vehicles in stills and 3D | `tests/unit/gallery.test.ts`; the page `.artifacts/review/0.5.1.0.html` | PASS; owner GO: see below |
@@ -27390,6 +27390,10 @@ Real learners (S3); Narrator and NVDA users; no physical laptop test (D-16); CI 
 ## Showcase still baselines after the mirror change (2026-10-12)
 
 `npm run verify` failed five `visual.spec.ts` "showcase stills" tests (COMBAT, RECCE, TROOP, COMMAND, MINE; 0.04 to 0.05 of pixels). Expected and actual images were compared side by side: the only change is the lowered drivers' mirrors, and the side view's framing moved a few pixels because the mirrors were its highest point. RECOVERY passed, since its crane sets its framing. The five baselines were regenerated with `npx playwright test tests/e2e/visual.spec.ts --project=chromium -g "showcase stills" --update-snapshots` (6 passed), then `npm run verify` was run again.
+
+## Owner request: no name (2026-10-12)
+
+The owner asked first for their name to be less prominent, then for it to be removed completely from the game. Every tracked file and the built game now name no person: `LICENSE` and `library/LICENSE` read "Copyright (c) 2026 SEA Game authors" (an MIT grant still needs a copyright notice, so the line stays without a personal name); `package.json` has no author; the About paragraph (EN and FR), notices, README, instructor guide and library prose say only that the work is MIT licensed. The MIT text already disclaims warranty and liability for the authors. Earlier commits and `docs/CODEBASE.md` history in git still hold the name; rewriting history needs the owner's decision (§20) and is not done. Check first: `tests/unit/build.test.ts` "names no person: the licence names SEA Game authors" failed on `LICENSE`, then passed after the edit. `npm run verify` then failed only `visual.spec.ts` "about dialog, licence and notices open, 320 px": expected and actual were compared and differ only by the shorter About paragraph and licence line shifting the layout; that baseline was regenerated (`--update-snapshots -g "about dialog"`) and `npm run verify` re-run.
 
 ## Reusable library review (Codex GPT-6.1 Sol, medium, read-only, 2026-10-12)
 
@@ -27743,14 +27747,14 @@ Each entry: what happened, the rule it produced, and the check that now enforces
 
 ### library/README.md
 
-Paths: `library/README.md`. SHA-256 `f8b5998e98de9ca5bded82b3a5727a3149cc63efa4bc9a337fe7bf9971c43126`, 2824 bytes.
+Paths: `library/README.md`. SHA-256 `85d328041fb9846604a555e412179e731589481498b1822d66e159678d4a7534`, 2783 bytes.
 
 ```markdown
 # Reusable library
 
 Practices, lessons, starter files and a catalogue of candidate free and open-source building blocks (audit the exact version before shipping), drawn from SEA Game and meant for every other project. Copy the whole `library/` folder into a new project (or read it in place); nothing in it depends on SEA Game's code.
 
-Copyright (c) 2026 Shafiqur Rahman Khan. MIT licence: see `LICENSE` in this folder, which travels with it. Third-party material is only referenced here, with its own licence (see `catalogue.md`).
+MIT licence: see `LICENSE` in this folder, which travels with it. Third-party material is only referenced here, with its own licence (see `catalogue.md`).
 
 ## Contents
 
@@ -28158,7 +28162,7 @@ The final deliverable is a local package that does not depend on any hosting: a 
 
 ### library/practices/docs.md
 
-Paths: `library/practices/docs.md`. SHA-256 `376aa246d362c251ab74d9fbe6f17d2efad7ab99ce9cc30c2b4fe040f50502e2`, 1713 bytes.
+Paths: `library/practices/docs.md`. SHA-256 `78248a8457e224eaa684070375dfbfe211ad5c6e6f42b83302a277f2ee487f54`, 2020 bytes.
 
 ```markdown
 # Documents that keep a project alive
@@ -28173,7 +28177,7 @@ Write so that another person or agent can resume development, operations and mai
 | Code file (e.g. `docs/CODEBASE.md`) | Every tracked file, text verbatim, binaries by hash; generated, never hand-edited. | A test rebuilds the tree from it and fails when stale. |
 | `docs/verification/<version>.md` | Evidence for each version: every check with command and result, review findings and dispositions. | Text only, never links to CI runs that will disappear. |
 | `docs/owner/*.md` | One-page scripts for anything only a person can do. | Plain words, a few steps, the reply expected. |
-| `README.md`, `THIRD_PARTY_NOTICES.md`, `LICENSE` | Entry point, third-party licences, copyright. | Kept current in the same change. |
+| `README.md`, `THIRD_PARTY_NOTICES.md`, `LICENSE` | Entry point, third-party licences, copyright. | Kept current in the same change. If the owner prefers not to be named, write "Copyright (c) <year> <project> authors" in `LICENSE`, leave the package author empty, and add a test that fails on the owner's name in any tracked file or build output. Keep a copyright line: MIT needs one, and its text already disclaims warranty and liability. |
 
 ## Habits
 
@@ -28282,10 +28286,10 @@ Three-point lighting (Blender manual), PBR reflection (pbr-book.org), tone mappi
 
 ### library/ui/tokens.css
 
-Paths: `library/ui/tokens.css`. SHA-256 `015d7d360d37ecd101c7da84898a449e47533087a430430170e4e32e71faaac8`, 3116 bytes.
+Paths: `library/ui/tokens.css`. SHA-256 `14887a0e6e3f26f799f9bc6d3bd89c2d8a96bf347584a8d2106a48f20b797099`, 3104 bytes.
 
 ```css
-/* Reusable theme tokens (library 0.1.0, from SEA Game 0.5.1.0). Copyright (c) 2026 Shafiqur Rahman Khan, MIT.
+/* Reusable theme tokens (library 0.1.0, from SEA Game 0.5.1.0). MIT licence, see library/LICENSE.
    Two themes: dark "war-room" (default, screens) and light "projector" (bright rooms), switched with
    <html data-theme="light">. Contrast against --surface (WCAG 2.x ratio), measured 2026-10-12:
      dark : ink 14.7, muted 8.4, accent 11.4, ok 10.8, warn 9.9, bad 8.1, focus 12.3, field-line 3.5, line 1.7
@@ -32383,7 +32387,7 @@ Paths: `package-lock.json`. SHA-256 `c24390aa6610c5dba6d38f8dd7b46bc35c792e5a0c8
 
 ### package.json
 
-Paths: `package.json`. SHA-256 `1778a4285131a9f7170861ea17a3487511fafa2726767fc148d3db4e705b383c`, 1506 bytes.
+Paths: `package.json`. SHA-256 `e53f1618d1cdcc10df5b84a165ad49ee458c240b8170f73dd0afe5eddb6db877`, 1470 bytes.
 
 ```json
 {
@@ -32393,7 +32397,6 @@ Paths: `package.json`. SHA-256 `1778a4285131a9f7170861ea17a3487511fafa2726767fc1
   "private": true,
   "description": "Systems Engineering Awareness: offline single-file classroom auction game (EN/FR)",
   "license": "MIT",
-  "author": "Shafiqur Rahman Khan",
   "type": "module",
   "engines": {
     "node": ">=22"
@@ -37932,7 +37935,7 @@ for (const lang of ['en', 'fr'] as const) {
 
 ### tests/e2e/chooser.spec.ts
 
-Paths: `tests/e2e/chooser.spec.ts`. SHA-256 `c1d5403358ab9d81f278461be943dfbafff61e9f36929f6c4cc5d7e502385a7a`, 10618 bytes.
+Paths: `tests/e2e/chooser.spec.ts`. SHA-256 `58413637d2032b708cba57e70ab2c8ffa382d663564a1e451586d96a1674948d`, 10614 bytes.
 
 ```ts
 import { expect, test } from '@playwright/test';
@@ -37992,7 +37995,7 @@ test.describe('role chooser over file:// (RQ-01, RQ-19, RQ-20)', () => {
       await page.getByRole('button', { name: 'About and licences' }).click();
       const dialog = page.getByRole('dialog', { name: 'About this game' });
       for (const name of ['Licence', 'Third-party notices']) await dialog.locator('summary', { hasText: name }).click();
-      await expect(dialog).toContainText('Copyright (c) 2026 Shafiqur Rahman Khan');
+      await expect(dialog).toContainText('Copyright (c) 2026 SEA Game authors');
       await expect(dialog).toContainText('Permission is hereby granted, free of charge, to any person obtaining a copy of this software');
       await expect(dialog.locator('pre')).toHaveCount(0);
       await expect(dialog.getByRole('heading', { name: 'three.js 0.186.1' })).toBeVisible();
@@ -40371,15 +40374,16 @@ describe('archive:prep', () => {
 
 ### tests/unit/build.test.ts
 
-Paths: `tests/unit/build.test.ts`. SHA-256 `ed65846a591dedb7ff0e64660dc6adfd66bd10731d3179f4c716821ac45fb2bf`, 5754 bytes.
+Paths: `tests/unit/build.test.ts`. SHA-256 `95bdeb793185ef39f1e6431aaa3236f0c85c92a0855f2fddec3b011a57f7bbb3`, 6383 bytes.
 
 ```ts
-import { readFileSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
+import { existsSync, readFileSync } from 'node:fs';
 import { inflateRawSync } from 'node:zlib';
 import { describe, expect, it } from 'vitest';
 import { MAX_BYTES, MODELS_DIR, RENDERS_DIR, render, sha256 } from '../../build/render.ts';
 
-const COPYRIGHT = 'Copyright (c) 2026 Shafiqur Rahman Khan';
+const COPYRIGHT = 'Copyright (c) 2026 SEA Game authors';
 
 describe('single-file build (RQ-01, RQ-24, RQ-25, RQ-27)', async () => {
   const html = await render();
@@ -40429,15 +40433,20 @@ describe('single-file build (RQ-01, RQ-24, RQ-25, RQ-27)', async () => {
     expect(html).toContain(COPYRIGHT);
     expect(Buffer.byteLength(html)).toBeLessThanOrEqual(MAX_BYTES);
   });
-  // The owner is the creator and sole copyright holder (G2): the licence, the notices, the package and the About text.
-  it('names the creator as copyright holder everywhere', () => {
-    expect(readFileSync('LICENSE', 'utf8')).toContain(COPYRIGHT);
-    expect(readFileSync('LICENSE', 'utf8')).not.toContain('contributors');
-    expect(readFileSync('THIRD_PARTY_NOTICES.md', 'utf8')).toContain(COPYRIGHT);
-    expect((JSON.parse(readFileSync('package.json', 'utf8')) as { author: string }).author).toBe('Shafiqur Rahman Khan');
+  // No personal name anywhere in the game or its sources (owner, 2026-10-12): the licence names "SEA Game authors",
+  // the package has no author, and no tracked file or the built game holds the owner's name or handle.
+  it('names no person: the licence names SEA Game authors', () => {
+    for (const file of ['LICENSE', 'library/LICENSE']) expect(readFileSync(file, 'utf8'), file).toContain(COPYRIGHT);
+    expect((JSON.parse(readFileSync('package.json', 'utf8')) as { author?: string }).author).toBeUndefined();
+    const name = new RegExp(['sha' + 'fiq', 'rah' + 'man khan'].join('|'), 'i'); // split so this file does not match itself
+    const tracked = execFileSync('git', ['ls-files', '-z'], { encoding: 'utf8' }).split(String.fromCharCode(0))
+      .filter(file => file && file !== 'docs/CODEBASE.md' && existsSync(file) && !/\.(png|avif|glb|zip|blend)$/.test(file));
+    for (const file of tracked) expect(name.test(readFileSync(file, 'utf8')), file).toBe(false);
+    expect(name.test(html), 'dist/index.html').toBe(false);
+    expect(new RegExp('shfq' + 'rkhn', 'i').test(html), 'dist/index.html').toBe(false);
     for (const lang of ['en', 'fr']) {
       const strings = JSON.parse(readFileSync(`content/strings.${lang}.json`, 'utf8')) as Record<string, string>;
-      expect(strings['about.body'], lang).toContain('© 2026 Shafiqur Rahman Khan');
+      expect(strings['about.body'], lang).toContain('MIT');
     }
   });
   it('embeds the committed renders once, as an inert JSON block of AVIF data URIs matching the manifest (MPES §11)', () => {
@@ -43061,7 +43070,7 @@ Keys and the commands that make each kind again:
 | `content/renders/troop-carrier-turntable-22.avif` | 24826 | `f15aa4520482c7fe55a0154cfa822fa37d57c04d190691ab3cb6802d39d8007b` | R |
 | `content/renders/troop-carrier-turntable-23.avif` | 23447 | `13c0df5b14955b03374fc2c006fb2245ffb330bbca6b6d9a1b8267f1edf2fc6a` | R |
 | `tests/e2e/visual.spec.ts-snapshots/about-1366-chromium-win32.png` | 69482 | `5daf6ca3e32b5c761787ef787a9d55c813f8fe715d238420b387dca5d40d1dfa` | S |
-| `tests/e2e/visual.spec.ts-snapshots/about-320-chromium-win32.png` | 28853 | `a212f588b8beed5fce31e4b18ea08508bacf7df0a399b01b9de4762bb9668546` | S |
+| `tests/e2e/visual.spec.ts-snapshots/about-320-chromium-win32.png` | 28836 | `1a982b60d287ed71dafd5d2d10ef20b2fb3c8b4eb0f0f249ce21b0452161063d` | S |
 | `tests/e2e/visual.spec.ts-snapshots/chooser-dark-chromium-win32.png` | 377817 | `a83a0067c4cc8f0ac4e3fbaad6af0f07981e2f5ba92905903b1b2c2552d203c5` | S |
 | `tests/e2e/visual.spec.ts-snapshots/chooser-light-chromium-win32.png` | 405574 | `b9317ca857dfc55ba754956c7ac28e0f6cba4f7b8b322ddcde911cab2c80585b` | S |
 | `tests/e2e/visual.spec.ts-snapshots/instructor-auction-open-paused-chromium-win32.png` | 221253 | `578edbae11bb04910a55388308b9b7bc8ab8bcf0f8daec06ce77aa57762989d1` | S |
@@ -43097,5 +43106,5 @@ Keys and the commands that make each kind again:
 
 | Path | Bytes | SHA-256 | Why |
 |---|---:|---|---|
-| `docs/MPES.md` | 164869 | `b7accb6c21f8c102634c117a5f6dc5d32c529bce73bbbd3b0adfd5316d6c8625` | The specification, a clean-room document of its own (Omni 5.1.1 §333). |
+| `docs/MPES.md` | 165023 | `039b2ac4daebfa5ef378d02cd93b305e89e2bd0b7b1c15bc1a3bad643a3bad10` | The specification, a clean-room document of its own (Omni 5.1.1 §333). |
 | `docs/CODEBASE.md` | | | This file. |

@@ -24,7 +24,7 @@ Shared rules for every goal: `AGENTS.md`. KPIs and priority: MPES §1.4.
 - **Game:** all of MPES §6 for both roles, all eight phases, EN/FR, schema-3 saves and backups, private entry, degraded states. Legacy 4.1 backups import.
 - **V2:** war-room HUD on every view with a projector theme; setup defaults first; bid increment chosen at setup; live lot fits 1280×720; debrief chart and questions; `dist/` not committed, `npm run check` compares two builds, CI deploys `main` to Pages for QA only.
 - **G2:**
-  - copyright "Copyright (c) 2026 Shafiqur Rahman Khan" in `LICENSE`, About and `package.json` (`tests/unit/build.test.ts`);
+  - no personal name in the game or its sources (owner, 2026-10-12): `LICENSE` and `library/LICENSE` read "Copyright (c) 2026 SEA Game authors", `package.json` has no author (`tests/unit/build.test.ts` "names no person");
   - About shows the licence and notices reflowed (`source/ui/reflow.ts`, `tests/unit/reflow.test.ts`, visual baselines at 1366×768 and 320 px);
   - the chooser shows all six vehicles as a lineup of hero stills, selected one large, keyboard and touch, EN/FR (`tests/e2e/chooser.spec.ts`, visual baselines);
   - `DecodedImages` never evicts an image on screen or a prepared one (`tests/unit/showcase.test.ts`);
