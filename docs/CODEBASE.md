@@ -1,6 +1,6 @@
 # SEA Game codebase
 
-Version 0.5.1.0. Written by `npm run codebase` (scripts/codebase.ts); do not edit by hand. It holds all 1011 tracked files of the repository: 155 text files as 153 unique contents, 854 binary files by hash with the command that regenerates them, and 2 documents kept separately. With docs/MPES.md it is enough to rebuild the project.
+Version 0.5.1.0. Written by `npm run codebase` (scripts/codebase.ts); do not edit by hand. It holds all 1013 tracked files of the repository: 157 text files as 155 unique contents, 854 binary files by hash with the command that regenerates them, and 2 documents kept separately. With docs/MPES.md it is enough to rebuild the project.
 
 ## How to rebuild the tree
 
@@ -120,7 +120,7 @@ RESTORE.md
 
 ### AGENTS.md
 
-Paths: `AGENTS.md`. SHA-256 `b6c960468c4131d12e87691ee79bbe7b0d6e8513937103be02d29b801574facd`, 6345 bytes.
+Paths: `AGENTS.md`. SHA-256 `488e982170ea9f33ecb02d3193de95876e61a1f623dfe48d0ebf01bf62eedd30`, 6407 bytes.
 
 ```markdown
 # Working rules for agents and maintainers
@@ -142,7 +142,7 @@ Paths: `AGENTS.md`. SHA-256 `b6c960468c4131d12e87691ee79bbe7b0d6e8513937103be02d
 15. Never ask the owner a question, except the visual check (rule 19). Anything else only a person can do is reported as BLOCKED-owner, with a script of one page or less in `docs/owner/`.
 16. When KPIs conflict (MPES §1.4): teaching and reliability come first, then learnability and workload, then performance and any-classroom (floors that are never traded away), then realism, then maintainability. Every effect must teach or confirm something.
 17. Every change bumps the game version by its scale, with a changelog row in the same PR. The game version is four-part `MAJOR.MINOR.PATCH.BUILD` (`gameVersion` in `package.json`; `version` holds the first three parts because npm needs SemVer): MAJOR for a break or for leaving beta (0.x is beta; 1.0.0.0 only when every beta exit criterion in MPES §19.2 holds, never earlier, whatever the milestone), MINOR for a feature or milestone, PATCH for a fix, BUILD for a change that alters no behaviour (tests, docs, tooling, CI). The specification bumps MPES by SemVer. A version that is not yet tagged is not bumped again; tags are `v<gameVersion>`.
-18. Documents that rebuild the project, kept current in the same PR as any change: `docs/MPES.md` (the specification, no code at all: prose and tables only, alone enough for a clean-room rebuild; `tests/unit/mpes.test.ts` checks it) and `docs/CODEBASE.md` (every tracked file, written by `npm run codebase`, never by hand; `tests/unit/codebase.test.ts` rebuilds the tree from it and fails when it is out of date, so run `npm run codebase` after the last edit and before committing).
+18. Documents that rebuild the project, kept current in the same PR as any change: `docs/MPES.md` (the specification, no code at all: prose and tables only, alone enough for a clean-room rebuild; `tests/unit/mpes.test.ts` checks it) and `docs/CODEBASE.md` (every tracked file, written by `npm run codebase`, never by hand; `tests/unit/codebase.test.ts` rebuilds the tree from it and fails when it is out of date, so run `npm run codebase` after the last edit and after `git add` of any new file, since it lists only tracked files, then commit).
 19. Visual check at each goal close: `npm run gallery` (`-- --since <tag>`, default the latest tag; `--notes <file>` adds an intro) builds this checkout and the tag and writes `.artifacts/review/<gameVersion>.html`, every view of both roles in EN and FR on the laptop and the projector, and the six vehicles in stills and 3D, changed shots beside their before. Send it to the owner and ask GO or FIX; repeat until GO before merging.
 20. Cleanup and backup: `npm run archive:prep` is a dry run that lists the regenerable folders (packages, builds, browsers, caches, the Blender download, gallery captures) with sizes. Only when the owner asks for a cleanup run `npm run archive:prep -- --apply`: it removes exactly those (never a tracked file, never through a link), keeps everything irreplaceable (git history, sources, content, render masters, models, concepts, logs and evidence, `_archive/`) and writes `RESTORE.md` with the steps back (`npm ci`, browsers, build, its SHA-256, verify). `tests/unit/archive.test.ts` applies and restores a fresh clone to the same build hash.
 21. Codex (the owner's ChatGPT subscription) raises quality: concept, texture and decal images, Blender modelling, an independent review of each diff, gallery and French text. Its CLI is not on PATH: `$codex = (Get-AppxPackage OpenAI.Codex).InstallLocation + '\app\resources\codex.exe'`. Run it headless in an empty work folder under `.artifacts/` with stdin closed (otherwise it waits on "Reading additional input from stdin"): from PowerShell, `cmd /c "`"$codex`" exec -m gpt-6.1-sol -c model_reasoning_effort=medium --skip-git-repo-check -s workspace-write -C <dir> [-i <reference.png>] `"<prompt>`" < NUL"` (PowerShell has no `<` redirection; Git Bash: `< /dev/null`). The prompt must hold no double quote, or cmd splits it ("unexpected argument"). For a review, pass the diff as a file in `<dir>` and ask for findings only. For an image, ask it to generate exactly one image and copy the PNG into the folder as `out.png` (images also land in `~/.codex/generated_images/`, about 1.5 minutes each); `node art/tools/concepts.ts` batches concept images. Always name the model and effort: GPT-6.1 Sol, medium, for every job until the owner says otherwise (owner, 2026-10-11). Verify everything it returns (rule 6); one Codex or Blender job at a time (rule 11).
@@ -930,6 +930,312 @@ def main():
     os.makedirs(a.out, exist_ok=True)
     for stem in filter(None, a.vehicles.split(',')):
         export(stem, a.out)
+
+
+if __name__ == '__main__':
+    main()
+```
+
+### art/blender/fit.py
+
+Paths: `art/blender/fit.py`. SHA-256 `e6ebd523b2bde44b9c0f44d76cde2defce2b1980f7fd8575f79727fa1fe905ae`, 13942 bytes.
+
+```python
+"""Fit check: every part must sit where it could physically be fitted (MPES §10.2).
+
+    blender -b --factory-startup -P fit.py -- [--vehicles combat,recce|all] [--parts CAP-A,FP-C|all]
+
+Builds each vehicle with every listed part at real-time detail, as art/blender/export.py does, and reports per part:
+
+- tyre: geometry inside a road wheel's tyre (between rim and tread, across the tyre's width) or hanging outboard of
+  the tyre's outer sidewall. A wheel hub may stand proud of the sidewall (within HUB_R of the axle, HUB_OUT
+  outboard). Parts that are wheel equipment themselves (WHEEL_KIT: tyres, snow chains) are exempt.
+- overhang: a sole seated on a level surface of the base vehicle that runs out over a slope or past an edge, as a
+  foot over the roof edge onto the chamfer would: more than OVERHANG_SHARE of the sole's points are over a sloping
+  face deeper than OVERHANG, or over nothing within a metre. Running gear (RUNNING_GEAR) is exempt. Codex review, G2: a hub foot had stood half over the roof chamfer;
+  a second review closed two loopholes (a sole split into faces, a loose surface counted as bracing).
+- floating: a piece of the part (a connected component of an object's mesh: a batch merges many pieces into one
+  object) that touches neither the base vehicle nor, through other pieces of the part, a piece that does (gap above
+  TOUCH).
+
+Prints each finding with the objects behind it and exits 1 if there is any. Owner FIX, G2: dampers had been
+modelled outside the tyres.
+"""
+import argparse
+import math
+import os
+import sys
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, HERE)
+
+import bpy  # noqa: E402
+from mathutils import Vector  # noqa: E402
+from mathutils.bvhtree import BVHTree  # noqa: E402
+
+from sea import fleet, geo, materials, scene  # noqa: E402
+from sea.geo import Builder  # noqa: E402
+from sea.parts.library import PARTS, build as build_part  # noqa: E402
+
+WHEEL_KIT = {'MOB-C', 'MOB-G'}  # replacement wheels and snow chains: they are the tyre
+RUNNING_GEAR = WHEEL_KIT | {'MOB-B'}  # seated on the base's own wheels and axles, not on a deck: no overhang check
+HUB_R, HUB_OUT = 0.42, 0.16      # hub allowance: radius from the axle (share of wheel radius), metres outboard
+RIM_R = 0.61                     # tyre bead seat, share of wheel radius
+TOUCH = 0.015                    # metres: closer than this counts as attached
+OVERHANG, OVERHANG_SHARE = 0.04, 0.10   # metres of drop beneath a sole point; share of a sole's points allowed over it
+BRACE = 0.3                      # metres: the part's own bracing (a knee, a strut) this far beneath a sole point holds it
+SLOPE = 0.8                      # a face is sloping when its normal's vertical part is below this (the chamfer: 0.51)
+
+
+def meshes():
+    """World-space vertices and polygons per object, grouped by layer."""
+    deps = bpy.context.evaluated_depsgraph_get()
+    out = {}
+    for o in bpy.context.scene.objects:
+        layer = o.get('sea_layer')
+        if layer is None or o.type not in ('MESH', 'CURVE'):
+            continue
+        ev = o.evaluated_get(deps)
+        me = ev.to_mesh()
+        if me is None:
+            continue
+        verts = [ev.matrix_world @ v.co for v in me.vertices]
+        polys = [tuple(p.vertices) for p in me.polygons]
+        ev.to_mesh_clear()
+        if verts and polys:
+            pieces = components(verts, polys)
+            for k, (v, p) in enumerate(pieces):
+                out.setdefault(layer, {})[o.name if len(pieces) == 1 else f'{o.name}#{k}'] = (v, p)
+    return out
+
+
+def components(verts, polys):
+    """Split a mesh into its connected pieces (vertices joined by a shared polygon), each re-indexed."""
+    parent = list(range(len(verts)))
+
+    def root(i):
+        while parent[i] != i:
+            parent[i] = parent[parent[i]]
+            i = parent[i]
+        return i
+    for poly in polys:
+        a = root(poly[0])
+        for i in poly[1:]:
+            b = root(i)
+            if a != b:
+                parent[b] = a
+    groups = {}
+    for poly in polys:
+        groups.setdefault(root(poly[0]), []).append(poly)
+    out = []
+    for group in groups.values():
+        index = {}
+        for poly in group:
+            for i in poly:
+                index.setdefault(i, len(index))
+        out.append(([verts[i] for i in index], [tuple(index[i] for i in poly) for poly in group]))
+    return out
+
+
+def tyre_hits(m, verts):
+    """Points inside a tyre or outboard of its sidewall (beyond the hub allowance)."""
+    r, half = m.wheel_r, m.tyre_w / 2
+    inside = outboard = 0
+    for v in verts:
+        for x in m.axles:
+            for s in (-1, 1):
+                rad = math.hypot(v.x - x, v.z - r)
+                out = s * v.y - m.track  # outward from the wheel centre plane
+                if rad >= r:
+                    continue
+                if abs(out) < half - 0.01 and rad > RIM_R * r + 0.01:
+                    inside += 1
+                elif out > half + 0.01 and not (rad < HUB_R * r and out < half + HUB_OUT):
+                    outboard += 1
+    return inside, outboard
+
+
+def samples(verts, polys, spacing=0.008, most=12):
+    """Points across an object's surface, not only its vertices: a strap can pass behind a buckle with no vertex
+    of either near the other."""
+    out = list(verts)
+    for poly in polys:
+        for k in range(1, len(poly) - 1):
+            a, b, c = verts[poly[0]], verts[poly[k]], verts[poly[k + 1]]
+            n = min(most, max(1, math.ceil(max((b - a).length, (c - b).length, (a - c).length) / spacing)))
+            for i in range(n + 1):
+                for j in range(n + 1 - i):
+                    out.append(a + (b - a) * (i / n) + (c - a) * (j / n))
+    return out
+
+
+def gap(a, tree_b, reach=TOUCH * 4):
+    """Smallest distance from vertices a to a surface, or None when none is within reach."""
+    best = None
+    for v in a:
+        hit = tree_b.find_nearest(v, reach)
+        if hit[0] is not None:
+            d = hit[3]
+            best = d if best is None else min(best, d)
+            if best < TOUCH:
+                return best
+    return best
+
+
+def overhang(verts, polys, base_tree, part_tree):
+    """Points of sole faces over a slope or an edge: (over, total). A sole is the downward faces of an object at one
+    level; it is seated when part of it is within TOUCH of a level surface of the base, straight down, and then every
+    one of its points counts, however its faces are split. A point is over a slope or an edge when straight beneath
+    it, deeper than OVERHANG, lies a sloping face or nothing within a metre; a sole bridging a gap to a level floor
+    beneath is supported at both ends and passes. So does a point held by the part's own bracing (a knee, a strut):
+    solid beneath it, touching it, within BRACE (a loose surface lower down does not hold it)."""
+    down = Vector((0, 0, -1))
+    soles = {}
+    for poly in polys:
+        if len(poly) < 3:
+            continue
+        a, b, c = verts[poly[0]], verts[poly[1]], verts[poly[2]]
+        n = (b - a).cross(c - a)
+        if n.length < 1e-9 or n.normalized().z > -0.9:
+            continue
+        sole = soles.setdefault(round(a.z / 0.005), [False, 0, 0])
+        for v in samples(verts, [poly], spacing=0.02, most=12)[len(verts):]:
+            hit = base_tree.ray_cast(v + Vector((0, 0, 0.005)), down, 1.0)
+            d = hit[3] - 0.005 if hit[0] is not None else float('inf')
+            sole[0] |= d < TOUCH and abs(hit[1].z) > 0.9
+            sole[2] += 1
+            if d > OVERHANG and (hit[0] is None or abs(hit[1].z) < SLOPE):
+                sole[1] += not braced(part_tree, v)
+    over = sum(o for seated, o, _ in soles.values() if seated)
+    total = sum(t for seated, _, t in soles.values() if seated)
+    return over, total
+
+
+def braced(part_tree, v):
+    """The part's own solid stands beneath v, touching it: just below v the first surface straight down, within
+    BRACE, faces down (v's foot is inside that solid), or a surface lies within TOUCH beneath."""
+    hit = part_tree.ray_cast(v - Vector((0, 0, 0.002)), Vector((0, 0, -1)), BRACE)
+    return hit[0] is not None and (hit[1].z < 0 or hit[3] < TOUCH)
+
+
+def floating(objects, base_tree):
+    """Objects of one part not attached, directly or through each other, to the base vehicle."""
+    names = list(objects)
+    trees = {n: BVHTree.FromPolygons(*objects[n], all_triangles=False) for n in names}
+    points = {n: samples(*objects[n]) for n in names}
+    boxes = {n: (Vector([min(v[i] for v in objects[n][0]) for i in range(3)]),
+                 Vector([max(v[i] for v in objects[n][0]) for i in range(3)])) for n in names}
+
+    def near(x, y):
+        (la, ha), (lb, hb) = boxes[x], boxes[y]
+        return all(la[i] - TOUCH <= hb[i] and lb[i] - TOUCH <= ha[i] for i in range(3))
+
+    def touches(x, y):
+        if not near(x, y):
+            return False
+        if trees[x].overlap(trees[y]):
+            return True
+        for p, q in ((x, y), (y, x)):
+            d = gap(points[p], trees[q])
+            if d is not None and d < TOUCH:
+                return True
+        return False
+
+    attached = set()
+    for n in names:
+        if trees[n].overlap(base_tree):
+            attached.add(n)
+            continue
+        d = gap(points[n], base_tree)
+        if d is not None and d < TOUCH:
+            attached.add(n)
+    frontier = list(attached)
+    while frontier:
+        x = frontier.pop()
+        for y in names:
+            if y not in attached and touches(x, y):
+                attached.add(y)
+                frontier.append(y)
+    loose = [n for n in names if n not in attached]
+    # How far each loose object is from anything attached (the base or attached objects of the part).
+    held = [('base', base_tree)] + [(n, trees[n]) for n in attached]
+    far = {}
+    for n in loose:
+        best = (float('inf'), None, None)
+        for name, t in held:
+            for v in objects[n][0]:
+                hit = t.find_nearest(v, 5.0)
+                if hit[0] is not None and hit[3] < best[0]:
+                    best = (hit[3], name, v)
+        far[n] = best
+    return far
+
+
+def main():
+    argv = sys.argv[sys.argv.index('--') + 1:] if '--' in sys.argv else []
+    p = argparse.ArgumentParser()
+    p.add_argument('--vehicles', default='all')
+    p.add_argument('--parts', default='all')
+    a = p.parse_args(argv)
+    vehicles = list(fleet.VEHICLES) if a.vehicles == 'all' else [v for v in a.vehicles.split(',') if v]
+    parts = list(PARTS) if a.parts == 'all' else [c for c in a.parts.split(',') if c]
+    geo.REALTIME = True
+    findings = 0
+    for stem in vehicles:
+        # One part at a time, alone on the vehicle: a team's build shows at most one part per slot.
+        for card in parts:
+            scene.reset()
+            mats = materials.realtime_palette()
+            m = fleet.VEHICLES[stem](mats)
+            build_part(card, Builder(card, mats), m)
+            layers = meshes()
+            base_v, base_p = [], []
+            for verts, polys in layers.get('base', {}).values():
+                off = len(base_v)
+                base_v.extend(verts)
+                base_p.extend(tuple(off + i for i in poly) for poly in polys)
+            base_tree = BVHTree.FromPolygons(base_v, base_p, all_triangles=False)
+            objects = layers.get(card, {})
+            # Reported per kind of object (the builder numbers each copy: 'MOB-D:damper-eye:107').
+            kind = lambda name: name.split('#')[0].split(':')[1] if name.count(':') >= 2 else name
+            tyre = {}
+            if card not in WHEEL_KIT:
+                for name, (verts, polys) in objects.items():
+                    # Surface samples, not only vertices: a long face can cross a tyre between its corners.
+                    inside, outboard = tyre_hits(m, samples(verts, polys, spacing=0.03, most=8))
+                    if inside or outboard:
+                        t = tyre.setdefault(kind(name), [0, 0, 0])
+                        t[0] += 1; t[1] += inside; t[2] += outboard
+            for k, (n, inside, outboard) in sorted(tyre.items()):
+                findings += 1
+                print(f'[fit] {stem:14s} {card:6s} tyre     {k} x{n}: {inside} points inside, {outboard} outboard', flush=True)
+            hang = {}
+            part_v, part_p = [], []
+            for verts, polys in objects.values():
+                off = len(part_v)
+                part_v.extend(verts)
+                part_p.extend(tuple(off + i for i in poly) for poly in polys)
+            part_tree = BVHTree.FromPolygons(part_v, part_p, all_triangles=False) if part_v else None
+            for name, (verts, polys) in ({} if card in RUNNING_GEAR else objects).items():
+                over, total = overhang(verts, polys, base_tree, part_tree)
+                if total and over > OVERHANG_SHARE * total:
+                    h = hang.setdefault(kind(name), [0, 0.0])
+                    h[0] += 1; h[1] = max(h[1], over / total)
+            for k, (n, share) in sorted(hang.items()):
+                findings += 1
+                print(f'[fit] {stem:14s} {card:6s} overhang {k} x{n}: {share * 100:.0f}% of its sole over a drop', flush=True)
+            loose = {}
+            for name, near in floating(objects, base_tree).items():
+                c = loose.setdefault(kind(name), [0, near])
+                c[0] += 1
+                if near[0] < c[1][0]:
+                    c[1] = near
+            for k, (n, (d, to, at)) in sorted(loose.items(), key=lambda i: i[1][1][0]):
+                findings += 1
+                where = f' (nearest {kind(to)} at {at.x:.2f}, {at.y:.2f}, {at.z:.2f})' if at is not None else ''
+                print(f'[fit] {stem:14s} {card:6s} floating {k} x{n}: {d * 1000:.0f} mm from anything attached{where}', flush=True)
+    print(f'[fit] {"FAIL" if findings else "PASS"} {findings} finding(s)', flush=True)
+    sys.exit(1 if findings else 0)
 
 
 if __name__ == '__main__':
@@ -5983,6 +6289,138 @@ def main():
 
 if __name__ == '__main__':
     main()
+```
+
+### art/tools/angles.ts
+
+Paths: `art/tools/angles.ts`. SHA-256 `4ac592cb122053732ef5c7a437adcd38e82f07425c48e14ab4f4ee28209c9f63`, 7996 bytes.
+
+```ts
+// Still-angle analysis (owner FIX, G2): which camera angles show the vehicles' parts best. Renders the packed model
+// (content/models/showcase.glb) in headless Chromium from a grid of yaw and pitch, framed as art/blender/render.py
+// frames a build still (55 mm lens on a 36 mm sensor, every layer of the vehicle in frame, margin 1.06), and counts
+// each part's visible pixels with only the base in front of it: in the layered stills a team shows at most one part
+// per mount, so parts never hide one another. Prints per vehicle the best front and rear angles and writes the grid.
+//
+//   node art/tools/angles.ts [out.json]
+//
+// Yaw and pitch follow art/blender/sea/scene.py: yaw 0 looks at the vehicle's left side, 90 at its front.
+import { build } from 'esbuild';
+import { readFileSync, writeFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+import { chromium } from '@playwright/test';
+
+const out = process.argv[2] ?? '.artifacts/angles.json';
+// A 10° grid plus the current build angles (render.py ANGLES: front 38/10, rear 218/12).
+const YAWS = [...Array.from({ length: 36 }, (_, i) => i * 10), 38, 218].sort((a, b) => a - b);
+const PITCHES = [6, 10, 12, 14, 18, 22, 26, 30, 35];
+const SIZE = { width: 480, height: 270 };
+
+const page = `
+import { Box3, Color, Mesh, MeshBasicMaterial, PerspectiveCamera, Scene, Vector3, WebGLRenderer } from 'three';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+const layerOf = o => String(o.userData.layer ?? o.name);
+window.analyse = async (yaws, pitches, size) => {
+  const glb = await (await fetch('http://sea.local/model.glb')).arrayBuffer();
+  const root = (await new GLTFLoader().parseAsync(glb, '')).scene;
+  const renderer = new WebGLRenderer({ antialias: false, preserveDrawingBuffer: true });
+  renderer.setSize(size.width, size.height, false);
+  const gl = renderer.getContext();
+  const pixels = new Uint8Array(size.width * size.height * 4);
+  const hFov = 2 * Math.atan(18 / 55), tanH = Math.tan(hFov / 2), tanV = tanH * size.height / size.width;
+  const camera = new PerspectiveCamera(2 * Math.atan(tanV) * 180 / Math.PI, size.width / size.height, 0.05, 500);
+  const result = {};
+  for (const vehicle of root.children) {
+    const scene = new Scene();
+    scene.background = new Color(1, 1, 1);
+    const copy = vehicle.clone();
+    scene.add(copy);
+    copy.updateMatrixWorld(true);
+    const box = new Box3().setFromObject(copy), centre = box.getCenter(new Vector3());
+    const corners = [];
+    for (const x of [box.min.x, box.max.x]) for (const y of [box.min.y, box.max.y]) for (const z of [box.min.z, box.max.z]) corners.push(new Vector3(x, y, z));
+    const base = copy.children.filter(n => layerOf(n) === 'base');
+    const parts = copy.children.filter(n => layerOf(n) !== 'base');
+    const black = new MeshBasicMaterial({ color: 0x000000 });
+    const red = new MeshBasicMaterial({ color: 0xff0000 });
+    const paint = (nodes, material) => nodes.forEach(n => n.traverse(o => { if (o instanceof Mesh) o.material = material; }));
+    paint(base, black); paint(parts, red);
+    const counts = {};
+    for (const yaw of yaws) for (const pitch of pitches) {
+      const y = yaw * Math.PI / 180, p = pitch * Math.PI / 180;
+      // Blender (x, y, z) is glTF (x, z, -y).
+      const dir = new Vector3(Math.sin(y) * Math.cos(p), Math.sin(p), Math.cos(y) * Math.cos(p));
+      camera.position.copy(centre).addScaledVector(dir, 50);
+      camera.lookAt(centre);
+      camera.updateMatrixWorld();
+      // Distance that fits every corner, then the margin; the subject is centred on its projected extents.
+      const inv = camera.matrixWorldInverse;
+      let distance = 0;
+      for (const c of corners) {
+        // v.z is minus the depth from the camera, 50 away: the corner sits 50 + v.z nearer the camera than the centre.
+        const v = c.clone().applyMatrix4(inv), nearer = 50 + v.z;
+        distance = Math.max(distance, Math.abs(v.x) / tanH + nearer, Math.abs(v.y) / tanV + nearer);
+      }
+      camera.position.copy(centre).addScaledVector(dir, distance * 1.06);
+      camera.updateMatrixWorld();
+      const key = yaw + '/' + pitch, row = {};
+      // Sanity: the whole vehicle with every part fills a fair share of the frame.
+      parts.forEach(n => { n.visible = true; });
+      renderer.render(scene, camera);
+      gl.readPixels(0, 0, size.width, size.height, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
+      let filled = 0;
+      for (let i = 0; i < pixels.length; i += 4) if (pixels[i] < 250 || pixels[i + 1] < 250) filled++;
+      row.filled = filled / (size.width * size.height);
+      for (const part of parts) {
+        parts.forEach(n => { n.visible = n === part; });
+        renderer.render(scene, camera);
+        gl.readPixels(0, 0, size.width, size.height, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
+        let n = 0;
+        for (let i = 0; i < pixels.length; i += 4) if (pixels[i] > 200 && pixels[i + 1] < 60) n++;
+        row[layerOf(part)] = n;
+      }
+      counts[key] = row;
+    }
+    result[vehicle.name] = counts;
+    console.log('[angles] ' + vehicle.name);
+  }
+  return result;
+};
+`;
+const bundle = await build({ stdin: { contents: page, resolveDir: resolve('.'), loader: 'js' }, bundle: true, write: false, format: 'iife', minify: true });
+const browser = await chromium.launch({ args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader'] });
+const tab = await browser.newPage();
+tab.on('console', m => { if (m.text().startsWith('[angles]')) console.log(m.text()); });
+await tab.route('http://sea.local/**', route => route.request().url().endsWith('/model.glb')
+  ? route.fulfill({ body: readFileSync('content/models/showcase.glb'), contentType: 'model/gltf-binary' })
+  : route.fulfill({ body: '<!doctype html><title>angles</title>', contentType: 'text/html' }));
+await tab.goto('http://sea.local/');
+await tab.addScriptTag({ content: bundle.outputFiles[0]!.text });
+type Grid = Record<string, Record<string, Record<string, number>>>;
+const grid = await tab.evaluate(([y, p, s]) => (window as unknown as { analyse: (...a: unknown[]) => Promise<unknown> }).analyse(y, p, s), [YAWS, PITCHES, SIZE] as const) as Grid;
+await browser.close();
+writeFileSync(out, JSON.stringify({ yaws: YAWS, pitches: PITCHES, size: SIZE, grid }));
+
+// Score of one angle: the sum over parts of log(1 + visible pixels), which rewards showing every part over
+// enlarging the big ones. A pair is scored on its front angle alone (the view a tracker opens on) plus, per part,
+// the better of the two (what the player can see by switching). Front angles have the camera ahead of the
+// vehicle's middle (yaw 0..90 or 270..360), rear angles behind it.
+const partsOf = (row: Record<string, number>) => Object.entries(row).filter(([k]) => k !== 'filled');
+const score = (row: Record<string, number>) => partsOf(row).reduce((s, [, n]) => s + Math.log1p(n), 0);
+const front = (yaw: number) => yaw <= 90 || yaw >= 270;
+for (const [vehicle, counts] of Object.entries(grid)) {
+  const keys = Object.keys(counts);
+  let best = { s: -1, f: '', r: '' };
+  for (const f of keys.filter(k => front(Number(k.split('/')[0])))) for (const r of keys.filter(k => !front(Number(k.split('/')[0])))) {
+    const a = counts[f]!, b = counts[r]!;
+    const s = score(a) + partsOf(a).map(([k]) => k).reduce((t, part) => t + Math.log1p(Math.max(a[part]!, b[part]!)), 0);
+    if (s > best.s) best = { s, f, r };
+  }
+  const current = (k: string) => `${score(counts[k]!).toFixed(1)}, fills ${Math.round(counts[k]!['filled']! * 100)}%`;
+  const hidden = (k: string) => partsOf(counts[k]!).filter(([, n]) => n < 200).map(([p]) => p).join(' ') || '-';
+  console.log(`${vehicle}: best front ${best.f} (${current(best.f)}), rear ${best.r} (${current(best.r)}); current front 38/10 (${current('38/10')}), rear 218/12 (${current('218/12')})`);
+  console.log(`  barely visible (<200 px): best front ${hidden(best.f)} | best rear ${hidden(best.r)} | current front ${hidden('38/10')} | current rear ${hidden('218/12')}`);
+}
 ```
 
 ### art/tools/build-composites.ts
@@ -25815,7 +26253,7 @@ The three Firefox failures are browser-internal and appeared only under full loc
 
 ### docs/verification/0.5.1.0.md
 
-Paths: `docs/verification/0.5.1.0.md`. SHA-256 `a93b276784b79617adbab74a7a81fc268c28c01a8f00243fe635d3c0ccfe06c0`, 15045 bytes.
+Paths: `docs/verification/0.5.1.0.md`. SHA-256 `76560faddea9ca7dcc0f66f896e09c7d35244687e43d4827b161c3e5325c8a78`, 15366 bytes.
 
 ```markdown
 # Verification record: 0.5.1.0 beta (goal G2)
@@ -25847,6 +26285,8 @@ Goal G2: owner fixes and the documentation regime. Branch `goal2b/foundation`, f
 | Full gate | `npm run verify` (typecheck, lint, unit, build check, build, Playwright in Chromium, Firefox and Edge, then perf) | PASS, 2026-10-11 after the final re-render: 203 unit tests; 124 Playwright tests passed, 48 skipped by design (pixel baselines and axe run in Chromium only); perf: model ready 562 ms, showcase update ≤ 48 ms, model memory 58 MB (`.artifacts/logs/g2-verify-sweep.log`). The twelve still baselines (`showcase-*-front`, `-rear`) were re-recorded for the new angles and geometry. |
 | CI, two consecutive green runs on one head | GitHub Actions `ci.yml` | CI_RESULT |
 | Owner visual check | `npm run gallery` → `.artifacts/review/0.5.1.0.html` | GALLERY_RESULT |
+
+CI on `ad90e7a` failed in `tests/unit/codebase.test.ts`: `docs/CODEBASE.md` had been written before `art/blender/fit.py` and one other new file were staged, so it listed 1011 of 1013 tracked files. It was regenerated after staging; `AGENTS.md` rule 18 now says to run `npm run codebase` after `git add` of any new file.
 
 ## Codex rebuild review (item 6)
 
