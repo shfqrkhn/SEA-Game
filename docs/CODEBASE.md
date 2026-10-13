@@ -26849,7 +26849,7 @@ Exportez une sauvegarde par **Menu → Exporter une sauvegarde** après la confi
 
 ### docs/HANDOVER.md
 
-Paths: `docs/HANDOVER.md`. SHA-256 `06f422669b2bad6d24cc3e6d1ccaef4b87756648e6d07ad41abddf2c60b5aa03`, 11050 bytes.
+Paths: `docs/HANDOVER.md`. SHA-256 `18557505d7816c32b396cc6d5ad563b74db69b2fa583b7a30ddff6acfcb36a6f`, 11373 bytes.
 
 ```markdown
 # Handover
@@ -26909,11 +26909,11 @@ Shared rules for every goal: `AGENTS.md`. KPIs and priority: MPES §1.4.
 
 ## 4. In-progress work
 
-Owner FIX 1 (stills and fit), FIX 2 (one click to close a round nobody can win in; unsold cards listed with their effects) and FIX 3 (a part read as the end of a barrel: optics head raised, mast set back, mirrors lowered, `sightline.py` at any depth including hull fittings, 574 pairs recorded and only shrinking; full re-render, encode and pack done) are done and checked (`docs/verification/0.5.1.0.md`). The Codex review of FIX 2 is dispositioned; unit-test scratch now cleans up after itself. Prepared for G3 on local side branches by Sonnet agents (not merged, not run in a browser; review before merging into G3): `g3/perf-ref` (`npm run perf:ref` rig, protocol fragment) and `g3/caching` (CI download caches, encode cache). The owner said GO on the gallery (2026-10-12, "we can iterate later") and merged PR #22; tag `v0.5.1.0` is on `10e61e3`. A hand-uploaded root `index.html` made `main` red and let CI deploy a 0.5.0.0 build over it; branch `g2/pages` removes it, adds a check and sets the Pages source to GitHub Actions (`docs/verification/0.5.1.0.md` "Pages after the merge"). `g2/pages` merged as PR #23 after two green runs; the Pages SHA-256 equals the 0.5.1.0 build (630e6d52…1667). Owner FIX 4 (2026-10-12): the showcase could not zoom and cut off a fully kitted vehicle; on a phone the tables in the collapsible sections lost columns; the controls were long words. Fixed on `fix/showcase-mobile` as 0.5.2.0 (CI then found pause letting the turn coast on; fixed, with every control reporting its view at once, and Playwright now refuses a `dist/index.html` older than the source: run `npm run build` before any ad hoc Playwright run), awaiting the owner's GO on its gallery, then merge, tag `v0.5.2.0`, and the Pages SHA-256 check. CI on `78cca1f` failed `showcaseUpdateMaxMs` once (109 ms against 100; `docs/verification/0.5.1.0.md` close-out): see timing note 3. Run only one Blender job at a time: the owner uses this PC.
+Owner FIX 1 (stills and fit), FIX 2 (one click to close a round nobody can win in; unsold cards listed with their effects) and FIX 3 (a part read as the end of a barrel: optics head raised, mast set back, mirrors lowered, `sightline.py` at any depth including hull fittings, 574 pairs recorded and only shrinking; full re-render, encode and pack done) are done and checked (`docs/verification/0.5.1.0.md`). The Codex review of FIX 2 is dispositioned; unit-test scratch now cleans up after itself. Prepared for G3 on local side branches by Sonnet agents (not merged, not run in a browser; review before merging into G3): `g3/perf-ref` (`npm run perf:ref` rig, protocol fragment) and `g3/caching` (CI download caches, encode cache). The owner said GO on the gallery (2026-10-12, "we can iterate later") and merged PR #22; tag `v0.5.1.0` is on `10e61e3`. A hand-uploaded root `index.html` made `main` red and let CI deploy a 0.5.0.0 build over it; branch `g2/pages` removes it, adds a check and sets the Pages source to GitHub Actions (`docs/verification/0.5.1.0.md` "Pages after the merge"). `g2/pages` merged as PR #23 after two green runs; the Pages SHA-256 equals the 0.5.1.0 build (630e6d52…1667). Owner FIX 4 (2026-10-12): the showcase could not zoom and cut off a fully kitted vehicle; on a phone the tables in the collapsible sections lost columns; the controls were long words. Fixed on `fix/showcase-mobile` as 0.5.2.0 (CI then found pause letting the turn coast on; fixed, with every control reporting its view at once, and Playwright now refuses a `dist/index.html` older than the source: run `npm run build` before any ad hoc Playwright run). At the owner's request (2026-10-13) it was merged into `main` (PR #24) and published through CI; a docs-only head merged without its own CI left `docs/CODEBASE.md` stale and failed `main` until `fix/codebase-sync` (`docs/verification/0.5.2.0.md` "Publication"). Merge only a head whose own CI is green. The gallery GO/FIX, the tag `v0.5.2.0` and the instructor zip await the owner. CI on `78cca1f` failed `showcaseUpdateMaxMs` once (109 ms against 100; `docs/verification/0.5.1.0.md` close-out): see timing note 3. Run only one Blender job at a time: the owner uses this PC.
 
 ## 5. Next action
 
-**Agent:** on the owner's GO for 0.5.2.0, merge `fix/showcase-mobile`, tag `v0.5.2.0` and check the Pages SHA-256; then start G3 (proxy + runtime, release 0.6.0.0): branch from `main` at `v0.5.2.0`; first step `npm run perf:ref` on the Intel UHD 770 proxy, measuring a baseline before any change.
+**Agent:** on the owner's GO for 0.5.2.0 (already merged and published), tag `v0.5.2.0` on `main`, record the Pages SHA-256 and send the instructor zip; then start G3 (proxy + runtime, release 0.6.0.0): branch from `main` at `v0.5.2.0`; first step `npm run perf:ref` on the Intel UHD 770 proxy, measuring a baseline before any change.
 **Owner:** `docs/owner/art-review.md` (5 minutes, reply GO or FIX).
 
 ## 6. Rollback
@@ -27445,7 +27445,7 @@ Result: PR #23 merged after two green CI runs; CI on the merge commit (run 38334
 
 ### docs/verification/0.5.2.0.md
 
-Paths: `docs/verification/0.5.2.0.md`. SHA-256 `42f041f47175b8861124774b059d121f4f13233ba9a822b8ba2fe3d69116c335`, 6601 bytes.
+Paths: `docs/verification/0.5.2.0.md`. SHA-256 `a22098f4b757650f4d538f2eeb41c427086b1d6239b95e8da3f0787fcabb0d75`, 8531 bytes.
 
 ```markdown
 # Verification record: 0.5.2.0 beta (owner FIX 4 on G2)
@@ -27477,8 +27477,9 @@ Framing notes: framing every part in the catalogue (−7.3 to 5.6 m long, 5.6 m 
 | Lint | `npm run lint` | PASS |
 | Unit and property | `npm test` | PASS, 20 files, 218 tests |
 | Full gate | `npm run verify` (typecheck, lint, unit, build check, build, Playwright in Chromium, Firefox and Edge, then perf) | PASS with machine-load timeouts: typecheck, lint, 218 unit tests, build check and build passed; Playwright 136 passed, 5 failed in Firefox on 120 s timeouts (`increment`, `close-round`, `layout` 10 teams FR, two `chooser` tests) with the CPU at 100% (OneDrive sync); each passed when run alone (`--workers=1`). Perf, run alone: see below |
-| CI, two consecutive green runs on one head | GitHub Actions `ci.yml` | PENDING |
-| Owner visual check | `npm run gallery -- --notes .artifacts/tmp/mobile/notes.md` → `.artifacts/review/0.5.2.0.html` (94 shots; new groups "Phone" and "Full kit in 3D", `scripts/gallery/shots.ts`; the two zoomed shots are new, as 0.5.1.0 has no zoom) | PENDING owner GO/FIX |
+| Full gate on `2590762` (pause fix) | `npm run verify` (`.artifacts/logs/verify-0.5.2.0-2590762.txt`, the CPU near idle) | Typecheck, lint, 218 unit tests, the byte-identical build check and the build passed (SHA-256 `fc7fd07d…0b88`); Playwright 131 passed, 10 failed: nine in Firefox and one in Edge, each a stalled page (seven on the 120 s test timeout, three on a 5 to 60 s wait; every failed read returned an empty page) under the full parallel run; perf did not run (it waits for every browser test). Run alone (`--workers=1`), all ten passed in both Firefox and Edge, but `journey-en` in Edge then stalled once (a click held 60 s). A/B in Edge, that journey alone: this branch 15 of 17 passed (both stalls in its first runs straight after the heavy runs, then 13 in a row), `main` at `646755b` 7 of 7. Read as known timing notes 2 and 3 (HANDOVER §3); CI is the clean judge |
+| CI, two consecutive green runs on one head | GitHub Actions `ci.yml` | Run 38341255504 on `67fcf3d` and run 38342388856 on `8598c62` failed: the turn check read a pause still coasting (item 5). On `2590762`: run 38348180952 attempt 1 PASS, attempt 2 PASS (two consecutive green runs on one head) |
+| Owner visual check | `npm run gallery -- --notes .artifacts/tmp/mobile/notes.md` → `.artifacts/review/0.5.2.0.html` (94 shots; new groups "Phone" and "Full kit in 3D", `scripts/gallery/shots.ts`; the two zoomed shots are new, as 0.5.1.0 has no zoom) | Sent 2026-10-13; owner GO/FIX pending. The owner asked for this version on GitHub and Pages (2026-10-13): merged into `main`, Pages from CI |
 
 Perf A/B on this machine (CPU at 100%), the perf project alone, `main` at `646755b` (worktree) alternating with this branch, three rounds:
 
@@ -27489,6 +27490,10 @@ Perf A/B on this machine (CPU at 100%), the perf project alone, `main` at `64675
 | 3 | 191.9 / 87.2 | 47 / 36 | 181 / 51 |
 
 `main` breaks the 100 ms budgets as often as this branch: this is known timing note 3 (HANDOVER §3), not a regression. The new framing costs about 1 ms per refit (`fitTable`, 10 runs in Node). Budgets unchanged; CI's two runs are the clean-machine judge.
+
+## Publication (owner request, 2026-10-13)
+
+The owner asked for this version on GitHub and Pages. PR #24 was merged (merge commit `2a73c5e`) after two green runs on `2590762`, but the head then was `a2e3bc7`, a docs-only commit recording those runs, without its own CI run. It left `docs/CODEBASE.md` stale; CI on `main` (run 38385681377) failed `tests/unit/codebase.test.ts` and skipped the Pages deploy, so Pages still served 0.5.1.0 (`630e6d52…1667`). Fixed by `fix/codebase-sync` (codebase regenerated, lesson in §20.1 and `library/LESSONS.md`), merged only once its own CI was green. Expected Pages SHA-256: `fc7fd07d00a18a579619704c90854cf2b541d6f2a84cbeb73ac250418d320b88`. Pages result: PENDING.
 
 ## Codex review
 
@@ -27775,12 +27780,18 @@ export default tseslint.config(
 
 ### library/LESSONS.md
 
-Paths: `library/LESSONS.md`. SHA-256 `0f420e0c7e514918c0da73cbf6e4f5dfab44ef1ae77666424d366ed68781af28`, 7333 bytes.
+Paths: `library/LESSONS.md`. SHA-256 `622025a7d079ac627627cf0665ae40207bc4b84b87cb90d674f56f4385cc214f`, 8064 bytes.
 
 ```markdown
 # Lessons learned
 
 Each entry: what happened, the rule it produced, and the check that now enforces it. Newest first. Examples come from SEA Game (a classroom auction game with photoreal vehicle renders and a real-time 3D showcase, one offline HTML file).
+
+## 2026-10-13 · Green branch, red main
+
+- **What happened:** after two green CI runs, a small docs-only commit was added and the pull request merged straight away. The generated codebase document embeds every doc, so it went stale; CI on `main` failed and the Pages deploy was skipped, leaving the old site live.
+- **Rule:** every commit, docs-only included, regenerates what is generated from it and runs the fast tests; merge only the head whose own CI is green. Let the host enforce it: require the CI checks on the main branch, administrators included.
+- **Check (as built in SEA Game):** the codebase test fails any stale generated document; branch protection on `main` requiring both CI checks is recommended to the owner.
 
 ## 2026-10-13 · Paused, yet still turning; fixed, yet still failing
 
@@ -43703,5 +43714,5 @@ Keys and the commands that make each kind again:
 
 | Path | Bytes | SHA-256 | Why |
 |---|---:|---|---|
-| `docs/MPES.md` | 169141 | `60f1982198a58a35b8ba74e8e2f83d29385b1bd8a40eaaeb32c576d184128210` | The specification, a clean-room document of its own (Omni 5.1.1 §333). |
+| `docs/MPES.md` | 169588 | `d37d86a9de0f30d247f52c96f41195b997e7f55fa7cc66fad131259c8a6c69f8` | The specification, a clean-room document of its own (Omni 5.1.1 §333). |
 | `docs/CODEBASE.md` | | | This file. |
