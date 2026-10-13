@@ -184,13 +184,27 @@ export class ModelStage {
 
   /** Whether the stage turns by itself (off under reduced motion until the player turns it on). */
   get turning(): boolean { return this.#controls.autoRotate; }
-  set turning(on: boolean) { this.#controls.autoRotate = on; this.#loop(); }
+  set turning(on: boolean) { this.#controls.autoRotate = on; if (!on) this.#halt(); this.#loop(); }
+
+  /** Pause stops the model where it is: the controls' easing would carry the turn on, for seconds on a slow
+   *  renderer. One update without damping clears what is left of it; the camera stays where it was. */
+  #halt(): void {
+    const at = this.#camera.position.clone();
+    this.#controls.enableDamping = false;
+    this.#controls.update();
+    this.#camera.position.copy(at);
+    this.#controls.update();
+    this.#controls.enableDamping = true;
+    this.#invalidate();
+    this.#report();
+  }
 
   /** Turns the vehicle by `radians` about the vertical axis (keyboard and button control). */
   turn(radians: number): void {
     const offset = this.#camera.position.clone().sub(this.#controls.target).applyAxisAngle(UP, radians);
     this.#camera.position.copy(this.#controls.target).add(offset);
     this.#controls.update();
+    this.#report();
   }
 
   /** Zooms in (`+1`) or out (`-1`) one step, within the limits (MPES §10.2). */
@@ -253,6 +267,7 @@ export class ModelStage {
     this.#distance();
     this.#controls.update();
     this.#invalidate();
+    this.#report();
   }
 
   /** Sets the camera's distance for its height (a drag up needs it farther back) at the player's zoom. */
@@ -283,6 +298,12 @@ export class ModelStage {
     this.#dirty = false;
     this.#distance();
     this.#renderer.render(this.#scene, this.#camera);
+    this.#report();
+  }
+
+  /** Tells `onView` where the camera is: each draw, and at once after a pause, turn, zoom or refit, so the reading never
+   *  lags a player's action by a paced draw (or for good while the stage is off screen and not drawing). */
+  #report(): void {
     if (this.onView) {
       const offset = this.#camera.position.clone().sub(this.#controls.target), distance = offset.length();
       const extent = extentAt(this.#kit, this.#controls.target, offset.divideScalar(distance), distance, this.#camera.fov, this.#camera.aspect);

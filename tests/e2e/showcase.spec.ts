@@ -90,6 +90,10 @@ for (const viewport of [{ width: 1280, height: 720 }, { width: 360, height: 740 
     await button('Pause turning').click();
     await expect(button('Pause turning')).toHaveText('▷');
     await expect(button('Pause turning')).toHaveAttribute('title', 'Resume turning');
+    // Pause stops the model where it is: no coasting on, which on a slow renderer lasted many seconds.
+    const held = await stage.getAttribute('data-azimuth');
+    await sp.waitForTimeout(600);
+    expect(await stage.getAttribute('data-azimuth'), 'paused means still').toBe(held);
     // The extent is the farthest corner of the full kit's bounding box from the frame centre (1 = the frame edge).
     const extent = async () => Number(await stage.getAttribute('data-extent'));
     // A turn eases over several frames, its tail long and slight: read the view once it has all but come to rest.

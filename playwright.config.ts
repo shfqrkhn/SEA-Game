@@ -26,6 +26,8 @@ const perf = engines.includes('chromium')
 
 export default defineConfig({
   testDir: 'tests/e2e',
+  // Refuse to test a dist/index.html older than the source (tests/e2e/fresh-build.ts).
+  globalSetup: './tests/e2e/fresh-build.ts',
   outputDir: '.artifacts/test-results',
   fullyParallel: true,
   forbidOnly: !!process.env.CI,

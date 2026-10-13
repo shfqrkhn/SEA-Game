@@ -2,6 +2,12 @@
 
 Each entry: what happened, the rule it produced, and the check that now enforces it. Newest first. Examples come from SEA Game (a classroom auction game with photoreal vehicle renders and a real-time 3D showcase, one offline HTML file).
 
+## 2026-10-13 · Paused, yet still turning; fixed, yet still failing
+
+- **What happened:** pausing a 3D turntable stopped its automatic turn, but the orbit controls' easing carried the turn on, for seconds on a slow software renderer; only CI's slow machine showed it. The fix then seemed not to work: the test read the view from an attribute updated only on the next paced draw (and never while the stage was off screen), and ran against a build made before the fix.
+- **Rule:** a pause, and every control, takes effect at once and reports its new state at once; a test reads current state, not a value cached for drawing; refuse to test a build older than its source.
+- **Check (as built in SEA Game):** the end-to-end test pauses and requires the reported turn to stay unchanged for 600 ms, and reads the zoom straight after the last of 12 presses; a Playwright global setup renders the build from source and refuses to start unless the built file is that build.
+
 ## 2026-10-12 · Framed for one view, cut off at the others
 
 - **What happened:** a 3D showcase framed the vehicle for its opening view; once fully kitted (a trailer behind, a blade in front, a tall mast), parts left the frame as it turned, and there was no zoom. Framing every part in the catalogue instead shrank a bare vehicle to a speck. On a phone, wide tables inside collapsible sections lost their right-hand columns, unseen because tests opened only the first screen.

@@ -1,6 +1,6 @@
 # SEA Game codebase
 
-Version 0.5.2.0. Written by `npm run codebase` (scripts/codebase.ts); do not edit by hand. It holds all 1034 tracked files of the repository: 178 text files as 175 unique contents, 854 binary files by hash with the command that regenerates them, and 2 documents kept separately. With docs/MPES.md it is enough to rebuild the project.
+Version 0.5.2.0. Written by `npm run codebase` (scripts/codebase.ts); do not edit by hand. It holds all 1035 tracked files of the repository: 179 text files as 176 unique contents, 854 binary files by hash with the command that regenerates them, and 2 documents kept separately. With docs/MPES.md it is enough to rebuild the project.
 
 ## How to rebuild the tree
 
@@ -26849,12 +26849,12 @@ Exportez une sauvegarde par **Menu → Exporter une sauvegarde** après la confi
 
 ### docs/HANDOVER.md
 
-Paths: `docs/HANDOVER.md`. SHA-256 `61fb54e4dfff3f669bc5bb42d5f9ee32d8813cd6c9ce9a7e4d72ab2bdf6f1fda`, 10824 bytes.
+Paths: `docs/HANDOVER.md`. SHA-256 `06f422669b2bad6d24cc3e6d1ccaef4b87756648e6d07ad41abddf2c60b5aa03`, 11050 bytes.
 
 ```markdown
 # Handover
 
-Updated 2026-10-12 (America/Toronto). Specification: [MPES](MPES.md) 4.4.3. Evidence: [verification/0.5.2.0.md](verification/0.5.2.0.md), [verification/0.5.1.0.md](verification/0.5.1.0.md), [verification/0.5.0.0.md](verification/0.5.0.0.md), [verification/spike-visual.md](verification/spike-visual.md).
+Updated 2026-10-13 (America/Toronto). Specification: [MPES](MPES.md) 4.4.3. Evidence: [verification/0.5.2.0.md](verification/0.5.2.0.md), [verification/0.5.1.0.md](verification/0.5.1.0.md), [verification/0.5.0.0.md](verification/0.5.0.0.md), [verification/spike-visual.md](verification/spike-visual.md).
 
 ## 1. Version and milestone
 
@@ -26909,7 +26909,7 @@ Shared rules for every goal: `AGENTS.md`. KPIs and priority: MPES §1.4.
 
 ## 4. In-progress work
 
-Owner FIX 1 (stills and fit), FIX 2 (one click to close a round nobody can win in; unsold cards listed with their effects) and FIX 3 (a part read as the end of a barrel: optics head raised, mast set back, mirrors lowered, `sightline.py` at any depth including hull fittings, 574 pairs recorded and only shrinking; full re-render, encode and pack done) are done and checked (`docs/verification/0.5.1.0.md`). The Codex review of FIX 2 is dispositioned; unit-test scratch now cleans up after itself. Prepared for G3 on local side branches by Sonnet agents (not merged, not run in a browser; review before merging into G3): `g3/perf-ref` (`npm run perf:ref` rig, protocol fragment) and `g3/caching` (CI download caches, encode cache). The owner said GO on the gallery (2026-10-12, "we can iterate later") and merged PR #22; tag `v0.5.1.0` is on `10e61e3`. A hand-uploaded root `index.html` made `main` red and let CI deploy a 0.5.0.0 build over it; branch `g2/pages` removes it, adds a check and sets the Pages source to GitHub Actions (`docs/verification/0.5.1.0.md` "Pages after the merge"). `g2/pages` merged as PR #23 after two green runs; the Pages SHA-256 equals the 0.5.1.0 build (630e6d52…1667). Owner FIX 4 (2026-10-12): the showcase could not zoom and cut off a fully kitted vehicle; on a phone the tables in the collapsible sections lost columns; the controls were long words. Fixed on `fix/showcase-mobile` as 0.5.2.0, awaiting the owner's GO on its gallery, then merge, tag `v0.5.2.0`, and the Pages SHA-256 check. CI on `78cca1f` failed `showcaseUpdateMaxMs` once (109 ms against 100; `docs/verification/0.5.1.0.md` close-out): see timing note 3. Run only one Blender job at a time: the owner uses this PC.
+Owner FIX 1 (stills and fit), FIX 2 (one click to close a round nobody can win in; unsold cards listed with their effects) and FIX 3 (a part read as the end of a barrel: optics head raised, mast set back, mirrors lowered, `sightline.py` at any depth including hull fittings, 574 pairs recorded and only shrinking; full re-render, encode and pack done) are done and checked (`docs/verification/0.5.1.0.md`). The Codex review of FIX 2 is dispositioned; unit-test scratch now cleans up after itself. Prepared for G3 on local side branches by Sonnet agents (not merged, not run in a browser; review before merging into G3): `g3/perf-ref` (`npm run perf:ref` rig, protocol fragment) and `g3/caching` (CI download caches, encode cache). The owner said GO on the gallery (2026-10-12, "we can iterate later") and merged PR #22; tag `v0.5.1.0` is on `10e61e3`. A hand-uploaded root `index.html` made `main` red and let CI deploy a 0.5.0.0 build over it; branch `g2/pages` removes it, adds a check and sets the Pages source to GitHub Actions (`docs/verification/0.5.1.0.md` "Pages after the merge"). `g2/pages` merged as PR #23 after two green runs; the Pages SHA-256 equals the 0.5.1.0 build (630e6d52…1667). Owner FIX 4 (2026-10-12): the showcase could not zoom and cut off a fully kitted vehicle; on a phone the tables in the collapsible sections lost columns; the controls were long words. Fixed on `fix/showcase-mobile` as 0.5.2.0 (CI then found pause letting the turn coast on; fixed, with every control reporting its view at once, and Playwright now refuses a `dist/index.html` older than the source: run `npm run build` before any ad hoc Playwright run), awaiting the owner's GO on its gallery, then merge, tag `v0.5.2.0`, and the Pages SHA-256 check. CI on `78cca1f` failed `showcaseUpdateMaxMs` once (109 ms against 100; `docs/verification/0.5.1.0.md` close-out): see timing note 3. Run only one Blender job at a time: the owner uses this PC.
 
 ## 5. Next action
 
@@ -27445,7 +27445,7 @@ Result: PR #23 merged after two green CI runs; CI on the merge commit (run 38334
 
 ### docs/verification/0.5.2.0.md
 
-Paths: `docs/verification/0.5.2.0.md`. SHA-256 `ce40bf4855ab04d291b2f405b286013d8057a4b75b55bc6f7de98c17e8e0dfb4`, 5045 bytes.
+Paths: `docs/verification/0.5.2.0.md`. SHA-256 `42f041f47175b8861124774b059d121f4f13233ba9a822b8ba2fe3d69116c335`, 6601 bytes.
 
 ```markdown
 # Verification record: 0.5.2.0 beta (owner FIX 4 on G2)
@@ -27460,8 +27460,12 @@ Owner FIX 4 (2026-10-12): "Vehicle showcase needs zoom in, out function. It need
 | 2 | The vehicle as fitted, however fully kitted out, framed within 92% of the frame at every turn and every drag height; refitted on a purchase or a window change; a purchase keeps the player's turn and zoom | `tests/unit/frame.test.ts` (long, tall, off-centre kits; wide, square, tall windows; every 5° turn; heights 0.6 to 1.45 rad); `tests/e2e/showcase.spec.ts` buys ACC-B, COM-E, ACC-C and SA-D on the troop carrier and turns it fully at 1280 and 360 px | PASS |
 | 3 | Sign controls: ‖ or ▷ (pause, resume), ↺, ↻, −, +; each named for assistive technology and in its tooltip, at least 44 px, inside the window at 360 px; EN and FR names | `tests/e2e/showcase.spec.ts`; axe in the existing showcase test | PASS |
 | 4 | Phone tables: below 40 rem each row is a card and every cell is labelled with its column header (`labelCells`), so no column is cut off; the desktop header is unchanged; swept over all eight table kinds | `tests/e2e/mobile.spec.ts` (320 and 360 px, EN and FR, planning with every section open and the tracker after a purchase; 1280 px header) | PASS |
+| 5 | Pause stops the model where it is, at once (CI found the turn coasting on after pause); every control (pause, turn, zoom) and every refit reports the view at once, not on the next paced draw | `tests/e2e/showcase.spec.ts` "paused means still" (the reported turn unchanged for 600 ms) and the zoom limit read straight after the last press, at 1280 and 360 px, in Chromium, Firefox and Edge | PASS |
+| 6 | No end-to-end run tests a build older than the source | `tests/e2e/fresh-build.ts` (Playwright global setup): refuses to start with a stale `dist/index.html`, starts with a fresh one | PASS |
 
 Root cause of item 4: the "dropdown menus" were the collapsible sections of the planning and tracker views; their tables were wider than a phone and their right-hand columns were clipped behind a sideways scroll that nothing showed.
+
+Root cause of item 5: CI run 38341255504 failed the turn check at 1280 px (the view still moving 0.023 rad between readings after a pause). The orbit controls ease every movement: switching off the automatic turn leaves the remaining eased turn to run out, which on a slow software renderer takes many seconds. A new check (the reported turn must not change for 600 ms after pause) failed before the fix (0.463 then 0.387; 0.653 then 0.577) and passes after it: pause applies one update without easing, keeping the camera where it is. The check then failed in Edge at 360 px by 0.002 to 0.003 rad, and the zoom read 0.8, its zoomed-in value, after 12 Zoom out presses: the stage reported its view only on its next paced draw, and not at all while scrolled off screen, so the reading lagged the camera. Now every control reports at once. A further trap: these runs had loaded a `dist/index.html` built before the change, so item 6 makes that impossible.
 
 Framing notes: framing every part in the catalogue (−7.3 to 5.6 m long, 5.6 m tall) left a bare vehicle at about half the frame, so the stage frames the vehicle as fitted. The camera distance is fitted per drag height (nine heights, interpolated), because a single distance for the highest view leaves the low views loose.
 
@@ -27771,12 +27775,18 @@ export default tseslint.config(
 
 ### library/LESSONS.md
 
-Paths: `library/LESSONS.md`. SHA-256 `2596c369629762b38204b16093f81f93439e89d45cfa4c92d383e6024479dd30`, 6366 bytes.
+Paths: `library/LESSONS.md`. SHA-256 `0f420e0c7e514918c0da73cbf6e4f5dfab44ef1ae77666424d366ed68781af28`, 7333 bytes.
 
 ```markdown
 # Lessons learned
 
 Each entry: what happened, the rule it produced, and the check that now enforces it. Newest first. Examples come from SEA Game (a classroom auction game with photoreal vehicle renders and a real-time 3D showcase, one offline HTML file).
+
+## 2026-10-13 · Paused, yet still turning; fixed, yet still failing
+
+- **What happened:** pausing a 3D turntable stopped its automatic turn, but the orbit controls' easing carried the turn on, for seconds on a slow software renderer; only CI's slow machine showed it. The fix then seemed not to work: the test read the view from an attribute updated only on the next paced draw (and never while the stage was off screen), and ran against a build made before the fix.
+- **Rule:** a pause, and every control, takes effect at once and reports its new state at once; a test reads current state, not a value cached for drawing; refuse to test a build older than its source.
+- **Check (as built in SEA Game):** the end-to-end test pauses and requires the reported turn to stay unchanged for 600 ms, and reads the zoom straight after the last of 12 presses; a Playwright global setup renders the build from source and refuses to start unless the built file is that build.
 
 ## 2026-10-12 · Framed for one view, cut off at the others
 
@@ -32534,7 +32544,7 @@ Paths: `package.json`. SHA-256 `089c1f8f37a85f58f864fc82666b184db97a778d7d73fa94
 
 ### playwright.config.ts
 
-Paths: `playwright.config.ts`. SHA-256 `93e71d129d3e662e56c7dff8a1e20867277837c6bae409d80d4fb22bb9bd828b`, 2315 bytes.
+Paths: `playwright.config.ts`. SHA-256 `d43d59e896edd40f4162e1ac652b715440ca26059342ce77a84f7950585d6155`, 2448 bytes.
 
 ```ts
 import { defineConfig, devices } from '@playwright/test';
@@ -32565,6 +32575,8 @@ const perf = engines.includes('chromium')
 
 export default defineConfig({
   testDir: 'tests/e2e',
+  // Refuse to test a dist/index.html older than the source (tests/e2e/fresh-build.ts).
+  globalSetup: './tests/e2e/fresh-build.ts',
   outputDir: '.artifacts/test-results',
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
@@ -35359,7 +35371,7 @@ export function vehicleGlb(glb: ArrayBuffer, vehicle: string): ArrayBuffer | nul
 
 ### source/showcase/model.ts
 
-Paths: `source/showcase/model.ts`. SHA-256 `7d1c27c45d1da51534b51162c8cdb240328cf84b18fdf7ab25682c5ddcd13a1f`, 14800 bytes.
+Paths: `source/showcase/model.ts`. SHA-256 `5b255ade54612974e8ba3d90a646b51b48d79f28f260c26025723eb2b023d485`, 15642 bytes.
 
 ```ts
 // Real-time vehicle showcase (MPES §10): the embedded glTF model on a slowly turning stage the player can drag.
@@ -35548,13 +35560,27 @@ export class ModelStage {
 
   /** Whether the stage turns by itself (off under reduced motion until the player turns it on). */
   get turning(): boolean { return this.#controls.autoRotate; }
-  set turning(on: boolean) { this.#controls.autoRotate = on; this.#loop(); }
+  set turning(on: boolean) { this.#controls.autoRotate = on; if (!on) this.#halt(); this.#loop(); }
+
+  /** Pause stops the model where it is: the controls' easing would carry the turn on, for seconds on a slow
+   *  renderer. One update without damping clears what is left of it; the camera stays where it was. */
+  #halt(): void {
+    const at = this.#camera.position.clone();
+    this.#controls.enableDamping = false;
+    this.#controls.update();
+    this.#camera.position.copy(at);
+    this.#controls.update();
+    this.#controls.enableDamping = true;
+    this.#invalidate();
+    this.#report();
+  }
 
   /** Turns the vehicle by `radians` about the vertical axis (keyboard and button control). */
   turn(radians: number): void {
     const offset = this.#camera.position.clone().sub(this.#controls.target).applyAxisAngle(UP, radians);
     this.#camera.position.copy(this.#controls.target).add(offset);
     this.#controls.update();
+    this.#report();
   }
 
   /** Zooms in (`+1`) or out (`-1`) one step, within the limits (MPES §10.2). */
@@ -35617,6 +35643,7 @@ export class ModelStage {
     this.#distance();
     this.#controls.update();
     this.#invalidate();
+    this.#report();
   }
 
   /** Sets the camera's distance for its height (a drag up needs it farther back) at the player's zoom. */
@@ -35647,6 +35674,12 @@ export class ModelStage {
     this.#dirty = false;
     this.#distance();
     this.#renderer.render(this.#scene, this.#camera);
+    this.#report();
+  }
+
+  /** Tells `onView` where the camera is: each draw, and at once after a pause, turn, zoom or refit, so the reading never
+   *  lags a player's action by a paced draw (or for good while the stage is off screen and not drawing). */
+  #report(): void {
     if (this.onView) {
       const offset = this.#camera.position.clone().sub(this.#controls.target), distance = offset.length();
       const extent = extentAt(this.#kit, this.#controls.target, offset.divideScalar(distance), distance, this.#camera.fov, this.#camera.aspect);
@@ -38644,6 +38677,25 @@ test('the instructor closes a full round in one click and the student skips to t
 });
 ```
 
+### tests/e2e/fresh-build.ts
+
+Paths: `tests/e2e/fresh-build.ts`. SHA-256 `4ad349017bfce1e741202ba7d0b6e48441b9951934e4134e21cf2a5c29244258`, 702 bytes.
+
+```ts
+// Playwright global setup: the end-to-end tests load dist/index.html, so a run against a build older than the source
+// tests old code and can pass or fail for the wrong reason (owner FIX 4, 2026-10-13: a pause fix looked unfixed).
+// Render the build from source once and refuse to start unless dist/index.html is that build.
+import { existsSync, readFileSync } from 'node:fs';
+import { OUT, render } from '../../build/render.ts';
+
+export default async function freshBuild(): Promise<void> {
+  const html = await render();
+  if (!existsSync(OUT) || readFileSync(OUT, 'utf8') !== html) {
+    throw new Error('dist/index.html is not the build of the current source: run `npm run build` first.');
+  }
+}
+```
+
 ### tests/e2e/helpers.ts
 
 Paths: `tests/e2e/helpers.ts`. SHA-256 `4ea88f72d5474759f6dec0697ec0ccbfad5328ae496370a75e52d7b53beac1f1`, 2642 bytes.
@@ -39872,7 +39924,7 @@ export async function studentRecord(page: Page, cardId: string, paidDollars: num
 
 ### tests/e2e/showcase.spec.ts
 
-Paths: `tests/e2e/showcase.spec.ts`. SHA-256 `acfea81150e8103f9099c62ad7cb1cd1c521b78556f88c19138691be90d779b1`, 22128 bytes.
+Paths: `tests/e2e/showcase.spec.ts`. SHA-256 `172f0dff6e6370a65a638829c345df2080cbd6584fc4e1bdccc09597641300fa`, 22412 bytes.
 
 ```ts
 // War-room HUD and vehicle showcase (MPES §7.1, §10, §11): the default look of every view. The live lot shows the
@@ -39967,6 +40019,10 @@ for (const viewport of [{ width: 1280, height: 720 }, { width: 360, height: 740 
     await button('Pause turning').click();
     await expect(button('Pause turning')).toHaveText('▷');
     await expect(button('Pause turning')).toHaveAttribute('title', 'Resume turning');
+    // Pause stops the model where it is: no coasting on, which on a slow renderer lasted many seconds.
+    const held = await stage.getAttribute('data-azimuth');
+    await sp.waitForTimeout(600);
+    expect(await stage.getAttribute('data-azimuth'), 'paused means still').toBe(held);
     // The extent is the farthest corner of the full kit's bounding box from the frame centre (1 = the frame edge).
     const extent = async () => Number(await stage.getAttribute('data-extent'));
     // A turn eases over several frames, its tail long and slight: read the view once it has all but come to rest.
@@ -43647,5 +43703,5 @@ Keys and the commands that make each kind again:
 
 | Path | Bytes | SHA-256 | Why |
 |---|---:|---|---|
-| `docs/MPES.md` | 168149 | `5f745051cac99586cbca81d0fb049b0d28a6a5d306405250b65b99a006779d07` | The specification, a clean-room document of its own (Omni 5.1.1 §333). |
+| `docs/MPES.md` | 169141 | `60f1982198a58a35b8ba74e8e2f83d29385b1bd8a40eaaeb32c576d184128210` | The specification, a clean-room document of its own (Omni 5.1.1 §333). |
 | `docs/CODEBASE.md` | | | This file. |
