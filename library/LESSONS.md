@@ -2,6 +2,12 @@
 
 Each entry: what happened, the rule it produced, and the check that now enforces it. Newest first. Examples come from SEA Game (a classroom auction game with photoreal vehicle renders and a real-time 3D showcase, one offline HTML file).
 
+## 2026-10-12 · Two ways to publish, one stale site
+
+- **What happened:** the built game was uploaded by hand to the repository root, and Pages (serving from the branch) published it. Minutes later CI's own Pages job, still running on the commit before the merge, deployed a build of the older source over it. The tracked copy also broke the checks that every tracked file is reproducible.
+- **Rule:** one deployer. Set the Pages source to the CI workflow, never commit a build, and publish only what passed the checks. After each release, compare the live file's hash with the local build.
+- **Check:** a unit test fails on any tracked page carrying a built payload; the release checklist compares the Pages SHA-256 with the build.
+
 ## 2026-10-12 · A part read as the end of a gun barrel
 
 - **What happened:** in a still, a roof sight stood where the eye carried a barrel on, so it looked like part of the barrel. A first check judged only parts in front of the muzzle; the fixed still still misled, because a part *behind* a barrel's end reads the same way. Then a hull mirror (not a "part", so not judged) did the same in another still.

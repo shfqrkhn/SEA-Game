@@ -26843,7 +26843,7 @@ Exportez une sauvegarde par **Menu → Exporter une sauvegarde** après la confi
 
 ### docs/HANDOVER.md
 
-Paths: `docs/HANDOVER.md`. SHA-256 `ac54d24501d1690c8c8ead7ed0c651cfffec75356c0f27acdf0b1e27bfe3d887`, 9660 bytes.
+Paths: `docs/HANDOVER.md`. SHA-256 `6a9f904038b658d7c2857cb25bf2e97e6803d70deca9fb5a8b872eab2614682c`, 10110 bytes.
 
 ```markdown
 # Handover
@@ -26897,13 +26897,13 @@ Shared rules for every goal: `AGENTS.md`. KPIs and priority: MPES §1.4.
 - **Owner art judgement:** BLOCKED-owner, script `docs/owner/art-review.md`.
 - **G3–G8:** above. `npm run perf:ref` does not exist yet; it is G3's first step.
 - **Known timing note:** `tests/unit/codebase.test.ts` usually runs in under half a second but once took 7.1 s (2026-10-11, cause unknown, result correct, not reproduced in 22 runs); it has an explicit 60 s bound with that evidence in a comment. Watch for a repeat.
-- **Known timing note 2:** `tests/unit/build.test.ts` "is deterministic" once timed out (63 s against 5 s) while other projects' test runs loaded this PC (2026-10-12); it passed in 5.3 s on re-run. The same day `tests/unit/archive.test.ts` "refuses a path that holds a tracked file" timed out the same way (5 s; 80 ms alone); its scratch clones had piled up in `.artifacts/tmp` and are now removed after each run (`tests/unit/scratch.test.ts`). If either repeats on a quiet machine, find the cause; do not raise the timeout.
+- **Known timing note 2:** `tests/unit/build.test.ts` "is deterministic" once timed out (63 s against 5 s) while other projects' test runs loaded this PC (2026-10-12); it passed in 5.3 s on re-run. The same day `tests/unit/archive.test.ts` "refuses a path that holds a tracked file" timed out the same way (5 s; 80 ms alone); its scratch clones had piled up in `.artifacts/tmp` and are now removed after each run (`tests/unit/scratch.test.ts`). On 2026-10-12 at 97% CPU two Firefox tests (`layout.spec.ts` live lot, `showcase.spec.ts` every vehicle) timed out with an unchanged build and passed alone. If either repeats on a quiet machine, find the cause; do not raise the timeout.
 - **Known timing note 3:** CI failed the showcase update budget once too (109 ms against 100, `78cca1f`, 2026-10-12). With Windows Defender and other projects busy, the local perf project fails a 3D update budget in about half of its runs, at the previous commit as often as now (A/B in `docs/verification/0.5.1.0.md`). Run it on a quiet machine; never raise the budgets. G3's `perf:ref` protocol is meant to settle this.
 - **Residual risks:** real learners (S3); Narrator and NVDA users; no physical laptop test (D-16); CI runs Windows Server, not Windows 11; art quality is the owner's judgement.
 
 ## 4. In-progress work
 
-Owner FIX 1 (stills and fit), FIX 2 (one click to close a round nobody can win in; unsold cards listed with their effects) and FIX 3 (a part read as the end of a barrel: optics head raised, mast set back, mirrors lowered, `sightline.py` at any depth including hull fittings, 574 pairs recorded and only shrinking; full re-render, encode and pack done) are done and checked (`docs/verification/0.5.1.0.md`). The Codex review of FIX 2 is dispositioned; unit-test scratch now cleans up after itself. Prepared for G3 on local side branches by Sonnet agents (not merged, not run in a browser; review before merging into G3): `g3/perf-ref` (`npm run perf:ref` rig, protocol fragment) and `g3/caching` (CI download caches, encode cache). The owner said GO on the gallery (2026-10-12, "we can iterate later"); left for G2: two green CI runs on the close-out commit, merge, tag and the Pages check. CI on `78cca1f` failed `showcaseUpdateMaxMs` once (109 ms against 100; `docs/verification/0.5.1.0.md` close-out): see timing note 3. Run only one Blender job at a time: the owner uses this PC.
+Owner FIX 1 (stills and fit), FIX 2 (one click to close a round nobody can win in; unsold cards listed with their effects) and FIX 3 (a part read as the end of a barrel: optics head raised, mast set back, mirrors lowered, `sightline.py` at any depth including hull fittings, 574 pairs recorded and only shrinking; full re-render, encode and pack done) are done and checked (`docs/verification/0.5.1.0.md`). The Codex review of FIX 2 is dispositioned; unit-test scratch now cleans up after itself. Prepared for G3 on local side branches by Sonnet agents (not merged, not run in a browser; review before merging into G3): `g3/perf-ref` (`npm run perf:ref` rig, protocol fragment) and `g3/caching` (CI download caches, encode cache). The owner said GO on the gallery (2026-10-12, "we can iterate later") and merged PR #22; tag `v0.5.1.0` is on `10e61e3`. A hand-uploaded root `index.html` made `main` red and let CI deploy a 0.5.0.0 build over it; branch `g2/pages` removes it, adds a check and sets the Pages source to GitHub Actions (`docs/verification/0.5.1.0.md` "Pages after the merge"). Left for G2: merge `g2/pages` after two green runs, then the Pages SHA-256 equals the build. CI on `78cca1f` failed `showcaseUpdateMaxMs` once (109 ms against 100; `docs/verification/0.5.1.0.md` close-out): see timing note 3. Run only one Blender job at a time: the owner uses this PC.
 
 ## 5. Next action
 
@@ -27201,7 +27201,7 @@ The three Firefox failures are browser-internal and appeared only under full loc
 
 ### docs/verification/0.5.1.0.md
 
-Paths: `docs/verification/0.5.1.0.md`. SHA-256 `ed1bbdb6cc55b2ee4c4311c2374b3cadaa50184c8d21fa51f720121008efdcf0`, 34932 bytes.
+Paths: `docs/verification/0.5.1.0.md`. SHA-256 `f8809850e9430a2e57203ec2ed8627ca3f246fedff3122b0704d99810db214cc`, 36683 bytes.
 
 ```markdown
 # Verification record: 0.5.1.0 beta (goal G2)
@@ -27427,6 +27427,12 @@ Baselines: `npx playwright test tests/e2e/visual.spec.ts --project=chromium` fai
 ## Close-out (G2)
 
 CI on `78cca1f` failed one budget in the perf project: `showcaseUpdateMaxMs` 109 ms against 100 ms (run 38313266738); every other test passed, and the same budget held on the three runs before it and locally (36 ms on `c0058fb`). This is the timing noise of known timing note 3 (HANDOVER §3), now seen on a shared CI runner as well. The budget is not raised: G3's `npm run perf:ref` protocol (fixed GPU, throttled CPU, repeated windows, worst of N reported) is where it is settled, and a repeat before then is investigated, not retried away. The docs-only close-out commit (this record, HANDOVER next action G3, README status) gets its own two consecutive green CI runs before PR #22 is merged with a merge commit; tag `v0.5.1.0` is then set on `main`, its annotation records both run ids, and the SHA-256 of the Pages build equals that of `npm run build` from the tag.
+
+## Pages after the merge (2026-10-12)
+
+The owner merged PR #22 (merge commit `10e61e3`) after uploading the built game as a root `index.html` (`c6cc04f`, SHA-256 630e6d52…1667, identical to the local build of `e8c6e13`). Pages was in branch mode, so it served that file; then CI's `pages` job on `c6cc04f`, whose source was still 0.5.0.0, deployed its own build over it (00:59 UTC), so Pages served 0.5.0.0. CI on `10e61e3` failed: the tracked `index.html` broke "credits the creator" (the name outside the named files) and the three `docs/CODEBASE.md` checks. Tag `v0.5.1.0` is on `10e61e3`; its game is the build of `e8c6e13`. Fix (branch `g2/pages`): check first, `tests/unit/build.test.ts` "commits no built game: only CI publishes it" failed on `index.html`; the file moved to `_archive/recycle/2026-10-12/` and out of git; the Pages source switched from the branch to GitHub Actions (owner's repository setting, reversible), so only CI's verified build is ever served. After that PR merges, the Pages SHA-256 is compared with the build again (HANDOVER §4).
+
+`npm run verify` on `g2/pages`: 205 unit tests passed; Playwright 121 passed, 2 failed in Firefox on timeouts (`layout.spec.ts` "live lot actions fit 1280×720 with 10 teams (en)", a click waiting 60 s; `showcase.spec.ts` "every vehicle has its showcase", 120 s) with the machine at 97% CPU (OneDrive sync and other work); the built game is byte-identical to the one that passed every test on `c0058fb` (SHA-256 630e6d52…1667). Re-run: showcase passed; the layout test failed once more in a two-file run and passed alone (28.6 s against about 2 s in Chromium). Timeouts unchanged; known timing note 2 (HANDOVER §3) now includes Firefox; CI's two runs are the clean-machine judge.
 ```
 
 ### docs/verification/legibility.md
@@ -27704,12 +27710,18 @@ export default tseslint.config(
 
 ### library/LESSONS.md
 
-Paths: `library/LESSONS.md`. SHA-256 `3f01cfea2810f58e3ae525ddfe2d6970d8d2223563f9a645ac956c0203c7b433`, 4334 bytes.
+Paths: `library/LESSONS.md`. SHA-256 `e8cc27d8e0f071781fb2f6f01d9b2016f128d3f39950ecb4a8accbc557e4f837`, 5069 bytes.
 
 ```markdown
 # Lessons learned
 
 Each entry: what happened, the rule it produced, and the check that now enforces it. Newest first. Examples come from SEA Game (a classroom auction game with photoreal vehicle renders and a real-time 3D showcase, one offline HTML file).
+
+## 2026-10-12 · Two ways to publish, one stale site
+
+- **What happened:** the built game was uploaded by hand to the repository root, and Pages (serving from the branch) published it. Minutes later CI's own Pages job, still running on the commit before the merge, deployed a build of the older source over it. The tracked copy also broke the checks that every tracked file is reproducible.
+- **Rule:** one deployer. Set the Pages source to the CI workflow, never commit a build, and publish only what passed the checks. After each release, compare the live file's hash with the local build.
+- **Check:** a unit test fails on any tracked page carrying a built payload; the release checklist compares the Pages SHA-256 with the build.
 
 ## 2026-10-12 · A part read as the end of a gun barrel
 
@@ -40387,7 +40399,7 @@ describe('archive:prep', () => {
 
 ### tests/unit/build.test.ts
 
-Paths: `tests/unit/build.test.ts`. SHA-256 `16548ff979212567db5302369023b5871b1ebc91952c73a827e41a7df43bb47a`, 7201 bytes.
+Paths: `tests/unit/build.test.ts`. SHA-256 `0bc4fdccbc64922aa9081f1edc691a45760c153aa4dc0b154fde515cc48ce0c9`, 7811 bytes.
 
 ```ts
 import { execFileSync } from 'node:child_process';
@@ -40494,6 +40506,13 @@ describe('single-file build (RQ-01, RQ-24, RQ-25, RQ-27)', async () => {
     // No textures: GLTFLoader would need blob: URLs for them, which the CSP forbids.
     const json = JSON.parse(glb.subarray(20, 20 + glb.readUInt32LE(12)).toString('utf8')) as { images?: unknown[] };
     expect(json.images ?? []).toHaveLength(0);
+  });
+  // The built game is never committed (D-12): Pages publishes CI's verified build, so a copy uploaded by hand (2026-10-12,
+  // a root index.html) would be served instead of it and fall behind. Any tracked page with the renders block filled is one.
+  it('commits no built game: only CI publishes it', () => {
+    const tracked = execFileSync('git', ['ls-files', '-z'], { encoding: 'utf8' }).split(String.fromCharCode(0))
+      .filter(file => /\.html?$/i.test(file) && existsSync(file));
+    for (const file of tracked) expect(/id="sea-renders">\{"/.test(readFileSync(file, 'utf8')), file).toBe(false);
   });
   it('has no duplicate static ids', () => {
     const ids = [...html.matchAll(/\sid="([^"]+)"/g)].map(match => match[1]);
@@ -43127,5 +43146,5 @@ Keys and the commands that make each kind again:
 
 | Path | Bytes | SHA-256 | Why |
 |---|---:|---|---|
-| `docs/MPES.md` | 165307 | `8c117d1a17dc15dabb70443423d38b3029cb66a3c37634523758d392dad78ceb` | The specification, a clean-room document of its own (Omni 5.1.1 §333). |
+| `docs/MPES.md` | 165877 | `69bfa1b943ff288b6dfc5c372a832aca72340c62818eee34c27b1fd115716ecc` | The specification, a clean-room document of its own (Omni 5.1.1 §333). |
 | `docs/CODEBASE.md` | | | This file. |

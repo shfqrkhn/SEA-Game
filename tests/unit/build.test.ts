@@ -103,6 +103,13 @@ describe('single-file build (RQ-01, RQ-24, RQ-25, RQ-27)', async () => {
     const json = JSON.parse(glb.subarray(20, 20 + glb.readUInt32LE(12)).toString('utf8')) as { images?: unknown[] };
     expect(json.images ?? []).toHaveLength(0);
   });
+  // The built game is never committed (D-12): Pages publishes CI's verified build, so a copy uploaded by hand (2026-10-12,
+  // a root index.html) would be served instead of it and fall behind. Any tracked page with the renders block filled is one.
+  it('commits no built game: only CI publishes it', () => {
+    const tracked = execFileSync('git', ['ls-files', '-z'], { encoding: 'utf8' }).split(String.fromCharCode(0))
+      .filter(file => /\.html?$/i.test(file) && existsSync(file));
+    for (const file of tracked) expect(/id="sea-renders">\{"/.test(readFileSync(file, 'utf8')), file).toBe(false);
+  });
   it('has no duplicate static ids', () => {
     const ids = [...html.matchAll(/\sid="([^"]+)"/g)].map(match => match[1]);
     expect(new Set(ids).size).toBe(ids.length);
