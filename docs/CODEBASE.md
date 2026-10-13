@@ -27445,7 +27445,7 @@ Result: PR #23 merged after two green CI runs; CI on the merge commit (run 38334
 
 ### docs/verification/0.5.2.0.md
 
-Paths: `docs/verification/0.5.2.0.md`. SHA-256 `6eece7685e5b9f86062c2b24b4141e21cf6c125005bdefcd4fe4f314e9fa1777`, 4856 bytes.
+Paths: `docs/verification/0.5.2.0.md`. SHA-256 `ce40bf4855ab04d291b2f405b286013d8057a4b75b55bc6f7de98c17e8e0dfb4`, 5045 bytes.
 
 ```markdown
 # Verification record: 0.5.2.0 beta (owner FIX 4 on G2)
@@ -27474,7 +27474,7 @@ Framing notes: framing every part in the catalogue (−7.3 to 5.6 m long, 5.6 m 
 | Unit and property | `npm test` | PASS, 20 files, 218 tests |
 | Full gate | `npm run verify` (typecheck, lint, unit, build check, build, Playwright in Chromium, Firefox and Edge, then perf) | PASS with machine-load timeouts: typecheck, lint, 218 unit tests, build check and build passed; Playwright 136 passed, 5 failed in Firefox on 120 s timeouts (`increment`, `close-round`, `layout` 10 teams FR, two `chooser` tests) with the CPU at 100% (OneDrive sync); each passed when run alone (`--workers=1`). Perf, run alone: see below |
 | CI, two consecutive green runs on one head | GitHub Actions `ci.yml` | PENDING |
-| Owner visual check | `npm run gallery` → `.artifacts/review/0.5.2.0.html` | PENDING |
+| Owner visual check | `npm run gallery -- --notes .artifacts/tmp/mobile/notes.md` → `.artifacts/review/0.5.2.0.html` (94 shots; new groups "Phone" and "Full kit in 3D", `scripts/gallery/shots.ts`; the two zoomed shots are new, as 0.5.1.0 has no zoom) | PENDING owner GO/FIX |
 
 Perf A/B on this machine (CPU at 100%), the perf project alone, `main` at `646755b` (worktree) alternating with this branch, three rounds:
 
@@ -33022,7 +33022,7 @@ await main();
 
 ### scripts/gallery/capture.spec.ts
 
-Paths: `scripts/gallery/capture.spec.ts`. SHA-256 `f29915ca14a9e29b87b710246fd14526eb2210702149fe75a59e21165d1f333f`, 6225 bytes.
+Paths: `scripts/gallery/capture.spec.ts`. SHA-256 `3c1f35897a19ea602edc80506ac6d529d98aa49b72c2fdea79b26b164f9619ce`, 8611 bytes.
 
 ```ts
 // Gallery capture (G2 item 4): one screenshot per shot of the game file named by SEA_GALLERY_DIST, into
@@ -33077,6 +33077,41 @@ async function showcase(page: Page, shot: Shot, mission: string, view: string): 
   await stage.screenshot({ path: join(OUT, `${shot.id}.png`), ...SHOT });
 }
 
+/** Owner FIX 4: a student on a phone, planning with every section open or tracking after one purchase; or the troop
+ *  carrier with the catalogue's farthest-reaching parts in 3D, at its opening angle, turned, or zoomed in. */
+async function phoneOrKit(page: Page, shot: Shot, kind: Extract<Shot['kind'], { type: 'phone' | 'kit' }>): Promise<void> {
+  if (kind.type === 'kit') { await withGpu(page); await page.emulateMedia({ reducedMotion: 'reduce' }); } else await withoutWebgl(page);
+  await page.goto(DIST + query(shot, { role: 'student' }));
+  await studentJoin(page, 'SEA3-T2-0123456789ABCDEF', 1, kind.type === 'kit' ? 'TROOP' : 'COMBAT');
+  const path = join(OUT, `${shot.id}.png`);
+  if (kind.type === 'phone' && kind.view === 'planning') {
+    await page.evaluate(() => document.querySelectorAll('details').forEach(d => { d.open = true; }));
+    await settle(page);
+    return void await page.screenshot({ path, fullPage: true, ...SHOT });
+  }
+  await page.check('#plan-confirm');
+  await page.click('#student-start-auction');
+  await confirmDialog(page);
+  const wins = kind.type === 'kit' ? [[1, 7, 'ACC-B'], [1, 5, 'COM-E'], [2, 7, 'ACC-C'], [2, 6, 'SA-D']] as const : [[1, 1, 'CAP-A']] as const;
+  for (const [round, lot, card] of wins) {
+    await page.selectOption('#pos-round', String(round));
+    await page.selectOption('#pos-lot', String(lot));
+    await page.fill('#card-id', card); await page.click('#load-card'); await page.fill('#paid', '900000');
+    await page.click('#record-win');
+  }
+  if (kind.type === 'phone') {
+    await settle(page);
+    return void await page.screenshot({ path, fullPage: true, ...SHOT });
+  }
+  const stage = page.locator('#showcase [role="img"]');
+  await expect(stage).toHaveAttribute('data-layers', 'ACC-B ACC-C COM-E SA-D', { timeout: 60_000 });
+  await expect(page.locator('#showcase [data-mode="3d"][data-ready="true"]')).toBeVisible({ timeout: 60_000 });
+  const presses = kind.view === 'turned' ? ['Turn left', 6] as const : kind.view === 'zoomed' ? ['Zoom in', 2] as const : null;
+  if (presses) for (let i = 0; i < presses[1]; i++) await page.locator('#showcase').getByRole('button', { name: presses[0], exact: true }).click();
+  await page.waitForTimeout(1500);
+  await page.locator('#showcase').screenshot({ path, ...SHOT });
+}
+
 /** An instructor session, 3 teams, played with the domain commands: each team wins 2 lots of round 1 at the start
  *  price, then the close is offered ('round-full') or taken ('round-closed'). */
 function scenario(name: 'round-full' | 'round-closed', lang: 'en' | 'fr'): I.InstructorState {
@@ -33103,6 +33138,7 @@ for (const shot of shots()) {
     const path = join(OUT, `${shot.id}.png`);
     const kind = shot.kind;
     if (kind.type === 'showcase') return showcase(page, shot, kind.mission, kind.view);
+    if (kind.type === 'phone' || kind.type === 'kit') return phoneOrKit(page, shot, kind);
     if (kind.type === 'fixture' || kind.type === 'scenario') {
       await page.clock.install({ time: new Date('2026-10-10T09:00:00Z') });
       const role = kind.type === 'fixture' ? kind.role : 'instructor';
@@ -33159,20 +33195,22 @@ export default defineConfig({
 
 ### scripts/gallery/shots.ts
 
-Paths: `scripts/gallery/shots.ts`. SHA-256 `5736e72fc7ab297cf16eec8943dc07a493803bffb669452d3b4218a42e8e83c1`, 4978 bytes.
+Paths: `scripts/gallery/shots.ts`. SHA-256 `60cf7b352e0852a1924991bdbc54ecb1ba18af3c6d08e6d0e76938d19d5490d3`, 6718 bytes.
 
 ```ts
 // The gallery's shot list (G2 item 4): every view of both roles, EN and FR, on the reference laptop and the projector,
-// and the six vehicles in stills and 3D. Shared by the capture spec and the page assembler.
+// the six vehicles in stills and 3D, and (owner FIX 4) the student views on a phone and the fully kitted 3D model. Shared by the capture spec and the page assembler.
 
 export type Language = 'en' | 'fr';
-export interface Display { readonly id: 'laptop' | 'projector'; readonly width: number; readonly height: number; readonly theme: 'dark' | 'light'; readonly name: string }
+export interface Display { readonly id: 'laptop' | 'projector' | 'phone'; readonly width: number; readonly height: number; readonly theme: 'dark' | 'light'; readonly name: string }
 export type Kind =
   | { readonly type: 'chooser' }
   | { readonly type: 'about' }
   | { readonly type: 'fixture'; readonly role: 'instructor' | 'student'; readonly fixture: string }
   | { readonly type: 'scenario'; readonly scenario: 'round-full' | 'round-closed' }
-  | { readonly type: 'showcase'; readonly mission: string; readonly view: 'front' | 'rear' | 'turntable' | '3d' };
+  | { readonly type: 'showcase'; readonly mission: string; readonly view: 'front' | 'rear' | 'turntable' | '3d' }
+  | { readonly type: 'phone'; readonly view: 'planning' | 'tracker' }
+  | { readonly type: 'kit'; readonly view: 'opening' | 'turned' | 'zoomed' };
 export interface Shot {
   readonly id: string;
   readonly group: string;
@@ -33187,6 +33225,8 @@ export const DISPLAYS: readonly Display[] = [
   { id: 'laptop', width: 1366, height: 768, theme: 'dark', name: 'Laptop 1366×768, war-room theme' },
   { id: 'projector', width: 1920, height: 1080, theme: 'light', name: 'Projector 1920×1080, projector theme' },
 ];
+/** Owner FIX 4: a phone, for the student views only (tables as labelled cards) and the 3D showcase. */
+export const PHONE: Display = { id: 'phone', width: 360, height: 740, theme: 'dark', name: 'Phone 360×740, war-room theme' };
 
 const VIEWS: readonly { id: string; group: string; title: string; caption: string; kind: Kind }[] = [
   { id: 'chooser', group: 'First screen', title: 'Role chooser', caption: 'The first screen: the six mission vehicles (selected one large) and the two roles.', kind: { type: 'chooser' } },
@@ -33225,6 +33265,19 @@ export function shots(): Shot[] {
   }
   for (const mission of MISSIONS) for (const [view, title, caption] of SHOWCASE_VIEWS) {
     list.push({ id: `showcase-${mission.toLowerCase()}-${view}`, group: 'Vehicles', title: `${mission}: ${title}`, caption, lang: 'en', display: DISPLAYS[0]!, kind: { type: 'showcase', mission, view } });
+  }
+  for (const lang of ['en', 'fr'] as const) for (const [view, title, caption] of [
+    ['planning', 'Planning', 'Student planning on a phone, every section open: each table row is a card, every value labelled with its column.'],
+    ['tracker', 'Auction tracker', 'Student tracker on a phone after a purchase (stills, no 3D): the purchases table as labelled cards, price included.'],
+  ] as const) {
+    list.push({ id: `phone-${view}-${lang}`, group: 'Phone', title: `${title} (${lang.toUpperCase()}, phone)`, caption, lang, display: PHONE, kind: { type: 'phone', view } });
+  }
+  for (const display of [DISPLAYS[0]!, PHONE]) for (const [view, title, caption] of [
+    ['opening', 'opening view', 'Troop carrier fully kitted out at the far ends of the catalogue (rear trailer ACC-B, front blade ACC-C, mast COM-E, sensor SA-D): all of it in frame.'],
+    ['turned', 'turned side-on', 'The same kit after six presses of ↺ (turn left): still all in frame, as at every turn.'],
+    ['zoomed', 'zoomed in', 'The same kit after two presses of + (zoom in); − zooms back out.'],
+  ] as const) {
+    list.push({ id: `kit-${view}-${display.id}`, group: 'Full kit in 3D', title: `Full kit, ${title} (${display.id})`, caption, lang: 'en', display, kind: { type: 'kit', view } });
   }
   return list;
 }
@@ -43594,5 +43647,5 @@ Keys and the commands that make each kind again:
 
 | Path | Bytes | SHA-256 | Why |
 |---|---:|---|---|
-| `docs/MPES.md` | 167941 | `440a79c29eeb297f75f6693852fe8952f8db417d6e674b9622ec290b4a165e50` | The specification, a clean-room document of its own (Omni 5.1.1 §333). |
+| `docs/MPES.md` | 168149 | `5f745051cac99586cbca81d0fb049b0d28a6a5d306405250b65b99a006779d07` | The specification, a clean-room document of its own (Omni 5.1.1 §333). |
 | `docs/CODEBASE.md` | | | This file. |
