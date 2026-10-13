@@ -2,6 +2,12 @@
 
 Each entry: what happened, the rule it produced, and the check that now enforces it. Newest first. Examples come from SEA Game (a classroom auction game with photoreal vehicle renders and a real-time 3D showcase, one offline HTML file).
 
+## 2026-10-13 · Green branch, red main
+
+- **What happened:** after two green CI runs, a small docs-only commit was added and the pull request merged straight away. The generated codebase document embeds every doc, so it went stale; CI on `main` failed and the Pages deploy was skipped, leaving the old site live.
+- **Rule:** every commit, docs-only included, regenerates what is generated from it and runs the fast tests; merge only the head whose own CI is green. Let the host enforce it: require the CI checks on the main branch, administrators included.
+- **Check (as built in SEA Game):** the codebase test fails any stale generated document; branch protection on `main` requiring both CI checks is recommended to the owner.
+
 ## 2026-10-13 · Paused, yet still turning; fixed, yet still failing
 
 - **What happened:** pausing a 3D turntable stopped its automatic turn, but the orbit controls' easing carried the turn on, for seconds on a slow software renderer; only CI's slow machine showed it. The fix then seemed not to work: the test read the view from an attribute updated only on the next paced draw (and never while the stage was off screen), and ran against a build made before the fix.
