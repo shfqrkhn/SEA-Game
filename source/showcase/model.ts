@@ -11,11 +11,16 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { vehicleGlb } from './glb.ts';
+import { distanceAt, extentAt, fitTable, zoomed, type FitTable } from './frame.ts';
 import { FramePacer } from './pace.ts';
 
 /** Seconds per full turn when the stage turns by itself. */
 export const TURN_SECONDS = 40;
 const UP = new Vector3(0, 1, 0);
+/** The opening view: three-quarter front, a little above (MPES §10.5 camera). */
+const OPENING = new Vector3(0.62, 0.32, 0.72).normalize();
+/** How far the player can drag the view up and down (polar angle from straight up). */
+const POLAR_MIN = 0.6, POLAR_MAX = 1.45;
 
 let packed: Promise<ArrayBuffer | null> | null = null;
 const libraries = new Map<string, Promise<Group | null>>();
@@ -118,8 +123,15 @@ export class ModelStage {
   #observer: IntersectionObserver;
   #resize: ResizeObserver;
   #motion = matchMedia('(prefers-reduced-motion: reduce)');
-  /** Called with the camera's azimuth (radians) whenever the view turns. */
-  onTurn: ((azimuth: number) => void) | null = null;
+  /** The bounds of the vehicle as fitted, the distance that frames them, and the player's zoom (a multiple of it). */
+  #kit = new Box3();
+  #fitted: FitTable = { polars: [0], distances: [1] };
+  /** The aspect the fitted distance was found for; a showcase update re-attaches the canvas at the same size. */
+  #fittedAspect = 0;
+  #zoom = 1;
+  /** Called after every draw with the camera's azimuth (radians), how far the kit reaches from the frame centre
+   * (1 = the frame edge) and the zoom. */
+  onView: ((azimuth: number, extent: number, zoom: number) => void) | null = null;
 
   constructor() {
     this.canvas = document.createElement('canvas');
@@ -158,14 +170,14 @@ export class ModelStage {
     this.#controls = new OrbitControls(this.#camera, this.canvas);
     Object.assign(this.#controls, {
       enableDamping: true, enablePan: false, enableZoom: false, autoRotate: !this.#motion.matches,
-      autoRotateSpeed: 60 / TURN_SECONDS, minPolarAngle: 0.6, maxPolarAngle: 1.45,
+      autoRotateSpeed: 60 / TURN_SECONDS, minPolarAngle: POLAR_MIN, maxPolarAngle: POLAR_MAX,
     });
     this.#controls.addEventListener('change', () => this.#invalidate());
     this.#controls.addEventListener('start', () => this.#loop());
     this.#motion.addEventListener('change', () => { this.turning = !this.#motion.matches; });
     this.#observer = new IntersectionObserver(([entry]) => { this.#visible = !!entry?.isIntersecting; this.#loop(); });
     this.#observer.observe(this.canvas);
-    this.#resize = new ResizeObserver(() => this.#fit());
+    this.#resize = new ResizeObserver(() => this.#size());
     this.#resize.observe(this.canvas);
     document.addEventListener('visibilitychange', () => this.#loop());
   }
@@ -181,11 +193,18 @@ export class ModelStage {
     this.#controls.update();
   }
 
+  /** Zooms in (`+1`) or out (`-1`) one step, within the limits (MPES §10.2). */
+  zoom(press: 1 | -1): void {
+    this.#zoom = zoomed(this.#zoom, press);
+    this.#place();
+  }
+
   /** Shows one vehicle with the given part nodes; returns false if the library has no such vehicle. */
   show(lib: Group, vehicle: string, parts: readonly string[]): boolean {
     const source = lib.getObjectByName(vehicle);
     if (!source) return false;
-    if (this.#vehicle?.name !== vehicle) {
+    const fresh = this.#vehicle?.name !== vehicle;
+    if (fresh) {
       if (this.#vehicle) this.#scene.remove(this.#vehicle);
       this.#vehicle = source.clone();
       this.#vehicle.traverse(o => {
@@ -196,31 +215,61 @@ export class ModelStage {
         }
       });
       this.#scene.add(this.#vehicle);
-      this.#frameCamera();
     }
     const shown = new Set(parts);
-    for (const node of this.#vehicle.children) node.visible = layerOf(node) === 'base' || shown.has(layerOf(node));
-    this.#invalidate();
+    for (const node of this.#vehicle!.children) node.visible = layerOf(node) === 'base' || shown.has(layerOf(node));
+    this.#frameCamera(fresh);
     return true;
   }
 
-  #frameCamera(): void {
-    const base = this.#vehicle?.children.find(n => layerOf(n) === 'base');
-    if (!base) return;
-    const box = new Box3().setFromObject(base), centre = box.getCenter(new Vector3()), size = box.getSize(new Vector3());
-    const radius = size.length() / 2;
-    this.#controls.target.set(centre.x, centre.y * 0.8, centre.z);
-    const distance = radius / Math.sin((this.#camera.fov * Math.PI) / 360) * 0.62;
-    this.#camera.position.set(centre.x + distance * 0.62, centre.y + distance * 0.32, centre.z + distance * 0.72);
-    this.#controls.update();
+  /**
+   * Frames the vehicle as fitted, so every installed part stays in view at every turn and drag height however fully it
+   * is kitted out (the whole catalogue spans 13 m, so framing every possible part would leave a bare vehicle tiny).
+   * A new vehicle opens on the three-quarter view at full frame; a purchase keeps the player's view and zoom.
+   */
+  #frameCamera(fresh: boolean): void {
+    if (!this.#vehicle) return;
+    const kit = new Box3();
+    for (const node of this.#vehicle.children) if (node.visible) kit.union(new Box3().setFromObject(node));
+    if (!fresh && kit.equals(this.#kit)) { this.#invalidate(); return; }
+    const offset = this.#camera.position.clone().sub(this.#controls.target);
+    this.#kit.copy(kit);
+    this.#kit.getCenter(this.#controls.target);
+    if (fresh) { offset.copy(OPENING); this.#zoom = 1; }
+    this.#camera.position.copy(this.#controls.target).add(offset);
+    this.#refit();
   }
 
-  #fit(): void {
+  /** The distance that frames the kit at this aspect, then the camera placed at the player's zoom of it. */
+  #refit(): void {
+    if (!this.#vehicle) return;
+    this.#fittedAspect = this.#camera.aspect;
+    this.#fitted = fitTable(this.#kit, this.#controls.target, POLAR_MIN, POLAR_MAX, this.#camera.fov, this.#camera.aspect);
+    this.#place();
+  }
+
+  /** Moves the camera along its current direction to the zoomed distance. */
+  #place(): void {
+    this.#distance();
+    this.#controls.update();
+    this.#invalidate();
+  }
+
+  /** Sets the camera's distance for its height (a drag up needs it farther back) at the player's zoom. */
+  #distance(): void {
+    const offset = this.#camera.position.clone().sub(this.#controls.target);
+    if (offset.lengthSq() === 0) offset.copy(OPENING);
+    const polar = Math.acos(Math.min(1, Math.max(-1, offset.y / offset.length())));
+    this.#camera.position.copy(this.#controls.target).add(offset.setLength(distanceAt(this.#fitted, polar) * this.#zoom));
+  }
+
+  #size(): void {
     const { clientWidth: w, clientHeight: h } = this.canvas;
     if (!w || !h) return;
     this.#renderer.setSize(w, h, false);
     this.#camera.aspect = w / h;
     this.#camera.updateProjectionMatrix();
+    if (this.#camera.aspect !== this.#fittedAspect) this.#refit();
     this.#invalidate();
   }
 
@@ -232,8 +281,13 @@ export class ModelStage {
 
   #draw(): void {
     this.#dirty = false;
+    this.#distance();
     this.#renderer.render(this.#scene, this.#camera);
-    this.onTurn?.(this.#controls.getAzimuthalAngle());
+    if (this.onView) {
+      const offset = this.#camera.position.clone().sub(this.#controls.target), distance = offset.length();
+      const extent = extentAt(this.#kit, this.#controls.target, offset.divideScalar(distance), distance, this.#camera.fov, this.#camera.aspect);
+      this.onView(this.#controls.getAzimuthalAngle(), extent, this.#zoom);
+    }
   }
 
   #stop(): void {
@@ -261,7 +315,7 @@ export class ModelStage {
 
   /** Restarts the loop after the canvas is re-attached to the page. */
   attached(): void {
-    this.#fit();
+    this.#size();
     this.#loop();
   }
 

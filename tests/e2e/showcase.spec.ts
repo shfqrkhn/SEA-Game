@@ -68,6 +68,58 @@ test('3D showcase: the model turns by itself, follows recorded purchases, and ca
   expect(errors).toEqual([]);
 });
 
+for (const viewport of [{ width: 1280, height: 720 }, { width: 360, height: 740 }]) {
+  test(`3D showcase at ${viewport.width} px: framed on the full kit at every turn, zooms, and has compact symbol controls`, async ({ browser }) => {
+    // Owner FIX 2026-10-12: the fully kitted model fits the view; zoom in and out; short controls marked by signs.
+    const { sp } = await trackerFor(browser, 'TROOP');
+    await sp.setViewportSize(viewport);
+    const showcase = sp.locator('#showcase'), stage = showcase.locator('[role="img"]');
+    await expect(stage).toHaveAttribute('data-ready', 'true', { timeout: 30_000 });
+    // The far ends of the catalogue: a rear trailer, a front blade, the tallest mast and sensor.
+    for (const [round, lot, card] of [[1, 7, 'ACC-B'], [1, 5, 'COM-E'], [2, 7, 'ACC-C'], [2, 6, 'SA-D']] as const) await record(sp, round, lot, card, 900000);
+    await expect(stage).toHaveAttribute('data-layers', 'ACC-B ACC-C COM-E SA-D');
+    const button = (name: string) => showcase.getByRole('button', { name, exact: true });
+    const signs = { 'Pause turning': '‖', 'Turn left': '↺', 'Turn right': '↻', 'Zoom out': '−', 'Zoom in': '+' };
+    for (const [name, sign] of Object.entries(signs)) {
+      await expect(button(name)).toHaveText(sign);
+      await expect(button(name)).toHaveAttribute('title', name);
+      const box = (await button(name).boundingBox())!;
+      expect(box.width, name).toBeGreaterThanOrEqual(44);
+      expect(box.x + box.width, name).toBeLessThanOrEqual(viewport.width);
+    }
+    await button('Pause turning').click();
+    await expect(button('Pause turning')).toHaveText('▷');
+    await expect(button('Pause turning')).toHaveAttribute('title', 'Resume turning');
+    // The extent is the farthest corner of the full kit's bounding box from the frame centre (1 = the frame edge).
+    const extent = async () => Number(await stage.getAttribute('data-extent'));
+    // A turn eases over several frames, its tail long and slight: read the view once it has all but come to rest.
+    const settled = async () => {
+      let last = NaN;
+      await expect.poll(async () => { const now = Number(await stage.getAttribute('data-azimuth')), moved = Math.abs(now - last); last = now; return moved; }, { intervals: [150], timeout: 10_000 }).toBeLessThan(0.01);
+      return extent();
+    };
+    const extents: number[] = [];
+    for (let i = 0; i < 16; i++) {
+      const before = await stage.getAttribute('data-azimuth');
+      await button('Turn left').click();
+      await expect(stage).not.toHaveAttribute('data-azimuth', before ?? '');
+      extents.push(await settled());
+      expect(extents.at(-1), `turn ${i}`).toBeLessThanOrEqual(1);
+    }
+    expect(Math.max(...extents), 'the widest view fills the frame, not a speck in it').toBeGreaterThan(0.85);
+    const zoom = async () => Number(await stage.getAttribute('data-zoom'));
+    const start = await zoom(), framed = await settled();
+    await button('Zoom in').click();
+    await expect.poll(zoom).toBeLessThan(start);
+    expect(await settled(), 'zooming in enlarges the vehicle').toBeGreaterThan(framed * 1.15);
+    for (let i = 0; i < 12; i++) await button('Zoom out').click();
+    const farthest = await zoom();
+    expect(farthest).toBeGreaterThan(start);
+    await button('Zoom out').click();
+    expect(await zoom(), 'zoom out stops at its limit').toBe(farthest);
+  });
+}
+
 test('3D showcase: the confirmed vehicle is prepared during planning, and only then, so the tracker opens with it ready', async ({ browser }) => {
   const prepared = (page: import('@playwright/test').Page) => page.evaluate(() => performance.getEntriesByType('mark').map(m => m.name).filter(n => n.startsWith('sea-model:')));
   const ip = await (await browser.newContext()).newPage();

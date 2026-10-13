@@ -1,6 +1,6 @@
 # SEA Game codebase
 
-Version 0.5.1.0. Written by `npm run codebase` (scripts/codebase.ts); do not edit by hand. It holds all 1030 tracked files of the repository: 174 text files as 171 unique contents, 854 binary files by hash with the command that regenerates them, and 2 documents kept separately. With docs/MPES.md it is enough to rebuild the project.
+Version 0.5.2.0. Written by `npm run codebase` (scripts/codebase.ts); do not edit by hand. It holds all 1034 tracked files of the repository: 178 text files as 175 unique contents, 854 binary files by hash with the command that regenerates them, and 2 documents kept separately. With docs/MPES.md it is enough to rebuild the project.
 
 ## How to rebuild the tree
 
@@ -187,7 +187,7 @@ THE SOFTWARE.
 
 ### README.md
 
-Paths: `README.md`. SHA-256 `9d71d02831c32a4d93cadfb91c11e7a50b04420089fa2b7dd709eec90f1ed740`, 3410 bytes.
+Paths: `README.md`. SHA-256 `5cacff2748ce16358bcd2daf20a366ea5e05ed947a834d9dac4a6959b4f0aa57`, 3489 bytes.
 
 ````markdown
 # SEA Game: Systems Engineering Awareness
@@ -195,7 +195,7 @@ Paths: `README.md`. SHA-256 `9d71d02831c32a4d93cadfb91c11e7a50b04420089fa2b7dd70
 A bilingual (English/French) classroom auction game. Teams plan a vehicle for a mission, bid for components in a facilitator-led auction, reconcile their build and submit a value-for-money bid. The whole game is one offline HTML file with every image embedded.
 
 - **Play:** open the game file (`SEA-Game-<version>.html` in a release package, or `dist/index.html` after a build) in a current Chrome, Edge or Firefox on **Windows 11** (the only supported platform). No installation, no network, no account.
-- **Status:** 0.5.1.0 beta, tag `v0.5.1.0` (G2, owner GO 2026-10-12: owner fixes, six-vehicle chooser, muzzle sightline check, component legibility rules, review gallery, code-free specification, codebase file, backup preparation, creator credit, reusable library); not yet release-qualified. Next: G3 (proxy and runtime, 0.6.0.0). The rollback is tag `v4.1.0-dev.1`.
+- **Status:** 0.5.2.0 beta (owner FIX 4: showcase zoom, full-kit framing, sign controls, phone tables), on tag `v0.5.1.0` (G2, owner GO 2026-10-12: owner fixes, six-vehicle chooser, muzzle sightline check, component legibility rules, review gallery, code-free specification, codebase file, backup preparation, creator credit, reusable library); not yet release-qualified. Next: G3 (proxy and runtime, 0.6.0.0). The rollback is tag `v4.1.0-dev.1`.
 - **Created by:** Shafiqur Rahman Khan, with AI assistance.
 - **Licence:** MIT, see [LICENSE](LICENSE).
 - **Specification:** [docs/MPES.md](docs/MPES.md). **Current state and next steps:** [docs/HANDOVER.md](docs/HANDOVER.md). **Working rules:** [AGENTS.md](AGENTS.md).
@@ -25961,7 +25961,7 @@ Paths: `content/renders/manifest.json`. SHA-256 `6525544fa7b2c0b623e3970093ba2ef
 
 ### content/strings.en.json
 
-Paths: `content/strings.en.json`. SHA-256 `2a848edc5150bfd8e50e7ca34c35e0ddd44ebde32181c2ddc559ad4088795862`, 20682 bytes.
+Paths: `content/strings.en.json`. SHA-256 `d6a7768a2c4136c45e69969f9594d92899650c600e4701be296afebce0ed8150`, 20787 bytes.
 
 ```json
 {
@@ -26335,6 +26335,9 @@ Paths: `content/strings.en.json`. SHA-256 `2a848edc5150bfd8e50e7ca34c35e0ddd44eb
   "showcase.pause": "Pause turning",
   "showcase.left": "Turn left",
   "showcase.right": "Turn right",
+  "showcase.resume": "Resume turning",
+  "showcase.zoomIn": "Zoom in",
+  "showcase.zoomOut": "Zoom out",
   "debrief.chart": "Class comparison",
   "debrief.chartNote": "Score by team, longest bar = best score. The ranking table below gives every number.",
   "debrief.chartScore": "score {n}",
@@ -26359,7 +26362,7 @@ Paths: `content/strings.en.json`. SHA-256 `2a848edc5150bfd8e50e7ca34c35e0ddd44eb
 
 ### content/strings.fr.json
 
-Paths: `content/strings.fr.json`. SHA-256 `7f299d8843e23b9910208885ea85de61530d5b0e9a3407eff8467cb6edc889da`, 23697 bytes.
+Paths: `content/strings.fr.json`. SHA-256 `841daaad366144e2464aac22e0f6e22991e61d1f54855273e95690240f2aab8d`, 23817 bytes.
 
 ```json
 {
@@ -26733,6 +26736,9 @@ Paths: `content/strings.fr.json`. SHA-256 `7f299d8843e23b9910208885ea85de61530d5
   "showcase.pause": "Arrêter la rotation",
   "showcase.left": "Pivoter à gauche",
   "showcase.right": "Pivoter à droite",
+  "showcase.resume": "Reprendre la rotation",
+  "showcase.zoomIn": "Zoom avant",
+  "showcase.zoomOut": "Zoom arrière",
   "debrief.chart": "Comparaison de la classe",
   "debrief.chartNote": "Score par équipe ; la barre la plus longue est le meilleur score. Le tableau de classement ci-dessous donne tous les chiffres.",
   "debrief.chartScore": "score {n}",
@@ -26843,16 +26849,16 @@ Exportez une sauvegarde par **Menu → Exporter une sauvegarde** après la confi
 
 ### docs/HANDOVER.md
 
-Paths: `docs/HANDOVER.md`. SHA-256 `6a9f904038b658d7c2857cb25bf2e97e6803d70deca9fb5a8b872eab2614682c`, 10110 bytes.
+Paths: `docs/HANDOVER.md`. SHA-256 `61fb54e4dfff3f669bc5bb42d5f9ee32d8813cd6c9ce9a7e4d72ab2bdf6f1fda`, 10824 bytes.
 
 ```markdown
 # Handover
 
-Updated 2026-10-12 (America/Toronto). Specification: [MPES](MPES.md) 4.4.2. Evidence: [verification/0.5.1.0.md](verification/0.5.1.0.md), [verification/0.5.0.0.md](verification/0.5.0.0.md), [verification/spike-visual.md](verification/spike-visual.md).
+Updated 2026-10-12 (America/Toronto). Specification: [MPES](MPES.md) 4.4.3. Evidence: [verification/0.5.2.0.md](verification/0.5.2.0.md), [verification/0.5.1.0.md](verification/0.5.1.0.md), [verification/0.5.0.0.md](verification/0.5.0.0.md), [verification/spike-visual.md](verification/spike-visual.md).
 
 ## 1. Version and milestone
 
-Version 0.5.1.0 beta (four-part MAJOR.MINOR.PATCH.BUILD, MPES §19.2; 1.0.0.0 only once out of beta: MPES §19.2 exit criteria, including every owner gate). M0–M4, V1, V2 (goal G1, tag `v0.5.0.0`) and G2 (owner fixes and the docs regime, tag `v0.5.1.0`, owner GO 2026-10-12) are complete. The rollback is tag `v4.1.0-dev.1`.
+Version 0.5.2.0 beta (four-part MAJOR.MINOR.PATCH.BUILD, MPES §19.2; 1.0.0.0 only once out of beta: MPES §19.2 exit criteria, including every owner gate). M0–M4, V1, V2 (goal G1, tag `v0.5.0.0`) and G2 (owner fixes and the docs regime, tag `v0.5.1.0`, owner GO 2026-10-12) are complete. 0.5.2.0 (branch `fix/showcase-mobile`) is owner FIX 4 on G2: showcase zoom, framing of the full kit at every turn and height, sign controls, and phone tables as labelled cards (`docs/verification/0.5.2.0.md`). The rollback is tag `v4.1.0-dev.1`.
 
 **Plan to beta exit (MPES §17), one PR and one tag per goal:**
 
@@ -26903,11 +26909,11 @@ Shared rules for every goal: `AGENTS.md`. KPIs and priority: MPES §1.4.
 
 ## 4. In-progress work
 
-Owner FIX 1 (stills and fit), FIX 2 (one click to close a round nobody can win in; unsold cards listed with their effects) and FIX 3 (a part read as the end of a barrel: optics head raised, mast set back, mirrors lowered, `sightline.py` at any depth including hull fittings, 574 pairs recorded and only shrinking; full re-render, encode and pack done) are done and checked (`docs/verification/0.5.1.0.md`). The Codex review of FIX 2 is dispositioned; unit-test scratch now cleans up after itself. Prepared for G3 on local side branches by Sonnet agents (not merged, not run in a browser; review before merging into G3): `g3/perf-ref` (`npm run perf:ref` rig, protocol fragment) and `g3/caching` (CI download caches, encode cache). The owner said GO on the gallery (2026-10-12, "we can iterate later") and merged PR #22; tag `v0.5.1.0` is on `10e61e3`. A hand-uploaded root `index.html` made `main` red and let CI deploy a 0.5.0.0 build over it; branch `g2/pages` removes it, adds a check and sets the Pages source to GitHub Actions (`docs/verification/0.5.1.0.md` "Pages after the merge"). Left for G2: merge `g2/pages` after two green runs, then the Pages SHA-256 equals the build. CI on `78cca1f` failed `showcaseUpdateMaxMs` once (109 ms against 100; `docs/verification/0.5.1.0.md` close-out): see timing note 3. Run only one Blender job at a time: the owner uses this PC.
+Owner FIX 1 (stills and fit), FIX 2 (one click to close a round nobody can win in; unsold cards listed with their effects) and FIX 3 (a part read as the end of a barrel: optics head raised, mast set back, mirrors lowered, `sightline.py` at any depth including hull fittings, 574 pairs recorded and only shrinking; full re-render, encode and pack done) are done and checked (`docs/verification/0.5.1.0.md`). The Codex review of FIX 2 is dispositioned; unit-test scratch now cleans up after itself. Prepared for G3 on local side branches by Sonnet agents (not merged, not run in a browser; review before merging into G3): `g3/perf-ref` (`npm run perf:ref` rig, protocol fragment) and `g3/caching` (CI download caches, encode cache). The owner said GO on the gallery (2026-10-12, "we can iterate later") and merged PR #22; tag `v0.5.1.0` is on `10e61e3`. A hand-uploaded root `index.html` made `main` red and let CI deploy a 0.5.0.0 build over it; branch `g2/pages` removes it, adds a check and sets the Pages source to GitHub Actions (`docs/verification/0.5.1.0.md` "Pages after the merge"). `g2/pages` merged as PR #23 after two green runs; the Pages SHA-256 equals the 0.5.1.0 build (630e6d52…1667). Owner FIX 4 (2026-10-12): the showcase could not zoom and cut off a fully kitted vehicle; on a phone the tables in the collapsible sections lost columns; the controls were long words. Fixed on `fix/showcase-mobile` as 0.5.2.0, awaiting the owner's GO on its gallery, then merge, tag `v0.5.2.0`, and the Pages SHA-256 check. CI on `78cca1f` failed `showcaseUpdateMaxMs` once (109 ms against 100; `docs/verification/0.5.1.0.md` close-out): see timing note 3. Run only one Blender job at a time: the owner uses this PC.
 
 ## 5. Next action
 
-**Agent:** start G3 (proxy + runtime, release 0.6.0.0): branch from `main` at `v0.5.1.0`; first step `npm run perf:ref` on the Intel UHD 770 proxy, measuring a baseline before any change.
+**Agent:** on the owner's GO for 0.5.2.0, merge `fix/showcase-mobile`, tag `v0.5.2.0` and check the Pages SHA-256; then start G3 (proxy + runtime, release 0.6.0.0): branch from `main` at `v0.5.2.0`; first step `npm run perf:ref` on the Intel UHD 770 proxy, measuring a baseline before any change.
 **Owner:** `docs/owner/art-review.md` (5 minutes, reply GO or FIX).
 
 ## 6. Rollback
@@ -27001,7 +27007,7 @@ Rough notes are fine. The agent turns them into changes and asks for nothing els
 
 ### docs/owner/instructor-review.md
 
-Paths: `docs/owner/instructor-review.md`. SHA-256 `bc2c212eb38e86ddb69ab60d653ac64a2ad07c912f23379c078260cb14c2b2c4`, 2503 bytes.
+Paths: `docs/owner/instructor-review.md`. SHA-256 `cb186b5ccceedb5aab30b1d3d14a07ce3996a6f714c8063f292fb9cacbffb2e7`, 2503 bytes.
 
 ```markdown
 # Instructor review of the prototype (about 20 minutes)
@@ -27036,7 +27042,7 @@ The two tabs do not connect: in class the instructor announces each result aloud
 
 **Reply** with rough notes, a few lines are fine, or screenshots of anything that looks wrong.
 
-SEA Game is created by Shafiqur Rahman Khan, with AI assistance. Prototype version 0.5.1.0.
+SEA Game is created by Shafiqur Rahman Khan, with AI assistance. Prototype version 0.5.2.0.
 ```
 
 ### docs/verification/0.5.0.0.md
@@ -27201,7 +27207,7 @@ The three Firefox failures are browser-internal and appeared only under full loc
 
 ### docs/verification/0.5.1.0.md
 
-Paths: `docs/verification/0.5.1.0.md`. SHA-256 `f8809850e9430a2e57203ec2ed8627ca3f246fedff3122b0704d99810db214cc`, 36683 bytes.
+Paths: `docs/verification/0.5.1.0.md`. SHA-256 `deee5c5eb336591cba5bd2bd2ad56bc58031b50e21d68a13d1e1cbe6003a759e`, 36966 bytes.
 
 ```markdown
 # Verification record: 0.5.1.0 beta (goal G2)
@@ -27433,6 +27439,61 @@ CI on `78cca1f` failed one budget in the perf project: `showcaseUpdateMaxMs` 109
 The owner merged PR #22 (merge commit `10e61e3`) after uploading the built game as a root `index.html` (`c6cc04f`, SHA-256 630e6d52…1667, identical to the local build of `e8c6e13`). Pages was in branch mode, so it served that file; then CI's `pages` job on `c6cc04f`, whose source was still 0.5.0.0, deployed its own build over it (00:59 UTC), so Pages served 0.5.0.0. CI on `10e61e3` failed: the tracked `index.html` broke "credits the creator" (the name outside the named files) and the three `docs/CODEBASE.md` checks. Tag `v0.5.1.0` is on `10e61e3`; its game is the build of `e8c6e13`. Fix (branch `g2/pages`): check first, `tests/unit/build.test.ts` "commits no built game: only CI publishes it" failed on `index.html`; the file moved to `_archive/recycle/2026-10-12/` and out of git; the Pages source switched from the branch to GitHub Actions (owner's repository setting, reversible), so only CI's verified build is ever served. After that PR merges, the Pages SHA-256 is compared with the build again (HANDOVER §4).
 
 `npm run verify` on `g2/pages`: 205 unit tests passed; Playwright 121 passed, 2 failed in Firefox on timeouts (`layout.spec.ts` "live lot actions fit 1280×720 with 10 teams (en)", a click waiting 60 s; `showcase.spec.ts` "every vehicle has its showcase", 120 s) with the machine at 97% CPU (OneDrive sync and other work); the built game is byte-identical to the one that passed every test on `c0058fb` (SHA-256 630e6d52…1667). Re-run: showcase passed; the layout test failed once more in a two-file run and passed alone (28.6 s against about 2 s in Chromium). Timeouts unchanged; known timing note 2 (HANDOVER §3) now includes Firefox; CI's two runs are the clean-machine judge.
+
+Result: PR #23 merged after two green CI runs; CI on the merge commit (run 38334451449, 2026-10-13 01:55 UTC) passed and deployed. The SHA-256 of the page Pages serves is `630e6d52d4b6f34369f631052b167e3922a3bda20f40bc268529e9948bd21667`, equal to `npm run build` of 0.5.1.0: PASS.
+```
+
+### docs/verification/0.5.2.0.md
+
+Paths: `docs/verification/0.5.2.0.md`. SHA-256 `6eece7685e5b9f86062c2b24b4141e21cf6c125005bdefcd4fe4f314e9fa1777`, 4856 bytes.
+
+```markdown
+# Verification record: 0.5.2.0 beta (owner FIX 4 on G2)
+
+Owner FIX 4 (2026-10-12): "Vehicle showcase needs zoom in, out function. It needs to fit the fully kitted out model in the view. On mobile, not all dropdown menu are showing. Make the vehicle showcase control buttons more concise. Pause/Resume Turning, turn left, turn right, zoom in/out, etc. can be indicated by math signs." Branch `fix/showcase-mobile`, from `main` at `646755b` (PR #23, Pages fix). Specification: MPES 4.4.3. Environment: Windows 11 Enterprise, Node 24.20.0, Playwright browsers from `npm run browsers`.
+
+## Items and their tests
+
+| Item | What | Test | Result |
+|---|---|---|---|
+| 1 | Zoom in and out by buttons, 1.25 per press, 0.4 to 1.6 times the fitted distance; the wheel never zooms (page scroll kept) | `tests/unit/frame.test.ts`; `tests/e2e/showcase.spec.ts` "3D showcase at 1280/360 px" | PASS |
+| 2 | The vehicle as fitted, however fully kitted out, framed within 92% of the frame at every turn and every drag height; refitted on a purchase or a window change; a purchase keeps the player's turn and zoom | `tests/unit/frame.test.ts` (long, tall, off-centre kits; wide, square, tall windows; every 5° turn; heights 0.6 to 1.45 rad); `tests/e2e/showcase.spec.ts` buys ACC-B, COM-E, ACC-C and SA-D on the troop carrier and turns it fully at 1280 and 360 px | PASS |
+| 3 | Sign controls: ‖ or ▷ (pause, resume), ↺, ↻, −, +; each named for assistive technology and in its tooltip, at least 44 px, inside the window at 360 px; EN and FR names | `tests/e2e/showcase.spec.ts`; axe in the existing showcase test | PASS |
+| 4 | Phone tables: below 40 rem each row is a card and every cell is labelled with its column header (`labelCells`), so no column is cut off; the desktop header is unchanged; swept over all eight table kinds | `tests/e2e/mobile.spec.ts` (320 and 360 px, EN and FR, planning with every section open and the tracker after a purchase; 1280 px header) | PASS |
+
+Root cause of item 4: the "dropdown menus" were the collapsible sections of the planning and tracker views; their tables were wider than a phone and their right-hand columns were clipped behind a sideways scroll that nothing showed.
+
+Framing notes: framing every part in the catalogue (−7.3 to 5.6 m long, 5.6 m tall) left a bare vehicle at about half the frame, so the stage frames the vehicle as fitted. The camera distance is fitted per drag height (nine heights, interpolated), because a single distance for the highest view leaves the low views loose.
+
+## Checks
+
+| Check | Command | Result |
+|---|---|---|
+| Types | `npm run typecheck` | PASS |
+| Lint | `npm run lint` | PASS |
+| Unit and property | `npm test` | PASS, 20 files, 218 tests |
+| Full gate | `npm run verify` (typecheck, lint, unit, build check, build, Playwright in Chromium, Firefox and Edge, then perf) | PASS with machine-load timeouts: typecheck, lint, 218 unit tests, build check and build passed; Playwright 136 passed, 5 failed in Firefox on 120 s timeouts (`increment`, `close-round`, `layout` 10 teams FR, two `chooser` tests) with the CPU at 100% (OneDrive sync); each passed when run alone (`--workers=1`). Perf, run alone: see below |
+| CI, two consecutive green runs on one head | GitHub Actions `ci.yml` | PENDING |
+| Owner visual check | `npm run gallery` → `.artifacts/review/0.5.2.0.html` | PENDING |
+
+Perf A/B on this machine (CPU at 100%), the perf project alone, `main` at `646755b` (worktree) alternating with this branch, three rounds:
+
+| Round | `commandP95Ms` main / fix | `showcaseUpdateMaxMs` main / fix | `modelUpdateMaxMs` main / fix |
+|---|---|---|---|
+| 1 | 120.1 / 30.2 | 137 / 232 | 36 / 47 |
+| 2 | 31.4 / 97.9 | 141 / 37 | 42 / 46 |
+| 3 | 191.9 / 87.2 | 47 / 36 | 181 / 51 |
+
+`main` breaks the 100 ms budgets as often as this branch: this is known timing note 3 (HANDOVER §3), not a regression. The new framing costs about 1 ms per refit (`fitTable`, 10 runs in Node). Budgets unchanged; CI's two runs are the clean-machine judge.
+
+## Codex review
+
+A read-only Codex session (gpt-6.1-sol, medium) reviewed the diff (`.artifacts/codex/review-fix4/REVIEW.md`). It swept 22,680 framing projections (maximum extent 0.923) and found no camera-fitting or sign-button defect. Two findings:
+
+| # | Finding | Disposition |
+|---|---|---|
+| 1 | Phone row headings kept the global `th { white-space: nowrap }`; at 320 px the French "PROCESSUS D'INGÉNIERIE DES SYSTÈMES" still needed sideways scrolling | Confirmed: `tests/e2e/mobile.spec.ts` now runs at 320 px too and failed on it ("scrolls": true); phone cells wrap; PASS |
+| 2 | The label check examined only cells that already had a label and needed just one per table, so lost labels would pass | Confirmed: the test now reads each column's name from the header row and requires it on every data cell under a named column; PASS |
 ```
 
 ### docs/verification/legibility.md
@@ -27710,12 +27771,18 @@ export default tseslint.config(
 
 ### library/LESSONS.md
 
-Paths: `library/LESSONS.md`. SHA-256 `e8cc27d8e0f071781fb2f6f01d9b2016f128d3f39950ecb4a8accbc557e4f837`, 5069 bytes.
+Paths: `library/LESSONS.md`. SHA-256 `2596c369629762b38204b16093f81f93439e89d45cfa4c92d383e6024479dd30`, 6366 bytes.
 
 ```markdown
 # Lessons learned
 
 Each entry: what happened, the rule it produced, and the check that now enforces it. Newest first. Examples come from SEA Game (a classroom auction game with photoreal vehicle renders and a real-time 3D showcase, one offline HTML file).
+
+## 2026-10-12 · Framed for one view, cut off at the others
+
+- **What happened:** a 3D showcase framed the vehicle for its opening view; once fully kitted (a trailer behind, a blade in front, a tall mast), parts left the frame as it turned, and there was no zoom. Framing every part in the catalogue instead shrank a bare vehicle to a speck. On a phone, wide tables inside collapsible sections lost their right-hand columns, unseen because tests opened only the first screen.
+- **Rule:** frame what is shown, at every view the user can reach (each turn, each drag height, each window shape), with a margin; zoom by buttons with limits, not the wheel, so the page still scrolls. Below a phone breakpoint, show each table row as a card whose cells carry their column headers. Test the worst case (the full kit) and every section opened at phone width.
+- **Check (as built in SEA Game):** a unit test projects the bounds of long, tall and off-centre kits at every 5° turn and every drag height in wide, square and tall windows (inside the frame, and tight); an end-to-end test buys the most extreme parts, turns the model fully at 1280 and 360 px, and reads the drawn extent and zoom; another opens every section at 360 px in both languages and fails any cell outside its table or without a label.
 
 ## 2026-10-12 · Two ways to publish, one stale site
 
@@ -28361,18 +28428,18 @@ a { color: var(--accent); }
 
 ### package-lock.json
 
-Paths: `package-lock.json`. SHA-256 `c24390aa6610c5dba6d38f8dd7b46bc35c792e5a0c8205711da0418272dec52b`, 134039 bytes.
+Paths: `package-lock.json`. SHA-256 `2b46683776f9ee6c6d1b153558b1fcccbb68209ebf02f21104a43564265bd206`, 134039 bytes.
 
 ```json
 {
   "name": "sea-game",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "lockfileVersion": 3,
   "requires": true,
   "packages": {
     "": {
       "name": "sea-game",
-      "version": "0.5.1",
+      "version": "0.5.2",
       "license": "MIT",
       "dependencies": {
         "three": "0.186.1"
@@ -32410,13 +32477,13 @@ Paths: `package-lock.json`. SHA-256 `c24390aa6610c5dba6d38f8dd7b46bc35c792e5a0c8
 
 ### package.json
 
-Paths: `package.json`. SHA-256 `e53f1618d1cdcc10df5b84a165ad49ee458c240b8170f73dd0afe5eddb6db877`, 1470 bytes.
+Paths: `package.json`. SHA-256 `089c1f8f37a85f58f864fc82666b184db97a778d7d73fa94edf76c5dea8e97cb`, 1470 bytes.
 
 ```json
 {
   "name": "sea-game",
-  "version": "0.5.1",
-  "gameVersion": "0.5.1.0",
+  "version": "0.5.2",
+  "gameVersion": "0.5.2.0",
   "private": true,
   "description": "Systems Engineering Awareness: offline single-file classroom auction game (EN/FR)",
   "license": "MIT",
@@ -35090,6 +35157,105 @@ const root = document.getElementById('app');
 if (root) start(root);
 ```
 
+### source/showcase/frame.ts
+
+Paths: `source/showcase/frame.ts`. SHA-256 `e8ca87b546c4f8809db8662364248bf452bb945db2763cefc8bcc6a6994bdf8c`, 4760 bytes.
+
+```ts
+// Framing and zoom for the 3D showcase (MPES §10.2): the camera stands far enough back that the vehicle as fitted, however
+// fully kitted out, stays in view at every turn, at whatever height the player drags to; the player zooms in and out
+// from there in steps, within limits.
+import { type Box3, PerspectiveCamera, Vector3 } from 'three';
+
+/** The fitted kit reaches at most this far from the frame centre (1 = the frame edge). */
+export const FIT_MARGIN = 0.92;
+/** One zoom press moves the camera by this factor; the limits are multiples of the fitted distance. */
+export const ZOOM_STEP = 1.25;
+export const ZOOM_IN_LIMIT = 0.4;
+export const ZOOM_OUT_LIMIT = 1.6;
+/** Turns sampled when fitting: every 7.5 degrees. */
+const AZIMUTHS = 48;
+
+/** Unit vector from the target to the camera at this polar angle (from straight up) and azimuth. */
+export function viewDirection(polar: number, azimuth: number): Vector3 {
+  return new Vector3().setFromSphericalCoords(1, polar, azimuth);
+}
+
+function corners(box: Box3): Vector3[] {
+  const { min, max } = box;
+  return [0, 1, 2, 3, 4, 5, 6, 7].map(i => new Vector3(i & 1 ? max.x : min.x, i & 2 ? max.y : min.y, i & 4 ? max.z : min.z));
+}
+
+const camera = new PerspectiveCamera();
+const point = new Vector3();
+
+/** How far the box's farthest corner projects from the frame centre, seen from `distance` along `direction`. */
+export function extentAt(box: Box3, target: Vector3, direction: Vector3, distance: number, fov: number, aspect: number, points = corners(box)): number {
+  camera.fov = fov;
+  camera.aspect = aspect;
+  camera.near = 0.01;
+  camera.far = distance * 10 + 100;
+  camera.updateProjectionMatrix();
+  camera.position.copy(direction).multiplyScalar(distance).add(target);
+  camera.lookAt(target);
+  camera.updateMatrixWorld();
+  let extent = 0;
+  for (const corner of points) {
+    point.copy(corner).project(camera);
+    // A corner behind the camera has no meaningful projection: treat it as out of frame.
+    extent = Math.max(extent, point.z > 1 ? Infinity : Math.abs(point.x), Math.abs(point.y));
+  }
+  return extent;
+}
+
+/**
+ * The least camera distance from `target` at which every corner of `box` lies within FIT_MARGIN of the frame centre,
+ * at every sampled turn and at each polar angle given (the default view and the drag limits).
+ */
+export function fitDistance(box: Box3, target: Vector3, polars: readonly number[], fov: number, aspect: number, margin = FIT_MARGIN): number {
+  const points = corners(box);
+  const radius = Math.max(...points.map(p => p.distanceTo(target)), 1e-3);
+  let distance = radius * 1.01;
+  for (const polar of polars) for (let i = 0; i < AZIMUTHS; i++) {
+    const direction = viewDirection(polar, (i / AZIMUTHS) * Math.PI * 2);
+    if (extentAt(box, target, direction, distance, fov, aspect, points) <= margin) continue;
+    // Extent falls as the camera backs away: bisect between this distance and one known to fit.
+    let near = distance, far = distance * 2;
+    while (extentAt(box, target, direction, far, fov, aspect, points) > margin) far *= 2;
+    for (let step = 0; step < 24; step++) {
+      const mid = (near + far) / 2;
+      if (extentAt(box, target, direction, mid, fov, aspect, points) > margin) near = mid; else far = mid;
+    }
+    distance = far;
+  }
+  return distance;
+}
+
+/** Fitted distances at evenly spaced heights between the drag limits: lower views need the camera less far back. */
+export interface FitTable { readonly polars: readonly number[]; readonly distances: readonly number[] }
+
+export function fitTable(box: Box3, target: Vector3, polarMin: number, polarMax: number, fov: number, aspect: number, steps = 8): FitTable {
+  const polars = Array.from({ length: steps + 1 }, (_, i) => polarMin + ((polarMax - polarMin) * i) / steps);
+  return { polars, distances: polars.map(polar => fitDistance(box, target, [polar], fov, aspect)) };
+}
+
+/** The fitted distance at any height between the table's, by linear interpolation (FIT_MARGIN absorbs the error). */
+export function distanceAt(table: FitTable, polar: number): number {
+  const { polars, distances } = table, last = polars.length - 1;
+  if (polar <= polars[0]!) return distances[0]!;
+  if (polar >= polars[last]!) return distances[last]!;
+  const i = Math.min(last - 1, Math.floor(((polar - polars[0]!) / (polars[last]! - polars[0]!)) * last));
+  const f = (polar - polars[i]!) / (polars[i + 1]! - polars[i]!);
+  return distances[i]! + (distances[i + 1]! - distances[i]!) * f;
+}
+
+/** The zoom (a multiple of the fitted distance) after one press: `+1` zooms in, `-1` out. */
+export function zoomed(zoom: number, press: 1 | -1): number {
+  const next = press > 0 ? zoom / ZOOM_STEP : zoom * ZOOM_STEP;
+  return Math.min(ZOOM_OUT_LIMIT, Math.max(ZOOM_IN_LIMIT, next));
+}
+```
+
 ### source/showcase/glb.ts
 
 Paths: `source/showcase/glb.ts`. SHA-256 `97171a7d60016b400abc931af1626947ba22971976064b368e9a71223e9b2543`, 1953 bytes.
@@ -35140,7 +35306,7 @@ export function vehicleGlb(glb: ArrayBuffer, vehicle: string): ArrayBuffer | nul
 
 ### source/showcase/model.ts
 
-Paths: `source/showcase/model.ts`. SHA-256 `dd5c09f1015dde90bae2fdfca3ba9c2c356d602c9677f30f80fcb90b614b64c5`, 12044 bytes.
+Paths: `source/showcase/model.ts`. SHA-256 `7d1c27c45d1da51534b51162c8cdb240328cf84b18fdf7ab25682c5ddcd13a1f`, 14800 bytes.
 
 ```ts
 // Real-time vehicle showcase (MPES §10): the embedded glTF model on a slowly turning stage the player can drag.
@@ -35156,11 +35322,16 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { vehicleGlb } from './glb.ts';
+import { distanceAt, extentAt, fitTable, zoomed, type FitTable } from './frame.ts';
 import { FramePacer } from './pace.ts';
 
 /** Seconds per full turn when the stage turns by itself. */
 export const TURN_SECONDS = 40;
 const UP = new Vector3(0, 1, 0);
+/** The opening view: three-quarter front, a little above (MPES §10.5 camera). */
+const OPENING = new Vector3(0.62, 0.32, 0.72).normalize();
+/** How far the player can drag the view up and down (polar angle from straight up). */
+const POLAR_MIN = 0.6, POLAR_MAX = 1.45;
 
 let packed: Promise<ArrayBuffer | null> | null = null;
 const libraries = new Map<string, Promise<Group | null>>();
@@ -35263,8 +35434,15 @@ export class ModelStage {
   #observer: IntersectionObserver;
   #resize: ResizeObserver;
   #motion = matchMedia('(prefers-reduced-motion: reduce)');
-  /** Called with the camera's azimuth (radians) whenever the view turns. */
-  onTurn: ((azimuth: number) => void) | null = null;
+  /** The bounds of the vehicle as fitted, the distance that frames them, and the player's zoom (a multiple of it). */
+  #kit = new Box3();
+  #fitted: FitTable = { polars: [0], distances: [1] };
+  /** The aspect the fitted distance was found for; a showcase update re-attaches the canvas at the same size. */
+  #fittedAspect = 0;
+  #zoom = 1;
+  /** Called after every draw with the camera's azimuth (radians), how far the kit reaches from the frame centre
+   * (1 = the frame edge) and the zoom. */
+  onView: ((azimuth: number, extent: number, zoom: number) => void) | null = null;
 
   constructor() {
     this.canvas = document.createElement('canvas');
@@ -35303,14 +35481,14 @@ export class ModelStage {
     this.#controls = new OrbitControls(this.#camera, this.canvas);
     Object.assign(this.#controls, {
       enableDamping: true, enablePan: false, enableZoom: false, autoRotate: !this.#motion.matches,
-      autoRotateSpeed: 60 / TURN_SECONDS, minPolarAngle: 0.6, maxPolarAngle: 1.45,
+      autoRotateSpeed: 60 / TURN_SECONDS, minPolarAngle: POLAR_MIN, maxPolarAngle: POLAR_MAX,
     });
     this.#controls.addEventListener('change', () => this.#invalidate());
     this.#controls.addEventListener('start', () => this.#loop());
     this.#motion.addEventListener('change', () => { this.turning = !this.#motion.matches; });
     this.#observer = new IntersectionObserver(([entry]) => { this.#visible = !!entry?.isIntersecting; this.#loop(); });
     this.#observer.observe(this.canvas);
-    this.#resize = new ResizeObserver(() => this.#fit());
+    this.#resize = new ResizeObserver(() => this.#size());
     this.#resize.observe(this.canvas);
     document.addEventListener('visibilitychange', () => this.#loop());
   }
@@ -35326,11 +35504,18 @@ export class ModelStage {
     this.#controls.update();
   }
 
+  /** Zooms in (`+1`) or out (`-1`) one step, within the limits (MPES §10.2). */
+  zoom(press: 1 | -1): void {
+    this.#zoom = zoomed(this.#zoom, press);
+    this.#place();
+  }
+
   /** Shows one vehicle with the given part nodes; returns false if the library has no such vehicle. */
   show(lib: Group, vehicle: string, parts: readonly string[]): boolean {
     const source = lib.getObjectByName(vehicle);
     if (!source) return false;
-    if (this.#vehicle?.name !== vehicle) {
+    const fresh = this.#vehicle?.name !== vehicle;
+    if (fresh) {
       if (this.#vehicle) this.#scene.remove(this.#vehicle);
       this.#vehicle = source.clone();
       this.#vehicle.traverse(o => {
@@ -35341,31 +35526,61 @@ export class ModelStage {
         }
       });
       this.#scene.add(this.#vehicle);
-      this.#frameCamera();
     }
     const shown = new Set(parts);
-    for (const node of this.#vehicle.children) node.visible = layerOf(node) === 'base' || shown.has(layerOf(node));
-    this.#invalidate();
+    for (const node of this.#vehicle!.children) node.visible = layerOf(node) === 'base' || shown.has(layerOf(node));
+    this.#frameCamera(fresh);
     return true;
   }
 
-  #frameCamera(): void {
-    const base = this.#vehicle?.children.find(n => layerOf(n) === 'base');
-    if (!base) return;
-    const box = new Box3().setFromObject(base), centre = box.getCenter(new Vector3()), size = box.getSize(new Vector3());
-    const radius = size.length() / 2;
-    this.#controls.target.set(centre.x, centre.y * 0.8, centre.z);
-    const distance = radius / Math.sin((this.#camera.fov * Math.PI) / 360) * 0.62;
-    this.#camera.position.set(centre.x + distance * 0.62, centre.y + distance * 0.32, centre.z + distance * 0.72);
-    this.#controls.update();
+  /**
+   * Frames the vehicle as fitted, so every installed part stays in view at every turn and drag height however fully it
+   * is kitted out (the whole catalogue spans 13 m, so framing every possible part would leave a bare vehicle tiny).
+   * A new vehicle opens on the three-quarter view at full frame; a purchase keeps the player's view and zoom.
+   */
+  #frameCamera(fresh: boolean): void {
+    if (!this.#vehicle) return;
+    const kit = new Box3();
+    for (const node of this.#vehicle.children) if (node.visible) kit.union(new Box3().setFromObject(node));
+    if (!fresh && kit.equals(this.#kit)) { this.#invalidate(); return; }
+    const offset = this.#camera.position.clone().sub(this.#controls.target);
+    this.#kit.copy(kit);
+    this.#kit.getCenter(this.#controls.target);
+    if (fresh) { offset.copy(OPENING); this.#zoom = 1; }
+    this.#camera.position.copy(this.#controls.target).add(offset);
+    this.#refit();
   }
 
-  #fit(): void {
+  /** The distance that frames the kit at this aspect, then the camera placed at the player's zoom of it. */
+  #refit(): void {
+    if (!this.#vehicle) return;
+    this.#fittedAspect = this.#camera.aspect;
+    this.#fitted = fitTable(this.#kit, this.#controls.target, POLAR_MIN, POLAR_MAX, this.#camera.fov, this.#camera.aspect);
+    this.#place();
+  }
+
+  /** Moves the camera along its current direction to the zoomed distance. */
+  #place(): void {
+    this.#distance();
+    this.#controls.update();
+    this.#invalidate();
+  }
+
+  /** Sets the camera's distance for its height (a drag up needs it farther back) at the player's zoom. */
+  #distance(): void {
+    const offset = this.#camera.position.clone().sub(this.#controls.target);
+    if (offset.lengthSq() === 0) offset.copy(OPENING);
+    const polar = Math.acos(Math.min(1, Math.max(-1, offset.y / offset.length())));
+    this.#camera.position.copy(this.#controls.target).add(offset.setLength(distanceAt(this.#fitted, polar) * this.#zoom));
+  }
+
+  #size(): void {
     const { clientWidth: w, clientHeight: h } = this.canvas;
     if (!w || !h) return;
     this.#renderer.setSize(w, h, false);
     this.#camera.aspect = w / h;
     this.#camera.updateProjectionMatrix();
+    if (this.#camera.aspect !== this.#fittedAspect) this.#refit();
     this.#invalidate();
   }
 
@@ -35377,8 +35592,13 @@ export class ModelStage {
 
   #draw(): void {
     this.#dirty = false;
+    this.#distance();
     this.#renderer.render(this.#scene, this.#camera);
-    this.onTurn?.(this.#controls.getAzimuthalAngle());
+    if (this.onView) {
+      const offset = this.#camera.position.clone().sub(this.#controls.target), distance = offset.length();
+      const extent = extentAt(this.#kit, this.#controls.target, offset.divideScalar(distance), distance, this.#camera.fov, this.#camera.aspect);
+      this.onView(this.#controls.getAzimuthalAngle(), extent, this.#zoom);
+    }
   }
 
   #stop(): void {
@@ -35406,7 +35626,7 @@ export class ModelStage {
 
   /** Restarts the loop after the canvas is re-attached to the page. */
   attached(): void {
-    this.#fit();
+    this.#size();
     this.#loop();
   }
 
@@ -35511,7 +35731,7 @@ export function cardRender(cardId: string): Render | undefined {
 
 ### source/showcase/showcase.ts
 
-Paths: `source/showcase/showcase.ts`. SHA-256 `8f750f8bc79eef9e245f5bddd6986ef2118bb39872e3ea9f593999e1eadbae8e`, 17863 bytes.
+Paths: `source/showcase/showcase.ts`. SHA-256 `70bee1b4e63351bca552acd0a2fc52dbe9026b51c2c742e0a308be4f6d1db79e`, 18726 bytes.
 
 ```ts
 // Vehicle showcase (MPES §10): the team's vehicle with its installed parts, as a slowly turning 3D model the
@@ -35533,8 +35753,9 @@ export interface ShowcaseText {
   readonly turntableLabel: string; readonly turntableNote: string;
   /** Heading of the SE_PROCESS badges, and the note shown when a mount holds more than one part. */
   readonly process: string; readonly slotNote: string;
-  /** The 3D stage's hint and its pause and turn buttons. */
-  readonly drag: string; readonly pause: string; readonly left: string; readonly right: string;
+  /** The 3D stage's hint and the names of its pause, turn and zoom buttons (each shows a sign, MPES §10.2). */
+  readonly drag: string; readonly pause: string; readonly resume: string; readonly left: string; readonly right: string;
+  readonly zoomIn: string; readonly zoomOut: string;
 }
 
 /** One press of a turn button turns the 3D vehicle by this much (radians). */
@@ -35664,7 +35885,11 @@ export class Showcase {
       const stage = new ModelStage();
       const element = h('div', { class: 'showcase-stage showcase-3d', role: 'img', 'data-mode': '3d', 'data-ready': 'false' });
       element.appendChild(stage.canvas);
-      stage.onTurn = azimuth => element.setAttribute('data-azimuth', azimuth.toFixed(3));
+      stage.onView = (azimuth, extent, zoom) => {
+        element.setAttribute('data-azimuth', azimuth.toFixed(3));
+        element.setAttribute('data-extent', extent.toFixed(3));
+        element.setAttribute('data-zoom', zoom.toFixed(3));
+      };
       this.#model = { stage, libraries: new Map([[vehicle, library]]), element };
       this.#mode = '3d';
       if (this.element.isConnected) this.#last?.();
@@ -35694,11 +35919,20 @@ export class Showcase {
     element.setAttribute('aria-label', label);
     element.setAttribute('data-layers', shown.map(p => p.id).sort().join(' '));
     element.setAttribute('data-ready', 'true');
-    const pause = h('button', { type: 'button', class: 'btn ghost', id: 'showcase-pause', 'aria-pressed': String(!stage.turning), text: text.pause, on: {
-      click: e => { stage.turning = !stage.turning; (e.currentTarget as HTMLElement).setAttribute('aria-pressed', String(!stage.turning)); },
-    } });
-    const turn = (id: string, name: string, radians: number) => h('button', { type: 'button', class: 'btn ghost', id, text: name, on: { click: () => stage.turn(radians) } });
-    const controls = h('div', { class: 'cluster showcase-controls' }, pause, turn('showcase-left', text.left, -TURN_STEP), turn('showcase-right', text.right, TURN_STEP));
+    // Signs, not words: the name is the button's accessible name and its tooltip. The pause button keeps its name and
+    // reports its state with aria-pressed; its sign and tooltip say what a press does next.
+    const sign = (id: string, name: string, mark: string, click: (button: HTMLElement) => void) =>
+      h('button', { type: 'button', class: 'btn sign', id, 'aria-label': name, title: name, text: mark, on: { click: e => click(e.currentTarget as HTMLElement) } });
+    const paused = (button: HTMLElement) => {
+      button.setAttribute('aria-pressed', String(!stage.turning));
+      button.textContent = stage.turning ? '‖' : '▷';
+      button.title = stage.turning ? text.pause : text.resume;
+    };
+    const pause = sign('showcase-pause', text.pause, '', button => { stage.turning = !stage.turning; paused(button); });
+    paused(pause);
+    const controls = h('div', { class: 'cluster showcase-controls' }, pause,
+      sign('showcase-left', text.left, '↺', () => stage.turn(-TURN_STEP)), sign('showcase-right', text.right, '↻', () => stage.turn(TURN_STEP)),
+      sign('showcase-zoom-out', text.zoomOut, '−', () => stage.zoom(-1)), sign('showcase-zoom-in', text.zoomIn, '+', () => stage.zoom(1)));
     const slotNote = shown.length < physical.filter(p => slots.has(p.id)).length ? h('p', { class: 'muted small', text: text.slotNote }) : '';
     const focused = document.activeElement?.id;
     this.element.replaceChildren(h('h2', { id: 'showcase-heading', text: text.title }), element,
@@ -36852,7 +37086,7 @@ export function reflow(source: string): Block[] {
 
 ### source/ui/student.ts
 
-Paths: `source/ui/student.ts`. SHA-256 `2a9963e5f862b10bb6e39ebfe650d511a78b0961dd194d23116957db5e76bc48`, 24493 bytes.
+Paths: `source/ui/student.ts`. SHA-256 `a7e8b63dfad76094d9d7998b9beddc8265b5bc6df37929899c6e10ee8500e96b`, 24591 bytes.
 
 ```ts
 // Student companion (MPES §7.3).
@@ -36886,7 +37120,8 @@ function showcaseFor(v: View, mission: MissionId): Child {
       turntable: t('showcase.turntable'), rotate: t('showcase.rotate'), installed: t('showcase.installed'), none: t('showcase.none'),
       turntableLabel: `${t('showcase.vehicle', { mission: missionName(mission, v.lang) })} ${t('showcase.turntableNote')}`, turntableNote: t('showcase.turntableNote'),
       process: t('showcase.process'), slotNote: t('showcase.slotNote'),
-      drag: t('showcase.drag'), pause: t('showcase.pause'), left: t('showcase.left'), right: t('showcase.right'),
+      drag: t('showcase.drag'), pause: t('showcase.pause'), resume: t('showcase.resume'), left: t('showcase.left'), right: t('showcase.right'),
+      zoomIn: t('showcase.zoomIn'), zoomOut: t('showcase.zoomOut'),
     }, s.currentCard && { id: s.currentCard.id, title: s.currentCard.title[v.lang], category: s.currentCard.cat });
 }
 
@@ -37213,7 +37448,7 @@ export function startStudent(root: HTMLElement, lang: Language, storage: Storage
 
 ### source/ui/styles.css
 
-Paths: `source/ui/styles.css`. SHA-256 `c6e8c944d2dfc0d45ddbd94a56a6a476db80f46a6dca9445f61f56675419dd53`, 19888 bytes.
+Paths: `source/ui/styles.css`. SHA-256 `97104ed93f9df9259bf246f5d90e55d3329b3ffd197a21f7a93cbdc49cb0caf0`, 21233 bytes.
 
 ```css
 /* SEA Game design system (MPES §7.1): one set of tokens for both roles. */
@@ -37311,6 +37546,21 @@ input[aria-invalid="true"], select[aria-invalid="true"] { border-color: var(--ba
 
 /* Tables */
 .table-wrap { overflow-x: auto; }
+/* Phones (owner FIX 2026-10-12): each row becomes a card, so no column hides off screen; each cell shows its column's
+   name (view.ts labelCells), numbers side by side, text at full width. The header row stays for screen readers. */
+@media (max-width: 40rem) {
+  .table-wrap table, .table-wrap tbody { display: block; }
+  .table-wrap thead {
+    position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap;
+  }
+  .table-wrap tr { display: flex; flex-wrap: wrap; gap: .35rem 1rem; padding: .6rem 0; border-bottom: 1px solid var(--line); }
+  .table-wrap th, .table-wrap td { display: block; flex: 1 1 100%; padding: 0; border: 0; text-align: left; white-space: normal; overflow-wrap: anywhere; }
+  .table-wrap td.num { flex: 0 0 auto; text-align: left; }
+  .table-wrap td[data-label]::before {
+    content: attr(data-label); display: block; font-family: var(--mono); font-size: .7rem; color: var(--muted);
+    text-transform: uppercase; letter-spacing: .06em;
+  }
+}
 table { border-collapse: collapse; width: 100%; }
 th, td { text-align: left; padding: .4rem .6rem; border-bottom: 1px solid var(--line); vertical-align: top; }
 th { font-size: .875rem; color: var(--muted); font-weight: 600; }
@@ -37494,6 +37744,9 @@ input, select, textarea { background: var(--field-bg); border-color: var(--field
 .showcase-canvas { display: block; width: 100%; height: 100%; touch-action: pan-y; cursor: grab; }
 .showcase-canvas:active { cursor: grabbing; }
 .showcase-controls { gap: .5rem; }
+/* Sign buttons (owner FIX 2026-10-12): one sign each, named by aria-label and tooltip; 44 px targets (WCAG 2.5.8). */
+.showcase-controls .btn.sign { min-width: 44px; min-height: 44px; padding: 0 .5rem; justify-content: center;
+  font-family: var(--font); font-size: 1.35rem; line-height: 1; letter-spacing: 0; text-transform: none; }
 .showcase-views { border: 0; padding: 0; gap: 1rem; }
 .showcase input[type="range"] { width: 100%; accent-color: var(--accent); }
 .installed { margin: 0; padding-left: 1.1rem; display: grid; gap: .15rem; }
@@ -37562,7 +37815,7 @@ export function toggleTheme(): Theme {
 
 ### source/ui/view.ts
 
-Paths: `source/ui/view.ts`. SHA-256 `0922a132e89f5f40325898d41812b73e1ec5fb1fed7d94ca5eceb278cfbdf156`, 14529 bytes.
+Paths: `source/ui/view.ts`. SHA-256 `48a0a0f278715e633d70b72a614e1f2c83c201f48eb2b863e325dd009e6e28b0`, 15712 bytes.
 
 ```ts
 // Shared role view: shell (header, progress, menu, notices), rendering with focus preservation,
@@ -37596,6 +37849,30 @@ export interface RoleConfig<S extends RoleState> {
 }
 
 type Tone = 'ok' | 'bad' | 'info';
+
+/**
+ * On a phone each table row becomes a card (styles.css, owner FIX 2026-10-12): every data cell carries its column's
+ * name for display, and explicit table roles keep the table's meaning for screen readers once rows stop displaying
+ * as table rows. A column whose header is only hidden text (an action) gets no label.
+ */
+function labelCells(wrap: HTMLElement): void {
+  const table = wrap.querySelector('table');
+  if (!table) return;
+  table.setAttribute('role', 'table');
+  const names = [...table.querySelectorAll('thead th')].map(th => th.querySelector('.visually-hidden') ? '' : th.textContent?.trim() ?? '');
+  for (const group of table.querySelectorAll('thead, tbody')) group.setAttribute('role', 'rowgroup');
+  for (const row of table.querySelectorAll('tr')) {
+    row.setAttribute('role', 'row');
+    [...row.children].forEach((cell, i) => {
+      if (cell.closest('thead')) cell.setAttribute('role', 'columnheader');
+      else if (cell.tagName === 'TH') cell.setAttribute('role', 'rowheader');
+      else {
+        cell.setAttribute('role', 'cell');
+        if (names[i]) cell.setAttribute('data-label', names[i]!);
+      }
+    });
+  }
+}
 
 export class RoleView<S extends RoleState> {
   readonly config: RoleConfig<S>;
@@ -37690,6 +37967,7 @@ export class RoleView<S extends RoleState> {
       if (this.#statusLine.textContent !== (this.#status?.text ?? '')) this.#statusLine.textContent = this.#status?.text ?? '';
       // Tables wider than the screen become labelled, focusable regions so they can be scrolled by keyboard (WCAG 2.1.1).
       for (const wrap of this.#content.querySelectorAll<HTMLElement>('.table-wrap')) {
+        labelCells(wrap);
         if (wrap.scrollWidth > wrap.clientWidth + 1) {
           wrap.tabIndex = 0;
           wrap.setAttribute('role', 'region');
@@ -38808,6 +39086,65 @@ for (const lang of ['en', 'fr']) {
 }
 ```
 
+### tests/e2e/mobile.spec.ts
+
+Paths: `tests/e2e/mobile.spec.ts`. SHA-256 `262f8f0cc5b74e169675320acd658e483f11c9d109102b452bf0c0db8a0bb077`, 3093 bytes.
+
+```ts
+// Owner FIX 2026-10-12: on a phone every table shows all of its columns. Tables open inside collapsed sections
+// (the category guide, the mission minimums) hid most columns off screen; below 40rem each row becomes a card whose
+// cells carry their column's name.
+import { expect, test, type Page } from '@playwright/test';
+import { gameUrl, guardNetwork } from './helpers.ts';
+import { confirmDialog, studentJoin } from './roles.ts';
+
+async function everyCellShown(page: Page, where: string): Promise<void> {
+  await page.evaluate(() => document.querySelectorAll('details').forEach(d => { d.open = true; }));
+  const tables = await page.evaluate(() => [...document.querySelectorAll<HTMLElement>('.table-wrap')].map(wrap => {
+    const edge = wrap.getBoundingClientRect().right;
+    const cells = [...wrap.querySelectorAll('th, td')].filter(c => getComputedStyle(c).display !== 'none' && !c.closest('thead'));
+    return {
+      name: wrap.querySelector('caption')?.textContent ?? wrap.textContent?.slice(0, 30),
+      scrolls: wrap.scrollWidth > wrap.clientWidth + 1,
+      outside: cells.filter(c => c.getBoundingClientRect().right > edge + 1).map(c => c.textContent),
+      // Every data cell under a named column shows that name, read from the header row itself, not from the cell.
+      unlabelled: [...wrap.querySelectorAll('tbody tr')].flatMap(row => [...row.children].filter((c, i) => {
+        const header = wrap.querySelectorAll('thead th')[i];
+        const name = header && !header.querySelector('.visually-hidden') ? header.textContent?.trim() ?? '' : '';
+        return c.tagName === 'TD' && name !== '' && getComputedStyle(c, '::before').content.replace(/"/g, '') !== name;
+      }).map(c => c.textContent)),
+      labelled: wrap.querySelectorAll('td[data-label]').length,
+    };
+  }));
+  expect(tables.length, where).toBeGreaterThan(0);
+  for (const table of tables) {
+    expect(table, `${where}: ${table.name}`).toMatchObject({ scrolls: false, outside: [], unlabelled: [] });
+    expect(table.labelled, `${where}: ${table.name} labels its cells`).toBeGreaterThan(0);
+  }
+}
+
+for (const width of [320, 360]) for (const lang of ['en', 'fr']) {
+  test(`phone (${width} px): every table shows all its columns (${lang})`, async ({ browser }) => {
+    const page = await (await browser.newContext({ viewport: { width, height: 740 } })).newPage();
+    guardNetwork(page);
+    await page.goto(gameUrl(`?role=student&lang=${lang}`));
+    await studentJoin(page, 'SEA3-T2-0123456789ABCDEF', 1, 'COMBAT');
+    await everyCellShown(page, 'planning');
+    await page.check('#plan-confirm');
+    await page.click('#student-start-auction');
+    await confirmDialog(page);
+    await page.fill('#card-id', 'CAP-A');
+    await page.click('#load-card');
+    await page.fill('#paid', '400000');
+    await page.click('#record-win');
+    await everyCellShown(page, 'tracker');
+    // The desktop layout is unchanged: a real table with its header row.
+    await page.setViewportSize({ width: 1280, height: 720 });
+    await expect(page.locator('.table-wrap thead').first()).toBeVisible();
+  });
+}
+```
+
 ### tests/e2e/oracle.ts
 
 Paths: `tests/e2e/oracle.ts`. SHA-256 `ed2d7485305ffe19c8bccef6660ee1df1df23bebf1cdc2a6e8562a71f4f01d65`, 2801 bytes.
@@ -39482,7 +39819,7 @@ export async function studentRecord(page: Page, cardId: string, paidDollars: num
 
 ### tests/e2e/showcase.spec.ts
 
-Paths: `tests/e2e/showcase.spec.ts`. SHA-256 `6a9f02d39b2b7a8bf8ab1f206ee6a40dcb9dd5a48a1b36ddbcc645656443989b`, 18738 bytes.
+Paths: `tests/e2e/showcase.spec.ts`. SHA-256 `acfea81150e8103f9099c62ad7cb1cd1c521b78556f88c19138691be90d779b1`, 22128 bytes.
 
 ```ts
 // War-room HUD and vehicle showcase (MPES §7.1, §10, §11): the default look of every view. The live lot shows the
@@ -39554,6 +39891,58 @@ test('3D showcase: the model turns by itself, follows recorded purchases, and ca
   await expectAccessible(sp, 'student tracker, 3D showcase');
   expect(errors).toEqual([]);
 });
+
+for (const viewport of [{ width: 1280, height: 720 }, { width: 360, height: 740 }]) {
+  test(`3D showcase at ${viewport.width} px: framed on the full kit at every turn, zooms, and has compact symbol controls`, async ({ browser }) => {
+    // Owner FIX 2026-10-12: the fully kitted model fits the view; zoom in and out; short controls marked by signs.
+    const { sp } = await trackerFor(browser, 'TROOP');
+    await sp.setViewportSize(viewport);
+    const showcase = sp.locator('#showcase'), stage = showcase.locator('[role="img"]');
+    await expect(stage).toHaveAttribute('data-ready', 'true', { timeout: 30_000 });
+    // The far ends of the catalogue: a rear trailer, a front blade, the tallest mast and sensor.
+    for (const [round, lot, card] of [[1, 7, 'ACC-B'], [1, 5, 'COM-E'], [2, 7, 'ACC-C'], [2, 6, 'SA-D']] as const) await record(sp, round, lot, card, 900000);
+    await expect(stage).toHaveAttribute('data-layers', 'ACC-B ACC-C COM-E SA-D');
+    const button = (name: string) => showcase.getByRole('button', { name, exact: true });
+    const signs = { 'Pause turning': '‖', 'Turn left': '↺', 'Turn right': '↻', 'Zoom out': '−', 'Zoom in': '+' };
+    for (const [name, sign] of Object.entries(signs)) {
+      await expect(button(name)).toHaveText(sign);
+      await expect(button(name)).toHaveAttribute('title', name);
+      const box = (await button(name).boundingBox())!;
+      expect(box.width, name).toBeGreaterThanOrEqual(44);
+      expect(box.x + box.width, name).toBeLessThanOrEqual(viewport.width);
+    }
+    await button('Pause turning').click();
+    await expect(button('Pause turning')).toHaveText('▷');
+    await expect(button('Pause turning')).toHaveAttribute('title', 'Resume turning');
+    // The extent is the farthest corner of the full kit's bounding box from the frame centre (1 = the frame edge).
+    const extent = async () => Number(await stage.getAttribute('data-extent'));
+    // A turn eases over several frames, its tail long and slight: read the view once it has all but come to rest.
+    const settled = async () => {
+      let last = NaN;
+      await expect.poll(async () => { const now = Number(await stage.getAttribute('data-azimuth')), moved = Math.abs(now - last); last = now; return moved; }, { intervals: [150], timeout: 10_000 }).toBeLessThan(0.01);
+      return extent();
+    };
+    const extents: number[] = [];
+    for (let i = 0; i < 16; i++) {
+      const before = await stage.getAttribute('data-azimuth');
+      await button('Turn left').click();
+      await expect(stage).not.toHaveAttribute('data-azimuth', before ?? '');
+      extents.push(await settled());
+      expect(extents.at(-1), `turn ${i}`).toBeLessThanOrEqual(1);
+    }
+    expect(Math.max(...extents), 'the widest view fills the frame, not a speck in it').toBeGreaterThan(0.85);
+    const zoom = async () => Number(await stage.getAttribute('data-zoom'));
+    const start = await zoom(), framed = await settled();
+    await button('Zoom in').click();
+    await expect.poll(zoom).toBeLessThan(start);
+    expect(await settled(), 'zooming in enlarges the vehicle').toBeGreaterThan(framed * 1.15);
+    for (let i = 0; i < 12; i++) await button('Zoom out').click();
+    const farthest = await zoom();
+    expect(farthest).toBeGreaterThan(start);
+    await button('Zoom out').click();
+    expect(await zoom(), 'zoom out stops at its limit').toBe(farthest);
+  });
+}
 
 test('3D showcase: the confirmed vehicle is prepared during planning, and only then, so the tracker opens with it ready', async ({ browser }) => {
   const prepared = (page: import('@playwright/test').Page) => page.evaluate(() => performance.getEntriesByType('mark').map(m => m.name).filter(n => n.startsWith('sea-model:')));
@@ -40790,6 +41179,65 @@ describe('money display', () => {
     expect(signed(4)).toBe('+4');
     expect(seconds(30_000)).toBe('0:30');
     expect(seconds(61_001)).toBe('1:02');
+  });
+});
+```
+
+### tests/unit/frame.test.ts
+
+Paths: `tests/unit/frame.test.ts`. SHA-256 `ecef243c2de24f6eabbcd5d1f9600e1e61d7fbfc829082513952176e9b166c48`, 2752 bytes.
+
+```ts
+// MPES §10.2 (owner FIX 2026-10-12): the 3D showcase frames the vehicle as fitted, however fully kitted out, every part
+// in view at every turn and at every height the player can drag to, and zooms in and out within set limits.
+import { describe, expect, it } from 'vitest';
+import { Box3, Vector3 } from 'three';
+import { distanceAt, extentAt, FIT_MARGIN, fitDistance, fitTable, viewDirection, ZOOM_IN_LIMIT, ZOOM_OUT_LIMIT, zoomed } from '../../source/showcase/frame.ts';
+
+const FOV = 30, POLARS = [0.6, 1.25, 1.45];
+const boxes = {
+  long: new Box3(new Vector3(-1.4, 0, -4), new Vector3(1.4, 2.6, 4)),
+  tall: new Box3(new Vector3(-1.2, 0, -2), new Vector3(1.2, 5.5, 2)),
+  offCentre: new Box3(new Vector3(0.5, 0.2, -1), new Vector3(3.5, 3, 6.5)),
+};
+
+describe('showcase framing (MPES §10.2)', () => {
+  for (const [name, box] of Object.entries(boxes)) for (const aspect of [16 / 9, 1, 9 / 16]) {
+    it(`fits the ${name} kit at every turn and height, aspect ${aspect.toFixed(2)}`, () => {
+      const target = box.getCenter(new Vector3());
+      const distance = fitDistance(box, target, POLARS, FOV, aspect);
+      let worst = 0;
+      for (const polar of POLARS) for (let i = 0; i < 360; i += 5) {
+        const extent = extentAt(box, target, viewDirection(polar, (i * Math.PI) / 180), distance, FOV, aspect);
+        expect(extent, `polar ${polar}, azimuth ${i}`).toBeLessThanOrEqual(1);
+        worst = Math.max(worst, extent);
+      }
+      // Tight, not merely safe: the worst view uses the frame up to the margin.
+      expect(worst).toBeGreaterThan(FIT_MARGIN - 0.03);
+    });
+  }
+
+  for (const [name, box] of Object.entries(boxes)) it(`keeps the ${name} kit in view at every height the player drags to`, () => {
+    const target = box.getCenter(new Vector3());
+    const table = fitTable(box, target, 0.6, 1.45, FOV, 16 / 9);
+    for (let polar = 0.6; polar <= 1.45 + 1e-9; polar += 0.025) for (let i = 0; i < 360; i += 5) {
+      const extent = extentAt(box, target, viewDirection(polar, (i * Math.PI) / 180), distanceAt(table, polar), FOV, 16 / 9);
+      expect(extent, `polar ${polar.toFixed(3)}, azimuth ${i}`).toBeLessThanOrEqual(1);
+    }
+    expect(distanceAt(table, 0.1)).toBe(table.distances[0]);
+    expect(distanceAt(table, 3)).toBe(table.distances.at(-1));
+  });
+
+  it('zooms in and out by steps, within its limits', () => {
+    expect(zoomed(1, 1)).toBeLessThan(1);
+    expect(zoomed(1, -1)).toBeGreaterThan(1);
+    let zoom = 1;
+    for (let i = 0; i < 20; i++) zoom = zoomed(zoom, 1);
+    expect(zoom).toBe(ZOOM_IN_LIMIT);
+    for (let i = 0; i < 20; i++) zoom = zoomed(zoom, -1);
+    expect(zoom).toBe(ZOOM_OUT_LIMIT);
+    expect(ZOOM_IN_LIMIT).toBeLessThan(1);
+    expect(ZOOM_OUT_LIMIT).toBeGreaterThan(1);
   });
 });
 ```
@@ -43146,5 +43594,5 @@ Keys and the commands that make each kind again:
 
 | Path | Bytes | SHA-256 | Why |
 |---|---:|---|---|
-| `docs/MPES.md` | 165877 | `69bfa1b943ff288b6dfc5c372a832aca72340c62818eee34c27b1fd115716ecc` | The specification, a clean-room document of its own (Omni 5.1.1 §333). |
+| `docs/MPES.md` | 167941 | `440a79c29eeb297f75f6693852fe8952f8db417d6e674b9622ec290b4a165e50` | The specification, a clean-room document of its own (Omni 5.1.1 §333). |
 | `docs/CODEBASE.md` | | | This file. |

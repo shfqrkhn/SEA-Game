@@ -17,8 +17,9 @@ export interface ShowcaseText {
   readonly turntableLabel: string; readonly turntableNote: string;
   /** Heading of the SE_PROCESS badges, and the note shown when a mount holds more than one part. */
   readonly process: string; readonly slotNote: string;
-  /** The 3D stage's hint and its pause and turn buttons. */
-  readonly drag: string; readonly pause: string; readonly left: string; readonly right: string;
+  /** The 3D stage's hint and the names of its pause, turn and zoom buttons (each shows a sign, MPES §10.2). */
+  readonly drag: string; readonly pause: string; readonly resume: string; readonly left: string; readonly right: string;
+  readonly zoomIn: string; readonly zoomOut: string;
 }
 
 /** One press of a turn button turns the 3D vehicle by this much (radians). */
@@ -148,7 +149,11 @@ export class Showcase {
       const stage = new ModelStage();
       const element = h('div', { class: 'showcase-stage showcase-3d', role: 'img', 'data-mode': '3d', 'data-ready': 'false' });
       element.appendChild(stage.canvas);
-      stage.onTurn = azimuth => element.setAttribute('data-azimuth', azimuth.toFixed(3));
+      stage.onView = (azimuth, extent, zoom) => {
+        element.setAttribute('data-azimuth', azimuth.toFixed(3));
+        element.setAttribute('data-extent', extent.toFixed(3));
+        element.setAttribute('data-zoom', zoom.toFixed(3));
+      };
       this.#model = { stage, libraries: new Map([[vehicle, library]]), element };
       this.#mode = '3d';
       if (this.element.isConnected) this.#last?.();
@@ -178,11 +183,20 @@ export class Showcase {
     element.setAttribute('aria-label', label);
     element.setAttribute('data-layers', shown.map(p => p.id).sort().join(' '));
     element.setAttribute('data-ready', 'true');
-    const pause = h('button', { type: 'button', class: 'btn ghost', id: 'showcase-pause', 'aria-pressed': String(!stage.turning), text: text.pause, on: {
-      click: e => { stage.turning = !stage.turning; (e.currentTarget as HTMLElement).setAttribute('aria-pressed', String(!stage.turning)); },
-    } });
-    const turn = (id: string, name: string, radians: number) => h('button', { type: 'button', class: 'btn ghost', id, text: name, on: { click: () => stage.turn(radians) } });
-    const controls = h('div', { class: 'cluster showcase-controls' }, pause, turn('showcase-left', text.left, -TURN_STEP), turn('showcase-right', text.right, TURN_STEP));
+    // Signs, not words: the name is the button's accessible name and its tooltip. The pause button keeps its name and
+    // reports its state with aria-pressed; its sign and tooltip say what a press does next.
+    const sign = (id: string, name: string, mark: string, click: (button: HTMLElement) => void) =>
+      h('button', { type: 'button', class: 'btn sign', id, 'aria-label': name, title: name, text: mark, on: { click: e => click(e.currentTarget as HTMLElement) } });
+    const paused = (button: HTMLElement) => {
+      button.setAttribute('aria-pressed', String(!stage.turning));
+      button.textContent = stage.turning ? '‖' : '▷';
+      button.title = stage.turning ? text.pause : text.resume;
+    };
+    const pause = sign('showcase-pause', text.pause, '', button => { stage.turning = !stage.turning; paused(button); });
+    paused(pause);
+    const controls = h('div', { class: 'cluster showcase-controls' }, pause,
+      sign('showcase-left', text.left, '↺', () => stage.turn(-TURN_STEP)), sign('showcase-right', text.right, '↻', () => stage.turn(TURN_STEP)),
+      sign('showcase-zoom-out', text.zoomOut, '−', () => stage.zoom(-1)), sign('showcase-zoom-in', text.zoomIn, '+', () => stage.zoom(1)));
     const slotNote = shown.length < physical.filter(p => slots.has(p.id)).length ? h('p', { class: 'muted small', text: text.slotNote }) : '';
     const focused = document.activeElement?.id;
     this.element.replaceChildren(h('h2', { id: 'showcase-heading', text: text.title }), element,

@@ -2,6 +2,12 @@
 
 Each entry: what happened, the rule it produced, and the check that now enforces it. Newest first. Examples come from SEA Game (a classroom auction game with photoreal vehicle renders and a real-time 3D showcase, one offline HTML file).
 
+## 2026-10-12 · Framed for one view, cut off at the others
+
+- **What happened:** a 3D showcase framed the vehicle for its opening view; once fully kitted (a trailer behind, a blade in front, a tall mast), parts left the frame as it turned, and there was no zoom. Framing every part in the catalogue instead shrank a bare vehicle to a speck. On a phone, wide tables inside collapsible sections lost their right-hand columns, unseen because tests opened only the first screen.
+- **Rule:** frame what is shown, at every view the user can reach (each turn, each drag height, each window shape), with a margin; zoom by buttons with limits, not the wheel, so the page still scrolls. Below a phone breakpoint, show each table row as a card whose cells carry their column headers. Test the worst case (the full kit) and every section opened at phone width.
+- **Check (as built in SEA Game):** a unit test projects the bounds of long, tall and off-centre kits at every 5° turn and every drag height in wide, square and tall windows (inside the frame, and tight); an end-to-end test buys the most extreme parts, turns the model fully at 1280 and 360 px, and reads the drawn extent and zoom; another opens every section at 360 px in both languages and fails any cell outside its table or without a label.
+
 ## 2026-10-12 · Two ways to publish, one stale site
 
 - **What happened:** the built game was uploaded by hand to the repository root, and Pages (serving from the branch) published it. Minutes later CI's own Pages job, still running on the commit before the merge, deployed a build of the older source over it. The tracked copy also broke the checks that every tracked file is reproducible.
