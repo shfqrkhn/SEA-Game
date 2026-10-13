@@ -1115,7 +1115,7 @@ Gates outside the code:
 | `tests/unit/controller.test.ts` | R-ARCH-2, §8.1, §8.7: commit, save and reset through a memory port. |
 | `tests/unit/format.test.ts` | RQ-05 display, RQ-19 French typography. |
 | `tests/unit/content.test.ts` | RQ-19: EN and FR have the same keys and placeholders, no empty string; content matches Appendix A. |
-| `tests/unit/build.test.ts` | RQ-01, 24, 25, 27: one file, CSP hashes match the inline script and style, no remote reference, size, notices, creator credit only in About, the chooser and named documents, determinism. |
+| `tests/unit/build.test.ts` | RQ-01, 24, 25, 27: one file, CSP hashes match the inline script and style, no remote reference, size, notices, no built game committed, creator credit only in About, the chooser and named documents, determinism. |
 | `tests/unit/renders.test.ts` | §10.2, §11: every subject rendered, every layer with a draw depth and slot, hashes, trims, the 40 MB budget. |
 | `tests/unit/glb.test.ts` | §10, §14: the model holds six vehicles; the game parses one. |
 | `tests/unit/showcase.test.ts` | §10.2, §10.3: draw order, latest part per slot, the decoded-image pool. |
@@ -1354,6 +1354,7 @@ This section is the authoritative record of what this project has learned; `libr
 | 2026-10-12 | One reported still had siblings in other vehicles, angles and slots. | For any defect, find its class, sweep every instance (variants, angles, languages, themes), fix all and add a check. | The verification record lists the sweep and the new check. |
 | 2026-10-12 | Moving one part collided with or floated off another. | Every geometry change runs overlap, fit, budgets and sightline on the whole fleet before any render. | The art checks of §10.2. |
 | 2026-10-12 | Changing the base meant re-rendering every layered still. | Know which outputs depend on a shared source; estimate the re-render first and batch base changes. | Render plan in the verification record. |
+| 2026-10-12 | A built game uploaded by hand to the repository root was served by Pages (branch mode), then replaced minutes later by CI deploying an older source; the tracked copy also broke the codebase checks. | Publish only through the pipeline: one deployer (Pages source GitHub Actions), never a committed build. | Unit test "commits no built game"; Pages SHA-256 check at each tag. |
 | 2026-10-12 | Lint scanned agents' worktrees and reported errors outside the project. | Exclude agent and tool folders from lint, tests and typecheck from the start. | Lint, test and typecheck configurations. |
 | 2026-10-11 | Tests timed out under load; piled-up scratch slowed one 16-fold. | Never raise a timeout or budget to pass; find and fix the cause and record the evidence. | Scratch is cleaned after each run. |
 
@@ -1415,7 +1416,7 @@ Reusable practices proven here, in brief:
 | D-09 | Imagery source | Agent-built in a pinned Blender LTS: original, fictional, MIT (§11). Owner, 2026-10-10. |
 | D-10 | File size | Single HTML ≤ 50 MB hard limit, ≤ 40 MB target (§14). Owner, 2026-10-10. |
 | D-11 | Minimum hardware | Smooth on integrated-graphics Windows 11 laptops (§14). Owner, 2026-10-10. |
-| D-12 | Build outputs | `dist/` not committed; `npm run check` compares two builds; CI deploys Pages for QA (§5.5, §18). |
+| D-12 | Build outputs | `dist/` not committed, nor any built copy (a unit test fails on a tracked page with the renders block filled); `npm run check` compares two builds; CI deploys Pages for QA, the Pages source set to GitHub Actions so nothing else is served (§5.5, §18). |
 | D-13 | GitHub | Temporary human-QA space, deleted by the owner at the end. The product is a local handoff package; nothing shipped or documented depends on GitHub (§19.3). Owner, 2026-10-10. |
 | D-14 | AI-assisted art | The owner's ChatGPT Codex subscription generates concept images (references only, kept out of the product) and upgrades the procedural Blender scripts under the budgets of §10.2. Fidelity is the owner's judgement. Owner, 2026-10-10. |
 | D-15 | Projector mode | A full-screen class view (§7.8); private entry stays the recording surface. Owner, 2026-10-10. |
