@@ -50,6 +50,41 @@ async function showcase(page: Page, shot: Shot, mission: string, view: string): 
   await stage.screenshot({ path: join(OUT, `${shot.id}.png`), ...SHOT });
 }
 
+/** Owner FIX 4: a student on a phone, planning with every section open or tracking after one purchase; or the troop
+ *  carrier with the catalogue's farthest-reaching parts in 3D, at its opening angle, turned, or zoomed in. */
+async function phoneOrKit(page: Page, shot: Shot, kind: Extract<Shot['kind'], { type: 'phone' | 'kit' }>): Promise<void> {
+  if (kind.type === 'kit') { await withGpu(page); await page.emulateMedia({ reducedMotion: 'reduce' }); } else await withoutWebgl(page);
+  await page.goto(DIST + query(shot, { role: 'student' }));
+  await studentJoin(page, 'SEA3-T2-0123456789ABCDEF', 1, kind.type === 'kit' ? 'TROOP' : 'COMBAT');
+  const path = join(OUT, `${shot.id}.png`);
+  if (kind.type === 'phone' && kind.view === 'planning') {
+    await page.evaluate(() => document.querySelectorAll('details').forEach(d => { d.open = true; }));
+    await settle(page);
+    return void await page.screenshot({ path, fullPage: true, ...SHOT });
+  }
+  await page.check('#plan-confirm');
+  await page.click('#student-start-auction');
+  await confirmDialog(page);
+  const wins = kind.type === 'kit' ? [[1, 7, 'ACC-B'], [1, 5, 'COM-E'], [2, 7, 'ACC-C'], [2, 6, 'SA-D']] as const : [[1, 1, 'CAP-A']] as const;
+  for (const [round, lot, card] of wins) {
+    await page.selectOption('#pos-round', String(round));
+    await page.selectOption('#pos-lot', String(lot));
+    await page.fill('#card-id', card); await page.click('#load-card'); await page.fill('#paid', '900000');
+    await page.click('#record-win');
+  }
+  if (kind.type === 'phone') {
+    await settle(page);
+    return void await page.screenshot({ path, fullPage: true, ...SHOT });
+  }
+  const stage = page.locator('#showcase [role="img"]');
+  await expect(stage).toHaveAttribute('data-layers', 'ACC-B ACC-C COM-E SA-D', { timeout: 60_000 });
+  await expect(page.locator('#showcase [data-mode="3d"][data-ready="true"]')).toBeVisible({ timeout: 60_000 });
+  const presses = kind.view === 'turned' ? ['Turn left', 6] as const : kind.view === 'zoomed' ? ['Zoom in', 2] as const : null;
+  if (presses) for (let i = 0; i < presses[1]; i++) await page.locator('#showcase').getByRole('button', { name: presses[0], exact: true }).click();
+  await page.waitForTimeout(1500);
+  await page.locator('#showcase').screenshot({ path, ...SHOT });
+}
+
 /** An instructor session, 3 teams, played with the domain commands: each team wins 2 lots of round 1 at the start
  *  price, then the close is offered ('round-full') or taken ('round-closed'). */
 function scenario(name: 'round-full' | 'round-closed', lang: 'en' | 'fr'): I.InstructorState {
@@ -76,6 +111,7 @@ for (const shot of shots()) {
     const path = join(OUT, `${shot.id}.png`);
     const kind = shot.kind;
     if (kind.type === 'showcase') return showcase(page, shot, kind.mission, kind.view);
+    if (kind.type === 'phone' || kind.type === 'kit') return phoneOrKit(page, shot, kind);
     if (kind.type === 'fixture' || kind.type === 'scenario') {
       await page.clock.install({ time: new Date('2026-10-10T09:00:00Z') });
       const role = kind.type === 'fixture' ? kind.role : 'instructor';

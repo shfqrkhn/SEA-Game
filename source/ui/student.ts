@@ -29,7 +29,8 @@ function showcaseFor(v: View, mission: MissionId): Child {
       turntable: t('showcase.turntable'), rotate: t('showcase.rotate'), installed: t('showcase.installed'), none: t('showcase.none'),
       turntableLabel: `${t('showcase.vehicle', { mission: missionName(mission, v.lang) })} ${t('showcase.turntableNote')}`, turntableNote: t('showcase.turntableNote'),
       process: t('showcase.process'), slotNote: t('showcase.slotNote'),
-      drag: t('showcase.drag'), pause: t('showcase.pause'), left: t('showcase.left'), right: t('showcase.right'),
+      drag: t('showcase.drag'), pause: t('showcase.pause'), resume: t('showcase.resume'), left: t('showcase.left'), right: t('showcase.right'),
+      zoomIn: t('showcase.zoomIn'), zoomOut: t('showcase.zoomOut'),
     }, s.currentCard && { id: s.currentCard.id, title: s.currentCard.title[v.lang], category: s.currentCard.cat });
 }
 

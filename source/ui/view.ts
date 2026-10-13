@@ -30,6 +30,30 @@ export interface RoleConfig<S extends RoleState> {
 
 type Tone = 'ok' | 'bad' | 'info';
 
+/**
+ * On a phone each table row becomes a card (styles.css, owner FIX 2026-10-12): every data cell carries its column's
+ * name for display, and explicit table roles keep the table's meaning for screen readers once rows stop displaying
+ * as table rows. A column whose header is only hidden text (an action) gets no label.
+ */
+function labelCells(wrap: HTMLElement): void {
+  const table = wrap.querySelector('table');
+  if (!table) return;
+  table.setAttribute('role', 'table');
+  const names = [...table.querySelectorAll('thead th')].map(th => th.querySelector('.visually-hidden') ? '' : th.textContent?.trim() ?? '');
+  for (const group of table.querySelectorAll('thead, tbody')) group.setAttribute('role', 'rowgroup');
+  for (const row of table.querySelectorAll('tr')) {
+    row.setAttribute('role', 'row');
+    [...row.children].forEach((cell, i) => {
+      if (cell.closest('thead')) cell.setAttribute('role', 'columnheader');
+      else if (cell.tagName === 'TH') cell.setAttribute('role', 'rowheader');
+      else {
+        cell.setAttribute('role', 'cell');
+        if (names[i]) cell.setAttribute('data-label', names[i]!);
+      }
+    });
+  }
+}
+
 export class RoleView<S extends RoleState> {
   readonly config: RoleConfig<S>;
   readonly root: HTMLElement;
@@ -123,6 +147,7 @@ export class RoleView<S extends RoleState> {
       if (this.#statusLine.textContent !== (this.#status?.text ?? '')) this.#statusLine.textContent = this.#status?.text ?? '';
       // Tables wider than the screen become labelled, focusable regions so they can be scrolled by keyboard (WCAG 2.1.1).
       for (const wrap of this.#content.querySelectorAll<HTMLElement>('.table-wrap')) {
+        labelCells(wrap);
         if (wrap.scrollWidth > wrap.clientWidth + 1) {
           wrap.tabIndex = 0;
           wrap.setAttribute('role', 'region');

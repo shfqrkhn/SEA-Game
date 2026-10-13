@@ -93,6 +93,21 @@ input[aria-invalid="true"], select[aria-invalid="true"] { border-color: var(--ba
 
 /* Tables */
 .table-wrap { overflow-x: auto; }
+/* Phones (owner FIX 2026-10-12): each row becomes a card, so no column hides off screen; each cell shows its column's
+   name (view.ts labelCells), numbers side by side, text at full width. The header row stays for screen readers. */
+@media (max-width: 40rem) {
+  .table-wrap table, .table-wrap tbody { display: block; }
+  .table-wrap thead {
+    position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap;
+  }
+  .table-wrap tr { display: flex; flex-wrap: wrap; gap: .35rem 1rem; padding: .6rem 0; border-bottom: 1px solid var(--line); }
+  .table-wrap th, .table-wrap td { display: block; flex: 1 1 100%; padding: 0; border: 0; text-align: left; white-space: normal; overflow-wrap: anywhere; }
+  .table-wrap td.num { flex: 0 0 auto; text-align: left; }
+  .table-wrap td[data-label]::before {
+    content: attr(data-label); display: block; font-family: var(--mono); font-size: .7rem; color: var(--muted);
+    text-transform: uppercase; letter-spacing: .06em;
+  }
+}
 table { border-collapse: collapse; width: 100%; }
 th, td { text-align: left; padding: .4rem .6rem; border-bottom: 1px solid var(--line); vertical-align: top; }
 th { font-size: .875rem; color: var(--muted); font-weight: 600; }
@@ -276,6 +291,9 @@ input, select, textarea { background: var(--field-bg); border-color: var(--field
 .showcase-canvas { display: block; width: 100%; height: 100%; touch-action: pan-y; cursor: grab; }
 .showcase-canvas:active { cursor: grabbing; }
 .showcase-controls { gap: .5rem; }
+/* Sign buttons (owner FIX 2026-10-12): one sign each, named by aria-label and tooltip; 44 px targets (WCAG 2.5.8). */
+.showcase-controls .btn.sign { min-width: 44px; min-height: 44px; padding: 0 .5rem; justify-content: center;
+  font-family: var(--font); font-size: 1.35rem; line-height: 1; letter-spacing: 0; text-transform: none; }
 .showcase-views { border: 0; padding: 0; gap: 1rem; }
 .showcase input[type="range"] { width: 100%; accent-color: var(--accent); }
 .installed { margin: 0; padding-left: 1.1rem; display: grid; gap: .15rem; }
