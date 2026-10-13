@@ -21,6 +21,21 @@ export function effectsList(effects: Effects, lang: Language): Child {
       h('span', { class: 'num', text: signed(effects[k]!) }), ' ', `${t(`unit.${k}` as StringKey)} · ${t(`cap.${k}` as StringKey)}`)));
 }
 
+/** Stands for a card ID in a translated sentence, so `withId` can put the ID in a span that never breaks at its hyphen. */
+export const ID_MARK = '\u0000';
+export function withId(text: string, id: string): Child[] {
+  return text.split(ID_MARK).flatMap((part, i) => i ? [h('span', { class: 'nowrap', text: id }), part] : [part]);
+}
+
+/** The same effects on one compact line (value, unit, capability), for lists of cards such as those leaving the game. */
+export function effectsLine(effects: Effects, lang: Language): Child {
+  const t = tr(lang);
+  const items = CAPABILITIES.filter(k => effects[k] !== undefined).map(k =>
+    h('span', { class: (effects[k] ?? 0) < 0 ? 'penalty' : 'gain' },
+      h('span', { class: 'num', text: signed(effects[k]!) }), ' ', `${t(`unit.${k}` as StringKey)} ${t(`cap.${k}` as StringKey)}`));
+  return h('span', { class: 'effects-line' }, items.flatMap((item, i) => i ? [', ', item] : [item]));
+}
+
 /** The card's photoreal render (MPES §11); every card and the practice card has one. */
 export function cardImage(id: string, label: string): HTMLElement | null {
   const render = cardRender(id);
@@ -32,7 +47,7 @@ export function cardDetails(card: MarketCard, lang: Language, headingLevel: 'h2'
   return h('figure', { class: 'card-figure', 'data-card': card.id },
     cardImage(card.id, `${card.id} · ${card.title[lang]}`),
     h('figcaption', { class: 'stack' },
-      h('p', { class: 'muted small', text: `${t(`cat.${card.cat}` as StringKey)} · ${card.id}` }),
+      h('p', { class: 'muted small' }, `${t(`cat.${card.cat}` as StringKey)} · `, h('span', { class: 'nowrap', text: card.id })),
       h(headingLevel, { text: card.title[lang] }),
       h('p', {}, labelled(t('common.startPrice'), lang), h('strong', { class: 'num', text: money(card.start, lang) })),
       effectsList(card.e, lang),
@@ -111,7 +126,7 @@ export function purchasesTable(purchases: readonly Purchase[], lang: Language, o
     h('tbody', {}, purchases.map(p => h('tr', {},
       h('td', { class: 'num', text: String(p.round) }), h('td', { class: 'num', text: String(p.lot) }),
       h('td', {}, h('span', { class: 'mono small', text: p.id }), ' ', p.title[lang]),
-      h('td', { class: 'small', text: CAPABILITIES.filter(k => p.e[k] !== undefined).map(k => `${k} ${signed(p.e[k]!)}`).join(', ') }),
+      h('td', { class: 'small' }, effectsLine(p.e, lang)),
       h('td', { class: 'num', text: money(p.paid, lang) }),
       value(p),
       action ? h('td', {}, action(p)) : null,

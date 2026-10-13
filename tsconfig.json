@@ -19,6 +19,6 @@
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true
   },
-  "include": ["source", "content", "tests", "build", "art", "*.config.ts"],
-  "exclude": ["_archive", ".artifacts", "node_modules", "dist"]
+  "include": ["source", "content", "tests", "build", "art", "scripts", "*.config.ts"],
+  "exclude": ["_archive", ".artifacts", ".claude", "node_modules", "dist"]
 }

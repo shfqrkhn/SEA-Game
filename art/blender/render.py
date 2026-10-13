@@ -26,7 +26,9 @@ from sea.mounts import SLOTS, card_mount  # noqa: E402
 from sea.parts import tokens  # noqa: E402
 from sea.parts.library import PARTS, build as build_part  # noqa: E402
 
-ANGLES = {'front': (38, 10), 'rear': (218, 12)}  # (yaw, pitch) of the two build angles
+# (yaw, pitch) of the two build angles. Chosen by art/tools/angles.ts (owner FIX, G2): near eye level and more side-on
+# than the earlier 38/10 and 218/12, so fewer parts are hidden by the hull and the vehicle fills more of the frame.
+ANGLES = {'front': (30, 6), 'rear': (210, 6)}
 # Sizes favour performance over looks (owner, 2026-10-10): enough pixels for the panels they fill, no more.
 HERO, BUILD, TURN, CARD = (1600, 900), (1280, 720), (960, 540), (512, 512)
 TURNTABLE_FRAMES = 24
@@ -98,8 +100,8 @@ class Job:
         hero = ['base', *fleet.HERO[stem]]
         if self.a.preview:
             self.shot(f'{stem}-hero', HERO, 0, hero, [], 32, 8)
-            self.shot(f'{stem}-kit', HERO, 0, everything, [], 32, 8)
-            self.shot(f'{stem}-kit-rear', HERO, 0, everything, [], 212, 10)
+            self.shot(f'{stem}-kit', HERO, 0, everything, [], *ANGLES['front'])
+            self.shot(f'{stem}-kit-rear', HERO, 0, everything, [], *ANGLES['rear'])
             return
         if 'hero' in only:
             self.shot(f'{stem}-hero', HERO, SAMPLES['hero'], hero, [], 32, 8)

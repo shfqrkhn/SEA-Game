@@ -319,6 +319,50 @@ export function advance(state: InstructorState): InstructorState {
   return { ...state, ...reset, round: Math.floor(next / LOTS), lot: next % LOTS, revealed: state.revealMode !== 'MANUAL', leader: null, currentBid: null };
 }
 
+/**
+ * Lots left in this round that no team may win (every team has its wins): the current one unless it has its outcome,
+ * and every later one. 0 if any team may still win.
+ */
+export function lotsNobodyCanWin(state: InstructorState): number {
+  if (state.phase !== 'auction' || state.teams.some(team => canWin(team, state.round + 1))) return 0;
+  return LOTS - state.lot - (currentOutcome(state) ? 1 : 0);
+}
+
+/** The cards a close of this round would record UNSOLD, in lot order (empty when it is not allowed). */
+export function cardsNobodyCanWin(state: InstructorState): MarketCard[] {
+  const count = lotsNobodyCanWin(state);
+  return count === 0 ? [] : state.market[state.round]!.slice(LOTS - count);
+}
+
+/** Cards of a round (0-based) whose effective outcome is UNSOLD, in lot order: each card comes up once, so these are out of the game. */
+export function unsoldIn(state: InstructorState, round: number): MarketCard[] {
+  const outcomes = effectiveOutcomes(state.ledger);
+  return (state.market[round] ?? []).filter((_, lot) => outcomes.get(round * LOTS + lot)?.kind === 'UNSOLD');
+}
+
+/**
+ * Owner request 2026-10-11 (MPES §6.5): when no team may win more this round, record the current lot and every later
+ * lot of the round UNSOLD at once and open the next round. It is offered from the sale that used the last win, so the
+ * instructor needs no extra Next lot. In round 7 it stops on lot 70, so build stays a deliberate step.
+ */
+export function closeRound(state: InstructorState): InstructorState {
+  auction(state);
+  const count = lotsNobodyCanWin(state);
+  if (count === 0) fail('phase');
+  const ledger = [...state.ledger];
+  for (let lot = LOTS - count; lot < LOTS; lot++) {
+    const card = state.market[state.round]?.[lot];
+    if (!card) fail('invalid-state');
+    if (!hasCapacity(state.round * LOTS + lot, ledger.length, 'UNSOLD')) fail('ledger-limit');
+    ledger.push({ seq: state.seq + ledger.length - state.ledger.length + 1, kind: 'UNSOLD', round: card.round, lot: card.lot, card: card.id, team: null, price: null });
+  }
+  const closed: InstructorState = {
+    ...state, ledger, seq: ledger.at(-1)!.seq, leader: null, currentBid: null, lot: LOTS - 1, revealed: true,
+    open: false, pausedRemaining: null, deadline: null, resultDraft: null, finalCallAnnounced: false,
+  };
+  return state.round === ROUNDS - 1 ? closed : advance(closed);
+}
+
 // ---- Build, submissions, debrief (MPES §6.11–6.13) ----
 export function openSubmissions(state: InstructorState): InstructorState {
   inPhase(state, 'build');

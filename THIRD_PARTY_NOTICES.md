@@ -1,6 +1,8 @@
 # Third-party notices
 
-The distributed game file bundles one third-party library, three.js (MIT License, below), which draws the interactive vehicle showcase. It bundles no third-party fonts or assets. These notices are also shown in the game under Help > About.
+SEA Game is released under the MIT License; its copyright notice is in the licence (About and licences > Licence).
+
+The distributed game file bundles one third-party library, three.js (MIT License, below), which draws the interactive vehicle showcase. It bundles no third-party fonts or assets. These notices are also shown in the game under About and licences.
 
 All imagery and 3D models in the game are original. They were modelled procedurally by the project's own scripts in `art/blender/` and rendered or exported with Blender 5.2.2 (GNU GPL). Blender's licence does not extend to what it renders or exports; the images and models are released with the game under its MIT licence. AI-generated concept images used as modelling references (`art/tools/concepts.ts`) are not part of the game file.
 

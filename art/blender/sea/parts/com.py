@@ -46,8 +46,9 @@ def _frame(b, m, mount, width, depth):
     else:
         _, y, z = getattr(m, mount)
         # All mounts are on the common hull. Rear cantilevers bolt to its deck,
-        # outside the capacity-module envelope; left/right/mast occupy separate lanes.
-        cy = {'antenna_left': y + .12, 'antenna_right': y - .10,
+        # outside the capacity-module envelope; left/right/mast occupy separate lanes,
+        # the outer ones inboard of the roof edge (fit.py overhang).
+        cy = {'antenna_left': y + (.21 if m.extra.get('recovery') else .25), 'antenna_right': y - .215,
               'radio_mast': y - .65}[mount]
         local = Builder(b.layer, b.m)
         local.matrix = b.matrix @ Matrix.Translation((m.back - .09, cy, z)) @ Matrix.Rotation(-PI / 2, 4, 'Z')
@@ -67,6 +68,11 @@ def _frame(b, m, mount, width, depth):
         for u in (-width * .36, width * .36):
             b.wedge('cantilever-gusset', [(-.02, .032), (.20, .032), (.20, .17)], .032,
                     (u, .08, .016), 'paint_dark', rot=(0, 0, PI / 2), bevel=.003)
+            # A knee under each shoe's overhang, to its end, bears on the hull's rear face (local Y .09; 2 mm off it, to stay
+            # out of the troop carrier's open compartment).
+            end = .027 - (depth + .10) / 2
+            b.wedge('cantilever-knee', [(.088, 0), (end, 0), (end, -.012), (.088, -.17)], .075,
+                    (u, 0, 0), 'paint_dark', rot=(0, 0, PI / 2), bevel=.003)
     return b
 
 
@@ -265,7 +271,7 @@ def com_d(b, m):
         b.cyl('telescopic-mast', r, h + .025, (mastx, .065, bottom + h / 2),
               'paint_dark' if i == 0 else 'paint', verts=24, bevel=.003)
         b.cyl('mast-clamp', r + .012, .032, (mastx, .065, bottom + h - .015), 'gunmetal', verts=24, bevel=.003)
-        b.box('clamp-buckle', (.034, .028, .030), (mastx, .012 - r, bottom + h - .015), 'paint_light', bevel=.003)
+        b.box('clamp-buckle', (.034, .028, .030), (mastx, .065 - r - .024, bottom + h - .015), 'paint_light', bevel=.003)
         bottom += h
     b.box('panel-yoke', (.115, .080, .080), (mastx, .065, bottom + .018), 'gunmetal', bevel=.008)
     b.cyl('panel-tilt-pivot', .031, .17, (mastx, .065, bottom + .055), 'gunmetal', (0, PI / 2, 0), verts=16, bevel=.003)
@@ -292,9 +298,10 @@ def com_d(b, m):
 def com_e(b, m):
     """Long-range HF: heavy side fins, twin whips and horizontal folding-mast pack."""
     b = _frame(b, m, 'radio_mast', .70, .45)
+    recovery = m.extra.get('recovery', False) and not _card(m)
     _radio(b, (0, .018, .076), (.56, .36, .285), fins=10, keys='hf')
-    for x in (-.278, .278):
-        _whip(b, (x, .12, .365), 2.60 if x < 0 else 2.1)
+    for x, y, height in ((-.278, .12, 2.60), (-.17, -.15, 2.1) if recovery else (.278, .12, 2.1)):
+        _whip(b, (x, y, .365), height)
     fins = Batch(b, 'side-heatsink', 'paint_dark')
     for x in (-.296, .296):
         for k in range(8):

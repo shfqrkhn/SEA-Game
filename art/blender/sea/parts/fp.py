@@ -5,6 +5,7 @@ import bmesh
 from mathutils import Euler, Matrix, Vector
 
 from ..geo import Batch, Builder, loft
+from .common import _card
 
 PI = math.pi
 X_AXIS = (0, PI / 2, 0)
@@ -98,6 +99,16 @@ def _annulus(b, name, r, inner, z, height, mat='paint', steps=48):
     profile = [(inner, -height/2), (r, -height/2), (r, height/2),
                (inner, height/2), (inner, -height/2)]
     b.revolve(name, profile, (0, 0, z+height/2), mat, rot=(PI/2, 0, 0), steps=steps)
+
+
+def _aux(b, m):
+    """The auxiliary station's frame: on the driver's hatch ring, where there is one, over an adapter that covers the hatch."""
+    at = Vector(m.roof2)+Vector((.16,-.06,0))
+    if m.extra.get('driver_hatch') and not _card(m):
+        # A hat: its skirt stands outside the hatch gasket and its plate above the closed hatch and grab.
+        b.revolve('hatch-ring-adapter',[(0,.12),(.335,.12),(.335,0),(.305,0),(.305,.105),(0,.105)],at,'paint_dark',rot=(PI/2,0,0),steps=48)
+        at.z += .12
+    return _local(b, at)
 
 
 def _ring(b, radius, height=0.15, hollow=False):
@@ -215,14 +226,14 @@ def _ammo(b, at, size=(0.32,0.22,0.28)):
         b.box('bin-latch', (0.035,0.022,0.095), (x+dx,y-sy/2-0.009,z+sz*0.3), 'gunmetal', bevel=0.003)
 
 
-def _feed(b, at, count=9, drop=0.18):
+def _feed(b, at, count=9, drop=0.18, side=-1):
     x,y,z = at
     rounds = Batch(b, 'linked-ammunition', 'steel')
     tips = Batch(b, 'projectile-tips', 'wood')
     links = Batch(b, 'feed-links', 'gunmetal')
     for k in range(count):
         t = k/(count-1)
-        yy = y-0.045-k*0.028
+        yy = y+side*(0.04+k*0.028)
         zz = z-drop*t*t
         rounds.cyl(0.012,0.09,(x,yy,zz),X_AXIS,verts=8)
         tips.cyl(0.012,0.035,(x+0.062,yy,zz),X_AXIS,verts=8,radius2=0.002)
@@ -230,22 +241,22 @@ def _feed(b, at, count=9, drop=0.18):
     rounds.done(); tips.done(); links.done()
 
 
-def _mg(b, at, length=0.70, heavy=True):
+def _mg(b, at, length=0.70, heavy=True, ammo_side=-1):
     x,y,z = at
     b.box('receiver', (0.39,0.12,0.14), at, 'gunmetal', bevel=0.009)
     b.box('feed-cover', (0.25,0.14,0.032), (x+0.015,y,z+0.085), 'black', bevel=0.005)
     _bolts(b, [(x+dx,y-0.067,z+dz) for dx in (-0.15,0.12) for dz in (-0.04,0.04)],Y_AXIS,0.009)
     _barrel(b, (x+0.195,y,z), length, 0.025 if heavy else 0.019)
     _shroud(b, (x+0.2,y,z), 0.32 if heavy else 0.24, 0.060 if heavy else 0.046)
-    b.box('rear-grip-bar', (0.035,0.24,0.035), (x-0.23,y,z), 'gunmetal', bevel=0.004)
+    b.box('rear-grip-bar', (0.035,0.24,0.035), (x-0.21,y,z), 'gunmetal', bevel=0.004)
     for s in (-1,1):
-        b.cyl('spade-grip',0.019,0.13,(x-0.24,y+s*0.11,z-0.035),'rubber',verts=12,bevel=0.004)
+        b.cyl('spade-grip',0.019,0.13,(x-0.215,y+s*0.11,z-0.05),'rubber',verts=12,bevel=0.004)
     b.tube('charging-handle', [(x-0.02,y+0.06,z),(x-0.02,y+0.14,z),(x-0.1,y+0.14,z)],0.011,'steel',smooth=False)
-    _handle(b, (x+0.17,y,z+0.11),0.14)
-    _feed(b,(x+0.05,y,z+0.01))
-    _ammo(b,(x-0.02,y-0.32,z-0.16))
-    b.box('ammunition-shelf',(.29,.43,.025),(x-.02,y-.245,z-.31),'paint_dark',bevel=.005)
-    b.box('ammunition-support',(.12,.10,.245),(x-.02,y-.085,z-.185),'paint_dark',bevel=.005)
+    _handle(b, (x+0.17,y,z+0.075),0.14)
+    _feed(b,(x+0.05,y,z+0.01),side=ammo_side)
+    _ammo(b,(x-0.02,y+ammo_side*.32,z-0.16))
+    b.box('ammunition-shelf',(.29,.43,.025),(x-.02,y+ammo_side*.245,z-.31),'paint_dark',bevel=.005)
+    b.box('ammunition-support',(.12,.10,.245),(x-.02,y+ammo_side*.085,z-.185),'paint_dark',bevel=.005)
 
 
 def _sight(b, at, size=(0.27,0.3,0.28)):
@@ -371,10 +382,13 @@ def _turret(b, width, length, height):
     b.box('rear-service-door',(.025,width*.46,height*.56),(-length*.535,0,top+height*.45),'paint_dark',bevel=.007)
     vents=Batch(b,'rear-cooling-louvres','gunmetal')
     for k in range(7):
-        vents.box((.026,width*.30,.017),(-length*.55,0,top+.15+k*.043))
+        # Within the door's height: the top louvre had stood clear of it (fit.py).
+        vents.box((.026,width*.30,.017),(-length*.55,0,top+.13+k*.035))
     vents.done()
     _handle(b,(-length*.27,0,top+height+.02),.24)
-    _bolts(b,[(xx,side*width*.32,top+height+.009) for xx in (-length*.24,0,length*.23) for side in (-1,1)],radius=.012)
+    # The roof falls 3% from the rear section to the front one; each bolt sits on it (fit.py).
+    roof=lambda xx: top+height*(1-.03*max(0,xx+length*.30)/(length*.58))
+    _bolts(b,[(xx,side*width*.32,roof(xx)+.009) for xx in (-length*.24,0,length*.23) for side in (-1,1)],radius=.012)
     for side in (-1,1):
         b.box('roof-panel-seam',(.012,width*.24,.010),(.12,side*width*.25,top+height*.993),'black',bevel=0)
         _handle(b,(-.06,side*width*.33,top+height),.14,'x')
@@ -414,22 +428,24 @@ def fp_c(b,m):
 
 def fp_d(b,m):
     """Compact powered machine-gun yoke with left camera and exposed drive cable."""
-    b=_local(b,Vector(m.roof2)+Vector((.16,-.06,0)))
+    b=_aux(b,m)
     _ring(b,.22,.13)
     b.box('servo-pedestal',(.32,.32,.15),(0,0,.19),'paint_dark',bevel=.025)
     for s in (-1,1):
         b.wedge('remote-yoke',[(-.18,0),(.18,0),(.13,.32),(-.09,.38)],.065,(0,s*.14,.25),'paint',bevel=.013)
         b.cyl('elevation-motor',.084,.075,(0,s*.19,.53),'paint_dark',rot=Y_AXIS,verts=24,bevel=.008)
-    _mg(b,(.04,0,.65),.58)
-    b.box('sensor-bracket',(.20,.14,.065),(.04,.20,.55),'paint_dark',bevel=.008)
-    _sight(b,(.03,.23,.70),(.20,.20,.24))
+    ammo=-1 if _card(m) else 1
+    _mg(b,(.04,0,.65),.58,ammo_side=ammo)
+    # The camera on the side away from the ammunition.
+    b.box('sensor-bracket',(.20,.14,.065),(.04,-ammo*.20,.55),'paint_dark',bevel=.008)
+    _sight(b,(.03,-ammo*.23,.70),(.20,.20,.24))
     b.tube('servo-harness',[(-.14,-.18,.49),(-.25,-.22,.33),(-.23,-.16,.14),(-.11,-.12,.11)],.018,'cable')
     _bolts(b,[(x,y,.143) for x in (-.14,.14) for y in (-.14,.14)])
 
 
 def fp_e(b,m):
     """Light manually served pintle with split folding shield and exposed support arms."""
-    b=_local(b,Vector(m.roof2)+Vector((.16,-.06,0)))
+    b=_aux(b,m)
     _pedestal(b,.39)
     b.box('traverse-fork',(.36,.17,.055),(.10,0,.50),'paint_dark',bevel=.007)
     for s in (-1,1):
@@ -440,7 +456,7 @@ def fp_e(b,m):
         if s<0: verts.reverse()
         _panel(b,'folding-shield-leaf',verts,'paint',.020)
         b.cyl('shield-hinge',.017,.27,(.38,s*.05,.52),'gunmetal',verts=12,bevel=.003)
-    _mg(b,(.09,0,.68),.54,False)
+    _mg(b,(.09,0,.68),.54,False,ammo_side=-1 if _card(m) else 1)
     b.tube('traverse-handle',[(-.15,.12,.55),(-.29,.12,.55),(-.29,-.1,.55)],.017,'paint_dark',smooth=False)
 
 
@@ -470,7 +486,7 @@ def fp_g(b,m):
     b=_local(b,m.roof)
     top=_remote_body(b,.75)
     b.box('gun-receiver',(.59,.23,.22),(-.03,.02,top+.54),'paint_dark',bevel=.019)
-    _barrel(b,(.28,.02,top+.54),1.03,.038)
+    _barrel(b,(.255,.02,top+.54),1.055,.038)
     b.box('launcher-crossarm',(.24,.44,.13),(-.06,-.46,top+.40),'gunmetal',bevel=.018)
     # Near-side pod exposes the defining twin circular canisters at card-camera angles.
     for z in (top+.35,top+.70):

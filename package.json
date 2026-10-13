@@ -1,7 +1,7 @@
 {
   "name": "sea-game",
-  "version": "0.5.0",
-  "gameVersion": "0.5.0.0",
+  "version": "0.5.1",
+  "gameVersion": "0.5.1.0",
   "private": true,
   "description": "Systems Engineering Awareness: offline single-file classroom auction game (EN/FR)",
   "license": "MIT",
@@ -17,6 +17,10 @@
     "build": "node build/build.ts",
     "check": "node build/build.ts --check",
     "e2e": "playwright test",
+    "archive:prep": "node scripts/archive-prep.ts",
+    "browsers": "node scripts/browsers.ts",
+    "codebase": "node scripts/codebase.ts",
+    "gallery": "node scripts/gallery.ts",
     "verify": "npm run typecheck && npm run lint && npm run test && npm run check && npm run build && npm run e2e"
   },
   "devDependencies": {
@@ -31,6 +35,7 @@
     "esbuild": "0.28.2",
     "eslint": "10.10.0",
     "fast-check": "4.10.1",
+    "meshoptimizer": "1.1.1",
     "sharp": "0.35.4",
     "typescript": "6.0.3",
     "typescript-eslint": "8.70.1",

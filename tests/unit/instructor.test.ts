@@ -164,6 +164,82 @@ describe('outcomes, corrections and void (RQ-06, RQ-08)', () => {
   });
 });
 
+// Owner request 2026-10-11 (MPES §6.5): when no team may win more this round, one command closes the rest unsold.
+describe('closing a round no team can win in', () => {
+  /** Two wins each for teams 1..n in the current round, from the current lot on. */
+  function fill(s: I.InstructorState, teams: number): I.InstructorState {
+    for (let id = 1; id <= teams; id++) {
+      for (let k = 0; k < 2; k++) s = I.advance(I.commitSale(bidFor(I.openBidding(s, now()), id), id, I.currentCard(s).start));
+    }
+    return s;
+  }
+  it('is refused while any team may still win, and offered from the sale that used the last win', () => {
+    let s = fill(session(2), 1);
+    s = I.advance(I.commitSale(bidFor(I.openBidding(s, now()), 2), 2, I.currentCard(s).start));
+    expect(I.lotsNobodyCanWin(s)).toBe(0);
+    expect(code(() => I.closeRound(s))).toBe('phase');
+    s = I.commitSale(bidFor(I.openBidding(s, now()), 2), 2, I.currentCard(s).start);
+    expect([s.round, s.lot]).toEqual([0, 3]);
+    expect(I.lotsNobodyCanWin(s)).toBe(6);
+    const before = s.ledger.length;
+    const closed = I.closeRound(s);
+    expect(closed.ledger.slice(before).map(e => [e.kind, e.lot])).toEqual([5, 6, 7, 8, 9, 10].map(lot => ['UNSOLD', lot]));
+    expect([closed.round, closed.lot]).toEqual([1, 0]);
+    valid(closed);
+    expect(I.lotsNobodyCanWin(I.advance(s))).toBe(6);
+  });
+  it('is not offered when the sale that used the last win was on the last lot', () => {
+    let s = session(2);
+    for (let lot = 0; lot < 6; lot++) s = I.advance(I.commitUnsold(I.openBidding(s, now())));
+    s = fill(s, 1);
+    s = I.advance(I.commitSale(bidFor(I.openBidding(s, now()), 2), 2, I.currentCard(s).start));
+    s = I.commitSale(bidFor(I.openBidding(s, now()), 2), 2, I.currentCard(s).start);
+    expect([s.round, s.lot]).toEqual([0, 9]);
+    expect(I.lotsNobodyCanWin(s)).toBe(0);
+    expect(code(() => I.closeRound(s))).toBe('phase');
+  });
+  it('records every remaining lot of the round unsold and opens the next round, in each reveal mode', () => {
+    for (const mode of ['ROUND', 'JIT', 'MANUAL'] as const) {
+      let s = fill(session(3, mode), 3);
+      expect([s.round, s.lot]).toEqual([0, 6]);
+      expect(I.lotsNobodyCanWin(s)).toBe(4);
+      const gone = I.cardsNobodyCanWin(s);
+      expect(gone).toEqual(s.market[0]!.slice(6));
+      const before = s.ledger.length;
+      s = I.closeRound(s);
+      expect(s.ledger.slice(before).map(e => [e.kind, e.round, e.lot])).toEqual([7, 8, 9, 10].map(lot => ['UNSOLD', 1, lot]));
+      // Listed again in the next round as out of the game: the cards each lot showed, never any later round's.
+      expect(I.unsoldIn(s, 0)).toEqual(gone);
+      expect(I.cardsNobodyCanWin(s)).toEqual([]);
+      expect(s.ledger.map(e => e.seq)).toEqual(s.ledger.map((_, i) => i + 1));
+      expect([s.round, s.lot, s.open, s.leader]).toEqual([1, 0, false, null]);
+      expect(s.revealed).toBe(mode !== 'MANUAL');
+      valid(s);
+    }
+  });
+  it('works while bidding is open or paused, since no team can lead', () => {
+    let s = I.openBidding(fill(session(2), 2), now());
+    expect(I.lotsNobodyCanWin(s)).toBe(6);
+    expect([I.closeRound(s).round, I.closeRound(s).lot]).toEqual([1, 0]);
+    s = I.closeRound(I.pause(s, now()));
+    expect([s.round, s.lot, s.pausedRemaining, s.deadline]).toEqual([1, 0, null, null]);
+    valid(s);
+  });
+  it('stays on the last lot of round 7 so moving to build remains a deliberate step', () => {
+    let s = session(2);
+    for (let r = 0; r < 6; r++) s = I.closeRound(fill(s, 2));
+    expect([s.round, s.lot]).toEqual([6, 0]);
+    s = I.closeRound(fill(s, 2));
+    expect([s.phase, s.round, s.lot]).toEqual(['auction', 6, 9]);
+    expect(I.currentOutcome(s)?.kind).toBe('UNSOLD');
+    expect(I.lotsNobodyCanWin(s)).toBe(0);
+    s = I.advance(s);
+    expect(s.phase).toBe('build');
+    expect(s.ledger).toHaveLength(70);
+    valid(s);
+  });
+});
+
 function playToBuild(s: I.InstructorState): I.InstructorState {
   while (s.phase === 'auction') {
     if (!I.currentOutcome(s)) {
@@ -204,7 +280,7 @@ describe('every reachable state validates and equals its ledger replay (RQ-08 pr
       fc.constant({ kind: 'pause' as const }), fc.constant({ kind: 'resume' as const }), fc.constant({ kind: 'extend' as const }),
       fc.record({ kind: fc.constant('bid' as const), team: fc.integer({ min: 1, max: 4 }) }),
       fc.record({ kind: fc.constant('sale' as const), team: fc.integer({ min: 1, max: 4 }), steps: fc.integer({ min: 0, max: 3 }) }),
-      fc.record({ kind: fc.constant('void' as const) }),
+      fc.record({ kind: fc.constant('void' as const) }), fc.constant({ kind: 'close-round' as const }),
     );
     fc.assert(fc.property(fc.array(action, { maxLength: 120 }), fc.constantFrom<RevealMode>('ROUND', 'JIT', 'MANUAL'), (actions, mode) => {
       let s = session(4, mode);
@@ -218,6 +294,7 @@ describe('every reachable state validates and equals its ledger replay (RQ-08 pr
             case 'unsold': s = I.commitUnsold(s); break;
             case 'void': s = I.voidCurrent(s, 'property'); break;
             case 'advance': s = I.advance(s); break;
+            case 'close-round': s = I.closeRound(s); break;
             case 'pause': s = I.pause(s, now()); break;
             case 'resume': s = I.resume(s, now()); break;
             case 'extend': s = I.extend(s, now()); break;

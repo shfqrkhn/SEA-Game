@@ -19,16 +19,20 @@ def _optics(b, m):
     x, y, z = m.optics
     if _card(m):
         return _frame(b, (x, y, z), -.35)
-    # Keep the shoe on the roof; cantilever the head forward over the glacis
+    # Keep the shoe on the roof; raise the head on a steep strut over the roof front
     # to leave the auxiliary gun and its folding shield a separate envelope.
-    support = _frame(b, (x + .205, y + .06, z))
+    # The mount is on the right, out of the auxiliary gun's line of fire, and the head stands high and short of the
+    # glacis: lower or further forward, it stood where the eye carried a gun's barrel on in the stills, in front of the
+    # muzzle or behind it (owner FIX, 2026-10-12; art/blender/sightline.py).
+    s = -1 if y > 0 else 1    # towards the centreline
+    support = _frame(b, (x + .205, y + s * .06, z))
     support.box('optics-deck-shoe', (.070, .050, .016), (0, 0, .008), 'paint_dark', bevel=.003)
     _bolts(support, 'optics-shoe-studs', [(a, c, .019) for a in (-.025, .025) for c in (-.015, .015)], .005)
-    support.wedge('optics-riser', [(-.005, .016), (.025, .016), (.67, .27), (.67, .30), (-.005, .30)],
-                  .055, (0, -.008, 0), 'paint_dark', bevel=.006)
-    support.box('optics-cantilever', (.70, .075, .040), (.335, -.015, .30), 'paint', bevel=.008)
-    support.box('optics-head-crossplate', (.14, .32, .040), (.645, .11, .30), 'paint', bevel=.008)
-    return _frame(b, (x + .85, y + .28, z + .32))
+    support.wedge('optics-riser', [(-.005, .016), (.025, .016), (.22, .75), (.22, .78), (-.005, .78)],
+                  .055, (0, s * -.008, 0), 'paint_dark', bevel=.006)
+    support.box('optics-cantilever', (.24, .075, .040), (.10, s * -.015, .78), 'paint', bevel=.008)
+    support.box('optics-head-crossplate', (.14, .32, .040), (.195, s * .11, .78), 'paint', bevel=.008)
+    return _frame(b, (x + .40, y + s * .28, z + .80))
 
 
 def _bolts(b, name, points, radius=.012, rot=(0, 0, 0)):
@@ -175,7 +179,8 @@ def sa_e(b, m):
 def sa_b(b, m):
     """Medium mast with separate EO gimbal and radar pedestal on a crossarm."""
     b = _frame(b, m.sensor_mast, -.35 if _card(m) else 0)
-    _foot(b, (.32, .32), .046)
+    # Long and narrow on the vehicle: the lane between the engine deck and the roof edge.
+    _foot(b, (.32, .32) if _card(m) else (.36, .24), .046)
     b.box('mast-drive', (.255, .255, .20), (0, 0, .151), 'paint', bevel=.022)
     b.box('drive-service', (.026, .20, .14), (.14, 0, .15), 'paint_dark', bevel=.012)
     _bolts(b, 'drive-service-screws', [(.155, y, z) for y in (-.075, .075) for z in (.10, .20)], .010, X_AXIS)
@@ -212,7 +217,7 @@ def sa_b(b, m):
 def sa_d(b, m):
     """Three-stage telescopic mast, panoramic head and four compact roof guy anchors."""
     b = _frame(b, m.sensor_mast, -.35 if _card(m) else 0)
-    _foot(b, (.38, .38), .050)
+    _foot(b, (.38, .38) if _card(m) else (.40, .24), .050)
     b.box('mast-drive-case', (.25, .25, .23), (0, 0, .165), 'paint', bevel=.023)
     grilles = Batch(b, 'mast-drive-grille', 'gunmetal')
     for k in range(7):
@@ -235,11 +240,12 @@ def sa_d(b, m):
         _bolts(f, 'head-face-screws', [(.222, y, z) for y in (-.049, .049) for z in (-.055, .055)], .007, X_AXIS)
     b.cyl('head-lid', .225, .023, (0, 0, 3.012), 'paint_dark', verts=32, bevel=.006)
     b.cyl('head-cap', .047, .029, (0, 0, 3.038), 'paint', verts=24, radius2=.029, bevel=.005)
-    spread = .46 if _card(m) else .19
+    # On the vehicle the anchors stand in the mast lane, spread fore and aft.
+    spread_x, spread_y = (.46, .46) if _card(m) else (.22, .075)
     for sx in (-1, 1):
         for sy in (-1, 1):
-            a = Vector((sx * spread, sy * spread, .065))
-            arm_length = math.sqrt(2) * spread
+            a = Vector((sx * spread_x, sy * spread_y, .065))
+            arm_length = math.hypot(spread_x, spread_y)
             b.box('guy-outrigger', (arm_length, .060, .046), (a.x / 2, a.y / 2, .052),
                   'paint', rot=(0, 0, math.atan2(a.y, a.x)), bevel=.006)
             c = Vector((sx * .045, sy * .045, 2.03))
@@ -258,8 +264,8 @@ def _corner_frame(b, m, corner):
     yaw = 0 if x > middle else PI
     sign = (1 if y > 0 else -1) * (1 if yaw == 0 else -1)
     if yaw == 0:
-        # Front feet bolt onto the existing smoke mounting plate, outside its tubes.
-        f = _frame(b, (x + .065, y + sign * .04, z + .08))
+        # Front feet bolt to the roof just ahead of the corner, inboard of the roof edge (fit.py overhang).
+        f = _frame(b, (x + .065, y - sign * .005, z))
         _foot(f, (.070, .070), .032, 'corner-foot')
         f.wedge('corner-outrigger', [(-.035, .03), (.26, .29), (.26, .33), (-.035, .07)], .070,
                 (0, sign * .045, 0), 'paint_dark', bevel=.007)
@@ -307,12 +313,14 @@ def sa_g(b, m):
     x = sum(p[0] for p in rear) / 2
     y = min(p[1] for p in rear)
     z = rear[0][2]
-    # Outboard of the cabin skin, including the recovery module's window lips.
-    hub_at = centre if _card(m) else (x + .27, y - .09, z)
+    # Inboard of the roof edge, sole and all (fit.py overhang), and behind the recovery module.
+    # On the recovery hull a narrower foot stands between the roof edge and the rear service plate.
+    recovery = m.extra.get('recovery') and not _card(m)
+    hub_at = centre if _card(m) else (x + .20, y + (0 if recovery else .08), z)
     f = _frame(b, hub_at)
     if _card(m):
         f.matrix = f.matrix @ Matrix.Diagonal((1.45, 1.35, 1, 1))
-    _foot(f, (.33, .25), .027, 'hub-foot')
+    _foot(f, (.33, .19 if recovery else .25), .027, 'hub-foot')
     f.box('data-hub', (.28, .21, .12), (0, 0, .091), 'paint_dark', bevel=.013)
     f.box('hub-lid-seal', (.286, .216, .009), (0, 0, .154), 'rubber', bevel=.005)
     f.box('hub-lid', (.29, .22, .014), (0, 0, .166), 'paint', bevel=.007)

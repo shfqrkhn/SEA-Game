@@ -2,7 +2,7 @@
 
 All vehicle, part and card imagery and the 3D showcase model are original, procedural and authored by script: no image textures, HDRIs, scans or downloaded models. The same scripts make both outputs offline; the game embeds only the results: encoded stills (`content/renders/`) and one packed glTF model (`content/models/`).
 
-AI assistance (MPES D-14): `tools/concepts.ts` generates concept images with the owner's Codex subscription, and Codex jobs may upgrade the Blender scripts. Concept images are references only: they live in `.artifacts/` and are never embedded.
+AI assistance (MPES D-14): `tools/concepts.ts` generates concept images with the owner's Codex subscription (model GPT-6.1 Sol, medium effort, named on every call; AGENTS.md rule 21), and Codex jobs may upgrade the Blender scripts. Concept images are references only: they live in `.artifacts/` and are never embedded.
 
 ## Toolchain
 
@@ -44,6 +44,10 @@ node art/tools/measure-spike.ts .artifacts/perf/measure.json
 $B -b --factory-startup -P art/blender/tris.py -- --vehicles all --parts all
 # Parts in different slots must not intersect (exit 1 on any hit; --detail names the clashing objects).
 $B -b --factory-startup -P art/blender/overlap.py -- --vehicles all --parts all
+# Every part must be physically fittable: nothing inside or outboard of a tyre, nothing floating (exit 1 on any finding).
+$B -b --factory-startup -P art/blender/fit.py -- --vehicles all --parts all
+# No part in front of a gun's muzzle where the eye carries the barrel on: hero stills clean, build stills only on the pairs recorded in sightline-baseline.json.
+$B -b --factory-startup -P art/blender/sightline.py -- --vehicles all --parts all
 # Export one GLB per vehicle (real-time detail, AO baked into vertex colours), then merge, weld, quantise and pack.
 $B -b --factory-startup -P art/blender/export.py -- --out .artifacts/models
 node art/tools/pack-models.ts .artifacts/models .artifacts/packed/models.glb
@@ -60,6 +64,9 @@ Pass absolute or project-relative output paths. `render.py` makes them absolute,
 - `blender/export.py`: the 3D showcase export: one GLB per vehicle with a `base` node and one node per part card (its mount slot in the node's extras), at real-time detail (`geo.REALTIME`: one bevel segment, half the round vertices), ambient occlusion baked into vertex colours.
 - `blender/tris.py`: triangle budgets of the 3D model, per vehicle and part.
 - `blender/overlap.py`: cross-slot collision check: builds each vehicle with every part at real-time detail and tests the surfaces of every pair of parts in different slots for intersecting triangles (a part wholly inside another is not detected).
+- `blender/sightline-baseline.json`: the build-still muzzle pairs still to clear in G4, with their clearances in pixels.
+- `blender/sightline.py`: muzzle sightline check: frames the hero and build stills exactly as `render.py` does and, for every barrel, fails a part fitted with it (another slot), in front of the muzzle or behind it, that comes within 1% of the frame width of the muzzle or of the barrel's line 4% of the frame width beyond it: in a still the eye carries a barrel on into whatever touches its end, at any depth. The hull's own small fittings (no larger than 0.8 m: mirrors, lamps, aerials) count as parts; the hull body and wheels, which every barrel crosses, do not. It builds at the stills' full detail and takes the muzzle at the far face of a muzzle brake. Hero stills must be clean; build stills may fail only on the pairs in `blender/sightline-baseline.json`, each no closer than recorded, in any run (filtered too). `--write-baseline` rewrites the record after a whole-fleet run and refuses to add a pair, so it only shrinks (empty by G4). `--report` prints every pair. Owner FIX 3 in G2, after the crew cupola read as the end of the heavy gun's barrel in the combat hero; the optics heads now stand raised on a steep strut on the right of the roof and the sensor mast set back; the drivers' mirrors stand lower, after the combat hero's mirror read as the cannon's muzzle brake.
+- `blender/fit.py`: physical fit check: builds each vehicle with one part at a time at real-time detail and reports part surfaces inside a road wheel's tyre or outboard of its sidewall (a hub may stand proud within 42% of the radius and 0.16 m; replacement wheels and snow chains are exempt), and pieces (connected parts of a mesh, since a batch merges many) more than 15 mm from the hull or from an attached piece of the same part, and soles seated on a level surface with more than 10% of their area more than 40 mm over a slope or an edge with no bracing of the part's own within 0.3 m beneath (running gear on the base's wheels is exempt). Owner FIX in G2, after dampers had been modelled outside the tyres; the overhang check after a Codex review found a foot over the roof chamfer.
 - `blender/render.py`: the job: which shots, sizes, samples and cameras; writes `renders.json` with each shot's draw order (camera distance) and, for part layers, its mount slot.
 - `blender/sea/scene.py`: render settings, studio lights and reflection cards, shadow-catcher ground, camera framing, layer visibility.
 - `blender/sea/materials.py`: procedural physically based materials for stills, and `realtime_palette()`, the same keys as plain glTF constants for the 3D model (olive paints with edge wear, crevice dust and road dust; rubber; metals; glass; lamps). Card renders turn road dust off.
@@ -81,7 +88,7 @@ Every physical card has one slot (`SLOTS` in `mounts.py`): for example all seven
 
 1. Edit its builder in its category module under `parts/` (or its slot in `mounts.py`). Keep it fictional and recognisable at 512 px, and size it from the card's effects (Appendix A).
 2. Preview (`--preview`) and check the kit stills and the card on a contact sheet.
-3. Check its budget with `tris.py --parts <ID>` and its fit with `overlap.py --parts all` (one Blender at a time: the owner uses this PC).
+3. Check its budget with `tris.py --parts <ID>`, its clearance with `overlap.py --parts all`, its fit with `fit.py --parts <ID>` and its sightline with `sightline.py` (one Blender at a time: the owner uses this PC).
 4. Render its layers on all six vehicles and its card (`--parts <ID>`), encode, export and pack the 3D model, then `npm test` (the render and model manifest tests check completeness, slots, hashes and the 40 MB budget).
 
 ## Sizes (performance over looks, owner 2026-10-10)

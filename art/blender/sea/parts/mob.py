@@ -266,58 +266,58 @@ def mob_b(b, m):
 
 
 
-def _brake_hub(b, at, side):
-    """Vented brake rotor and exposed wheel studs, distinct from B's portal casing."""
-    x,y,z=at
-    b.cyl('brake-rotor',.24,.055,at,'gunmetal',rot=Y_AXIS,verts=40,bevel=.004)
-    _ring(b,'rotor-wear-face',.243,.098,.008,(x,y+side*.033,z),'steel',48)
-    b.cyl('bearing-hub',.13,.12,(x,y+side*.04,z),'paint_dark',rot=Y_AXIS,verts=32,bevel=.01)
-    b.cyl('bearing-dust-cap',.084,.028,(x,y+side*.112,z),'paint',rot=Y_AXIS,verts=24,bevel=.007)
-    _nuts(b,'wheel-studs',(x,y+side*.064,z),.174,10,.015)
-    vents=Batch(b,'rotor-vent-vanes','black')
-    vent_count=12 if geo.REALTIME else 24
-    for k in range(vent_count):
-        a=k*2*PI/vent_count
-        vents.box((.022,.042,.009),(x+.239*math.cos(a),y,z+.239*math.sin(a)),(0,-a,0))
-    vents.done()
-
-
 def mob_d(b, m):
-    """Heavy-Duty Suspension: wishbones, ribbed upright, coil and yellow damper."""
-    for x,y,s in _wheels(m):
-        r=m.wheel_r
-        # Fitted springs live inside the tyre plane, below the side-armour band.
-        face=y+s*(m.tyre_w*.5+.028)
-        inner=face-s*.48
-        _brake_hub(b,(x,face,r),s)
-        b.box('steering-upright',(.15,.13,.51),(x,face-s*.07,r+.035),'paint',bevel=.027)
-        for h in (-.22,.36):
-            for dx in (-.20,.20):
-                _bar(b,'wishbone',(x,face-s*.08,r+h),(x+dx,inner,r+h+.015),.045,'paint')
-                b.cyl('wishbone-bushing',.062,.09,(x+dx,inner,r+h+.015),'rubber',rot=X_AXIS,verts=16,bevel=.006)
-                b.cyl('pivot-pin',.032,.11,(x+dx,inner,r+h+.015),'steel',rot=X_AXIS,verts=6,bevel=0)
-        b.box('chassis-clevis',(.48,.09,.66),(x,inner,r+.10),'paint_dark',bevel=.023)
-        sy=face-s*.29
-        for h in (-.14,.39):
-            b.cyl('spring-seat',.116,.037,(x,sy,r+h),'paint',verts=24,bevel=.009)
-        _bar(b,'spring-guide',(x,sy,r-.12),(x,sy,r+.39),.05,'gunmetal')
-        coil_steps = 48 if geo.REALTIME else 96
-        coil=[(x+.085*math.cos(i*12*PI/coil_steps),sy+.085*math.sin(i*12*PI/coil_steps),r-.12+i*.49/coil_steps) for i in range(coil_steps+1)]
-        _pipe(b, 'heavy-coil',coil,.022,'paint_light')
-        dx=x+(.22 if _card(m) else .34)
-        damper_y=sy-s*.055 if _card(m) else face+s*.07
-        _bar(b,'yellow-damper',(dx,damper_y,r-.12),(dx,damper_y,r+.20),.049,'yellow')
-        _bar(b,'chrome-piston',(dx,damper_y,r+.19),(dx,damper_y,r+.40),.022,'chrome')
-        if not _card(m):
-            _pipe(b,'upper-damper-bracket',[(dx,inner,r+.65),(dx,damper_y,r+.65),(dx,damper_y,r+.42)],.025,'paint')
-            _bar(b,'lower-damper-bracket',(x,face,r-.10),(dx,damper_y,r-.15),.025,'paint',12)
-        for h in (-.15,.42):
-            b.cyl('damper-eye',.05,.075,(dx,damper_y,r+h),'yellow',rot=Y_AXIS,verts=16,bevel=.008)
-            b.cyl('damper-eye-pin',.023,.084,(dx,damper_y,r+h),'steel',rot=Y_AXIS,verts=6,bevel=0)
-        _bar(b,'cv-shaft',(x,face-s*.07,r),(x,inner,r),.05)
-        for j in range(5):
-            b.cyl('cv-boot-rib',.075-abs(j-2)*.005,.026,(x,face-s*(.15+j*.029),r),'rubber',rot=Y_AXIS,verts=16,bevel=.006)
-        _bar(b,'tie-rod',(x-.16,face-s*.08,r-.10),(x-.22,inner,r-.10),.023,'steel')
+    """Heavy-Duty Suspension: heavy hub, ventilated brake with yellow calliper, upright, double wishbones and a
+    canted yellow coil-over, all inboard of the tyre (owner FIX, G2: the dampers had stood outside the tyres)."""
+    # The card shows the station from its inboard side, where the springing is; fitted, the rim hides it.
+    stations=[(x,-y,-s) for x,y,s in _wheels(m)] if _card(m) else _wheels(m)
+    for x,y,s in stations:
+        r,half=m.wheel_r,m.tyre_w*.5
+        at=lambda o: y+s*o  # o: metres outward from the wheel's centre plane
+        # Outboard only the hub, proud of the rim within a hub's radius.
+        b.cyl('heavy-hub-flange',.20,.03,(x,at(half-.005),r),'paint',rot=Y_AXIS,verts=32,bevel=.006)
+        _nuts(b,'wheel-studs',(x,at(half+.012),r),.165,10,.015)
+        b.cyl('bearing-hub',.13,.10,(x,at(half+.06),r),'paint_dark',rot=Y_AXIS,verts=32,bevel=.01)
+        b.cyl('bearing-dust-cap',.084,.03,(x,at(half+.12),r),'yellow',rot=Y_AXIS,verts=24,bevel=.007)
+        # In the rim well, inside the bead seat: rotor, calliper, upright.
+        b.cyl('brake-rotor',.28,.045,(x,at(-.05),r),'gunmetal',rot=Y_AXIS,verts=40,bevel=.004)
+        _ring(b,'rotor-wear-face',.282,.09,.008,(x,at(-.0235),r),'steel',48)
+        # Spindle from the upright through the rotor to the hub (Codex review, G2).
+        b.cyl('hub-spindle',.075,.36,(x,at(.06),r),'steel',rot=Y_AXIS,verts=24,bevel=.006)
+        b.box('brake-calliper',(.17,.09,.10),(x-.05,at(-.05),r+.24),'yellow',rot=(0,.2,0),bevel=.02)
+        b.box('steering-upright',(.15,.09,.44),(x,at(-.12),r),'paint',bevel=.027)
+        # Wishbones from the upright to pivots on the hull side, below the sponson.
+        pivot_y=at(-.30)
+        for z0,z1 in ((r-.17,r+.14),(r+.17,r+.34)):
+            for dx in (-.18,.18):
+                _bar(b,'wishbone',(x,at(-.14),z0),(x+dx,pivot_y,z1),.04,'paint')
+                b.cyl('wishbone-bushing',.055,.08,(x+dx,pivot_y,z1),'rubber',rot=X_AXIS,verts=16,bevel=.006)
+                b.cyl('pivot-pin',.028,.10,(x+dx,pivot_y,z1),'steel',rot=X_AXIS,verts=6,bevel=0)
+        # Coil-over from the lower wishbone up and in to a hull bracket: the coil stays in the rim well.
+        low=Vector((x+.10,at(-.19),r-.12)); top=Vector((x+.16,at(-.36),r+.52))
+        axis=top-low
+        _bar(b,'yellow-damper',low,low+axis*.62,.042,'yellow')
+        _bar(b,'chrome-piston',low+axis*.58,top,.02,'chrome')
+        for end in (low,top):
+            b.cyl('damper-eye',.045,.07,end,'yellow',rot=X_AXIS,verts=16,bevel=.008)
+            b.cyl('damper-eye-pin',.02,.08,end,'steel',rot=X_AXIS,verts=6,bevel=0)
+        b.box('damper-bracket',(.16,.10,.14),(top.x,at(-.36),top.z),'paint_dark',bevel=.015)
+        u=axis.normalized(); v=u.orthogonal().normalized(); w=u.cross(v)
+        coil_steps = 40 if geo.REALTIME else 80
+        coil=[low+axis*(.08+.34*i/coil_steps)+(v*math.cos(i*10*PI/coil_steps)+w*math.sin(i*10*PI/coil_steps))*.075
+              for i in range(coil_steps+1)]
+        _pipe(b,'heavy-coil',coil,.018,'paint_light')
+        for t in (.08,.42):
+            b.cyl('spring-seat',.10,.03,low+axis*t,'paint',rot=axis.to_track_quat('Z','Y').to_euler(),verts=24,bevel=.008)
+        _bar(b,'cv-shaft',(x,at(-.12),r),(x,at(-.36),r),.05)
+        for j in range(4):
+            b.cyl('cv-boot-rib',.075-abs(j-1.5)*.006,.026,(x,at(-.19-j*.029),r),'rubber',rot=Y_AXIS,verts=16,bevel=.006)
+        _bar(b,'tie-rod',(x+.07,at(-.14),r-.08),(x+.20,pivot_y,r-.08),.022,'steel')
+        if _card(m):
+            # On the card there is no hull: chassis clevises stand in for it at each inner pivot.
+            for dx in (-.18,.18):
+                for z in (r+.14,r+.34):
+                    b.box('chassis-clevis',(.12,.05,.11),(x+dx,at(-.345),z),'paint_dark',bevel=.012)
 
 
 def _jerrycan(b, at, side, scale):
@@ -346,13 +346,13 @@ def mob_e(b, m):
             ln=length*.45
             b.box('armoured-fuel-tank',(ln,.34,height),(tx,y,z),'paint',bevel=.055,segments=3)
             for dx in (-ln*.32,ln*.32):
-                b.box('tank-strap',( .035,.37,height+.018),(tx+dx,y,z),'paint_dark',bevel=.035)
+                b.box('tank-strap',( .035,.37,height+.018),(tx+dx,y+s*.02,z),'paint_dark',bevel=.035)
                 b.box('strap-buckle',(.065,.025,.065),(tx+dx,y+s*.198,z+.05),'steel',bevel=.007)
             b.cyl('fuel-filler',.055,.028,(tx,y,z+height/2+.018),'gunmetal',verts=24,bevel=.007)
             b.cyl('filler-lock',.065,.014,(tx,y,z+height/2+.033),'paint',verts=16,bevel=.003)
             b.box('tank-cradle',(ln+.02,.43,.045),(tx,y,z-height/2-.03),'paint_dark',bevel=.012)
             for dx in (-ln*.3,ln*.3):
-                b.box('tank-hanger',(.05,.05,height+.06),(tx+dx,y-s*.20,z),'paint_dark',bevel=.01)
+                b.box('tank-hanger',(.05,.05,height+.06),(tx+dx,y-s*.15,z),'paint_dark',bevel=.01)
             can_scale=1 if _card(m) else .77
             for dx in (-.105,.105) if _card(m) else (0,):
                 _jerrycan(b,(tx+dx,y+s*.28,z-.01),s,can_scale)

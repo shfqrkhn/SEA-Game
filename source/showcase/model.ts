@@ -19,15 +19,24 @@ const UP = new Vector3(0, 1, 0);
 
 let packed: Promise<ArrayBuffer | null> | null = null;
 const libraries = new Map<string, Promise<Group | null>>();
+const preparing = new Set<string>();
+
+/** Base64 to bytes: the browser's own decoder where it has one (a quarter of the time), else atob. */
+function base64Bytes(text: string): Uint8Array<ArrayBuffer> {
+  const native = (Uint8Array as unknown as { fromBase64?: (s: string) => Uint8Array<ArrayBuffer> }).fromBase64;
+  if (native) return native(text);
+  const binary = atob(text);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  return bytes;
+}
 
 /** The embedded model file (every vehicle): base64 of a raw-deflated GLB in an inert script block, inflated once. */
 function embedded(): Promise<ArrayBuffer | null> {
   packed ??= (async () => {
     const text = document.getElementById('sea-models')?.textContent?.trim();
     if (!text) return null;
-    const binary = atob(text);
-    const bytes = new Uint8Array(binary.length);
-    for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+    const bytes = base64Bytes(text);
     return new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).arrayBuffer();
   })().catch(() => null);
   return packed;
@@ -44,11 +53,25 @@ export function loadVehicle(vehicle: string): Promise<Group | null> {
       const file = await embedded();
       const glb = file && vehicleGlb(file, vehicle);
       if (!glb) return null;
-      return (await new GLTFLoader().parseAsync(glb, '')).scene;
+      const scene = (await new GLTFLoader().parseAsync(glb, '')).scene;
+      performance.mark(`sea-model:${vehicle}`);
+      return scene;
     })().catch(() => null);
     libraries.set(vehicle, library);
   }
   return library;
+}
+
+/**
+ * Decodes and parses a vehicle's model in idle time, so the tracker opens with it ready (MPES §10.3). Called once the
+ * team confirms its vehicle in planning; nothing happens without WebGL, where the tracker shows stills.
+ */
+export function prepareVehicle(vehicle: string): void {
+  if (libraries.has(vehicle) || preparing.has(vehicle)) return;
+  preparing.add(vehicle);
+  const run = () => { if (webglAvailable()) void loadVehicle(vehicle); };
+  // Idle time, but within two seconds even on a busy page.
+  if ('requestIdleCallback' in globalThis) requestIdleCallback(run, { timeout: 2000 }); else setTimeout(run, 200);
 }
 
 /** Software renderers draw on the CPU, which a turning model would saturate (no GPU, remote desktop). */
@@ -121,6 +144,13 @@ export class ModelStage {
     sun.shadow.bias = -0.0005;
     sun.shadow.radius = 4;
     this.#scene.add(sun);
+    // Rim light from behind the vehicle as seen from the camera, whichever way it turns: a cool, unshadowed edge
+    // that lifts each part's outline off the dark stage and off the parts behind it (MPES §10.5 legibility).
+    const rim = new DirectionalLight(new Color(0.85, 0.9, 1), 0.5);
+    rim.position.set(6, 5, -18);
+    rim.target.position.set(0, 0, -10);
+    this.#camera.add(rim, rim.target);
+    this.#scene.add(this.#camera);
     const floor = new Mesh(new PlaneGeometry(30, 30), new ShadowMaterial({ opacity: 0.35 }));
     floor.rotation.x = -Math.PI / 2;
     floor.receiveShadow = true;

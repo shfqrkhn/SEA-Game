@@ -14,6 +14,7 @@ import { labelled, money, signed } from './format.ts';
 import type { Language, StringKey } from './i18n.ts';
 import { practiceCard } from './instructor.ts';
 import { RoleView } from './view.ts';
+import { prepareVehicle } from '../showcase/model.ts';
 import { Showcase } from '../showcase/showcase.ts';
 import { renders, VEHICLE } from '../showcase/renders.ts';
 
@@ -89,7 +90,8 @@ function categoryGuide(lang: Language, t: View['t']): Child {
       const values = cards.map(c => c.effects[k]).filter((x): x is number => x !== undefined);
       if (values.length === 0) return [];
       const min = Math.min(...values), max = Math.max(...values);
-      return [`${k} ${min === max ? signed(min) : t('splan.range', { min: signed(min), max: signed(max) })}`];
+      // Value, unit and capability in words, as on the cards (owner FIX 2 sibling: it showed codes such as "MOB +2").
+      return [`${min === max ? signed(min) : t('splan.range', { min: signed(min), max: signed(max) })} ${t(`unit.${k}` as StringKey)} ${t(`cap.${k}` as StringKey)}`];
     });
     const prices = cards.map(c => c.startCents);
     return h('tr', {},
@@ -112,6 +114,7 @@ function missionHero(mission: MissionId, lang: Language, t: View['t']): Child {
 
 function planningView(v: View): Child {
   const s = joined(v), t = v.t, mission = s.team.mission as MissionId;
+  if (s.vehicleConfirmed) prepareVehicle(VEHICLE[mission]);
   const area = (field: 'plan' | 'risks', label: StringKey, hint: StringKey) => h('div', { class: 'field' },
     h('label', { for: `plan-${field}`, text: t(label) }),
     h('span', { class: 'hint', id: `plan-${field}-hint`, text: t(hint) }),
@@ -197,6 +200,10 @@ function auctionView(v: View): Child {
       ] : h('p', { class: 'muted', text: t('strack.noCard') }),
       h('p', { class: 'small', text: t('strack.winsLeft', { n: Math.max(0, winsLeft) }) }),
       h('div', { class: 'cluster' },
+        // With both wins of this round recorded the team cannot buy again until the next round (owner, 2026-10-11).
+        winsLeft <= 0 && round < ROUNDS ? h('button', { type: 'button', class: 'btn primary', id: 'next-round', text: t('strack.nextRound', { round: round + 1 }), on: {
+          click: () => v.run(state => S.setPosition(state, state.round + 2, 1), () => { v.drafts.delete('card-id'); v.drafts.delete('paid'); }),
+        } }) : null,
         h('button', { type: 'button', class: 'btn', id: 'not-ours', text: t('strack.notOurs'), on: { click: () => v.run(S.notOurs, () => { v.drafts.delete('card-id'); v.drafts.delete('paid'); }) } }),
         h('button', { type: 'button', class: 'btn ghost', id: 'finish-early', text: t('strack.finish'), on: {
           click: e => void v.confirm({ title: t('strack.finishTitle'), body: h('p', { text: t('strack.finishBody') }), confirm: t('strack.finish'), opener: e.currentTarget as HTMLElement }, S.finishAuction),

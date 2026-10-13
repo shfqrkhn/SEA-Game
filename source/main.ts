@@ -2,7 +2,9 @@
 import { sessionStoragePort } from './app/ports.ts';
 import { showAbout } from './ui/about.ts';
 import { applyTheme, themeFrom, toggleTheme, withTheme } from './ui/theme.ts';
-import { renders } from './showcase/renders.ts';
+import { renders, VEHICLE, type Render } from './showcase/renders.ts';
+import { missionName } from './ui/components.ts';
+import type { MissionId } from './domain/data.ts';
 import { startInstructor } from './ui/instructor.ts';
 import { startStudent } from './ui/student.ts';
 import { h, replaceChildren } from './ui/dom.ts';
@@ -23,10 +25,42 @@ export function roleHref(role: Role | null, lang: Language): string {
   return `?${withTheme(params).toString()}`;
 }
 
-/** Chooser hero: the embedded pre-rendered still, so no 3D runs on the first screen (D-08). */
-function heroStill(lang: Language): HTMLElement | null {
-  const still = renders().get('recovery-hero');
-  return still ? h('img', { class: 'hero-still', src: still.src, alt: translate(lang, 'chooser.heroStill'), decoding: 'async', width: String(still.size.width), height: String(still.size.height) }) : null;
+/**
+ * Chooser lineup (G2): the six mission vehicles as embedded pre-rendered stills, the selected one large, so no 3D
+ * runs on the first screen (D-08). Toggle buttons; arrow keys, Home and End move along the lineup and select.
+ */
+function lineup(lang: Language): HTMLElement | null {
+  const stills = (Object.keys(VEHICLE) as MissionId[]).flatMap(id => {
+    const still = renders().get(`${VEHICLE[id]}-hero`);
+    return still ? [{ id, still }] : [];
+  });
+  if (!stills.length) return null;
+  const size = (still: Render) => ({ width: String(still.size.width), height: String(still.size.height) });
+  const first = stills[0]!;
+  const large = h('img', { class: 'hero-still', id: 'hero-still', src: first.still.src, alt: translate(lang, `chooser.still.${first.id}`), decoding: 'async', ...size(first.still) });
+  const select = (index: number, focus: boolean) => {
+    const { id, still } = stills[index]!;
+    large.src = still.src;
+    large.alt = translate(lang, `chooser.still.${id}`);
+    buttons.forEach((button, i) => { button.setAttribute('aria-pressed', String(i === index)); button.tabIndex = i === index ? 0 : -1; });
+    if (focus) buttons[index]!.focus();
+  };
+  const keys: Readonly<Record<string, (i: number) => number>> = {
+    ArrowRight: i => (i + 1) % stills.length, ArrowDown: i => (i + 1) % stills.length,
+    ArrowLeft: i => (i + stills.length - 1) % stills.length, ArrowUp: i => (i + stills.length - 1) % stills.length,
+    Home: () => 0, End: () => stills.length - 1,
+  };
+  const buttons = stills.map(({ id, still }, index) => h('button', {
+    type: 'button', class: 'lineup-pick', 'aria-pressed': String(index === 0), tabindex: index === 0 ? '0' : '-1',
+    on: {
+      click: () => select(index, false),
+      keydown: event => {
+        const move = keys[(event as KeyboardEvent).key];
+        if (move) { event.preventDefault(); select(move(index), true); }
+      },
+    },
+  }, h('img', { src: still.src, alt: '', decoding: 'async', loading: 'lazy', ...size(still) }), h('span', { text: missionName(id, lang) })));
+  return h('div', { class: 'hero-lineup' }, large, h('div', { class: 'lineup', role: 'group', 'aria-label': translate(lang, 'chooser.lineup') }, ...buttons));
 }
 
 /** Projector or war-room theme, switched in place (MPES §7.1). */
@@ -51,7 +85,7 @@ function renderChooser(root: HTMLElement, lang: Language, unknownRole: boolean):
     h('p', { class: 'muted', text: t(description) }),
   );
   replaceChildren(root, h('main', { class: 'hero', id: 'main' },
-    h('div', { class: 'hero-stage' }, heroStill(lang)),
+    h('div', { class: 'hero-stage' }, lineup(lang)),
     h('div', { class: 'hero-panel stack' },
       h('div', { class: 'wordmark' }, h('span', { class: 'wordmark-sea', 'aria-hidden': 'true', text: 'SEA' }), h('h1', { class: 'wordmark-title', text: t('app.title') })),
       h('p', { class: 'lead', text: t('app.tagline') }),

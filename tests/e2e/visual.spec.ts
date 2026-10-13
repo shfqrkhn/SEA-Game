@@ -30,6 +30,20 @@ for (const theme of ['dark', 'light'] as const) {
   });
 }
 
+// G2 item 2: the licence and notices reflowed, at the reference laptop size and the narrowest supported width.
+for (const [width, height] of [[1366, 768], [320, 640]] as const) {
+  test(`about dialog, licence and notices open, ${width} px`, async ({ page }) => {
+    guardNetwork(page);
+    await page.setViewportSize({ width, height });
+    await page.goto(gameUrl('?lang=en'));
+    await page.getByRole('button', { name: 'About and licences' }).click();
+    const dialog = page.getByRole('dialog', { name: 'About this game' });
+    for (const name of ['Licence', 'Third-party notices']) await dialog.locator('summary', { hasText: name }).click();
+    await dialog.getByRole('heading', { name: 'three.js 0.186.1' }).scrollIntoViewIfNeeded();
+    await expect(dialog).toHaveScreenshot(`about-${width}.png`, SHOT);
+  });
+}
+
 for (const name of ['instructor-setup', 'instructor-planning', 'instructor-auction-open-paused', 'instructor-build', 'instructor-closed']) {
   test(`instructor view: ${name}`, async ({ page }) => {
     await seeded(page, 'SEA_INSTRUCTOR_V300', name, '?role=instructor&lang=en');
