@@ -28,6 +28,7 @@ $B -b --factory-startup -P art/blender/render.py -- --out .artifacts/renders/pre
 node art/tools/contact-sheet.ts .artifacts/renders/kits.jpg 3 520 wide .artifacts/renders/preview/*-kit.png
 node art/tools/contact-sheet.ts .artifacts/renders/cards.jpg 7 200 square .artifacts/renders/preview/card-*.png
 # Encode and write the manifest the build embeds (replaces content/renders/ entirely).
+# Unchanged masters are reused from .artifacts/cache/encode/ (same bytes out); add --no-cache for a clean encode.
 node art/tools/encode-renders.ts encode .artifacts/renders/v3 content/renders avif 65
 # Review before committing: hero and base stills, cards, a turntable, and base + one part per slot (variants A, D, G).
 R=.artifacts/renders/v3; C=.artifacts/contact; mkdir -p $C/builds
