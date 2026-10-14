@@ -21,6 +21,7 @@
     "browsers": "node scripts/browsers.ts",
     "codebase": "node scripts/codebase.ts",
     "gallery": "node scripts/gallery.ts",
+    "perf:ref": "node build/build.ts && playwright test -c playwright.perf-ref.config.ts",
     "verify": "npm run typecheck && npm run lint && npm run test && npm run check && npm run build && npm run e2e"
   },
   "devDependencies": {
