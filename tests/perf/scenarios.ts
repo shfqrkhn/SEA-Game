@@ -31,11 +31,12 @@ function installVitals(): void {
 }
 
 /**
- * GPU time of each showcase draw, where the browser offers a GPU timer (EXT_disjoint_timer_query_webgl2): a query runs
- * from one draw's end to the next, and the showcase is the only WebGL user on the page, so each result is one draw.
+ * GPU time of each showcase draw, where the browser offers a GPU timer (EXT_disjoint_timer_query_webgl2): a query
+ * brackets each draw, from the stage's `sea-drawing` to its `sea-draw`, so the wait between paced draws is never counted
+ * (Codex G3 review). Results arrive a few frames late; each is kept with the time its draw began.
  */
 function installGpuTimer(): void {
-  const times: number[] = [];
+  const times: { at: number; ms: number }[] = [];
   const sea = { times, available: false };
   (globalThis as unknown as { __seaGpu: typeof sea }).__seaGpu = sea;
   const original = HTMLCanvasElement.prototype.getContext;
@@ -46,17 +47,19 @@ function installGpuTimer(): void {
     const ext = gl.getExtension('EXT_disjoint_timer_query_webgl2') as { TIME_ELAPSED_EXT: number; GPU_DISJOINT_EXT: number } | null;
     if (!ext) return gl;
     sea.available = true;
-    const pending: WebGLQuery[] = [];
-    let open: WebGLQuery | null = null;
+    const pending: { query: WebGLQuery; at: number }[] = [];
+    let open: { query: WebGLQuery; at: number } | null = null;
+    this.addEventListener('sea-drawing', () => {
+      const query = open ? null : gl.createQuery();
+      if (query) { gl.beginQuery(ext.TIME_ELAPSED_EXT, query); open = { query, at: performance.now() }; }
+    });
     this.addEventListener('sea-draw', () => {
-      if (open) { gl.endQuery(ext.TIME_ELAPSED_EXT); pending.push(open); }
-      while (pending.length && gl.getQueryParameter(pending[0]!, gl.QUERY_RESULT_AVAILABLE)) {
-        const query = pending.shift()!;
-        if (!gl.getParameter(ext.GPU_DISJOINT_EXT)) times.push(gl.getQueryParameter(query, gl.QUERY_RESULT) / 1e6);
+      if (open) { gl.endQuery(ext.TIME_ELAPSED_EXT); pending.push(open); open = null; }
+      while (pending.length && gl.getQueryParameter(pending[0]!.query, gl.QUERY_RESULT_AVAILABLE)) {
+        const { query, at } = pending.shift()!;
+        if (!gl.getParameter(ext.GPU_DISJOINT_EXT)) times.push({ at, ms: gl.getQueryParameter(query, gl.QUERY_RESULT) / 1e6 });
         gl.deleteQuery(query);
       }
-      open = gl.createQuery();
-      if (open) gl.beginQuery(ext.TIME_ELAPSED_EXT, open);
     });
     return gl;
   } as typeof original;
@@ -130,6 +133,10 @@ async function machine(lab: Lab, prefix: string, out: Measured): Promise<void> {
   if (!mb) out.notes[`${prefix}ProcessMB`] = 'the operating system did not report the process memory';
 }
 
+/** The largest valid instructor save: 210 ledger entries, all 70 lots, 3 teams, results to reconcile. */
+const MAX_LEDGER = 'tests/fixtures/legacy/instructor-max-ledger.json';
+const MAX_LEDGER_TEAMS = (JSON.parse(readFileSync(MAX_LEDGER, 'utf8')) as { state: { teams: unknown[] } }).state.teams.length;
+
 export const TEN_TEAMS = { teams: 10, reveal: 'JIT' as const, timed: true, missions: ['TROOP', 'RECCE', 'COMBAT', 'COMMAND', 'RECOVERY', 'MINE', 'TROOP', 'RECCE', 'COMBAT', 'COMMAND'] };
 
 /** Size, the chooser's first painted frame and LCP, and the largest valid instructor save: start time and memory. */
@@ -153,8 +160,8 @@ export async function startUp(lab: Lab, after?: (page: Page, view: string) => Pr
   await after?.(chooser, 'Chooser');
   await lab.close(chooser);
 
-  // 210 ledger entries, all 70 lots, 10 teams.
-  const saved = JSON.parse(readFileSync('tests/fixtures/legacy/instructor-max-ledger.json', 'utf8')).state;
+  // 210 ledger entries, all 70 lots, 3 teams.
+  const saved = JSON.parse(readFileSync(MAX_LEDGER, 'utf8')).state;
   const big = await lab.open(page => page.addInitScript(raw => { if (!sessionStorage.getItem('SEA_INSTRUCTOR_V300')) sessionStorage.setItem('SEA_INSTRUCTOR_V300', raw); }, JSON.stringify(saved)));
   const t1 = Date.now();
   await big.goto(gameUrl('?role=instructor&lang=en'));
@@ -184,15 +191,38 @@ export async function commands(lab: Lab): Promise<Measured> {
   out.values.commandP95Ms = round(p95(bids));
   out.values.commandMaxMs = round(Math.max(...bids));
 
-  // No growth across 10 phase cycles: a new session from the menu, setup, practice, planning and a live auction.
+  // No growth across 10 phase cycles, each through every phase: the largest save imported from the menu (results to
+  // reconcile), submissions entered privately, the debrief, the room closed; then a new session from the menu, setup,
+  // practice, planning and a live auction.
   const cycle = async () => {
+    await press(page.locator('#menu-button'));
+    const chooser = page.waitForEvent('filechooser');
+    await page.locator('dialog[open] button[data-value="import"]').click();
+    await (await chooser).setFiles(MAX_LEDGER);
+    await confirmDialog(page);
+    await page.click('#open-submissions');
+    await page.click('#enter-private');
+    for (let id = 1; id <= MAX_LEDGER_TEAMS; id++) {
+      await page.fill(`#profit-${id}`, '1000');
+      await page.locator(`#profit-${id}`).blur();
+      await page.check(`#submitted-${id}`);
+    }
+    await page.click('#close-submissions');
+    await confirmDialog(page);
+    await page.locator('#award').waitFor();
+    await page.click('#close-room');
+    await confirmDialog(page);
+    await page.getByRole('heading', { name: 'Session closed' }).waitFor();
     await press(page.locator('#menu-button'));
     await page.locator('dialog[open] button[data-value="new"]').click();
     await confirmDialog(page);
     await instructorSetup(page, TEN_TEAMS);
     await page.click('#open-bidding');
   };
+  await phasesSeen(page, true);
   await cycle();
+  const seen = await phasesSeen(page, false);
+  if (PHASES.some(phase => !seen.includes(phase))) throw new Error(`the memory cycle missed phases: it saw ${seen.join(', ')}`);
   const before = await memoryMB(page);
   for (let i = 0; i < 10; i++) await cycle();
   out.values.memoryGrowthMB = round(await memoryMB(page) - before);
@@ -211,14 +241,16 @@ const MODEL = '#showcase [data-mode="3d"]';
  */
 export async function model(lab: Lab, after?: (page: Page) => Promise<void>): Promise<Measured> {
   const out: Measured = { values: {}, notes: {} };
-  const readies: number[] = [], updates: number[] = [];
+  const readies: number[] = [], updates: number[] = [], phases: Phases[] = [];
   for (let n = 0; ; n++) {
     const page = await lab.open(lab.gpu);
     await beforeTracker(page, gameUrl('?role=student&lang=en'));
     readies.push(await inputToPaint(page, () => page.locator(TRACKER_OK).click(), { kind: 'drawn', selector: MODEL, attribute: 'data-drawn' }));
     for (const purchase of PURCHASES) {
       await loadPurchase(page, purchase);
+      await phasesWatch(page, purchase[2]);
       updates.push(await inputToPaint(page, () => page.click('#record-win'), { kind: 'drawn', selector: MODEL, attribute: 'data-drawn', token: purchase[2] }));
+      phases.push(await phasesRead(page));
     }
     if (n === 0) {
       out.values.modelMemoryMB = Math.round(await memoryMB(page));
@@ -227,7 +259,8 @@ export async function model(lab: Lab, after?: (page: Page) => Promise<void>): Pr
     if (updates.length < MIN_SAMPLES) { await lab.close(page); continue; }
 
     await page.locator(MODEL).scrollIntoViewIfNeeded();
-    const turning = await page.evaluate(() => new Promise<{ costs: number[]; gaps: number[] }>(resolve => {
+    const turning = await page.evaluate(() => new Promise<{ costs: number[]; gaps: number[]; from: number; to: number }>(resolve => {
+      const from = performance.now();
       const canvas = document.querySelector('#showcase canvas')!;
       const costs: number[] = [], gaps: number[] = [];
       let last: number | null = null;
@@ -238,9 +271,14 @@ export async function model(lab: Lab, after?: (page: Page) => Promise<void>): Pr
         last = now;
       };
       canvas.addEventListener('sea-draw', draw);
-      setTimeout(() => { canvas.removeEventListener('sea-draw', draw); resolve({ costs, gaps }); }, 5000);
+      setTimeout(() => { canvas.removeEventListener('sea-draw', draw); resolve({ costs, gaps, from, to: performance.now() }); }, 5000);
     }));
-    const gpu = await page.evaluate(() => (globalThis as unknown as { __seaGpu: { times: number[]; available: boolean } }).__seaGpu);
+    await page.waitForTimeout(500); // the last draws' GPU results arrive a few frames late
+    // Only the draws of the five seconds of turning: not the purchases' nor the calibration's.
+    const gpu = await page.evaluate(({ from, to }) => {
+      const sea = (globalThis as unknown as { __seaGpu: { times: { at: number; ms: number }[]; available: boolean } }).__seaGpu;
+      return { available: sea.available, times: sea.times.filter(t => t.at >= from && t.at < to).map(t => t.ms) };
+    }, turning);
     out.values.turningDraws = turning.costs.length;
     // The adaptive tier the stage settled on: 0 is full resolution (source/showcase/pace.ts TIERS).
     out.values.modelTier = Number(await page.locator('#showcase canvas').getAttribute('data-tier') ?? 0);
@@ -258,7 +296,44 @@ export async function model(lab: Lab, after?: (page: Page) => Promise<void>): Pr
   out.values.modelUpdateSamples = updates.length;
   out.values.modelUpdateP95Ms = round(p95(updates));
   out.values.modelUpdateMaxMs = round(Math.max(...updates));
+  // Where an update's time goes (§14.1 per-draw report): each phase's p95 on its own, so they need not sum to the total.
+  for (const phase of ['handle', 'wait', 'draw', 'paint'] as const) {
+    const times = phases.map(p => p[phase]).filter((t): t is number => t !== null);
+    out.values[`modelUpdate${phase[0]!.toUpperCase()}${phase.slice(1)}P95Ms`] = times.length >= MIN_SAMPLES ? round(p95(times)) : null;
+  }
   return out;
+}
+
+/** One 3D update in phases: input to the purchase shown in `data-layers` (the command handled), then to the start of
+ *  the draw that shows it (waiting for a frame), the draw, and the draw's end to the input-to-paint end (painting). */
+interface Phases { handle: number | null; wait: number | null; draw: number | null; paint: number | null }
+
+/** Watches the next update for `token`, alongside inputToPaint: timestamps only, so it changes nothing it measures. */
+async function phasesWatch(page: Page, token: string): Promise<void> {
+  await page.evaluate(({ selector, token }) => {
+    const t: Record<string, number> = {};
+    (globalThis as unknown as { __seaPhases: Record<string, number> }).__seaPhases = t;
+    addEventListener('pointerdown', e => { t.input ??= e.timeStamp; }, { capture: true, once: true });
+    const has = (name: string) => (document.querySelector(selector)?.getAttribute(name) ?? '').split(' ').includes(token);
+    const observer = new MutationObserver(() => {
+      if (t.layers === undefined && has('data-layers')) t.layers = performance.now();
+      if (t.drawn === undefined && has('data-drawn')) { t.drawn = performance.now(); observer.disconnect(); }
+    });
+    observer.observe(document, { subtree: true, attributes: true, attributeFilter: ['data-layers', 'data-drawn'] });
+    // The canvas may be replaced by the command: listen where the events pass on their way, the document's capture phase.
+    const done = new AbortController();
+    document.addEventListener('sea-drawing', () => { if (t.layers !== undefined && t.drawing === undefined) t.drawing = performance.now(); }, { capture: true, signal: done.signal });
+    document.addEventListener('sea-draw', () => { if (t.drawing !== undefined) { t.draw = performance.now(); done.abort(); } }, { capture: true, signal: done.signal });
+  }, { selector: MODEL, token });
+}
+
+async function phasesRead(page: Page): Promise<Phases> {
+  return page.evaluate(() => {
+    const t = (globalThis as unknown as { __seaPhases: Record<string, number> }).__seaPhases;
+    const end = (globalThis as unknown as { __seaInput: { end?: number } }).__seaInput.end;
+    const span = (a?: number, b?: number) => (a === undefined || b === undefined ? null : b - a);
+    return { handle: span(t.input, t.layers), wait: span(t.layers, t.drawing), draw: span(t.drawing, t.draw), paint: span(t.draw, end) };
+  });
 }
 
 /**
@@ -299,4 +374,30 @@ export async function stills(lab: Lab): Promise<Measured> {
   await machine(lab, 'student', out);
   await lab.close(first);
   return out;
+}
+
+/** Every instructor phase, in order; one memory cycle passes through each (Codex G3 review). */
+const PHASES = ['setup', 'practice', 'planning', 'auction', 'build', 'submit', 'debrief', 'closed'];
+
+/**
+ * Starts (`on`) or stops noting each phase the instructor's state is saved in, and returns those noted, in order of
+ * first sight. Off while commands are timed, so the timings carry no extra parse of the saved state.
+ */
+async function phasesSeen(page: Page, on: boolean): Promise<string[]> {
+  return page.evaluate(([key, start]) => {
+    const w = window as unknown as { __seaPhases?: { on: boolean; seen: string[] } };
+    if (!w.__seaPhases) {
+      const watch = w.__seaPhases = { on: false, seen: [] as string[] }, write = Storage.prototype.setItem;
+      Storage.prototype.setItem = function (this: Storage, name: string, value: string) {
+        if (watch.on && name === key) {
+          const phase = (JSON.parse(value) as { phase?: unknown }).phase;
+          if (typeof phase === 'string' && !watch.seen.includes(phase)) watch.seen.push(phase);
+        }
+        write.call(this, name, value);
+      };
+    }
+    if (start) w.__seaPhases.seen = [];
+    w.__seaPhases.on = start;
+    return w.__seaPhases.seen;
+  }, ['SEA_INSTRUCTOR_V300', on] as const);
 }

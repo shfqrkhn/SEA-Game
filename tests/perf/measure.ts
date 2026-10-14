@@ -35,7 +35,9 @@ export async function throttle(page: Page, rate = THROTTLE): Promise<void> {
 
 /** What the result of an input looks like once it is on screen. */
 export type Shown =
-  /** The handler has run; the next painted frame shows it. */
+  /** The click has been handled (every listener on its path, the page's own delegation included); the next painted
+   *  frame shows it. Waiting for the click, not only the press, keeps a slow release from ending the timing on a frame
+   *  painted before the command ran (Codex G3 review). */
   | { kind: 'paint' }
   /** Images matching `selector` exist and are all decoded; then painted. */
   | { kind: 'image'; selector: string }
@@ -54,6 +56,8 @@ export async function inputToPaint(page: Page, act: () => Promise<unknown>, show
     (globalThis as unknown as { __seaInput: Probe }).__seaInput = probe;
     const first = (event: Event) => { if (probe.start === null) probe.start = event.timeStamp; };
     for (const type of ['pointerdown', 'keydown', 'click']) addEventListener(type, first, { capture: true, once: true });
+    // On the window, bubbling: the last listener a click reaches, so every handler of the command has run.
+    const clicked = shown.kind !== 'paint' ? null : new Promise<void>(resolve => addEventListener('click', () => resolve(), { once: true }));
     // A message posted during a frame runs after that frame is painted; outside a frame, the next frame comes first.
     const afterPaint = (inFrame: boolean) => new Promise<number>(resolve => {
       const post = () => { const channel = new MessageChannel(); channel.port1.onmessage = () => resolve(performance.now()); channel.port2.postMessage(0); };
@@ -81,13 +85,14 @@ export async function inputToPaint(page: Page, act: () => Promise<unknown>, show
         while (!images.length) { await new Promise(requestAnimationFrame); images = [...document.querySelectorAll<HTMLImageElement>(shown.selector)]; }
         await Promise.all(images.map(img => img.decode()));
       }
+      if (clicked) await clicked;
       return afterPaint(false);
     })());
   }, { shown, timeout });
   await act();
   return page.evaluate(async () => {
-    const probe = (globalThis as unknown as { __seaInput: { start: number | null; done: Promise<number> } }).__seaInput;
-    const end = await probe.done;
+    const probe = (globalThis as unknown as { __seaInput: { start: number | null; done: Promise<number>; end?: number } }).__seaInput;
+    const end = probe.end = await probe.done;
     return end - probe.start!;
   });
 }
@@ -137,8 +142,10 @@ export async function processMB(browser: Browser): Promise<{ renderer: number; g
       const sizes = processInfo.filter(p => p.type === type).map(p => privateBytes(p.id));
       return sizes.length && sizes.every(size => size !== null) ? (sizes as number[]).reduce((a, b) => a + b, 0) / MB : null;
     };
-    const renderer = sum('renderer'), gpu = sum('GPU') ?? 0;
-    return renderer === null ? null : { renderer: round(renderer), gpu: round(gpu) };
+    // No GPU process at all (software drawing in the renderer) is zero; a GPU process that cannot be read is unmeasured,
+    // never zero, or a renderer-only total would pass the memory gates (Codex G3 review).
+    const renderer = sum('renderer'), gpu = processInfo.some(p => p.type === 'GPU') ? sum('GPU') : 0;
+    return renderer === null || gpu === null ? null : { renderer: round(renderer), gpu: round(gpu) };
   } finally {
     await cdp.detach();
   }

@@ -2,6 +2,7 @@
 // card's photoreal render; the student tracker shows the team's vehicle with its real purchases, as a slowly turning
 // 3D model where WebGL works and as stacked still renders where it does not.
 import { expect, test } from '@playwright/test';
+import sharp from 'sharp';
 import { collectConsoleErrors, expectAccessible, gameUrl, guardNetwork, withGpu, withoutWebgl } from './helpers.ts';
 import { confirmDialog, instructorSetup, studentJoin } from './roles.ts';
 
@@ -12,6 +13,26 @@ async function record(page: import('@playwright/test').Page, round: number, lot:
   await page.click('#load-card');
   await page.fill('#paid', String(paid));
   await page.click('#record-win');
+}
+
+/**
+ * The vehicle's median luminance contrast with its stage, from a screenshot (WCAG 1.4.11 asks 3:1 of a graphic that
+ * carries meaning): the background is the brightest corner, the vehicle every pixel at least 2.5 times as bright.
+ * A dim laptop panel scales both alike, so the ratio is what survives it (G3 panel safety).
+ */
+/** Lowest still contrast allowed until G4 (see the every-vehicle test). */
+const STILLS_CONTRAST_FLOOR = 2.1;
+
+async function vehicleContrast(shot: Buffer): Promise<number> {
+  const { data, info } = await sharp(shot).removeAlpha().raw().toBuffer({ resolveWithObject: true });
+  const linear = (c: number) => (c /= 255) <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+  const at = (i: number) => 0.2126 * linear(data[i]!) + 0.7152 * linear(data[i + 1]!) + 0.0722 * linear(data[i + 2]!);
+  const { width: w, height: h } = info;
+  const background = Math.max(...[[4, 4], [w - 5, 4], [4, h - 5], [w - 5, h - 5]].map(([x, y]) => at((y! * w + x!) * 3)));
+  const vehicle: number[] = [];
+  for (let i = 0; i < data.length; i += 3) { const l = at(i); if (l > background * 2.5) vehicle.push(l); }
+  vehicle.sort((a, b) => a - b);
+  return (vehicle[vehicle.length >> 1]! + 0.05) / (background + 0.05);
 }
 
 async function trackerFor(browser: import('@playwright/test').Browser, mission: string) {
@@ -124,6 +145,30 @@ for (const viewport of [{ width: 1280, height: 720 }, { width: 360, height: 740 
   });
 }
 
+// G3 touchpad and touch safety (MPES §10.2): the page scrolls past the stage, by wheel, touchpad or finger; only a drag turns it.
+test('3D showcase never traps the page scroll: wheel and vertical swipes scroll the page, a drag turns the vehicle', async ({ browser }) => {
+  const { sp } = await trackerFor(browser, 'RECOVERY');
+  await sp.setViewportSize({ width: 360, height: 740 });
+  const showcase = sp.locator('#showcase'), stage = showcase.locator('[role="img"]'), canvas = stage.locator('canvas');
+  await expect(stage).toHaveAttribute('data-ready', 'true', { timeout: 30_000 });
+  await showcase.getByRole('button', { name: 'Pause turning', exact: true }).click();
+  await canvas.scrollIntoViewIfNeeded();
+  expect(await canvas.evaluate(c => getComputedStyle(c).touchAction), 'a vertical swipe on the stage scrolls the page').toBe('pan-y');
+  const box = (await canvas.boundingBox())!, zoom = await stage.getAttribute('data-zoom');
+  await sp.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+  // Towards whichever end of the page has room.
+  const top = await sp.evaluate(() => scrollY), up = top > 0;
+  await sp.mouse.wheel(0, up ? -200 : 200);
+  await expect.poll(async () => Math.abs(await sp.evaluate(() => scrollY) - top), 'a wheel or two-finger touchpad scroll over the stage scrolls the page').toBeGreaterThan(50);
+  expect(await stage.getAttribute('data-zoom'), 'the wheel never zooms').toBe(zoom);
+  const after = (await canvas.boundingBox())!, azimuth = await stage.getAttribute('data-azimuth');
+  await sp.mouse.move(after.x + after.width * 0.3, after.y + after.height / 2);
+  await sp.mouse.down();
+  await sp.mouse.move(after.x + after.width * 0.7, after.y + after.height / 2, { steps: 8 });
+  await sp.mouse.up();
+  await expect(stage).not.toHaveAttribute('data-azimuth', azimuth ?? '');
+});
+
 // G3 (MPES §10.3): a driver reset, a GPU switch or sleep loses the graphics context; the stage must come back by itself.
 test('3D showcase recovers a lost graphics context: it stops drawing, then draws the next purchase once restored', async ({ browser }) => {
   const { sp } = await trackerFor(browser, 'RECOVERY');
@@ -141,7 +186,23 @@ test('3D showcase recovers a lost graphics context: it stops drawing, then draws
   await expect(stage).not.toHaveAttribute('data-drawn', 'ACC-F');
   await sp.evaluate(() => (window as unknown as { seaLose: WEBGL_lose_context }).seaLose.restoreContext());
   await expect(stage).toHaveAttribute('data-drawn', 'ACC-F', { timeout: 30_000 });
+  // Again, as Firefox on a software renderer did in CI run 38577929333: a restore announced while the context is still
+  // lost, then the real restore without a word. The stage must not take the announcement for a context, nor miss the return.
+  await sp.evaluate(() => {
+    const canvas = document.querySelector<HTMLCanvasElement>('#showcase canvas')!;
+    (window as unknown as { seaLose: WEBGL_lose_context }).seaLose.loseContext();
+    canvas.dispatchEvent(new Event('webglcontextrestored'));
+  });
   await record(sp, 2, 7, 'ACC-E', 600000);
+  await expect(stage).toHaveAttribute('data-layers', 'ACC-E');
+  await sp.waitForTimeout(1000);
+  await expect(stage, 'nothing is drawn on a context still lost').toHaveAttribute('data-drawn', 'ACC-F');
+  await sp.evaluate(() => {
+    const canvas = document.querySelector<HTMLCanvasElement>('#showcase canvas')!;
+    // Silenced before the stage hears it: window listeners in the capture phase run before the canvas's own.
+    window.addEventListener('webglcontextrestored', event => { if (event.target === canvas && event.isTrusted) event.stopImmediatePropagation(); }, { capture: true, once: true });
+    (window as unknown as { seaLose: WEBGL_lose_context }).seaLose.restoreContext();
+  });
   await expect(stage).toHaveAttribute('data-drawn', 'ACC-E', { timeout: 30_000 });
   expect(errors).toEqual([]);
 });
@@ -324,21 +385,41 @@ test('stills fallback decodes each layer once: purchases, angle changes and turn
     'background decodes run one at a time').toBe(1);
 });
 
-test('every vehicle has its showcase, in 3D and in stills, and every lot its card render', async ({ page, browser }) => {
+// Every vehicle has its showcase in 3D and in stills, and (G3 panel safety) on a dim laptop panel it still stands out
+// from its stage in both. One test a vehicle: six in one test outran its time on a loaded CI runner (run 38577929333).
+for (const mission of ['COMBAT', 'RECCE', 'TROOP', 'COMMAND', 'RECOVERY', 'MINE']) {
+  test(`${mission} vehicle has its showcase in 3D and in stills, and stands out from its stage on a dim panel`, async ({ browser }) => {
+    const join = async (page: import('@playwright/test').Page) => {
+      guardNetwork(page);
+      await page.goto(gameUrl('?role=student&lang=en'));
+      await studentJoin(page, 'SEA3-T2-0123456789ABCDEF', 1, mission);
+      await page.check('#plan-confirm');
+      await page.click('#student-start-auction');
+      await confirmDialog(page);
+    };
+    const gpuContext = await browser.newContext(), gpu = await gpuContext.newPage();
+    await withGpu(gpu);
+    await join(gpu);
+    const model = gpu.locator('#showcase [role="img"]');
+    await expect(model).toHaveAttribute('data-ready', 'true', { timeout: 30_000 });
+    await gpu.getByRole('button', { name: 'Pause turning', exact: true }).click();
+    expect(await vehicleContrast(await model.screenshot()), '3D').toBeGreaterThanOrEqual(3);
+    await gpuContext.close();
+    const flatContext = await browser.newContext(), flat = await flatContext.newPage();
+    await withoutWebgl(flat);
+    await join(flat);
+    const base = flat.locator('#showcase img[data-layer="base"]');
+    await expect(base).toHaveCount(1);
+    await expect.poll(() => base.evaluate(i => (i as HTMLImageElement).complete && (i as HTMLImageElement).naturalWidth > 0)).toBe(true);
+    // The Cycles stills are darker than the real-time model (2.11 to 2.14 on 2026-10-14): held there until the G4
+    // re-render lifts them to 3 (MPES §10.5). This floor may only rise.
+    expect(await vehicleContrast(await flat.locator('#showcase .showcase-stage').first().screenshot()), 'stills').toBeGreaterThanOrEqual(STILLS_CONTRAST_FLOOR);
+    await flatContext.close();
+  });
+}
+
+test('a software renderer gets the stills, and every lot its card render', async ({ page }) => {
   guardNetwork(page);
-  for (const mission of ['COMBAT', 'RECCE', 'TROOP', 'COMMAND', 'RECOVERY', 'MINE']) {
-    const context = await browser.newContext();
-    const sp = await context.newPage();
-    guardNetwork(sp);
-    await withGpu(sp);
-    await sp.goto(gameUrl('?role=student&lang=en'));
-    await studentJoin(sp, 'SEA3-T2-0123456789ABCDEF', 1, mission);
-    await sp.check('#plan-confirm');
-    await sp.click('#student-start-auction');
-    await confirmDialog(sp);
-    await expect(sp.locator('#showcase [role="img"]'), mission).toHaveAttribute('data-ready', 'true', { timeout: 30_000 });
-    await context.close();
-  }
   // A software WebGL renderer (no GPU) gets the still renders, as a browser without WebGL does.
   await page.goto(gameUrl('?role=student&lang=en'));
   await studentJoin(page, 'SEA3-T2-0123456789ABCDEF', 1, 'COMBAT');
@@ -351,17 +432,6 @@ test('every vehicle has its showcase, in 3D and in stills, and every lot its car
     return !gl || /swiftshader|llvmpipe|basic render|software/i.test(String(gl.getParameter(info ? info.UNMASKED_RENDERER_WEBGL : gl.RENDERER)));
   });
   if (software) await expect(page.locator('#showcase [role="img"]')).toHaveAttribute('data-mode', 'stills');
-  await withoutWebgl(page);
-  for (const mission of ['COMBAT', 'RECCE', 'TROOP', 'COMMAND', 'RECOVERY', 'MINE']) {
-    await page.goto(gameUrl('?role=student&lang=en'));
-    await page.evaluate(() => sessionStorage.clear());
-    await page.reload();
-    await studentJoin(page, 'SEA3-T2-0123456789ABCDEF', 1, mission);
-    await page.check('#plan-confirm');
-    await page.click('#student-start-auction');
-    await confirmDialog(page);
-    await expect(page.locator('#showcase img[data-layer="base"]'), mission).toHaveCount(1);
-  }
   // Each card loads in a lot of its own category (lots 1-8: CAP, MOB, FP, PRO, COM, SA, ACC, SE).
   for (const [lot, card] of ['CAP-A', 'MOB-G', 'FP-C', 'PRO-E', 'COM-D', 'SA-F', 'ACC-B', 'SE-U'].entries()) {
     await page.selectOption('#pos-lot', String(lot + 1));

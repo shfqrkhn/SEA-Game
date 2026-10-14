@@ -5,7 +5,7 @@
 // painted result, nearest-rank p95 of at least 30 samples) are tests/perf/, shared with `npm run perf:ref`, which
 // measures them on the reference GPU; here the runner's software renderer stands in for it (withGpu).
 import { expect, test, type TestInfo } from '@playwright/test';
-import { MIN_SAMPLES } from '../perf/measure.ts';
+import { MIN_SAMPLES, inputToPaint } from '../perf/measure.ts';
 import { Lab, commands, model, startUp, stills, type Measured } from '../perf/scenarios.ts';
 import { withGpu } from './helpers.ts';
 
@@ -50,4 +50,14 @@ test('stills showcase (MPES §14, §10.3)', async ({ browser }, info) => {
   expect(v.angleChangeMs).toBeLessThanOrEqual(50);
   expect(v.turntableStepMaxMs).toBeLessThanOrEqual(50);
   expect(v.studentMemoryMB).toBeLessThanOrEqual(400);
+});
+
+// The protocol itself (Codex G3 review): a click timed to the next paint must include the command, however late the
+// button is released; before the fix a 200 ms press measured 33 ms, the command never inside the timing.
+test('a command timing includes the command, even when the button is released late', async ({ page }) => {
+  await page.setContent('<button id="b">Bid</button><output id="o"></output>');
+  await page.evaluate(() => document.querySelector('#b')!.addEventListener('click', () => { document.querySelector('#o')!.textContent = 'done'; }));
+  const ms = await inputToPaint(page, () => page.click('#b', { delay: 200 }), { kind: 'paint' });
+  await expect(page.locator('#o')).toHaveText('done');
+  expect(ms).toBeGreaterThanOrEqual(200);
 });

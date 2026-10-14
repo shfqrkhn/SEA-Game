@@ -6,7 +6,7 @@ import { makeBackup, parseBackup, MAX_BACKUP_BYTES, type BackupRole } from '../d
 import { DomainError } from '../domain/errors.ts';
 import { PHASES, type Phase } from '../domain/session.ts';
 import { showDialog } from './dialog.ts';
-import { h, replaceChildren, type Child } from './dom.ts';
+import { h, nameDocument, replaceChildren, type Child } from './dom.ts';
 import { otherLanguage, translate, type Language, type StringKey } from './i18n.ts';
 import { showAbout } from './about.ts';
 import { themeFrom, toggleTheme, withTheme } from './theme.ts';
@@ -151,8 +151,7 @@ export class RoleView<S extends RoleState> {
       const focusId = active?.id || null;
       let selection: [number | null, number | null] | null = null;
       try { if (active && 'selectionStart' in active && typeof active.selectionStart === 'number') selection = [active.selectionStart ?? null, active.selectionEnd ?? null]; } catch { selection = null; }
-      document.documentElement.lang = this.lang;
-      document.title = `${this.config.brand(this)} · ${this.t('app.title')}`;
+      nameDocument(this.lang, `${this.config.brand(this)} · ${this.t('app.title')}`);
       replaceChildren(this.#content, this.shell());
       this.#statusLine.className = `page status-line ${this.#status?.tone === 'bad' ? 'error' : this.#status?.tone === 'ok' ? 'ok' : ''}`;
       if (this.#statusLine.textContent !== (this.#status?.text ?? '')) this.#statusLine.textContent = this.#status?.text ?? '';

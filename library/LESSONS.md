@@ -2,6 +2,12 @@
 
 Each entry: what happened, the rule it produced, and the check that now enforces it. Newest first. Examples come from SEA Game (a classroom auction game with photoreal vehicle renders and a real-time 3D showcase, one offline HTML file).
 
+## 2026-10-14 · An unchanged attribute that restyled the page; a restore that was not one
+
+- **What happened:** a purchase's 3D update ran over budget on CI. Splitting its timing into phases (input to handled, to draw start, the draw, to paint) and profiling one purchase showed the cause: every command wrote the page's `lang` attribute, unchanged. Writing an attribute on the document root restyles the whole page, even with the same value; with the focused button just replaced, it forced a full style and layout inside the command and slowed the next one. On the same run, Firefox on a software renderer announced a restored WebGL context while it was still lost, then restored it later without any event.
+- **Rule:** write to the document root only what changed. Split a slow timing into its phases before guessing at a fix. Trust an object's own state over the events that report it: ignore a "restored" event while the context still says lost, and while lost, check the state now and then and act on a silent return.
+- **Check (as built in SEA Game):** a helper writes the language and title only when they differ; the performance scenario reports the 3D update's phases beside the gated total; the context-loss browser test covers an early announcement (nothing may draw) and a silent restore (the next purchase must still draw).
+
 ## 2026-10-13 · Green branch, red main
 
 - **What happened:** after two green CI runs, a small docs-only commit was added and the pull request merged straight away. The generated codebase document embeds every doc, so it went stale; CI on `main` failed and the Pages deploy was skipped, leaving the old site live.

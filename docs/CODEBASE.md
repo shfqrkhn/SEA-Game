@@ -27699,7 +27699,7 @@ A read-only Codex session (gpt-6.1-sol, medium) reviewed the diff (`.artifacts/c
 
 ### docs/verification/0.6.0.0.md
 
-Paths: `docs/verification/0.6.0.0.md`. SHA-256 `fc4ebb765b2c94be34b1eaea0fd41d8774443832ba473977c37041fe3a3f233c`, 6169 bytes.
+Paths: `docs/verification/0.6.0.0.md`. SHA-256 `ba929c3ada7bab39c71f7cae879e9bb205df25281111b0a22a9fc19f7a962fd0`, 11089 bytes.
 
 ```markdown
 # Verification record: 0.6.0.0 beta (G3 proxy and runtime) — in progress
@@ -27756,7 +27756,35 @@ Local timings on 2026-10-14 are void: another job held the processor at about 80
 
 ## Lane: reference proxy (merged from `g3/perf-ref`)
 
-`npm run perf:ref`, `playwright.perf-ref.config.ts`, `tests/perf-ref/`. Its protocol is written into MPES §14 in this goal; Codex's nine findings on both lanes are dispositioned below when fixed.
+`npm run perf:ref`, `playwright.perf-ref.config.ts`, `tests/perf-ref/`. Its protocol is written into MPES §14 in this goal; Codex's findings on both lanes are dispositioned below.
+
+### Red run 38577929333 (head 7dd20c2): three causes
+
+Diagnosed before any rerun, from the job logs and the Playwright traces of both jobs.
+
+| Job and test | Evidence | Cause | Fix | Check |
+|---|---|---|---|---|
+| verify (22), perf: 3D update p95 117.4 ms > 100 (max 126.8; stills update p95 66.5, within budget) | Phase breakdown added to the scenario (input to handled, to draw start, the draw, to paint); a CPU profile and a trace of one purchase at 4x CPU on an unminified build | Each command wrote the page's `lang` attribute, unchanged. Writing the root's `lang` restyles the whole page, and the command had just replaced the focused button: a forced full style and layout of 12 to 14 ms before the new view existed (3 ms without the write), and the next layout rose from 5.5 to 21 to 27 ms | The document's language and title are written only when they change (`nameDocument`, `source/ui/dom.ts`), in the views and the chooser alike. A purchase at 4x CPU after the fix: click handled in 38.6 ms, drawn in the next frame, painted at about 66 ms, of which about 11 ms is CI's software compositor reading the canvas back | Phase breakdown reported with the 3D update (`modelUpdateHandleP95Ms`, `…WaitP95Ms`, `…DrawP95Ms`, `…PaintP95Ms`); the gate stays at 100 ms |
+| verify (24), Firefox: context-loss test, `data-drawn` still `ACC-F` | Trace console and screencast; a probe of the event order (`.artifacts/tmp/ctxprobe/`) | On a software renderer Firefox announced `webglcontextrestored` while the context was still lost, and three.js rebuilt onto the dead context; later it restored the context without any event | The context, not the events, decides: an announcement while `isContextLost()` is still true is stopped before three.js sees it, and while lost a 1 s check notices a silent return and announces it, which rebuilds three.js and the stage (`source/showcase/model.ts`) | The context-loss test now also loses the context with an early announcement (nothing may be drawn on it) and restores it with the event suppressed (the purchase must still be drawn); it failed before the fix and passes on Chromium and Firefox |
+| verify (24), Chromium and Edge: "every vehicle …" timed out at 120 s | Six missions, each in 3D and stills, plus eight card renders, in one test | One test held too much work for the time on a software renderer | Split into one test per mission and one for the software renderer and card renders; no timeout raised, no check dropped | `tests/e2e/showcase.spec.ts` |
+
+## Codex findings on the lanes (nine) and on the G3 diff (four)
+
+| # | Finding | Disposition |
+|---|---|---|
+| L1 | Reference report read memory as undefined | Fixed: `perf:ref` now runs the CI scenarios (`tests/perf/scenarios.ts`) and reports their values |
+| L2 | A stale or incomplete baseline passed | Fixed: rows are filtered by run, and a missing pair or an unexplained metric is a problem (`tests/unit/perf-ref-report.test.ts`) |
+| L3 | Commands were timed before their paint | Fixed: every timing runs from the trusted input to after the next paint, and waits for the click (`tests/unit/perf-measure.test.ts`) |
+| L4 | Turning cadence measured without draws | Fixed: costs come from the stage's own draw events |
+| L5 | The 3D update was timed before its draw | Fixed: timed to the frame whose `data-drawn` names the purchase |
+| L6 | Memory missed images and GPU allocations | Fixed: renderer and GPU process memory from the browser's system information; null with a note when the system does not report it |
+| L7 | The memory cycles did not pass through every phase | Fixed: each of the ten cycles imports the largest save (results to reconcile), enters submissions privately, opens the debrief, closes the room, then starts a new session through setup, practice, planning and a live auction. The scenario fails unless one cycle saves the instructor's state in all eight phases; that check failed on the old cycle (it saw setup to auction only). Also corrected: the largest save holds 3 teams, not 10 as a comment said |
+| L8 | Trim settings duplicated between the encoder and its cache key | Fixed: one settings object feeds both (`tests/unit/encode-cache.test.ts`) |
+| L9 | A cache entry's geometry was not in its checksum | Fixed: the checksum covers the geometry and the bytes |
+| D1 | The multisampled resolve drew pale fringes at the vehicle's edge | Fixed: colour divided by coverage before tone mapping, multiplied after (`source/showcase/resolve.ts`, `tests/unit/resolve.test.ts`, which also refuses a changed three.js shader) |
+| D2 | The GPU timer query was not bracketed by the draw | Fixed: bracketed by the stage's draw start and draw events |
+| D3 | A late button release could start the timing after the command | Fixed: the timing starts at the trusted input (`tests/e2e/perf.spec.ts`, late-release test) |
+| D4 | Unreadable GPU memory was reported as zero | Fixed: reported as null with a note |
 
 ## Checks
 
@@ -28038,12 +28066,18 @@ export default tseslint.config(
 
 ### library/LESSONS.md
 
-Paths: `library/LESSONS.md`. SHA-256 `219a2918e350c76c6157d655452b5dffa4a0e01314bbcdb3db7a56b086b84683`, 8117 bytes.
+Paths: `library/LESSONS.md`. SHA-256 `ce14bd8163790023e0666db41af79f8b0e6e0dd3f9f0e1a4f73d9ff403984b0f`, 9457 bytes.
 
 ```markdown
 # Lessons learned
 
 Each entry: what happened, the rule it produced, and the check that now enforces it. Newest first. Examples come from SEA Game (a classroom auction game with photoreal vehicle renders and a real-time 3D showcase, one offline HTML file).
+
+## 2026-10-14 · An unchanged attribute that restyled the page; a restore that was not one
+
+- **What happened:** a purchase's 3D update ran over budget on CI. Splitting its timing into phases (input to handled, to draw start, the draw, to paint) and profiling one purchase showed the cause: every command wrote the page's `lang` attribute, unchanged. Writing an attribute on the document root restyles the whole page, even with the same value; with the focused button just replaced, it forced a full style and layout inside the command and slowed the next one. On the same run, Firefox on a software renderer announced a restored WebGL context while it was still lost, then restored it later without any event.
+- **Rule:** write to the document root only what changed. Split a slow timing into its phases before guessing at a fix. Trust an object's own state over the events that report it: ignore a "restored" event while the context still says lost, and while lost, check the state now and then and act on a silent return.
+- **Check (as built in SEA Game):** a helper writes the language and title only when they differ; the performance scenario reports the 3D update's phases beside the gated total; the context-loss browser test covers an early announcement (nothing may draw) and a silent restore (the next purchase must still draw).
 
 ## 2026-10-13 · Green branch, red main
 
@@ -28558,7 +28592,7 @@ Write so that another person or agent can resume development, operations and mai
 
 ### library/practices/performance.md
 
-Paths: `library/practices/performance.md`. SHA-256 `c42b5d253505d0d166b1a384e15176723870dc4cd7db6958ad394e1921f1b053`, 2450 bytes.
+Paths: `library/practices/performance.md`. SHA-256 `2a976517fcc97ee1f2528fab234062d06711c9788bc485430723c6d529fe6ce1`, 2847 bytes.
 
 ```markdown
 # Performance on ordinary laptops
@@ -28588,7 +28622,9 @@ Chromium and Edge forced onto an Intel integrated GPU (`--use-angle=d3d11 --enab
 - Parse only the model shown; decode images lazily and never evict one on screen.
 - Small procedural environment map (e.g. 64 px PMREM) instead of HDR files; one shadow map; extra lights unshadowed.
 - Bake ambient occlusion into vertex colours; avoid image textures where size is tight.
-- Fall back to layered stills when WebGL 2 is missing or the context is lost; recover from context loss.
+- Fall back to layered stills when WebGL 2 is missing or the context is lost; recover from context loss, trusting `isContextLost()` over the events (a browser may announce a restore early, or restore silently).
+- Never write the document root's attributes (`lang`, `data-theme`, title) unless the value changed: even an unchanged write restyles the whole page.
+- Split a slow interaction timing into phases (handled, draw start, draw, paint) before fixing; profile one instance on an unminified build.
 - Own every GPU resource: dispose of geometries, materials, textures and render targets when a view closes (three.js does not free them for you); give shared resources a clear owner or a reference count; cancel loads no longer wanted; test repeated open and close for memory growth.
 - Count GPU memory, not file size: a 200 KB AVIF of 2048 px still takes about 16 MB decoded (more with mipmaps).
 - Measure on a quiet machine. Timing failures under load are evidence to investigate, never a reason to raise budgets.
@@ -33510,7 +33546,7 @@ for (const shot of shots()) {
 
 ### scripts/gallery/playwright.config.ts
 
-Paths: `scripts/gallery/playwright.config.ts`. SHA-256 `1b26b9af8289e5554b565ba2222270e96c17e4858fe5388ed674259e43658bac`, 672 bytes.
+Paths: `scripts/gallery/playwright.config.ts`. SHA-256 `a8acd01dbf4a628dbce575e01a878305283b3a79a0a90eebde164b77e3b28ad5`, 1145 bytes.
 
 ```ts
 // Gallery capture only (scripts/gallery.ts); the test suite's config is playwright.config.ts.
@@ -33530,7 +33566,15 @@ export default defineConfig({
   retries: 0,
   reporter: [['line']],
   timeout: 180_000,
-  use: { ...devices['Desktop Chrome'], actionTimeout: 60_000 },
+  // The 3D shots show what a laptop's integrated GPU draws (the full-quality tier), not the software renderer's cheapest
+  // tier: the browser runs on this PC's Intel GPU with npm run perf:ref's flags (G3).
+  use: {
+    ...devices['Desktop Chrome'], channel: 'chromium', actionTimeout: 60_000,
+    launchOptions: {
+      args: ['--use-angle=d3d11', '--enable-gpu', '--ignore-gpu-blocklist', '--force_low_power_gpu'],
+      ignoreDefaultArgs: ['--disable-gpu', '--disable-gpu-compositing', '--disable-software-rasterizer'],
+    },
+  },
 });
 ```
 
@@ -35417,7 +35461,7 @@ declare const __SEA_LICENSE__: string;
 
 ### source/main.ts
 
-Paths: `source/main.ts`. SHA-256 `ef1a94af9f5f17ee821597d56a2fe645dc2d77ab3d1b52fe33dad1db0d979a0e`, 7219 bytes.
+Paths: `source/main.ts`. SHA-256 `672cfd392a3f08e93f3a0bb9bd194715a73b54656346e3cb9a12b506ab9b1288`, 7196 bytes.
 
 ```ts
 // Entry point: route to the role chooser or a single role (MPES §5.3).
@@ -35429,7 +35473,7 @@ import { missionName } from './ui/components.ts';
 import type { MissionId } from './domain/data.ts';
 import { startInstructor } from './ui/instructor.ts';
 import { startStudent } from './ui/student.ts';
-import { h, replaceChildren } from './ui/dom.ts';
+import { h, nameDocument, replaceChildren } from './ui/dom.ts';
 import { detectLanguage, otherLanguage, translate, type Language, type StringKey } from './ui/i18n.ts';
 
 export type Role = 'instructor' | 'student';
@@ -35500,8 +35544,7 @@ const fresh = (href: () => string) => (event: Event) => { (event.currentTarget a
 
 function renderChooser(root: HTMLElement, lang: Language, unknownRole: boolean): void {
   const t = (key: StringKey, vars?: Record<string, string>) => translate(lang, key, vars);
-  document.documentElement.lang = lang;
-  document.title = t('app.title');
+  nameDocument(lang, t('app.title'));
   const roleCard = (role: Role, label: StringKey, description: StringKey) => h('section', { class: 'role-card' },
     h('a', { class: 'btn primary big', href: roleHref(role, lang), 'data-role': role, text: t(label), on: { click: fresh(() => roleHref(role, lang)) } }),
     h('p', { class: 'muted', text: t(description) }),
@@ -35700,7 +35743,7 @@ export function vehicleGlb(glb: ArrayBuffer, vehicle: string): ArrayBuffer | nul
 
 ### source/showcase/model.ts
 
-Paths: `source/showcase/model.ts`. SHA-256 `85f4e72f52a51fa30cac1805a37ae20495679843f44de99fc52864b3e41d4634`, 23299 bytes.
+Paths: `source/showcase/model.ts`. SHA-256 `ded80a253162dedd32e9bd66aa322f9b5f6f4189d11b43a7d9aacd09396bea26`, 25272 bytes.
 
 ```ts
 // Real-time vehicle showcase (MPES §10): the embedded glTF model on a slowly turning stage the player can drag.
@@ -35718,6 +35761,7 @@ import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment
 import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
 import { vehicleGlb } from './glb.ts';
 import { distanceAt, extentAt, fitTable, zoomed, type FitTable } from './frame.ts';
+import { premultipliedOutput } from './resolve.ts';
 import { FramePacer, INPUT_HOLD_MS, TIERS, nextTier, startTier } from './pace.ts';
 
 /** Seconds per full turn when the stage turns by itself. */
@@ -35727,6 +35771,8 @@ const UP = new Vector3(0, 1, 0);
 const OPENING = new Vector3(0.62, 0.32, 0.72).normalize();
 /** How far the player can drag the view up and down (polar angle from straight up). */
 const POLAR_MIN = 0.6, POLAR_MAX = 1.45;
+/** How often a lost graphics context is checked for a return its browser did not announce. */
+const LOST_CHECK_MS = 1000;
 
 let packed: Promise<ArrayBuffer | null> | null = null;
 const libraries = new Map<string, Promise<Group | null>>();
@@ -35832,9 +35878,11 @@ export class ModelStage {
   /** Where a multisampled tier draws the scene, then resolved to the canvas with tone mapping by #output; none on a
    *  tier without multisampling. The canvas itself has none, so a tier can drop it without a new context. */
   #target: WebGLRenderTarget | null = null;
-  #output = Object.assign(new OutputPass(), { renderToScreen: true });
+  #output = resolvePass();
   #environment: Texture | null = null;
   #lost = false;
+  /** While the context is lost, the check that notices its return (see the constructor). */
+  #watch: ReturnType<typeof setInterval> | undefined;
   /** The player's input anywhere else on the page holds the paced turning draws (input first, MPES §10.3). */
   #input = (event: Event): void => { if (event.target !== this.canvas) this.#pacer.hold(performance.now() + INPUT_HOLD_MS); };
   #visible = true;
@@ -35892,6 +35940,9 @@ export class ModelStage {
       enableDamping: true, enablePan: false, enableZoom: false, autoRotate: !this.#motion.matches,
       autoRotateSpeed: 60 / TURN_SECONDS, minPolarAngle: POLAR_MIN, maxPolarAngle: POLAR_MAX,
     });
+    // OrbitControls sets touch-action none, which traps a finger swipe over the stage: give vertical swipes back to the
+    // page (the stylesheet's pan-y), so only a sideways drag turns the vehicle (G3 touch safety).
+    this.canvas.style.touchAction = '';
     this.#controls.addEventListener('change', () => this.#invalidate());
     this.#controls.addEventListener('start', () => this.#loop());
     this.#motion.addEventListener('change', () => { this.turning = !this.#motion.matches; });
@@ -35903,8 +35954,23 @@ export class ModelStage {
     for (const type of ['pointerdown', 'keydown', 'input']) document.addEventListener(type, this.#input, { capture: true, passive: true });
     // A lost graphics context (driver reset, GPU switch, sleep) stops the stage; three.js rebuilds the context when it is
     // restored, but what was drawn into textures is gone: the environment and the shadow are made again, then one draw.
-    this.canvas.addEventListener('webglcontextlost', () => { this.#lost = true; this.#stop(); });
+    // The context, not the events, says whether it is back: Firefox on a software renderer announced a restore while the
+    // context was still lost, then restored it without a word (G3, CI run 38577929333). So an early announcement is
+    // stopped before three.js rebuilds onto a dead context, and while lost a slow check notices a silent return and
+    // announces it, which rebuilds three.js and the stage alike.
+    this.canvas.addEventListener('webglcontextlost', () => {
+      this.#lost = true;
+      this.#stop();
+      clearInterval(this.#watch);
+      this.#watch = setInterval(() => {
+        if (!this.#renderer.getContext().isContextLost()) this.canvas.dispatchEvent(new Event('webglcontextrestored'));
+      }, LOST_CHECK_MS);
+    });
+    this.canvas.addEventListener('webglcontextrestored', event => {
+      if (this.#renderer.getContext().isContextLost()) { event.stopImmediatePropagation(); return; }
+    }, { capture: true });
     this.canvas.addEventListener('webglcontextrestored', () => {
+      clearInterval(this.#watch);
       this.#lost = false;
       this.#environ();
       this.#renderer.shadowMap.needsUpdate = true;
@@ -36128,6 +36194,8 @@ export class ModelStage {
     this.#dirty = false;
     this.#urgent = false;
     this.#distance();
+    // Observable without reaching into the stage: the reference-laptop run brackets each draw's GPU time by these (§14.1).
+    this.canvas.dispatchEvent(new Event('sea-drawing'));
     this.#render();
     this.#report();
     this.onDraw?.();
@@ -36180,6 +36248,7 @@ export class ModelStage {
 
   dispose(): void {
     cancelAnimationFrame(this.#frame);
+    clearInterval(this.#watch);
     this.#observer.disconnect();
     this.#resize.disconnect();
     for (const type of ['pointerdown', 'keydown', 'input']) document.removeEventListener(type, this.#input, { capture: true });
@@ -36189,6 +36258,13 @@ export class ModelStage {
     this.#environment?.dispose();
     this.#renderer.dispose();
   }
+}
+
+/** The resolve of a multisampled tier to the canvas: tone mapping and sRGB, aware of transparent edges (resolve.ts). */
+function resolvePass(): OutputPass {
+  const pass = Object.assign(new OutputPass(), { renderToScreen: true });
+  pass.material.fragmentShader = premultipliedOutput(pass.material.fragmentShader);
+  return pass;
 }
 ```
 
@@ -36926,7 +37002,7 @@ export function showDialog(options: DialogOptions): Promise<string> {
 
 ### source/ui/dom.ts
 
-Paths: `source/ui/dom.ts`. SHA-256 `8c421bce744d2290b9f2001b58733b82b76870dddaf027a1e3e4c13fc94a0390`, 3271 bytes.
+Paths: `source/ui/dom.ts`. SHA-256 `882ace1c49f52c0124c1a1ccef72a1822e7b5927b6bab0767dc8add026ae1127`, 3832 bytes.
 
 ```ts
 // Safe DOM construction (MPES C-11): text is always set as text, never parsed as HTML.
@@ -36996,6 +37072,16 @@ export function svg<K extends keyof SVGElementTagNameMap>(tag: K, attributes: Re
 export function replaceChildren(parent: Element, ...children: Child[]): void {
   parent.replaceChildren();
   append(parent, children);
+}
+
+/**
+ * Names the document's language and title, writing only what changed. Writing the root's `lang`, even unchanged,
+ * restyles the whole page; inside a command that then replaced the focused button, it cost a full style and layout
+ * before the new view existed and slowed the one after it (G3 profile: about 12 and 15 ms a purchase at 4x CPU).
+ */
+export function nameDocument(lang: string, title: string): void {
+  if (document.documentElement.lang !== lang) document.documentElement.lang = lang;
+  if (document.title !== title) document.title = title;
 }
 ```
 
@@ -38437,7 +38523,7 @@ export function toggleTheme(): Theme {
 
 ### source/ui/view.ts
 
-Paths: `source/ui/view.ts`. SHA-256 `f9dbb6ce1de8e72820c2eae22d3b90eeedad30cc02b81d965b04134c8e062eb4`, 16561 bytes.
+Paths: `source/ui/view.ts`. SHA-256 `092316b41c66b2f67810d4bfeaafc73d565ef5b883c01bfd83b22a247d17ef3e`, 16534 bytes.
 
 ```ts
 // Shared role view: shell (header, progress, menu, notices), rendering with focus preservation,
@@ -38448,7 +38534,7 @@ import { makeBackup, parseBackup, MAX_BACKUP_BYTES, type BackupRole } from '../d
 import { DomainError } from '../domain/errors.ts';
 import { PHASES, type Phase } from '../domain/session.ts';
 import { showDialog } from './dialog.ts';
-import { h, replaceChildren, type Child } from './dom.ts';
+import { h, nameDocument, replaceChildren, type Child } from './dom.ts';
 import { otherLanguage, translate, type Language, type StringKey } from './i18n.ts';
 import { showAbout } from './about.ts';
 import { themeFrom, toggleTheme, withTheme } from './theme.ts';
@@ -38593,8 +38679,7 @@ export class RoleView<S extends RoleState> {
       const focusId = active?.id || null;
       let selection: [number | null, number | null] | null = null;
       try { if (active && 'selectionStart' in active && typeof active.selectionStart === 'number') selection = [active.selectionStart ?? null, active.selectionEnd ?? null]; } catch { selection = null; }
-      document.documentElement.lang = this.lang;
-      document.title = `${this.config.brand(this)} · ${this.t('app.title')}`;
+      nameDocument(this.lang, `${this.config.brand(this)} · ${this.t('app.title')}`);
       replaceChildren(this.#content, this.shell());
       this.#statusLine.className = `page status-line ${this.#status?.tone === 'bad' ? 'error' : this.#status?.tone === 'ok' ? 'ok' : ''}`;
       if (this.#statusLine.textContent !== (this.#status?.text ?? '')) this.#statusLine.textContent = this.#status?.text ?? '';
@@ -39865,7 +39950,7 @@ export function dollars(cents: number): string {
 
 ### tests/e2e/perf.spec.ts
 
-Paths: `tests/e2e/perf.spec.ts`. SHA-256 `be6299bd3b1db68120698da66e94ad95d14f403df268eeeae2e6c9bf7f42ff31`, 2912 bytes.
+Paths: `tests/e2e/perf.spec.ts`. SHA-256 `6de3cbc22b19a8e855e69d63f71bcb8685b99bac5d3b161461cf51f5bd3f6d45`, 3685 bytes.
 
 ```ts
 // RQ-26 (MPES §14, §10.3): every performance budget, measured in Chromium on the reference profile (4x CPU
@@ -39875,7 +39960,7 @@ Paths: `tests/e2e/perf.spec.ts`. SHA-256 `be6299bd3b1db68120698da66e94ad95d14f40
 // painted result, nearest-rank p95 of at least 30 samples) are tests/perf/, shared with `npm run perf:ref`, which
 // measures them on the reference GPU; here the runner's software renderer stands in for it (withGpu).
 import { expect, test, type TestInfo } from '@playwright/test';
-import { MIN_SAMPLES } from '../perf/measure.ts';
+import { MIN_SAMPLES, inputToPaint } from '../perf/measure.ts';
 import { Lab, commands, model, startUp, stills, type Measured } from '../perf/scenarios.ts';
 import { withGpu } from './helpers.ts';
 
@@ -39920,6 +40005,16 @@ test('stills showcase (MPES §14, §10.3)', async ({ browser }, info) => {
   expect(v.angleChangeMs).toBeLessThanOrEqual(50);
   expect(v.turntableStepMaxMs).toBeLessThanOrEqual(50);
   expect(v.studentMemoryMB).toBeLessThanOrEqual(400);
+});
+
+// The protocol itself (Codex G3 review): a click timed to the next paint must include the command, however late the
+// button is released; before the fix a 200 ms press measured 33 ms, the command never inside the timing.
+test('a command timing includes the command, even when the button is released late', async ({ page }) => {
+  await page.setContent('<button id="b">Bid</button><output id="o"></output>');
+  await page.evaluate(() => document.querySelector('#b')!.addEventListener('click', () => { document.querySelector('#o')!.textContent = 'done'; }));
+  const ms = await inputToPaint(page, () => page.click('#b', { delay: 200 }), { kind: 'paint' });
+  await expect(page.locator('#o')).toHaveText('done');
+  expect(ms).toBeGreaterThanOrEqual(200);
 });
 ```
 
@@ -40395,13 +40490,14 @@ export async function studentRecord(page: Page, cardId: string, paidDollars: num
 
 ### tests/e2e/showcase.spec.ts
 
-Paths: `tests/e2e/showcase.spec.ts`. SHA-256 `9fb73875cf006f6802f5feab55ca9c2ea3d4b47604f2064fdfa5e985a4182753`, 23896 bytes.
+Paths: `tests/e2e/showcase.spec.ts`. SHA-256 `86dfd8557c8a82273f7fac420dfcd4e17b877419b3c591b185bc2f0fdee4e542`, 29088 bytes.
 
 ```ts
 // War-room HUD and vehicle showcase (MPES §7.1, §10, §11): the default look of every view. The live lot shows the
 // card's photoreal render; the student tracker shows the team's vehicle with its real purchases, as a slowly turning
 // 3D model where WebGL works and as stacked still renders where it does not.
 import { expect, test } from '@playwright/test';
+import sharp from 'sharp';
 import { collectConsoleErrors, expectAccessible, gameUrl, guardNetwork, withGpu, withoutWebgl } from './helpers.ts';
 import { confirmDialog, instructorSetup, studentJoin } from './roles.ts';
 
@@ -40412,6 +40508,26 @@ async function record(page: import('@playwright/test').Page, round: number, lot:
   await page.click('#load-card');
   await page.fill('#paid', String(paid));
   await page.click('#record-win');
+}
+
+/**
+ * The vehicle's median luminance contrast with its stage, from a screenshot (WCAG 1.4.11 asks 3:1 of a graphic that
+ * carries meaning): the background is the brightest corner, the vehicle every pixel at least 2.5 times as bright.
+ * A dim laptop panel scales both alike, so the ratio is what survives it (G3 panel safety).
+ */
+/** Lowest still contrast allowed until G4 (see the every-vehicle test). */
+const STILLS_CONTRAST_FLOOR = 2.1;
+
+async function vehicleContrast(shot: Buffer): Promise<number> {
+  const { data, info } = await sharp(shot).removeAlpha().raw().toBuffer({ resolveWithObject: true });
+  const linear = (c: number) => (c /= 255) <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+  const at = (i: number) => 0.2126 * linear(data[i]!) + 0.7152 * linear(data[i + 1]!) + 0.0722 * linear(data[i + 2]!);
+  const { width: w, height: h } = info;
+  const background = Math.max(...[[4, 4], [w - 5, 4], [4, h - 5], [w - 5, h - 5]].map(([x, y]) => at((y! * w + x!) * 3)));
+  const vehicle: number[] = [];
+  for (let i = 0; i < data.length; i += 3) { const l = at(i); if (l > background * 2.5) vehicle.push(l); }
+  vehicle.sort((a, b) => a - b);
+  return (vehicle[vehicle.length >> 1]! + 0.05) / (background + 0.05);
 }
 
 async function trackerFor(browser: import('@playwright/test').Browser, mission: string) {
@@ -40524,6 +40640,30 @@ for (const viewport of [{ width: 1280, height: 720 }, { width: 360, height: 740 
   });
 }
 
+// G3 touchpad and touch safety (MPES §10.2): the page scrolls past the stage, by wheel, touchpad or finger; only a drag turns it.
+test('3D showcase never traps the page scroll: wheel and vertical swipes scroll the page, a drag turns the vehicle', async ({ browser }) => {
+  const { sp } = await trackerFor(browser, 'RECOVERY');
+  await sp.setViewportSize({ width: 360, height: 740 });
+  const showcase = sp.locator('#showcase'), stage = showcase.locator('[role="img"]'), canvas = stage.locator('canvas');
+  await expect(stage).toHaveAttribute('data-ready', 'true', { timeout: 30_000 });
+  await showcase.getByRole('button', { name: 'Pause turning', exact: true }).click();
+  await canvas.scrollIntoViewIfNeeded();
+  expect(await canvas.evaluate(c => getComputedStyle(c).touchAction), 'a vertical swipe on the stage scrolls the page').toBe('pan-y');
+  const box = (await canvas.boundingBox())!, zoom = await stage.getAttribute('data-zoom');
+  await sp.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+  // Towards whichever end of the page has room.
+  const top = await sp.evaluate(() => scrollY), up = top > 0;
+  await sp.mouse.wheel(0, up ? -200 : 200);
+  await expect.poll(async () => Math.abs(await sp.evaluate(() => scrollY) - top), 'a wheel or two-finger touchpad scroll over the stage scrolls the page').toBeGreaterThan(50);
+  expect(await stage.getAttribute('data-zoom'), 'the wheel never zooms').toBe(zoom);
+  const after = (await canvas.boundingBox())!, azimuth = await stage.getAttribute('data-azimuth');
+  await sp.mouse.move(after.x + after.width * 0.3, after.y + after.height / 2);
+  await sp.mouse.down();
+  await sp.mouse.move(after.x + after.width * 0.7, after.y + after.height / 2, { steps: 8 });
+  await sp.mouse.up();
+  await expect(stage).not.toHaveAttribute('data-azimuth', azimuth ?? '');
+});
+
 // G3 (MPES §10.3): a driver reset, a GPU switch or sleep loses the graphics context; the stage must come back by itself.
 test('3D showcase recovers a lost graphics context: it stops drawing, then draws the next purchase once restored', async ({ browser }) => {
   const { sp } = await trackerFor(browser, 'RECOVERY');
@@ -40541,7 +40681,23 @@ test('3D showcase recovers a lost graphics context: it stops drawing, then draws
   await expect(stage).not.toHaveAttribute('data-drawn', 'ACC-F');
   await sp.evaluate(() => (window as unknown as { seaLose: WEBGL_lose_context }).seaLose.restoreContext());
   await expect(stage).toHaveAttribute('data-drawn', 'ACC-F', { timeout: 30_000 });
+  // Again, as Firefox on a software renderer did in CI run 38577929333: a restore announced while the context is still
+  // lost, then the real restore without a word. The stage must not take the announcement for a context, nor miss the return.
+  await sp.evaluate(() => {
+    const canvas = document.querySelector<HTMLCanvasElement>('#showcase canvas')!;
+    (window as unknown as { seaLose: WEBGL_lose_context }).seaLose.loseContext();
+    canvas.dispatchEvent(new Event('webglcontextrestored'));
+  });
   await record(sp, 2, 7, 'ACC-E', 600000);
+  await expect(stage).toHaveAttribute('data-layers', 'ACC-E');
+  await sp.waitForTimeout(1000);
+  await expect(stage, 'nothing is drawn on a context still lost').toHaveAttribute('data-drawn', 'ACC-F');
+  await sp.evaluate(() => {
+    const canvas = document.querySelector<HTMLCanvasElement>('#showcase canvas')!;
+    // Silenced before the stage hears it: window listeners in the capture phase run before the canvas's own.
+    window.addEventListener('webglcontextrestored', event => { if (event.target === canvas && event.isTrusted) event.stopImmediatePropagation(); }, { capture: true, once: true });
+    (window as unknown as { seaLose: WEBGL_lose_context }).seaLose.restoreContext();
+  });
   await expect(stage).toHaveAttribute('data-drawn', 'ACC-E', { timeout: 30_000 });
   expect(errors).toEqual([]);
 });
@@ -40724,21 +40880,41 @@ test('stills fallback decodes each layer once: purchases, angle changes and turn
     'background decodes run one at a time').toBe(1);
 });
 
-test('every vehicle has its showcase, in 3D and in stills, and every lot its card render', async ({ page, browser }) => {
+// Every vehicle has its showcase in 3D and in stills, and (G3 panel safety) on a dim laptop panel it still stands out
+// from its stage in both. One test a vehicle: six in one test outran its time on a loaded CI runner (run 38577929333).
+for (const mission of ['COMBAT', 'RECCE', 'TROOP', 'COMMAND', 'RECOVERY', 'MINE']) {
+  test(`${mission} vehicle has its showcase in 3D and in stills, and stands out from its stage on a dim panel`, async ({ browser }) => {
+    const join = async (page: import('@playwright/test').Page) => {
+      guardNetwork(page);
+      await page.goto(gameUrl('?role=student&lang=en'));
+      await studentJoin(page, 'SEA3-T2-0123456789ABCDEF', 1, mission);
+      await page.check('#plan-confirm');
+      await page.click('#student-start-auction');
+      await confirmDialog(page);
+    };
+    const gpuContext = await browser.newContext(), gpu = await gpuContext.newPage();
+    await withGpu(gpu);
+    await join(gpu);
+    const model = gpu.locator('#showcase [role="img"]');
+    await expect(model).toHaveAttribute('data-ready', 'true', { timeout: 30_000 });
+    await gpu.getByRole('button', { name: 'Pause turning', exact: true }).click();
+    expect(await vehicleContrast(await model.screenshot()), '3D').toBeGreaterThanOrEqual(3);
+    await gpuContext.close();
+    const flatContext = await browser.newContext(), flat = await flatContext.newPage();
+    await withoutWebgl(flat);
+    await join(flat);
+    const base = flat.locator('#showcase img[data-layer="base"]');
+    await expect(base).toHaveCount(1);
+    await expect.poll(() => base.evaluate(i => (i as HTMLImageElement).complete && (i as HTMLImageElement).naturalWidth > 0)).toBe(true);
+    // The Cycles stills are darker than the real-time model (2.11 to 2.14 on 2026-10-14): held there until the G4
+    // re-render lifts them to 3 (MPES §10.5). This floor may only rise.
+    expect(await vehicleContrast(await flat.locator('#showcase .showcase-stage').first().screenshot()), 'stills').toBeGreaterThanOrEqual(STILLS_CONTRAST_FLOOR);
+    await flatContext.close();
+  });
+}
+
+test('a software renderer gets the stills, and every lot its card render', async ({ page }) => {
   guardNetwork(page);
-  for (const mission of ['COMBAT', 'RECCE', 'TROOP', 'COMMAND', 'RECOVERY', 'MINE']) {
-    const context = await browser.newContext();
-    const sp = await context.newPage();
-    guardNetwork(sp);
-    await withGpu(sp);
-    await sp.goto(gameUrl('?role=student&lang=en'));
-    await studentJoin(sp, 'SEA3-T2-0123456789ABCDEF', 1, mission);
-    await sp.check('#plan-confirm');
-    await sp.click('#student-start-auction');
-    await confirmDialog(sp);
-    await expect(sp.locator('#showcase [role="img"]'), mission).toHaveAttribute('data-ready', 'true', { timeout: 30_000 });
-    await context.close();
-  }
   // A software WebGL renderer (no GPU) gets the still renders, as a browser without WebGL does.
   await page.goto(gameUrl('?role=student&lang=en'));
   await studentJoin(page, 'SEA3-T2-0123456789ABCDEF', 1, 'COMBAT');
@@ -40751,17 +40927,6 @@ test('every vehicle has its showcase, in 3D and in stills, and every lot its car
     return !gl || /swiftshader|llvmpipe|basic render|software/i.test(String(gl.getParameter(info ? info.UNMASKED_RENDERER_WEBGL : gl.RENDERER)));
   });
   if (software) await expect(page.locator('#showcase [role="img"]')).toHaveAttribute('data-mode', 'stills');
-  await withoutWebgl(page);
-  for (const mission of ['COMBAT', 'RECCE', 'TROOP', 'COMMAND', 'RECOVERY', 'MINE']) {
-    await page.goto(gameUrl('?role=student&lang=en'));
-    await page.evaluate(() => sessionStorage.clear());
-    await page.reload();
-    await studentJoin(page, 'SEA3-T2-0123456789ABCDEF', 1, mission);
-    await page.check('#plan-confirm');
-    await page.click('#student-start-auction');
-    await confirmDialog(page);
-    await expect(page.locator('#showcase img[data-layer="base"]'), mission).toHaveCount(1);
-  }
   // Each card loads in a lot of its own category (lots 1-8: CAP, MOB, FP, PRO, COM, SA, ACC, SE).
   for (const [lot, card] of ['CAP-A', 'MOB-G', 'FP-C', 'PRO-E', 'COM-D', 'SA-F', 'ACC-B', 'SE-U'].entries()) {
     await page.selectOption('#pos-lot', String(lot + 1));
@@ -41690,7 +41855,7 @@ export default function teardown(): void {
 
 ### tests/perf/measure.ts
 
-Paths: `tests/perf/measure.ts`. SHA-256 `4611c0b9009e159e59a40806ec95c0765b47da889af1d1d4f42e1818d1e93b1f`, 9846 bytes.
+Paths: `tests/perf/measure.ts`. SHA-256 `bb01cf756596a8af6ba2c8acf091c19b68960fa4163ba64c40f39be88d53628d`, 10658 bytes.
 
 ```ts
 // The MPES §14 measurement protocol, shared by the CI gate (tests/e2e/perf.spec.ts) and the reference-laptop proxy
@@ -41730,7 +41895,9 @@ export async function throttle(page: Page, rate = THROTTLE): Promise<void> {
 
 /** What the result of an input looks like once it is on screen. */
 export type Shown =
-  /** The handler has run; the next painted frame shows it. */
+  /** The click has been handled (every listener on its path, the page's own delegation included); the next painted
+   *  frame shows it. Waiting for the click, not only the press, keeps a slow release from ending the timing on a frame
+   *  painted before the command ran (Codex G3 review). */
   | { kind: 'paint' }
   /** Images matching `selector` exist and are all decoded; then painted. */
   | { kind: 'image'; selector: string }
@@ -41749,6 +41916,8 @@ export async function inputToPaint(page: Page, act: () => Promise<unknown>, show
     (globalThis as unknown as { __seaInput: Probe }).__seaInput = probe;
     const first = (event: Event) => { if (probe.start === null) probe.start = event.timeStamp; };
     for (const type of ['pointerdown', 'keydown', 'click']) addEventListener(type, first, { capture: true, once: true });
+    // On the window, bubbling: the last listener a click reaches, so every handler of the command has run.
+    const clicked = shown.kind !== 'paint' ? null : new Promise<void>(resolve => addEventListener('click', () => resolve(), { once: true }));
     // A message posted during a frame runs after that frame is painted; outside a frame, the next frame comes first.
     const afterPaint = (inFrame: boolean) => new Promise<number>(resolve => {
       const post = () => { const channel = new MessageChannel(); channel.port1.onmessage = () => resolve(performance.now()); channel.port2.postMessage(0); };
@@ -41776,13 +41945,14 @@ export async function inputToPaint(page: Page, act: () => Promise<unknown>, show
         while (!images.length) { await new Promise(requestAnimationFrame); images = [...document.querySelectorAll<HTMLImageElement>(shown.selector)]; }
         await Promise.all(images.map(img => img.decode()));
       }
+      if (clicked) await clicked;
       return afterPaint(false);
     })());
   }, { shown, timeout });
   await act();
   return page.evaluate(async () => {
-    const probe = (globalThis as unknown as { __seaInput: { start: number | null; done: Promise<number> } }).__seaInput;
-    const end = await probe.done;
+    const probe = (globalThis as unknown as { __seaInput: { start: number | null; done: Promise<number>; end?: number } }).__seaInput;
+    const end = probe.end = await probe.done;
     return end - probe.start!;
   });
 }
@@ -41832,8 +42002,10 @@ export async function processMB(browser: Browser): Promise<{ renderer: number; g
       const sizes = processInfo.filter(p => p.type === type).map(p => privateBytes(p.id));
       return sizes.length && sizes.every(size => size !== null) ? (sizes as number[]).reduce((a, b) => a + b, 0) / MB : null;
     };
-    const renderer = sum('renderer'), gpu = sum('GPU') ?? 0;
-    return renderer === null ? null : { renderer: round(renderer), gpu: round(gpu) };
+    // No GPU process at all (software drawing in the renderer) is zero; a GPU process that cannot be read is unmeasured,
+    // never zero, or a renderer-only total would pass the memory gates (Codex G3 review).
+    const renderer = sum('renderer'), gpu = processInfo.some(p => p.type === 'GPU') ? sum('GPU') : 0;
+    return renderer === null || gpu === null ? null : { renderer: round(renderer), gpu: round(gpu) };
   } finally {
     await cdp.detach();
   }
@@ -41870,7 +42042,7 @@ export async function loadPurchase(page: Page, [round_, lot, card, paid]: typeof
 
 ### tests/perf/scenarios.ts
 
-Paths: `tests/perf/scenarios.ts`. SHA-256 `6aeec6bef848f2038c72f4c7c0fb46dfd8a46f41e9a07264f07896e4f6d16047`, 17148 bytes.
+Paths: `tests/perf/scenarios.ts`. SHA-256 `8a687c6128aeaf08aaefcdc38314e75378760004d678082bcff389378cb95740`, 23564 bytes.
 
 ```ts
 // The MPES §14 scenarios, run the same way by the CI gate (tests/e2e/perf.spec.ts, software graphics) and by the
@@ -41906,11 +42078,12 @@ function installVitals(): void {
 }
 
 /**
- * GPU time of each showcase draw, where the browser offers a GPU timer (EXT_disjoint_timer_query_webgl2): a query runs
- * from one draw's end to the next, and the showcase is the only WebGL user on the page, so each result is one draw.
+ * GPU time of each showcase draw, where the browser offers a GPU timer (EXT_disjoint_timer_query_webgl2): a query
+ * brackets each draw, from the stage's `sea-drawing` to its `sea-draw`, so the wait between paced draws is never counted
+ * (Codex G3 review). Results arrive a few frames late; each is kept with the time its draw began.
  */
 function installGpuTimer(): void {
-  const times: number[] = [];
+  const times: { at: number; ms: number }[] = [];
   const sea = { times, available: false };
   (globalThis as unknown as { __seaGpu: typeof sea }).__seaGpu = sea;
   const original = HTMLCanvasElement.prototype.getContext;
@@ -41921,17 +42094,19 @@ function installGpuTimer(): void {
     const ext = gl.getExtension('EXT_disjoint_timer_query_webgl2') as { TIME_ELAPSED_EXT: number; GPU_DISJOINT_EXT: number } | null;
     if (!ext) return gl;
     sea.available = true;
-    const pending: WebGLQuery[] = [];
-    let open: WebGLQuery | null = null;
+    const pending: { query: WebGLQuery; at: number }[] = [];
+    let open: { query: WebGLQuery; at: number } | null = null;
+    this.addEventListener('sea-drawing', () => {
+      const query = open ? null : gl.createQuery();
+      if (query) { gl.beginQuery(ext.TIME_ELAPSED_EXT, query); open = { query, at: performance.now() }; }
+    });
     this.addEventListener('sea-draw', () => {
-      if (open) { gl.endQuery(ext.TIME_ELAPSED_EXT); pending.push(open); }
-      while (pending.length && gl.getQueryParameter(pending[0]!, gl.QUERY_RESULT_AVAILABLE)) {
-        const query = pending.shift()!;
-        if (!gl.getParameter(ext.GPU_DISJOINT_EXT)) times.push(gl.getQueryParameter(query, gl.QUERY_RESULT) / 1e6);
+      if (open) { gl.endQuery(ext.TIME_ELAPSED_EXT); pending.push(open); open = null; }
+      while (pending.length && gl.getQueryParameter(pending[0]!.query, gl.QUERY_RESULT_AVAILABLE)) {
+        const { query, at } = pending.shift()!;
+        if (!gl.getParameter(ext.GPU_DISJOINT_EXT)) times.push({ at, ms: gl.getQueryParameter(query, gl.QUERY_RESULT) / 1e6 });
         gl.deleteQuery(query);
       }
-      open = gl.createQuery();
-      if (open) gl.beginQuery(ext.TIME_ELAPSED_EXT, open);
     });
     return gl;
   } as typeof original;
@@ -42005,6 +42180,10 @@ async function machine(lab: Lab, prefix: string, out: Measured): Promise<void> {
   if (!mb) out.notes[`${prefix}ProcessMB`] = 'the operating system did not report the process memory';
 }
 
+/** The largest valid instructor save: 210 ledger entries, all 70 lots, 3 teams, results to reconcile. */
+const MAX_LEDGER = 'tests/fixtures/legacy/instructor-max-ledger.json';
+const MAX_LEDGER_TEAMS = (JSON.parse(readFileSync(MAX_LEDGER, 'utf8')) as { state: { teams: unknown[] } }).state.teams.length;
+
 export const TEN_TEAMS = { teams: 10, reveal: 'JIT' as const, timed: true, missions: ['TROOP', 'RECCE', 'COMBAT', 'COMMAND', 'RECOVERY', 'MINE', 'TROOP', 'RECCE', 'COMBAT', 'COMMAND'] };
 
 /** Size, the chooser's first painted frame and LCP, and the largest valid instructor save: start time and memory. */
@@ -42028,8 +42207,8 @@ export async function startUp(lab: Lab, after?: (page: Page, view: string) => Pr
   await after?.(chooser, 'Chooser');
   await lab.close(chooser);
 
-  // 210 ledger entries, all 70 lots, 10 teams.
-  const saved = JSON.parse(readFileSync('tests/fixtures/legacy/instructor-max-ledger.json', 'utf8')).state;
+  // 210 ledger entries, all 70 lots, 3 teams.
+  const saved = JSON.parse(readFileSync(MAX_LEDGER, 'utf8')).state;
   const big = await lab.open(page => page.addInitScript(raw => { if (!sessionStorage.getItem('SEA_INSTRUCTOR_V300')) sessionStorage.setItem('SEA_INSTRUCTOR_V300', raw); }, JSON.stringify(saved)));
   const t1 = Date.now();
   await big.goto(gameUrl('?role=instructor&lang=en'));
@@ -42059,15 +42238,38 @@ export async function commands(lab: Lab): Promise<Measured> {
   out.values.commandP95Ms = round(p95(bids));
   out.values.commandMaxMs = round(Math.max(...bids));
 
-  // No growth across 10 phase cycles: a new session from the menu, setup, practice, planning and a live auction.
+  // No growth across 10 phase cycles, each through every phase: the largest save imported from the menu (results to
+  // reconcile), submissions entered privately, the debrief, the room closed; then a new session from the menu, setup,
+  // practice, planning and a live auction.
   const cycle = async () => {
+    await press(page.locator('#menu-button'));
+    const chooser = page.waitForEvent('filechooser');
+    await page.locator('dialog[open] button[data-value="import"]').click();
+    await (await chooser).setFiles(MAX_LEDGER);
+    await confirmDialog(page);
+    await page.click('#open-submissions');
+    await page.click('#enter-private');
+    for (let id = 1; id <= MAX_LEDGER_TEAMS; id++) {
+      await page.fill(`#profit-${id}`, '1000');
+      await page.locator(`#profit-${id}`).blur();
+      await page.check(`#submitted-${id}`);
+    }
+    await page.click('#close-submissions');
+    await confirmDialog(page);
+    await page.locator('#award').waitFor();
+    await page.click('#close-room');
+    await confirmDialog(page);
+    await page.getByRole('heading', { name: 'Session closed' }).waitFor();
     await press(page.locator('#menu-button'));
     await page.locator('dialog[open] button[data-value="new"]').click();
     await confirmDialog(page);
     await instructorSetup(page, TEN_TEAMS);
     await page.click('#open-bidding');
   };
+  await phasesSeen(page, true);
   await cycle();
+  const seen = await phasesSeen(page, false);
+  if (PHASES.some(phase => !seen.includes(phase))) throw new Error(`the memory cycle missed phases: it saw ${seen.join(', ')}`);
   const before = await memoryMB(page);
   for (let i = 0; i < 10; i++) await cycle();
   out.values.memoryGrowthMB = round(await memoryMB(page) - before);
@@ -42086,14 +42288,16 @@ const MODEL = '#showcase [data-mode="3d"]';
  */
 export async function model(lab: Lab, after?: (page: Page) => Promise<void>): Promise<Measured> {
   const out: Measured = { values: {}, notes: {} };
-  const readies: number[] = [], updates: number[] = [];
+  const readies: number[] = [], updates: number[] = [], phases: Phases[] = [];
   for (let n = 0; ; n++) {
     const page = await lab.open(lab.gpu);
     await beforeTracker(page, gameUrl('?role=student&lang=en'));
     readies.push(await inputToPaint(page, () => page.locator(TRACKER_OK).click(), { kind: 'drawn', selector: MODEL, attribute: 'data-drawn' }));
     for (const purchase of PURCHASES) {
       await loadPurchase(page, purchase);
+      await phasesWatch(page, purchase[2]);
       updates.push(await inputToPaint(page, () => page.click('#record-win'), { kind: 'drawn', selector: MODEL, attribute: 'data-drawn', token: purchase[2] }));
+      phases.push(await phasesRead(page));
     }
     if (n === 0) {
       out.values.modelMemoryMB = Math.round(await memoryMB(page));
@@ -42102,7 +42306,8 @@ export async function model(lab: Lab, after?: (page: Page) => Promise<void>): Pr
     if (updates.length < MIN_SAMPLES) { await lab.close(page); continue; }
 
     await page.locator(MODEL).scrollIntoViewIfNeeded();
-    const turning = await page.evaluate(() => new Promise<{ costs: number[]; gaps: number[] }>(resolve => {
+    const turning = await page.evaluate(() => new Promise<{ costs: number[]; gaps: number[]; from: number; to: number }>(resolve => {
+      const from = performance.now();
       const canvas = document.querySelector('#showcase canvas')!;
       const costs: number[] = [], gaps: number[] = [];
       let last: number | null = null;
@@ -42113,9 +42318,14 @@ export async function model(lab: Lab, after?: (page: Page) => Promise<void>): Pr
         last = now;
       };
       canvas.addEventListener('sea-draw', draw);
-      setTimeout(() => { canvas.removeEventListener('sea-draw', draw); resolve({ costs, gaps }); }, 5000);
+      setTimeout(() => { canvas.removeEventListener('sea-draw', draw); resolve({ costs, gaps, from, to: performance.now() }); }, 5000);
     }));
-    const gpu = await page.evaluate(() => (globalThis as unknown as { __seaGpu: { times: number[]; available: boolean } }).__seaGpu);
+    await page.waitForTimeout(500); // the last draws' GPU results arrive a few frames late
+    // Only the draws of the five seconds of turning: not the purchases' nor the calibration's.
+    const gpu = await page.evaluate(({ from, to }) => {
+      const sea = (globalThis as unknown as { __seaGpu: { times: { at: number; ms: number }[]; available: boolean } }).__seaGpu;
+      return { available: sea.available, times: sea.times.filter(t => t.at >= from && t.at < to).map(t => t.ms) };
+    }, turning);
     out.values.turningDraws = turning.costs.length;
     // The adaptive tier the stage settled on: 0 is full resolution (source/showcase/pace.ts TIERS).
     out.values.modelTier = Number(await page.locator('#showcase canvas').getAttribute('data-tier') ?? 0);
@@ -42133,7 +42343,44 @@ export async function model(lab: Lab, after?: (page: Page) => Promise<void>): Pr
   out.values.modelUpdateSamples = updates.length;
   out.values.modelUpdateP95Ms = round(p95(updates));
   out.values.modelUpdateMaxMs = round(Math.max(...updates));
+  // Where an update's time goes (§14.1 per-draw report): each phase's p95 on its own, so they need not sum to the total.
+  for (const phase of ['handle', 'wait', 'draw', 'paint'] as const) {
+    const times = phases.map(p => p[phase]).filter((t): t is number => t !== null);
+    out.values[`modelUpdate${phase[0]!.toUpperCase()}${phase.slice(1)}P95Ms`] = times.length >= MIN_SAMPLES ? round(p95(times)) : null;
+  }
   return out;
+}
+
+/** One 3D update in phases: input to the purchase shown in `data-layers` (the command handled), then to the start of
+ *  the draw that shows it (waiting for a frame), the draw, and the draw's end to the input-to-paint end (painting). */
+interface Phases { handle: number | null; wait: number | null; draw: number | null; paint: number | null }
+
+/** Watches the next update for `token`, alongside inputToPaint: timestamps only, so it changes nothing it measures. */
+async function phasesWatch(page: Page, token: string): Promise<void> {
+  await page.evaluate(({ selector, token }) => {
+    const t: Record<string, number> = {};
+    (globalThis as unknown as { __seaPhases: Record<string, number> }).__seaPhases = t;
+    addEventListener('pointerdown', e => { t.input ??= e.timeStamp; }, { capture: true, once: true });
+    const has = (name: string) => (document.querySelector(selector)?.getAttribute(name) ?? '').split(' ').includes(token);
+    const observer = new MutationObserver(() => {
+      if (t.layers === undefined && has('data-layers')) t.layers = performance.now();
+      if (t.drawn === undefined && has('data-drawn')) { t.drawn = performance.now(); observer.disconnect(); }
+    });
+    observer.observe(document, { subtree: true, attributes: true, attributeFilter: ['data-layers', 'data-drawn'] });
+    // The canvas may be replaced by the command: listen where the events pass on their way, the document's capture phase.
+    const done = new AbortController();
+    document.addEventListener('sea-drawing', () => { if (t.layers !== undefined && t.drawing === undefined) t.drawing = performance.now(); }, { capture: true, signal: done.signal });
+    document.addEventListener('sea-draw', () => { if (t.drawing !== undefined) { t.draw = performance.now(); done.abort(); } }, { capture: true, signal: done.signal });
+  }, { selector: MODEL, token });
+}
+
+async function phasesRead(page: Page): Promise<Phases> {
+  return page.evaluate(() => {
+    const t = (globalThis as unknown as { __seaPhases: Record<string, number> }).__seaPhases;
+    const end = (globalThis as unknown as { __seaInput: { end?: number } }).__seaInput.end;
+    const span = (a?: number, b?: number) => (a === undefined || b === undefined ? null : b - a);
+    return { handle: span(t.input, t.layers), wait: span(t.layers, t.drawing), draw: span(t.drawing, t.draw), paint: span(t.draw, end) };
+  });
 }
 
 /**
@@ -42174,6 +42421,32 @@ export async function stills(lab: Lab): Promise<Measured> {
   await machine(lab, 'student', out);
   await lab.close(first);
   return out;
+}
+
+/** Every instructor phase, in order; one memory cycle passes through each (Codex G3 review). */
+const PHASES = ['setup', 'practice', 'planning', 'auction', 'build', 'submit', 'debrief', 'closed'];
+
+/**
+ * Starts (`on`) or stops noting each phase the instructor's state is saved in, and returns those noted, in order of
+ * first sight. Off while commands are timed, so the timings carry no extra parse of the saved state.
+ */
+async function phasesSeen(page: Page, on: boolean): Promise<string[]> {
+  return page.evaluate(([key, start]) => {
+    const w = window as unknown as { __seaPhases?: { on: boolean; seen: string[] } };
+    if (!w.__seaPhases) {
+      const watch = w.__seaPhases = { on: false, seen: [] as string[] }, write = Storage.prototype.setItem;
+      Storage.prototype.setItem = function (this: Storage, name: string, value: string) {
+        if (watch.on && name === key) {
+          const phase = (JSON.parse(value) as { phase?: unknown }).phase;
+          if (typeof phase === 'string' && !watch.seen.includes(phase)) watch.seen.push(phase);
+        }
+        write.call(this, name, value);
+      };
+    }
+    if (start) w.__seaPhases.seen = [];
+    w.__seaPhases.on = start;
+    return w.__seaPhases.seen;
+  }, ['SEA_INSTRUCTOR_V300', on] as const);
 }
 ```
 
@@ -45359,5 +45632,5 @@ Keys and the commands that make each kind again:
 
 | Path | Bytes | SHA-256 | Why |
 |---|---:|---|---|
-| `docs/MPES.md` | 176761 | `f07b1f07c9b646008d64c1fa86a0eb62486350a6779a918fc482dae40442c16a` | The specification, a clean-room document of its own (Omni 5.1.1 §333). |
+| `docs/MPES.md` | 178413 | `4dff8c47b317c32de8a697c3988d2ca16b022b4f33c8e38fd5f18a14fff4e7ab` | The specification, a clean-room document of its own (Omni 5.1.1 §333). |
 | `docs/CODEBASE.md` | | | This file. |

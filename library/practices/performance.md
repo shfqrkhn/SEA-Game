@@ -25,7 +25,9 @@ Chromium and Edge forced onto an Intel integrated GPU (`--use-angle=d3d11 --enab
 - Parse only the model shown; decode images lazily and never evict one on screen.
 - Small procedural environment map (e.g. 64 px PMREM) instead of HDR files; one shadow map; extra lights unshadowed.
 - Bake ambient occlusion into vertex colours; avoid image textures where size is tight.
-- Fall back to layered stills when WebGL 2 is missing or the context is lost; recover from context loss.
+- Fall back to layered stills when WebGL 2 is missing or the context is lost; recover from context loss, trusting `isContextLost()` over the events (a browser may announce a restore early, or restore silently).
+- Never write the document root's attributes (`lang`, `data-theme`, title) unless the value changed: even an unchanged write restyles the whole page.
+- Split a slow interaction timing into phases (handled, draw start, draw, paint) before fixing; profile one instance on an unminified build.
 - Own every GPU resource: dispose of geometries, materials, textures and render targets when a view closes (three.js does not free them for you); give shared resources a clear owner or a reference count; cancel loads no longer wanted; test repeated open and close for memory growth.
 - Count GPU memory, not file size: a 200 KB AVIF of 2048 px still takes about 16 MB decoded (more with mipmaps).
 - Measure on a quiet machine. Timing failures under load are evidence to investigate, never a reason to raise budgets.

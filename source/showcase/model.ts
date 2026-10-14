@@ -13,6 +13,7 @@ import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment
 import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
 import { vehicleGlb } from './glb.ts';
 import { distanceAt, extentAt, fitTable, zoomed, type FitTable } from './frame.ts';
+import { premultipliedOutput } from './resolve.ts';
 import { FramePacer, INPUT_HOLD_MS, TIERS, nextTier, startTier } from './pace.ts';
 
 /** Seconds per full turn when the stage turns by itself. */
@@ -22,6 +23,8 @@ const UP = new Vector3(0, 1, 0);
 const OPENING = new Vector3(0.62, 0.32, 0.72).normalize();
 /** How far the player can drag the view up and down (polar angle from straight up). */
 const POLAR_MIN = 0.6, POLAR_MAX = 1.45;
+/** How often a lost graphics context is checked for a return its browser did not announce. */
+const LOST_CHECK_MS = 1000;
 
 let packed: Promise<ArrayBuffer | null> | null = null;
 const libraries = new Map<string, Promise<Group | null>>();
@@ -127,9 +130,11 @@ export class ModelStage {
   /** Where a multisampled tier draws the scene, then resolved to the canvas with tone mapping by #output; none on a
    *  tier without multisampling. The canvas itself has none, so a tier can drop it without a new context. */
   #target: WebGLRenderTarget | null = null;
-  #output = Object.assign(new OutputPass(), { renderToScreen: true });
+  #output = resolvePass();
   #environment: Texture | null = null;
   #lost = false;
+  /** While the context is lost, the check that notices its return (see the constructor). */
+  #watch: ReturnType<typeof setInterval> | undefined;
   /** The player's input anywhere else on the page holds the paced turning draws (input first, MPES §10.3). */
   #input = (event: Event): void => { if (event.target !== this.canvas) this.#pacer.hold(performance.now() + INPUT_HOLD_MS); };
   #visible = true;
@@ -187,6 +192,9 @@ export class ModelStage {
       enableDamping: true, enablePan: false, enableZoom: false, autoRotate: !this.#motion.matches,
       autoRotateSpeed: 60 / TURN_SECONDS, minPolarAngle: POLAR_MIN, maxPolarAngle: POLAR_MAX,
     });
+    // OrbitControls sets touch-action none, which traps a finger swipe over the stage: give vertical swipes back to the
+    // page (the stylesheet's pan-y), so only a sideways drag turns the vehicle (G3 touch safety).
+    this.canvas.style.touchAction = '';
     this.#controls.addEventListener('change', () => this.#invalidate());
     this.#controls.addEventListener('start', () => this.#loop());
     this.#motion.addEventListener('change', () => { this.turning = !this.#motion.matches; });
@@ -198,8 +206,23 @@ export class ModelStage {
     for (const type of ['pointerdown', 'keydown', 'input']) document.addEventListener(type, this.#input, { capture: true, passive: true });
     // A lost graphics context (driver reset, GPU switch, sleep) stops the stage; three.js rebuilds the context when it is
     // restored, but what was drawn into textures is gone: the environment and the shadow are made again, then one draw.
-    this.canvas.addEventListener('webglcontextlost', () => { this.#lost = true; this.#stop(); });
+    // The context, not the events, says whether it is back: Firefox on a software renderer announced a restore while the
+    // context was still lost, then restored it without a word (G3, CI run 38577929333). So an early announcement is
+    // stopped before three.js rebuilds onto a dead context, and while lost a slow check notices a silent return and
+    // announces it, which rebuilds three.js and the stage alike.
+    this.canvas.addEventListener('webglcontextlost', () => {
+      this.#lost = true;
+      this.#stop();
+      clearInterval(this.#watch);
+      this.#watch = setInterval(() => {
+        if (!this.#renderer.getContext().isContextLost()) this.canvas.dispatchEvent(new Event('webglcontextrestored'));
+      }, LOST_CHECK_MS);
+    });
+    this.canvas.addEventListener('webglcontextrestored', event => {
+      if (this.#renderer.getContext().isContextLost()) { event.stopImmediatePropagation(); return; }
+    }, { capture: true });
     this.canvas.addEventListener('webglcontextrestored', () => {
+      clearInterval(this.#watch);
       this.#lost = false;
       this.#environ();
       this.#renderer.shadowMap.needsUpdate = true;
@@ -423,6 +446,8 @@ export class ModelStage {
     this.#dirty = false;
     this.#urgent = false;
     this.#distance();
+    // Observable without reaching into the stage: the reference-laptop run brackets each draw's GPU time by these (§14.1).
+    this.canvas.dispatchEvent(new Event('sea-drawing'));
     this.#render();
     this.#report();
     this.onDraw?.();
@@ -475,6 +500,7 @@ export class ModelStage {
 
   dispose(): void {
     cancelAnimationFrame(this.#frame);
+    clearInterval(this.#watch);
     this.#observer.disconnect();
     this.#resize.disconnect();
     for (const type of ['pointerdown', 'keydown', 'input']) document.removeEventListener(type, this.#input, { capture: true });
@@ -484,4 +510,11 @@ export class ModelStage {
     this.#environment?.dispose();
     this.#renderer.dispose();
   }
+}
+
+/** The resolve of a multisampled tier to the canvas: tone mapping and sRGB, aware of transparent edges (resolve.ts). */
+function resolvePass(): OutputPass {
+  const pass = Object.assign(new OutputPass(), { renderToScreen: true });
+  pass.material.fragmentShader = premultipliedOutput(pass.material.fragmentShader);
+  return pass;
 }

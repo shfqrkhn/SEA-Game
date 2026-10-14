@@ -15,5 +15,13 @@ export default defineConfig({
   retries: 0,
   reporter: [['line']],
   timeout: 180_000,
-  use: { ...devices['Desktop Chrome'], actionTimeout: 60_000 },
+  // The 3D shots show what a laptop's integrated GPU draws (the full-quality tier), not the software renderer's cheapest
+  // tier: the browser runs on this PC's Intel GPU with npm run perf:ref's flags (G3).
+  use: {
+    ...devices['Desktop Chrome'], channel: 'chromium', actionTimeout: 60_000,
+    launchOptions: {
+      args: ['--use-angle=d3d11', '--enable-gpu', '--ignore-gpu-blocklist', '--force_low_power_gpu'],
+      ignoreDefaultArgs: ['--disable-gpu', '--disable-gpu-compositing', '--disable-software-rasterizer'],
+    },
+  },
 });
