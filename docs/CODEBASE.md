@@ -1,6 +1,6 @@
 # SEA Game codebase
 
-Version 0.5.2.0. Written by `npm run codebase` (scripts/codebase.ts); do not edit by hand. It holds all 1048 tracked files of the repository: 192 text files as 189 unique contents, 854 binary files by hash with the command that regenerates them, and 2 documents kept separately. With docs/MPES.md it is enough to rebuild the project.
+Version 0.6.0.0. Written by `npm run codebase` (scripts/codebase.ts); do not edit by hand. It holds all 1048 tracked files of the repository: 192 text files as 189 unique contents, 854 binary files by hash with the command that regenerates them, and 2 documents kept separately. With docs/MPES.md it is enough to rebuild the project.
 
 ## How to rebuild the tree
 
@@ -203,7 +203,7 @@ THE SOFTWARE.
 
 ### README.md
 
-Paths: `README.md`. SHA-256 `5cacff2748ce16358bcd2daf20a366ea5e05ed947a834d9dac4a6959b4f0aa57`, 3489 bytes.
+Paths: `README.md`. SHA-256 `0397bce8e01fd8b68658d0cbca82429de0ed3d81ab3e1b600744b6a1fb3a4164`, 3640 bytes.
 
 ````markdown
 # SEA Game: Systems Engineering Awareness
@@ -211,7 +211,7 @@ Paths: `README.md`. SHA-256 `5cacff2748ce16358bcd2daf20a366ea5e05ed947a834d9dac4
 A bilingual (English/French) classroom auction game. Teams plan a vehicle for a mission, bid for components in a facilitator-led auction, reconcile their build and submit a value-for-money bid. The whole game is one offline HTML file with every image embedded.
 
 - **Play:** open the game file (`SEA-Game-<version>.html` in a release package, or `dist/index.html` after a build) in a current Chrome, Edge or Firefox on **Windows 11** (the only supported platform). No installation, no network, no account.
-- **Status:** 0.5.2.0 beta (owner FIX 4: showcase zoom, full-kit framing, sign controls, phone tables), on tag `v0.5.1.0` (G2, owner GO 2026-10-12: owner fixes, six-vehicle chooser, muzzle sightline check, component legibility rules, review gallery, code-free specification, codebase file, backup preparation, creator credit, reusable library); not yet release-qualified. Next: G3 (proxy and runtime, 0.6.0.0). The rollback is tag `v4.1.0-dev.1`.
+- **Status:** 0.6.0.0 beta in progress (G3 proxy and runtime: adaptive quality tiers, timed starting tier, context-loss recovery, the `npm run perf:ref` protocol), after 0.5.2.0 (owner FIX 4: showcase zoom, full-kit framing, sign controls, phone tables), on tag `v0.5.1.0` (G2, owner GO 2026-10-12: owner fixes, six-vehicle chooser, muzzle sightline check, component legibility rules, review gallery, code-free specification, codebase file, backup preparation, creator credit, reusable library); not yet release-qualified. Next: G3 (proxy and runtime, 0.6.0.0). The rollback is tag `v4.1.0-dev.1`.
 - **Created by:** Shafiqur Rahman Khan, with AI assistance.
 - **Licence:** MIT, see [LICENSE](LICENSE).
 - **Specification:** [docs/MPES.md](docs/MPES.md). **Current state and next steps:** [docs/HANDOVER.md](docs/HANDOVER.md). **Working rules:** [AGENTS.md](AGENTS.md).
@@ -27041,16 +27041,16 @@ Exportez une sauvegarde par **Menu → Exporter une sauvegarde** après la confi
 
 ### docs/HANDOVER.md
 
-Paths: `docs/HANDOVER.md`. SHA-256 `6ffe4af79e4253be0271f6c52d79b2f1116f9aa070eef85248ac3abc27eb89f1`, 11650 bytes.
+Paths: `docs/HANDOVER.md`. SHA-256 `36f8b1230cf021c7cb25dcb45c12dd145dff8f78cee159778e6eae7a6fe7c297`, 12002 bytes.
 
 ```markdown
 # Handover
 
-Updated 2026-10-13 (America/Toronto). Specification: [MPES](MPES.md) 4.4.3. Evidence: [verification/0.5.2.0.md](verification/0.5.2.0.md), [verification/0.5.1.0.md](verification/0.5.1.0.md), [verification/0.5.0.0.md](verification/0.5.0.0.md), [verification/spike-visual.md](verification/spike-visual.md).
+Updated 2026-10-14 (America/Toronto). Specification: [MPES](MPES.md) 4.5.0. Evidence: [verification/0.6.0.0.md](verification/0.6.0.0.md) (in progress), [verification/0.5.2.0.md](verification/0.5.2.0.md), [verification/0.5.1.0.md](verification/0.5.1.0.md), [verification/0.5.0.0.md](verification/0.5.0.0.md), [verification/spike-visual.md](verification/spike-visual.md).
 
 ## 1. Version and milestone
 
-Version 0.5.2.0 beta (four-part MAJOR.MINOR.PATCH.BUILD, MPES §19.2; 1.0.0.0 only once out of beta: MPES §19.2 exit criteria, including every owner gate). M0–M4, V1, V2 (goal G1, tag `v0.5.0.0`) and G2 (owner fixes and the docs regime, tag `v0.5.1.0`, owner GO 2026-10-12) are complete. 0.5.2.0 (tag `v0.5.2.0` on `c2932eb`, owner GO 2026-10-13) is owner FIX 4 on G2: showcase zoom, framing of the full kit at every turn and height, sign controls, and phone tables as labelled cards (`docs/verification/0.5.2.0.md`). The rollback is tag `v4.1.0-dev.1`.
+Version 0.5.2.0 beta (four-part MAJOR.MINOR.PATCH.BUILD, MPES §19.2; 1.0.0.0 only once out of beta: MPES §19.2 exit criteria, including every owner gate). M0–M4, V1, V2 (goal G1, tag `v0.5.0.0`) and G2 (owner fixes and the docs regime, tag `v0.5.1.0`, owner GO 2026-10-12) are complete. 0.5.2.0 (tag `v0.5.2.0` on `c2932eb`, owner GO 2026-10-13) is owner FIX 4 on G2: showcase zoom, framing of the full kit at every turn and height, sign controls, and phone tables as labelled cards (`docs/verification/0.5.2.0.md`). G3 (0.6.0.0, branch `g3/proxy-runtime`, draft PR #27) is in progress. The rollback is tag `v4.1.0-dev.1`.
 
 **Plan to beta exit (MPES §17), one PR and one tag per goal:**
 
@@ -27105,7 +27105,7 @@ Owner FIX 1 (stills and fit), FIX 2 (one click to close a round nobody can win i
 
 ## 5. Next action
 
-**Agent:** start G3 (proxy + runtime, release 0.6.0.0): branch from `main` at `v0.5.2.0`; first step `npm run perf:ref` on the Intel UHD 770 proxy, measuring a baseline before any change.
+**Agent:** G3 on `g3/proxy-runtime` (PR #27): get two consecutive green CI runs on one head with the 3D update within 100 ms (red run 38571533524 diagnosed in `docs/verification/0.6.0.0.md`: tiers now drop multisampling and the starting tier is timed); `npm run perf:ref` 12-KPI baseline in a quiet slot (MPES §14.1); touchpad and panel safety; Codex review of the G3 diff; gallery and owner GO or FIX.
 **Owner:** `docs/owner/art-review.md` (5 minutes, reply GO or FIX).
 
 ## 6. Rollback
@@ -28707,18 +28707,18 @@ a { color: var(--accent); }
 
 ### package-lock.json
 
-Paths: `package-lock.json`. SHA-256 `2b46683776f9ee6c6d1b153558b1fcccbb68209ebf02f21104a43564265bd206`, 134039 bytes.
+Paths: `package-lock.json`. SHA-256 `16d1847b103895666a8194a0826854ef72b8225dcaa7b044265691d969494ac6`, 134039 bytes.
 
 ```json
 {
   "name": "sea-game",
-  "version": "0.5.2",
+  "version": "0.6.0",
   "lockfileVersion": 3,
   "requires": true,
   "packages": {
     "": {
       "name": "sea-game",
-      "version": "0.5.2",
+      "version": "0.6.0",
       "license": "MIT",
       "dependencies": {
         "three": "0.186.1"
@@ -32756,13 +32756,13 @@ Paths: `package-lock.json`. SHA-256 `2b46683776f9ee6c6d1b153558b1fcccbb68209ebf0
 
 ### package.json
 
-Paths: `package.json`. SHA-256 `ec494d090ff7f5a6ba08432e6355dfbb4e7a1684b37f7715f01b46edd2d5d18a`, 1561 bytes.
+Paths: `package.json`. SHA-256 `ac63da86526a1197fb4bf0fd93b5c0c130bb2c872a836f8aa0436c904fe00bf2`, 1561 bytes.
 
 ```json
 {
   "name": "sea-game",
-  "version": "0.5.2",
-  "gameVersion": "0.5.2.0",
+  "version": "0.6.0",
+  "gameVersion": "0.6.0.0",
   "private": true,
   "description": "Systems Engineering Awareness: offline single-file classroom auction game (EN/FR)",
   "license": "MIT",
@@ -45359,5 +45359,5 @@ Keys and the commands that make each kind again:
 
 | Path | Bytes | SHA-256 | Why |
 |---|---:|---|---|
-| `docs/MPES.md` | 171578 | `d064b2f85bbae185ff56af1d5b25ec463f4038d3d003cc7d4e5a8a3fc5269fa4` | The specification, a clean-room document of its own (Omni 5.1.1 §333). |
+| `docs/MPES.md` | 176761 | `f07b1f07c9b646008d64c1fa86a0eb62486350a6779a918fc482dae40442c16a` | The specification, a clean-room document of its own (Omni 5.1.1 §333). |
 | `docs/CODEBASE.md` | | | This file. |

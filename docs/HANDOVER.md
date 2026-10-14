@@ -1,10 +1,10 @@
 # Handover
 
-Updated 2026-10-13 (America/Toronto). Specification: [MPES](MPES.md) 4.4.3. Evidence: [verification/0.5.2.0.md](verification/0.5.2.0.md), [verification/0.5.1.0.md](verification/0.5.1.0.md), [verification/0.5.0.0.md](verification/0.5.0.0.md), [verification/spike-visual.md](verification/spike-visual.md).
+Updated 2026-10-14 (America/Toronto). Specification: [MPES](MPES.md) 4.5.0. Evidence: [verification/0.6.0.0.md](verification/0.6.0.0.md) (in progress), [verification/0.5.2.0.md](verification/0.5.2.0.md), [verification/0.5.1.0.md](verification/0.5.1.0.md), [verification/0.5.0.0.md](verification/0.5.0.0.md), [verification/spike-visual.md](verification/spike-visual.md).
 
 ## 1. Version and milestone
 
-Version 0.5.2.0 beta (four-part MAJOR.MINOR.PATCH.BUILD, MPES §19.2; 1.0.0.0 only once out of beta: MPES §19.2 exit criteria, including every owner gate). M0–M4, V1, V2 (goal G1, tag `v0.5.0.0`) and G2 (owner fixes and the docs regime, tag `v0.5.1.0`, owner GO 2026-10-12) are complete. 0.5.2.0 (tag `v0.5.2.0` on `c2932eb`, owner GO 2026-10-13) is owner FIX 4 on G2: showcase zoom, framing of the full kit at every turn and height, sign controls, and phone tables as labelled cards (`docs/verification/0.5.2.0.md`). The rollback is tag `v4.1.0-dev.1`.
+Version 0.5.2.0 beta (four-part MAJOR.MINOR.PATCH.BUILD, MPES §19.2; 1.0.0.0 only once out of beta: MPES §19.2 exit criteria, including every owner gate). M0–M4, V1, V2 (goal G1, tag `v0.5.0.0`) and G2 (owner fixes and the docs regime, tag `v0.5.1.0`, owner GO 2026-10-12) are complete. 0.5.2.0 (tag `v0.5.2.0` on `c2932eb`, owner GO 2026-10-13) is owner FIX 4 on G2: showcase zoom, framing of the full kit at every turn and height, sign controls, and phone tables as labelled cards (`docs/verification/0.5.2.0.md`). G3 (0.6.0.0, branch `g3/proxy-runtime`, draft PR #27) is in progress. The rollback is tag `v4.1.0-dev.1`.
 
 **Plan to beta exit (MPES §17), one PR and one tag per goal:**
 
@@ -59,7 +59,7 @@ Owner FIX 1 (stills and fit), FIX 2 (one click to close a round nobody can win i
 
 ## 5. Next action
 
-**Agent:** start G3 (proxy + runtime, release 0.6.0.0): branch from `main` at `v0.5.2.0`; first step `npm run perf:ref` on the Intel UHD 770 proxy, measuring a baseline before any change.
+**Agent:** G3 on `g3/proxy-runtime` (PR #27): get two consecutive green CI runs on one head with the 3D update within 100 ms (red run 38571533524 diagnosed in `docs/verification/0.6.0.0.md`: tiers now drop multisampling and the starting tier is timed); `npm run perf:ref` 12-KPI baseline in a quiet slot (MPES §14.1); touchpad and panel safety; Codex review of the G3 diff; gallery and owner GO or FIX.
 **Owner:** `docs/owner/art-review.md` (5 minutes, reply GO or FIX).
 
 ## 6. Rollback

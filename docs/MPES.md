@@ -3,7 +3,7 @@
 | Field | Value |
 |---|---|
 | Document | Master Product and Engineering Specification (MPES) for the clean-room rebuild of **Systems Engineering Awareness (SEA Game)** |
-| Version | 4.4.3 | 2026-10-12 | G2 owner FIX 4 (0.5.2.0): the 3D showcase frames the vehicle as fitted, however fully kitted out, at every turn and drag height, zooms in and out by buttons, and its controls are signs (‖/▷, ↺, ↻, −, +) with names for assistive technology; on a phone every table shows all its columns, each row a labelled card (§7.1, §10.2, §20.1). |
+| Version | 4.5.0 | 2026-10-14 | G3 proxy and runtime (0.6.0.0, in progress): adaptive quality tiers that drop edge multisampling before the last step of resolution, a starting tier timed before the stage is shown, paced draws held for a second after the player's input, recovery from a lost graphics context (§10.3); the reference-proxy measurement protocol (§14); measurement corrections (input to painted result, nearest-rank p95 of 30 samples). |
 | Date | 2026-10-11 (America/Toronto) |
 | Status | **ACCEPTED**. Owner delegated all remaining decisions and gates to the implementing agent on 2026-10-09 (§22) |
 | Supersedes | MPES 1.5.2 and every earlier handover, ledger, prompt and evidence packet for implementation purposes |
@@ -60,7 +60,7 @@ An independent review (a Codex session given only this file, G2) asked where its
 | Interface text, styling values, layout, geometry, materials, render and export settings | A conforming implementation: it meets §7, §10–§12 and passes §16, but is not byte-identical. Where this file leaves a value open (a colour, a key binding, a camera), the rebuild chooses one and records it in its own source | The tracked source, rebuilt from `docs/CODEBASE.md` |
 | Binary inputs: renders, the packed model, visual baselines | Made again by the §11.1 pipeline; renders match in look and size, not byte for byte (Cycles varies by GPU and driver) | Git history and the handoff package's git bundle (§19.3); `docs/CODEBASE.md` lists each with its SHA-256 |
 | Historical inputs: the legacy backups of §8.8 and the previous application | Cannot be made from prose. A rebuild without them writes schema-3 fixtures from §8 and reports RQ-17's historical proof NOT_RUN | `tests/fixtures/legacy/` (tracked), tag `v4.1.0-dev.1` and Appendix C commits in git history |
-| Measurement protocols not yet written (the proxy rig, adaptive tiers, context-loss recovery) | Not yet specified: G3 defines them and writes them into §10.4 and §14 | — |
+| Measurement protocols (the proxy rig, adaptive tiers, context-loss recovery) | Reproduced: §10.3 and §14 state them; the GPU time of a frame is not yet measured (§14) | The tracked tests, rebuilt from `docs/CODEBASE.md` |
 
 **No code** (item 6 of §0) means: no fenced block, and no program text longer than one command line. File names, command lines, field names, formulas and value lists inline are not code.
 
@@ -891,7 +891,9 @@ Make the build tangible: the selected mission's base vehicle visibly gains parts
 | 3D model ready (opening the tracker to the first drawn model) | ≤ 3 s, reference profile. The model is prepared while the team plans (`prepareVehicle`), so the tracker usually opens with it parsed |
 | 3D model update after a purchase is recorded | ≤ 100 ms, reference profile |
 | Memory added by the 3D showcase | ≤ 400 MB |
-| 3D drawing rate and share of the machine | ≤ 30 frames a second; a drawn frame is timed by the gap to the next animation frame, and the next draw waits at least twice that (at most 1 s), so drawing never takes more than half the machine. Drags, key turns and resizes draw in the next paced frame, never synchronously |
+| 3D drawing rate and share of the machine | ≤ 30 frames a second; a drawn frame is timed by the gap to the next animation frame, and the next draw waits at least twice that (at most 1 s), so drawing never takes more than half the machine. Drags, key turns and resizes draw in the next paced frame, never synchronously. A purchase draws in the next animation frame; the player's input anywhere else on the page holds paced turning draws for 1 s, so its answer never queues behind one |
+| Adaptive quality tiers | Four tiers, dearest first: full pixel ratio (the screen's, at most 1.5) with 4× multisampled edges; 0.75 of it multisampled; 0.75 without; 0.5 without. Multisampling goes before the last step of resolution: on a software renderer it made a draw about 3.6 times dearer (G3 draw-cost probe). A multisampled tier draws into an off-screen half-float target resolved to the canvas with tone mapping, so a tier can drop it without a new graphics context. Before the stage is shown, one timed draw per tier at the stage's own size picks the first tier that fits a 30 fps frame (else the cheapest); a tier differing only in resolution is skipped when its share of pixels could not bring the cost within the frame. While drawing, the tier steps down one when the cheapest of the last eight draws exceeds a 30 fps frame; it never steps up within a session, so the picture cannot flicker between sizes |
+| Lost graphics context | A driver reset, GPU switch or sleep stops drawing at once; when the browser restores the context the lighting environment and shadow are made again and the current parts drawn, with no page error. Proved by a browser test that loses and restores the context around a purchase |
 | Still decoding | Each still layer is decoded once and reused; what the player can ask for next is prepared nearest first as soon as the shown view has decoded, never left for idle time (a busy machine may have none before the next step): first the layers of the card the player has loaded, at this angle and then the other, so recording it never waits for a decode; from an angle, the other angle and the turntable frame shown on entry with the frames either side; when turning, the frames ahead in the direction of travel, then behind. A step never creates a new image. Prepared images decode one at a time, so at most one background decode competes with the image the player is waiting for. Images on screen and the prepared set (what the player can ask for next, up to 20 layers per angle) are never dropped; of the rest, at most 24 decoded images are kept, least recently used dropped first (about 88 MB together, within the decoded-image budget above); a unit test proves a prepared image is never evicted (G2). Image decoding runs off the main thread, so CPU throttling does not show its cost: the oracle is that no layer is decoded twice while it is on screen, prepared or kept (an image dropped from the 24 kept may be decoded again later; the browser test's sequence of purchases, angle changes and turntable steps stays within what is kept). Decoding cost grows with pixels, transparent ones included, so every placed image (build layers and bases, turntable frames) is trimmed to the pixels visible at 8-bit output plus a 2 px apron (CI run 38136462558: near-full-frame layers made a purchase wait 212 ms); a unit test checks every one |
 
 ### 10.4 Technique per element
@@ -1028,6 +1030,20 @@ The backup download uses a `blob:` link, which is navigation, not a fetched reso
 | 3D showcase on the proxy | Ready ≤ 3 s; p95 frame ≤ 33 ms with GPU frame ≤ 16 ms; memory ≤ 300 MB where headroom allows (never above §10.3) |
 | Idle CPU on any view | ≤ 3% over 60 s |
 
+### 14.1 Reference-proxy measurement protocol (`npm run perf:ref`, G3)
+
+The proxy's result is a baseline, not a verdict: every gate is reported PASS or FAIL against §10.3 and §14, but the run never stops for a missed budget. Only a wrong or missing graphics chip stops it.
+
+- **Rig.** Chromium and Edge, full browsers, each started with Direct3D 11 through ANGLE, the GPU on, the GPU blocklist ignored and the low-power GPU forced; the test runner's GPU-off defaults removed. The page's processor slowed fourfold in every scenario. Three screen profiles, each in full: 1366×768 at scale 1, 1536×864 at 1.25, 1280×720 at 1.5. The built file opened from disk, rebuilt at the start. Nothing pretends to be a GPU.
+- **Quiet PC.** One browser at a time, never beside Blender, other heavy jobs or the full test suite. A run on a busy PC is void and taken again.
+- **Gate zero.** Before measuring, each browser's unmasked WebGL renderer must contain "UHD Graphics 770"; otherwise the run records what it saw, measures nothing, and the report is INCOMPLETE.
+- **Scenarios.** The CI performance gate's own (same commands, same sample counts): chooser and instructor-with-largest-save start-up, 40 timed bid clicks, memory and growth over ten cycles, stills update, angle and turntable steps, 3D ready, 3D update (30 purchases, each tracker in a fresh page), 3D frame cadence over five seconds of turning, INP, LCP (the chooser-ready time stands in when a page opened from disk reports none, and the report says so), CLS, longest task after load, page errors and network requests. Every timing runs from the trusted input event to after the next paint; percentiles are nearest-rank over at least 30 samples.
+- **Idle.** On the first screen profile only: after three quiet seconds, the processor time of all browser processes over 60 s as a share of one core, on the chooser, the instructor with saved state and the tracker with the 3D model, plus the page's own busy share.
+- **Memory.** Page memory plus decoded pixels; for the 3D showcase also the renderer and GPU processes, reported against both §10.3 and the proxy target.
+- **Report.** One file per browser and profile, then one report with one row per KPI of §1.4, keeping the worst value. It is INCOMPLETE when a browser and profile is missing, a file belongs to another run, a run did not finish, or a budgeted metric is empty without a stated reason. A KPI row is FAIL if any measured metric is over budget, PASS if at least one was measured and none failed, NOT_RUN if none was.
+- **Use.** The first complete report of a goal is its baseline, copied into `docs/verification/` with its commit before any change; after each change, run again in a quiet slot and compare metric by metric. Run-to-run noise is learned by taking the baseline twice.
+- **Not yet measured.** The GPU time of a frame (the page cannot reach the graphics timer; the animation-frame gap is the nearest figure and is not the same); the 2× GPU headroom, judged from the frame figures; battery saver, a dim panel, a touchpad and single-channel memory, which this PC cannot set. These stay residual risk.
+
 ---
 
 ## 15. Requirements and acceptance map
@@ -1124,7 +1140,7 @@ Gates outside the code:
 | `tests/unit/glb.test.ts` | §10, §14: the model holds six vehicles; the game parses one. |
 | `tests/unit/frame.test.ts` | §10.2: long, tall and off-centre kits fit at every turn and height in wide, square and tall windows, tightly; zoom steps and limits. |
 | `tests/unit/showcase.test.ts` | §10.2, §10.3: draw order, latest part per slot, the decoded-image pool. |
-| `tests/unit/pace.test.ts` | §10.3: frame pacing and adaptive resolution tiers. |
+| `tests/unit/pace.test.ts` | §10.3: frame pacing, the input hold, adaptive quality tiers and the starting tier. |
 | `tests/unit/perf-measure.test.ts` | §14: the nearest-rank p95 and its minimum sample count. |
 | `tests/unit/perf-ref-report.test.ts` | §14: the proxy report's PASS, FAIL and NOT_RUN per metric and per KPI, and its refusal of an incomplete run. |
 | `tests/unit/encode-cache.test.ts` | §11.1: the render encode cache misses once then hits byte-identically, misses on any changed setting or master, and re-encodes a damaged entry. |
@@ -1148,7 +1164,7 @@ Gates outside the code:
 | `tests/e2e/close-round.spec.ts` | Closing a round no team can win in from the sale that used the last win, key N, reload; the student's skip to the next round (§6.5 step 9, §7.2, §7.3). |
 | `tests/e2e/layout.spec.ts` | §7.1: live-lot actions fully visible at 1280×720. |
 | `tests/e2e/chooser.spec.ts` | The chooser: offline, languages, both roles, the six-vehicle lineup by keyboard and touch, About. |
-| `tests/e2e/showcase.spec.ts` | §7.1, §10, §11: the HUD look, card renders, 3D and stills modes; the full kit framed at every turn, zoom and sign controls at 1280 and 360 px. |
+| `tests/e2e/showcase.spec.ts` | §7.1, §10, §11: the HUD look, card renders, 3D and stills modes; the full kit framed at every turn, zoom and sign controls at 1280 and 360 px; recovery from a lost graphics context. |
 | `tests/e2e/mobile.spec.ts` | §7.1: at 320 and 360 px in both languages, every table on the planning and tracker views shows all its cells, each data cell labelled with its column header (read from the header row) and long headings wrapped; the desktop header stays at 1280 px. |
 | `tests/e2e/rehearsal.spec.ts` | §16.6 pilot substitute. |
 | `tests/e2e/visual.spec.ts` | J8 baselines in `tests/e2e/visual.spec.ts-snapshots/` (Chromium on Windows; About at 1366×768 and 320 px). |
@@ -1465,6 +1481,7 @@ Reusable practices proven here, in brief:
 
 | Version | Date | Change |
 |---|---|---|
+| 4.5.0 | 2026-10-14 | G3 proxy and runtime (0.6.0.0, in progress): adaptive quality tiers that drop edge multisampling before the last step of resolution, a starting tier timed before the stage is shown, paced draws held for a second after the player's input, recovery from a lost graphics context (§10.3); the reference-proxy measurement protocol (§14); measurement corrections (input to painted result, nearest-rank p95 of 30 samples) (§0.2, §10.3, §14.1). |
 | 4.4.3 | 2026-10-12 | G2 owner FIX 4 (0.5.2.0): showcase framing of the fitted vehicle at every turn and height, zoom buttons, sign controls; pause stops at once; the stage reports its view at once after each control; Playwright refuses a stale build; phone tables as labelled cards (§7.1, §10.2, §16, §20.1). |
 | 4.4.2 | 2026-10-12 | G2 owner FIX 3 of the stills: in the combat hero the crew cupola hid the heavy gun's muzzle and read as part of its barrel. Muzzle sightline check `art/blender/sightline.py` (§10.2, §18); the optics heads moved to the right of the roof, out of the auxiliary gun's line of fire: hero stills clean (two failed before), build stills from 334 failing pairs to 279, and G4 takes them to zero (§17). |
 | 4.4.1 | 2026-10-12 | G2 owner FIX 2: the unsold-card lists show each card's effects on one line, and every purchases table and the planning guide use the same localised words instead of capability codes; live lot card and controls one third and two thirds; card IDs never break (§7.2, §7.4, §5.6). |
