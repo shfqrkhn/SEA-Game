@@ -6,7 +6,7 @@ Each entry: what happened, the rule it produced, and the check that now enforces
 
 - **What happened:** after two green CI runs, a small docs-only commit was added and the pull request merged straight away. The generated codebase document embeds every doc, so it went stale; CI on `main` failed and the Pages deploy was skipped, leaving the old site live.
 - **Rule:** every commit, docs-only included, regenerates what is generated from it and runs the fast tests; merge only the head whose own CI is green. Let the host enforce it: require the CI checks on the main branch, administrators included.
-- **Check (as built in SEA Game):** the codebase test fails any stale generated document; branch protection on `main` requiring both CI checks is recommended to the owner.
+- **Check (as built in SEA Game):** the codebase test fails any stale generated document; branch protection on `main` requires both CI checks on the up-to-date head, administrators included (set with the owner's permission).
 
 ## 2026-10-13 · Paused, yet still turning; fixed, yet still failing
 
