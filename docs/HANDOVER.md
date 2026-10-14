@@ -47,10 +47,11 @@ Shared rules for every goal: `AGENTS.md`. KPIs and priority: MPES §1.4.
 ## 3. Not done
 
 - **Owner art judgement:** BLOCKED-owner, script `docs/owner/art-review.md`.
-- **G3–G8:** above. `npm run perf:ref` does not exist yet; it is G3's first step.
+- **G3–G8:** above. `npm run perf:ref` exists (MPES §14.1); its first 12-KPI baseline waits for a quiet slot on this PC.
 - **Known timing note:** `tests/unit/codebase.test.ts` usually runs in under half a second but once took 7.1 s (2026-10-11, cause unknown, result correct, not reproduced in 22 runs); it has an explicit 60 s bound with that evidence in a comment. Watch for a repeat.
 - **Known timing note 2:** `tests/unit/build.test.ts` "is deterministic" once timed out (63 s against 5 s) while other projects' test runs loaded this PC (2026-10-12); it passed in 5.3 s on re-run. The same day `tests/unit/archive.test.ts` "refuses a path that holds a tracked file" timed out the same way (5 s; 80 ms alone); its scratch clones had piled up in `.artifacts/tmp` and are now removed after each run (`tests/unit/scratch.test.ts`). On 2026-10-12 at 97% CPU two Firefox tests (`layout.spec.ts` live lot, `showcase.spec.ts` every vehicle) timed out with an unchanged build and passed alone. If either repeats on a quiet machine, find the cause; do not raise the timeout.
 - **Known timing note 3:** CI failed the showcase update budget once too (109 ms against 100, `78cca1f`, 2026-10-12). With Windows Defender and other projects busy, the local perf project fails a 3D update budget in about half of its runs, at the previous commit as often as now (A/B in `docs/verification/0.5.1.0.md`). Run it on a quiet machine; never raise the budgets. G3's `perf:ref` protocol is meant to settle this.
+- **Whole-vehicle contrast (for G4):** measured honestly (every pixel the vehicle changes against the bare stage), the vehicles stand at 2.75 to 3.06:1 in 3D and 1.45 to 1.49:1 in stills on the dark stage, below the 3:1 of WCAG 1.4.11. The floors (2.7 and 1.4 in `tests/e2e/showcase.spec.ts`) may only rise; G4 lifts both to 3 through lighting, value separation and the re-render (MPES §10.5).
 - **Residual risks:** real learners (S3); Narrator and NVDA users; no physical laptop test (D-16); CI runs Windows Server, not Windows 11; art quality is the owner's judgement.
 
 ## 4. In-progress work
@@ -59,7 +60,7 @@ Owner FIX 1 (stills and fit), FIX 2 (one click to close a round nobody can win i
 
 ## 5. Next action
 
-**Agent:** G3 on `g3/proxy-runtime` (PR #27): get two consecutive green CI runs on one head with the 3D update within 100 ms (red run 38571533524 diagnosed in `docs/verification/0.6.0.0.md`: tiers now drop multisampling and the starting tier is timed); `npm run perf:ref` 12-KPI baseline in a quiet slot (MPES §14.1); touchpad and panel safety; Codex review of the G3 diff; gallery and owner GO or FIX.
+**Agent:** G3 on `g3/proxy-runtime` (PR #27): get two consecutive green CI runs on one head with the 3D update within 100 ms (red runs 38571533524 and 38577929333 diagnosed and fixed in `docs/verification/0.6.0.0.md`; Codex findings on the lanes and the G3 diff dispositioned there); `npm run perf:ref` 12-KPI baseline in a quiet slot (MPES §14.1); touchpad and panel safety; Codex review of the G3 diff; gallery and owner GO or FIX.
 **Owner:** `docs/owner/art-review.md` (5 minutes, reply GO or FIX).
 
 ## 6. Rollback

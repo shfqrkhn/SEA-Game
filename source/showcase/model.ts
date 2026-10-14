@@ -135,6 +135,8 @@ export class ModelStage {
   #lost = false;
   /** While the context is lost, the check that notices its return (see the constructor). */
   #watch: ReturnType<typeof setInterval> | undefined;
+  /** Removes every listener the stage added outside its controls when it is disposed (`tests/unit/stage-dispose.test.ts`). */
+  readonly #listening = new AbortController();
   /** The player's input anywhere else on the page holds the paced turning draws (input first, MPES §10.3). */
   #input = (event: Event): void => { if (event.target !== this.canvas) this.#pacer.hold(performance.now() + INPUT_HOLD_MS); };
   #visible = true;
@@ -197,13 +199,14 @@ export class ModelStage {
     this.canvas.style.touchAction = '';
     this.#controls.addEventListener('change', () => this.#invalidate());
     this.#controls.addEventListener('start', () => this.#loop());
-    this.#motion.addEventListener('change', () => { this.turning = !this.#motion.matches; });
+    const { signal } = this.#listening;
+    this.#motion.addEventListener('change', () => { this.turning = !this.#motion.matches; }, { signal });
     this.#observer = new IntersectionObserver(([entry]) => { this.#visible = !!entry?.isIntersecting; this.#loop(); });
     this.#observer.observe(this.canvas);
     this.#resize = new ResizeObserver(() => this.#size());
     this.#resize.observe(this.canvas);
-    document.addEventListener('visibilitychange', () => this.#loop());
-    for (const type of ['pointerdown', 'keydown', 'input']) document.addEventListener(type, this.#input, { capture: true, passive: true });
+    document.addEventListener('visibilitychange', () => this.#loop(), { signal });
+    for (const type of ['pointerdown', 'keydown', 'input']) document.addEventListener(type, this.#input, { capture: true, passive: true, signal });
     // A lost graphics context (driver reset, GPU switch, sleep) stops the stage; three.js rebuilds the context when it is
     // restored, but what was drawn into textures is gone: the environment and the shadow are made again, then one draw.
     // The context, not the events, says whether it is back: Firefox on a software renderer announced a restore while the
@@ -217,17 +220,17 @@ export class ModelStage {
       this.#watch = setInterval(() => {
         if (!this.#renderer.getContext().isContextLost()) this.canvas.dispatchEvent(new Event('webglcontextrestored'));
       }, LOST_CHECK_MS);
-    });
+    }, { signal });
     this.canvas.addEventListener('webglcontextrestored', event => {
       if (this.#renderer.getContext().isContextLost()) { event.stopImmediatePropagation(); return; }
-    }, { capture: true });
+    }, { capture: true, signal });
     this.canvas.addEventListener('webglcontextrestored', () => {
       clearInterval(this.#watch);
       this.#lost = false;
       this.#environ();
       this.#renderer.shadowMap.needsUpdate = true;
       this.#invalidate(true);
-    });
+    }, { signal });
   }
 
   /** The lighting environment, drawn into a texture. A 64 px environment lights matte paint as well as the default
@@ -500,10 +503,10 @@ export class ModelStage {
 
   dispose(): void {
     cancelAnimationFrame(this.#frame);
+    this.#listening.abort();
     clearInterval(this.#watch);
     this.#observer.disconnect();
     this.#resize.disconnect();
-    for (const type of ['pointerdown', 'keydown', 'input']) document.removeEventListener(type, this.#input, { capture: true });
     this.#controls.dispose();
     this.#target?.dispose();
     this.#output.dispose();

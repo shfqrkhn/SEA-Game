@@ -1,7 +1,7 @@
 // War-room HUD and vehicle showcase (MPES §7.1, §10, §11): the default look of every view. The live lot shows the
 // card's photoreal render; the student tracker shows the team's vehicle with its real purchases, as a slowly turning
 // 3D model where WebGL works and as stacked still renders where it does not.
-import { expect, test } from '@playwright/test';
+import { expect, test, type Locator } from '@playwright/test';
 import sharp from 'sharp';
 import { collectConsoleErrors, expectAccessible, gameUrl, guardNetwork, withGpu, withoutWebgl } from './helpers.ts';
 import { confirmDialog, instructorSetup, studentJoin } from './roles.ts';
@@ -15,24 +15,43 @@ async function record(page: import('@playwright/test').Page, round: number, lot:
   await page.click('#record-win');
 }
 
-/**
- * The vehicle's median luminance contrast with its stage, from a screenshot (WCAG 1.4.11 asks 3:1 of a graphic that
- * carries meaning): the background is the brightest corner, the vehicle every pixel at least 2.5 times as bright.
- * A dim laptop panel scales both alike, so the ratio is what survives it (G3 panel safety).
- */
-/** Lowest still contrast allowed until G4 (see the every-vehicle test). */
+/** Lowest still contrast of the brighter vehicle pixels allowed until G4 (see the per-mission tests). */
 const STILLS_CONTRAST_FLOOR = 2.1;
+/**
+ * Lowest whole-vehicle contrast (every pixel the vehicle changes) allowed until G4 lifts both to 3 (MPES §10.5): the
+ * values measured when this check was added (2026-10-14: 3D 2.75 to 3.06, stills 1.45 to 1.49). These floors may only rise.
+ */
+const WHOLE_CONTRAST_FLOOR = { live: 2.7, stills: 1.4 };
 
-async function vehicleContrast(shot: Buffer): Promise<number> {
-  const { data, info } = await sharp(shot).removeAlpha().raw().toBuffer({ resolveWithObject: true });
+/**
+ * The vehicle's luminance contrast with its stage (WCAG 1.4.11 asks 3:1 of a graphic that carries meaning), from the
+ * stage shot with the vehicle (`vehicle`: the canvas or the still layers) and without it. A dim laptop panel scales
+ * both alike, so the ratios survive it (G3 panel safety).
+ * - `bright`: the median of the pixels at least 2.5 times as bright as the brightest corner, against that corner.
+ * - `whole`: every pixel the vehicle changes, however dark, its median against the same pixels of the bare stage. Codex
+ *   (G3 review) showed `bright` alone passing a near-invisible vehicle with one bright highlight; `whole` fails it.
+ * - `share`: the part of the stage the vehicle covers.
+ */
+async function vehicleContrast(stage: Locator, vehicle: string): Promise<{ bright: number; whole: number; share: number }> {
+  const read = async (shot: Buffer) => sharp(shot).removeAlpha().raw().toBuffer({ resolveWithObject: true });
+  const { data: shown, info } = await read(await stage.screenshot());
+  await stage.locator(vehicle).evaluateAll(els => els.forEach(e => { (e as HTMLElement).style.visibility = 'hidden'; }));
+  const { data: bare } = await read(await stage.screenshot());
+  await stage.locator(vehicle).evaluateAll(els => els.forEach(e => { (e as HTMLElement).style.visibility = ''; }));
   const linear = (c: number) => (c /= 255) <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
-  const at = (i: number) => 0.2126 * linear(data[i]!) + 0.7152 * linear(data[i + 1]!) + 0.0722 * linear(data[i + 2]!);
+  const at = (data: Buffer, i: number) => 0.2126 * linear(data[i]!) + 0.7152 * linear(data[i + 1]!) + 0.0722 * linear(data[i + 2]!);
+  const median = (values: number[]) => values.sort((a, b) => a - b)[values.length >> 1] ?? 0;
   const { width: w, height: h } = info;
-  const background = Math.max(...[[4, 4], [w - 5, 4], [4, h - 5], [w - 5, h - 5]].map(([x, y]) => at((y! * w + x!) * 3)));
-  const vehicle: number[] = [];
-  for (let i = 0; i < data.length; i += 3) { const l = at(i); if (l > background * 2.5) vehicle.push(l); }
-  vehicle.sort((a, b) => a - b);
-  return (vehicle[vehicle.length >> 1]! + 0.05) / (background + 0.05);
+  const corner = Math.max(...[[4, 4], [w - 5, 4], [4, h - 5], [w - 5, h - 5]].map(([x, y]) => at(shown, (y! * w + x!) * 3)));
+  const lit: number[] = [], front: number[] = [], back: number[] = [];
+  for (let i = 0; i < shown.length; i += 3) {
+    const l = at(shown, i);
+    if (l > corner * 2.5) lit.push(l);
+    if (Math.max(Math.abs(shown[i]! - bare[i]!), Math.abs(shown[i + 1]! - bare[i + 1]!), Math.abs(shown[i + 2]! - bare[i + 2]!)) <= 8) continue;
+    front.push(l); back.push(at(bare, i));
+  }
+  const [f, b] = [median(front), median(back)];
+  return { bright: (median(lit) + 0.05) / (corner + 0.05), whole: (Math.max(f, b) + 0.05) / (Math.min(f, b) + 0.05), share: front.length / (w * h) };
 }
 
 async function trackerFor(browser: import('@playwright/test').Browser, mission: string) {
@@ -403,7 +422,10 @@ for (const mission of ['COMBAT', 'RECCE', 'TROOP', 'COMMAND', 'RECOVERY', 'MINE'
     const model = gpu.locator('#showcase [role="img"]');
     await expect(model).toHaveAttribute('data-ready', 'true', { timeout: 30_000 });
     await gpu.getByRole('button', { name: 'Pause turning', exact: true }).click();
-    expect(await vehicleContrast(await model.screenshot()), '3D').toBeGreaterThanOrEqual(3);
+    const live = await vehicleContrast(model, 'canvas');
+    expect(live.share, '3D vehicle covers its stage').toBeGreaterThan(0.05);
+    expect(live.bright, '3D').toBeGreaterThanOrEqual(3);
+    expect(live.whole, '3D whole vehicle').toBeGreaterThanOrEqual(WHOLE_CONTRAST_FLOOR.live);
     await gpuContext.close();
     const flatContext = await browser.newContext(), flat = await flatContext.newPage();
     await withoutWebgl(flat);
@@ -413,7 +435,10 @@ for (const mission of ['COMBAT', 'RECCE', 'TROOP', 'COMMAND', 'RECOVERY', 'MINE'
     await expect.poll(() => base.evaluate(i => (i as HTMLImageElement).complete && (i as HTMLImageElement).naturalWidth > 0)).toBe(true);
     // The Cycles stills are darker than the real-time model (2.11 to 2.14 on 2026-10-14): held there until the G4
     // re-render lifts them to 3 (MPES §10.5). This floor may only rise.
-    expect(await vehicleContrast(await flat.locator('#showcase .showcase-stage').first().screenshot()), 'stills').toBeGreaterThanOrEqual(STILLS_CONTRAST_FLOOR);
+    const still = await vehicleContrast(flat.locator('#showcase .showcase-stage').first(), 'img');
+    expect(still.share, 'still vehicle covers its stage').toBeGreaterThan(0.05);
+    expect(still.bright, 'stills').toBeGreaterThanOrEqual(STILLS_CONTRAST_FLOOR);
+    expect(still.whole, 'stills whole vehicle').toBeGreaterThanOrEqual(WHOLE_CONTRAST_FLOOR.stills);
     await flatContext.close();
   });
 }

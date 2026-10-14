@@ -357,6 +357,7 @@ Each module's responsibility and public contract. Names are the exported identif
 | `source/showcase/renders.ts` | `renders()` (the embedded render table, parsed once), `Render`, `VEHICLE` (mission to file stem), `cardRender`. |
 | `source/showcase/glb.ts` | `vehicleGlb`: a copy of the embedded GLB whose scene holds only the named vehicle's root node, so the loader parses only that vehicle. |
 | `source/showcase/pace.ts` | `FramePacer` and `FRAME_MS`: at most 30 draws a second, each next draw at least twice the last frame's gap later (at most 1 s), §10.3. |
+| `source/showcase/resolve.ts` | `premultipliedOutput`: three.js's output (tone-mapping) shader for a multisampled tier, dividing colour by its coverage before tone mapping and multiplying after the sRGB curve, so edges on a transparent target draw without pale fringes; throws if the shader's shape changed, §10.3. |
 | `source/showcase/frame.ts` | Framing and zoom of the 3D showcase (§10.2): the projected extent of a box, the fitted distance at every turn, a table of fitted distances over the drag heights, and the zoom steps and limits. |
 | `source/showcase/model.ts` | `ModelStage` (one WebGL renderer, slow turn, drag, buttons, reduced motion, draws only while visible), `loadVehicle` (marks `sea-model:<stem>` in the performance timeline when parsed), `prepareVehicle` (once the team confirms its vehicle in planning: in idle time, within 2 s, decodes and parses that vehicle alone if WebGL is available, so the tracker opens with it ready), `webglAvailable` (WebGL 2 on a hardware renderer), `layerOf`, `partSlots`, `TURN_SECONDS`. |
 | `source/showcase/showcase.ts` | `Showcase` (3D when available, else stills; text list of parts; process badges), `DecodedImages` (decode-once pool of §10.3), `stackOrder` (farthest first), `latestBySlot`, `latestPerSlot`, `TURN_STEP`. |
@@ -919,7 +920,7 @@ Every fitted part must read as a separate object at a glance, in every still, in
 - **Camera.** Three-quarter views with a moderate lens (55 mm), no depth of field, framed on everything the still may show; the angle is chosen by the worst-visible part, not only the total.
 - **Signalling (Mayer).** One highlighted subject per view: the part a team has just chosen is the figure, the rest the ground. Labels and effects stand next to what they describe (spatial contiguity); nothing decorative competes with them (coherence). Pre-attentive cues (shape, position, value) carry the highlight, never colour alone.
 - **Projector.** A projector lifts blacks and washes out light colours: text aims at 7:1 contrast (4.5:1 is the floor of §12), essential non-text cues at least 3:1 and 2 px wide; no thin low-contrast lines carry meaning; colour codes always pair with an icon, letter or shape.
-- **Measured, not judged by eye alone.** Checks in force: the muzzle sightline (§10.2), overlap and fit, and WCAG contrast in the end-to-end tests. Planned for G4 (§17): a per-part mask render of each still that fails a part whose visible area falls below a share of its own or whose boundary contrast with its neighbours is too low, judged on the encoded images at their displayed sizes, in grayscale and under colour-vision simulation. Planned for G5: projector washout simulation of the interface.
+- **Measured, not judged by eye alone.** Checks in force: the muzzle sightline (§10.2), overlap and fit, and WCAG contrast in the end-to-end tests, both of the brighter vehicle pixels and of the whole vehicle (every pixel it changes, against the bare stage: 2.7 in 3D and 1.4 in stills when measured on 2026-10-14, to reach 3:1 in G4). Planned for G4 (§17): a per-part mask render of each still that fails a part whose visible area falls below a share of its own or whose boundary contrast with its neighbours is too low, judged on the encoded images at their displayed sizes, in grayscale and under colour-vision simulation. Planned for G5: projector washout simulation of the interface.
 - **Lessons learned.** A rule that ignores parts behind the subject passes stills that still mislead (FIX 3, second round); a fix to one vehicle's still must be swept across every vehicle, slot and angle; a count ceiling lets one regression hide behind one fix, so a recorded list of identified exceptions that may only shrink holds the line instead.
 
 ---
@@ -1139,15 +1140,17 @@ Gates outside the code:
 | `tests/unit/renders.test.ts` | §10.2, §11: every subject rendered, every layer with a draw depth and slot, hashes, trims, the 40 MB budget. |
 | `tests/unit/glb.test.ts` | §10, §14: the model holds six vehicles; the game parses one. |
 | `tests/unit/frame.test.ts` | §10.2: long, tall and off-centre kits fit at every turn and height in wide, square and tall windows, tightly; zoom steps and limits. |
+| `tests/unit/stage-dispose.test.ts` | §10.3: every listener the 3D stage adds outside its orbit controls carries one abort signal, aborted on dispose (read from the source, since the stage needs WebGL). |
 | `tests/unit/showcase.test.ts` | §10.2, §10.3: draw order, latest part per slot, the decoded-image pool. |
 | `tests/unit/pace.test.ts` | §10.3: frame pacing, the input hold, adaptive quality tiers and the starting tier. |
+| `tests/unit/resolve.test.ts` | §10.3: the multisampled resolve's order (divide, tone map, sRGB, multiply) and its refusal of a changed three.js shader. |
 | `tests/unit/perf-measure.test.ts` | §14: the nearest-rank p95 and its minimum sample count. |
 | `tests/unit/perf-ref-report.test.ts` | §14: the proxy report's PASS, FAIL and NOT_RUN per metric and per KPI, and its refusal of an incomplete run. |
 | `tests/unit/encode-cache.test.ts` | §11.1: the render encode cache misses once then hits byte-identically, misses on any changed setting or master, and re-encodes a damaged entry. |
 | `tests/unit/reflow.test.ts` | G2: licence and notices reflowed for display, files verbatim. |
 | `tests/unit/docs.test.ts` | S1, RQ-30: every control the quick-start guide names exists, in the same language. |
 | `tests/unit/gallery.test.ts` | §19.6: the gallery's shot list covers every view, role, language, size and vehicle. |
-| `tests/unit/codebase.test.ts` | §19.6: `docs/CODEBASE.md` rebuilds every tracked file in a temporary folder with matching hashes, and is current (bound 60 s). |
+| `tests/unit/codebase.test.ts` | §19.6: `docs/CODEBASE.md` rebuilds every tracked file in a temporary folder with matching hashes, and is current (bound 60 s); no new file in a project folder is left untracked, which it would miss. |
 | `tests/unit/archive.test.ts` | §19.6: on a temporary clone, `archive:prep --apply` keeps what is irreplaceable and the restore gives the same build hash. |
 | `tests/unit/scratch.test.ts` | C-13: every unit test that makes a scratch folder in `.artifacts/tmp` removes it when its file finishes, so scratch never piles up. |
 | `tests/unit/mpes.test.ts` | §0: this document has no code block and names every tracked file, npm script, package pin, CSP directive and goal G3 to G8. |
@@ -1164,7 +1167,7 @@ Gates outside the code:
 | `tests/e2e/close-round.spec.ts` | Closing a round no team can win in from the sale that used the last win, key N, reload; the student's skip to the next round (§6.5 step 9, §7.2, §7.3). |
 | `tests/e2e/layout.spec.ts` | §7.1: live-lot actions fully visible at 1280×720. |
 | `tests/e2e/chooser.spec.ts` | The chooser: offline, languages, both roles, the six-vehicle lineup by keyboard and touch, About. |
-| `tests/e2e/showcase.spec.ts` | §7.1, §10, §11: the HUD look, card renders, 3D and stills modes; the full kit framed at every turn, zoom and sign controls at 1280 and 360 px; recovery from a lost graphics context, including an early or a silent restore; each mission's vehicle in 3D and in stills, standing out from its stage on a dim panel, one test per mission. |
+| `tests/e2e/showcase.spec.ts` | §7.1, §10, §11: the HUD look, card renders, 3D and stills modes; the full kit framed at every turn, zoom and sign controls at 1280 and 360 px; recovery from a lost graphics context, including an early or a silent restore; each mission's vehicle in 3D and in stills, standing out from its stage on a dim panel, one test per mission: the brighter pixels at 3:1 (stills 2.1 until G4) and the whole vehicle, every pixel it changes against the bare stage, at floors that may only rise until G4 lifts them to 3:1. |
 | `tests/e2e/mobile.spec.ts` | §7.1: at 320 and 360 px in both languages, every table on the planning and tracker views shows all its cells, each data cell labelled with its column header (read from the header row) and long headings wrapped; the desktop header stays at 1280 px. |
 | `tests/e2e/rehearsal.spec.ts` | §16.6 pilot substitute. |
 | `tests/e2e/visual.spec.ts` | J8 baselines in `tests/e2e/visual.spec.ts-snapshots/` (Chromium on Windows; About at 1366×768 and 320 px). |

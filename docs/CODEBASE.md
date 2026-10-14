@@ -1,6 +1,6 @@
 # SEA Game codebase
 
-Version 0.6.0.0. Written by `npm run codebase` (scripts/codebase.ts); do not edit by hand. It holds all 1048 tracked files of the repository: 192 text files as 189 unique contents, 854 binary files by hash with the command that regenerates them, and 2 documents kept separately. With docs/MPES.md it is enough to rebuild the project.
+Version 0.6.0.0. Written by `npm run codebase` (scripts/codebase.ts); do not edit by hand. It holds all 1051 tracked files of the repository: 195 text files as 192 unique contents, 854 binary files by hash with the command that regenerates them, and 2 documents kept separately. With docs/MPES.md it is enough to rebuild the project.
 
 ## How to rebuild the tree
 
@@ -27041,7 +27041,7 @@ Exportez une sauvegarde par **Menu → Exporter une sauvegarde** après la confi
 
 ### docs/HANDOVER.md
 
-Paths: `docs/HANDOVER.md`. SHA-256 `36f8b1230cf021c7cb25dcb45c12dd145dff8f78cee159778e6eae7a6fe7c297`, 12002 bytes.
+Paths: `docs/HANDOVER.md`. SHA-256 `303dbe7bde55b5a2221f732dd42848690efb9bbda7f84eed07837cb4cf93c934`, 12468 bytes.
 
 ```markdown
 # Handover
@@ -27093,10 +27093,11 @@ Shared rules for every goal: `AGENTS.md`. KPIs and priority: MPES §1.4.
 ## 3. Not done
 
 - **Owner art judgement:** BLOCKED-owner, script `docs/owner/art-review.md`.
-- **G3–G8:** above. `npm run perf:ref` does not exist yet; it is G3's first step.
+- **G3–G8:** above. `npm run perf:ref` exists (MPES §14.1); its first 12-KPI baseline waits for a quiet slot on this PC.
 - **Known timing note:** `tests/unit/codebase.test.ts` usually runs in under half a second but once took 7.1 s (2026-10-11, cause unknown, result correct, not reproduced in 22 runs); it has an explicit 60 s bound with that evidence in a comment. Watch for a repeat.
 - **Known timing note 2:** `tests/unit/build.test.ts` "is deterministic" once timed out (63 s against 5 s) while other projects' test runs loaded this PC (2026-10-12); it passed in 5.3 s on re-run. The same day `tests/unit/archive.test.ts` "refuses a path that holds a tracked file" timed out the same way (5 s; 80 ms alone); its scratch clones had piled up in `.artifacts/tmp` and are now removed after each run (`tests/unit/scratch.test.ts`). On 2026-10-12 at 97% CPU two Firefox tests (`layout.spec.ts` live lot, `showcase.spec.ts` every vehicle) timed out with an unchanged build and passed alone. If either repeats on a quiet machine, find the cause; do not raise the timeout.
 - **Known timing note 3:** CI failed the showcase update budget once too (109 ms against 100, `78cca1f`, 2026-10-12). With Windows Defender and other projects busy, the local perf project fails a 3D update budget in about half of its runs, at the previous commit as often as now (A/B in `docs/verification/0.5.1.0.md`). Run it on a quiet machine; never raise the budgets. G3's `perf:ref` protocol is meant to settle this.
+- **Whole-vehicle contrast (for G4):** measured honestly (every pixel the vehicle changes against the bare stage), the vehicles stand at 2.75 to 3.06:1 in 3D and 1.45 to 1.49:1 in stills on the dark stage, below the 3:1 of WCAG 1.4.11. The floors (2.7 and 1.4 in `tests/e2e/showcase.spec.ts`) may only rise; G4 lifts both to 3 through lighting, value separation and the re-render (MPES §10.5).
 - **Residual risks:** real learners (S3); Narrator and NVDA users; no physical laptop test (D-16); CI runs Windows Server, not Windows 11; art quality is the owner's judgement.
 
 ## 4. In-progress work
@@ -27105,7 +27106,7 @@ Owner FIX 1 (stills and fit), FIX 2 (one click to close a round nobody can win i
 
 ## 5. Next action
 
-**Agent:** G3 on `g3/proxy-runtime` (PR #27): get two consecutive green CI runs on one head with the 3D update within 100 ms (red run 38571533524 diagnosed in `docs/verification/0.6.0.0.md`: tiers now drop multisampling and the starting tier is timed); `npm run perf:ref` 12-KPI baseline in a quiet slot (MPES §14.1); touchpad and panel safety; Codex review of the G3 diff; gallery and owner GO or FIX.
+**Agent:** G3 on `g3/proxy-runtime` (PR #27): get two consecutive green CI runs on one head with the 3D update within 100 ms (red runs 38571533524 and 38577929333 diagnosed and fixed in `docs/verification/0.6.0.0.md`; Codex findings on the lanes and the G3 diff dispositioned there); `npm run perf:ref` 12-KPI baseline in a quiet slot (MPES §14.1); touchpad and panel safety; Codex review of the G3 diff; gallery and owner GO or FIX.
 **Owner:** `docs/owner/art-review.md` (5 minutes, reply GO or FIX).
 
 ## 6. Rollback
@@ -27699,7 +27700,7 @@ A read-only Codex session (gpt-6.1-sol, medium) reviewed the diff (`.artifacts/c
 
 ### docs/verification/0.6.0.0.md
 
-Paths: `docs/verification/0.6.0.0.md`. SHA-256 `ba929c3ada7bab39c71f7cae879e9bb205df25281111b0a22a9fc19f7a962fd0`, 11089 bytes.
+Paths: `docs/verification/0.6.0.0.md`. SHA-256 `39e99538f486a8d89dcc03e7696349b4d3661556bb6a0662ba0bd518586d8225`, 13146 bytes.
 
 ```markdown
 # Verification record: 0.6.0.0 beta (G3 proxy and runtime) — in progress
@@ -27768,6 +27769,8 @@ Diagnosed before any rerun, from the job logs and the Playwright traces of both 
 | verify (24), Firefox: context-loss test, `data-drawn` still `ACC-F` | Trace console and screencast; a probe of the event order (`.artifacts/tmp/ctxprobe/`) | On a software renderer Firefox announced `webglcontextrestored` while the context was still lost, and three.js rebuilt onto the dead context; later it restored the context without any event | The context, not the events, decides: an announcement while `isContextLost()` is still true is stopped before three.js sees it, and while lost a 1 s check notices a silent return and announces it, which rebuilds three.js and the stage (`source/showcase/model.ts`) | The context-loss test now also loses the context with an early announcement (nothing may be drawn on it) and restores it with the event suppressed (the purchase must still be drawn); it failed before the fix and passes on Chromium and Firefox |
 | verify (24), Chromium and Edge: "every vehicle …" timed out at 120 s | Six missions, each in 3D and stills, plus eight card renders, in one test | One test held too much work for the time on a software renderer | Split into one test per mission and one for the software renderer and card renders; no timeout raised, no check dropped | `tests/e2e/showcase.spec.ts` |
 
+Local verify of 6dd12fa failed in the codebase and specification tests: two new files (`source/showcase/resolve.ts`, `tests/unit/resolve.test.ts`) were still untracked when `npm run codebase` ran, so the units passed before the commit and failed after it. Fixed by naming both in MPES and regenerating; `tests/unit/codebase.test.ts` now fails while any file in a project folder is untracked (checked with a probe file).
+
 ## Codex findings on the lanes (nine) and on the G3 diff (four)
 
 | # | Finding | Disposition |
@@ -27785,6 +27788,8 @@ Diagnosed before any rerun, from the job logs and the Playwright traces of both 
 | D2 | The GPU timer query was not bracketed by the draw | Fixed: bracketed by the stage's draw start and draw events |
 | D3 | A late button release could start the timing after the command | Fixed: the timing starts at the trusted input (`tests/e2e/perf.spec.ts`, late-release test) |
 | D4 | Unreadable GPU memory was reported as zero | Fixed: reported as null with a note |
+| D5 | Review of 6dd12fa: a disposed stage left its context, visibility and reduced-motion listeners registered, so a late context loss restarted the check and kept the stage alive | Fixed: every listener outside the orbit controls carries one abort signal, aborted on dispose (`source/showcase/model.ts`). Check `tests/unit/stage-dispose.test.ts` reads the source (the stage needs WebGL, absent in unit tests); it failed before the fix with six unsigned listeners. Sibling sweep: the only other page-level listeners (instructor auction keys, its clock) live as long as the page |
+| D6 | Review of 6dd12fa: the contrast oracle took only pixels brighter than the background, so a near-invisible vehicle with one bright highlight passed (Codex's synthetic case: body 1.01:1, reported 18.4:1) | Fixed by adding, not replacing: the stage is shot with and without the vehicle, and every pixel the vehicle changes, however dark, is measured against the same pixel of the bare stage; the vehicle must also cover more than 5% of the stage. Codex's case scores about 1.0 and fails. The honest figure is lower than the old one (3D 2.75 to 3.06, stills 1.45 to 1.49 on 2026-10-14, Chromium): the olive hull and dark tyres on the dark stage. Inspected side by side (`.artifacts/tmp/contrast/`: shot, bare stage, mask): the masks hold the vehicle and its ground shadow, nothing else. The existing checks (3 and 2.1 on the bright pixels) stay; the new whole-vehicle floors start at the measured values (3D 2.7, stills 1.4), may only rise, and G4 lifts both to 3 (MPES §10.5, HANDOVER §3). All 54 showcase tests pass on Chromium, Firefox and Edge |
 
 ## Checks
 
@@ -35743,7 +35748,7 @@ export function vehicleGlb(glb: ArrayBuffer, vehicle: string): ArrayBuffer | nul
 
 ### source/showcase/model.ts
 
-Paths: `source/showcase/model.ts`. SHA-256 `ded80a253162dedd32e9bd66aa322f9b5f6f4189d11b43a7d9aacd09396bea26`, 25272 bytes.
+Paths: `source/showcase/model.ts`. SHA-256 `08beb24a376caa6129feef3ab2b1ddf0b54586e9905ff5ffb685d2515b913dd0`, 25451 bytes.
 
 ```ts
 // Real-time vehicle showcase (MPES §10): the embedded glTF model on a slowly turning stage the player can drag.
@@ -35883,6 +35888,8 @@ export class ModelStage {
   #lost = false;
   /** While the context is lost, the check that notices its return (see the constructor). */
   #watch: ReturnType<typeof setInterval> | undefined;
+  /** Removes every listener the stage added outside its controls when it is disposed (`tests/unit/stage-dispose.test.ts`). */
+  readonly #listening = new AbortController();
   /** The player's input anywhere else on the page holds the paced turning draws (input first, MPES §10.3). */
   #input = (event: Event): void => { if (event.target !== this.canvas) this.#pacer.hold(performance.now() + INPUT_HOLD_MS); };
   #visible = true;
@@ -35945,13 +35952,14 @@ export class ModelStage {
     this.canvas.style.touchAction = '';
     this.#controls.addEventListener('change', () => this.#invalidate());
     this.#controls.addEventListener('start', () => this.#loop());
-    this.#motion.addEventListener('change', () => { this.turning = !this.#motion.matches; });
+    const { signal } = this.#listening;
+    this.#motion.addEventListener('change', () => { this.turning = !this.#motion.matches; }, { signal });
     this.#observer = new IntersectionObserver(([entry]) => { this.#visible = !!entry?.isIntersecting; this.#loop(); });
     this.#observer.observe(this.canvas);
     this.#resize = new ResizeObserver(() => this.#size());
     this.#resize.observe(this.canvas);
-    document.addEventListener('visibilitychange', () => this.#loop());
-    for (const type of ['pointerdown', 'keydown', 'input']) document.addEventListener(type, this.#input, { capture: true, passive: true });
+    document.addEventListener('visibilitychange', () => this.#loop(), { signal });
+    for (const type of ['pointerdown', 'keydown', 'input']) document.addEventListener(type, this.#input, { capture: true, passive: true, signal });
     // A lost graphics context (driver reset, GPU switch, sleep) stops the stage; three.js rebuilds the context when it is
     // restored, but what was drawn into textures is gone: the environment and the shadow are made again, then one draw.
     // The context, not the events, says whether it is back: Firefox on a software renderer announced a restore while the
@@ -35965,17 +35973,17 @@ export class ModelStage {
       this.#watch = setInterval(() => {
         if (!this.#renderer.getContext().isContextLost()) this.canvas.dispatchEvent(new Event('webglcontextrestored'));
       }, LOST_CHECK_MS);
-    });
+    }, { signal });
     this.canvas.addEventListener('webglcontextrestored', event => {
       if (this.#renderer.getContext().isContextLost()) { event.stopImmediatePropagation(); return; }
-    }, { capture: true });
+    }, { capture: true, signal });
     this.canvas.addEventListener('webglcontextrestored', () => {
       clearInterval(this.#watch);
       this.#lost = false;
       this.#environ();
       this.#renderer.shadowMap.needsUpdate = true;
       this.#invalidate(true);
-    });
+    }, { signal });
   }
 
   /** The lighting environment, drawn into a texture. A 64 px environment lights matte paint as well as the default
@@ -36248,10 +36256,10 @@ export class ModelStage {
 
   dispose(): void {
     cancelAnimationFrame(this.#frame);
+    this.#listening.abort();
     clearInterval(this.#watch);
     this.#observer.disconnect();
     this.#resize.disconnect();
-    for (const type of ['pointerdown', 'keydown', 'input']) document.removeEventListener(type, this.#input, { capture: true });
     this.#controls.dispose();
     this.#target?.dispose();
     this.#output.dispose();
@@ -36414,6 +36422,30 @@ export const VEHICLE: Readonly<Record<MissionId, string>> = {
 
 export function cardRender(cardId: string): Render | undefined {
   return renders().get(`card-${cardId}`);
+}
+```
+
+### source/showcase/resolve.ts
+
+Paths: `source/showcase/resolve.ts`. SHA-256 `267570117c5ccd681fe6564fc05f2026e35959c434d35a3b7d583760a39dc3b7`, 1136 bytes.
+
+```ts
+/**
+ * The tone-mapping resolve of a multisampled tier (MPES §10.3), made aware of transparency. The scene is drawn into a
+ * target cleared to transparent, so an edge pixel holds its colour already multiplied by how much of it the vehicle
+ * covers (premultiplied). Tone mapping and the sRGB curve are not linear: applied to that product they brighten the
+ * edge into a pale fringe on the dark stage (Codex G3 review). So the colour is divided by its coverage first, mapped,
+ * then multiplied again for the canvas, which expects premultiplied colour.
+ */
+const READ = 'gl_FragColor = texture2D( tDiffuse, vUv );';
+const END = /\}\s*$/;
+
+/** three.js's OutputShader fragment source with the division and multiplication added; throws if its shape changed. */
+export function premultipliedOutput(fragment: string): string {
+  if (!fragment.includes(READ) || !END.test(fragment)) throw new Error('OutputShader changed: review source/showcase/resolve.ts');
+  return fragment
+    .replace(READ, `${READ}\n\tif ( gl_FragColor.a > 0.0 ) gl_FragColor.rgb /= gl_FragColor.a;`)
+    .replace(END, '\tgl_FragColor.rgb *= gl_FragColor.a;\n}');
 }
 ```
 
@@ -40490,13 +40522,13 @@ export async function studentRecord(page: Page, cardId: string, paidDollars: num
 
 ### tests/e2e/showcase.spec.ts
 
-Paths: `tests/e2e/showcase.spec.ts`. SHA-256 `86dfd8557c8a82273f7fac420dfcd4e17b877419b3c591b185bc2f0fdee4e542`, 29088 bytes.
+Paths: `tests/e2e/showcase.spec.ts`. SHA-256 `317302168535488282a56d8fbeed253288c599b23ee8b30cdabab88c92a1a499`, 31095 bytes.
 
 ```ts
 // War-room HUD and vehicle showcase (MPES §7.1, §10, §11): the default look of every view. The live lot shows the
 // card's photoreal render; the student tracker shows the team's vehicle with its real purchases, as a slowly turning
 // 3D model where WebGL works and as stacked still renders where it does not.
-import { expect, test } from '@playwright/test';
+import { expect, test, type Locator } from '@playwright/test';
 import sharp from 'sharp';
 import { collectConsoleErrors, expectAccessible, gameUrl, guardNetwork, withGpu, withoutWebgl } from './helpers.ts';
 import { confirmDialog, instructorSetup, studentJoin } from './roles.ts';
@@ -40510,24 +40542,43 @@ async function record(page: import('@playwright/test').Page, round: number, lot:
   await page.click('#record-win');
 }
 
-/**
- * The vehicle's median luminance contrast with its stage, from a screenshot (WCAG 1.4.11 asks 3:1 of a graphic that
- * carries meaning): the background is the brightest corner, the vehicle every pixel at least 2.5 times as bright.
- * A dim laptop panel scales both alike, so the ratio is what survives it (G3 panel safety).
- */
-/** Lowest still contrast allowed until G4 (see the every-vehicle test). */
+/** Lowest still contrast of the brighter vehicle pixels allowed until G4 (see the per-mission tests). */
 const STILLS_CONTRAST_FLOOR = 2.1;
+/**
+ * Lowest whole-vehicle contrast (every pixel the vehicle changes) allowed until G4 lifts both to 3 (MPES §10.5): the
+ * values measured when this check was added (2026-10-14: 3D 2.75 to 3.06, stills 1.45 to 1.49). These floors may only rise.
+ */
+const WHOLE_CONTRAST_FLOOR = { live: 2.7, stills: 1.4 };
 
-async function vehicleContrast(shot: Buffer): Promise<number> {
-  const { data, info } = await sharp(shot).removeAlpha().raw().toBuffer({ resolveWithObject: true });
+/**
+ * The vehicle's luminance contrast with its stage (WCAG 1.4.11 asks 3:1 of a graphic that carries meaning), from the
+ * stage shot with the vehicle (`vehicle`: the canvas or the still layers) and without it. A dim laptop panel scales
+ * both alike, so the ratios survive it (G3 panel safety).
+ * - `bright`: the median of the pixels at least 2.5 times as bright as the brightest corner, against that corner.
+ * - `whole`: every pixel the vehicle changes, however dark, its median against the same pixels of the bare stage. Codex
+ *   (G3 review) showed `bright` alone passing a near-invisible vehicle with one bright highlight; `whole` fails it.
+ * - `share`: the part of the stage the vehicle covers.
+ */
+async function vehicleContrast(stage: Locator, vehicle: string): Promise<{ bright: number; whole: number; share: number }> {
+  const read = async (shot: Buffer) => sharp(shot).removeAlpha().raw().toBuffer({ resolveWithObject: true });
+  const { data: shown, info } = await read(await stage.screenshot());
+  await stage.locator(vehicle).evaluateAll(els => els.forEach(e => { (e as HTMLElement).style.visibility = 'hidden'; }));
+  const { data: bare } = await read(await stage.screenshot());
+  await stage.locator(vehicle).evaluateAll(els => els.forEach(e => { (e as HTMLElement).style.visibility = ''; }));
   const linear = (c: number) => (c /= 255) <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
-  const at = (i: number) => 0.2126 * linear(data[i]!) + 0.7152 * linear(data[i + 1]!) + 0.0722 * linear(data[i + 2]!);
+  const at = (data: Buffer, i: number) => 0.2126 * linear(data[i]!) + 0.7152 * linear(data[i + 1]!) + 0.0722 * linear(data[i + 2]!);
+  const median = (values: number[]) => values.sort((a, b) => a - b)[values.length >> 1] ?? 0;
   const { width: w, height: h } = info;
-  const background = Math.max(...[[4, 4], [w - 5, 4], [4, h - 5], [w - 5, h - 5]].map(([x, y]) => at((y! * w + x!) * 3)));
-  const vehicle: number[] = [];
-  for (let i = 0; i < data.length; i += 3) { const l = at(i); if (l > background * 2.5) vehicle.push(l); }
-  vehicle.sort((a, b) => a - b);
-  return (vehicle[vehicle.length >> 1]! + 0.05) / (background + 0.05);
+  const corner = Math.max(...[[4, 4], [w - 5, 4], [4, h - 5], [w - 5, h - 5]].map(([x, y]) => at(shown, (y! * w + x!) * 3)));
+  const lit: number[] = [], front: number[] = [], back: number[] = [];
+  for (let i = 0; i < shown.length; i += 3) {
+    const l = at(shown, i);
+    if (l > corner * 2.5) lit.push(l);
+    if (Math.max(Math.abs(shown[i]! - bare[i]!), Math.abs(shown[i + 1]! - bare[i + 1]!), Math.abs(shown[i + 2]! - bare[i + 2]!)) <= 8) continue;
+    front.push(l); back.push(at(bare, i));
+  }
+  const [f, b] = [median(front), median(back)];
+  return { bright: (median(lit) + 0.05) / (corner + 0.05), whole: (Math.max(f, b) + 0.05) / (Math.min(f, b) + 0.05), share: front.length / (w * h) };
 }
 
 async function trackerFor(browser: import('@playwright/test').Browser, mission: string) {
@@ -40898,7 +40949,10 @@ for (const mission of ['COMBAT', 'RECCE', 'TROOP', 'COMMAND', 'RECOVERY', 'MINE'
     const model = gpu.locator('#showcase [role="img"]');
     await expect(model).toHaveAttribute('data-ready', 'true', { timeout: 30_000 });
     await gpu.getByRole('button', { name: 'Pause turning', exact: true }).click();
-    expect(await vehicleContrast(await model.screenshot()), '3D').toBeGreaterThanOrEqual(3);
+    const live = await vehicleContrast(model, 'canvas');
+    expect(live.share, '3D vehicle covers its stage').toBeGreaterThan(0.05);
+    expect(live.bright, '3D').toBeGreaterThanOrEqual(3);
+    expect(live.whole, '3D whole vehicle').toBeGreaterThanOrEqual(WHOLE_CONTRAST_FLOOR.live);
     await gpuContext.close();
     const flatContext = await browser.newContext(), flat = await flatContext.newPage();
     await withoutWebgl(flat);
@@ -40908,7 +40962,10 @@ for (const mission of ['COMBAT', 'RECCE', 'TROOP', 'COMMAND', 'RECOVERY', 'MINE'
     await expect.poll(() => base.evaluate(i => (i as HTMLImageElement).complete && (i as HTMLImageElement).naturalWidth > 0)).toBe(true);
     // The Cycles stills are darker than the real-time model (2.11 to 2.14 on 2026-10-14): held there until the G4
     // re-render lifts them to 3 (MPES §10.5). This floor may only rise.
-    expect(await vehicleContrast(await flat.locator('#showcase .showcase-stage').first().screenshot()), 'stills').toBeGreaterThanOrEqual(STILLS_CONTRAST_FLOOR);
+    const still = await vehicleContrast(flat.locator('#showcase .showcase-stage').first(), 'img');
+    expect(still.share, 'still vehicle covers its stage').toBeGreaterThan(0.05);
+    expect(still.bright, 'stills').toBeGreaterThanOrEqual(STILLS_CONTRAST_FLOOR);
+    expect(still.whole, 'stills whole vehicle').toBeGreaterThanOrEqual(WHOLE_CONTRAST_FLOOR.stills);
     await flatContext.close();
   });
 }
@@ -42661,7 +42718,7 @@ describe('single-file build (RQ-01, RQ-24, RQ-25, RQ-27)', async () => {
 
 ### tests/unit/codebase.test.ts
 
-Paths: `tests/unit/codebase.test.ts`. SHA-256 `a663822ecd3e948fc07a49e5a4c01f4df5af92a1a3b27263e200f63dc2637802`, 4508 bytes.
+Paths: `tests/unit/codebase.test.ts`. SHA-256 `3ee4fc5ff824bc91a1c0e1f766e78f97a59a5075a0840e06809d988f46e00e49`, 5024 bytes.
 
 ```ts
 // G2 item 7: docs/CODEBASE.md rebuilds the tree. This test reads it with its own parser, following only the rules the
@@ -42737,6 +42794,12 @@ describe('docs/CODEBASE.md', () => {
     // Explicit bound: it writes about 150 files and hashes about 1,000 (60 MB). Usually 0.2-0.4 s, but one run on
     // 2026-10-11 took 7.1 s and hit the 5 s default (cause unknown; correct result; not reproduced in 22 runs).
   }, 60_000);
+
+  // G3: two new files, still untracked when the codebase was written, passed locally and failed in verify once added.
+  it('has no new project file left untracked, which the codebase would miss', () => {
+    const untracked = execFileSync('git', ['ls-files', '--others', '--exclude-standard', '-z', '--', 'source', 'tests', 'scripts', 'build', 'content', 'art', 'library'], { encoding: 'utf8' }).split('\0').filter(Boolean);
+    expect(untracked, 'git add the new files, then npm run codebase').toEqual([]);
+  });
 
   it('keeps the specification out and has no hand edits', () => {
     expect(DOC).not.toMatch(/^Paths: .*`docs\/MPES\.md`/m);
@@ -44024,6 +44087,34 @@ describe('render manifest (MPES §10.2, §11)', () => {
 });
 ```
 
+### tests/unit/resolve.test.ts
+
+Paths: `tests/unit/resolve.test.ts`. SHA-256 `b416b6525615569093dfeec553587882d70cbab30de22c6f58cbc2673eb28424`, 1289 bytes.
+
+```ts
+import { describe, expect, it } from 'vitest';
+import { OutputShader } from 'three/examples/jsm/shaders/OutputShader.js';
+import { premultipliedOutput } from '../../source/showcase/resolve.ts';
+
+describe('multisampled resolve (MPES §10.3, Codex G3 review)', () => {
+  const fragment = premultipliedOutput(OutputShader.fragmentShader);
+
+  it('divides by coverage before tone mapping and multiplies after the sRGB curve', () => {
+    const read = fragment.indexOf('texture2D( tDiffuse, vUv )'), divide = fragment.indexOf('gl_FragColor.rgb /= gl_FragColor.a');
+    const tone = fragment.indexOf('ToneMapping( gl_FragColor.rgb )'), srgb = fragment.indexOf('sRGBTransferOETF( gl_FragColor )');
+    const multiply = fragment.indexOf('gl_FragColor.rgb *= gl_FragColor.a');
+    expect(read).toBeGreaterThan(0);
+    expect([read, divide, tone, srgb, multiply].every((at, i, all) => at > 0 && (i === 0 || at > all[i - 1]!))).toBe(true);
+    expect(fragment).toContain('if ( gl_FragColor.a > 0.0 )');
+    expect(fragment.trimEnd().endsWith('}')).toBe(true);
+  });
+
+  it('refuses a three.js OutputShader whose shape changed, rather than drawing fringes silently', () => {
+    expect(() => premultipliedOutput('void main() { gl_FragColor = vec4( 1.0 ); }')).toThrow(/OutputShader changed/);
+  });
+});
+```
+
 ### tests/unit/rules.test.ts
 
 Paths: `tests/unit/rules.test.ts`. SHA-256 `59f37c573234231b72fc0c4e74c05f334fff67a816da40cbb23b069a37530120`, 10736 bytes.
@@ -44568,6 +44659,50 @@ export function specDealVectors(): Record<string, string[][]> {
   }
   return result;
 }
+```
+
+### tests/unit/stage-dispose.test.ts
+
+Paths: `tests/unit/stage-dispose.test.ts`. SHA-256 `850c666368379de7d8294d6b0eef34a0f04f825589f56c645bff6522248b6471`, 1851 bytes.
+
+```ts
+// MPES §10.3, Codex G3 review: a disposed 3D stage leaves nothing listening. A listener left on the document, the
+// motion query or the canvas kept a disposed stage alive and could restart its lost-context check after disposal.
+// The stage cannot be built without WebGL here, so this reads its source: every listener it adds, except on the orbit
+// controls (which their own dispose removes), carries the stage's abort signal, and dispose aborts it.
+import { readFileSync } from 'node:fs';
+import { describe, expect, it } from 'vitest';
+
+const SOURCE = readFileSync('source/showcase/model.ts', 'utf8');
+
+/** Each `addEventListener(` call: its receiver and its full argument text, matched to the closing parenthesis. */
+function listenerCalls(source: string): { receiver: string; args: string }[] {
+  const calls: { receiver: string; args: string }[] = [];
+  for (const match of source.matchAll(/([\w.#]+)\.addEventListener\(/g)) {
+    let depth = 1, i = match.index + match[0].length;
+    for (; depth > 0 && i < source.length; i++) depth += source[i] === '(' ? 1 : source[i] === ')' ? -1 : 0;
+    calls.push({ receiver: match[1]!, args: source.slice(match.index + match[0].length, i - 1) });
+  }
+  return calls;
+}
+
+describe('3D stage disposal (MPES §10.3)', () => {
+  const calls = listenerCalls(SOURCE);
+
+  it('finds the stage listeners', () => {
+    expect(calls.length).toBeGreaterThanOrEqual(8);
+  });
+
+  it('gives every listener outside the orbit controls the stage signal', () => {
+    const unsigned = calls.filter(c => c.receiver !== 'this.#controls' && !/\bsignal\b/.test(c.args)).map(c => c.receiver);
+    expect(unsigned).toEqual([]);
+  });
+
+  it('aborts that signal on dispose', () => {
+    const dispose = /\n {2}dispose\(\): void \{([\s\S]*?)\n {2}\}/.exec(SOURCE)?.[1] ?? '';
+    expect(dispose).toMatch(/\.abort\(\)/);
+  });
+});
 ```
 
 ### tests/unit/student.test.ts
@@ -45632,5 +45767,5 @@ Keys and the commands that make each kind again:
 
 | Path | Bytes | SHA-256 | Why |
 |---|---:|---|---|
-| `docs/MPES.md` | 178413 | `4dff8c47b317c32de8a697c3988d2ca16b022b4f33c8e38fd5f18a14fff4e7ab` | The specification, a clean-room document of its own (Omni 5.1.1 §333). |
+| `docs/MPES.md` | 179532 | `8dfa7c586d8a254f650bfee5e4af28509a2d1dd503b3ac3842a7bd286300d41d` | The specification, a clean-room document of its own (Omni 5.1.1 §333). |
 | `docs/CODEBASE.md` | | | This file. |
