@@ -27700,7 +27700,7 @@ A read-only Codex session (gpt-6.1-sol, medium) reviewed the diff (`.artifacts/c
 
 ### docs/verification/0.6.0.0.md
 
-Paths: `docs/verification/0.6.0.0.md`. SHA-256 `2d7a99ef2dfc0ae1cecc480c60a7ca2f0531d6b273e3005ed8afe5817fdf6df9`, 15890 bytes.
+Paths: `docs/verification/0.6.0.0.md`. SHA-256 `6f9f0fc891ba1de6fd4080eed04c9d76b38b4388bcfa3ac19598cad2fd82aac9`, 16885 bytes.
 
 ```markdown
 # Verification record: 0.6.0.0 beta (G3 proxy and runtime) — in progress
@@ -27793,6 +27793,9 @@ Local verify of 6dd12fa failed in the codebase and specification tests: two new 
 | D7 | Review of fe4df5d: the disposal check accepted the word `signal` anywhere in a call (a comment, another controller's signal) | Fixed: the check now reads each call's options object and requires its `signal` property to be the one destructured from the stage's own controller, bound nowhere else, and dispose to abort that controller. It proves itself against five mutations (a commented-out signal, a fresh controller's signal, a signal in a comment after the listener, a signal from another controller, dispose without the abort); the old check passed all five |
 | D8 | Review of fe4df5d: the whole-vehicle oracle left out every pixel within 8 levels of the stage, the very low-contrast pixels it should measure (Codex's case: 90% of a vehicle invisible, reported 8.89:1) | Fixed: the vehicle is found without looking at its brightness. The stage is shot on black and on white; a pixel that stays the same is opaque vehicle, and its shadow and the stage change. Every silhouette pixel is measured against the same pixel of the bare stage, so in Codex's case the invisible 90% sets the median and it fails. Inspected side by side (`.artifacts/tmp/contrast/sil-grid.png`: shot and silhouette, COMBAT and RECOVERY, 3D and stills): the silhouette is the vehicle alone, crane and antennas included, with no shadow or stage. Measured on Chromium, Firefox and Edge for all six vehicles: 3D 3.16 to 3.72, stills 1.56 to 1.66. These are higher than the old mask's figures because the ground shadow, darker than the stage, no longer counts as vehicle. The floors rise from 2.7 to 3 (3D, now WCAG 3:1) and from 1.4 to 1.5 (stills) |
 | D9 | Local verify of fe4df5d: five of six per-mission showcase tests failed in Firefox with an empty stage (12 workers). Reproduced with 10 workers (2 of 24 failed), and diagnosed with a temporary build that exposed the stage's state: the context was live and the canvas in view, but the stage's visibility observer last said "not visible" and never reported again. The stage had drawn one tick in 60 s | A product defect, not a test flake: a student's stage could stay blank. Fixed: each time the canvas is put on the page the stage asks for its visibility afresh and drops undelivered reports (`source/showcase/model.ts` `attached`). Failing check first: a new browser test in which every observation reports only once failed on all three engines, then passed. The contrast test now also waits for the stage's own draw after pausing, since "ready" means the scene is set, not drawn. The loaded repro then passed 24 of 24. Sibling sweep: the only other observer, the stage's resize observer, reports on the first layout after any change of size; re-asking it would reset the canvas each purchase, so it stays |
+| D10 | Review of d13d6e3: the disposal check still accepted an options spread or a second `signal` that overrides the stage's (Codex ran it: all three checks passed and the listener fired after the stage aborted) | Fixed: the check now reads the source through the TypeScript parser, not text: options must be a plain object literal with exactly one `signal`, that `signal` the only binding of the name and destructured from the stage's controller, and dispose must call the controller's `abort()` as a statement of its own. Eight mutations, the spread, the duplicate and a conditional abort among them, each fail it |
+
+Local verify of d13d6e3: every functional test passed (173); the three performance gates failed on this shared PC (command p95 100.8 ms, stills update p95 143.6 ms, 3D ready 4.46 s) while its other work held the processor busy. Local timings are void by the standing rule; CI on the pushed head is the gate, and two of the three scenarios do not run the changed stage code.
 
 ## Checks
 
@@ -44731,59 +44734,79 @@ export function specDealVectors(): Record<string, string[][]> {
 
 ### tests/unit/stage-dispose.test.ts
 
-Paths: `tests/unit/stage-dispose.test.ts`. SHA-256 `ae00bc440cb9f47ec7b40639d414fbc673205e32f4760cd1912fbdb131540b73`, 4177 bytes.
+Paths: `tests/unit/stage-dispose.test.ts`. SHA-256 `4be4c8cf6d8578f25f4848bd167b93756160a6b0c6bae09d78f36dcfd693f1af`, 6399 bytes.
 
 ```ts
 // MPES §10.3, Codex G3 review: a disposed 3D stage leaves nothing listening. A listener left on the document, the
 // motion query or the canvas kept a disposed stage alive and could restart its lost-context check after disposal.
-// The stage cannot be built without WebGL here, so this reads its source: every listener it adds, except on the orbit
-// controls (which their own dispose removes), passes an options object whose `signal` is the stage's own controller's,
-// and dispose aborts that same controller. A second review found the first version of this check satisfied by the word
-// `signal` anywhere in the call (a comment, another controller's signal), so the check now proves itself against those.
+// The stage cannot be built without WebGL here, so this reads its source as TypeScript sees it: every listener it adds,
+// except on the orbit controls (which their own dispose removes), passes a plain options object whose one `signal` is
+// the stage's own controller's, and dispose aborts that same controller. Two reviews found earlier text matching fooled
+// (the word `signal` in a comment, another controller's signal, a spread overriding it), so the check proves itself
+// against each.
 import { readFileSync } from 'node:fs';
+import ts from 'typescript';
 import { describe, expect, it } from 'vitest';
 
 const SOURCE = readFileSync('source/showcase/model.ts', 'utf8');
 
-/** Each `addEventListener(` call: its receiver and its top-level arguments, matched to the closing parenthesis. */
-function listenerCalls(source: string): { receiver: string; args: string[] }[] {
-  const calls: { receiver: string; args: string[] }[] = [];
-  for (const match of source.matchAll(/([\w.#]+)\.addEventListener\(/g)) {
-    const args: string[] = [];
-    let depth = 1, i = match.index + match[0].length, from = i;
-    for (; depth > 0 && i < source.length; i++) {
-      const c = source[i];
-      if (c === '(' || c === '{' || c === '[') depth++;
-      else if (c === ')' || c === '}' || c === ']') depth--;
-      if ((c === ',' && depth === 1) || depth === 0) { args.push(source.slice(from, i).trim()); from = i + 1; }
-    }
-    calls.push({ receiver: match[1]!, args });
-  }
+/** `this.#listening`, and `this.#listening.signal`, as written. */
+const isListening = (node: ts.Node): boolean => ts.isPropertyAccessExpression(node) && node.expression.kind === ts.SyntaxKind.ThisKeyword && node.name.getText() === '#listening';
+const isListeningSignal = (node: ts.Node): boolean => ts.isPropertyAccessExpression(node) && node.name.text === 'signal' && isListening(node.expression);
+
+/** Every `addEventListener` call in the source. */
+function listenerCalls(file: ts.SourceFile): ts.CallExpression[] {
+  const calls: ts.CallExpression[] = [];
+  const visit = (node: ts.Node): void => {
+    if (ts.isCallExpression(node) && ts.isPropertyAccessExpression(node.expression) && node.expression.name.text === 'addEventListener') calls.push(node);
+    ts.forEachChild(node, visit);
+  };
+  visit(file);
   return calls;
 }
 
 /** What is wrong with a stage source's listener disposal; empty when every listener goes with the stage. */
 function disposalFaults(source: string): string[] {
+  const file = ts.createSourceFile('model.ts', source, ts.ScriptTarget.Latest, true);
   const faults: string[] = [];
-  const code = source.replace(/\/\*[\s\S]*?\*\/|\/\/[^\n]*/g, '');
-  if (!/readonly #listening = new AbortController\(\);/.test(code)) faults.push('no #listening controller');
-  // The one `signal` in scope is the controller's: destructured from it once, and bound nowhere else.
-  const bindings = code.match(/\b(?:const|let|var)\s*\{?[^=;]*\bsignal\b[^=;]*=/g) ?? [];
-  if (bindings.length !== 1 || !/const \{ signal \} = this\.#listening;/.test(code)) faults.push('signal is not the #listening signal');
-  for (const { receiver, args } of listenerCalls(code)) {
-    if (receiver === 'this.#controls') continue;
-    const options = args.length === 3 ? args[2]! : '';
-    const props = options.startsWith('{') && options.endsWith('}') ? options.slice(1, -1).split(',').map(p => p.trim()) : [];
-    if (!props.some(p => p === 'signal' || p === 'signal: signal' || p === 'signal: this.#listening.signal')) faults.push(`${receiver} ${args[0]} has no stage signal`);
+  // The one `signal` binding in the file is destructured from the stage's controller.
+  const bindings: ts.Node[] = [];
+  const visit = (node: ts.Node): void => {
+    if ((ts.isVariableDeclaration(node) || ts.isParameter(node) || ts.isBindingElement(node)) && ts.isIdentifier(node.name) && node.name.text === 'signal') bindings.push(node);
+    ts.forEachChild(node, visit);
+  };
+  visit(file);
+  const own = bindings.length === 1 && ts.isBindingElement(bindings[0]!) && !bindings[0].propertyName && !bindings[0].dotDotDotToken
+    && ts.isVariableDeclaration(bindings[0].parent.parent) && !!bindings[0].parent.parent.initializer && isListening(bindings[0].parent.parent.initializer);
+  if (!own) faults.push('signal is not the #listening signal');
+  let controller = false;
+  for (const member of file.statements.filter(ts.isClassDeclaration).flatMap(c => [...c.members])) {
+    if (ts.isPropertyDeclaration(member) && member.name.getText() === '#listening' && member.initializer && ts.isNewExpression(member.initializer)
+      && member.initializer.expression.getText() === 'AbortController') controller = true;
   }
-  const dispose = /\n {2}dispose\(\): void \{([\s\S]*?)\n {2}\}/.exec(code)?.[1] ?? '';
-  if (!/this\.#listening\.abort\(\);/.test(dispose)) faults.push('dispose does not abort #listening');
+  if (!controller) faults.push('no #listening controller');
+  for (const call of listenerCalls(file)) {
+    const receiver = (call.expression as ts.PropertyAccessExpression).expression.getText();
+    if (receiver === 'this.#controls') continue;
+    const options = call.arguments[2];
+    const name = `${receiver} ${call.arguments[0]?.getText()}`;
+    if (call.arguments.length !== 3 || !options || !ts.isObjectLiteralExpression(options)) { faults.push(`${name} has no options object`); continue; }
+    if (options.properties.some(p => !ts.isPropertyAssignment(p) && !ts.isShorthandPropertyAssignment(p))) { faults.push(`${name} options are not plain properties`); continue; }
+    const signals = options.properties.filter(p => p.name?.getText() === 'signal');
+    const value = signals.length === 1 ? (ts.isShorthandPropertyAssignment(signals[0]!) ? signals[0].name : (signals[0] as ts.PropertyAssignment).initializer) : undefined;
+    if (!value || !((ts.isIdentifier(value) && value.text === 'signal' && own) || isListeningSignal(value))) faults.push(`${name} has no stage signal`);
+  }
+  const dispose = file.statements.filter(ts.isClassDeclaration).flatMap(c => [...c.members])
+    .find((m): m is ts.MethodDeclaration => ts.isMethodDeclaration(m) && m.name.getText() === 'dispose');
+  const aborts = dispose?.body?.statements.some(s => ts.isExpressionStatement(s) && ts.isCallExpression(s.expression) && s.expression.arguments.length === 0
+    && ts.isPropertyAccessExpression(s.expression.expression) && s.expression.expression.name.text === 'abort' && isListening(s.expression.expression.expression));
+  if (!aborts) faults.push('dispose does not abort #listening');
   return faults;
 }
 
 describe('3D stage disposal (MPES §10.3)', () => {
   it('finds the stage listeners', () => {
-    expect(listenerCalls(SOURCE).length).toBeGreaterThanOrEqual(8);
+    expect(listenerCalls(ts.createSourceFile('model.ts', SOURCE, ts.ScriptTarget.Latest, true)).length).toBeGreaterThanOrEqual(8);
   });
 
   it('removes every listener outside the orbit controls on dispose', () => {
@@ -44797,6 +44820,9 @@ describe('3D stage disposal (MPES §10.3)', () => {
       ["() => this.#loop(), { signal });", "() => this.#loop() /* signal */);"],
       ['const { signal } = this.#listening;', 'const { signal } = new AbortController();'],
       ['this.#listening.abort();', '// this.#listening.abort();'],
+      ['{ capture: true, passive: true, signal });', '{ capture: true, passive: true, signal, ...{ signal: new AbortController().signal } });'],
+      ['{ capture: true, passive: true, signal });', '{ capture: true, passive: true, signal, signal: new AbortController().signal });'],
+      ['this.#listening.abort();', 'if (Math.random() > 2) this.#listening.abort();'],
     ];
     for (const [from, to] of mutations) {
       expect(SOURCE, from).toContain(from);
@@ -45868,5 +45894,5 @@ Keys and the commands that make each kind again:
 
 | Path | Bytes | SHA-256 | Why |
 |---|---:|---|---|
-| `docs/MPES.md` | 180829 | `62a05338b118225f2ab2bfdb6bd688539a713c00bca70db573e1aae1d4c3f1ec` | The specification, a clean-room document of its own (Omni 5.1.1 §333). |
+| `docs/MPES.md` | 180931 | `a67c0292c8b19448c1c2b83530db696b38ae85d4d61118376ba6a3f6369ff506` | The specification, a clean-room document of its own (Omni 5.1.1 §333). |
 | `docs/CODEBASE.md` | | | This file. |

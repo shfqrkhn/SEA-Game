@@ -1141,7 +1141,7 @@ Gates outside the code:
 | `tests/unit/renders.test.ts` | §10.2, §11: every subject rendered, every layer with a draw depth and slot, hashes, trims, the 40 MB budget. |
 | `tests/unit/glb.test.ts` | §10, §14: the model holds six vehicles; the game parses one. |
 | `tests/unit/frame.test.ts` | §10.2: long, tall and off-centre kits fit at every turn and height in wide, square and tall windows, tightly; zoom steps and limits. |
-| `tests/unit/stage-dispose.test.ts` | §10.3: every listener the 3D stage adds outside its orbit controls carries one abort signal, aborted on dispose (read from the source, since the stage needs WebGL). |
+| `tests/unit/stage-dispose.test.ts` | §10.3: every listener the 3D stage adds outside its orbit controls passes the stage controller's own abort signal, aborted on dispose (read through the TypeScript parser, since the stage needs WebGL); the check proves itself against eight known ways to get it wrong. |
 | `tests/unit/showcase.test.ts` | §10.2, §10.3: draw order, latest part per slot, the decoded-image pool. |
 | `tests/unit/pace.test.ts` | §10.3: frame pacing, the input hold, adaptive quality tiers and the starting tier. |
 | `tests/unit/resolve.test.ts` | §10.3: the multisampled resolve's order (divide, tone map, sRGB, multiply) and its refusal of a changed three.js shader. |
