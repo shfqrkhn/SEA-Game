@@ -496,8 +496,13 @@ export class ModelStage {
    * Restarts the loop after the canvas is re-attached to the page. The size is left to the ResizeObserver: it reports
    * after the next layout if the size changed. Reading it here would force a layout of the page being replaced
    * (G3 profile: about 15 ms per purchase at 4x).
+   * The visibility is asked afresh, dropping any report not yet delivered: the observer saw the canvas before it was on
+   * the page, and a loaded Firefox never reported it again once it was, so a stage in plain view drew nothing (G3).
    */
   attached(): void {
+    this.#observer.takeRecords();
+    this.#observer.unobserve(this.canvas);
+    this.#observer.observe(this.canvas);
     this.#loop();
   }
 

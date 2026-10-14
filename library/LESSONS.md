@@ -2,6 +2,12 @@
 
 Each entry: what happened, the rule it produced, and the check that now enforces it. Newest first. Examples come from SEA Game (a classroom auction game with photoreal vehicle renders and a real-time 3D showcase, one offline HTML file).
 
+## 2026-10-14 · A stage in plain view that never drew; a contrast check blind to dark pixels
+
+- **What happened:** under a loaded local test run, Firefox showed an empty 3D stage. A temporary build that exposed the stage's state showed that the WebGL context was live and the canvas was on screen, but the stage's IntersectionObserver had last reported "not visible" (it first saw the canvas before it was on the page) and never reported again. The stage had drawn once in a minute. Separately, a reviewer showed that two contrast oracles were blind to dark pixels: one took only pixels brighter than the background, and the next took only pixels that differ from it. A vehicle mostly as dark as its stage passed both.
+- **Rule:** when a view re-attaches a canvas, re-ask the browser for its visibility; never let a single missed report stop drawing for good. A test of a canvas waits for the renderer's draw, not for "ready". Find what a contrast check measures without using brightness: shoot on black and on white, and the pixels that stay the same are the subject.
+- **Check (as built in SEA Game):** a browser test replaces IntersectionObserver with one that reports only once per observation, and the stage must still draw; the per-mission contrast test measures the silhouette from the black-and-white shots, waits for the stage's `sea-draw`, and holds the 3D vehicle to 3:1.
+
 ## 2026-10-14 · An unchanged attribute that restyled the page; a restore that was not one
 
 - **What happened:** a purchase's 3D update ran over budget on CI. Splitting its timing into phases (input to handled, to draw start, the draw, to paint) and profiling one purchase showed the cause: every command wrote the page's `lang` attribute, unchanged. Writing an attribute on the document root restyles the whole page, even with the same value; with the focused button just replaced, it forced a full style and layout inside the command and slowed the next one. On the same run, Firefox on a software renderer announced a restored WebGL context while it was still lost, then restored it later without any event.

@@ -45,6 +45,7 @@ Every component must read as a separate object at a glance: in a still, in real-
 ## 7. Measured, not judged by eye alone
 
 - In force (example project): picture sightline check, overlap, fit, triangle budgets, WCAG contrast in end-to-end tests.
+- Find the subject before measuring its contrast, and find it without looking at its brightness: shoot it on black and on white; what stays the same is the opaque subject. A mask of "bright pixels" or "pixels that differ from the background" leaves out the dark parts a contrast check exists to catch. Prove the oracle on a synthetic subject that is mostly invisible.
 - Next: render a per-component ID mask for each still; fail a component whose visible area falls below a share of its own (start 35% in at least one angle), or whose boundary contrast with neighbours is under 1.5:1 along 70% of its edge; judge the encoded images at displayed sizes, in greyscale and under colour-vision simulation. Simulate projector washout (start: 15% white veil) on the interface.
 
 ## Sources

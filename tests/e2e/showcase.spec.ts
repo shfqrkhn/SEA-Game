@@ -18,26 +18,36 @@ async function record(page: import('@playwright/test').Page, round: number, lot:
 /** Lowest still contrast of the brighter vehicle pixels allowed until G4 (see the per-mission tests). */
 const STILLS_CONTRAST_FLOOR = 2.1;
 /**
- * Lowest whole-vehicle contrast (every pixel the vehicle changes) allowed until G4 lifts both to 3 (MPES §10.5): the
- * values measured when this check was added (2026-10-14: 3D 2.75 to 3.06, stills 1.45 to 1.49). These floors may only rise.
+ * Lowest whole-vehicle contrast (the vehicle's silhouette, see vehicleContrast) allowed until G4 lifts the stills to 3
+ * (MPES §10.5). Measured on 2026-10-14 on Chromium, Firefox and Edge: 3D 3.16 to 3.72, stills 1.56 to 1.66. These floors
+ * may only rise: the 3D floor already holds the whole vehicle to WCAG 3:1.
  */
-const WHOLE_CONTRAST_FLOOR = { live: 2.7, stills: 1.4 };
+const WHOLE_CONTRAST_FLOOR = { live: 3, stills: 1.5 };
 
 /**
- * The vehicle's luminance contrast with its stage (WCAG 1.4.11 asks 3:1 of a graphic that carries meaning), from the
- * stage shot with the vehicle (`vehicle`: the canvas or the still layers) and without it. A dim laptop panel scales
- * both alike, so the ratios survive it (G3 panel safety).
+ * The vehicle's luminance contrast with its stage (WCAG 1.4.11 asks 3:1 of a graphic that carries meaning). A dim
+ * laptop panel scales vehicle and stage alike, so the ratios survive it (G3 panel safety).
  * - `bright`: the median of the pixels at least 2.5 times as bright as the brightest corner, against that corner.
- * - `whole`: every pixel the vehicle changes, however dark, its median against the same pixels of the bare stage. Codex
- *   (G3 review) showed `bright` alone passing a near-invisible vehicle with one bright highlight; `whole` fails it.
- * - `share`: the part of the stage the vehicle covers.
+ * - `whole`: the vehicle's silhouette, found without looking at its brightness: the stage is shot on black and on
+ *   white, and a pixel that stays the same is opaque vehicle (its soft shadow and the stage change). Its median
+ *   luminance is compared with the same pixels of the stage shot with the vehicle (`vehicle`: the canvas or the still
+ *   layers) hidden. Codex (G3 review) showed `bright` alone, and then a mask of the pixels that differ from the stage,
+ *   passing a vehicle mostly as dark as its stage; the silhouette counts those pixels too.
+ * - `share`: the part of the stage the silhouette covers.
  */
 async function vehicleContrast(stage: Locator, vehicle: string): Promise<{ bright: number; whole: number; share: number }> {
-  const read = async (shot: Buffer) => sharp(shot).removeAlpha().raw().toBuffer({ resolveWithObject: true });
-  const { data: shown, info } = await read(await stage.screenshot());
-  await stage.locator(vehicle).evaluateAll(els => els.forEach(e => { (e as HTMLElement).style.visibility = 'hidden'; }));
-  const { data: bare } = await read(await stage.screenshot());
-  await stage.locator(vehicle).evaluateAll(els => els.forEach(e => { (e as HTMLElement).style.visibility = ''; }));
+  const shoot = async () => sharp(await stage.screenshot()).removeAlpha().raw().toBuffer({ resolveWithObject: true });
+  const style = (css: Record<string, string>, selector?: string) => (selector ? stage.locator(selector) : stage)
+    .evaluateAll((els, c) => els.forEach(e => Object.assign((e as HTMLElement).style, c)), css);
+  const { data: shown, info } = await shoot();
+  await style({ background: '#000' });
+  const { data: black } = await shoot();
+  await style({ background: '#fff' });
+  const { data: white } = await shoot();
+  await style({ background: '' });
+  await style({ visibility: 'hidden' }, vehicle);
+  const { data: bare } = await shoot();
+  await style({ visibility: '' }, vehicle);
   const linear = (c: number) => (c /= 255) <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
   const at = (data: Buffer, i: number) => 0.2126 * linear(data[i]!) + 0.7152 * linear(data[i + 1]!) + 0.0722 * linear(data[i + 2]!);
   const median = (values: number[]) => values.sort((a, b) => a - b)[values.length >> 1] ?? 0;
@@ -47,7 +57,8 @@ async function vehicleContrast(stage: Locator, vehicle: string): Promise<{ brigh
   for (let i = 0; i < shown.length; i += 3) {
     const l = at(shown, i);
     if (l > corner * 2.5) lit.push(l);
-    if (Math.max(Math.abs(shown[i]! - bare[i]!), Math.abs(shown[i + 1]! - bare[i + 1]!), Math.abs(shown[i + 2]! - bare[i + 2]!)) <= 8) continue;
+    // Opaque: black and white behind it move the pixel by at most a tenth of the way.
+    if (Math.max(white[i]! - black[i]!, white[i + 1]! - black[i + 1]!, white[i + 2]! - black[i + 2]!) > 25) continue;
     front.push(l); back.push(at(bare, i));
   }
   const [f, b] = [median(front), median(back)];
@@ -224,6 +235,41 @@ test('3D showcase recovers a lost graphics context: it stops drawing, then draws
   });
   await expect(stage).toHaveAttribute('data-drawn', 'ACC-E', { timeout: 30_000 });
   expect(errors).toEqual([]);
+});
+
+// Verify of fe4df5d (Firefox, 12 workers): the stage's visibility observer reported the canvas hidden, before it was
+// on the page, and never again once it was, so a stage in plain view drew nothing for a minute. Here every observation
+// reports once, its first state, and never again: the worst a loaded browser did. The stage must still draw.
+test('3D showcase draws though the browser reports its visibility only once', async ({ page }) => {
+  guardNetwork(page);
+  await withGpu(page);
+  await page.addInitScript(() => {
+    const Native = window.IntersectionObserver;
+    // A plain function: the test compiler turns class private fields into helpers the page does not have.
+    window.IntersectionObserver = function (this: IntersectionObserver, report: IntersectionObserverCallback) {
+      const watching = new Map<Element, IntersectionObserver>();
+      const unobserve = (target: Element) => { watching.get(target)?.disconnect(); watching.delete(target); };
+      return Object.assign(this, {
+        observe: (target: Element) => {
+          unobserve(target);
+          const once = new Native(entries => { unobserve(target); report(entries, this); });
+          watching.set(target, once);
+          once.observe(target);
+        },
+        unobserve,
+        disconnect: () => { for (const target of [...watching.keys()]) unobserve(target); },
+        takeRecords: () => [],
+      });
+    } as unknown as typeof IntersectionObserver;
+  });
+  await page.goto(gameUrl('?role=student&lang=en'));
+  await studentJoin(page, 'SEA3-T2-0123456789ABCDEF', 1, 'COMBAT');
+  await page.check('#plan-confirm');
+  await page.click('#student-start-auction');
+  await confirmDialog(page);
+  const stage = page.locator('#showcase [role="img"]');
+  await expect(stage).toHaveAttribute('data-ready', 'true', { timeout: 30_000 });
+  await expect(stage, 'the stage in view has drawn').toHaveAttribute('data-drawn', /.*/, { timeout: 15_000 });
 });
 
 test('3D showcase: the confirmed vehicle is prepared during planning, and only then, so the tracker opens with it ready', async ({ browser }) => {
@@ -421,7 +467,12 @@ for (const mission of ['COMBAT', 'RECCE', 'TROOP', 'COMMAND', 'RECOVERY', 'MINE'
     await join(gpu);
     const model = gpu.locator('#showcase [role="img"]');
     await expect(model).toHaveAttribute('data-ready', 'true', { timeout: 30_000 });
+    // Ready means the scene is set, not drawn: on a loaded machine the first frame came after the shots, so all four
+    // were an empty stage (verify of fe4df5d, Firefox, 12 workers). The pause draws once; the shots wait for that draw.
+    const canvas = model.locator('canvas');
+    await canvas.evaluate(c => { c.addEventListener('sea-draw', () => { c.dataset['draws'] = String(Number(c.dataset['draws'] ?? 0) + 1); }); });
     await gpu.getByRole('button', { name: 'Pause turning', exact: true }).click();
+    await expect(canvas).toHaveAttribute('data-draws', /\d/);
     const live = await vehicleContrast(model, 'canvas');
     expect(live.share, '3D vehicle covers its stage').toBeGreaterThan(0.05);
     expect(live.bright, '3D').toBeGreaterThanOrEqual(3);

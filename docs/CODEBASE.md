@@ -27041,7 +27041,7 @@ Exportez une sauvegarde par **Menu → Exporter une sauvegarde** après la confi
 
 ### docs/HANDOVER.md
 
-Paths: `docs/HANDOVER.md`. SHA-256 `303dbe7bde55b5a2221f732dd42848690efb9bbda7f84eed07837cb4cf93c934`, 12468 bytes.
+Paths: `docs/HANDOVER.md`. SHA-256 `64fa00ad64565b0239bdb2aa610c188158730c87b786c6583bba9ff43d6b2ae9`, 12461 bytes.
 
 ```markdown
 # Handover
@@ -27097,7 +27097,7 @@ Shared rules for every goal: `AGENTS.md`. KPIs and priority: MPES §1.4.
 - **Known timing note:** `tests/unit/codebase.test.ts` usually runs in under half a second but once took 7.1 s (2026-10-11, cause unknown, result correct, not reproduced in 22 runs); it has an explicit 60 s bound with that evidence in a comment. Watch for a repeat.
 - **Known timing note 2:** `tests/unit/build.test.ts` "is deterministic" once timed out (63 s against 5 s) while other projects' test runs loaded this PC (2026-10-12); it passed in 5.3 s on re-run. The same day `tests/unit/archive.test.ts` "refuses a path that holds a tracked file" timed out the same way (5 s; 80 ms alone); its scratch clones had piled up in `.artifacts/tmp` and are now removed after each run (`tests/unit/scratch.test.ts`). On 2026-10-12 at 97% CPU two Firefox tests (`layout.spec.ts` live lot, `showcase.spec.ts` every vehicle) timed out with an unchanged build and passed alone. If either repeats on a quiet machine, find the cause; do not raise the timeout.
 - **Known timing note 3:** CI failed the showcase update budget once too (109 ms against 100, `78cca1f`, 2026-10-12). With Windows Defender and other projects busy, the local perf project fails a 3D update budget in about half of its runs, at the previous commit as often as now (A/B in `docs/verification/0.5.1.0.md`). Run it on a quiet machine; never raise the budgets. G3's `perf:ref` protocol is meant to settle this.
-- **Whole-vehicle contrast (for G4):** measured honestly (every pixel the vehicle changes against the bare stage), the vehicles stand at 2.75 to 3.06:1 in 3D and 1.45 to 1.49:1 in stills on the dark stage, below the 3:1 of WCAG 1.4.11. The floors (2.7 and 1.4 in `tests/e2e/showcase.spec.ts`) may only rise; G4 lifts both to 3 through lighting, value separation and the re-render (MPES §10.5).
+- **Whole-vehicle contrast (for G4):** measured on the vehicle's silhouette (stage shot on black and on white), the vehicles stand at 3.16 to 3.72:1 in 3D, meeting WCAG 1.4.11, and 1.56 to 1.66:1 in stills on the dark stage. The floors (3 and 1.5 in `tests/e2e/showcase.spec.ts`) may only rise; G4 lifts the stills to 3 through lighting, value separation and the re-render (MPES §10.5).
 - **Residual risks:** real learners (S3); Narrator and NVDA users; no physical laptop test (D-16); CI runs Windows Server, not Windows 11; art quality is the owner's judgement.
 
 ## 4. In-progress work
@@ -27700,7 +27700,7 @@ A read-only Codex session (gpt-6.1-sol, medium) reviewed the diff (`.artifacts/c
 
 ### docs/verification/0.6.0.0.md
 
-Paths: `docs/verification/0.6.0.0.md`. SHA-256 `39e99538f486a8d89dcc03e7696349b4d3661556bb6a0662ba0bd518586d8225`, 13146 bytes.
+Paths: `docs/verification/0.6.0.0.md`. SHA-256 `2d7a99ef2dfc0ae1cecc480c60a7ca2f0531d6b273e3005ed8afe5817fdf6df9`, 15890 bytes.
 
 ```markdown
 # Verification record: 0.6.0.0 beta (G3 proxy and runtime) — in progress
@@ -27790,6 +27790,9 @@ Local verify of 6dd12fa failed in the codebase and specification tests: two new 
 | D4 | Unreadable GPU memory was reported as zero | Fixed: reported as null with a note |
 | D5 | Review of 6dd12fa: a disposed stage left its context, visibility and reduced-motion listeners registered, so a late context loss restarted the check and kept the stage alive | Fixed: every listener outside the orbit controls carries one abort signal, aborted on dispose (`source/showcase/model.ts`). Check `tests/unit/stage-dispose.test.ts` reads the source (the stage needs WebGL, absent in unit tests); it failed before the fix with six unsigned listeners. Sibling sweep: the only other page-level listeners (instructor auction keys, its clock) live as long as the page |
 | D6 | Review of 6dd12fa: the contrast oracle took only pixels brighter than the background, so a near-invisible vehicle with one bright highlight passed (Codex's synthetic case: body 1.01:1, reported 18.4:1) | Fixed by adding, not replacing: the stage is shot with and without the vehicle, and every pixel the vehicle changes, however dark, is measured against the same pixel of the bare stage; the vehicle must also cover more than 5% of the stage. Codex's case scores about 1.0 and fails. The honest figure is lower than the old one (3D 2.75 to 3.06, stills 1.45 to 1.49 on 2026-10-14, Chromium): the olive hull and dark tyres on the dark stage. Inspected side by side (`.artifacts/tmp/contrast/`: shot, bare stage, mask): the masks hold the vehicle and its ground shadow, nothing else. The existing checks (3 and 2.1 on the bright pixels) stay; the new whole-vehicle floors start at the measured values (3D 2.7, stills 1.4), may only rise, and G4 lifts both to 3 (MPES §10.5, HANDOVER §3). All 54 showcase tests pass on Chromium, Firefox and Edge |
+| D7 | Review of fe4df5d: the disposal check accepted the word `signal` anywhere in a call (a comment, another controller's signal) | Fixed: the check now reads each call's options object and requires its `signal` property to be the one destructured from the stage's own controller, bound nowhere else, and dispose to abort that controller. It proves itself against five mutations (a commented-out signal, a fresh controller's signal, a signal in a comment after the listener, a signal from another controller, dispose without the abort); the old check passed all five |
+| D8 | Review of fe4df5d: the whole-vehicle oracle left out every pixel within 8 levels of the stage, the very low-contrast pixels it should measure (Codex's case: 90% of a vehicle invisible, reported 8.89:1) | Fixed: the vehicle is found without looking at its brightness. The stage is shot on black and on white; a pixel that stays the same is opaque vehicle, and its shadow and the stage change. Every silhouette pixel is measured against the same pixel of the bare stage, so in Codex's case the invisible 90% sets the median and it fails. Inspected side by side (`.artifacts/tmp/contrast/sil-grid.png`: shot and silhouette, COMBAT and RECOVERY, 3D and stills): the silhouette is the vehicle alone, crane and antennas included, with no shadow or stage. Measured on Chromium, Firefox and Edge for all six vehicles: 3D 3.16 to 3.72, stills 1.56 to 1.66. These are higher than the old mask's figures because the ground shadow, darker than the stage, no longer counts as vehicle. The floors rise from 2.7 to 3 (3D, now WCAG 3:1) and from 1.4 to 1.5 (stills) |
+| D9 | Local verify of fe4df5d: five of six per-mission showcase tests failed in Firefox with an empty stage (12 workers). Reproduced with 10 workers (2 of 24 failed), and diagnosed with a temporary build that exposed the stage's state: the context was live and the canvas in view, but the stage's visibility observer last said "not visible" and never reported again. The stage had drawn one tick in 60 s | A product defect, not a test flake: a student's stage could stay blank. Fixed: each time the canvas is put on the page the stage asks for its visibility afresh and drops undelivered reports (`source/showcase/model.ts` `attached`). Failing check first: a new browser test in which every observation reports only once failed on all three engines, then passed. The contrast test now also waits for the stage's own draw after pausing, since "ready" means the scene is set, not drawn. The loaded repro then passed 24 of 24. Sibling sweep: the only other observer, the stage's resize observer, reports on the first layout after any change of size; re-asking it would reset the canvas each purchase, so it stays |
 
 ## Checks
 
@@ -28071,12 +28074,18 @@ export default tseslint.config(
 
 ### library/LESSONS.md
 
-Paths: `library/LESSONS.md`. SHA-256 `ce14bd8163790023e0666db41af79f8b0e6e0dd3f9f0e1a4f73d9ff403984b0f`, 9457 bytes.
+Paths: `library/LESSONS.md`. SHA-256 `e0b64a4c2950aaba205f49fb199420d26bbd4a76640fa4f8bd3ba7bc566f61c6`, 10842 bytes.
 
 ```markdown
 # Lessons learned
 
 Each entry: what happened, the rule it produced, and the check that now enforces it. Newest first. Examples come from SEA Game (a classroom auction game with photoreal vehicle renders and a real-time 3D showcase, one offline HTML file).
+
+## 2026-10-14 · A stage in plain view that never drew; a contrast check blind to dark pixels
+
+- **What happened:** under a loaded local test run, Firefox showed an empty 3D stage. A temporary build that exposed the stage's state showed that the WebGL context was live and the canvas was on screen, but the stage's IntersectionObserver had last reported "not visible" (it first saw the canvas before it was on the page) and never reported again. The stage had drawn once in a minute. Separately, a reviewer showed that two contrast oracles were blind to dark pixels: one took only pixels brighter than the background, and the next took only pixels that differ from it. A vehicle mostly as dark as its stage passed both.
+- **Rule:** when a view re-attaches a canvas, re-ask the browser for its visibility; never let a single missed report stop drawing for good. A test of a canvas waits for the renderer's draw, not for "ready". Find what a contrast check measures without using brightness: shoot on black and on white, and the pixels that stay the same are the subject.
+- **Check (as built in SEA Game):** a browser test replaces IntersectionObserver with one that reports only once per observation, and the stage must still draw; the per-mission contrast test measures the silhouette from the black-and-white shots, waits for the stage's `sea-draw`, and holds the 3D vehicle to 3:1.
 
 ## 2026-10-14 · An unchanged attribute that restyled the page; a restore that was not one
 
@@ -28597,7 +28606,7 @@ Write so that another person or agent can resume development, operations and mai
 
 ### library/practices/performance.md
 
-Paths: `library/practices/performance.md`. SHA-256 `2a976517fcc97ee1f2528fab234062d06711c9788bc485430723c6d529fe6ce1`, 2847 bytes.
+Paths: `library/practices/performance.md`. SHA-256 `972dc95b6170fd25d7484d66e5ed3446deaf44457b7b990f75bf56bfa618f2ba`, 3197 bytes.
 
 ```markdown
 # Performance on ordinary laptops
@@ -28632,12 +28641,14 @@ Chromium and Edge forced onto an Intel integrated GPU (`--use-angle=d3d11 --enab
 - Split a slow interaction timing into phases (handled, draw start, draw, paint) before fixing; profile one instance on an unminified build.
 - Own every GPU resource: dispose of geometries, materials, textures and render targets when a view closes (three.js does not free them for you); give shared resources a clear owner or a reference count; cancel loads no longer wanted; test repeated open and close for memory growth.
 - Count GPU memory, not file size: a 200 KB AVIF of 2048 px still takes about 16 MB decoded (more with mipmaps).
+- A visibility observer may go stale across a detach and re-attach on a loaded browser: when a view puts its canvas back on the page, ask afresh (drop pending records, unobserve, observe). Test with an observer that reports only once.
+- "Ready" is not "drawn": a screenshot test of a canvas waits for the renderer's own draw event, not a ready flag.
 - Measure on a quiet machine. Timing failures under load are evidence to investigate, never a reason to raise budgets.
 ```
 
 ### library/practices/visual-legibility.md
 
-Paths: `library/practices/visual-legibility.md`. SHA-256 `6a1270b13397cd7eef9e198f584cfae9a8062271bd330a1825b9c14adc994bcd`, 4527 bytes.
+Paths: `library/practices/visual-legibility.md`. SHA-256 `0fa06b29aaa9eb5ef5ae43a99416dedeff936dbcc979b7e7e112080105e7b979`, 4895 bytes.
 
 ```markdown
 # Visual legibility
@@ -28687,6 +28698,7 @@ Every component must read as a separate object at a glance: in a still, in real-
 ## 7. Measured, not judged by eye alone
 
 - In force (example project): picture sightline check, overlap, fit, triangle budgets, WCAG contrast in end-to-end tests.
+- Find the subject before measuring its contrast, and find it without looking at its brightness: shoot it on black and on white; what stays the same is the opaque subject. A mask of "bright pixels" or "pixels that differ from the background" leaves out the dark parts a contrast check exists to catch. Prove the oracle on a synthetic subject that is mostly invisible.
 - Next: render a per-component ID mask for each still; fail a component whose visible area falls below a share of its own (start 35% in at least one angle), or whose boundary contrast with neighbours is under 1.5:1 along 70% of its edge; judge the encoded images at displayed sizes, in greyscale and under colour-vision simulation. Simulate projector washout (start: 15% white veil) on the interface.
 
 ## Sources
@@ -35748,7 +35760,7 @@ export function vehicleGlb(glb: ArrayBuffer, vehicle: string): ArrayBuffer | nul
 
 ### source/showcase/model.ts
 
-Paths: `source/showcase/model.ts`. SHA-256 `08beb24a376caa6129feef3ab2b1ddf0b54586e9905ff5ffb685d2515b913dd0`, 25451 bytes.
+Paths: `source/showcase/model.ts`. SHA-256 `7adadac69817d44d7b8f91cb311273ffdff9390f878e61ef0a33389a13d5cb7c`, 25807 bytes.
 
 ```ts
 // Real-time vehicle showcase (MPES §10): the embedded glTF model on a slowly turning stage the player can drag.
@@ -36249,8 +36261,13 @@ export class ModelStage {
    * Restarts the loop after the canvas is re-attached to the page. The size is left to the ResizeObserver: it reports
    * after the next layout if the size changed. Reading it here would force a layout of the page being replaced
    * (G3 profile: about 15 ms per purchase at 4x).
+   * The visibility is asked afresh, dropping any report not yet delivered: the observer saw the canvas before it was on
+   * the page, and a loaded Firefox never reported it again once it was, so a stage in plain view drew nothing (G3).
    */
   attached(): void {
+    this.#observer.takeRecords();
+    this.#observer.unobserve(this.canvas);
+    this.#observer.observe(this.canvas);
     this.#loop();
   }
 
@@ -40522,7 +40539,7 @@ export async function studentRecord(page: Page, cardId: string, paidDollars: num
 
 ### tests/e2e/showcase.spec.ts
 
-Paths: `tests/e2e/showcase.spec.ts`. SHA-256 `317302168535488282a56d8fbeed253288c599b23ee8b30cdabab88c92a1a499`, 31095 bytes.
+Paths: `tests/e2e/showcase.spec.ts`. SHA-256 `eb7ddcfa6365976c460d861d44971986eaf7b57bc00cbd2c5e7c6ac8a9650938`, 34124 bytes.
 
 ```ts
 // War-room HUD and vehicle showcase (MPES §7.1, §10, §11): the default look of every view. The live lot shows the
@@ -40545,26 +40562,36 @@ async function record(page: import('@playwright/test').Page, round: number, lot:
 /** Lowest still contrast of the brighter vehicle pixels allowed until G4 (see the per-mission tests). */
 const STILLS_CONTRAST_FLOOR = 2.1;
 /**
- * Lowest whole-vehicle contrast (every pixel the vehicle changes) allowed until G4 lifts both to 3 (MPES §10.5): the
- * values measured when this check was added (2026-10-14: 3D 2.75 to 3.06, stills 1.45 to 1.49). These floors may only rise.
+ * Lowest whole-vehicle contrast (the vehicle's silhouette, see vehicleContrast) allowed until G4 lifts the stills to 3
+ * (MPES §10.5). Measured on 2026-10-14 on Chromium, Firefox and Edge: 3D 3.16 to 3.72, stills 1.56 to 1.66. These floors
+ * may only rise: the 3D floor already holds the whole vehicle to WCAG 3:1.
  */
-const WHOLE_CONTRAST_FLOOR = { live: 2.7, stills: 1.4 };
+const WHOLE_CONTRAST_FLOOR = { live: 3, stills: 1.5 };
 
 /**
- * The vehicle's luminance contrast with its stage (WCAG 1.4.11 asks 3:1 of a graphic that carries meaning), from the
- * stage shot with the vehicle (`vehicle`: the canvas or the still layers) and without it. A dim laptop panel scales
- * both alike, so the ratios survive it (G3 panel safety).
+ * The vehicle's luminance contrast with its stage (WCAG 1.4.11 asks 3:1 of a graphic that carries meaning). A dim
+ * laptop panel scales vehicle and stage alike, so the ratios survive it (G3 panel safety).
  * - `bright`: the median of the pixels at least 2.5 times as bright as the brightest corner, against that corner.
- * - `whole`: every pixel the vehicle changes, however dark, its median against the same pixels of the bare stage. Codex
- *   (G3 review) showed `bright` alone passing a near-invisible vehicle with one bright highlight; `whole` fails it.
- * - `share`: the part of the stage the vehicle covers.
+ * - `whole`: the vehicle's silhouette, found without looking at its brightness: the stage is shot on black and on
+ *   white, and a pixel that stays the same is opaque vehicle (its soft shadow and the stage change). Its median
+ *   luminance is compared with the same pixels of the stage shot with the vehicle (`vehicle`: the canvas or the still
+ *   layers) hidden. Codex (G3 review) showed `bright` alone, and then a mask of the pixels that differ from the stage,
+ *   passing a vehicle mostly as dark as its stage; the silhouette counts those pixels too.
+ * - `share`: the part of the stage the silhouette covers.
  */
 async function vehicleContrast(stage: Locator, vehicle: string): Promise<{ bright: number; whole: number; share: number }> {
-  const read = async (shot: Buffer) => sharp(shot).removeAlpha().raw().toBuffer({ resolveWithObject: true });
-  const { data: shown, info } = await read(await stage.screenshot());
-  await stage.locator(vehicle).evaluateAll(els => els.forEach(e => { (e as HTMLElement).style.visibility = 'hidden'; }));
-  const { data: bare } = await read(await stage.screenshot());
-  await stage.locator(vehicle).evaluateAll(els => els.forEach(e => { (e as HTMLElement).style.visibility = ''; }));
+  const shoot = async () => sharp(await stage.screenshot()).removeAlpha().raw().toBuffer({ resolveWithObject: true });
+  const style = (css: Record<string, string>, selector?: string) => (selector ? stage.locator(selector) : stage)
+    .evaluateAll((els, c) => els.forEach(e => Object.assign((e as HTMLElement).style, c)), css);
+  const { data: shown, info } = await shoot();
+  await style({ background: '#000' });
+  const { data: black } = await shoot();
+  await style({ background: '#fff' });
+  const { data: white } = await shoot();
+  await style({ background: '' });
+  await style({ visibility: 'hidden' }, vehicle);
+  const { data: bare } = await shoot();
+  await style({ visibility: '' }, vehicle);
   const linear = (c: number) => (c /= 255) <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
   const at = (data: Buffer, i: number) => 0.2126 * linear(data[i]!) + 0.7152 * linear(data[i + 1]!) + 0.0722 * linear(data[i + 2]!);
   const median = (values: number[]) => values.sort((a, b) => a - b)[values.length >> 1] ?? 0;
@@ -40574,7 +40601,8 @@ async function vehicleContrast(stage: Locator, vehicle: string): Promise<{ brigh
   for (let i = 0; i < shown.length; i += 3) {
     const l = at(shown, i);
     if (l > corner * 2.5) lit.push(l);
-    if (Math.max(Math.abs(shown[i]! - bare[i]!), Math.abs(shown[i + 1]! - bare[i + 1]!), Math.abs(shown[i + 2]! - bare[i + 2]!)) <= 8) continue;
+    // Opaque: black and white behind it move the pixel by at most a tenth of the way.
+    if (Math.max(white[i]! - black[i]!, white[i + 1]! - black[i + 1]!, white[i + 2]! - black[i + 2]!) > 25) continue;
     front.push(l); back.push(at(bare, i));
   }
   const [f, b] = [median(front), median(back)];
@@ -40751,6 +40779,41 @@ test('3D showcase recovers a lost graphics context: it stops drawing, then draws
   });
   await expect(stage).toHaveAttribute('data-drawn', 'ACC-E', { timeout: 30_000 });
   expect(errors).toEqual([]);
+});
+
+// Verify of fe4df5d (Firefox, 12 workers): the stage's visibility observer reported the canvas hidden, before it was
+// on the page, and never again once it was, so a stage in plain view drew nothing for a minute. Here every observation
+// reports once, its first state, and never again: the worst a loaded browser did. The stage must still draw.
+test('3D showcase draws though the browser reports its visibility only once', async ({ page }) => {
+  guardNetwork(page);
+  await withGpu(page);
+  await page.addInitScript(() => {
+    const Native = window.IntersectionObserver;
+    // A plain function: the test compiler turns class private fields into helpers the page does not have.
+    window.IntersectionObserver = function (this: IntersectionObserver, report: IntersectionObserverCallback) {
+      const watching = new Map<Element, IntersectionObserver>();
+      const unobserve = (target: Element) => { watching.get(target)?.disconnect(); watching.delete(target); };
+      return Object.assign(this, {
+        observe: (target: Element) => {
+          unobserve(target);
+          const once = new Native(entries => { unobserve(target); report(entries, this); });
+          watching.set(target, once);
+          once.observe(target);
+        },
+        unobserve,
+        disconnect: () => { for (const target of [...watching.keys()]) unobserve(target); },
+        takeRecords: () => [],
+      });
+    } as unknown as typeof IntersectionObserver;
+  });
+  await page.goto(gameUrl('?role=student&lang=en'));
+  await studentJoin(page, 'SEA3-T2-0123456789ABCDEF', 1, 'COMBAT');
+  await page.check('#plan-confirm');
+  await page.click('#student-start-auction');
+  await confirmDialog(page);
+  const stage = page.locator('#showcase [role="img"]');
+  await expect(stage).toHaveAttribute('data-ready', 'true', { timeout: 30_000 });
+  await expect(stage, 'the stage in view has drawn').toHaveAttribute('data-drawn', /.*/, { timeout: 15_000 });
 });
 
 test('3D showcase: the confirmed vehicle is prepared during planning, and only then, so the tracker opens with it ready', async ({ browser }) => {
@@ -40948,7 +41011,12 @@ for (const mission of ['COMBAT', 'RECCE', 'TROOP', 'COMMAND', 'RECOVERY', 'MINE'
     await join(gpu);
     const model = gpu.locator('#showcase [role="img"]');
     await expect(model).toHaveAttribute('data-ready', 'true', { timeout: 30_000 });
+    // Ready means the scene is set, not drawn: on a loaded machine the first frame came after the shots, so all four
+    // were an empty stage (verify of fe4df5d, Firefox, 12 workers). The pause draws once; the shots wait for that draw.
+    const canvas = model.locator('canvas');
+    await canvas.evaluate(c => { c.addEventListener('sea-draw', () => { c.dataset['draws'] = String(Number(c.dataset['draws'] ?? 0) + 1); }); });
     await gpu.getByRole('button', { name: 'Pause turning', exact: true }).click();
+    await expect(canvas).toHaveAttribute('data-draws', /\d/);
     const live = await vehicleContrast(model, 'canvas');
     expect(live.share, '3D vehicle covers its stage').toBeGreaterThan(0.05);
     expect(live.bright, '3D').toBeGreaterThanOrEqual(3);
@@ -44663,44 +44731,77 @@ export function specDealVectors(): Record<string, string[][]> {
 
 ### tests/unit/stage-dispose.test.ts
 
-Paths: `tests/unit/stage-dispose.test.ts`. SHA-256 `850c666368379de7d8294d6b0eef34a0f04f825589f56c645bff6522248b6471`, 1851 bytes.
+Paths: `tests/unit/stage-dispose.test.ts`. SHA-256 `ae00bc440cb9f47ec7b40639d414fbc673205e32f4760cd1912fbdb131540b73`, 4177 bytes.
 
 ```ts
 // MPES §10.3, Codex G3 review: a disposed 3D stage leaves nothing listening. A listener left on the document, the
 // motion query or the canvas kept a disposed stage alive and could restart its lost-context check after disposal.
 // The stage cannot be built without WebGL here, so this reads its source: every listener it adds, except on the orbit
-// controls (which their own dispose removes), carries the stage's abort signal, and dispose aborts it.
+// controls (which their own dispose removes), passes an options object whose `signal` is the stage's own controller's,
+// and dispose aborts that same controller. A second review found the first version of this check satisfied by the word
+// `signal` anywhere in the call (a comment, another controller's signal), so the check now proves itself against those.
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
 const SOURCE = readFileSync('source/showcase/model.ts', 'utf8');
 
-/** Each `addEventListener(` call: its receiver and its full argument text, matched to the closing parenthesis. */
-function listenerCalls(source: string): { receiver: string; args: string }[] {
-  const calls: { receiver: string; args: string }[] = [];
+/** Each `addEventListener(` call: its receiver and its top-level arguments, matched to the closing parenthesis. */
+function listenerCalls(source: string): { receiver: string; args: string[] }[] {
+  const calls: { receiver: string; args: string[] }[] = [];
   for (const match of source.matchAll(/([\w.#]+)\.addEventListener\(/g)) {
-    let depth = 1, i = match.index + match[0].length;
-    for (; depth > 0 && i < source.length; i++) depth += source[i] === '(' ? 1 : source[i] === ')' ? -1 : 0;
-    calls.push({ receiver: match[1]!, args: source.slice(match.index + match[0].length, i - 1) });
+    const args: string[] = [];
+    let depth = 1, i = match.index + match[0].length, from = i;
+    for (; depth > 0 && i < source.length; i++) {
+      const c = source[i];
+      if (c === '(' || c === '{' || c === '[') depth++;
+      else if (c === ')' || c === '}' || c === ']') depth--;
+      if ((c === ',' && depth === 1) || depth === 0) { args.push(source.slice(from, i).trim()); from = i + 1; }
+    }
+    calls.push({ receiver: match[1]!, args });
   }
   return calls;
 }
 
+/** What is wrong with a stage source's listener disposal; empty when every listener goes with the stage. */
+function disposalFaults(source: string): string[] {
+  const faults: string[] = [];
+  const code = source.replace(/\/\*[\s\S]*?\*\/|\/\/[^\n]*/g, '');
+  if (!/readonly #listening = new AbortController\(\);/.test(code)) faults.push('no #listening controller');
+  // The one `signal` in scope is the controller's: destructured from it once, and bound nowhere else.
+  const bindings = code.match(/\b(?:const|let|var)\s*\{?[^=;]*\bsignal\b[^=;]*=/g) ?? [];
+  if (bindings.length !== 1 || !/const \{ signal \} = this\.#listening;/.test(code)) faults.push('signal is not the #listening signal');
+  for (const { receiver, args } of listenerCalls(code)) {
+    if (receiver === 'this.#controls') continue;
+    const options = args.length === 3 ? args[2]! : '';
+    const props = options.startsWith('{') && options.endsWith('}') ? options.slice(1, -1).split(',').map(p => p.trim()) : [];
+    if (!props.some(p => p === 'signal' || p === 'signal: signal' || p === 'signal: this.#listening.signal')) faults.push(`${receiver} ${args[0]} has no stage signal`);
+  }
+  const dispose = /\n {2}dispose\(\): void \{([\s\S]*?)\n {2}\}/.exec(code)?.[1] ?? '';
+  if (!/this\.#listening\.abort\(\);/.test(dispose)) faults.push('dispose does not abort #listening');
+  return faults;
+}
+
 describe('3D stage disposal (MPES §10.3)', () => {
-  const calls = listenerCalls(SOURCE);
-
   it('finds the stage listeners', () => {
-    expect(calls.length).toBeGreaterThanOrEqual(8);
+    expect(listenerCalls(SOURCE).length).toBeGreaterThanOrEqual(8);
   });
 
-  it('gives every listener outside the orbit controls the stage signal', () => {
-    const unsigned = calls.filter(c => c.receiver !== 'this.#controls' && !/\bsignal\b/.test(c.args)).map(c => c.receiver);
-    expect(unsigned).toEqual([]);
+  it('removes every listener outside the orbit controls on dispose', () => {
+    expect(disposalFaults(SOURCE)).toEqual([]);
   });
 
-  it('aborts that signal on dispose', () => {
-    const dispose = /\n {2}dispose\(\): void \{([\s\S]*?)\n {2}\}/.exec(SOURCE)?.[1] ?? '';
-    expect(dispose).toMatch(/\.abort\(\)/);
+  it('catches a listener the stage controller would not remove', () => {
+    const mutations: [string, string][] = [
+      ["}, { signal });\n    this.canvas.addEventListener('webglcontextrestored', event", "}, { /* signal */ });\n    this.canvas.addEventListener('webglcontextrestored', event"],
+      ["() => this.#loop(), { signal });", "() => this.#loop(), { signal: new AbortController().signal });"],
+      ["() => this.#loop(), { signal });", "() => this.#loop() /* signal */);"],
+      ['const { signal } = this.#listening;', 'const { signal } = new AbortController();'],
+      ['this.#listening.abort();', '// this.#listening.abort();'],
+    ];
+    for (const [from, to] of mutations) {
+      expect(SOURCE, from).toContain(from);
+      expect(disposalFaults(SOURCE.replace(from, to)), to).not.toEqual([]);
+    }
   });
 });
 ```
@@ -45767,5 +45868,5 @@ Keys and the commands that make each kind again:
 
 | Path | Bytes | SHA-256 | Why |
 |---|---:|---|---|
-| `docs/MPES.md` | 179532 | `8dfa7c586d8a254f650bfee5e4af28509a2d1dd503b3ac3842a7bd286300d41d` | The specification, a clean-room document of its own (Omni 5.1.1 §333). |
+| `docs/MPES.md` | 180829 | `62a05338b118225f2ab2bfdb6bd688539a713c00bca70db573e1aae1d4c3f1ec` | The specification, a clean-room document of its own (Omni 5.1.1 §333). |
 | `docs/CODEBASE.md` | | | This file. |
