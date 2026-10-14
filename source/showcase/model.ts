@@ -12,7 +12,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { vehicleGlb } from './glb.ts';
 import { distanceAt, extentAt, fitTable, zoomed, type FitTable } from './frame.ts';
-import { FramePacer } from './pace.ts';
+import { FramePacer, SCALES, nextTier } from './pace.ts';
 
 /** Seconds per full turn when the stage turns by itself. */
 export const TURN_SECONDS = 40;
@@ -119,6 +119,10 @@ export class ModelStage {
   #frame = 0;
   #pacer = new FramePacer();
   #dirty = true;
+  /** A change the player asked for (a purchase, turn, zoom or resize) waiting to be drawn: it skips the pacer's wait. */
+  #urgent = false;
+  /** Index into SCALES: the render resolution this machine can draw in time (adaptive tiers). */
+  #tier = 0;
   #visible = true;
   #observer: IntersectionObserver;
   #resize: ResizeObserver;
@@ -132,17 +136,22 @@ export class ModelStage {
   /** Called after every draw with the camera's azimuth (radians), how far the kit reaches from the frame centre
    * (1 = the frame edge) and the zoom. */
   onView: ((azimuth: number, extent: number, zoom: number) => void) | null = null;
+  /** Called after each draw has reached the canvas: what the player sees now matches the last `show`. */
+  onDraw: (() => void) | null = null;
 
   constructor() {
     this.canvas = document.createElement('canvas');
     this.canvas.className = 'showcase-canvas';
     this.#renderer = new WebGLRenderer({ canvas: this.canvas, antialias: true, alpha: true, powerPreference: 'low-power' });
-    this.#renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
+    this.#renderer.setPixelRatio(this.#ratio());
     this.#renderer.outputColorSpace = SRGBColorSpace;
     this.#renderer.toneMapping = ACESFilmicToneMapping;
     this.#renderer.toneMappingExposure = 0.85;
     this.#renderer.shadowMap.enabled = true;
     this.#renderer.shadowMap.type = PCFShadowMap;
+    // Baked shadows: the sun and the vehicle stand still while the camera orbits, so the shadow map only changes with the
+    // fitted parts; drawing it every frame doubled each turning draw (G3). show() asks for it again.
+    this.#renderer.shadowMap.autoUpdate = false;
     const pmrem = new PMREMGenerator(this.#renderer);
     // A 64 px environment lights matte paint as well as the default 256 px, with a sixteenth of the pixels to render and blur.
     this.#scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04, 0.1, 100, { size: 64 }).texture;
@@ -204,6 +213,7 @@ export class ModelStage {
     const offset = this.#camera.position.clone().sub(this.#controls.target).applyAxisAngle(UP, radians);
     this.#camera.position.copy(this.#controls.target).add(offset);
     this.#controls.update();
+    this.#invalidate(true);
     this.#report();
   }
 
@@ -211,6 +221,25 @@ export class ModelStage {
   zoom(press: 1 | -1): void {
     this.#zoom = zoomed(this.#zoom, press);
     this.#place();
+    this.#invalidate(true);
+  }
+
+  /**
+   * Builds the vehicle and compiles every shader it can need, each part's material whether fitted or not, without
+   * blocking the page where the browser compiles in parallel (KHR_parallel_shader_compile). The first draw and the
+   * first draw of each purchase then have nothing left to compile (G3 profile: the first draw was one task of 0.3 to
+   * 2.7 s on a software renderer). Draws nothing: the canvas is not on the page yet. False if there is no such vehicle.
+   */
+  async prepare(lib: Group, vehicle: string): Promise<boolean> {
+    if (!this.show(lib, vehicle, [])) return false;
+    await this.#renderer.compileAsync(this.#scene, this.#camera);
+    // Then every part, without delaying the first draw. three.js compiles only what is visible, but only the call itself
+    // needs the parts shown: the browser finishes compiling them in parallel after they are hidden again.
+    const parts = this.#vehicle!.children.filter(node => !node.visible);
+    for (const node of parts) node.visible = true;
+    void this.#renderer.compileAsync(this.#scene, this.#camera).catch(() => undefined);
+    for (const node of parts) node.visible = false;
+    return true;
   }
 
   /** Shows one vehicle with the given part nodes; returns false if the library has no such vehicle. */
@@ -232,7 +261,9 @@ export class ModelStage {
     }
     const shown = new Set(parts);
     for (const node of this.#vehicle!.children) node.visible = layerOf(node) === 'base' || shown.has(layerOf(node));
+    this.#renderer.shadowMap.needsUpdate = true;
     this.#frameCamera(fresh);
+    this.#invalidate(true);
     return true;
   }
 
@@ -285,20 +316,46 @@ export class ModelStage {
     this.#camera.aspect = w / h;
     this.#camera.updateProjectionMatrix();
     if (this.#camera.aspect !== this.#fittedAspect) this.#refit();
-    this.#invalidate();
+    this.#invalidate(true);
   }
 
-  /** Asks for a redraw in the next paced frame; drags and key turns never draw synchronously. */
-  #invalidate(): void {
+  /**
+   * Asks for a redraw: in the next paced frame, or, for a change the player asked for (`urgent`), in the next animation
+   * frame whatever the pacer's wait. The pacer times a draw by the gap to the next frame, so the page work of a
+   * purchase (its re-render) reads as drawing cost and stretched the wait to half a second (G3, CI showcase budget);
+   * one draw per action cannot load the machine. Nothing draws synchronously.
+   */
+  #invalidate(urgent = false): void {
     this.#dirty = true;
+    if (urgent) this.#urgent = true;
     this.#loop();
+  }
+
+  /** The pixel ratio to draw at: the screen's, at most 1.5, at the tier's share. */
+  #ratio(): number {
+    return Math.min(devicePixelRatio, 1.5) * SCALES[this.#tier]!;
+  }
+
+  /** Steps the resolution down when the recent draws show this machine cannot draw in time (see nextTier). */
+  #adapt(): void {
+    const tier = nextTier(this.#tier, this.#pacer.floor);
+    if (tier === this.#tier) return;
+    this.#tier = tier;
+    this.#pacer.forget();
+    this.#renderer.setPixelRatio(this.#ratio());
+    this.canvas.setAttribute('data-tier', String(tier));
+    this.#dirty = true;
   }
 
   #draw(): void {
     this.#dirty = false;
+    this.#urgent = false;
     this.#distance();
     this.#renderer.render(this.#scene, this.#camera);
     this.#report();
+    this.onDraw?.();
+    // Observable without reaching into the stage: the reference-laptop run times real draws by this event (MPES §14).
+    this.canvas.dispatchEvent(new Event('sea-draw'));
   }
 
   /** Tells `onView` where the camera is: each draw, and at once after a pause, turn, zoom or refit, so the reading never
@@ -325,18 +382,22 @@ export class ModelStage {
     this.#timer.update();
     const tick = (now: number) => {
       this.#frame = requestAnimationFrame(tick);
-      if (!this.#pacer.due(now)) return;
+      if (!this.#pacer.due(now) && !this.#urgent) return;
       this.#timer.update(now);
       const moved = this.#controls.update(this.#timer.getDelta());
+      this.#adapt();
       if (this.#dirty) { this.#draw(); this.#pacer.drew(now); }
       if (!moved && !this.#controls.autoRotate && !this.#dirty) this.#stop();
     };
     this.#frame = requestAnimationFrame(tick);
   }
 
-  /** Restarts the loop after the canvas is re-attached to the page. */
+  /**
+   * Restarts the loop after the canvas is re-attached to the page. The size is left to the ResizeObserver: it reports
+   * after the next layout if the size changed. Reading it here would force a layout of the page being replaced
+   * (G3 profile: about 15 ms per purchase at 4x).
+   */
   attached(): void {
-    this.#size();
     this.#loop();
   }
 

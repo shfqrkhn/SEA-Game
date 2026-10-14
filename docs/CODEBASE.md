@@ -1,6 +1,6 @@
 # SEA Game codebase
 
-Version 0.5.2.0. Written by `npm run codebase` (scripts/codebase.ts); do not edit by hand. It holds all 1035 tracked files of the repository: 179 text files as 176 unique contents, 854 binary files by hash with the command that regenerates them, and 2 documents kept separately. With docs/MPES.md it is enough to rebuild the project.
+Version 0.5.2.0. Written by `npm run codebase` (scripts/codebase.ts); do not edit by hand. It holds all 1048 tracked files of the repository: 192 text files as 189 unique contents, 854 binary files by hash with the command that regenerates them, and 2 documents kept separately. With docs/MPES.md it is enough to rebuild the project.
 
 ## How to rebuild the tree
 
@@ -27,7 +27,7 @@ Paths: `.gitattributes`. SHA-256 `cb9753404d72096c8f333e1597e7e12445118d89f04f21
 
 ### .github/workflows/ci.yml
 
-Paths: `.github/workflows/ci.yml`. SHA-256 `e8e816bcd20246f09c73ff27b9e630811704597006e07d503596d0c2b0ff22bf`, 2485 bytes.
+Paths: `.github/workflows/ci.yml`. SHA-256 `510b273a607d0ea75d089eeb9590672f4474314b7659cd67f83c3f7878bc67a3`, 3524 bytes.
 
 ```yaml
 name: CI
@@ -37,6 +37,11 @@ on:
   pull_request:
 permissions:
   contents: read
+# A newer push to the same pull request cancels the superseded run. Pushes to main and tags never cancel:
+# the group is unique per run id unless the event is a pull request.
+concurrency:
+  group: ci-${{ github.event_name == 'pull_request' && github.ref || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 jobs:
   verify:
     strategy:
@@ -56,12 +61,23 @@ jobs:
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: ${{ matrix.node }}
+          cache: npm
+          cache-dependency-path: package-lock.json
       - run: npm ci --no-audit --no-fund
       - run: npm run typecheck
       - run: npm run lint
       - run: npm test
       - run: npm run check
       - run: npm run build
+      # Browser downloads are cached per OS, engine set and exact Playwright version; the install below is a
+      # fast no-op on a hit and the fallback on a miss.
+      - id: pw
+        shell: bash
+        run: echo "version=$(node -p "require('./package-lock.json').packages['node_modules/@playwright/test'].version")" >> "$GITHUB_OUTPUT"
+      - uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809 # v4.2.4
+        with:
+          path: ~\AppData\Local\ms-playwright
+          key: playwright-${{ runner.os }}-${{ env.SEA_ENGINES == 'chromium' && 'chromium' || 'chromium-firefox' }}-${{ steps.pw.outputs.version }}
       - run: npx playwright install ${{ env.SEA_ENGINES == 'chromium' && 'chromium' || 'chromium firefox' }}
       - run: npx playwright test
       - if: failure()
@@ -714,9 +730,113 @@ def _cab(b):
 
 ```
 
+### _archive/recycle/2026-10-14/g3-caching.md
+
+Paths: `_archive/recycle/2026-10-14/g3-caching.md`. SHA-256 `b4d9076a10719d2d6cb67e36378428c48092b7ada4ef4c5c31ec00c26f792e4b`, 2563 bytes.
+
+```markdown
+# G3 caching: CI and render encoding
+
+Two changes make repeat work faster without changing what is produced.
+
+## CI (.github/workflows/ci.yml)
+
+- A newer push to the same pull request cancels the older, superseded run. Pushes to main and tags never cancel, because outside pull requests each run gets its own unique group.
+- npm downloads are cached through actions/setup-node (cache: npm, keyed on package-lock.json). `npm ci` still runs; node_modules is not cached.
+- The Playwright browser folder is cached per OS, engine set (chromium, or chromium plus firefox) and the exact @playwright/test version read from package-lock.json. The `npx playwright install` step is kept: on a cache hit it finds the browsers already present and finishes at once; on a miss it downloads as before.
+- Matrix, test commands, budgets, timeouts and the Pages deploy are untouched. The one new action, actions/cache, is pinned by commit like the others (v4.2.4).
+
+Evidence: workflow reviewed against the diff. The first CI run after merge is a cache miss; the second should show cache hits in the setup-node and cache steps (to be confirmed on the first two runs).
+
+## Render encoder (art/tools/encode-renders.ts)
+
+- Each master is trimmed and encoded once; the result is stored under `.artifacts/cache/encode/` (already gitignored via `.artifacts/`).
+- The cache key is the sha256 of the master PNG bytes plus every setting that shapes the output (format, quality, effort, chroma or alpha settings, trim threshold and apron, layer kind) plus all sharp and libvips build versions. Change any of them and it re-encodes.
+- A stored entry carries its own checksum; a damaged or half-written entry is ignored and re-encoded. Writes go through a temporary file and a rename, so parallel workers cannot leave partial entries.
+- `--no-cache` bypasses the cache. The run summary reports how many files came from the cache.
+- The command-line behaviour runs only when the file is executed directly, so tests can import its helpers.
+
+Evidence:
+- tests/unit/encode-cache.test.ts (4 tests): a tiny generated PNG misses first, hits second, and the hit is byte-identical to an uncached encode; a changed quality or format misses; the key changes with the master bytes and layer kind; a corrupted entry is re-encoded.
+- Smoke run on a two-image folder: encode, encode again (2 of 2 from cache), encode with `--no-cache`: the three manifests are byte-identical (the manifest lists each output's sha256).
+- `npx tsc --noEmit` and `npm run lint` pass. No full re-encode of content/renders was run.
+```
+
+### _archive/recycle/2026-10-14/g3-perf-ref-protocol.md
+
+Paths: `_archive/recycle/2026-10-14/g3-perf-ref-protocol.md`. SHA-256 `325975cc4bd1e93b366aceecd89d9517f0233a3a3b663de25ee1d68c1117b640`, 6625 bytes.
+
+```markdown
+# Fragment: reference-proxy measurement protocol (for MPES §14, goal G3)
+
+Draft for the owner's merge into MPES §14 and `docs/verification/`. Plain language, no code. Nothing here changes a budget.
+
+## 1. Purpose
+
+No physical reference laptop will be tested. This protocol defines the stand-in: this PC's Intel UHD 770, driven the same way every time, so that a number taken before a change can be compared with a number taken after it. Its result is a baseline, not a verdict: it reports every gate as PASS or FAIL against the budgets in §10.3 and §14, but it never stops because a budget was missed. Only a wrong or missing graphics chip stops it.
+
+## 2. The rig
+
+1. **Browsers.** Chromium and Edge, both full browsers (not the stripped headless build), each started with the owner's graphics flags: Direct3D 11 through ANGLE, GPU on, the GPU blocklist ignored, and the low-power GPU forced. Playwright's own defaults that switch the GPU off are removed.
+2. **Slowdown.** The page's processor is slowed fourfold through the browser's debugging interface, in every scenario.
+3. **Screens.** Three profiles, each run in full: 1366×768 at scale 1, 1536×864 at scale 1.25, and 1280×720 at scale 1.5.
+4. **The game.** The built file `dist/index.html`, opened from disk, rebuilt at the start of the run. The graphics chip is real: nothing pretends to be a GPU.
+5. **A quiet PC.** Close other work first, run one browser at a time, and never alongside Blender, Codex jobs or the full test suite. A baseline taken on a busy PC is void and is taken again.
+
+## 3. Gate zero: prove the graphics chip
+
+Before any measurement, each browser is asked for its unmasked WebGL renderer. If the text does not contain "UHD Graphics 770" (for example the software renderer, or the PC's other graphics chip), the run stops at once, records the text it saw, and measures nothing. The report is then marked INCOMPLETE and is not a baseline.
+
+## 4. What is measured
+
+Each row below is measured on every screen profile in both browsers; the report keeps the worst value.
+
+| Gate (MPES) | How it is read |
+|---|---|
+| File size ≤ 50 MB (§14) | Size of the built file |
+| Chooser ready ≤ 2 s (§14) | Page start to the first frame showing the heading and the role buttons |
+| Instructor with maximum saved state ≤ 3 s (§14) | Page start to the "Results to reconcile" heading, with the largest valid save (210 ledger entries, 70 lots, 10 teams) |
+| Command response ≤ 100 ms, p95 (§14) | 40 bid clicks in a 10-team timed auction, click to finished result |
+| Memory ≤ 400 MB and no growth across 10 cycles (§14) | Page memory plus decoded pixels after a full session; growth over ten rounds of re-rendering |
+| Stills update ≤ 100 ms, angle change ≤ 50 ms, turntable step ≤ 50 ms (§10.3) | Without WebGL: purchase to decoded layer; angle switch; six turntable steps |
+| 3D ready ≤ 3 s (§10.3, §14) | Opening the tracker to the first drawn model, on the real GPU |
+| 3D update ≤ 100 ms (§10.3) | Recording a purchase to the model showing the part, three purchases |
+| 3D memory ≤ 400 MB, proxy target ≤ 300 MB (§10.3, §14) | As above, reported against both limits |
+| 3D frame cadence, p95 ≤ 33 ms (§14) | Gaps between animation frames over five seconds of the model turning |
+| Idle CPU ≤ 3% over 60 s (§14) | After three quiet seconds, the processor time of all browser processes over 60 seconds, as a share of one core, on the chooser, the instructor with saved state and the tracker with the 3D model; plus the page's own busy share |
+| INP ≤ 200 ms (§14) | The slowest of the real, trusted clicks and key presses of the run (setup, bids, tracker steps) |
+| LCP ≤ 2.5 s (§14) | The browser's own figure for the chooser; a page opened from disk may report none, then the chooser-ready time stands in and the report says so |
+| CLS ≤ 0.1 (§14) | Total unexpected layout movement on the chooser, instructor and tracker |
+| No task over 200 ms after load (§14) | The longest main-thread task after the page finished loading, on the same views |
+| Zero page errors; zero network requests (§1.4, §13) | Counted on every page of the run |
+
+Idle windows run on the first screen profile only, to keep the run to about half an hour; set the idle length to zero to skip them (the report then says "not measured").
+
+## 5. What is not measured yet
+
+- **GPU time of a frame (≤ 16 ms, §14).** The page cannot reach the graphics timer of the showcase, so the report leaves it NOT_RUN. The animation-frame gap is the nearest figure and is not the same thing. Closing this needs a hook in the showcase or a browser trace and is a G3 follow-up.
+- **The 2× GPU headroom** in the proxy definition (§14) has no number of its own; it is judged by reading the frame figures, not computed.
+- **Memory "where headroom allows" ≤ 300 MB** is reported but is a target, not a gate.
+- **Battery saver, dim panel, touchpad and 8 GB single-channel memory** cannot be set on this PC; they remain residual risk (§14, D-16).
+- KPIs that are not performance (teaching, reliability, workload, learnability, realism, accessibility, maintainability, longevity) appear in the report as NOT_RUN with the place they are measured instead.
+
+## 6. Procedure
+
+1. Quiet slot: no other heavy work on the PC; note the time.
+2. Run the reference-proxy command. It rebuilds the game, checks the graphics chip in each browser, runs both browsers through all three screen profiles, and writes its results under `.artifacts/perf-ref/<timestamp>/`: one file per browser and screen, then `report.json` and `report.md` with one row per KPI of §1.4.
+3. If the report says INCOMPLETE, read its problem list, fix the rig (never the budget) and run again; keep nothing from an INCOMPLETE run.
+4. The first complete report of a goal is **the baseline**. Copy its `report.md` into `docs/verification/` with the commit it describes before any change is made.
+5. After each change, run again in a quiet slot and compare metric by metric with the baseline. A metric that rose by more than its run-to-run noise is a regression to explain; one over its budget is a FAIL to fix, test first.
+6. Run-to-run noise is learned, not assumed: take the baseline twice and record the spread before relying on small differences.
+
+## 7. Reporting
+
+Every check is reported PASS, FAIL, NOT_RUN or BLOCKED with the command that produced it (AGENTS.md rule 6). A KPI row is FAIL if any of its measured metrics is over budget, PASS if at least one was measured and none failed, and NOT_RUN if none was. The proxy, not a laptop, stays a residual risk in the handover.
+```
+
 ### art/README.md
 
-Paths: `art/README.md`. SHA-256 `7a2d6ec81b0194c1e9940851769d000cac3418b9de26afbc5154c2dd0deb46b8`, 12288 bytes.
+Paths: `art/README.md`. SHA-256 `50f382a2410bc638fe653b49a527aedb3150738b4befca1f92457364560c71ee`, 12402 bytes.
 
 ````markdown
 # Art pipeline (MPES §10, §11)
@@ -749,6 +869,7 @@ $B -b --factory-startup -P art/blender/render.py -- --out .artifacts/renders/pre
 node art/tools/contact-sheet.ts .artifacts/renders/kits.jpg 3 520 wide .artifacts/renders/preview/*-kit.png
 node art/tools/contact-sheet.ts .artifacts/renders/cards.jpg 7 200 square .artifacts/renders/preview/card-*.png
 # Encode and write the manifest the build embeds (replaces content/renders/ entirely).
+# Unchanged masters are reused from .artifacts/cache/encode/ (same bytes out); add --no-cache for a clean encode.
 node art/tools/encode-renders.ts encode .artifacts/renders/v3 content/renders avif 65
 # Review before committing: hero and base stills, cards, a turntable, and base + one part per slot (variants A, D, G).
 R=.artifacts/renders/v3; C=.artifacts/contact; mkdir -p $C/builds
@@ -7552,16 +7673,19 @@ console.log(`${files.length} images -> ${out}`);
 
 ### art/tools/encode-renders.ts
 
-Paths: `art/tools/encode-renders.ts`. SHA-256 `1bc622fe4770fb3189bd83d377fadddb6af96df2fd7d0990edf9c3fe2fe4c1af`, 8441 bytes.
+Paths: `art/tools/encode-renders.ts`. SHA-256 `be938d7c23a82f1d58be0ab819cd6c6d184c54d828aab77b85fe3cb38db2186f`, 11823 bytes.
 
 ```ts
 // Encode Blender render masters (16-bit RGBA PNG) for embedding (MPES §10, §11).
 //   node art/tools/encode-renders.ts measure <masters> <report.json>   AVIF vs WebP quality sweep
-//   node art/tools/encode-renders.ts encode <masters> <out-dir> <avif|webp> <quality>
+//   node art/tools/encode-renders.ts encode <masters> <out-dir> <avif|webp> <quality> [--no-cache]
+// Encoded layers are cached under .artifacts/cache/encode/, keyed on the master's bytes, every encoding and trim
+// setting and the sharp/libvips versions, so an unchanged master is not re-encoded. --no-cache bypasses it.
 // Layers are trimmed to their visible pixels; the manifest records each file's offset in its frame.
 import { createHash } from 'node:crypto';
-import { mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readdirSync, readFileSync, renameSync, writeFileSync } from 'node:fs';
 import { basename, join, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import sharp, { type OutputInfo } from 'sharp';
 
 type Format = 'avif' | 'webp';
@@ -7615,9 +7739,50 @@ async function trimmed(path: string, kind: string): Promise<{ data: Buffer; info
   return { data: out.data, info: out.info, left, top, frameWidth: meta.width!, frameHeight: meta.height! };
 }
 
+export const ENCODE_CACHE_DIR = resolve(import.meta.dirname, '../../.artifacts/cache/encode');
+/** Every setting that shapes the output bytes besides the master and quality; change any value and the cache misses. */
+const SETTINGS = {
+  avif: { effort: 6, chromaSubsampling: '4:4:4' }, webp: { alphaQuality: 90, effort: 6, smartSubsample: true },
+  apron: 2, trimThreshold: 1, visibleAlpha16: 129, intermediatePngCompression: 0, colourspace: 'srgb',
+};
+
 async function encode(input: Buffer, format: Format, quality: number): Promise<Buffer> {
   const s = sharp(input);
-  return format === 'avif' ? s.avif({ quality, effort: 6, chromaSubsampling: '4:4:4' }).toBuffer() : s.webp({ quality, alphaQuality: 90, effort: 6, smartSubsample: true }).toBuffer();
+  return format === 'avif' ? s.avif({ quality, ...SETTINGS.avif }).toBuffer() : s.webp({ quality, ...SETTINGS.webp }).toBuffer();
+}
+
+export interface Encoded { readonly data: Buffer; readonly left: number; readonly top: number; readonly frameWidth: number; readonly frameHeight: number; readonly width: number; readonly height: number }
+
+/** sha256 over the master bytes, kind, format, quality, all settings and the sharp + libvips build versions. */
+export function cacheKey(master: Buffer, kind: string, format: Format, quality: number): string {
+  const h = createHash('sha256');
+  h.update(createHash('sha256').update(master).digest());
+  h.update(JSON.stringify({ kind, format, quality, settings: SETTINGS, versions: sharp.versions }));
+  return h.digest('hex');
+}
+
+/** Trim and encode one master, reusing a cached result when its key matches. Output is byte-identical either way. */
+export async function trimAndEncode(path: string, kind: string, format: Format, quality: number, cache: string | null = ENCODE_CACHE_DIR): Promise<Encoded & { hit: boolean }> {
+  const key = cache ? cacheKey(readFileSync(path), kind, format, quality) : '';
+  const bin = cache ? join(cache, `${key}.${format}`) : '', json = cache ? join(cache, `${key}.json`) : '';
+  if (cache && existsSync(bin) && existsSync(json)) {
+    try {
+      const { sha256, ...geo } = JSON.parse(readFileSync(json, 'utf8')) as Omit<Encoded, 'data'> & { sha256: string };
+      const data = readFileSync(bin);
+      if (createHash('sha256').update(data).digest('hex') === sha256) return { ...geo, data, hit: true };
+    } catch { /* unreadable entry: fall through and re-encode */ }
+  }
+  const t = await trimmed(path, kind);
+  const result: Encoded = { data: await encode(t.data, format, quality), left: t.left, top: t.top, frameWidth: t.frameWidth, frameHeight: t.frameHeight, width: t.info.width, height: t.info.height };
+  if (cache) {
+    mkdirSync(cache, { recursive: true });
+    const { data, ...geo } = result;
+    // Write to a temporary name and rename, so a parallel or interrupted run never leaves a half-written entry.
+    const tmp = `${bin}.${process.pid}.tmp`, tmpJson = `${json}.${process.pid}.tmp`;
+    writeFileSync(tmp, data); renameSync(tmp, bin);
+    writeFileSync(tmpJson, JSON.stringify({ ...geo, sha256: createHash('sha256').update(data).digest('hex') })); renameSync(tmpJson, json);
+  }
+  return { ...result, hit: false };
 }
 
 /** PSNR of the encoded image against the master, both flattened onto the HUD backdrop. */
@@ -7648,26 +7813,28 @@ async function measure(dir: string, report: string): Promise<void> {
   console.table(rows);
 }
 
-async function encodeAll(dir: string, out: string, format: Format, quality: number): Promise<void> {
+async function encodeAll(dir: string, out: string, format: Format, quality: number, useCache: boolean): Promise<void> {
   mkdirSync(out, { recursive: true });
   const renders = JSON.parse(readFileSync(join(dir, 'renders.json'), 'utf8')) as { blender: string; seed: number; outputs: { file: string; depth: number; slot?: string }[] };
   const meta = new Map(renders.outputs.map(o => [o.file, o]));
   const masters = readdirSync(dir).filter(f => f.endsWith('.png') && meta.has(f)).sort().map(classify);
   const entries: Record<string, unknown>[] = [], hidden: string[] = [];
+  let hits = 0;
   // Encode in parallel; results are sorted by file afterwards so the manifest does not depend on timing.
   let next = 0;
   const work = async () => {
     while (next < masters.length) {
       const m = masters[next++]!;
       if (m.kind === 'build-layer' && await empty(join(dir, m.file))) { hidden.push(m.id); continue; }
-      const t = await trimmed(join(dir, m.file), m.kind);
-      const data = await encode(t.data, format, quality);
+      const t = await trimAndEncode(join(dir, m.file), m.kind, format, quality, useCache ? ENCODE_CACHE_DIR : null);
+      const data = t.data;
+      if (t.hit) hits++;
       const file = basename(m.file, '.png') + '.' + format;
       writeFileSync(join(out, file), data);
       const o = meta.get(m.file)!;
       entries.push({
         file, kind: m.kind, id: m.id, depth: o.depth ?? null, ...(o.slot ? { slot: o.slot } : {}), bytes: data.length, sha256: createHash('sha256').update(data).digest('hex'),
-        frame: { width: t.frameWidth, height: t.frameHeight }, offset: { left: t.left, top: t.top }, size: { width: t.info.width, height: t.info.height },
+        frame: { width: t.frameWidth, height: t.frameHeight }, offset: { left: t.left, top: t.top }, size: { width: t.width, height: t.height },
       });
     }
   };
@@ -7676,13 +7843,17 @@ async function encodeAll(dir: string, out: string, format: Format, quality: numb
   hidden.sort();
   const total = entries.reduce((n, e) => n + (e.bytes as number), 0);
   writeFileSync(join(out, 'manifest.json'), JSON.stringify({ blender: renders.blender, seed: renders.seed, format, quality, totalBytes: total, hidden, entries }, null, 2) + '\n');
-  console.log(`${entries.length} files (${hidden.length} hidden layers), ${total} bytes -> ${out}`);
+  console.log(`${entries.length} files (${hidden.length} hidden layers, ${hits} from cache), ${total} bytes -> ${out}`);
 }
 
-const [mode, a, b, format, quality] = process.argv.slice(2);
-if (mode === 'measure' && a && b) await measure(resolve(a), resolve(b));
-else if (mode === 'encode' && a && b && (format === 'avif' || format === 'webp')) await encodeAll(resolve(a), resolve(b), format, Number(quality));
-else { console.error('usage: measure <masters> <report.json> | encode <masters> <out> <avif|webp> <quality>'); process.exit(2); }
+// Run as a CLI only when executed directly, so tests can import the helpers above.
+if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  const args = process.argv.slice(2), useCache = !args.includes('--no-cache');
+  const [mode, a, b, format, quality] = args.filter(x => x !== '--no-cache');
+  if (mode === 'measure' && a && b) await measure(resolve(a), resolve(b));
+  else if (mode === 'encode' && a && b && (format === 'avif' || format === 'webp')) await encodeAll(resolve(a), resolve(b), format, Number(quality), useCache);
+  else { console.error('usage: measure <masters> <report.json> | encode <masters> <out> <avif|webp> <quality> [--no-cache]'); process.exit(2); }
+}
 ```
 
 ### art/tools/measure-spike.ts
@@ -27505,6 +27676,47 @@ A read-only Codex session (gpt-6.1-sol, medium) reviewed the diff (`.artifacts/c
 | 2 | The label check examined only cells that already had a label and needed just one per table, so lost labels would pass | Confirmed: the test now reads each column's name from the header row and requires it on every data cell under a named column; PASS |
 ```
 
+### docs/verification/0.6.0.0.md
+
+Paths: `docs/verification/0.6.0.0.md`. SHA-256 `9f1fd58204f8e3629fb7044b42df78964450682a5b30d27fcaa6cdb0ade65a16`, 3797 bytes.
+
+```markdown
+# Verification record: 0.6.0.0 beta (G3 proxy and runtime) — in progress
+
+Branch `g3/proxy-runtime`, from `main` at the 0.5.2.0 release. Specification: MPES 4.4.3 until this goal's changelog row. Environment: Windows 11 Enterprise, Node 24.20.0, Playwright browsers from `npm run browsers`.
+
+## First item: CI `showcaseUpdateMaxMs` 109, 162, 168 > 100 ms (verify (22))
+
+Root causes found so far, each with its fix:
+
+| Cause | Evidence | Fix |
+|---|---|---|
+| Every command rendered the view twice: once through the controller's subscription and again in the view | `tests/e2e/render.spec.ts` counted two rebuilds per command before the fix | A command, saved field or status message rebuilds once (`source/ui/view.ts`) |
+| The perf project recorded a trace, whose DOM snapshots ran inside the timed window | Click-to-paint fell with tracing off, same build | Trace off for the perf project (`playwright.config.ts`) |
+| The frame pacer counted page work after a draw as drawing cost, so a purchase waited for the next paced frame | Phase probe: purchase handled at about 30 ms, drawn one to two paced frames later | A change the player asked for draws in the next animation frame (urgent invalidate, `source/showcase/model.ts`) |
+| Attaching the 3D stage forced a layout | Profile of the attach | The attach only starts the loop |
+| The first draw compiled every shader in one task: 0.25 to 2.7 s, once 35.8 s, on a software renderer | Long-task timings of the first draw | The stage compiles in the background before it is shown (stills stay up), the bare vehicle first, then every part |
+| The shadow map was drawn again in every frame | Renderer inspection | Shadows are baked: drawn again only when the vehicle or its parts change |
+| A software renderer draws a full-resolution frame in about 50 ms, more than a 30 fps frame | Draw gap 104 ms at tier 0, 84 ms at tier 1 | Adaptive tiers (full, 0.75, 0.5 of the pixel ratio), one step down whenever the cheapest of the last eight draws exceeds a 30 fps frame (`source/showcase/pace.ts`, `tests/unit/pace.test.ts`) |
+
+The measurement protocol was also corrected (tests/perf/): every timing runs from the trusted input event to after the next paint, with the nearest-rank p95 of at least 30 samples (`tests/unit/perf-measure.test.ts`); the 3D update is timed to the frame that draws the purchased part, the 3D ready time from the tracker's opening click to the first drawn model (MPES §14), each tracker in a fresh context.
+
+Local timings on 2026-10-14 are void: another job held the processor at about 80% (AGENTS.md: a busy PC voids a measurement). CI is the gate.
+
+## Lane: caching (merged from `g3/caching`)
+
+- CI: a newer push to the same pull request cancels the superseded run (pushes to main and tags never cancel); npm downloads cached by `actions/setup-node` keyed on `package-lock.json`; the Playwright browser folder cached per OS, engine set and exact `@playwright/test` version, with `npx playwright install` kept. Matrix, commands, budgets, timeouts and the Pages deploy unchanged; `actions/cache` pinned by commit (v4.2.4).
+- Render encoder (`art/tools/encode-renders.ts`): each master trimmed and encoded once into `.artifacts/cache/encode/`, keyed on the master's bytes, every output setting and the sharp and libvips versions; a damaged entry is re-encoded; writes are atomic; `--no-cache` bypasses it. Evidence: `tests/unit/encode-cache.test.ts`; a two-image smoke run gave byte-identical manifests with, without and from the cache.
+
+## Lane: reference proxy (merged from `g3/perf-ref`)
+
+`npm run perf:ref`, `playwright.perf-ref.config.ts`, `tests/perf-ref/`. Its protocol is written into MPES §14 in this goal; Codex's nine findings on both lanes are dispositioned below when fixed.
+
+## Checks
+
+To be completed at close.
+```
+
 ### docs/verification/legibility.md
 
 Paths: `docs/verification/legibility.md`. SHA-256 `da0cb31a104792540a189739d3c26cc59c140e192da37fb8abd6e89a81d265d0`, 9940 bytes.
@@ -32498,7 +32710,7 @@ Paths: `package-lock.json`. SHA-256 `2b46683776f9ee6c6d1b153558b1fcccbb68209ebf0
 
 ### package.json
 
-Paths: `package.json`. SHA-256 `089c1f8f37a85f58f864fc82666b184db97a778d7d73fa94edf76c5dea8e97cb`, 1470 bytes.
+Paths: `package.json`. SHA-256 `ec494d090ff7f5a6ba08432e6355dfbb4e7a1684b37f7715f01b46edd2d5d18a`, 1561 bytes.
 
 ```json
 {
@@ -32524,6 +32736,7 @@ Paths: `package.json`. SHA-256 `089c1f8f37a85f58f864fc82666b184db97a778d7d73fa94
     "browsers": "node scripts/browsers.ts",
     "codebase": "node scripts/codebase.ts",
     "gallery": "node scripts/gallery.ts",
+    "perf:ref": "node build/build.ts && playwright test -c playwright.perf-ref.config.ts",
     "verify": "npm run typecheck && npm run lint && npm run test && npm run check && npm run build && npm run e2e"
   },
   "devDependencies": {
@@ -32555,7 +32768,7 @@ Paths: `package.json`. SHA-256 `089c1f8f37a85f58f864fc82666b184db97a778d7d73fa94
 
 ### playwright.config.ts
 
-Paths: `playwright.config.ts`. SHA-256 `d43d59e896edd40f4162e1ac652b715440ca26059342ce77a84f7950585d6155`, 2448 bytes.
+Paths: `playwright.config.ts`. SHA-256 `14fdbbff372def5088a3d721df70b6cb78625a419e6faf193fb5265aae152f09`, 2602 bytes.
 
 ```ts
 import { defineConfig, devices } from '@playwright/test';
@@ -32579,9 +32792,10 @@ const all = [
 ];
 
 const browsers = all.filter(project => engines.includes(project.name)).map(project => ({ ...project, testIgnore: /perf\.spec\.ts/ }));
-// RQ-26 budgets are measured in Chromium, alone, after every other project has finished.
+// RQ-26 budgets are measured in Chromium, alone, after every other project has finished. No trace: its DOM
+// snapshots run in the page on every action, inside the timed window (about 40 ms per click at 4x, G3 profile).
 const perf = engines.includes('chromium')
-  ? [{ name: 'perf', use: { ...devices['Desktop Chrome'] }, testMatch: /perf\.spec\.ts/, dependencies: browsers.map(project => project.name) }]
+  ? [{ name: 'perf', use: { ...devices['Desktop Chrome'], trace: 'off' as const }, testMatch: /perf\.spec\.ts/, dependencies: browsers.map(project => project.name) }]
   : [];
 
 export default defineConfig({
@@ -32599,6 +32813,64 @@ export default defineConfig({
   // load can stall for about 15 s and then recover (local verify, 2026-10-10).
   use: { viewport: { width: 1280, height: 720 }, actionTimeout: 60_000, trace: 'retain-on-failure' },
   projects: [...browsers, ...perf],
+});
+```
+
+### playwright.perf-ref.config.ts
+
+Paths: `playwright.perf-ref.config.ts`. SHA-256 `9701ff8901d80ebb3c26afc8a2a6d81e8015aa5a68203ea377b278156dabffde`, 2808 bytes.
+
+```ts
+// G3 `npm run perf:ref`: the MPES §14 reference-laptop proxy. Chromium and Edge forced onto this PC's Intel UHD 770
+// with 4x CPU throttling (set inside the spec). Separate from playwright.config.ts on purpose: it is not part of
+// `npm run verify`, and the existing `perf` project is untouched. The run refuses to measure unless the unmasked
+// WebGL renderer says "UHD Graphics 770". Reports land in .artifacts/perf-ref/<timestamp>/.
+import { defineConfig } from '@playwright/test';
+import path from 'node:path';
+
+if (!process.env.CI && !process.env.PLAYWRIGHT_BROWSERS_PATH) {
+  process.env.PLAYWRIGHT_BROWSERS_PATH = path.resolve('.artifacts/ms-playwright');
+}
+
+// One timestamp for the whole run, shared with the workers and the teardown through the environment.
+const pad = (n: number) => String(n).padStart(2, '0');
+const now = new Date();
+process.env.PERF_REF_STAMP ??= `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}T${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
+process.env.PERF_REF_DIR ??= path.resolve('.artifacts/perf-ref', process.env.PERF_REF_STAMP);
+
+/** The owner's launch flags, verbatim (the underscore form of the last one is Chromium's own spelling). */
+const GPU_ARGS = ['--use-angle=d3d11', '--enable-gpu', '--ignore-gpu-blocklist', '--force_low_power_gpu', '--js-flags=--expose-gc'];
+
+const engines = (process.env.SEA_ENGINES ?? 'chromium,msedge').split(',');
+const launch = {
+  args: GPU_ARGS,
+  // Playwright's own defaults must not undo the flags above.
+  ignoreDefaultArgs: ['--disable-gpu', '--disable-gpu-compositing', '--disable-software-rasterizer'],
+  headless: !process.env.PERF_REF_HEADED,
+};
+const all = [
+  // channel 'chromium' is the full Chromium in its new headless mode; the default headless shell has no real GPU path.
+  { name: 'perf-ref-chromium', use: { channel: 'chromium', launchOptions: launch }, engine: 'chromium' },
+  { name: 'perf-ref-msedge', use: { channel: 'msedge', launchOptions: launch }, engine: 'msedge' },
+];
+
+export default defineConfig({
+  testDir: 'tests/perf-ref',
+  testMatch: /perf-ref\.spec\.ts/,
+  outputDir: '.artifacts/test-results-perf-ref',
+  // One browser at a time, one test at a time: timings must not compete with each other.
+  fullyParallel: false,
+  workers: 1,
+  // Stop at the first failure: a wrong GPU makes every later number meaningless.
+  maxFailures: 1,
+  forbidOnly: true,
+  retries: 0,
+  reporter: [['list']],
+  // Three viewport profiles plus idle windows per browser; generous because the run is slow by design.
+  timeout: 1_200_000,
+  globalTeardown: './tests/perf-ref/teardown.ts',
+  use: { actionTimeout: 60_000, trace: 'off' },
+  projects: all.filter(project => engines.includes(project.engine)).map(project => ({ name: project.name, use: project.use })),
 });
 ```
 
@@ -35382,7 +35654,7 @@ export function vehicleGlb(glb: ArrayBuffer, vehicle: string): ArrayBuffer | nul
 
 ### source/showcase/model.ts
 
-Paths: `source/showcase/model.ts`. SHA-256 `5b255ade54612974e8ba3d90a646b51b48d79f28f260c26025723eb2b023d485`, 15642 bytes.
+Paths: `source/showcase/model.ts`. SHA-256 `0b852c770b4936e6ba69aa8b66372ad1b32ae7b31571f6423eb837e1e5934a97`, 19074 bytes.
 
 ```ts
 // Real-time vehicle showcase (MPES §10): the embedded glTF model on a slowly turning stage the player can drag.
@@ -35399,7 +35671,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { vehicleGlb } from './glb.ts';
 import { distanceAt, extentAt, fitTable, zoomed, type FitTable } from './frame.ts';
-import { FramePacer } from './pace.ts';
+import { FramePacer, SCALES, nextTier } from './pace.ts';
 
 /** Seconds per full turn when the stage turns by itself. */
 export const TURN_SECONDS = 40;
@@ -35506,6 +35778,10 @@ export class ModelStage {
   #frame = 0;
   #pacer = new FramePacer();
   #dirty = true;
+  /** A change the player asked for (a purchase, turn, zoom or resize) waiting to be drawn: it skips the pacer's wait. */
+  #urgent = false;
+  /** Index into SCALES: the render resolution this machine can draw in time (adaptive tiers). */
+  #tier = 0;
   #visible = true;
   #observer: IntersectionObserver;
   #resize: ResizeObserver;
@@ -35519,17 +35795,22 @@ export class ModelStage {
   /** Called after every draw with the camera's azimuth (radians), how far the kit reaches from the frame centre
    * (1 = the frame edge) and the zoom. */
   onView: ((azimuth: number, extent: number, zoom: number) => void) | null = null;
+  /** Called after each draw has reached the canvas: what the player sees now matches the last `show`. */
+  onDraw: (() => void) | null = null;
 
   constructor() {
     this.canvas = document.createElement('canvas');
     this.canvas.className = 'showcase-canvas';
     this.#renderer = new WebGLRenderer({ canvas: this.canvas, antialias: true, alpha: true, powerPreference: 'low-power' });
-    this.#renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
+    this.#renderer.setPixelRatio(this.#ratio());
     this.#renderer.outputColorSpace = SRGBColorSpace;
     this.#renderer.toneMapping = ACESFilmicToneMapping;
     this.#renderer.toneMappingExposure = 0.85;
     this.#renderer.shadowMap.enabled = true;
     this.#renderer.shadowMap.type = PCFShadowMap;
+    // Baked shadows: the sun and the vehicle stand still while the camera orbits, so the shadow map only changes with the
+    // fitted parts; drawing it every frame doubled each turning draw (G3). show() asks for it again.
+    this.#renderer.shadowMap.autoUpdate = false;
     const pmrem = new PMREMGenerator(this.#renderer);
     // A 64 px environment lights matte paint as well as the default 256 px, with a sixteenth of the pixels to render and blur.
     this.#scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04, 0.1, 100, { size: 64 }).texture;
@@ -35591,6 +35872,7 @@ export class ModelStage {
     const offset = this.#camera.position.clone().sub(this.#controls.target).applyAxisAngle(UP, radians);
     this.#camera.position.copy(this.#controls.target).add(offset);
     this.#controls.update();
+    this.#invalidate(true);
     this.#report();
   }
 
@@ -35598,6 +35880,25 @@ export class ModelStage {
   zoom(press: 1 | -1): void {
     this.#zoom = zoomed(this.#zoom, press);
     this.#place();
+    this.#invalidate(true);
+  }
+
+  /**
+   * Builds the vehicle and compiles every shader it can need, each part's material whether fitted or not, without
+   * blocking the page where the browser compiles in parallel (KHR_parallel_shader_compile). The first draw and the
+   * first draw of each purchase then have nothing left to compile (G3 profile: the first draw was one task of 0.3 to
+   * 2.7 s on a software renderer). Draws nothing: the canvas is not on the page yet. False if there is no such vehicle.
+   */
+  async prepare(lib: Group, vehicle: string): Promise<boolean> {
+    if (!this.show(lib, vehicle, [])) return false;
+    await this.#renderer.compileAsync(this.#scene, this.#camera);
+    // Then every part, without delaying the first draw. three.js compiles only what is visible, but only the call itself
+    // needs the parts shown: the browser finishes compiling them in parallel after they are hidden again.
+    const parts = this.#vehicle!.children.filter(node => !node.visible);
+    for (const node of parts) node.visible = true;
+    void this.#renderer.compileAsync(this.#scene, this.#camera).catch(() => undefined);
+    for (const node of parts) node.visible = false;
+    return true;
   }
 
   /** Shows one vehicle with the given part nodes; returns false if the library has no such vehicle. */
@@ -35619,7 +35920,9 @@ export class ModelStage {
     }
     const shown = new Set(parts);
     for (const node of this.#vehicle!.children) node.visible = layerOf(node) === 'base' || shown.has(layerOf(node));
+    this.#renderer.shadowMap.needsUpdate = true;
     this.#frameCamera(fresh);
+    this.#invalidate(true);
     return true;
   }
 
@@ -35672,20 +35975,46 @@ export class ModelStage {
     this.#camera.aspect = w / h;
     this.#camera.updateProjectionMatrix();
     if (this.#camera.aspect !== this.#fittedAspect) this.#refit();
-    this.#invalidate();
+    this.#invalidate(true);
   }
 
-  /** Asks for a redraw in the next paced frame; drags and key turns never draw synchronously. */
-  #invalidate(): void {
+  /**
+   * Asks for a redraw: in the next paced frame, or, for a change the player asked for (`urgent`), in the next animation
+   * frame whatever the pacer's wait. The pacer times a draw by the gap to the next frame, so the page work of a
+   * purchase (its re-render) reads as drawing cost and stretched the wait to half a second (G3, CI showcase budget);
+   * one draw per action cannot load the machine. Nothing draws synchronously.
+   */
+  #invalidate(urgent = false): void {
     this.#dirty = true;
+    if (urgent) this.#urgent = true;
     this.#loop();
+  }
+
+  /** The pixel ratio to draw at: the screen's, at most 1.5, at the tier's share. */
+  #ratio(): number {
+    return Math.min(devicePixelRatio, 1.5) * SCALES[this.#tier]!;
+  }
+
+  /** Steps the resolution down when the recent draws show this machine cannot draw in time (see nextTier). */
+  #adapt(): void {
+    const tier = nextTier(this.#tier, this.#pacer.floor);
+    if (tier === this.#tier) return;
+    this.#tier = tier;
+    this.#pacer.forget();
+    this.#renderer.setPixelRatio(this.#ratio());
+    this.canvas.setAttribute('data-tier', String(tier));
+    this.#dirty = true;
   }
 
   #draw(): void {
     this.#dirty = false;
+    this.#urgent = false;
     this.#distance();
     this.#renderer.render(this.#scene, this.#camera);
     this.#report();
+    this.onDraw?.();
+    // Observable without reaching into the stage: the reference-laptop run times real draws by this event (MPES §14).
+    this.canvas.dispatchEvent(new Event('sea-draw'));
   }
 
   /** Tells `onView` where the camera is: each draw, and at once after a pause, turn, zoom or refit, so the reading never
@@ -35712,18 +36041,22 @@ export class ModelStage {
     this.#timer.update();
     const tick = (now: number) => {
       this.#frame = requestAnimationFrame(tick);
-      if (!this.#pacer.due(now)) return;
+      if (!this.#pacer.due(now) && !this.#urgent) return;
       this.#timer.update(now);
       const moved = this.#controls.update(this.#timer.getDelta());
+      this.#adapt();
       if (this.#dirty) { this.#draw(); this.#pacer.drew(now); }
       if (!moved && !this.#controls.autoRotate && !this.#dirty) this.#stop();
     };
     this.#frame = requestAnimationFrame(tick);
   }
 
-  /** Restarts the loop after the canvas is re-attached to the page. */
+  /**
+   * Restarts the loop after the canvas is re-attached to the page. The size is left to the ResizeObserver: it reports
+   * after the next layout if the size changed. Reading it here would force a layout of the page being replaced
+   * (G3 profile: about 15 ms per purchase at 4x).
+   */
   attached(): void {
-    this.#size();
     this.#loop();
   }
 
@@ -35739,7 +36072,7 @@ export class ModelStage {
 
 ### source/showcase/pace.ts
 
-Paths: `source/showcase/pace.ts`. SHA-256 `13453d99bad904fa98d2a847c1834d90c67beb210bc74617d96202bbe9db98c8`, 1611 bytes.
+Paths: `source/showcase/pace.ts`. SHA-256 `69e8e1ea1597de0162a3786b640c4ad5292eb48ac1a3fdaf41a1155e40f747db`, 2909 bytes.
 
 ```ts
 /** Fastest the showcase draws: 30 fps is smooth for a slow turn and halves the GPU work of 60 fps. */
@@ -35748,6 +36081,21 @@ export const FRAME_MS = 1000 / 30;
 const CEILING_MS = 1000;
 /** Animation frames arrive with a little jitter; a frame this close to due counts as due. */
 const SLACK_MS = 2;
+/** Draws behind `floor`: enough that one quiet frame among them shows what drawing alone costs. */
+const RECENT = 8;
+
+/** Render resolution tiers, as a share of the full pixel ratio (MPES §10.3 adaptive tiers): full, then two steps down. */
+export const SCALES = [1, 0.75, 0.5] as const;
+
+/**
+ * The tier to draw at next: one step down when even the cheapest recent draw could not hold 30 fps (`floor` above
+ * FRAME_MS), else unchanged. Never up within a session, so the picture cannot flicker between sizes; a hardware GPU
+ * stays at full resolution, a slow or software one drops until a draw fits (G3: a software renderer took about 60 ms
+ * a draw, so each purchase waited on two of them).
+ */
+export function nextTier(tier: number, floor: number): number {
+  return floor > FRAME_MS && tier < SCALES.length - 1 ? tier + 1 : tier;
+}
 
 /**
  * Decides which animation frames draw (MPES §10.3). A drawn frame is timed by the gap to the next animation
@@ -35759,15 +36107,24 @@ export class FramePacer {
   #last = -Infinity;
   #drewAt = Number.NaN;
   #cost = 0;
+  #recent: number[] = [];
 
   /** Milliseconds the pacer currently waits between draws. */
   get interval(): number { return this.#interval; }
+
+  /** The cheapest of the last few draws (page work only ever adds to a sample); NaN until there are enough. */
+  get floor(): number { return this.#recent.length < RECENT ? Number.NaN : Math.min(...this.#recent); }
+
+  /** Starts `floor` afresh, after the drawing itself changed (a new tier). */
+  forget(): void { this.#recent = []; }
 
   /** Call on every animation frame; true when this frame may draw. */
   due(now: number): boolean {
     if (!Number.isNaN(this.#drewAt)) {
       const sample = now - this.#drewAt;
       this.#cost = this.#cost ? this.#cost * 0.6 + sample * 0.4 : sample;
+      this.#recent.push(sample);
+      if (this.#recent.length > RECENT) this.#recent.shift();
       this.#interval = Math.min(CEILING_MS, Math.max(FRAME_MS, 2 * this.#cost));
       this.#drewAt = Number.NaN;
     }
@@ -35828,7 +36185,7 @@ export function cardRender(cardId: string): Render | undefined {
 
 ### source/showcase/showcase.ts
 
-Paths: `source/showcase/showcase.ts`. SHA-256 `70bee1b4e63351bca552acd0a2fc52dbe9026b51c2c742e0a308be4f6d1db79e`, 18726 bytes.
+Paths: `source/showcase/showcase.ts`. SHA-256 `8b7b4267d8436cc14c913b9f900fd90db7f1aae9477e5f0cf5ffa61c6e2bd61f`, 19371 bytes.
 
 ```ts
 // Vehicle showcase (MPES §10): the team's vehicle with its installed parts, as a slowly turning 3D model the
@@ -35977,15 +36334,23 @@ export class Showcase {
   #start(vehicle: string): void {
     this.#mode = 'stills';
     if (!webglAvailable()) return;
-    void loadVehicle(vehicle).then(library => {
+    void loadVehicle(vehicle).then(async library => {
       if (!library) return;
       const stage = new ModelStage();
+      // Stills stay up while the stage compiles its shaders, so the page never waits on the compiler.
+      if (!await stage.prepare(library, vehicle)) { stage.dispose(); return; }
       const element = h('div', { class: 'showcase-stage showcase-3d', role: 'img', 'data-mode': '3d', 'data-ready': 'false' });
       element.appendChild(stage.canvas);
       stage.onView = (azimuth, extent, zoom) => {
         element.setAttribute('data-azimuth', azimuth.toFixed(3));
         element.setAttribute('data-extent', extent.toFixed(3));
         element.setAttribute('data-zoom', zoom.toFixed(3));
+      };
+      // The parts the canvas actually shows: `data-layers` changes when a purchase is recorded, `data-drawn` only once
+      // the next draw has put them on screen (the MPES §14 update and ready budgets end here, not at the request).
+      stage.onDraw = () => {
+        const layers = element.getAttribute('data-layers');
+        if (layers !== null && element.getAttribute('data-drawn') !== layers) element.setAttribute('data-drawn', layers);
       };
       this.#model = { stage, libraries: new Map([[vehicle, library]]), element };
       this.#mode = '3d';
@@ -37912,7 +38277,7 @@ export function toggleTheme(): Theme {
 
 ### source/ui/view.ts
 
-Paths: `source/ui/view.ts`. SHA-256 `48a0a0f278715e633d70b72a614e1f2c83c201f48eb2b863e325dd009e6e28b0`, 15712 bytes.
+Paths: `source/ui/view.ts`. SHA-256 `f9dbb6ce1de8e72820c2eae22d3b90eeedad30cc02b81d965b04134c8e062eb4`, 16561 bytes.
 
 ```ts
 // Shared role view: shell (header, progress, menu, notices), rendering with focus preservation,
@@ -37978,6 +38343,8 @@ export class RoleView<S extends RoleState> {
   #status: { text: string; tone: Tone } | null = null;
   #undo: S | null = null;
   #rendering = false;
+  /** True while the view commits a change itself and renders once afterwards (see #commit). */
+  #committing = false;
   readonly #content: HTMLElement;
   readonly #statusLine: HTMLElement;
 
@@ -37987,7 +38354,7 @@ export class RoleView<S extends RoleState> {
     this.#content = h('div');
     this.#statusLine = h('div', { class: 'page status-line', role: 'status', 'aria-live': 'polite', id: 'status' });
     replaceChildren(root, this.#content, this.#statusLine);
-    config.controller.subscribe(() => this.render());
+    config.controller.subscribe(() => { if (!this.#committing) this.render(); });
   }
 
   get state(): S { return this.config.controller.state; }
@@ -37995,10 +38362,19 @@ export class RoleView<S extends RoleState> {
   t = (key: StringKey, vars?: Readonly<Record<string, string | number>>): string => translate(this.lang, key, vars);
 
   // ---- Commands ----
+  /**
+   * Commits through the controller without the subscription's render: the caller renders once, after its own updates
+   * (status, drafts), so a click rebuilds the page once rather than twice (MPES §14 command response).
+   */
+  #commit<T>(change: () => T): T {
+    this.#committing = true;
+    try { return change(); } finally { this.#committing = false; }
+  }
+
   /** Run a command; on failure show the localized reason and keep everything unchanged. */
   run(command: (state: S) => S, success?: () => void): Result {
     if (this.#undo) this.#undo = null;
-    const result = this.config.controller.dispatch(command);
+    const result = this.#commit(() => this.config.controller.dispatch(command));
     if (result.ok) { this.#status = null; success?.(); this.render(); }
     else this.say(this.t(`error.${result.code}` as StringKey), 'bad');
     return result;
@@ -38011,7 +38387,7 @@ export class RoleView<S extends RoleState> {
   savingInput(id: string, current: string, command: (state: S, value: string) => S, props: Record<string, unknown> = {}): HTMLInputElement {
     const commit = (value: string, report: boolean) => {
       if (value === current) return;
-      const result = this.config.controller.dispatch(state => command(state, value));
+      const result = this.#commit(() => this.config.controller.dispatch(state => command(state, value)));
       if (result.ok) { this.drafts.delete(id); current = value; this.render(); }
       else if (report) this.say(this.t(`error.${result.code}` as StringKey), 'bad');
     };
@@ -38063,13 +38439,15 @@ export class RoleView<S extends RoleState> {
       this.#statusLine.className = `page status-line ${this.#status?.tone === 'bad' ? 'error' : this.#status?.tone === 'ok' ? 'ok' : ''}`;
       if (this.#statusLine.textContent !== (this.#status?.text ?? '')) this.#statusLine.textContent = this.#status?.text ?? '';
       // Tables wider than the screen become labelled, focusable regions so they can be scrolled by keyboard (WCAG 2.1.1).
-      for (const wrap of this.#content.querySelectorAll<HTMLElement>('.table-wrap')) {
-        labelCells(wrap);
-        if (wrap.scrollWidth > wrap.clientWidth + 1) {
-          wrap.tabIndex = 0;
-          wrap.setAttribute('role', 'region');
-          wrap.setAttribute('aria-label', wrap.querySelector('caption')?.textContent || wrap.closest('section')?.querySelector('h1, h2, h3')?.textContent || this.t('common.purchases'));
-        }
+      // Every cell is labelled before any width is read, and every width is read before any region is marked, so the
+      // page lays out once per render rather than once per table.
+      const wraps = [...this.#content.querySelectorAll<HTMLElement>('.table-wrap')];
+      for (const wrap of wraps) labelCells(wrap);
+      const wide = wraps.filter(wrap => wrap.scrollWidth > wrap.clientWidth + 1);
+      for (const wrap of wide) {
+        wrap.tabIndex = 0;
+        wrap.setAttribute('role', 'region');
+        wrap.setAttribute('aria-label', wrap.querySelector('caption')?.textContent || wrap.closest('section')?.querySelector('h1, h2, h3')?.textContent || this.t('common.purchases'));
       }
       if (focusId) {
         const next = document.getElementById(focusId) as (HTMLElement & Partial<HTMLInputElement>) | null;
@@ -38206,7 +38584,7 @@ export class RoleView<S extends RoleState> {
     candidate = this.config.setLanguage(candidate, this.lang); // keep the language the user is reading
     const previous = this.state;
     this.drafts.clear();
-    this.config.controller.replace(candidate);
+    this.#commit(() => this.config.controller.replace(candidate));
     this.#undo = previous;
     this.say(t(notice), 'ok');
   }
@@ -38215,7 +38593,7 @@ export class RoleView<S extends RoleState> {
     if (!this.#undo) return;
     const previous = this.#undo;
     this.#undo = null;
-    this.config.controller.replace(previous);
+    this.#commit(() => this.config.controller.replace(previous));
     this.say(this.t('backup.undone'), 'ok');
   }
 }
@@ -39327,187 +39705,61 @@ export function dollars(cents: number): string {
 
 ### tests/e2e/perf.spec.ts
 
-Paths: `tests/e2e/perf.spec.ts`. SHA-256 `86062b3ae4555e7177ae03cf207abfc0ca4005e2de493250a48a3064eeb515b5`, 10065 bytes.
+Paths: `tests/e2e/perf.spec.ts`. SHA-256 `be6299bd3b1db68120698da66e94ad95d14f403df268eeeae2e6c9bf7f42ff31`, 2912 bytes.
 
 ```ts
 // RQ-26 (MPES §14, §10.3): every performance budget, measured in Chromium on the reference profile (4x CPU
 // throttling, D-11). Numbers are attached to the report and copied into docs/verification for the release. This
 // file runs in its own project after every other suite has finished (playwright.config.ts), so timings are not
-// skewed by parallel work.
-import { expect, test, type Page } from '@playwright/test';
-import { readFileSync, statSync } from 'node:fs';
-import { gameUrl, guardNetwork, withGpu, withoutWebgl } from './helpers.ts';
-import { instructorSetup } from './roles.ts';
+// skewed by parallel work; its tests run one after another in one worker. The scenarios and the protocol (input to
+// painted result, nearest-rank p95 of at least 30 samples) are tests/perf/, shared with `npm run perf:ref`, which
+// measures them on the reference GPU; here the runner's software renderer stands in for it (withGpu).
+import { expect, test, type TestInfo } from '@playwright/test';
+import { MIN_SAMPLES } from '../perf/measure.ts';
+import { Lab, commands, model, startUp, stills, type Measured } from '../perf/scenarios.ts';
+import { withGpu } from './helpers.ts';
 
 test.use({ launchOptions: { args: ['--js-flags=--expose-gc'] } });
+test.describe.configure({ mode: 'default' });
 test.setTimeout(240_000);
 
-const MB = 1024 * 1024;
-
-/** The reference profile: Chromium with 4x CPU throttling stands in for an integrated-graphics laptop (D-11). */
-async function reference(page: Page): Promise<Page> {
-  guardNetwork(page);
-  const cdp = await page.context().newCDPSession(page);
-  await cdp.send('Emulation.setCPUThrottlingRate', { rate: 4 });
-  return page;
+/** Each test reports its numbers; the release's verification record copies them. */
+async function report(info: TestInfo, measured: Measured): Promise<Measured['values']> {
+  await info.attach('performance.json', { body: JSON.stringify(measured, null, 2), contentType: 'application/json' });
+  console.log(JSON.stringify(measured.values));
+  return measured.values;
 }
 
-/** JS heap plus the decoded pixels of every image on screen (4 bytes per pixel). */
-async function memoryMB(page: Page): Promise<number> {
-  return page.evaluate(() => {
-    (globalThis as unknown as { gc?: () => void }).gc?.();
-    const heap = (performance as unknown as { memory: { usedJSHeapSize: number } }).memory.usedJSHeapSize;
-    const pixels = [...document.images].reduce((n, img) => n + img.naturalWidth * img.naturalHeight * 4, 0);
-    return (heap + pixels) / 1048576;
-  });
-}
+test('start-up, size and memory (MPES §14)', async ({ browser }, info) => {
+  const v = await report(info, await startUp(new Lab(browser)));
+  expect(v.htmlMB).toBeLessThanOrEqual(50);
+  expect(v.chooserMs).toBeLessThanOrEqual(2000);
+  expect(v.maxStateStartMs).toBeLessThanOrEqual(3000);
+  expect(v.maxStateMemoryMB).toBeLessThanOrEqual(400);
+});
 
-const p95 = (values: number[]) => [...values].sort((a, b) => a - b)[Math.floor(values.length * 0.95)]!;
+test('command response and memory growth (MPES §14)', async ({ browser }, info) => {
+  const v = await report(info, await commands(new Lab(browser)));
+  expect(v.commandSamples).toBeGreaterThanOrEqual(MIN_SAMPLES);
+  expect(v.commandP95Ms).toBeLessThanOrEqual(100);
+  expect(v.memoryGrowthMB).toBeLessThanOrEqual(5);
+});
 
-test('performance budgets (MPES §14, §10.3)', async ({ page }, info) => {
-  const results: Record<string, number> = {};
-  results.htmlMB = Math.round(statSync('dist/index.html').size / MB * 10) / 10;
+test('3D showcase (MPES §14, §10.3)', async ({ browser }, info) => {
+  const v = await report(info, await model(new Lab(browser, {}, withGpu)));
+  expect(v.modelReadyMs).toBeLessThanOrEqual(3000);
+  expect(v.modelUpdateSamples).toBeGreaterThanOrEqual(MIN_SAMPLES);
+  expect(v.modelUpdateP95Ms).toBeLessThanOrEqual(100);
+  expect(v.modelMemoryMB).toBeLessThanOrEqual(400);
+});
 
-  // Time to interactive, chooser: the first frame showing the heading and the role buttons.
-  // (file:// pages report no paint timing, so a test-side observer records it.)
-  const chooser = await reference(await page.context().newPage());
-  await chooser.addInitScript(() => {
-    new MutationObserver((_, observer) => {
-      if (!document.querySelector('h1') || !document.querySelector('a[data-role]')) return;
-      observer.disconnect();
-      requestAnimationFrame(() => { (window as unknown as { seaPainted: number }).seaPainted = performance.now(); });
-    }).observe(document, { childList: true, subtree: true });
-  });
-  await chooser.goto(gameUrl('?lang=en'));
-  await chooser.waitForFunction(() => (window as unknown as { seaPainted?: number }).seaPainted !== undefined);
-  results.chooserMs = Math.round(await chooser.evaluate(() => (window as unknown as { seaPainted: number }).seaPainted));
-  await chooser.close();
-
-  // Time to interactive with the largest valid instructor save: 210 ledger entries, all 70 lots, 10 teams.
-  await reference(page);
-  const state = JSON.parse(readFileSync('tests/fixtures/legacy/instructor-max-ledger.json', 'utf8')).state;
-  await page.addInitScript(raw => { if (!sessionStorage.getItem('SEA_INSTRUCTOR_V300')) sessionStorage.setItem('SEA_INSTRUCTOR_V300', raw); }, JSON.stringify(state));
-  const t1 = Date.now();
-  await page.goto(gameUrl('?role=instructor&lang=en'));
-  await page.getByRole('heading', { name: 'Results to reconcile' }).waitFor();
-  results.maxStateStartMs = Date.now() - t1;
-  results.maxStateMemoryMB = Math.round(await memoryMB(page));
-
-  // Command response: click to rendered result in a 10-team timed auction, inside the page.
-  const fresh = await reference(await page.context().newPage());
-  await fresh.goto(gameUrl('?role=instructor&lang=en'));
-  await instructorSetup(fresh, { teams: 10, reveal: 'JIT', timed: true, missions: ['TROOP', 'RECCE', 'COMBAT', 'COMMAND', 'RECOVERY', 'MINE', 'TROOP', 'RECCE', 'COMBAT', 'COMMAND'] });
-  await fresh.click('#open-bidding');
-  const bids = await fresh.evaluate(() => {
-    const out: number[] = [];
-    for (let i = 0; i < 40; i++) {
-      const button = document.querySelector<HTMLButtonElement>(`#bid-${(i % 10) + 1}`);
-      if (!button || button.disabled) continue;
-      const start = performance.now();
-      button.click();
-      out.push(performance.now() - start);
-    }
-    return out;
-  });
-  results.commandP95Ms = Math.round(p95(bids) * 10) / 10;
-
-  // No growth: ten full re-render cycles (language round trips re-render every view) leave the heap flat.
-  const before = await memoryMB(fresh);
-  for (let cycle = 0; cycle < 10; cycle++) await fresh.evaluate(() => { for (let i = 0; i < 20; i++) document.querySelector<HTMLButtonElement>('#lang-toggle')!.click(); });
-  results.memoryGrowthMB = Math.round((await memoryMB(fresh) - before) * 10) / 10;
-
-  // 3D showcase (MPES §10.3): from opening the tracker until the model is drawn; then record a purchase until the
-  // model shows it.
-  const tracker = async (page: Page) => {
-    await page.goto(gameUrl('?role=student&lang=en'));
-    await page.fill('#join-code', 'SEA3-T2-0123456789ABCDEF');
-    await page.selectOption('#join-mission', 'RECOVERY');
-    await page.click('#join'); await page.click('#record-practice'); await page.click('#student-planning');
-    await page.check('#plan-confirm'); await page.click('#student-start-auction');
-  };
-  const model = await reference(await page.context().newPage());
-  await withGpu(model);
-  await tracker(model);
-  const opened = await model.evaluate(() => performance.now());
-  await model.locator('dialog button[data-value="ok"]').click();
-  await model.locator('#showcase [data-mode="3d"][data-ready="true"]').waitFor();
-  results.modelReadyMs = Math.round(await model.evaluate(() => performance.now()) - opened);
-  const modelUpdates: number[] = [];
-  for (const [round, lot, card, paid] of [[1, 5, 'COM-E', 600000], [1, 7, 'ACC-F', 350000], [2, 1, 'CAP-B', 450000]] as const) {
-    if (round > 1) await model.selectOption('#pos-round', String(round));
-    await model.selectOption('#pos-lot', String(lot));
-    await model.fill('#card-id', card); await model.click('#load-card'); await model.fill('#paid', String(paid));
-    modelUpdates.push(await model.evaluate(async id => {
-      const start = performance.now();
-      document.querySelector<HTMLButtonElement>('#record-win')!.click();
-      if (!document.querySelector('#showcase [data-mode="3d"]')!.getAttribute('data-layers')!.split(' ').includes(id)) throw new Error(`model lacks ${id}`);
-      await new Promise(requestAnimationFrame);
-      return performance.now() - start;
-    }, card));
-  }
-  results.modelUpdateMaxMs = Math.round(Math.max(...modelUpdates));
-  results.modelMemoryMB = Math.round(await memoryMB(model));
-  await model.close();
-
-  // Stills showcase without WebGL (MPES §10.3): record a purchase until its layer is decoded; change angle; scrub
-  // the turntable.
-  const student = await reference(await page.context().newPage());
-  await withoutWebgl(student);
-  await tracker(student);
-  await student.locator('dialog button[data-value="ok"]').click();
-  await student.locator('#showcase img[data-layer="base"]').waitFor();
-  const updates: number[] = [];
-  for (const [round, lot, card, paid] of [[1, 5, 'COM-E', 600000], [1, 7, 'ACC-F', 350000], [2, 1, 'CAP-B', 450000]] as const) {
-    if (round > 1) await student.selectOption('#pos-round', String(round));
-    await student.selectOption('#pos-lot', String(lot));
-    await student.fill('#card-id', card); await student.click('#load-card'); await student.fill('#paid', String(paid));
-    updates.push(await student.evaluate(async id => {
-      const start = performance.now();
-      document.querySelector<HTMLButtonElement>('#record-win')!.click();
-      await document.querySelector<HTMLImageElement>(`#showcase img[data-layer="${id}"]`)!.decode();
-      return performance.now() - start;
-    }, card));
-  }
-  results.showcaseUpdateMaxMs = Math.round(Math.max(...updates));
-  results.angleChangeMs = Math.round(await student.evaluate(async () => {
-    const start = performance.now();
-    document.querySelector<HTMLInputElement>('#showcase-view-rear')!.click();
-    await Promise.all([...document.querySelectorAll<HTMLImageElement>('#showcase img')].map(img => img.decode()));
-    return performance.now() - start;
-  }));
-  await student.check('#showcase-view-turntable');
-  await student.locator('#showcase-turn').waitFor();
-  await student.waitForTimeout(300); // neighbouring frames pre-decode while a person pauses
-  const scrub: number[] = [];
-  for (let i = 0; i < 6; i++) {
-    scrub.push(await student.evaluate(async () => {
-      const input = document.querySelector<HTMLInputElement>('#showcase-turn')!;
-      const start = performance.now();
-      input.value = String((Number(input.value) + 1) % (Number(input.max) + 1));
-      input.dispatchEvent(new Event('input', { bubbles: true }));
-      await document.querySelector<HTMLImageElement>('#showcase img[data-frame]')!.decode();
-      return performance.now() - start;
-    }));
-    await student.waitForTimeout(120);
-  }
-  results.turntableStepMaxMs = Math.round(Math.max(...scrub));
-  results.studentMemoryMB = Math.round(await memoryMB(student));
-
-  await info.attach('performance.json', { body: JSON.stringify(results, null, 2), contentType: 'application/json' });
-  console.log(JSON.stringify(results));
-  expect(results.htmlMB).toBeLessThanOrEqual(50);
-  expect(results.chooserMs).toBeLessThanOrEqual(2000);
-  expect(results.maxStateStartMs).toBeLessThanOrEqual(3000);
-  expect(results.commandP95Ms).toBeLessThanOrEqual(100);
-  expect(results.maxStateMemoryMB).toBeLessThanOrEqual(400);
-  expect(results.studentMemoryMB).toBeLessThanOrEqual(400);
-  expect(results.memoryGrowthMB).toBeLessThanOrEqual(5);
-  expect(results.showcaseUpdateMaxMs).toBeLessThanOrEqual(100);
-  expect(results.modelReadyMs).toBeLessThanOrEqual(3000);
-  expect(results.modelUpdateMaxMs).toBeLessThanOrEqual(100);
-  expect(results.modelMemoryMB).toBeLessThanOrEqual(400);
-  expect(results.angleChangeMs).toBeLessThanOrEqual(50);
-  expect(results.turntableStepMaxMs).toBeLessThanOrEqual(50);
+test('stills showcase (MPES §14, §10.3)', async ({ browser }, info) => {
+  const v = await report(info, await stills(new Lab(browser)));
+  expect(v.showcaseUpdateSamples).toBeGreaterThanOrEqual(MIN_SAMPLES);
+  expect(v.showcaseUpdateP95Ms).toBeLessThanOrEqual(100);
+  expect(v.angleChangeMs).toBeLessThanOrEqual(50);
+  expect(v.turntableStepMaxMs).toBeLessThanOrEqual(50);
+  expect(v.studentMemoryMB).toBeLessThanOrEqual(400);
 });
 ```
 
@@ -39852,6 +40104,54 @@ test('G-PILOT substitute: French classroom rehearsal, 10 teams, three student ta
   for (const [key, value] of Object.entries(score)) expect(value.pass, key).toBe(true);
   expect(tabs.flatMap(t => t.requests)).toEqual([]);
   expect(tabs.flatMap(t => t.errors)).toEqual([]);
+});
+```
+
+### tests/e2e/render.spec.ts
+
+Paths: `tests/e2e/render.spec.ts`. SHA-256 `55def4ca56100811b80e48e3fa3887bb647fb681d88be743ce57b40dc22a18d8`, 2076 bytes.
+
+```ts
+// MPES §14 command response: a command, a saved field or a status message rebuilds the view once, never twice (G3: each
+// command used to render through the controller's subscription and again in the view, doubling the click-to-paint time).
+import { expect, test, type Page } from '@playwright/test';
+import { gameUrl, guardNetwork } from './helpers.ts';
+
+/** Counts full re-renders: each one empties the view's content element before rebuilding it. */
+async function countRenders(page: Page): Promise<void> {
+  await page.evaluate(() => {
+    const w = window as unknown as { seaRenders: number };
+    w.seaRenders = 0;
+    const content = document.querySelector('#app > div')!;
+    new MutationObserver(records => { for (const r of records) if (r.target === content && r.removedNodes.length) w.seaRenders++; })
+      .observe(content, { childList: true });
+  });
+}
+const renders = (page: Page) => page.evaluate(() => { const w = window as unknown as { seaRenders: number }; const n = w.seaRenders; w.seaRenders = 0; return n; });
+
+test('each command, saved field and message renders the view once', async ({ page }) => {
+  guardNetwork(page);
+  await page.goto(gameUrl('?role=instructor&lang=en'));
+  await countRenders(page);
+  await page.click('#generate');
+  expect(await renders(page), 'command').toBe(1);
+  await page.click('#start-practice');
+  expect(await renders(page), 'command').toBe(1);
+  await page.click('#lang-toggle');
+  expect(await renders(page), 'language').toBe(1);
+
+  await page.goto(gameUrl('?role=student&lang=en'));
+  await countRenders(page);
+  await page.fill('#join-code', 'SEA3-T2-0123456789ABCDEF');
+  await page.selectOption('#join-mission', 'RECOVERY');
+  await renders(page);
+  await page.click('#join');
+  expect(await renders(page), 'join').toBe(1);
+  await page.click('#record-practice'); await page.click('#student-planning');
+  await renders(page);
+  // A field that saves as you type: one render per committed value.
+  await page.locator('#plan-wtp').pressSequentially('5');
+  expect(await renders(page), 'saved field').toBe(1);
 });
 ```
 
@@ -40821,6 +41121,1032 @@ Paths: `tests/fixtures/legacy/student-practice.json`. SHA-256 `fbf972503388c8ac6
 {"format":"SEA-GAME-BACKUP","version":1,"appVersion":"4.1.0-dev.1","ruleset":"STANDARD","deck":"synthetic-v1","schema":3,"sessionCode":"SEA3-T3-A1B2C3D4E5F60718","role":"STUDENT","state":{"schema":3,"phase":"practice","lang":"fr","vehicleConfirmed":false,"lockedMission":null,"sessionCode":"SEA3-T3-A1B2C3D4E5F60718","teamCount":3,"teamId":2,"team":{"id":2,"mission":"RECCE","lockedMission":null,"totals":{"CAP":0,"MOB":0,"FP":0,"PRO":0,"COM":0,"SA":0,"REC":0,"MC":0},"cost":0,"purchases":[],"purchasesByRound":[0,0,0,0,0,0,0],"profit":0,"submitted":false},"round":0,"lot":0,"currentCard":null,"plan":"","planBaseline":null,"risks":"","maxWtpCents":85000000,"scratch":{},"profitMode":"AMOUNT","profitInput":"250000","profitCents":25000000,"practiceWon":true,"vehicleChangeNotice":false}}
 ```
 
+### tests/perf-ref/perf-ref.spec.ts
+
+Paths: `tests/perf-ref/perf-ref.spec.ts`. SHA-256 `8e85922c222157aa1e4ea56fa69d77e7a3ccbfb0ca2c399638988f90d46d0547`, 18887 bytes.
+
+```ts
+// G3 `npm run perf:ref` (MPES §14, §17): every §14 gate measured on the reference-laptop proxy, i.e. Chromium and
+// Edge on this PC's Intel UHD 770 (launch flags in playwright.perf-ref.config.ts), 4x CPU throttling, three screen
+// profiles. It first proves the GPU, then measures, then writes one run file per browser and profile; the teardown
+// merges them into report.json and report.md (one row per KPI of §1.4).
+//
+// The scenarios repeat tests/e2e/perf.spec.ts on purpose (that file is the enforcing gate and stays as it is; a test
+// file cannot be imported). Differences: no GPU spoofing (the real GPU is the point), real clicks for INP, and no
+// budget assertion: a baseline must be recordable before any change, so budgets are only reported (report.ts).
+import { test, type Browser, type CDPSession, type Page } from '@playwright/test';
+import { mkdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
+import path from 'node:path';
+import { collectConsoleErrors, gameUrl, guardNetwork, withoutWebgl } from '../e2e/helpers.ts';
+import { instructorSetup } from '../e2e/roles.ts';
+import type { RunFile, RunMeta } from './report.ts';
+
+const MB = 1024 * 1024;
+const REQUIRED_RENDERER = 'UHD Graphics 770';
+const THROTTLE = 4;
+const IDLE_SECONDS = Number(process.env.PERF_REF_IDLE_SECONDS ?? 60);
+const OUT = process.env.PERF_REF_DIR ?? path.resolve('.artifacts/perf-ref', 'manual');
+
+/** The three screens of MPES §14. Idle windows run on the first only (they are 60 s each). */
+const PROFILES = [
+  { id: '1366x768at1', width: 1366, height: 768, scale: 1 },
+  { id: '1536x864at1.25', width: 1536, height: 864, scale: 1.25 },
+  { id: '1280x720at1.5', width: 1280, height: 720, scale: 1.5 },
+] as const;
+type Profile = typeof PROFILES[number];
+
+interface Vitals { cls: number; lcp: number | null; long: { s: number; d: number }[]; inter: number[]; loaded: number | null }
+
+/** Runs in every page before its scripts: records layout shift, LCP, long tasks and interaction durations. */
+function installVitals(): void {
+  const sea: Vitals = { cls: 0, lcp: null, long: [], inter: [], loaded: null };
+  (globalThis as unknown as { __sea: Vitals }).__sea = sea;
+  const watch = (type: string, handle: (entry: PerformanceEntry) => void, extra: Record<string, unknown> = {}) => {
+    try { new PerformanceObserver(list => list.getEntries().forEach(handle)).observe({ type, buffered: true, ...extra } as PerformanceObserverInit); } catch { /* entry type not supported here */ }
+  };
+  watch('layout-shift', entry => { const shift = entry as unknown as { value: number; hadRecentInput: boolean }; if (!shift.hadRecentInput) sea.cls += shift.value; });
+  watch('largest-contentful-paint', entry => { sea.lcp = entry.startTime; });
+  watch('longtask', entry => { sea.long.push({ s: entry.startTime, d: entry.duration }); });
+  watch('event', entry => { const timing = entry as unknown as { interactionId?: number }; if (timing.interactionId) sea.inter.push(entry.duration); }, { durationThreshold: 16 });
+  addEventListener('load', () => requestAnimationFrame(() => { sea.loaded = performance.now(); }));
+}
+
+const p95 = (values: number[]) => [...values].sort((a, b) => a - b)[Math.floor(values.length * 0.95)] ?? 0;
+const round = (value: number, places = 1) => Math.round(value * 10 ** places) / 10 ** places;
+
+interface Scene { page: Page; cdp: CDPSession; errors: string[]; egress: string[] }
+
+const state = { values: {} as Record<string, number | null>, notes: {} as Record<string, string>, errors: [] as string[], egress: [] as string[] };
+const worst = (id: string, value: number) => { const old = state.values[id]; state.values[id] = old === null || old === undefined ? value : Math.max(old, value); };
+
+async function open(browser: Browser, profile: Profile, prepare?: (page: Page) => Promise<unknown>): Promise<Scene> {
+  const context = await browser.newContext({ viewport: { width: profile.width, height: profile.height }, deviceScaleFactor: profile.scale });
+  const page = await context.newPage();
+  const egress = guardNetwork(page);
+  const errors = collectConsoleErrors(page);
+  const cdp = await context.newCDPSession(page);
+  await cdp.send('Emulation.setCPUThrottlingRate', { rate: THROTTLE });
+  await page.addInitScript(installVitals);
+  await prepare?.(page);
+  return { page, cdp, errors, egress };
+}
+
+/** Read the page's vitals, fold them into the run, and close it. */
+async function finish(scene: Scene): Promise<void> {
+  const vitals = await scene.page.evaluate(() => (globalThis as unknown as { __sea: Vitals }).__sea);
+  worst('clsScore', round(vitals.cls, 3));
+  worst('longTaskMaxMs', Math.round(Math.max(0, ...vitals.long.filter(task => task.s >= (vitals.loaded ?? 0)).map(task => task.d))));
+  if (vitals.inter.length) worst('inpMs', Math.round(Math.max(...vitals.inter)));
+  state.errors.push(...scene.errors);
+  state.egress.push(...scene.egress);
+  await scene.page.context().close();
+}
+
+/** JS heap plus the decoded pixels of every image on screen (4 bytes per pixel), as tests/e2e/perf.spec.ts. */
+async function memoryMB(page: Page): Promise<number> {
+  return page.evaluate(() => {
+    (globalThis as unknown as { gc?: () => void }).gc?.();
+    const heap = (performance as unknown as { memory: { usedJSHeapSize: number } }).memory.usedJSHeapSize;
+    const pixels = [...document.images].reduce((n, img) => n + img.naturalWidth * img.naturalHeight * 4, 0);
+    return (heap + pixels) / MB;
+  });
+}
+
+/** Browser CPU over a quiet window: all processes (incl. GPU) in % of one core, and the page's main-thread busy share. */
+async function idle(browser: Browser, scene: Scene, id: string): Promise<void> {
+  if (IDLE_SECONDS <= 0) { state.notes[id] = 'idle window switched off (PERF_REF_IDLE_SECONDS=0)'; return; }
+  try {
+    const browserCdp = await browser.newBrowserCDPSession();
+    const cpu = async () => {
+      const { processInfo } = await browserCdp.send('SystemInfo.getProcessInfo') as { processInfo: { cpuTime: number }[] };
+      return processInfo.reduce((sum, p) => sum + p.cpuTime, 0);
+    };
+    const task = async () => {
+      const { metrics } = await scene.cdp.send('Performance.getMetrics') as { metrics: { name: string; value: number }[] };
+      return metrics.find(m => m.name === 'TaskDuration')?.value ?? 0;
+    };
+    await scene.cdp.send('Performance.enable');
+    await scene.page.waitForTimeout(3000); // let start-up work finish before the window opens
+    const [cpu0, task0, t0] = [await cpu(), await task(), Date.now()];
+    await scene.page.waitForTimeout(IDLE_SECONDS * 1000);
+    const [cpu1, task1, t1] = [await cpu(), await task(), Date.now()];
+    const wall = (t1 - t0) / 1000;
+    state.values[id] = round((cpu1 - cpu0) / wall * 100);
+    worst('idleMainThreadMaxPct', round((task1 - task0) / wall * 100));
+    await browserCdp.detach();
+  } catch (error) {
+    state.notes[id] = `idle CPU could not be read: ${String(error).slice(0, 120)}`;
+  }
+}
+
+for (const profile of PROFILES) {
+  test(`reference proxy ${profile.id}`, async ({ browser }, info) => {
+    test.setTimeout(1_200_000);
+    const engine = info.project.name.replace('perf-ref-', '');
+    const first = profile === PROFILES[0];
+    state.values = {}; state.notes = {}; state.errors = []; state.egress = [];
+    const meta: RunMeta = {
+      browser: engine, browserVersion: browser.version(), profile: profile.id,
+      viewport: { width: profile.width, height: profile.height, scale: profile.scale },
+      cpuThrottle: THROTTLE, gpu: { vendor: 'unknown', renderer: 'unknown' }, idleSeconds: first ? IDLE_SECONDS : 0,
+    };
+    mkdirSync(OUT, { recursive: true });
+    const write = (runState: RunFile['state'], message?: string) => writeFileSync(path.join(OUT, `${engine}-${profile.id}.run.json`),
+      JSON.stringify({ meta, state: runState, ...(message ? { message } : {}), values: state.values, notes: state.notes } satisfies RunFile, null, 2) + '\n');
+
+    // Gate 0, before anything is measured: the unmasked WebGL renderer must be the UHD 770 or nothing else counts.
+    const probe = await browser.newPage();
+    const gpu = await probe.evaluate(() => {
+      const gl = document.createElement('canvas').getContext('webgl2') ?? document.createElement('canvas').getContext('webgl');
+      const ext = gl?.getExtension('WEBGL_debug_renderer_info');
+      return { vendor: String(gl && ext ? gl.getParameter(ext.UNMASKED_VENDOR_WEBGL) : 'no WebGL'), renderer: String(gl && ext ? gl.getParameter(ext.UNMASKED_RENDERER_WEBGL) : 'no WebGL') };
+    });
+    await probe.close();
+    meta.gpu = gpu;
+    if (!gpu.renderer.includes(REQUIRED_RENDERER)) {
+      write('GPU_CHECK_FAILED', `unmasked renderer "${gpu.renderer}" does not contain "${REQUIRED_RENDERER}"`);
+      throw new Error(`perf:ref needs "${REQUIRED_RENDERER}"; ${engine} reports "${gpu.renderer}" (vendor "${gpu.vendor}"). Nothing was measured.`);
+    }
+
+    try {
+      state.values.htmlMB = round(statSync('dist/index.html').size / MB);
+
+      // Chooser: first frame with the heading and role buttons (file:// pages report no paint timing, so a test-side observer).
+      const chooser = await open(browser, profile, page => page.addInitScript(() => {
+        new MutationObserver((_, observer) => {
+          if (!document.querySelector('h1') || !document.querySelector('a[data-role]')) return;
+          observer.disconnect();
+          requestAnimationFrame(() => { (window as unknown as { seaPainted: number }).seaPainted = performance.now(); });
+        }).observe(document, { childList: true, subtree: true });
+      }));
+      await chooser.page.goto(gameUrl('?lang=en'));
+      await chooser.page.waitForFunction(() => (window as unknown as { seaPainted?: number }).seaPainted !== undefined);
+      state.values.chooserMs = Math.round(await chooser.page.evaluate(() => (window as unknown as { seaPainted: number }).seaPainted));
+      const lcp = await chooser.page.evaluate(() => (globalThis as unknown as { __sea: Vitals }).__sea.lcp);
+      if (lcp !== null) state.values.lcpMs = Math.round(lcp);
+      else { state.values.lcpMs = state.values.chooserMs; state.notes.lcpMs = 'no LCP entry on file://; chooserMs (heading and buttons painted) used as the proxy'; }
+      if (first) await idle(browser, chooser, 'idleCpuChooserPct');
+      await finish(chooser);
+
+      // Largest valid instructor save: 210 ledger entries, all 70 lots, 10 teams.
+      const saved = JSON.parse(readFileSync('tests/fixtures/legacy/instructor-max-ledger.json', 'utf8')).state;
+      const big = await open(browser, profile, page => page.addInitScript(raw => { if (!sessionStorage.getItem('SEA_INSTRUCTOR_V300')) sessionStorage.setItem('SEA_INSTRUCTOR_V300', raw); }, JSON.stringify(saved)));
+      const t1 = Date.now();
+      await big.page.goto(gameUrl('?role=instructor&lang=en'));
+      await big.page.getByRole('heading', { name: 'Results to reconcile' }).waitFor();
+      state.values.maxStateStartMs = Date.now() - t1;
+      state.values.maxStateMemoryMB = Math.round(await memoryMB(big.page));
+      if (first) await idle(browser, big, 'idleCpuInstructorPct');
+      await finish(big);
+
+      // Command response in a 10-team timed auction, then real clicks (trusted events) for INP.
+      const fresh = await open(browser, profile);
+      await fresh.page.goto(gameUrl('?role=instructor&lang=en'));
+      await instructorSetup(fresh.page, { teams: 10, reveal: 'JIT', timed: true, missions: ['TROOP', 'RECCE', 'COMBAT', 'COMMAND', 'RECOVERY', 'MINE', 'TROOP', 'RECCE', 'COMBAT', 'COMMAND'] });
+      await fresh.page.click('#open-bidding');
+      const bids = await fresh.page.evaluate(() => {
+        const out: number[] = [];
+        for (let i = 0; i < 40; i++) {
+          const button = document.querySelector<HTMLButtonElement>(`#bid-${(i % 10) + 1}`);
+          if (!button || button.disabled) continue;
+          const start = performance.now();
+          button.click();
+          out.push(performance.now() - start);
+        }
+        return out;
+      });
+      state.values.commandP95Ms = round(p95(bids));
+      for (let i = 1; i <= 10; i++) { // real clicks; a bid button that is not live is skipped, not waited for
+        const button = fresh.page.locator(`#bid-${i}`);
+        if (await button.count() && await button.isEnabled()) await button.click();
+      }
+      const before = await memoryMB(fresh.page);
+      for (let cycle = 0; cycle < 10; cycle++) await fresh.page.evaluate(() => { for (let i = 0; i < 20; i++) document.querySelector<HTMLButtonElement>('#lang-toggle')!.click(); });
+      state.values.memoryGrowthMB = round(await memoryMB(fresh.page) - before);
+      await finish(fresh);
+
+      const tracker = async (page: Page) => {
+        await page.goto(gameUrl('?role=student&lang=en'));
+        await page.fill('#join-code', 'SEA3-T2-0123456789ABCDEF');
+        await page.selectOption('#join-mission', 'RECOVERY');
+        await page.click('#join'); await page.click('#record-practice'); await page.click('#student-planning');
+        await page.check('#plan-confirm'); await page.click('#student-start-auction');
+      };
+      const purchases = [[1, 5, 'COM-E', 600000], [1, 7, 'ACC-F', 350000], [2, 1, 'CAP-B', 450000]] as const;
+
+      // 3D showcase on the real GPU: ready, three purchases, frame cadence, memory.
+      const model = await open(browser, profile);
+      await tracker(model.page);
+      const opened = await model.page.evaluate(() => performance.now());
+      await model.page.locator('dialog button[data-value="ok"]').click();
+      // Ready is budgeted at 3 s; a baseline must record a slower value rather than abort, so wait up to 30 s.
+      await model.page.locator('#showcase [data-mode="3d"][data-ready="true"]').waitFor({ timeout: 30_000 });
+      state.values.modelReadyMs = Math.round(await model.page.evaluate(() => performance.now()) - opened);
+      const modelUpdates: number[] = [];
+      for (const [round_, lot, card, paid] of purchases) {
+        if (round_ > 1) await model.page.selectOption('#pos-round', String(round_));
+        await model.page.selectOption('#pos-lot', String(lot));
+        await model.page.fill('#card-id', card); await model.page.click('#load-card'); await model.page.fill('#paid', String(paid));
+        modelUpdates.push(await model.page.evaluate(async id => {
+          const start = performance.now();
+          document.querySelector<HTMLButtonElement>('#record-win')!.click();
+          if (!document.querySelector('#showcase [data-mode="3d"]')!.getAttribute('data-layers')!.split(' ').includes(id)) throw new Error(`model lacks ${id}`);
+          await new Promise(requestAnimationFrame);
+          return performance.now() - start;
+        }, card));
+      }
+      state.values.modelUpdateMaxMs = Math.round(Math.max(...modelUpdates));
+      state.values.modelMemoryMB = Math.round(await memoryMB(model.page));
+      state.values.modelMemoryTargetMB = state.values.modelMemoryMB;
+      const gaps = await model.page.evaluate(() => new Promise<number[]>(resolve => {
+        const out: number[] = [];
+        let last = performance.now();
+        const end = last + 5000;
+        const tick = (now: number) => { out.push(now - last); last = now; if (now < end) requestAnimationFrame(tick); else resolve(out); };
+        requestAnimationFrame(tick);
+      }));
+      state.values.frameP95Ms = round(p95(gaps));
+      state.values.gpuFrameMs = null;
+      state.notes.gpuFrameMs = 'not measured: the page cannot reach the showcase GPU timer; frameP95Ms is the animation-frame gap only';
+      if (first) await idle(browser, model, 'idleCpuTrackerPct');
+      await finish(model);
+
+      // Stills showcase without WebGL.
+      const student = await open(browser, profile, withoutWebgl);
+      await tracker(student.page);
+      await student.page.locator('dialog button[data-value="ok"]').click();
+      await student.page.locator('#showcase img[data-layer="base"]').waitFor();
+      const updates: number[] = [];
+      for (const [round_, lot, card, paid] of purchases) {
+        if (round_ > 1) await student.page.selectOption('#pos-round', String(round_));
+        await student.page.selectOption('#pos-lot', String(lot));
+        await student.page.fill('#card-id', card); await student.page.click('#load-card'); await student.page.fill('#paid', String(paid));
+        updates.push(await student.page.evaluate(async id => {
+          const start = performance.now();
+          document.querySelector<HTMLButtonElement>('#record-win')!.click();
+          await document.querySelector<HTMLImageElement>(`#showcase img[data-layer="${id}"]`)!.decode();
+          return performance.now() - start;
+        }, card));
+      }
+      state.values.showcaseUpdateMaxMs = Math.round(Math.max(...updates));
+      state.values.angleChangeMs = Math.round(await student.page.evaluate(async () => {
+        const start = performance.now();
+        document.querySelector<HTMLInputElement>('#showcase-view-rear')!.click();
+        await Promise.all([...document.querySelectorAll<HTMLImageElement>('#showcase img')].map(img => img.decode()));
+        return performance.now() - start;
+      }));
+      await student.page.check('#showcase-view-turntable');
+      await student.page.locator('#showcase-turn').waitFor();
+      await student.page.waitForTimeout(300); // neighbouring frames pre-decode while a person pauses
+      const scrub: number[] = [];
+      for (let i = 0; i < 6; i++) {
+        scrub.push(await student.page.evaluate(async () => {
+          const input = document.querySelector<HTMLInputElement>('#showcase-turn')!;
+          const start = performance.now();
+          input.value = String((Number(input.value) + 1) % (Number(input.max) + 1));
+          input.dispatchEvent(new Event('input', { bubbles: true }));
+          await document.querySelector<HTMLImageElement>('#showcase img[data-frame]')!.decode();
+          return performance.now() - start;
+        }));
+        await student.page.waitForTimeout(120);
+      }
+      state.values.turntableStepMaxMs = Math.round(Math.max(...scrub));
+      state.values.studentMemoryMB = Math.round(await memoryMB(student.page));
+      await finish(student);
+
+      state.values.pageErrors = state.errors.length;
+      if (state.errors.length) state.notes.pageErrors = state.errors.slice(0, 3).join(' | ').slice(0, 300);
+      state.values.egressAttempts = state.egress.length;
+      if (state.egress.length) state.notes.egressAttempts = state.egress.slice(0, 3).join(' | ').slice(0, 300);
+      if (!first) for (const id of ['idleCpuChooserPct', 'idleCpuInstructorPct', 'idleCpuTrackerPct', 'idleMainThreadMaxPct']) state.notes[id] = 'idle windows run on the first profile only';
+      write('OK');
+      console.log(`${engine} ${profile.id} on ${gpu.renderer}: ${JSON.stringify(state.values)}`);
+    } catch (error) {
+      write('ERROR', String(error).slice(0, 500));
+      throw error;
+    }
+  });
+}
+```
+
+### tests/perf-ref/report.ts
+
+Paths: `tests/perf-ref/report.ts`. SHA-256 `078c87e6878639376b93b61c1375585789861e62c990d428e20f105aba95106b`, 11874 bytes.
+
+```ts
+// G3 reference-proxy report (MPES §14, §1.4): the metric catalogue, the budgets it is read against, and the
+// JSON and Markdown the run writes. Pure functions only, so a unit test can check them without a browser.
+//
+// The budgets below repeat MPES §10.3 and §14 for READING a baseline. The enforcing copies stay in
+// tests/e2e/perf.spec.ts and are not changed by this file; a run of perf:ref reports PASS or FAIL per metric but
+// never fails the Playwright run because a budget was exceeded (a baseline must be recordable before any change).
+
+export type Status = 'PASS' | 'FAIL' | 'NOT_RUN' | 'BLOCKED';
+
+/** The 12 KPIs of MPES §1.4, in table order. */
+export const KPIS = [
+  'Teaching effectiveness',
+  'Classroom reliability',
+  'Instructor workload',
+  'Learnability',
+  'Responsive interface',
+  'Browser performance',
+  'Visual realism',
+  'Runs in any classroom',
+  'Accessibility and language',
+  'Privacy and security',
+  'Maintainability after handoff',
+  'Longevity and zero cost',
+] as const;
+export type Kpi = typeof KPIS[number];
+
+export interface MetricDef {
+  id: string;
+  label: string;
+  unit: string;
+  /** Upper limit (the value must be at most this), or null when the metric is informational. */
+  budget: number | null;
+  kpi: Kpi;
+  /** Where the budget comes from. */
+  gate: string;
+  /** Measured by tests/e2e/perf.spec.ts as well as here. */
+  inExistingSpec: boolean;
+}
+
+const BP = 'Browser performance';
+const RI = 'Responsive interface';
+
+export const METRICS: readonly MetricDef[] = [
+  { id: 'htmlMB', label: 'HTML file size', unit: 'MB', budget: 50, kpi: BP, gate: '§14', inExistingSpec: true },
+  { id: 'chooserMs', label: 'Time to interactive, chooser', unit: 'ms', budget: 2000, kpi: BP, gate: '§14', inExistingSpec: true },
+  { id: 'maxStateStartMs', label: 'Time to interactive, instructor with maximum saved state', unit: 'ms', budget: 3000, kpi: BP, gate: '§14', inExistingSpec: true },
+  { id: 'commandP95Ms', label: 'Command response, p95 (10-team timed auction)', unit: 'ms', budget: 100, kpi: BP, gate: '§14', inExistingSpec: true },
+  { id: 'maxStateMemoryMB', label: 'Memory, 70 lots and 10 teams', unit: 'MB', budget: 400, kpi: BP, gate: '§14', inExistingSpec: true },
+  { id: 'memoryGrowthMB', label: 'Memory growth over 10 re-render cycles', unit: 'MB', budget: 5, kpi: BP, gate: '§14', inExistingSpec: true },
+  { id: 'studentMemoryMB', label: 'Memory, student tracker with stills', unit: 'MB', budget: 400, kpi: BP, gate: '§10.3', inExistingSpec: true },
+  { id: 'showcaseUpdateMaxMs', label: 'Stills update after a purchase, worst of 3', unit: 'ms', budget: 100, kpi: BP, gate: '§10.3', inExistingSpec: true },
+  { id: 'angleChangeMs', label: 'Stills angle change', unit: 'ms', budget: 50, kpi: BP, gate: '§10.3', inExistingSpec: true },
+  { id: 'turntableStepMaxMs', label: 'Turntable step, worst of 6', unit: 'ms', budget: 50, kpi: BP, gate: '§10.3', inExistingSpec: true },
+  { id: 'modelReadyMs', label: '3D model ready', unit: 'ms', budget: 3000, kpi: BP, gate: '§10.3, §14', inExistingSpec: true },
+  { id: 'modelUpdateMaxMs', label: '3D model update after a purchase, worst of 3', unit: 'ms', budget: 100, kpi: BP, gate: '§10.3', inExistingSpec: true },
+  { id: 'modelMemoryMB', label: 'Memory, 3D showcase (hard limit)', unit: 'MB', budget: 400, kpi: BP, gate: '§10.3', inExistingSpec: true },
+  { id: 'modelMemoryTargetMB', label: 'Memory, 3D showcase (proxy target)', unit: 'MB', budget: 300, kpi: BP, gate: '§14', inExistingSpec: false },
+  { id: 'frameP95Ms', label: '3D showcase, p95 gap between animation frames over 5 s', unit: 'ms', budget: 33, kpi: BP, gate: '§14', inExistingSpec: false },
+  { id: 'gpuFrameMs', label: '3D showcase, GPU time of a frame', unit: 'ms', budget: 16, kpi: BP, gate: '§14', inExistingSpec: false },
+  { id: 'idleCpuChooserPct', label: 'Idle CPU, chooser (all browser processes, % of one core)', unit: '%', budget: 3, kpi: BP, gate: '§14', inExistingSpec: false },
+  { id: 'idleCpuInstructorPct', label: 'Idle CPU, instructor with saved state', unit: '%', budget: 3, kpi: BP, gate: '§14', inExistingSpec: false },
+  { id: 'idleCpuTrackerPct', label: 'Idle CPU, student tracker with 3D showcase', unit: '%', budget: 3, kpi: BP, gate: '§14', inExistingSpec: false },
+  { id: 'idleMainThreadMaxPct', label: 'Idle main-thread busy share, worst of the three views', unit: '%', budget: 3, kpi: BP, gate: '§14', inExistingSpec: false },
+  { id: 'inpMs', label: 'Interaction to next paint (real clicks, worst)', unit: 'ms', budget: 200, kpi: RI, gate: '§14, §1.4', inExistingSpec: false },
+  { id: 'lcpMs', label: 'Largest contentful paint (chooser)', unit: 'ms', budget: 2500, kpi: RI, gate: '§14, §1.4', inExistingSpec: false },
+  { id: 'clsScore', label: 'Cumulative layout shift (chooser, instructor, tracker; worst)', unit: '', budget: 0.1, kpi: RI, gate: '§14, §1.4', inExistingSpec: false },
+  { id: 'longTaskMaxMs', label: 'Longest task after load (chooser, instructor, tracker; worst)', unit: 'ms', budget: 200, kpi: RI, gate: '§14, §1.4', inExistingSpec: false },
+  { id: 'pageErrors', label: 'Page errors and console errors', unit: 'count', budget: 0, kpi: 'Runs in any classroom', gate: '§1.4', inExistingSpec: false },
+  { id: 'egressAttempts', label: 'Network requests other than the file itself', unit: 'count', budget: 0, kpi: 'Privacy and security', gate: '§13, §1.4', inExistingSpec: false },
+];
+
+/** KPIs that perf:ref cannot measure, and where they are measured instead. */
+export const OTHER_KPI_NOTES: Partial<Record<Kpi, string>> = {
+  'Teaching effectiveness': 'Owner rubric and pre/post check (BLOCKED-owner); not a performance measure.',
+  'Classroom reliability': 'Fault tests (G3, tests/e2e); not a performance measure.',
+  'Instructor workload': 'Click and key counts from e2e traces (G3); dry run by the owner.',
+  Learnability: 'Scripted novice e2e (G3); dry run by the owner.',
+  'Visual realism': 'Owner side-by-side review; size and contrast tests elsewhere.',
+  'Accessibility and language': 'axe and manual passes (tests/e2e/a11y.spec.ts, G4).',
+  'Maintainability after handoff': 'Two-build comparison (npm run check).',
+  'Longevity and zero cost': 'Dependency and API review.',
+};
+
+export interface RunMeta {
+  browser: string;
+  browserVersion: string;
+  profile: string;
+  viewport: { width: number; height: number; scale: number };
+  cpuThrottle: number;
+  gpu: { vendor: string; renderer: string };
+  idleSeconds: number;
+}
+
+export interface RunFile {
+  meta: RunMeta;
+  /** 'OK', or the reason the run stopped before measuring (for example a wrong GPU). */
+  state: 'OK' | 'GPU_CHECK_FAILED' | 'ERROR';
+  message?: string;
+  /** Metric id to value; absent or null means not measured in this run. */
+  values: Record<string, number | null>;
+  /** Metric id to a short note (proxy used, why not measured). */
+  notes: Record<string, string>;
+}
+
+export function statusOf(def: MetricDef, value: number | null | undefined): Status {
+  if (value === null || value === undefined || Number.isNaN(value)) return 'NOT_RUN';
+  if (def.budget === null) return 'PASS';
+  return value <= def.budget ? 'PASS' : 'FAIL';
+}
+
+export interface MetricRow {
+  id: string;
+  label: string;
+  unit: string;
+  budget: number | null;
+  gate: string;
+  /** Worst value over all runs that measured it. */
+  worst: number | null;
+  runs: { run: string; value: number | null; status: Status; note?: string }[];
+  status: Status;
+}
+
+export interface KpiRow {
+  kpi: Kpi;
+  status: Status;
+  detail: string;
+  metrics: MetricRow[];
+}
+
+const runName = (run: RunFile) => `${run.meta.browser} ${run.meta.profile}`;
+
+/** FAIL if any entry failed, PASS if at least one passed, else NOT_RUN. */
+function worstOf(statuses: Status[]): Status {
+  if (statuses.includes('FAIL')) return 'FAIL';
+  if (statuses.includes('PASS')) return 'PASS';
+  return 'NOT_RUN';
+}
+
+/** One row per KPI, built from every run file. A KPI is FAIL if any measured metric fails, PASS if at least one was measured and none failed. */
+export function buildKpiRows(runs: RunFile[]): KpiRow[] {
+  const measuredRuns = runs.filter(run => run.state === 'OK');
+  return KPIS.map(kpi => {
+    const defs = METRICS.filter(def => def.kpi === kpi);
+    if (defs.length === 0) return { kpi, status: 'NOT_RUN' as Status, detail: OTHER_KPI_NOTES[kpi] ?? 'Not measured by perf:ref.', metrics: [] };
+    const metrics: MetricRow[] = defs.map(def => {
+      const perRun = measuredRuns.map(run => {
+        const value = run.values[def.id] ?? null;
+        const note = run.notes[def.id];
+        return { run: runName(run), value, status: statusOf(def, value), ...(note ? { note } : {}) };
+      });
+      const numbers = perRun.map(r => r.value).filter((v): v is number => v !== null);
+      const worst = numbers.length ? Math.max(...numbers) : null;
+      return { id: def.id, label: def.label, unit: def.unit, budget: def.budget, gate: def.gate, worst, runs: perRun, status: worstOf(perRun.map(r => r.status)) };
+    });
+    const status = worstOf(metrics.map(m => m.status));
+    const failed = metrics.filter(m => m.status === 'FAIL').map(m => m.id);
+    const unmeasured = metrics.filter(m => m.status === 'NOT_RUN').map(m => m.id);
+    const detail = [failed.length ? `over budget: ${failed.join(', ')}` : '', unmeasured.length ? `not measured: ${unmeasured.join(', ')}` : ''].filter(Boolean).join('; ') || 'every metric within budget';
+    return { kpi, status, detail, metrics };
+  });
+}
+
+export interface Report {
+  stamp: string;
+  commit: string;
+  dirty: boolean;
+  /** INCOMPLETE when any run stopped before measuring; the rows are then not a baseline. */
+  state: 'BASELINE' | 'INCOMPLETE';
+  problems: string[];
+  runs: RunMeta[];
+  kpis: KpiRow[];
+}
+
+export function buildReport(runs: RunFile[], stamp: string, commit: string, dirty: boolean): Report {
+  const problems = runs.filter(run => run.state !== 'OK').map(run => `${runName(run)}: ${run.state}${run.message ? ` (${run.message})` : ''}`);
+  if (runs.length === 0) problems.push('no run files were written');
+  return { stamp, commit, dirty, state: problems.length ? 'INCOMPLETE' : 'BASELINE', problems, runs: runs.map(run => run.meta), kpis: buildKpiRows(runs) };
+}
+
+const fmt = (value: number | null, unit: string) => value === null ? 'n/a' : `${Math.round(value * 100) / 100}${unit ? ` ${unit}` : ''}`;
+
+export function renderMarkdown(report: Report): string {
+  const lines: string[] = [];
+  lines.push(`# Reference-proxy baseline ${report.stamp}`, '');
+  lines.push(`State: **${report.state}**. Commit ${report.commit}${report.dirty ? ' (working tree had uncommitted changes)' : ''}.`, '');
+  if (report.problems.length) lines.push('Problems:', ...report.problems.map(p => `- ${p}`), '');
+  lines.push('Runs:', ...report.runs.map(r => `- ${r.browser} ${r.browserVersion}, profile ${r.profile} (${r.viewport.width}x${r.viewport.height} at ${r.viewport.scale}), ${r.cpuThrottle}x CPU throttle, GPU ${r.gpu.renderer}, idle window ${r.idleSeconds} s`), '');
+  lines.push('## KPIs (MPES §1.4)', '', '| KPI | Status | Detail |', '|---|---|---|');
+  for (const row of report.kpis) lines.push(`| ${row.kpi} | ${row.status} | ${row.detail} |`);
+  lines.push('', '## Metrics (worst value over all runs)', '', '| KPI | Metric | Worst | Budget | Status | Gate |', '|---|---|---|---|---|---|');
+  for (const row of report.kpis) for (const m of row.metrics) lines.push(`| ${row.kpi} | ${m.label} | ${fmt(m.worst, m.unit)} | ${m.budget === null ? 'none' : fmt(m.budget, m.unit)} | ${m.status} | ${m.gate} |`);
+  lines.push('', '## Every run', '');
+  for (const row of report.kpis) for (const m of row.metrics) {
+    lines.push(`- ${m.id}: ${m.runs.map(r => `${r.run} ${fmt(r.value, '')} ${r.status}${r.note ? ` [${r.note}]` : ''}`).join('; ') || 'no run'}`);
+  }
+  lines.push('');
+  return lines.join('\n');
+}
+```
+
+### tests/perf-ref/teardown.ts
+
+Paths: `tests/perf-ref/teardown.ts`. SHA-256 `b12707f93562b7c80875c44716dbccd8854e0d0d77f1ddfad37429ad6e6cf78f`, 1227 bytes.
+
+```ts
+// After the perf:ref run: gather the per-run files into report.json and report.md in the same folder.
+import { execFileSync } from 'node:child_process';
+import { existsSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
+import path from 'node:path';
+import { buildReport, renderMarkdown, type RunFile } from './report.ts';
+
+function git(...args: string[]): string {
+  try { return execFileSync('git', args, { encoding: 'utf8' }).trim(); } catch { return ''; }
+}
+
+export default function teardown(): void {
+  const dir = process.env.PERF_REF_DIR;
+  if (!dir || !existsSync(dir)) {
+    console.log('perf:ref: no output folder, nothing to report');
+    return;
+  }
+  const runs = readdirSync(dir).filter(name => name.endsWith('.run.json')).sort()
+    .map(name => JSON.parse(readFileSync(path.join(dir, name), 'utf8')) as RunFile);
+  const report = buildReport(runs, process.env.PERF_REF_STAMP ?? path.basename(dir), git('rev-parse', 'HEAD') || 'unknown', git('status', '--porcelain') !== '');
+  writeFileSync(path.join(dir, 'report.json'), JSON.stringify(report, null, 2) + '\n');
+  writeFileSync(path.join(dir, 'report.md'), renderMarkdown(report));
+  console.log(`perf:ref: ${report.state}, report in ${dir}`);
+}
+```
+
+### tests/perf/measure.ts
+
+Paths: `tests/perf/measure.ts`. SHA-256 `4611c0b9009e159e59a40806ec95c0765b47da889af1d1d4f42e1818d1e93b1f`, 9846 bytes.
+
+```ts
+// The MPES §14 measurement protocol, shared by the CI gate (tests/e2e/perf.spec.ts) and the reference-laptop proxy
+// (tests/perf-ref/perf-ref.spec.ts) so both measure the same thing the same way:
+// - an update is timed from the trusted input event (a real click through the browser) until the frame that shows
+//   its result has been painted, never from a script call until a promise settles;
+// - a budget stated as p95 is checked on the nearest-rank p95 of enough samples (MIN_SAMPLES), and a run with fewer
+//   samples fails instead of passing on an empty or tiny set; the maximum is reported alongside;
+// - memory is the JS heap plus every decoded image on screen (an estimate), and, where the operating system can
+//   report it, the private memory of the page's renderer and the GPU process (the real figure).
+import type { Browser, Locator, Page } from '@playwright/test';
+import { execFileSync } from 'node:child_process';
+import { readFileSync } from 'node:fs';
+
+export const MB = 1024 * 1024;
+/** The CPU slowdown that stands in for a reference laptop's processor (D-11). */
+export const THROTTLE = 4;
+/** Samples behind every p95: with 30, the p95 is the second-worst sample, so one stray stall cannot decide it. */
+export const MIN_SAMPLES = 30;
+
+export const round = (value: number, places = 1): number => Math.round(value * 10 ** places) / 10 ** places;
+
+/** Nearest-rank p95 (the smallest value at or above 95% of the samples); throws below `minimum` samples. */
+export function p95(values: readonly number[], minimum = MIN_SAMPLES): number {
+  if (values.length < minimum || values.some(value => !Number.isFinite(value))) {
+    throw new Error(`p95 needs at least ${minimum} finite samples, got ${values.length}`);
+  }
+  const sorted = [...values].sort((a, b) => a - b);
+  return sorted[Math.ceil(sorted.length * 0.95) - 1]!;
+}
+
+/** Applies the reference CPU throttling to a page. */
+export async function throttle(page: Page, rate = THROTTLE): Promise<void> {
+  const cdp = await page.context().newCDPSession(page);
+  await cdp.send('Emulation.setCPUThrottlingRate', { rate });
+}
+
+/** What the result of an input looks like once it is on screen. */
+export type Shown =
+  /** The handler has run; the next painted frame shows it. */
+  | { kind: 'paint' }
+  /** Images matching `selector` exist and are all decoded; then painted. */
+  | { kind: 'image'; selector: string }
+  /** The element's attribute lists `token` (space-separated), or merely exists when `token` is left out; it is set
+   *  during a frame (a canvas draw), and that frame has been painted. */
+  | { kind: 'drawn'; selector: string; attribute: string; token?: string };
+
+/**
+ * Milliseconds from the input event that `act` causes (pointer down, key down or click, whichever comes first) until
+ * the first frame showing `shown` has been painted. `act` must give a trusted input (a Playwright click or key press).
+ */
+export async function inputToPaint(page: Page, act: () => Promise<unknown>, shown: Shown, timeout = 10_000): Promise<number> {
+  await page.evaluate(({ shown, timeout }) => {
+    type Probe = { start: number | null; done: Promise<number> };
+    const probe = { start: null } as unknown as Probe;
+    (globalThis as unknown as { __seaInput: Probe }).__seaInput = probe;
+    const first = (event: Event) => { if (probe.start === null) probe.start = event.timeStamp; };
+    for (const type of ['pointerdown', 'keydown', 'click']) addEventListener(type, first, { capture: true, once: true });
+    // A message posted during a frame runs after that frame is painted; outside a frame, the next frame comes first.
+    const afterPaint = (inFrame: boolean) => new Promise<number>(resolve => {
+      const post = () => { const channel = new MessageChannel(); channel.port1.onmessage = () => resolve(performance.now()); channel.port2.postMessage(0); };
+      if (inFrame) post(); else requestAnimationFrame(post);
+    });
+    const started = () => new Promise<void>(resolve => {
+      const check = () => (probe.start !== null ? resolve() : setTimeout(check, 0));
+      check();
+    });
+    const deadline = <T>(work: Promise<T>) => Promise.race([work, new Promise<never>((_, reject) => setTimeout(() => reject(new Error(`not shown within ${timeout} ms: ${JSON.stringify(shown)}`)), timeout))]);
+    // Watched from before the input, so a draw in the first frame after it cannot be missed.
+    const drawn = shown.kind !== 'drawn' ? null : new Promise<void>(resolve => {
+      const lists = () => {
+        const value = document.querySelector(shown.selector)?.getAttribute(shown.attribute);
+        return value != null && (shown.token === undefined || value.split(' ').includes(shown.token));
+      };
+      const observer = new MutationObserver(() => { if (lists()) { observer.disconnect(); resolve(); } });
+      observer.observe(document, { subtree: true, attributes: true, attributeFilter: [shown.attribute] });
+    });
+    probe.done = deadline((async () => {
+      await started();
+      if (drawn) { await drawn; return afterPaint(true); }
+      if (shown.kind === 'image') {
+        let images = [...document.querySelectorAll<HTMLImageElement>(shown.selector)];
+        while (!images.length) { await new Promise(requestAnimationFrame); images = [...document.querySelectorAll<HTMLImageElement>(shown.selector)]; }
+        await Promise.all(images.map(img => img.decode()));
+      }
+      return afterPaint(false);
+    })());
+  }, { shown, timeout });
+  await act();
+  return page.evaluate(async () => {
+    const probe = (globalThis as unknown as { __seaInput: { start: number | null; done: Promise<number> } }).__seaInput;
+    const end = await probe.done;
+    return end - probe.start!;
+  });
+}
+
+/** Clicks a control as a person would (trusted events) after centring it, so the press cannot land elsewhere. */
+export async function press(target: Locator): Promise<void> {
+  await target.evaluate(element => element.scrollIntoView({ block: 'center' }));
+  await target.click();
+}
+
+/** Estimate: JS heap after a full collection plus the decoded pixels of every image on screen (4 bytes per pixel). */
+export async function memoryMB(page: Page): Promise<number> {
+  return page.evaluate(mb => {
+    (globalThis as unknown as { gc?: () => void }).gc?.();
+    const heap = (performance as unknown as { memory: { usedJSHeapSize: number } }).memory.usedJSHeapSize;
+    const pixels = [...document.images].reduce((n, img) => n + img.naturalWidth * img.naturalHeight * 4, 0);
+    return (heap + pixels) / mb;
+  }, MB);
+}
+
+/** Private memory of one process in bytes, from the operating system, or null where it cannot be read. */
+function privateBytes(pid: number): number | null {
+  try {
+    if (process.platform === 'linux') {
+      const rollup = readFileSync(`/proc/${pid}/smaps_rollup`, 'utf8');
+      const kb = [...rollup.matchAll(/^Private_(?:Clean|Dirty):\s+(\d+) kB/gm)].reduce((n, m) => n + Number(m[1]), 0);
+      return kb * 1024;
+    }
+    if (process.platform === 'win32') {
+      const out = execFileSync('powershell', ['-NoProfile', '-NonInteractive', '-Command', `(Get-Process -Id ${pid}).PrivateMemorySize64`], { encoding: 'utf8', timeout: 20_000 });
+      const bytes = Number(out.trim());
+      return Number.isFinite(bytes) ? bytes : null;
+    }
+  } catch { /* the process ended or the platform hides it */ }
+  return null;
+}
+
+/**
+ * The browser's renderer and GPU processes, in MB of private memory (what the page costs the machine, decoded images
+ * and GPU uploads included). Every renderer counts, so close other pages first; null where the OS cannot report it.
+ */
+export async function processMB(browser: Browser): Promise<{ renderer: number; gpu: number } | null> {
+  const cdp = await browser.newBrowserCDPSession();
+  try {
+    const { processInfo } = await cdp.send('SystemInfo.getProcessInfo') as { processInfo: { type: string; id: number }[] };
+    const sum = (type: string) => {
+      const sizes = processInfo.filter(p => p.type === type).map(p => privateBytes(p.id));
+      return sizes.length && sizes.every(size => size !== null) ? (sizes as number[]).reduce((a, b) => a + b, 0) / MB : null;
+    };
+    const renderer = sum('renderer'), gpu = sum('GPU') ?? 0;
+    return renderer === null ? null : { renderer: round(renderer), gpu: round(gpu) };
+  } finally {
+    await cdp.detach();
+  }
+}
+
+/** A RECOVERY team at the dialog that opens its auction tracker; the tracker opens on `TRACKER_OK`. */
+export async function beforeTracker(page: Page, url: string): Promise<void> {
+  await page.goto(url);
+  await page.fill('#join-code', 'SEA3-T2-0123456789ABCDEF');
+  await page.selectOption('#join-mission', 'RECOVERY');
+  await page.click('#join'); await page.click('#record-practice'); await page.click('#student-planning');
+  await page.check('#plan-confirm'); await page.click('#student-start-auction');
+}
+
+/** The button that opens the tracker from `beforeTracker`. */
+export const TRACKER_OK = 'dialog button[data-value="ok"]';
+
+/** The student tracker on the auction step for a RECOVERY team, ready to record purchases. */
+export async function openTracker(page: Page, url: string): Promise<void> {
+  await beforeTracker(page, url);
+  await page.locator(TRACKER_OK).click();
+}
+
+/** Three purchases a RECOVERY team can record in a row: round, lot, card, price paid. */
+export const PURCHASES = [[1, 5, 'COM-E', 600000], [1, 7, 'ACC-F', 350000], [2, 1, 'CAP-B', 450000]] as const;
+
+/** Loads a purchase into the tracker's form, ready for #record-win. */
+export async function loadPurchase(page: Page, [round_, lot, card, paid]: typeof PURCHASES[number]): Promise<void> {
+  if (round_ > 1) await page.selectOption('#pos-round', String(round_));
+  await page.selectOption('#pos-lot', String(lot));
+  await page.fill('#card-id', card); await page.click('#load-card'); await page.fill('#paid', String(paid));
+}
+```
+
+### tests/perf/scenarios.ts
+
+Paths: `tests/perf/scenarios.ts`. SHA-256 `7467a50445c13dda9b79eb6db5109b71c1621a90289f63c18e78a287c6d72ce2`, 16864 bytes.
+
+```ts
+// The MPES §14 scenarios, run the same way by the CI gate (tests/e2e/perf.spec.ts, software graphics) and by the
+// reference-laptop proxy (`npm run perf:ref`, the real Intel UHD 770). Each scenario opens its pages through a Lab,
+// which sets the screen profile, throttling, network guard and vitals, and returns its numbers; the caller asserts
+// (CI) or reports against the budgets (proxy). Timing follows tests/perf/measure.ts.
+import type { Browser, BrowserContextOptions, Page } from '@playwright/test';
+import { readFileSync, statSync } from 'node:fs';
+import { collectConsoleErrors, gameUrl, guardNetwork, withoutWebgl } from '../e2e/helpers.ts';
+import { confirmDialog, instructorSetup } from '../e2e/roles.ts';
+import {
+  MB, MIN_SAMPLES, PURCHASES, TRACKER_OK, beforeTracker, inputToPaint, loadPurchase, memoryMB, openTracker, p95, press,
+  processMB, round, throttle,
+} from './measure.ts';
+
+export type Values = Record<string, number | null>;
+export interface Measured { values: Values; notes: Record<string, string> }
+
+interface Vitals { cls: number; lcp: number | null; long: { s: number; d: number }[]; inter: number[]; loaded: number | null }
+
+/** Runs in every page before its scripts: layout shift, LCP, long tasks and interaction durations (MPES §14). */
+function installVitals(): void {
+  const sea: Vitals = { cls: 0, lcp: null, long: [], inter: [], loaded: null };
+  (globalThis as unknown as { __seaVitals: Vitals }).__seaVitals = sea;
+  const watch = (type: string, handle: (entry: PerformanceEntry) => void, extra: Record<string, unknown> = {}) => {
+    try { new PerformanceObserver(list => list.getEntries().forEach(handle)).observe({ type, buffered: true, ...extra } as PerformanceObserverInit); } catch { /* entry type not supported here */ }
+  };
+  watch('layout-shift', entry => { const shift = entry as unknown as { value: number; hadRecentInput: boolean }; if (!shift.hadRecentInput) sea.cls += shift.value; });
+  watch('largest-contentful-paint', entry => { sea.lcp = entry.startTime; });
+  watch('longtask', entry => { sea.long.push({ s: entry.startTime, d: entry.duration }); });
+  watch('event', entry => { const timing = entry as unknown as { interactionId?: number }; if (timing.interactionId) sea.inter.push(entry.duration); }, { durationThreshold: 16 });
+  addEventListener('load', () => requestAnimationFrame(() => { sea.loaded = performance.now(); }));
+}
+
+/**
+ * GPU time of each showcase draw, where the browser offers a GPU timer (EXT_disjoint_timer_query_webgl2): a query runs
+ * from one draw's end to the next, and the showcase is the only WebGL user on the page, so each result is one draw.
+ */
+function installGpuTimer(): void {
+  const times: number[] = [];
+  const sea = { times, available: false };
+  (globalThis as unknown as { __seaGpu: typeof sea }).__seaGpu = sea;
+  const original = HTMLCanvasElement.prototype.getContext;
+  HTMLCanvasElement.prototype.getContext = function (this: HTMLCanvasElement, type: string, ...rest: unknown[]) {
+    const gl = (original as (...args: unknown[]) => unknown).call(this, type, ...rest) as WebGL2RenderingContext | null;
+    if (type !== 'webgl2' || !gl || (this as unknown as { seaTimed?: boolean }).seaTimed) return gl;
+    (this as unknown as { seaTimed: boolean }).seaTimed = true;
+    const ext = gl.getExtension('EXT_disjoint_timer_query_webgl2') as { TIME_ELAPSED_EXT: number; GPU_DISJOINT_EXT: number } | null;
+    if (!ext) return gl;
+    sea.available = true;
+    const pending: WebGLQuery[] = [];
+    let open: WebGLQuery | null = null;
+    this.addEventListener('sea-draw', () => {
+      if (open) { gl.endQuery(ext.TIME_ELAPSED_EXT); pending.push(open); }
+      while (pending.length && gl.getQueryParameter(pending[0]!, gl.QUERY_RESULT_AVAILABLE)) {
+        const query = pending.shift()!;
+        if (!gl.getParameter(ext.GPU_DISJOINT_EXT)) times.push(gl.getQueryParameter(query, gl.QUERY_RESULT) / 1e6);
+        gl.deleteQuery(query);
+      }
+      open = gl.createQuery();
+      if (open) gl.beginQuery(ext.TIME_ELAPSED_EXT, open);
+    });
+    return gl;
+  } as typeof original;
+}
+
+/** Pages on one screen profile with throttling and a network guard; it collects vitals, errors and egress as pages close. */
+export class Lab {
+  readonly errors: string[] = [];
+  readonly egress: string[] = [];
+  readonly measured: Measured = { values: {}, notes: {} };
+  readonly #pages = new Map<Page, { errors: string[]; egress: string[] }>();
+
+  readonly browser: Browser;
+  readonly context: BrowserContextOptions;
+  readonly gpu: ((page: Page) => Promise<void>) | undefined;
+
+  /** `gpu` makes WebGL count as a graphics card where there is none (CI); on the reference laptop it is left out. */
+  constructor(browser: Browser, context: BrowserContextOptions = {}, gpu?: (page: Page) => Promise<void>) {
+    this.browser = browser;
+    this.context = context;
+    this.gpu = gpu;
+  }
+
+  /** A fresh page in its own context; `prepare` runs before its first navigation. */
+  async open(prepare?: (page: Page) => Promise<unknown>): Promise<Page> {
+    const page = await (await this.browser.newContext(this.context)).newPage();
+    this.#pages.set(page, { egress: guardNetwork(page), errors: collectConsoleErrors(page) });
+    await throttle(page);
+    await page.addInitScript(installVitals);
+    await page.addInitScript(installGpuTimer);
+    await prepare?.(page);
+    return page;
+  }
+
+  /** The page's vitals (layout shift, longest task after load, slowest interaction), folded into the worst so far. */
+  async close(page: Page): Promise<void> {
+    const vitals = await page.evaluate(() => (globalThis as unknown as { __seaVitals: Vitals }).__seaVitals);
+    this.#worst('clsScore', round(vitals.cls, 3));
+    this.#worst('longTaskMaxMs', Math.round(Math.max(0, ...vitals.long.filter(task => task.s >= (vitals.loaded ?? 0)).map(task => task.d))));
+    if (vitals.inter.length) this.#worst('inpMs', Math.round(Math.max(...vitals.inter)));
+    const seen = this.#pages.get(page);
+    if (seen) { this.errors.push(...seen.errors); this.egress.push(...seen.egress); this.#pages.delete(page); }
+    await page.context().close();
+  }
+
+  /** Every error and request so far, as counts (with the first few as notes). */
+  tally(): void {
+    const { values, notes } = this.measured;
+    values.pageErrors = this.errors.length;
+    if (this.errors.length) notes.pageErrors = this.errors.slice(0, 3).join(' | ').slice(0, 300);
+    values.egressAttempts = this.egress.length;
+    if (this.egress.length) notes.egressAttempts = this.egress.slice(0, 3).join(' | ').slice(0, 300);
+  }
+
+  #worst(id: string, value: number): void {
+    const old = this.measured.values[id];
+    this.measured.values[id] = old === null || old === undefined ? value : Math.max(old, value);
+  }
+}
+
+/** The renderer and GPU processes' private memory, under `prefix`; null with a note where the OS cannot report it. */
+async function machine(lab: Lab, prefix: string, out: Measured): Promise<void> {
+  const mb = await processMB(lab.browser);
+  out.values[`${prefix}RendererMB`] = mb?.renderer ?? null;
+  out.values[`${prefix}GpuProcessMB`] = mb?.gpu ?? null;
+  if (!mb) out.notes[`${prefix}RendererMB`] = 'the operating system did not report the process memory';
+}
+
+export const TEN_TEAMS = { teams: 10, reveal: 'JIT' as const, timed: true, missions: ['TROOP', 'RECCE', 'COMBAT', 'COMMAND', 'RECOVERY', 'MINE', 'TROOP', 'RECCE', 'COMBAT', 'COMMAND'] };
+
+/** Size, the chooser's first painted frame and LCP, and the largest valid instructor save: start time and memory. */
+export async function startUp(lab: Lab, after?: (page: Page, view: string) => Promise<void>): Promise<Measured> {
+  const out: Measured = { values: {}, notes: {} };
+  out.values.htmlMB = round(statSync('dist/index.html').size / MB);
+  // file:// pages report no paint timing, so a page-side observer records the first frame with the heading and buttons.
+  const chooser = await lab.open(page => page.addInitScript(() => {
+    new MutationObserver((_, observer) => {
+      if (!document.querySelector('h1') || !document.querySelector('a[data-role]')) return;
+      observer.disconnect();
+      requestAnimationFrame(() => { (window as unknown as { seaPainted: number }).seaPainted = performance.now(); });
+    }).observe(document, { childList: true, subtree: true });
+  }));
+  await chooser.goto(gameUrl('?lang=en'));
+  await chooser.waitForFunction(() => (window as unknown as { seaPainted?: number }).seaPainted !== undefined);
+  out.values.chooserMs = Math.round(await chooser.evaluate(() => (window as unknown as { seaPainted: number }).seaPainted));
+  const lcp = await chooser.evaluate(() => (globalThis as unknown as { __seaVitals: Vitals }).__seaVitals.lcp);
+  out.values.lcpMs = lcp === null ? out.values.chooserMs : Math.round(lcp);
+  if (lcp === null) out.notes.lcpMs = 'no LCP entry on file://; the first frame with the heading and buttons stands in';
+  await after?.(chooser, 'Chooser');
+  await lab.close(chooser);
+
+  // 210 ledger entries, all 70 lots, 10 teams.
+  const saved = JSON.parse(readFileSync('tests/fixtures/legacy/instructor-max-ledger.json', 'utf8')).state;
+  const big = await lab.open(page => page.addInitScript(raw => { if (!sessionStorage.getItem('SEA_INSTRUCTOR_V300')) sessionStorage.setItem('SEA_INSTRUCTOR_V300', raw); }, JSON.stringify(saved)));
+  const t1 = Date.now();
+  await big.goto(gameUrl('?role=instructor&lang=en'));
+  await big.getByRole('heading', { name: 'Results to reconcile' }).waitFor();
+  out.values.maxStateStartMs = Date.now() - t1;
+  out.values.maxStateMemoryMB = Math.round(await memoryMB(big));
+  await machine(lab, 'maxState', out);
+  await after?.(big, 'Instructor');
+  await lab.close(big);
+  return out;
+}
+
+/** Real clicks on the bid buttons of a 10-team timed auction, each until painted; then ten full phase cycles. */
+export async function commands(lab: Lab): Promise<Measured> {
+  const out: Measured = { values: {}, notes: {} };
+  const page = await lab.open();
+  await page.goto(gameUrl('?role=instructor&lang=en'));
+  await instructorSetup(page, TEN_TEAMS);
+  await page.click('#open-bidding');
+  const bids: number[] = [];
+  for (let i = 0; i < 40; i++) {
+    const button = page.locator(`#bid-${(i % 10) + 1}`);
+    if (!await button.isEnabled()) continue;
+    bids.push(await inputToPaint(page, () => button.click(), { kind: 'paint' }));
+  }
+  out.values.commandSamples = bids.length;
+  out.values.commandP95Ms = round(p95(bids));
+  out.values.commandMaxMs = round(Math.max(...bids));
+
+  // No growth across 10 phase cycles: a new session from the menu, setup, practice, planning and a live auction.
+  const cycle = async () => {
+    await press(page.locator('#menu-button'));
+    await page.locator('dialog[open] button[data-value="new"]').click();
+    await confirmDialog(page);
+    await instructorSetup(page, TEN_TEAMS);
+    await page.click('#open-bidding');
+  };
+  await cycle();
+  const before = await memoryMB(page);
+  for (let i = 0; i < 10; i++) await cycle();
+  out.values.memoryGrowthMB = round(await memoryMB(page) - before);
+  await lab.close(page);
+  return out;
+}
+
+const MODEL = '#showcase [data-mode="3d"]';
+
+/**
+ * The 3D showcase: fresh trackers, one at a time (an open one keeps turning and would load the GPU of the next), until
+ * there are enough purchases. Ready: a real click on the button that opens the tracker until the first draw is painted;
+ * every tracker counts. Update: a real click on "record" until the draw showing the new part is painted. Then, on the
+ * last tracker, five seconds of turning: each draw's main-thread time in its frame, the gap between draws, and its GPU
+ * time where the browser can time it.
+ */
+export async function model(lab: Lab, after?: (page: Page) => Promise<void>): Promise<Measured> {
+  const out: Measured = { values: {}, notes: {} };
+  const readies: number[] = [], updates: number[] = [];
+  for (let n = 0; ; n++) {
+    const page = await lab.open(lab.gpu);
+    await beforeTracker(page, gameUrl('?role=student&lang=en'));
+    readies.push(await inputToPaint(page, () => page.locator(TRACKER_OK).click(), { kind: 'drawn', selector: MODEL, attribute: 'data-drawn' }));
+    for (const purchase of PURCHASES) {
+      await loadPurchase(page, purchase);
+      updates.push(await inputToPaint(page, () => page.click('#record-win'), { kind: 'drawn', selector: MODEL, attribute: 'data-drawn', token: purchase[2] }));
+    }
+    if (n === 0) {
+      out.values.modelMemoryMB = Math.round(await memoryMB(page));
+      await machine(lab, 'model', out);
+    }
+    if (updates.length < MIN_SAMPLES) { await lab.close(page); continue; }
+
+    await page.locator(MODEL).scrollIntoViewIfNeeded();
+    const turning = await page.evaluate(() => new Promise<{ costs: number[]; gaps: number[] }>(resolve => {
+      const canvas = document.querySelector('#showcase canvas')!;
+      const costs: number[] = [], gaps: number[] = [];
+      let last: number | null = null;
+      const draw = () => {
+        const now = performance.now(), frame = document.timeline.currentTime as number;
+        costs.push(now - frame);
+        if (last !== null) gaps.push(now - last);
+        last = now;
+      };
+      canvas.addEventListener('sea-draw', draw);
+      setTimeout(() => { canvas.removeEventListener('sea-draw', draw); resolve({ costs, gaps }); }, 5000);
+    }));
+    const gpu = await page.evaluate(() => (globalThis as unknown as { __seaGpu: { times: number[]; available: boolean } }).__seaGpu);
+    out.values.turningDraws = turning.costs.length;
+    // The adaptive tier the stage settled on: 0 is full resolution (source/showcase/pace.ts SCALES).
+    out.values.modelTier = Number(await page.locator('#showcase canvas').getAttribute('data-tier') ?? 0);
+    out.values.frameP95Ms = turning.costs.length >= MIN_SAMPLES ? round(p95(turning.costs)) : null;
+    out.values.drawGapP95Ms = turning.gaps.length >= MIN_SAMPLES ? round(p95(turning.gaps)) : null;
+    if (out.values.frameP95Ms === null) out.notes.frameP95Ms = `only ${turning.costs.length} draws in 5 s of turning`;
+    out.values.gpuFrameMs = gpu.available && gpu.times.length >= MIN_SAMPLES ? round(p95(gpu.times)) : null;
+    if (out.values.gpuFrameMs === null) out.notes.gpuFrameMs = gpu.available ? `only ${gpu.times.length} timed draws` : 'this browser offers no WebGL GPU timer (EXT_disjoint_timer_query_webgl2)';
+    await after?.(page);
+    await lab.close(page);
+    break;
+  }
+  out.values.modelReadyMs = round(Math.max(...readies));
+  out.values.modelReadyFirstMs = round(readies[0]!);
+  out.values.modelUpdateSamples = updates.length;
+  out.values.modelUpdateP95Ms = round(p95(updates));
+  out.values.modelUpdateMaxMs = round(Math.max(...updates));
+  return out;
+}
+
+/**
+ * Without WebGL: a real click on "record" until the new layer is decoded and painted, on fresh trackers until there are
+ * enough samples; then, on the first tracker, a real click on another angle and real key presses on the turntable.
+ */
+export async function stills(lab: Lab): Promise<Measured> {
+  const out: Measured = { values: {}, notes: {} };
+  const updates: number[] = [];
+  const first = await lab.open(withoutWebgl);
+  for (let n = 0; updates.length < MIN_SAMPLES; n++) {
+    const page = n === 0 ? first : await lab.open(withoutWebgl);
+    await openTracker(page, gameUrl('?role=student&lang=en'));
+    await page.locator('#showcase img[data-layer="base"]').waitFor();
+    for (const purchase of PURCHASES) {
+      await loadPurchase(page, purchase);
+      updates.push(await inputToPaint(page, () => page.click('#record-win'), { kind: 'image', selector: `#showcase img[data-layer="${purchase[2]}"]` }));
+    }
+    if (n > 0) await lab.close(page);
+  }
+  out.values.showcaseUpdateSamples = updates.length;
+  out.values.showcaseUpdateP95Ms = round(p95(updates));
+  out.values.showcaseUpdateMaxMs = round(Math.max(...updates));
+
+  out.values.angleChangeMs = Math.round(await inputToPaint(first, () => first.click('#showcase-view-rear'), { kind: 'image', selector: '#showcase img[data-angle="rear"]' }));
+  await first.check('#showcase-view-turntable');
+  await first.locator('#showcase-turn').waitFor();
+  await first.waitForTimeout(300); // neighbouring frames pre-decode while a person pauses
+  await first.focus('#showcase-turn');
+  const scrub: number[] = [];
+  for (let i = 0; i < 6; i++) {
+    const next = await first.evaluate(() => { const input = document.querySelector<HTMLInputElement>('#showcase-turn')!; return Math.min(Number(input.value) + 1, Number(input.max)); });
+    scrub.push(await inputToPaint(first, () => first.keyboard.press('ArrowRight'), { kind: 'image', selector: `#showcase img[data-frame="${next}"]` }));
+    await first.waitForTimeout(120);
+  }
+  out.values.turntableStepMaxMs = Math.round(Math.max(...scrub));
+  out.values.studentMemoryMB = Math.round(await memoryMB(first));
+  await lab.close(first);
+  return out;
+}
+```
+
 ### tests/unit/archive.test.ts
 
 Paths: `tests/unit/archive.test.ts`. SHA-256 `51bf560e0e35ff899918d2cb6e3ba7922621cbb0c09a2f7a17d696496c0643e7`, 5220 bytes.
@@ -41266,6 +42592,70 @@ describe('no GitHub links in the README or the guides (D-13)', () => {
   for (const file of ['README.md', 'docs/CLASSROOM_QUICK_START.md', 'docs/RECOVERY_GUIDE.md']) {
     it(file, () => expect(readFileSync(new URL(`../../${file}`, import.meta.url), 'utf8')).not.toMatch(/github/i));
   }
+});
+```
+
+### tests/unit/encode-cache.test.ts
+
+Paths: `tests/unit/encode-cache.test.ts`. SHA-256 `4baf0b60e98ef04a5d3a98ae038971d0411df5c1cb0087bfaea64c566bc575ac`, 3344 bytes.
+
+```ts
+// Encode cache (art/tools/encode-renders.ts): an unchanged master is not re-encoded, the cached bytes equal a clean
+// encode, and changing any setting or the master misses.
+import { mkdirSync, mkdtempSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import { join, resolve } from 'node:path';
+import sharp from 'sharp';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { cacheKey, trimAndEncode } from '../../art/tools/encode-renders.ts';
+
+const ROOT = resolve(import.meta.dirname, '..', '..');
+const made: string[] = [];
+let dir = '', cache = '', master = '';
+beforeAll(async () => {
+  mkdirSync(join(ROOT, '.artifacts', 'tmp'), { recursive: true });
+  dir = mkdtempSync(join(ROOT, '.artifacts', 'tmp', 'sea-encode-'));
+  made.push(dir);
+  cache = join(dir, 'cache');
+  master = join(dir, 'card-test.png');
+  // 32x32 transparent frame with a visible 12x12 square, so the trim has something to do.
+  const square = await sharp({ create: { width: 12, height: 12, channels: 4, background: { r: 200, g: 80, b: 40, alpha: 1 } } }).png().toBuffer();
+  await sharp({ create: { width: 32, height: 32, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } } }).composite([{ input: square, left: 10, top: 9 }]).png().toFile(master);
+});
+afterAll(() => { for (const dir of made) rmSync(dir, { recursive: true, force: true, maxRetries: 5 }); });
+
+describe('encode cache', () => {
+  it('misses once, then hits, and a hit is byte-identical to an uncached encode', async () => {
+    const first = await trimAndEncode(master, 'card', 'webp', 80, cache);
+    const second = await trimAndEncode(master, 'card', 'webp', 80, cache);
+    const clean = await trimAndEncode(master, 'card', 'webp', 80, null);
+    expect(first.hit).toBe(false);
+    expect(second.hit).toBe(true);
+    expect(second.data.equals(clean.data)).toBe(true);
+    expect(second.data.equals(first.data)).toBe(true);
+    expect([second.left, second.top, second.width, second.height]).toEqual([clean.left, clean.top, clean.width, clean.height]);
+  });
+
+  it('misses when quality or format changes', async () => {
+    await trimAndEncode(master, 'card', 'webp', 80, cache);
+    expect((await trimAndEncode(master, 'card', 'webp', 81, cache)).hit).toBe(false);
+    expect((await trimAndEncode(master, 'card', 'avif', 80, cache)).hit).toBe(false);
+    expect((await trimAndEncode(master, 'card', 'webp', 81, cache)).hit).toBe(true);
+  });
+
+  it('keys on the master bytes and the kind', async () => {
+    const bytes = await sharp(master).toBuffer();
+    expect(cacheKey(bytes, 'card', 'webp', 80)).toBe(cacheKey(bytes, 'card', 'webp', 80));
+    expect(cacheKey(bytes, 'card', 'webp', 80)).not.toBe(cacheKey(bytes, 'hero', 'webp', 80));
+    expect(cacheKey(Buffer.concat([bytes, Buffer.from([0])]), 'card', 'webp', 80)).not.toBe(cacheKey(bytes, 'card', 'webp', 80));
+  });
+
+  it('re-encodes a corrupted entry instead of trusting it', async () => {
+    await trimAndEncode(master, 'card', 'webp', 70, cache);
+    for (const f of readdirSync(cache).filter(n => n.endsWith('.webp'))) writeFileSync(join(cache, f), Buffer.from('corrupt'));
+    const again = await trimAndEncode(master, 'card', 'webp', 70, cache);
+    expect(again.hit).toBe(false);
+    expect(again.data.equals((await trimAndEncode(master, 'card', 'webp', 70, null)).data)).toBe(true);
+  });
 });
 ```
 
@@ -41897,13 +43287,13 @@ describe('docs/MPES.md', () => {
 
 ### tests/unit/pace.test.ts
 
-Paths: `tests/unit/pace.test.ts`. SHA-256 `c3296555d99e89e234dbaebf2003c0fa6edb04ac1f6f5c6546a9be7deeef0def`, 2461 bytes.
+Paths: `tests/unit/pace.test.ts`. SHA-256 `2165cdf1bae2f75d968ae1f5775780a03536bc4d4c66e31c9ad226f7fd38e87e`, 3410 bytes.
 
 ```ts
 // MPES §10.3: the 3D showcase never takes more than half the machine. A frame that drew is timed by the gap
 // to the next animation frame; the stage then waits at least twice that long before drawing again.
 import { describe, expect, it } from 'vitest';
-import { FRAME_MS, FramePacer } from '../../source/showcase/pace.ts';
+import { FRAME_MS, FramePacer, SCALES, nextTier } from '../../source/showcase/pace.ts';
 
 /** Runs `ms` of animation frames where each drawn frame costs `cost` ms; returns the draw times. */
 function run(pacer: FramePacer, start: number, ms: number, cost: number, vsync = 1000 / 60): number[] {
@@ -41955,6 +43345,119 @@ describe('frame pacer (MPES §10.3)', () => {
     pacer.pause();
     expect(pacer.due(60_000)).toBe(true);
     expect(pacer.interval).toBeLessThan(FRAME_MS + 1);
+  });
+
+  it('reports the cheapest of the last eight draws, and nothing before eight', () => {
+    const pacer = new FramePacer();
+    run(pacer, 0, 7 * 50, 50, 50);
+    expect(pacer.floor).toBeNaN();
+    run(pacer, 350, 20 * 50, 50, 50);
+    expect(pacer.floor).toBe(50);
+    pacer.forget();
+    expect(pacer.floor).toBeNaN();
+  });
+});
+
+describe('adaptive tiers (MPES §10.3)', () => {
+  it('stays at full resolution while a draw fits in a 30 fps frame', () => {
+    expect(nextTier(0, 1000 / 60)).toBe(0);
+    expect(nextTier(0, FRAME_MS)).toBe(0);
+    expect(nextTier(0, Number.NaN)).toBe(0);
+  });
+
+  it('steps down one tier when even the cheapest recent draw is too slow, never below the last', () => {
+    expect(nextTier(0, 60)).toBe(1);
+    expect(nextTier(1, 60)).toBe(2);
+    expect(nextTier(SCALES.length - 1, 600)).toBe(SCALES.length - 1);
+  });
+
+  it('never steps back up', () => {
+    expect(nextTier(2, 1)).toBe(2);
+  });
+});
+```
+
+### tests/unit/perf-measure.test.ts
+
+Paths: `tests/unit/perf-measure.test.ts`. SHA-256 `77d839ae45ed8c8115812109d0ecea326caff92c7da6beec394209bbacdd0eea`, 776 bytes.
+
+```ts
+import { describe, expect, it } from 'vitest';
+import { MIN_SAMPLES, p95 } from '../perf/measure.ts';
+
+describe('perf measurement protocol (MPES §14)', () => {
+  it('takes the nearest-rank p95', () => {
+    const values = Array.from({ length: 40 }, (_, i) => i + 1);
+    expect(p95(values)).toBe(38);
+    expect(p95(values.slice(0, 30).reverse())).toBe(29);
+    expect(p95(Array.from({ length: 100 }, (_, i) => i + 1))).toBe(95);
+  });
+
+  it('refuses too few samples instead of passing on them', () => {
+    expect(MIN_SAMPLES).toBeGreaterThanOrEqual(30);
+    expect(() => p95([])).toThrow(/at least 30/);
+    expect(() => p95([1, 2, 3])).toThrow();
+    expect(() => p95(Array.from({ length: 30 }, () => Number.NaN))).toThrow();
+    expect(p95([5, 7], 2)).toBe(7);
+  });
+});
+```
+
+### tests/unit/perf-ref-report.test.ts
+
+Paths: `tests/unit/perf-ref-report.test.ts`. SHA-256 `26f511527ed4bd377515ac76698f0dc6f557cec3dce128568c9db484781759bc`, 2661 bytes.
+
+```ts
+import { describe, expect, it } from 'vitest';
+import { KPIS, METRICS, buildReport, renderMarkdown, statusOf, type RunFile } from '../perf-ref/report.ts';
+
+const run = (profile: string, values: Record<string, number | null>, state: RunFile['state'] = 'OK'): RunFile => ({
+  meta: { browser: 'chromium', browserVersion: '1', profile, viewport: { width: 1366, height: 768, scale: 1 }, cpuThrottle: 4, gpu: { vendor: 'Intel', renderer: 'ANGLE (Intel UHD Graphics 770)' }, idleSeconds: 60 },
+  state, values, notes: {},
+});
+
+describe('perf:ref report', () => {
+  it('has one row per KPI of MPES §1.4, in order', () => {
+    expect(KPIS).toHaveLength(12);
+    const rows = buildReport([run('a', {})], 's', 'c', false).kpis;
+    expect(rows.map(r => r.kpi)).toEqual([...KPIS]);
+  });
+
+  it('has unique metric ids, each under a known KPI', () => {
+    expect(new Set(METRICS.map(m => m.id)).size).toBe(METRICS.length);
+    for (const metric of METRICS) expect(KPIS).toContain(metric.kpi);
+  });
+
+  it('reads a value against its budget, and a missing one as NOT_RUN', () => {
+    const chooser = METRICS.find(m => m.id === 'chooserMs')!;
+    expect(statusOf(chooser, 2000)).toBe('PASS');
+    expect(statusOf(chooser, 2001)).toBe('FAIL');
+    expect(statusOf(chooser, null)).toBe('NOT_RUN');
+    expect(statusOf(chooser, undefined)).toBe('NOT_RUN');
+  });
+
+  it('takes the worst value over runs and fails the KPI when one metric is over budget', () => {
+    const report = buildReport([run('a', { chooserMs: 900 }), run('b', { chooserMs: 2500 })], 's', 'c', false);
+    const browser = report.kpis.find(r => r.kpi === 'Browser performance')!;
+    const chooser = browser.metrics.find(m => m.id === 'chooserMs')!;
+    expect(chooser.worst).toBe(2500);
+    expect(chooser.status).toBe('FAIL');
+    expect(browser.status).toBe('FAIL');
+    expect(report.state).toBe('BASELINE');
+  });
+
+  it('is INCOMPLETE, and keeps no numbers from a run that failed its GPU check', () => {
+    const report = buildReport([run('a', { chooserMs: 100 }, 'GPU_CHECK_FAILED')], 's', 'c', true);
+    expect(report.state).toBe('INCOMPLETE');
+    expect(report.problems[0]).toContain('GPU_CHECK_FAILED');
+    expect(report.kpis.find(r => r.kpi === 'Browser performance')!.metrics.every(m => m.worst === null)).toBe(true);
+    expect(buildReport([], 's', 'c', false).state).toBe('INCOMPLETE');
+  });
+
+  it('renders every KPI and metric in the Markdown', () => {
+    const text = renderMarkdown(buildReport([run('a', { chooserMs: 900 })], 's', 'c', false));
+    for (const kpi of KPIS) expect(text).toContain(kpi);
+    for (const metric of METRICS) expect(text).toContain(metric.label);
   });
 });
 ```
@@ -42464,7 +43967,7 @@ describe('stricter state invariants', () => {
 
 ### tests/unit/scratch.test.ts
 
-Paths: `tests/unit/scratch.test.ts`. SHA-256 `4cb44f28bb782807d45907e872c47055f482da2224083ca865ca5bf6719cd9d9`, 967 bytes.
+Paths: `tests/unit/scratch.test.ts`. SHA-256 `37d01472eb4a1b528caa3fc9f93fe0becfcb81b4d9ad0edf7634514fc746314a`, 991 bytes.
 
 ```ts
 // Unit tests that make scratch folders in .artifacts/tmp remove them afterwards: the archive and codebase tests once
@@ -42479,7 +43982,7 @@ describe('unit-test scratch', () => {
   it('every test file that makes a scratch folder removes it in afterAll', () => {
     const makers = readdirSync(DIR).filter(f => f.endsWith('.ts') && f !== 'scratch.test.ts').map(f => [f, readFileSync(join(DIR, f), 'utf8')] as const)
       .filter(([, text]) => /mkdtemp(Sync)?\(/.test(text));
-    expect(makers.map(([f]) => f).sort()).toEqual(['archive.test.ts', 'codebase.test.ts']);
+    expect(makers.map(([f]) => f).sort()).toEqual(['archive.test.ts', 'codebase.test.ts', 'encode-cache.test.ts']);
     for (const [f, text] of makers) expect(text, f).toMatch(/afterAll\(\(\) => \{ for \(const dir of made\) rmSync\(dir, \{ recursive: true/);
   });
 });
@@ -43714,5 +45217,5 @@ Keys and the commands that make each kind again:
 
 | Path | Bytes | SHA-256 | Why |
 |---|---:|---|---|
-| `docs/MPES.md` | 169588 | `d37d86a9de0f30d247f52c96f41195b997e7f55fa7cc66fad131259c8a6c69f8` | The specification, a clean-room document of its own (Omni 5.1.1 §333). |
+| `docs/MPES.md` | 171498 | `5a00f5c057f2787e401fb77e17bb51f301ecc15d2d76cac2348c3738d44595e8` | The specification, a clean-room document of its own (Omni 5.1.1 §333). |
 | `docs/CODEBASE.md` | | | This file. |

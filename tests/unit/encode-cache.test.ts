@@ -1,22 +1,25 @@
 // Encode cache (art/tools/encode-renders.ts): an unchanged master is not re-encoded, the cached bytes equal a clean
 // encode, and changing any setting or the master misses.
-import { mkdtempSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
-import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { mkdirSync, mkdtempSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import { join, resolve } from 'node:path';
 import sharp from 'sharp';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { cacheKey, trimAndEncode } from '../../art/tools/encode-renders.ts';
 
+const ROOT = resolve(import.meta.dirname, '..', '..');
+const made: string[] = [];
 let dir = '', cache = '', master = '';
 beforeAll(async () => {
-  dir = mkdtempSync(join(tmpdir(), 'sea-encode-'));
+  mkdirSync(join(ROOT, '.artifacts', 'tmp'), { recursive: true });
+  dir = mkdtempSync(join(ROOT, '.artifacts', 'tmp', 'sea-encode-'));
+  made.push(dir);
   cache = join(dir, 'cache');
   master = join(dir, 'card-test.png');
   // 32x32 transparent frame with a visible 12x12 square, so the trim has something to do.
   const square = await sharp({ create: { width: 12, height: 12, channels: 4, background: { r: 200, g: 80, b: 40, alpha: 1 } } }).png().toBuffer();
   await sharp({ create: { width: 32, height: 32, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } } }).composite([{ input: square, left: 10, top: 9 }]).png().toFile(master);
 });
-afterAll(() => { rmSync(dir, { recursive: true, force: true }); });
+afterAll(() => { for (const dir of made) rmSync(dir, { recursive: true, force: true, maxRetries: 5 }); });
 
 describe('encode cache', () => {
   it('misses once, then hits, and a hit is byte-identical to an uncached encode', async () => {

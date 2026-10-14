@@ -1,7 +1,7 @@
 // MPES §10.3: the 3D showcase never takes more than half the machine. A frame that drew is timed by the gap
 // to the next animation frame; the stage then waits at least twice that long before drawing again.
 import { describe, expect, it } from 'vitest';
-import { FRAME_MS, FramePacer } from '../../source/showcase/pace.ts';
+import { FRAME_MS, FramePacer, SCALES, nextTier } from '../../source/showcase/pace.ts';
 
 /** Runs `ms` of animation frames where each drawn frame costs `cost` ms; returns the draw times. */
 function run(pacer: FramePacer, start: number, ms: number, cost: number, vsync = 1000 / 60): number[] {
@@ -53,5 +53,33 @@ describe('frame pacer (MPES §10.3)', () => {
     pacer.pause();
     expect(pacer.due(60_000)).toBe(true);
     expect(pacer.interval).toBeLessThan(FRAME_MS + 1);
+  });
+
+  it('reports the cheapest of the last eight draws, and nothing before eight', () => {
+    const pacer = new FramePacer();
+    run(pacer, 0, 7 * 50, 50, 50);
+    expect(pacer.floor).toBeNaN();
+    run(pacer, 350, 20 * 50, 50, 50);
+    expect(pacer.floor).toBe(50);
+    pacer.forget();
+    expect(pacer.floor).toBeNaN();
+  });
+});
+
+describe('adaptive tiers (MPES §10.3)', () => {
+  it('stays at full resolution while a draw fits in a 30 fps frame', () => {
+    expect(nextTier(0, 1000 / 60)).toBe(0);
+    expect(nextTier(0, FRAME_MS)).toBe(0);
+    expect(nextTier(0, Number.NaN)).toBe(0);
+  });
+
+  it('steps down one tier when even the cheapest recent draw is too slow, never below the last', () => {
+    expect(nextTier(0, 60)).toBe(1);
+    expect(nextTier(1, 60)).toBe(2);
+    expect(nextTier(SCALES.length - 1, 600)).toBe(SCALES.length - 1);
+  });
+
+  it('never steps back up', () => {
+    expect(nextTier(2, 1)).toBe(2);
   });
 });

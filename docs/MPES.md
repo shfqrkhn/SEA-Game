@@ -405,6 +405,7 @@ Each module's responsibility and public contract. Names are the exported identif
 | `eslint.config.mjs` | typescript-eslint recommended, plus: `no-eval`, `no-implied-eval`, `no-new-func`; `innerHTML`, `outerHTML`, `insertAdjacentHTML` and `document.write` forbidden; unused variables an error except arguments starting with `_`. In `source/`: the globals `fetch`, `XMLHttpRequest`, `WebSocket`, `EventSource`, `localStorage`, `indexedDB`, `alert`, `confirm`, `prompt` forbidden. In `source/domain/` also `document`, `window`, `Date`, `crypto`, `sessionStorage` and `Math.random`. Tests may use `any` (tamper fixtures). Ignores `_archive`, `.artifacts`, `dist`, `node_modules`, `test-results`, `coverage`. |
 | `vitest.config.ts` | Includes `tests/unit/**/*.test.ts`, Node environment, excludes local folders; coverage by V8 over `source/domain/**`, into `.artifacts/coverage`, threshold 95% of lines. |
 | `playwright.config.ts` | Browsers in `.artifacts/ms-playwright` unless CI; engines from `SEA_ENGINES` (default `chromium,firefox,msedge`); Firefox with `webgl.force-enabled`; Edge by `channel: msedge`; every engine ignores `perf.spec.ts`, which runs in its own Chromium project after all others; test folder `tests/e2e`, output `.artifacts/test-results`, fully parallel, no retries, `forbidOnly` and the list and GitHub reporters in CI (list locally), test timeout 120 s, action timeout 60 s, viewport 1280×720, trace kept on failure; global setup `tests/e2e/fresh-build.ts`. |
+| `playwright.perf-ref.config.ts` | The reference-laptop proxy (`npm run perf:ref`, §14): test folder `tests/perf-ref`, one worker, no retries, full browsers (not headless shell) without Playwright's GPU-off defaults, launched with Direct3D 11 through ANGLE, GPU on, blocklist ignored, low-power GPU forced and garbage collection exposed; one project per browser (Chromium, Edge by `channel: msedge`); global teardown `tests/perf-ref/teardown.ts`. |
 | `.gitattributes` | Text with LF everywhere; PNG, JPEG, WebP, WOFF2 and AVIF binary. |
 | `.gitignore` | `dist/`, `handoff/`, `_archive/`, `.artifacts/`, `node_modules/`, `test-results/`, `playwright-report/`, `coverage/`, `__pycache__/`, `RESTORE.md`. |
 | `.github/workflows/ci.yml` | §16.5. |
@@ -425,8 +426,9 @@ Each module's responsibility and public contract. Names are the exported identif
 | `npm run codebase` | `node scripts/codebase.ts` | Writes `docs/CODEBASE.md` (§19.6). |
 | `npm run archive:prep` | `node scripts/archive-prep.ts` | Backup preparation, dry run unless `--apply` (§19.6). |
 | `npm run browsers` | `node scripts/browsers.ts` | Installs Chromium and Firefox (or the engines named after `--`) for the browser suites. |
+| `npm run perf:ref` | `node build/build.ts`, then `playwright test -c playwright.perf-ref.config.ts` | The reference-laptop proxy on this PC's Intel UHD 770 (§14). |
 
-Planned, not yet present: `npm run perf:ref` (the reference-laptop proxy, G3) and `npm run package` (the handoff package, G6).
+Planned, not yet present: `npm run package` (the handoff package, G6).
 
 ---
 
@@ -1122,7 +1124,10 @@ Gates outside the code:
 | `tests/unit/glb.test.ts` | §10, §14: the model holds six vehicles; the game parses one. |
 | `tests/unit/frame.test.ts` | §10.2: long, tall and off-centre kits fit at every turn and height in wide, square and tall windows, tightly; zoom steps and limits. |
 | `tests/unit/showcase.test.ts` | §10.2, §10.3: draw order, latest part per slot, the decoded-image pool. |
-| `tests/unit/pace.test.ts` | §10.3: frame pacing. |
+| `tests/unit/pace.test.ts` | §10.3: frame pacing and adaptive resolution tiers. |
+| `tests/unit/perf-measure.test.ts` | §14: the nearest-rank p95 and its minimum sample count. |
+| `tests/unit/perf-ref-report.test.ts` | §14: the proxy report's PASS, FAIL and NOT_RUN per metric and per KPI, and its refusal of an incomplete run. |
+| `tests/unit/encode-cache.test.ts` | §11.1: the render encode cache misses once then hits byte-identically, misses on any changed setting or master, and re-encodes a damaged entry. |
 | `tests/unit/reflow.test.ts` | G2: licence and notices reflowed for display, files verbatim. |
 | `tests/unit/docs.test.ts` | S1, RQ-30: every control the quick-start guide names exists, in the same language. |
 | `tests/unit/gallery.test.ts` | §19.6: the gallery's shot list covers every view, role, language, size and vehicle. |
@@ -1147,7 +1152,13 @@ Gates outside the code:
 | `tests/e2e/mobile.spec.ts` | §7.1: at 320 and 360 px in both languages, every table on the planning and tracker views shows all its cells, each data cell labelled with its column header (read from the header row) and long headings wrapped; the desktop header stays at 1280 px. |
 | `tests/e2e/rehearsal.spec.ts` | §16.6 pilot substitute. |
 | `tests/e2e/visual.spec.ts` | J8 baselines in `tests/e2e/visual.spec.ts-snapshots/` (Chromium on Windows; About at 1366×768 and 320 px). |
-| `tests/e2e/perf.spec.ts` | RQ-26: §14 and §10.3 budgets on the reference profile. |
+| `tests/e2e/perf.spec.ts` | RQ-26: §14 and §10.3 budgets on the reference profile, with the runner's software graphics standing in for the GPU. |
+| `tests/e2e/render.spec.ts` | §14: a command, a saved field or a status message rebuilds the view once. |
+| `tests/perf/measure.ts` | §14 protocol: input to painted result, nearest-rank p95 of at least 30 samples, memory, throttling, vitals. |
+| `tests/perf/scenarios.ts` | §14 scenarios shared by `tests/e2e/perf.spec.ts` and `npm run perf:ref`: start-up, commands, 3D showcase, stills showcase. |
+| `tests/perf-ref/perf-ref.spec.ts` | `npm run perf:ref`: proves the Intel UHD 770, then runs the §14 scenarios in each screen profile and writes one run file each. |
+| `tests/perf-ref/report.ts` | Merges the run files into `report.json` and `report.md`, one row per KPI of §1.4. |
+| `tests/perf-ref/teardown.ts` | The proxy's global teardown: writes the report after the last run. |
 
 The legacy fixtures in `tests/fixtures/legacy/` are twelve schema-3 backups exported by the previous application (instructor setup, planning, auction open then paused (one file), build, maximum ledger, closed; student practice, planning in French, auction, build, closed, closed with a mixed-case code), §8.8.
 
@@ -1254,7 +1265,7 @@ The repository root is `D:\VSCode\SEA-Game`. Source, tests, content, build, art 
 | `docs/RECOVERY_GUIDE.md` | Backup, restore and recovery steps, EN and FR. |
 | `docs/owner/art-review.md` | The owner's art review script (one page). Later owner-only steps go in `docs/owner/` too. |
 | `docs/owner/instructor-review.md` | A one-page guide for an instructor reviewing the prototype: how to open it, a solo two-tab walk-through, and five questions. |
-| `docs/verification/0.5.0.0.md`, `docs/verification/0.5.1.0.md`, `docs/verification/0.5.2.0.md`, `docs/verification/<version>.md` | Evidence for each released version, as text: every check with its command and PASS, FAIL, NOT_RUN or BLOCKED. |
+| `docs/verification/0.5.0.0.md`, `docs/verification/0.5.1.0.md`, `docs/verification/0.5.2.0.md`, `docs/verification/0.6.0.0.md`, `docs/verification/<version>.md` | Evidence for each released version, as text: every check with its command and PASS, FAIL, NOT_RUN or BLOCKED. |
 | `docs/verification/spike-visual.md` | V1 spike measurements and decision. |
 | `docs/verification/source-fidelity.md` | How the rules were checked against the previous application and the owner's course source. |
 | `docs/verification/legibility.md` | Research behind §10.5 component legibility (lighting, camera, shading, signalling, projector), with sources; weakly sourced points are marked. |

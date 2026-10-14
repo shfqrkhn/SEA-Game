@@ -10,7 +10,7 @@ describe('unit-test scratch', () => {
   it('every test file that makes a scratch folder removes it in afterAll', () => {
     const makers = readdirSync(DIR).filter(f => f.endsWith('.ts') && f !== 'scratch.test.ts').map(f => [f, readFileSync(join(DIR, f), 'utf8')] as const)
       .filter(([, text]) => /mkdtemp(Sync)?\(/.test(text));
-    expect(makers.map(([f]) => f).sort()).toEqual(['archive.test.ts', 'codebase.test.ts']);
+    expect(makers.map(([f]) => f).sort()).toEqual(['archive.test.ts', 'codebase.test.ts', 'encode-cache.test.ts']);
     for (const [f, text] of makers) expect(text, f).toMatch(/afterAll\(\(\) => \{ for \(const dir of made\) rmSync\(dir, \{ recursive: true/);
   });
 });

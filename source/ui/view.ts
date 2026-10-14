@@ -61,6 +61,8 @@ export class RoleView<S extends RoleState> {
   #status: { text: string; tone: Tone } | null = null;
   #undo: S | null = null;
   #rendering = false;
+  /** True while the view commits a change itself and renders once afterwards (see #commit). */
+  #committing = false;
   readonly #content: HTMLElement;
   readonly #statusLine: HTMLElement;
 
@@ -70,7 +72,7 @@ export class RoleView<S extends RoleState> {
     this.#content = h('div');
     this.#statusLine = h('div', { class: 'page status-line', role: 'status', 'aria-live': 'polite', id: 'status' });
     replaceChildren(root, this.#content, this.#statusLine);
-    config.controller.subscribe(() => this.render());
+    config.controller.subscribe(() => { if (!this.#committing) this.render(); });
   }
 
   get state(): S { return this.config.controller.state; }
@@ -78,10 +80,19 @@ export class RoleView<S extends RoleState> {
   t = (key: StringKey, vars?: Readonly<Record<string, string | number>>): string => translate(this.lang, key, vars);
 
   // ---- Commands ----
+  /**
+   * Commits through the controller without the subscription's render: the caller renders once, after its own updates
+   * (status, drafts), so a click rebuilds the page once rather than twice (MPES §14 command response).
+   */
+  #commit<T>(change: () => T): T {
+    this.#committing = true;
+    try { return change(); } finally { this.#committing = false; }
+  }
+
   /** Run a command; on failure show the localized reason and keep everything unchanged. */
   run(command: (state: S) => S, success?: () => void): Result {
     if (this.#undo) this.#undo = null;
-    const result = this.config.controller.dispatch(command);
+    const result = this.#commit(() => this.config.controller.dispatch(command));
     if (result.ok) { this.#status = null; success?.(); this.render(); }
     else this.say(this.t(`error.${result.code}` as StringKey), 'bad');
     return result;
@@ -94,7 +105,7 @@ export class RoleView<S extends RoleState> {
   savingInput(id: string, current: string, command: (state: S, value: string) => S, props: Record<string, unknown> = {}): HTMLInputElement {
     const commit = (value: string, report: boolean) => {
       if (value === current) return;
-      const result = this.config.controller.dispatch(state => command(state, value));
+      const result = this.#commit(() => this.config.controller.dispatch(state => command(state, value)));
       if (result.ok) { this.drafts.delete(id); current = value; this.render(); }
       else if (report) this.say(this.t(`error.${result.code}` as StringKey), 'bad');
     };
@@ -146,13 +157,15 @@ export class RoleView<S extends RoleState> {
       this.#statusLine.className = `page status-line ${this.#status?.tone === 'bad' ? 'error' : this.#status?.tone === 'ok' ? 'ok' : ''}`;
       if (this.#statusLine.textContent !== (this.#status?.text ?? '')) this.#statusLine.textContent = this.#status?.text ?? '';
       // Tables wider than the screen become labelled, focusable regions so they can be scrolled by keyboard (WCAG 2.1.1).
-      for (const wrap of this.#content.querySelectorAll<HTMLElement>('.table-wrap')) {
-        labelCells(wrap);
-        if (wrap.scrollWidth > wrap.clientWidth + 1) {
-          wrap.tabIndex = 0;
-          wrap.setAttribute('role', 'region');
-          wrap.setAttribute('aria-label', wrap.querySelector('caption')?.textContent || wrap.closest('section')?.querySelector('h1, h2, h3')?.textContent || this.t('common.purchases'));
-        }
+      // Every cell is labelled before any width is read, and every width is read before any region is marked, so the
+      // page lays out once per render rather than once per table.
+      const wraps = [...this.#content.querySelectorAll<HTMLElement>('.table-wrap')];
+      for (const wrap of wraps) labelCells(wrap);
+      const wide = wraps.filter(wrap => wrap.scrollWidth > wrap.clientWidth + 1);
+      for (const wrap of wide) {
+        wrap.tabIndex = 0;
+        wrap.setAttribute('role', 'region');
+        wrap.setAttribute('aria-label', wrap.querySelector('caption')?.textContent || wrap.closest('section')?.querySelector('h1, h2, h3')?.textContent || this.t('common.purchases'));
       }
       if (focusId) {
         const next = document.getElementById(focusId) as (HTMLElement & Partial<HTMLInputElement>) | null;
@@ -289,7 +302,7 @@ export class RoleView<S extends RoleState> {
     candidate = this.config.setLanguage(candidate, this.lang); // keep the language the user is reading
     const previous = this.state;
     this.drafts.clear();
-    this.config.controller.replace(candidate);
+    this.#commit(() => this.config.controller.replace(candidate));
     this.#undo = previous;
     this.say(t(notice), 'ok');
   }
@@ -298,7 +311,7 @@ export class RoleView<S extends RoleState> {
     if (!this.#undo) return;
     const previous = this.#undo;
     this.#undo = null;
-    this.config.controller.replace(previous);
+    this.#commit(() => this.config.controller.replace(previous));
     this.say(this.t('backup.undone'), 'ok');
   }
 }

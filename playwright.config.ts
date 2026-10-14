@@ -19,9 +19,10 @@ const all = [
 ];
 
 const browsers = all.filter(project => engines.includes(project.name)).map(project => ({ ...project, testIgnore: /perf\.spec\.ts/ }));
-// RQ-26 budgets are measured in Chromium, alone, after every other project has finished.
+// RQ-26 budgets are measured in Chromium, alone, after every other project has finished. No trace: its DOM
+// snapshots run in the page on every action, inside the timed window (about 40 ms per click at 4x, G3 profile).
 const perf = engines.includes('chromium')
-  ? [{ name: 'perf', use: { ...devices['Desktop Chrome'] }, testMatch: /perf\.spec\.ts/, dependencies: browsers.map(project => project.name) }]
+  ? [{ name: 'perf', use: { ...devices['Desktop Chrome'], trace: 'off' as const }, testMatch: /perf\.spec\.ts/, dependencies: browsers.map(project => project.name) }]
   : [];
 
 export default defineConfig({
