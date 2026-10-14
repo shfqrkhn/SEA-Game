@@ -148,7 +148,9 @@ export class Showcase {
       if (!library) return;
       const stage = new ModelStage();
       // Stills stay up while the stage compiles its shaders, so the page never waits on the compiler.
-      if (!await stage.prepare(library, vehicle)) { stage.dispose(); return; }
+      // The stills hold the place the stage takes, so their size is the size its starting tier is timed at (one layout read).
+      const box = this.element.querySelector('.showcase-stage')?.getBoundingClientRect();
+      if (!await stage.prepare(library, vehicle, box?.width && box.height ? { width: box.width, height: box.height } : undefined)) { stage.dispose(); return; }
       const element = h('div', { class: 'showcase-stage showcase-3d', role: 'img', 'data-mode': '3d', 'data-ready': 'false' });
       element.appendChild(stage.canvas);
       stage.onView = (azimuth, extent, zoom) => {

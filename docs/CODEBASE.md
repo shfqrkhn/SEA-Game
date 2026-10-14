@@ -7673,7 +7673,7 @@ console.log(`${files.length} images -> ${out}`);
 
 ### art/tools/encode-renders.ts
 
-Paths: `art/tools/encode-renders.ts`. SHA-256 `be938d7c23a82f1d58be0ab819cd6c6d184c54d828aab77b85fe3cb38db2186f`, 11823 bytes.
+Paths: `art/tools/encode-renders.ts`. SHA-256 `8da5e9c6226100354aeee9a437b11a42d3d344f2228b98f3275b191b9792583a`, 12985 bytes.
 
 ```ts
 // Encode Blender render masters (16-bit RGBA PNG) for embedding (MPES §10, §11).
@@ -7707,44 +7707,51 @@ async function empty(path: string): Promise<boolean> {
   return (stats.channels[3]?.max ?? 255) === 0;
 }
 
+/**
+ * Every setting that shapes the output besides the master and quality. The trim and the encoders read them from here,
+ * and the cache key covers them all, so changing any value misses the cache. `revision` covers a change to the code
+ * itself that no setting names: raise it with any change to trimmed() or encode().
+ */
+export const SETTINGS = {
+  revision: 1,
+  avif: { effort: 6, chromaSubsampling: '4:4:4' }, webp: { alphaQuality: 90, effort: 6, smartSubsample: true },
+  apron: 2, trimThreshold: 1, visibleAlpha16: 129, intermediatePngCompression: 0, colourspace: 'srgb' as const,
+};
+
 /** Images drawn at their offset in a frame (build layers and bases, turntable frames); cards and heroes show whole. */
 const placed = (kind: string) => kind.startsWith('build-') || kind === 'turntable';
 
 async function trimmed(path: string, kind: string): Promise<{ data: Buffer; info: OutputInfo; left: number; top: number; frameWidth: number; frameHeight: number }> {
   const meta = await sharp(path).metadata();
-  const image = sharp(path).toColourspace('srgb');
+  const { apron, trimThreshold, visibleAlpha16, intermediatePngCompression: compressionLevel, colourspace } = SETTINGS;
+  const image = sharp(path).toColourspace(colourspace);
   if (!placed(kind)) {
-    // Trim fully transparent margins (threshold on alpha only), keeping a 2 px apron; this framing is what is shown.
-    const { info } = await image.clone().trim({ background: { r: 0, g: 0, b: 0, alpha: 0 }, threshold: 1 }).toBuffer({ resolveWithObject: true });
-    const left = Math.max(0, -(info.trimOffsetLeft ?? 0) - 2), top = Math.max(0, -(info.trimOffsetTop ?? 0) - 2);
-    const width = Math.min(meta.width! - left, info.width + 4), height = Math.min(meta.height! - top, info.height + 4);
-    const out = await image.extract({ left, top, width, height }).png({ compressionLevel: 0 }).toBuffer({ resolveWithObject: true });
+    // Trim fully transparent margins (threshold on alpha only), keeping the apron; this framing is what is shown.
+    const { info } = await image.clone().trim({ background: { r: 0, g: 0, b: 0, alpha: 0 }, threshold: trimThreshold }).toBuffer({ resolveWithObject: true });
+    const left = Math.max(0, -(info.trimOffsetLeft ?? 0) - apron), top = Math.max(0, -(info.trimOffsetTop ?? 0) - apron);
+    const width = Math.min(meta.width! - left, info.width + 2 * apron), height = Math.min(meta.height! - top, info.height + 2 * apron);
+    const out = await image.extract({ left, top, width, height }).png({ compressionLevel }).toBuffer({ resolveWithObject: true });
     return { data: out.data, info: out.info, left, top, frameWidth: meta.width!, frameHeight: meta.height! };
   }
-  // A placed image is trimmed to its visible pixels, keeping a 2 px apron for soft shadows. Visible means an alpha
+  // A placed image is trimmed to its visible pixels, keeping the apron for soft shadows. Visible means an alpha
   // that survives 8-bit output: 16-bit masters carry faint render noise across the frame, and trimming on any
   // non-zero alpha kept layers near full-frame, so each decode took up to 19 times the pixels (CI run 38136462558).
   const { data, info } = await sharp(path).ensureAlpha().extractChannel(3).raw({ depth: 'ushort' }).toBuffer({ resolveWithObject: true });
   const alpha = new Uint16Array(data.buffer, data.byteOffset, info.width * info.height);
-  const visible = meta.depth === 'ushort' ? 129 : 1; // rounds to at least 1/255
+  const visible = meta.depth === 'ushort' ? visibleAlpha16 : 1; // rounds to at least 1/255
   let x0 = info.width, y0 = info.height, x1 = -1, y1 = -1;
   for (let y = 0; y < info.height; y++) for (let x = 0; x < info.width; x++) {
     if (alpha[y * info.width + x]! < visible) continue;
     x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y);
   }
-  if (x1 < 0) { x0 = 0; y0 = 0; x1 = 0; y1 = 0; } // nothing visible: a 1 px image (5 px with the apron)
-  const left = Math.max(0, x0 - 2), top = Math.max(0, y0 - 2);
-  const width = Math.min(meta.width!, x1 + 3) - left, height = Math.min(meta.height!, y1 + 3) - top;
-  const out = await image.extract({ left, top, width, height }).png({ compressionLevel: 0 }).toBuffer({ resolveWithObject: true });
+  if (x1 < 0) { x0 = 0; y0 = 0; x1 = 0; y1 = 0; } // nothing visible: a 1 px image plus the apron
+  const left = Math.max(0, x0 - apron), top = Math.max(0, y0 - apron);
+  const width = Math.min(meta.width!, x1 + 1 + apron) - left, height = Math.min(meta.height!, y1 + 1 + apron) - top;
+  const out = await image.extract({ left, top, width, height }).png({ compressionLevel }).toBuffer({ resolveWithObject: true });
   return { data: out.data, info: out.info, left, top, frameWidth: meta.width!, frameHeight: meta.height! };
 }
 
 export const ENCODE_CACHE_DIR = resolve(import.meta.dirname, '../../.artifacts/cache/encode');
-/** Every setting that shapes the output bytes besides the master and quality; change any value and the cache misses. */
-const SETTINGS = {
-  avif: { effort: 6, chromaSubsampling: '4:4:4' }, webp: { alphaQuality: 90, effort: 6, smartSubsample: true },
-  apron: 2, trimThreshold: 1, visibleAlpha16: 129, intermediatePngCompression: 0, colourspace: 'srgb',
-};
 
 async function encode(input: Buffer, format: Format, quality: number): Promise<Buffer> {
   const s = sharp(input);
@@ -7761,15 +7768,29 @@ export function cacheKey(master: Buffer, kind: string, format: Format, quality: 
   return h.digest('hex');
 }
 
+type Geometry = Omit<Encoded, 'data'>;
+const GEOMETRY = ['left', 'top', 'frameWidth', 'frameHeight', 'width', 'height'] as const;
+
+/** sha256 over an entry's geometry and bytes, so damage to either is caught. */
+function entrySum(geo: Geometry, data: Buffer): string {
+  return createHash('sha256').update(JSON.stringify(GEOMETRY.map(k => geo[k]))).update(data).digest('hex');
+}
+
+/** Geometry that can describe a crop of its frame: whole numbers, a non-empty size, inside the frame. */
+function sound(geo: Geometry): boolean {
+  return GEOMETRY.every(k => Number.isInteger(geo[k]) && geo[k] >= 0) && geo.width > 0 && geo.height > 0
+    && geo.left + geo.width <= geo.frameWidth && geo.top + geo.height <= geo.frameHeight;
+}
+
 /** Trim and encode one master, reusing a cached result when its key matches. Output is byte-identical either way. */
 export async function trimAndEncode(path: string, kind: string, format: Format, quality: number, cache: string | null = ENCODE_CACHE_DIR): Promise<Encoded & { hit: boolean }> {
   const key = cache ? cacheKey(readFileSync(path), kind, format, quality) : '';
   const bin = cache ? join(cache, `${key}.${format}`) : '', json = cache ? join(cache, `${key}.json`) : '';
   if (cache && existsSync(bin) && existsSync(json)) {
     try {
-      const { sha256, ...geo } = JSON.parse(readFileSync(json, 'utf8')) as Omit<Encoded, 'data'> & { sha256: string };
-      const data = readFileSync(bin);
-      if (createHash('sha256').update(data).digest('hex') === sha256) return { ...geo, data, hit: true };
+      const entry = JSON.parse(readFileSync(json, 'utf8')) as Geometry & { sha256: string };
+      const geo = Object.fromEntries(GEOMETRY.map(k => [k, entry[k]])) as unknown as Geometry, data = readFileSync(bin);
+      if (sound(geo) && entrySum(geo, data) === entry.sha256) return { ...geo, data, hit: true };
     } catch { /* unreadable entry: fall through and re-encode */ }
   }
   const t = await trimmed(path, kind);
@@ -7780,7 +7801,7 @@ export async function trimAndEncode(path: string, kind: string, format: Format, 
     // Write to a temporary name and rename, so a parallel or interrupted run never leaves a half-written entry.
     const tmp = `${bin}.${process.pid}.tmp`, tmpJson = `${json}.${process.pid}.tmp`;
     writeFileSync(tmp, data); renameSync(tmp, bin);
-    writeFileSync(tmpJson, JSON.stringify({ ...geo, sha256: createHash('sha256').update(data).digest('hex') })); renameSync(tmpJson, json);
+    writeFileSync(tmpJson, JSON.stringify({ ...geo, sha256: entrySum(geo, data) })); renameSync(tmpJson, json);
   }
   return { ...result, hit: false };
 }
@@ -27678,7 +27699,7 @@ A read-only Codex session (gpt-6.1-sol, medium) reviewed the diff (`.artifacts/c
 
 ### docs/verification/0.6.0.0.md
 
-Paths: `docs/verification/0.6.0.0.md`. SHA-256 `9f1fd58204f8e3629fb7044b42df78964450682a5b30d27fcaa6cdb0ade65a16`, 3797 bytes.
+Paths: `docs/verification/0.6.0.0.md`. SHA-256 `fc4ebb765b2c94be34b1eaea0fd41d8774443832ba473977c37041fe3a3f233c`, 6169 bytes.
 
 ```markdown
 # Verification record: 0.6.0.0 beta (G3 proxy and runtime) — in progress
@@ -27698,6 +27719,31 @@ Root causes found so far, each with its fix:
 | The first draw compiled every shader in one task: 0.25 to 2.7 s, once 35.8 s, on a software renderer | Long-task timings of the first draw | The stage compiles in the background before it is shown (stills stay up), the bare vehicle first, then every part |
 | The shadow map was drawn again in every frame | Renderer inspection | Shadows are baked: drawn again only when the vehicle or its parts change |
 | A software renderer draws a full-resolution frame in about 50 ms, more than a 30 fps frame | Draw gap 104 ms at tier 0, 84 ms at tier 1 | Adaptive tiers (full, 0.75, 0.5 of the pixel ratio), one step down whenever the cheapest of the last eight draws exceeds a 30 fps frame (`source/showcase/pace.ts`, `tests/unit/pace.test.ts`) |
+
+### Red run 38571533524 (verify (22), head d0763a7): 3D update p95 331.6 ms > 100
+
+Diagnosed before any rerun. The stills update was within budget (p95 78.8 ms), so the first item's stills cause is fixed in CI; the 3D update was not. Every CI tracker opens in a fresh context, so the stage started at full quality each time and needed eight slow draws per step down: the tiers never reached the timed purchases (data-tier 2 only at the end, about 170 ms a draw on CI's software renderer).
+
+Draw-cost probe (`.artifacts/tmp/drawcost/`, three.js r0.186.1, SwiftShader, recovery vehicle with three parts: 40 draw calls, 69k triangles), one draw in ms:
+
+| Setting | 0.75 ratio | 4x CPU throttle |
+|---|---|---|
+| As shipped (multisampled canvas, shadow, environment, tone mapping) | 62 | 62 (ratio 1) |
+| No multisampling | 22 | 24 (ratio 1), 16.5 (0.75), 11-12 (0.5) |
+| No shadow | 56 | |
+| No environment | 26-30 | 6.7 (0.5, no multisampling) |
+| No tone mapping | 57-61 | |
+| Lambert instead of standard material | 22 | |
+| Ratio 1.5 | 113 (54 without multisampling) | |
+
+Multisampling made a draw about 3.6 times dearer; the cost is GPU-process work, so CPU throttling barely changes it. Fixes:
+
+| Cause | Fix | Check |
+|---|---|---|
+| Multisampling was fixed in the canvas, so no tier could drop it | Canvas without multisampling; tiers 0 and 1 draw into a multisampled half-float target resolved to the canvas with tone mapping (three.js OutputPass); tiers 2 and 3 draw straight at 0.75 and 0.5 (`source/showcase/pace.ts` TIERS) | `tests/unit/pace.test.ts` |
+| A fresh page started at full quality | Before the stage is shown, one timed draw per tier at the stage's size picks the first tier within a 30 fps frame (startTier); a tier differing only in resolution is skipped when its pixel share cannot bring the cost in budget | `tests/unit/pace.test.ts` starting tier |
+| A paced turning draw could start just before a click and delay its answer | The player's input anywhere else on the page holds paced draws for one second; the purchase's own draw still goes in the next frame | `tests/unit/pace.test.ts` hold |
+| A lost graphics context (driver reset, GPU switch, sleep) left the stage blank | Drawing stops on loss; on restore the environment and shadow are made again and the current parts drawn | `tests/e2e/showcase.spec.ts` context-loss test (all engines) |
 
 The measurement protocol was also corrected (tests/perf/): every timing runs from the trusted input event to after the next paint, with the nearest-rank p95 of at least 30 samples (`tests/unit/perf-measure.test.ts`); the 3D update is timed to the frame that draws the purchased part, the 3D ready time from the tracker's opening click to the first drawn model (MPES §14), each tracker in a fresh context.
 
@@ -35654,7 +35700,7 @@ export function vehicleGlb(glb: ArrayBuffer, vehicle: string): ArrayBuffer | nul
 
 ### source/showcase/model.ts
 
-Paths: `source/showcase/model.ts`. SHA-256 `0b852c770b4936e6ba69aa8b66372ad1b32ae7b31571f6423eb837e1e5934a97`, 19074 bytes.
+Paths: `source/showcase/model.ts`. SHA-256 `85f4e72f52a51fa30cac1805a37ae20495679843f44de99fc52864b3e41d4634`, 23299 bytes.
 
 ```ts
 // Real-time vehicle showcase (MPES §10): the embedded glTF model on a slowly turning stage the player can drag.
@@ -35663,15 +35709,16 @@ Paths: `source/showcase/model.ts`. SHA-256 `0b852c770b4936e6ba69aa8b66372ad1b32a
 // when the player prefers reduced motion. Without WebGL the caller shows the still renders instead.
 import {
   ACESFilmicToneMapping, Box3, Color, DirectionalLight, Group, Mesh, MeshStandardMaterial, type Object3D,
-  PCFShadowMap, PerspectiveCamera, PlaneGeometry, PMREMGenerator, Scene, ShadowMaterial, SRGBColorSpace,
-  Timer, Vector3, WebGLRenderer,
+  HalfFloatType, PCFShadowMap, PerspectiveCamera, PlaneGeometry, PMREMGenerator, Scene, ShadowMaterial, SRGBColorSpace,
+  type Texture, Timer, Vector2, Vector3, WebGLRenderer, WebGLRenderTarget,
 } from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
+import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
 import { vehicleGlb } from './glb.ts';
 import { distanceAt, extentAt, fitTable, zoomed, type FitTable } from './frame.ts';
-import { FramePacer, SCALES, nextTier } from './pace.ts';
+import { FramePacer, INPUT_HOLD_MS, TIERS, nextTier, startTier } from './pace.ts';
 
 /** Seconds per full turn when the stage turns by itself. */
 export const TURN_SECONDS = 40;
@@ -35780,8 +35827,16 @@ export class ModelStage {
   #dirty = true;
   /** A change the player asked for (a purchase, turn, zoom or resize) waiting to be drawn: it skips the pacer's wait. */
   #urgent = false;
-  /** Index into SCALES: the render resolution this machine can draw in time (adaptive tiers). */
+  /** Index into TIERS: the resolution and edge smoothing this machine can draw in time (adaptive tiers). */
   #tier = 0;
+  /** Where a multisampled tier draws the scene, then resolved to the canvas with tone mapping by #output; none on a
+   *  tier without multisampling. The canvas itself has none, so a tier can drop it without a new context. */
+  #target: WebGLRenderTarget | null = null;
+  #output = Object.assign(new OutputPass(), { renderToScreen: true });
+  #environment: Texture | null = null;
+  #lost = false;
+  /** The player's input anywhere else on the page holds the paced turning draws (input first, MPES §10.3). */
+  #input = (event: Event): void => { if (event.target !== this.canvas) this.#pacer.hold(performance.now() + INPUT_HOLD_MS); };
   #visible = true;
   #observer: IntersectionObserver;
   #resize: ResizeObserver;
@@ -35801,8 +35856,8 @@ export class ModelStage {
   constructor() {
     this.canvas = document.createElement('canvas');
     this.canvas.className = 'showcase-canvas';
-    this.#renderer = new WebGLRenderer({ canvas: this.canvas, antialias: true, alpha: true, powerPreference: 'low-power' });
-    this.#renderer.setPixelRatio(this.#ratio());
+    this.#renderer = new WebGLRenderer({ canvas: this.canvas, antialias: false, alpha: true, powerPreference: 'low-power' });
+    this.#tierTo(0);
     this.#renderer.outputColorSpace = SRGBColorSpace;
     this.#renderer.toneMapping = ACESFilmicToneMapping;
     this.#renderer.toneMappingExposure = 0.85;
@@ -35811,10 +35866,7 @@ export class ModelStage {
     // Baked shadows: the sun and the vehicle stand still while the camera orbits, so the shadow map only changes with the
     // fitted parts; drawing it every frame doubled each turning draw (G3). show() asks for it again.
     this.#renderer.shadowMap.autoUpdate = false;
-    const pmrem = new PMREMGenerator(this.#renderer);
-    // A 64 px environment lights matte paint as well as the default 256 px, with a sixteenth of the pixels to render and blur.
-    this.#scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04, 0.1, 100, { size: 64 }).texture;
-    pmrem.dispose();
+    this.#environ();
     this.#scene.background = null;
     const sun = new DirectionalLight(new Color(1, 0.97, 0.92), 1.6);
     sun.position.set(6, 12, 5);
@@ -35848,6 +35900,26 @@ export class ModelStage {
     this.#resize = new ResizeObserver(() => this.#size());
     this.#resize.observe(this.canvas);
     document.addEventListener('visibilitychange', () => this.#loop());
+    for (const type of ['pointerdown', 'keydown', 'input']) document.addEventListener(type, this.#input, { capture: true, passive: true });
+    // A lost graphics context (driver reset, GPU switch, sleep) stops the stage; three.js rebuilds the context when it is
+    // restored, but what was drawn into textures is gone: the environment and the shadow are made again, then one draw.
+    this.canvas.addEventListener('webglcontextlost', () => { this.#lost = true; this.#stop(); });
+    this.canvas.addEventListener('webglcontextrestored', () => {
+      this.#lost = false;
+      this.#environ();
+      this.#renderer.shadowMap.needsUpdate = true;
+      this.#invalidate(true);
+    });
+  }
+
+  /** The lighting environment, drawn into a texture. A 64 px environment lights matte paint as well as the default
+   *  256 px, with a sixteenth of the pixels to render and blur. */
+  #environ(): void {
+    const pmrem = new PMREMGenerator(this.#renderer);
+    this.#environment?.dispose();
+    this.#environment = pmrem.fromScene(new RoomEnvironment(), 0.04, 0.1, 100, { size: 64 }).texture;
+    this.#scene.environment = this.#environment;
+    pmrem.dispose();
   }
 
   /** Whether the stage turns by itself (off under reduced motion until the player turns it on). */
@@ -35889,9 +35961,10 @@ export class ModelStage {
    * first draw of each purchase then have nothing left to compile (G3 profile: the first draw was one task of 0.3 to
    * 2.7 s on a software renderer). Draws nothing: the canvas is not on the page yet. False if there is no such vehicle.
    */
-  async prepare(lib: Group, vehicle: string): Promise<boolean> {
+  async prepare(lib: Group, vehicle: string, size = { width: 640, height: 360 }): Promise<boolean> {
     if (!this.show(lib, vehicle, [])) return false;
     await this.#renderer.compileAsync(this.#scene, this.#camera);
+    this.#calibrate(size);
     // Then every part, without delaying the first draw. three.js compiles only what is visible, but only the call itself
     // needs the parts shown: the browser finishes compiling them in parallel after they are hidden again.
     const parts = this.#vehicle!.children.filter(node => !node.visible);
@@ -35899,6 +35972,31 @@ export class ModelStage {
     void this.#renderer.compileAsync(this.#scene, this.#camera).catch(() => undefined);
     for (const node of parts) node.visible = false;
     return true;
+  }
+
+  /**
+   * Picks the starting tier from one timed draw per tier at the size the stage will have (pace.ts startTier), so a slow
+   * machine starts where it can keep up instead of spending its first purchases at full quality (G3, CI run
+   * 38571533524: about 170 ms a draw). Each draw is waited for by reading one pixel back. The first, at 1 px, only
+   * prepares the resolve to the canvas, so no timed draw includes compiling it.
+   */
+  #calibrate(size: { width: number; height: number }): void {
+    const gl = this.#renderer.getContext(), pixel = new Uint8Array(4);
+    const timed = (): number => {
+      const start = performance.now();
+      this.#render();
+      gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel);
+      return performance.now() - start;
+    };
+    this.#renderer.setSize(1, 1, false);
+    this.#tierTo(0);
+    timed();
+    this.#renderer.setSize(size.width, size.height, false);
+    this.#camera.aspect = size.width / size.height;
+    this.#camera.updateProjectionMatrix();
+    this.#refit();
+    this.#tierTo(startTier(tier => { this.#tierTo(tier); return timed(); }));
+    this.#renderer.shadowMap.needsUpdate = true;
   }
 
   /** Shows one vehicle with the given part nodes; returns false if the library has no such vehicle. */
@@ -35972,6 +36070,7 @@ export class ModelStage {
     const { clientWidth: w, clientHeight: h } = this.canvas;
     if (!w || !h) return;
     this.#renderer.setSize(w, h, false);
+    this.#fitTarget();
     this.#camera.aspect = w / h;
     this.#camera.updateProjectionMatrix();
     if (this.#camera.aspect !== this.#fittedAspect) this.#refit();
@@ -35990,27 +36089,46 @@ export class ModelStage {
     this.#loop();
   }
 
-  /** The pixel ratio to draw at: the screen's, at most 1.5, at the tier's share. */
-  #ratio(): number {
-    return Math.min(devicePixelRatio, 1.5) * SCALES[this.#tier]!;
+  /** Draws at `tier`: the screen's pixel ratio, at most 1.5, at the tier's share, multisampled if the tier is. */
+  #tierTo(tier: number): void {
+    this.#tier = tier;
+    this.#renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5) * TIERS[tier]!.scale);
+    this.#fitTarget();
+    this.canvas.setAttribute('data-tier', String(tier));
   }
 
-  /** Steps the resolution down when the recent draws show this machine cannot draw in time (see nextTier). */
+  /** The multisampled target at the canvas's drawing size, or none on a tier without multisampling. */
+  #fitTarget(): void {
+    const samples = TIERS[this.#tier]!.samples, size = this.#renderer.getDrawingBufferSize(new Vector2());
+    if (!samples) { this.#target?.dispose(); this.#target = null; return; }
+    if (this.#target?.samples === samples) { this.#target.setSize(size.x, size.y); return; }
+    this.#target?.dispose();
+    // Half floats keep the scene linear and unclamped until the resolve tone-maps it, as drawing to the canvas does.
+    this.#target = new WebGLRenderTarget(size.x, size.y, { samples, type: HalfFloatType });
+  }
+
+  /** Steps the quality down when the recent draws show this machine cannot draw in time (see nextTier). */
   #adapt(): void {
     const tier = nextTier(this.#tier, this.#pacer.floor);
     if (tier === this.#tier) return;
-    this.#tier = tier;
     this.#pacer.forget();
-    this.#renderer.setPixelRatio(this.#ratio());
-    this.canvas.setAttribute('data-tier', String(tier));
+    this.#tierTo(tier);
     this.#dirty = true;
+  }
+
+  /** The scene to the canvas: straight, or through the multisampled target and its tone-mapping resolve. */
+  #render(): void {
+    if (!this.#target) { this.#renderer.render(this.#scene, this.#camera); return; }
+    this.#renderer.setRenderTarget(this.#target);
+    this.#renderer.render(this.#scene, this.#camera);
+    this.#output.render(this.#renderer, null as unknown as WebGLRenderTarget, this.#target, 0, false);
   }
 
   #draw(): void {
     this.#dirty = false;
     this.#urgent = false;
     this.#distance();
-    this.#renderer.render(this.#scene, this.#camera);
+    this.#render();
     this.#report();
     this.onDraw?.();
     // Observable without reaching into the stage: the reference-laptop run times real draws by this event (MPES §14).
@@ -36035,7 +36153,7 @@ export class ModelStage {
 
   /** Animates only while the stage is visible and turning or waiting to redraw; the pacer picks the frames that draw. */
   #loop(): void {
-    const running = this.#visible && document.visibilityState === 'visible' && this.canvas.isConnected;
+    const running = !this.#lost && this.#visible && document.visibilityState === 'visible' && this.canvas.isConnected;
     if (!running) { this.#stop(); return; }
     if (this.#frame) return;
     this.#timer.update();
@@ -36064,7 +36182,11 @@ export class ModelStage {
     cancelAnimationFrame(this.#frame);
     this.#observer.disconnect();
     this.#resize.disconnect();
+    for (const type of ['pointerdown', 'keydown', 'input']) document.removeEventListener(type, this.#input, { capture: true });
     this.#controls.dispose();
+    this.#target?.dispose();
+    this.#output.dispose();
+    this.#environment?.dispose();
     this.#renderer.dispose();
   }
 }
@@ -36072,7 +36194,7 @@ export class ModelStage {
 
 ### source/showcase/pace.ts
 
-Paths: `source/showcase/pace.ts`. SHA-256 `69e8e1ea1597de0162a3786b640c4ad5292eb48ac1a3fdaf41a1155e40f747db`, 2909 bytes.
+Paths: `source/showcase/pace.ts`. SHA-256 `4170eed2da54f3f90ba85a96210da60d6633242fc5d5d87f71606ed64a73016c`, 4653 bytes.
 
 ```ts
 /** Fastest the showcase draws: 30 fps is smooth for a slow turn and halves the GPU work of 60 fps. */
@@ -36084,17 +36206,49 @@ const SLACK_MS = 2;
 /** Draws behind `floor`: enough that one quiet frame among them shows what drawing alone costs. */
 const RECENT = 8;
 
-/** Render resolution tiers, as a share of the full pixel ratio (MPES §10.3 adaptive tiers): full, then two steps down. */
-export const SCALES = [1, 0.75, 0.5] as const;
+/** Paced draws wait this long after the player's input elsewhere on the page, so the answer to it draws first. */
+export const INPUT_HOLD_MS = 1000;
+
+/**
+ * Drawing quality tiers (MPES §10.3 adaptive tiers), dearest first: the share of the full pixel ratio, and the
+ * multisampling of edges. Multisampling goes before the last step of resolution: on a software renderer it made a
+ * draw 3.6 times dearer, where halving the resolution saved less (G3 draw-cost probe).
+ */
+export const TIERS: readonly { scale: number; samples: number }[] = [
+  { scale: 1, samples: 4 },
+  { scale: 0.75, samples: 4 },
+  { scale: 0.75, samples: 0 },
+  { scale: 0.5, samples: 0 },
+];
 
 /**
  * The tier to draw at next: one step down when even the cheapest recent draw could not hold 30 fps (`floor` above
  * FRAME_MS), else unchanged. Never up within a session, so the picture cannot flicker between sizes; a hardware GPU
- * stays at full resolution, a slow or software one drops until a draw fits (G3: a software renderer took about 60 ms
+ * stays at full quality, a slow or software one drops until a draw fits (G3: a software renderer took about 60 ms
  * a draw, so each purchase waited on two of them).
  */
 export function nextTier(tier: number, floor: number): number {
-  return floor > FRAME_MS && tier < SCALES.length - 1 ? tier + 1 : tier;
+  return floor > FRAME_MS && tier < TIERS.length - 1 ? tier + 1 : tier;
+}
+
+/**
+ * The tier to start at, from single timed draws (`measure` draws once at a tier and returns how long the renderer took,
+ * in ms): the first that fits a 30 fps frame, else the cheapest. Before the stage is shown, so a slow machine does not
+ * begin at full quality and spend seconds of turning stepping down. A tier that differs only in resolution is skipped
+ * when its share of pixels could not bring the last cost within the frame even if a draw cost nothing else.
+ */
+export function startTier(measure: (tier: number) => number, budget = FRAME_MS): number {
+  let last: { tier: number; cost: number } | null = null;
+  for (let tier = 0; tier < TIERS.length; tier++) {
+    if (last) {
+      const [was, now] = [TIERS[last.tier]!, TIERS[tier]!];
+      if (was.samples === now.samples && last.cost * (now.scale / was.scale) ** 2 > budget && tier < TIERS.length - 1) continue;
+    }
+    const cost = measure(tier);
+    if (cost <= budget) return tier;
+    last = { tier, cost };
+  }
+  return TIERS.length - 1;
 }
 
 /**
@@ -36108,12 +36262,16 @@ export class FramePacer {
   #drewAt = Number.NaN;
   #cost = 0;
   #recent: number[] = [];
+  #held = -Infinity;
 
   /** Milliseconds the pacer currently waits between draws. */
   get interval(): number { return this.#interval; }
 
   /** The cheapest of the last few draws (page work only ever adds to a sample); NaN until there are enough. */
   get floor(): number { return this.#recent.length < RECENT ? Number.NaN : Math.min(...this.#recent); }
+
+  /** No paced draw before `until` (the player's input comes first); urgent draws are the caller's and still go. */
+  hold(until: number): void { this.#held = Math.max(this.#held, until); }
 
   /** Starts `floor` afresh, after the drawing itself changed (a new tier). */
   forget(): void { this.#recent = []; }
@@ -36128,7 +36286,7 @@ export class FramePacer {
       this.#interval = Math.min(CEILING_MS, Math.max(FRAME_MS, 2 * this.#cost));
       this.#drewAt = Number.NaN;
     }
-    return now - this.#last >= this.#interval - SLACK_MS;
+    return now >= this.#held && now - this.#last >= this.#interval - SLACK_MS;
   }
 
   /** Call after drawing in the frame stamped `now`. */
@@ -36185,7 +36343,7 @@ export function cardRender(cardId: string): Render | undefined {
 
 ### source/showcase/showcase.ts
 
-Paths: `source/showcase/showcase.ts`. SHA-256 `8b7b4267d8436cc14c913b9f900fd90db7f1aae9477e5f0cf5ffa61c6e2bd61f`, 19371 bytes.
+Paths: `source/showcase/showcase.ts`. SHA-256 `4439de7dafc8f6e0be8d5414b8596adc66a61edc120e7b7b49f57c9aa72adc1b`, 19669 bytes.
 
 ```ts
 // Vehicle showcase (MPES §10): the team's vehicle with its installed parts, as a slowly turning 3D model the
@@ -36338,7 +36496,9 @@ export class Showcase {
       if (!library) return;
       const stage = new ModelStage();
       // Stills stay up while the stage compiles its shaders, so the page never waits on the compiler.
-      if (!await stage.prepare(library, vehicle)) { stage.dispose(); return; }
+      // The stills hold the place the stage takes, so their size is the size its starting tier is timed at (one layout read).
+      const box = this.element.querySelector('.showcase-stage')?.getBoundingClientRect();
+      if (!await stage.prepare(library, vehicle, box?.width && box.height ? { width: box.width, height: box.height } : undefined)) { stage.dispose(); return; }
       const element = h('div', { class: 'showcase-stage showcase-3d', role: 'img', 'data-mode': '3d', 'data-ready': 'false' });
       element.appendChild(stage.canvas);
       stage.onView = (azimuth, extent, zoom) => {
@@ -40235,7 +40395,7 @@ export async function studentRecord(page: Page, cardId: string, paidDollars: num
 
 ### tests/e2e/showcase.spec.ts
 
-Paths: `tests/e2e/showcase.spec.ts`. SHA-256 `172f0dff6e6370a65a638829c345df2080cbd6584fc4e1bdccc09597641300fa`, 22412 bytes.
+Paths: `tests/e2e/showcase.spec.ts`. SHA-256 `9fb73875cf006f6802f5feab55ca9c2ea3d4b47604f2064fdfa5e985a4182753`, 23896 bytes.
 
 ```ts
 // War-room HUD and vehicle showcase (MPES §7.1, §10, §11): the default look of every view. The live lot shows the
@@ -40363,6 +40523,28 @@ for (const viewport of [{ width: 1280, height: 720 }, { width: 360, height: 740 
     expect(await zoom(), 'zoom out stops at its limit').toBe(farthest);
   });
 }
+
+// G3 (MPES §10.3): a driver reset, a GPU switch or sleep loses the graphics context; the stage must come back by itself.
+test('3D showcase recovers a lost graphics context: it stops drawing, then draws the next purchase once restored', async ({ browser }) => {
+  const { sp } = await trackerFor(browser, 'RECOVERY');
+  const errors = collectConsoleErrors(sp);
+  const stage = sp.locator('#showcase [role="img"]');
+  await expect(stage).toHaveAttribute('data-ready', 'true', { timeout: 30_000 });
+  await sp.evaluate(() => {
+    const gl = document.querySelector<HTMLCanvasElement>('#showcase canvas')!.getContext('webgl2')!;
+    (window as unknown as { seaLose: WEBGL_lose_context }).seaLose = gl.getExtension('WEBGL_lose_context')!;
+    (window as unknown as { seaLose: WEBGL_lose_context }).seaLose.loseContext();
+  });
+  await sp.waitForFunction(() => document.querySelector<HTMLCanvasElement>('#showcase canvas')!.getContext('webgl2')!.isContextLost());
+  await record(sp, 1, 7, 'ACC-F', 350000);
+  await expect(stage).toHaveAttribute('data-layers', 'ACC-F');
+  await expect(stage).not.toHaveAttribute('data-drawn', 'ACC-F');
+  await sp.evaluate(() => (window as unknown as { seaLose: WEBGL_lose_context }).seaLose.restoreContext());
+  await expect(stage).toHaveAttribute('data-drawn', 'ACC-F', { timeout: 30_000 });
+  await record(sp, 2, 7, 'ACC-E', 600000);
+  await expect(stage).toHaveAttribute('data-drawn', 'ACC-E', { timeout: 30_000 });
+  expect(errors).toEqual([]);
+});
 
 test('3D showcase: the confirmed vehicle is prepared during planning, and only then, so the tracker opens with it ready', async ({ browser }) => {
   const prepared = (page: import('@playwright/test').Page) => page.evaluate(() => performance.getEntriesByType('mark').map(m => m.name).filter(n => n.startsWith('sea-model:')));
@@ -41123,119 +41305,58 @@ Paths: `tests/fixtures/legacy/student-practice.json`. SHA-256 `fbf972503388c8ac6
 
 ### tests/perf-ref/perf-ref.spec.ts
 
-Paths: `tests/perf-ref/perf-ref.spec.ts`. SHA-256 `8e85922c222157aa1e4ea56fa69d77e7a3ccbfb0ca2c399638988f90d46d0547`, 18887 bytes.
+Paths: `tests/perf-ref/perf-ref.spec.ts`. SHA-256 `6a4beaac646d99eb1b44fd1e0e9afe5316be6d16292dc14abf28dd15d6180162`, 6474 bytes.
 
 ```ts
 // G3 `npm run perf:ref` (MPES §14, §17): every §14 gate measured on the reference-laptop proxy, i.e. Chromium and
 // Edge on this PC's Intel UHD 770 (launch flags in playwright.perf-ref.config.ts), 4x CPU throttling, three screen
 // profiles. It first proves the GPU, then measures, then writes one run file per browser and profile; the teardown
-// merges them into report.json and report.md (one row per KPI of §1.4).
+// merges this run's files into report.json and report.md (one row per KPI of §1.4).
 //
-// The scenarios repeat tests/e2e/perf.spec.ts on purpose (that file is the enforcing gate and stays as it is; a test
-// file cannot be imported). Differences: no GPU spoofing (the real GPU is the point), real clicks for INP, and no
-// budget assertion: a baseline must be recordable before any change, so budgets are only reported (report.ts).
-import { test, type Browser, type CDPSession, type Page } from '@playwright/test';
-import { mkdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
+// The scenarios and the protocol are the CI gate's own (tests/perf/scenarios.ts, tests/perf/measure.ts: input to
+// painted result, nearest-rank p95 of at least 30 samples). Differences: no GPU spoofing (the real GPU is the point),
+// idle windows, and no budget assertion: a baseline must be recordable before any change, so budgets are only
+// reported (report.ts).
+import { test, type Browser, type Page } from '@playwright/test';
+import { mkdirSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
-import { collectConsoleErrors, gameUrl, guardNetwork, withoutWebgl } from '../e2e/helpers.ts';
-import { instructorSetup } from '../e2e/roles.ts';
-import type { RunFile, RunMeta } from './report.ts';
+import { THROTTLE, round } from '../perf/measure.ts';
+import { Lab, commands, model, startUp, stills, type Measured } from '../perf/scenarios.ts';
+import { PROFILES, type RunFile, type RunMeta } from './report.ts';
 
-const MB = 1024 * 1024;
 const REQUIRED_RENDERER = 'UHD Graphics 770';
-const THROTTLE = 4;
 const IDLE_SECONDS = Number(process.env.PERF_REF_IDLE_SECONDS ?? 60);
 const OUT = process.env.PERF_REF_DIR ?? path.resolve('.artifacts/perf-ref', 'manual');
+const RUN_ID = process.env.PERF_REF_STAMP ?? 'manual';
+const IDLE_IDS = { Chooser: 'idleCpuChooserPct', Instructor: 'idleCpuInstructorPct', Tracker: 'idleCpuTrackerPct' } as const;
 
-/** The three screens of MPES §14. Idle windows run on the first only (they are 60 s each). */
-const PROFILES = [
-  { id: '1366x768at1', width: 1366, height: 768, scale: 1 },
-  { id: '1536x864at1.25', width: 1536, height: 864, scale: 1.25 },
-  { id: '1280x720at1.5', width: 1280, height: 720, scale: 1.5 },
-] as const;
-type Profile = typeof PROFILES[number];
-
-interface Vitals { cls: number; lcp: number | null; long: { s: number; d: number }[]; inter: number[]; loaded: number | null }
-
-/** Runs in every page before its scripts: records layout shift, LCP, long tasks and interaction durations. */
-function installVitals(): void {
-  const sea: Vitals = { cls: 0, lcp: null, long: [], inter: [], loaded: null };
-  (globalThis as unknown as { __sea: Vitals }).__sea = sea;
-  const watch = (type: string, handle: (entry: PerformanceEntry) => void, extra: Record<string, unknown> = {}) => {
-    try { new PerformanceObserver(list => list.getEntries().forEach(handle)).observe({ type, buffered: true, ...extra } as PerformanceObserverInit); } catch { /* entry type not supported here */ }
-  };
-  watch('layout-shift', entry => { const shift = entry as unknown as { value: number; hadRecentInput: boolean }; if (!shift.hadRecentInput) sea.cls += shift.value; });
-  watch('largest-contentful-paint', entry => { sea.lcp = entry.startTime; });
-  watch('longtask', entry => { sea.long.push({ s: entry.startTime, d: entry.duration }); });
-  watch('event', entry => { const timing = entry as unknown as { interactionId?: number }; if (timing.interactionId) sea.inter.push(entry.duration); }, { durationThreshold: 16 });
-  addEventListener('load', () => requestAnimationFrame(() => { sea.loaded = performance.now(); }));
-}
-
-const p95 = (values: number[]) => [...values].sort((a, b) => a - b)[Math.floor(values.length * 0.95)] ?? 0;
-const round = (value: number, places = 1) => Math.round(value * 10 ** places) / 10 ** places;
-
-interface Scene { page: Page; cdp: CDPSession; errors: string[]; egress: string[] }
-
-const state = { values: {} as Record<string, number | null>, notes: {} as Record<string, string>, errors: [] as string[], egress: [] as string[] };
-const worst = (id: string, value: number) => { const old = state.values[id]; state.values[id] = old === null || old === undefined ? value : Math.max(old, value); };
-
-async function open(browser: Browser, profile: Profile, prepare?: (page: Page) => Promise<unknown>): Promise<Scene> {
-  const context = await browser.newContext({ viewport: { width: profile.width, height: profile.height }, deviceScaleFactor: profile.scale });
-  const page = await context.newPage();
-  const egress = guardNetwork(page);
-  const errors = collectConsoleErrors(page);
-  const cdp = await context.newCDPSession(page);
-  await cdp.send('Emulation.setCPUThrottlingRate', { rate: THROTTLE });
-  await page.addInitScript(installVitals);
-  await prepare?.(page);
-  return { page, cdp, errors, egress };
-}
-
-/** Read the page's vitals, fold them into the run, and close it. */
-async function finish(scene: Scene): Promise<void> {
-  const vitals = await scene.page.evaluate(() => (globalThis as unknown as { __sea: Vitals }).__sea);
-  worst('clsScore', round(vitals.cls, 3));
-  worst('longTaskMaxMs', Math.round(Math.max(0, ...vitals.long.filter(task => task.s >= (vitals.loaded ?? 0)).map(task => task.d))));
-  if (vitals.inter.length) worst('inpMs', Math.round(Math.max(...vitals.inter)));
-  state.errors.push(...scene.errors);
-  state.egress.push(...scene.egress);
-  await scene.page.context().close();
-}
-
-/** JS heap plus the decoded pixels of every image on screen (4 bytes per pixel), as tests/e2e/perf.spec.ts. */
-async function memoryMB(page: Page): Promise<number> {
-  return page.evaluate(() => {
-    (globalThis as unknown as { gc?: () => void }).gc?.();
-    const heap = (performance as unknown as { memory: { usedJSHeapSize: number } }).memory.usedJSHeapSize;
-    const pixels = [...document.images].reduce((n, img) => n + img.naturalWidth * img.naturalHeight * 4, 0);
-    return (heap + pixels) / MB;
-  });
-}
-
-/** Browser CPU over a quiet window: all processes (incl. GPU) in % of one core, and the page's main-thread busy share. */
-async function idle(browser: Browser, scene: Scene, id: string): Promise<void> {
-  if (IDLE_SECONDS <= 0) { state.notes[id] = 'idle window switched off (PERF_REF_IDLE_SECONDS=0)'; return; }
+/** Browser CPU over a quiet window: all processes (GPU included) in % of one core, and the page's main-thread busy share. */
+async function idle(browser: Browser, page: Page, id: string, out: Measured): Promise<void> {
+  if (IDLE_SECONDS <= 0) { out.notes[id] = 'idle window switched off (PERF_REF_IDLE_SECONDS=0)'; return; }
   try {
     const browserCdp = await browser.newBrowserCDPSession();
+    const pageCdp = await page.context().newCDPSession(page);
     const cpu = async () => {
       const { processInfo } = await browserCdp.send('SystemInfo.getProcessInfo') as { processInfo: { cpuTime: number }[] };
       return processInfo.reduce((sum, p) => sum + p.cpuTime, 0);
     };
     const task = async () => {
-      const { metrics } = await scene.cdp.send('Performance.getMetrics') as { metrics: { name: string; value: number }[] };
+      const { metrics } = await pageCdp.send('Performance.getMetrics') as { metrics: { name: string; value: number }[] };
       return metrics.find(m => m.name === 'TaskDuration')?.value ?? 0;
     };
-    await scene.cdp.send('Performance.enable');
-    await scene.page.waitForTimeout(3000); // let start-up work finish before the window opens
+    await pageCdp.send('Performance.enable');
+    await page.waitForTimeout(3000); // let start-up work finish before the window opens
     const [cpu0, task0, t0] = [await cpu(), await task(), Date.now()];
-    await scene.page.waitForTimeout(IDLE_SECONDS * 1000);
+    await page.waitForTimeout(IDLE_SECONDS * 1000);
     const [cpu1, task1, t1] = [await cpu(), await task(), Date.now()];
     const wall = (t1 - t0) / 1000;
-    state.values[id] = round((cpu1 - cpu0) / wall * 100);
-    worst('idleMainThreadMaxPct', round((task1 - task0) / wall * 100));
+    out.values[id] = round((cpu1 - cpu0) / wall * 100);
+    const busy = round((task1 - task0) / wall * 100), old = out.values.idleMainThreadMaxPct;
+    out.values.idleMainThreadMaxPct = old === null || old === undefined ? busy : Math.max(old, busy);
+    await pageCdp.detach();
     await browserCdp.detach();
   } catch (error) {
-    state.notes[id] = `idle CPU could not be read: ${String(error).slice(0, 120)}`;
+    out.notes[id] = `idle CPU could not be read: ${String(error).slice(0, 120)}`;
   }
 }
 
@@ -41244,15 +41365,15 @@ for (const profile of PROFILES) {
     test.setTimeout(1_200_000);
     const engine = info.project.name.replace('perf-ref-', '');
     const first = profile === PROFILES[0];
-    state.values = {}; state.notes = {}; state.errors = []; state.egress = [];
+    const out: Measured = { values: {}, notes: {} };
     const meta: RunMeta = {
-      browser: engine, browserVersion: browser.version(), profile: profile.id,
+      runId: RUN_ID, browser: engine, browserVersion: browser.version(), profile: profile.id,
       viewport: { width: profile.width, height: profile.height, scale: profile.scale },
       cpuThrottle: THROTTLE, gpu: { vendor: 'unknown', renderer: 'unknown' }, idleSeconds: first ? IDLE_SECONDS : 0,
     };
     mkdirSync(OUT, { recursive: true });
     const write = (runState: RunFile['state'], message?: string) => writeFileSync(path.join(OUT, `${engine}-${profile.id}.run.json`),
-      JSON.stringify({ meta, state: runState, ...(message ? { message } : {}), values: state.values, notes: state.notes } satisfies RunFile, null, 2) + '\n');
+      JSON.stringify({ meta, state: runState, ...(message ? { message } : {}), values: out.values, notes: out.notes } satisfies RunFile, null, 2) + '\n');
 
     // Gate 0, before anything is measured: the unmasked WebGL renderer must be the UHD 770 or nothing else counts.
     const probe = await browser.newPage();
@@ -41269,158 +41390,20 @@ for (const profile of PROFILES) {
     }
 
     try {
-      state.values.htmlMB = round(statSync('dist/index.html').size / MB);
-
-      // Chooser: first frame with the heading and role buttons (file:// pages report no paint timing, so a test-side observer).
-      const chooser = await open(browser, profile, page => page.addInitScript(() => {
-        new MutationObserver((_, observer) => {
-          if (!document.querySelector('h1') || !document.querySelector('a[data-role]')) return;
-          observer.disconnect();
-          requestAnimationFrame(() => { (window as unknown as { seaPainted: number }).seaPainted = performance.now(); });
-        }).observe(document, { childList: true, subtree: true });
-      }));
-      await chooser.page.goto(gameUrl('?lang=en'));
-      await chooser.page.waitForFunction(() => (window as unknown as { seaPainted?: number }).seaPainted !== undefined);
-      state.values.chooserMs = Math.round(await chooser.page.evaluate(() => (window as unknown as { seaPainted: number }).seaPainted));
-      const lcp = await chooser.page.evaluate(() => (globalThis as unknown as { __sea: Vitals }).__sea.lcp);
-      if (lcp !== null) state.values.lcpMs = Math.round(lcp);
-      else { state.values.lcpMs = state.values.chooserMs; state.notes.lcpMs = 'no LCP entry on file://; chooserMs (heading and buttons painted) used as the proxy'; }
-      if (first) await idle(browser, chooser, 'idleCpuChooserPct');
-      await finish(chooser);
-
-      // Largest valid instructor save: 210 ledger entries, all 70 lots, 10 teams.
-      const saved = JSON.parse(readFileSync('tests/fixtures/legacy/instructor-max-ledger.json', 'utf8')).state;
-      const big = await open(browser, profile, page => page.addInitScript(raw => { if (!sessionStorage.getItem('SEA_INSTRUCTOR_V300')) sessionStorage.setItem('SEA_INSTRUCTOR_V300', raw); }, JSON.stringify(saved)));
-      const t1 = Date.now();
-      await big.page.goto(gameUrl('?role=instructor&lang=en'));
-      await big.page.getByRole('heading', { name: 'Results to reconcile' }).waitFor();
-      state.values.maxStateStartMs = Date.now() - t1;
-      state.values.maxStateMemoryMB = Math.round(await memoryMB(big.page));
-      if (first) await idle(browser, big, 'idleCpuInstructorPct');
-      await finish(big);
-
-      // Command response in a 10-team timed auction, then real clicks (trusted events) for INP.
-      const fresh = await open(browser, profile);
-      await fresh.page.goto(gameUrl('?role=instructor&lang=en'));
-      await instructorSetup(fresh.page, { teams: 10, reveal: 'JIT', timed: true, missions: ['TROOP', 'RECCE', 'COMBAT', 'COMMAND', 'RECOVERY', 'MINE', 'TROOP', 'RECCE', 'COMBAT', 'COMMAND'] });
-      await fresh.page.click('#open-bidding');
-      const bids = await fresh.page.evaluate(() => {
-        const out: number[] = [];
-        for (let i = 0; i < 40; i++) {
-          const button = document.querySelector<HTMLButtonElement>(`#bid-${(i % 10) + 1}`);
-          if (!button || button.disabled) continue;
-          const start = performance.now();
-          button.click();
-          out.push(performance.now() - start);
-        }
-        return out;
-      });
-      state.values.commandP95Ms = round(p95(bids));
-      for (let i = 1; i <= 10; i++) { // real clicks; a bid button that is not live is skipped, not waited for
-        const button = fresh.page.locator(`#bid-${i}`);
-        if (await button.count() && await button.isEnabled()) await button.click();
-      }
-      const before = await memoryMB(fresh.page);
-      for (let cycle = 0; cycle < 10; cycle++) await fresh.page.evaluate(() => { for (let i = 0; i < 20; i++) document.querySelector<HTMLButtonElement>('#lang-toggle')!.click(); });
-      state.values.memoryGrowthMB = round(await memoryMB(fresh.page) - before);
-      await finish(fresh);
-
-      const tracker = async (page: Page) => {
-        await page.goto(gameUrl('?role=student&lang=en'));
-        await page.fill('#join-code', 'SEA3-T2-0123456789ABCDEF');
-        await page.selectOption('#join-mission', 'RECOVERY');
-        await page.click('#join'); await page.click('#record-practice'); await page.click('#student-planning');
-        await page.check('#plan-confirm'); await page.click('#student-start-auction');
-      };
-      const purchases = [[1, 5, 'COM-E', 600000], [1, 7, 'ACC-F', 350000], [2, 1, 'CAP-B', 450000]] as const;
-
-      // 3D showcase on the real GPU: ready, three purchases, frame cadence, memory.
-      const model = await open(browser, profile);
-      await tracker(model.page);
-      const opened = await model.page.evaluate(() => performance.now());
-      await model.page.locator('dialog button[data-value="ok"]').click();
-      // Ready is budgeted at 3 s; a baseline must record a slower value rather than abort, so wait up to 30 s.
-      await model.page.locator('#showcase [data-mode="3d"][data-ready="true"]').waitFor({ timeout: 30_000 });
-      state.values.modelReadyMs = Math.round(await model.page.evaluate(() => performance.now()) - opened);
-      const modelUpdates: number[] = [];
-      for (const [round_, lot, card, paid] of purchases) {
-        if (round_ > 1) await model.page.selectOption('#pos-round', String(round_));
-        await model.page.selectOption('#pos-lot', String(lot));
-        await model.page.fill('#card-id', card); await model.page.click('#load-card'); await model.page.fill('#paid', String(paid));
-        modelUpdates.push(await model.page.evaluate(async id => {
-          const start = performance.now();
-          document.querySelector<HTMLButtonElement>('#record-win')!.click();
-          if (!document.querySelector('#showcase [data-mode="3d"]')!.getAttribute('data-layers')!.split(' ').includes(id)) throw new Error(`model lacks ${id}`);
-          await new Promise(requestAnimationFrame);
-          return performance.now() - start;
-        }, card));
-      }
-      state.values.modelUpdateMaxMs = Math.round(Math.max(...modelUpdates));
-      state.values.modelMemoryMB = Math.round(await memoryMB(model.page));
-      state.values.modelMemoryTargetMB = state.values.modelMemoryMB;
-      const gaps = await model.page.evaluate(() => new Promise<number[]>(resolve => {
-        const out: number[] = [];
-        let last = performance.now();
-        const end = last + 5000;
-        const tick = (now: number) => { out.push(now - last); last = now; if (now < end) requestAnimationFrame(tick); else resolve(out); };
-        requestAnimationFrame(tick);
-      }));
-      state.values.frameP95Ms = round(p95(gaps));
-      state.values.gpuFrameMs = null;
-      state.notes.gpuFrameMs = 'not measured: the page cannot reach the showcase GPU timer; frameP95Ms is the animation-frame gap only';
-      if (first) await idle(browser, model, 'idleCpuTrackerPct');
-      await finish(model);
-
-      // Stills showcase without WebGL.
-      const student = await open(browser, profile, withoutWebgl);
-      await tracker(student.page);
-      await student.page.locator('dialog button[data-value="ok"]').click();
-      await student.page.locator('#showcase img[data-layer="base"]').waitFor();
-      const updates: number[] = [];
-      for (const [round_, lot, card, paid] of purchases) {
-        if (round_ > 1) await student.page.selectOption('#pos-round', String(round_));
-        await student.page.selectOption('#pos-lot', String(lot));
-        await student.page.fill('#card-id', card); await student.page.click('#load-card'); await student.page.fill('#paid', String(paid));
-        updates.push(await student.page.evaluate(async id => {
-          const start = performance.now();
-          document.querySelector<HTMLButtonElement>('#record-win')!.click();
-          await document.querySelector<HTMLImageElement>(`#showcase img[data-layer="${id}"]`)!.decode();
-          return performance.now() - start;
-        }, card));
-      }
-      state.values.showcaseUpdateMaxMs = Math.round(Math.max(...updates));
-      state.values.angleChangeMs = Math.round(await student.page.evaluate(async () => {
-        const start = performance.now();
-        document.querySelector<HTMLInputElement>('#showcase-view-rear')!.click();
-        await Promise.all([...document.querySelectorAll<HTMLImageElement>('#showcase img')].map(img => img.decode()));
-        return performance.now() - start;
-      }));
-      await student.page.check('#showcase-view-turntable');
-      await student.page.locator('#showcase-turn').waitFor();
-      await student.page.waitForTimeout(300); // neighbouring frames pre-decode while a person pauses
-      const scrub: number[] = [];
-      for (let i = 0; i < 6; i++) {
-        scrub.push(await student.page.evaluate(async () => {
-          const input = document.querySelector<HTMLInputElement>('#showcase-turn')!;
-          const start = performance.now();
-          input.value = String((Number(input.value) + 1) % (Number(input.max) + 1));
-          input.dispatchEvent(new Event('input', { bubbles: true }));
-          await document.querySelector<HTMLImageElement>('#showcase img[data-frame]')!.decode();
-          return performance.now() - start;
-        }));
-        await student.page.waitForTimeout(120);
-      }
-      state.values.turntableStepMaxMs = Math.round(Math.max(...scrub));
-      state.values.studentMemoryMB = Math.round(await memoryMB(student.page));
-      await finish(student);
-
-      state.values.pageErrors = state.errors.length;
-      if (state.errors.length) state.notes.pageErrors = state.errors.slice(0, 3).join(' | ').slice(0, 300);
-      state.values.egressAttempts = state.egress.length;
-      if (state.egress.length) state.notes.egressAttempts = state.egress.slice(0, 3).join(' | ').slice(0, 300);
-      if (!first) for (const id of ['idleCpuChooserPct', 'idleCpuInstructorPct', 'idleCpuTrackerPct', 'idleMainThreadMaxPct']) state.notes[id] = 'idle windows run on the first profile only';
+      // The real GPU: no spoofing (the CI gate passes withGpu here).
+      const lab = new Lab(browser, { viewport: { width: profile.width, height: profile.height }, deviceScaleFactor: profile.scale });
+      const merge = (part: Measured) => { Object.assign(out.values, part.values); Object.assign(out.notes, part.notes); };
+      merge(await startUp(lab, first ? (page, view) => idle(browser, page, IDLE_IDS[view as 'Chooser' | 'Instructor'], out) : undefined));
+      merge(await commands(lab));
+      merge(await model(lab, first ? page => idle(browser, page, IDLE_IDS.Tracker, out) : undefined));
+      merge(await stills(lab));
+      lab.tally();
+      merge(lab.measured);
+      out.values.modelMemoryTargetMB = out.values.modelProcessMB ?? null;
+      if (out.values.modelMemoryTargetMB === null) out.notes.modelMemoryTargetMB = out.notes.modelProcessMB ?? 'renderer and GPU process memory not reported';
+      if (!first) for (const id of [...Object.values(IDLE_IDS), 'idleMainThreadMaxPct']) out.notes[id] = 'idle windows run on the first profile only';
       write('OK');
-      console.log(`${engine} ${profile.id} on ${gpu.renderer}: ${JSON.stringify(state.values)}`);
+      console.log(`${engine} ${profile.id} on ${gpu.renderer}: ${JSON.stringify(out.values)}`);
     } catch (error) {
       write('ERROR', String(error).slice(0, 500));
       throw error;
@@ -41431,7 +41414,7 @@ for (const profile of PROFILES) {
 
 ### tests/perf-ref/report.ts
 
-Paths: `tests/perf-ref/report.ts`. SHA-256 `078c87e6878639376b93b61c1375585789861e62c990d428e20f105aba95106b`, 11874 bytes.
+Paths: `tests/perf-ref/report.ts`. SHA-256 `7133cea91d79f6a1b84032af8bb53491ae82f784347e5c10185b6283a1412d37`, 15803 bytes.
 
 ```ts
 // G3 reference-proxy report (MPES §14, §1.4): the metric catalogue, the budgets it is read against, and the
@@ -41476,34 +41459,57 @@ export interface MetricDef {
 const BP = 'Browser performance';
 const RI = 'Responsive interface';
 
+// A budget of null marks context for reading the others: sample counts, the worst case behind a p95, the tier chosen.
 export const METRICS: readonly MetricDef[] = [
   { id: 'htmlMB', label: 'HTML file size', unit: 'MB', budget: 50, kpi: BP, gate: '§14', inExistingSpec: true },
   { id: 'chooserMs', label: 'Time to interactive, chooser', unit: 'ms', budget: 2000, kpi: BP, gate: '§14', inExistingSpec: true },
   { id: 'maxStateStartMs', label: 'Time to interactive, instructor with maximum saved state', unit: 'ms', budget: 3000, kpi: BP, gate: '§14', inExistingSpec: true },
-  { id: 'commandP95Ms', label: 'Command response, p95 (10-team timed auction)', unit: 'ms', budget: 100, kpi: BP, gate: '§14', inExistingSpec: true },
-  { id: 'maxStateMemoryMB', label: 'Memory, 70 lots and 10 teams', unit: 'MB', budget: 400, kpi: BP, gate: '§14', inExistingSpec: true },
-  { id: 'memoryGrowthMB', label: 'Memory growth over 10 re-render cycles', unit: 'MB', budget: 5, kpi: BP, gate: '§14', inExistingSpec: true },
-  { id: 'studentMemoryMB', label: 'Memory, student tracker with stills', unit: 'MB', budget: 400, kpi: BP, gate: '§10.3', inExistingSpec: true },
-  { id: 'showcaseUpdateMaxMs', label: 'Stills update after a purchase, worst of 3', unit: 'ms', budget: 100, kpi: BP, gate: '§10.3', inExistingSpec: true },
+  { id: 'commandSamples', label: 'Command response, samples', unit: '', budget: null, kpi: BP, gate: '§14', inExistingSpec: true },
+  { id: 'commandP95Ms', label: 'Command response, p95 (10-team timed auction, click to painted result)', unit: 'ms', budget: 100, kpi: BP, gate: '§14', inExistingSpec: true },
+  { id: 'commandMaxMs', label: 'Command response, worst', unit: 'ms', budget: null, kpi: BP, gate: '§14', inExistingSpec: true },
+  { id: 'maxStateMemoryMB', label: 'Memory, 70 lots and 10 teams (page heap and images)', unit: 'MB', budget: 400, kpi: BP, gate: '§14', inExistingSpec: true },
+  { id: 'maxStateProcessMB', label: 'Memory, 70 lots and 10 teams (renderer and GPU processes)', unit: 'MB', budget: 400, kpi: BP, gate: '§14', inExistingSpec: false },
+  { id: 'memoryGrowthMB', label: 'Memory growth over 10 phase cycles', unit: 'MB', budget: 5, kpi: BP, gate: '§14', inExistingSpec: true },
+  { id: 'showcaseUpdateSamples', label: 'Stills update, samples', unit: '', budget: null, kpi: BP, gate: '§10.3', inExistingSpec: true },
+  { id: 'showcaseUpdateP95Ms', label: 'Stills update after a purchase, p95', unit: 'ms', budget: 100, kpi: BP, gate: '§10.3', inExistingSpec: true },
+  { id: 'showcaseUpdateMaxMs', label: 'Stills update after a purchase, worst', unit: 'ms', budget: null, kpi: BP, gate: '§10.3', inExistingSpec: true },
   { id: 'angleChangeMs', label: 'Stills angle change', unit: 'ms', budget: 50, kpi: BP, gate: '§10.3', inExistingSpec: true },
   { id: 'turntableStepMaxMs', label: 'Turntable step, worst of 6', unit: 'ms', budget: 50, kpi: BP, gate: '§10.3', inExistingSpec: true },
-  { id: 'modelReadyMs', label: '3D model ready', unit: 'ms', budget: 3000, kpi: BP, gate: '§10.3, §14', inExistingSpec: true },
-  { id: 'modelUpdateMaxMs', label: '3D model update after a purchase, worst of 3', unit: 'ms', budget: 100, kpi: BP, gate: '§10.3', inExistingSpec: true },
-  { id: 'modelMemoryMB', label: 'Memory, 3D showcase (hard limit)', unit: 'MB', budget: 400, kpi: BP, gate: '§10.3', inExistingSpec: true },
-  { id: 'modelMemoryTargetMB', label: 'Memory, 3D showcase (proxy target)', unit: 'MB', budget: 300, kpi: BP, gate: '§14', inExistingSpec: false },
-  { id: 'frameP95Ms', label: '3D showcase, p95 gap between animation frames over 5 s', unit: 'ms', budget: 33, kpi: BP, gate: '§14', inExistingSpec: false },
-  { id: 'gpuFrameMs', label: '3D showcase, GPU time of a frame', unit: 'ms', budget: 16, kpi: BP, gate: '§14', inExistingSpec: false },
+  { id: 'studentMemoryMB', label: 'Memory, student tracker with stills (page heap and images)', unit: 'MB', budget: 400, kpi: BP, gate: '§10.3', inExistingSpec: true },
+  { id: 'studentProcessMB', label: 'Memory, student tracker with stills (renderer and GPU processes)', unit: 'MB', budget: 400, kpi: BP, gate: '§10.3', inExistingSpec: false },
+  { id: 'modelReadyMs', label: '3D model ready, worst tracker (opening click to first drawn model)', unit: 'ms', budget: 3000, kpi: BP, gate: '§10.3, §14', inExistingSpec: true },
+  { id: 'modelReadyFirstMs', label: '3D model ready, first tracker', unit: 'ms', budget: null, kpi: BP, gate: '§10.3, §14', inExistingSpec: true },
+  { id: 'modelUpdateSamples', label: '3D model update, samples', unit: '', budget: null, kpi: BP, gate: '§10.3', inExistingSpec: true },
+  { id: 'modelUpdateP95Ms', label: '3D model update after a purchase, p95 (click to the painted draw with the part)', unit: 'ms', budget: 100, kpi: BP, gate: '§10.3', inExistingSpec: true },
+  { id: 'modelUpdateMaxMs', label: '3D model update after a purchase, worst', unit: 'ms', budget: null, kpi: BP, gate: '§10.3', inExistingSpec: true },
+  { id: 'modelMemoryMB', label: 'Memory, 3D showcase (page heap and images)', unit: 'MB', budget: 400, kpi: BP, gate: '§10.3', inExistingSpec: true },
+  { id: 'modelProcessMB', label: 'Memory, 3D showcase (renderer and GPU processes, textures included)', unit: 'MB', budget: 400, kpi: BP, gate: '§10.3', inExistingSpec: false },
+  { id: 'modelMemoryTargetMB', label: 'Memory, 3D showcase, renderer and GPU processes (proxy target)', unit: 'MB', budget: 300, kpi: BP, gate: '§14', inExistingSpec: false },
+  { id: 'turningDraws', label: '3D showcase, draws in 5 s of turning', unit: '', budget: null, kpi: BP, gate: '§14', inExistingSpec: false },
+  { id: 'frameP95Ms', label: '3D showcase, p95 main-thread time of a draw over 5 s of turning', unit: 'ms', budget: 33, kpi: BP, gate: '§14', inExistingSpec: false },
+  { id: 'drawGapP95Ms', label: '3D showcase, p95 gap between draws (the pacer leaves at least twice a draw cost)', unit: 'ms', budget: null, kpi: BP, gate: '§10.3', inExistingSpec: false },
+  { id: 'modelTier', label: '3D showcase, resolution tier settled on (0 is full)', unit: '', budget: null, kpi: BP, gate: '§10.3', inExistingSpec: false },
+  { id: 'gpuFrameMs', label: '3D showcase, p95 GPU time of a draw', unit: 'ms', budget: 16, kpi: BP, gate: '§14', inExistingSpec: false },
   { id: 'idleCpuChooserPct', label: 'Idle CPU, chooser (all browser processes, % of one core)', unit: '%', budget: 3, kpi: BP, gate: '§14', inExistingSpec: false },
   { id: 'idleCpuInstructorPct', label: 'Idle CPU, instructor with saved state', unit: '%', budget: 3, kpi: BP, gate: '§14', inExistingSpec: false },
   { id: 'idleCpuTrackerPct', label: 'Idle CPU, student tracker with 3D showcase', unit: '%', budget: 3, kpi: BP, gate: '§14', inExistingSpec: false },
   { id: 'idleMainThreadMaxPct', label: 'Idle main-thread busy share, worst of the three views', unit: '%', budget: 3, kpi: BP, gate: '§14', inExistingSpec: false },
   { id: 'inpMs', label: 'Interaction to next paint (real clicks, worst)', unit: 'ms', budget: 200, kpi: RI, gate: '§14, §1.4', inExistingSpec: false },
   { id: 'lcpMs', label: 'Largest contentful paint (chooser)', unit: 'ms', budget: 2500, kpi: RI, gate: '§14, §1.4', inExistingSpec: false },
-  { id: 'clsScore', label: 'Cumulative layout shift (chooser, instructor, tracker; worst)', unit: '', budget: 0.1, kpi: RI, gate: '§14, §1.4', inExistingSpec: false },
-  { id: 'longTaskMaxMs', label: 'Longest task after load (chooser, instructor, tracker; worst)', unit: 'ms', budget: 200, kpi: RI, gate: '§14, §1.4', inExistingSpec: false },
+  { id: 'clsScore', label: 'Cumulative layout shift (every page; worst)', unit: '', budget: 0.1, kpi: RI, gate: '§14, §1.4', inExistingSpec: false },
+  { id: 'longTaskMaxMs', label: 'Longest task after load (every page; worst)', unit: 'ms', budget: 200, kpi: RI, gate: '§14, §1.4', inExistingSpec: false },
   { id: 'pageErrors', label: 'Page errors and console errors', unit: 'count', budget: 0, kpi: 'Runs in any classroom', gate: '§1.4', inExistingSpec: false },
   { id: 'egressAttempts', label: 'Network requests other than the file itself', unit: 'count', budget: 0, kpi: 'Privacy and security', gate: '§13, §1.4', inExistingSpec: false },
 ];
+
+/** The browsers and screens of MPES §14; a baseline needs every pair. Idle windows run on the first screen only. */
+export const BROWSERS = ['chromium', 'msedge'] as const;
+export const PROFILES = [
+  { id: '1366x768at1', width: 1366, height: 768, scale: 1 },
+  { id: '1536x864at1.25', width: 1536, height: 864, scale: 1.25 },
+  { id: '1280x720at1.5', width: 1280, height: 720, scale: 1.5 },
+] as const;
+export type Profile = typeof PROFILES[number];
 
 /** KPIs that perf:ref cannot measure, and where they are measured instead. */
 export const OTHER_KPI_NOTES: Partial<Record<Kpi, string>> = {
@@ -41518,6 +41524,8 @@ export const OTHER_KPI_NOTES: Partial<Record<Kpi, string>> = {
 };
 
 export interface RunMeta {
+  /** The run that wrote the file (one per `npm run perf:ref`); files from another run are not counted. */
+  runId: string;
   browser: string;
   browserVersion: string;
   profile: string;
@@ -41573,7 +41581,7 @@ function worstOf(statuses: Status[]): Status {
 }
 
 /** One row per KPI, built from every run file. A KPI is FAIL if any measured metric fails, PASS if at least one was measured and none failed. */
-export function buildKpiRows(runs: RunFile[]): KpiRow[] {
+function buildKpiRows(runs: RunFile[]): KpiRow[] {
   const measuredRuns = runs.filter(run => run.state === 'OK');
   return KPIS.map(kpi => {
     const defs = METRICS.filter(def => def.kpi === kpi);
@@ -41607,10 +41615,24 @@ export interface Report {
   kpis: KpiRow[];
 }
 
-export function buildReport(runs: RunFile[], stamp: string, commit: string, dirty: boolean): Report {
-  const problems = runs.filter(run => run.state !== 'OK').map(run => `${runName(run)}: ${run.state}${run.message ? ` (${run.message})` : ''}`);
-  if (runs.length === 0) problems.push('no run files were written');
-  return { stamp, commit, dirty, state: problems.length ? 'INCOMPLETE' : 'BASELINE', problems, runs: runs.map(run => run.meta), kpis: buildKpiRows(runs) };
+/**
+ * The report of one run. It is a BASELINE only when this run (`runId`) wrote every browser and screen pair, each
+ * measured, and each gives every budgeted metric a value or the reason it has none; anything else is INCOMPLETE, and
+ * files another run left in the folder are listed as problems and not counted.
+ */
+export function buildReport(all: RunFile[], at: { runId: string; stamp: string; commit: string; dirty: boolean }): Report {
+  const problems: string[] = [];
+  for (const run of all) if (run.meta.runId !== at.runId) problems.push(`${runName(run)}: a file from another run (${run.meta.runId}), not counted`);
+  const runs = all.filter(run => run.meta.runId === at.runId);
+  for (const browser of BROWSERS) for (const profile of PROFILES) {
+    if (!runs.some(run => run.meta.browser === browser && run.meta.profile === profile.id)) problems.push(`missing run: ${browser} ${profile.id}`);
+  }
+  for (const run of runs) {
+    if (run.state !== 'OK') { problems.push(`${runName(run)}: ${run.state}${run.message ? ` (${run.message})` : ''}`); continue; }
+    const unexplained = METRICS.filter(def => def.budget !== null && (run.values[def.id] ?? null) === null && !run.notes[def.id]).map(def => def.id);
+    if (unexplained.length) problems.push(`${runName(run)}: not measured and no reason given: ${unexplained.join(', ')}`);
+  }
+  return { stamp: at.stamp, commit: at.commit, dirty: at.dirty, state: problems.length ? 'INCOMPLETE' : 'BASELINE', problems, runs: runs.map(run => run.meta), kpis: buildKpiRows(runs) };
 }
 
 const fmt = (value: number | null, unit: string) => value === null ? 'n/a' : `${Math.round(value * 100) / 100}${unit ? ` ${unit}` : ''}`;
@@ -41636,7 +41658,7 @@ export function renderMarkdown(report: Report): string {
 
 ### tests/perf-ref/teardown.ts
 
-Paths: `tests/perf-ref/teardown.ts`. SHA-256 `b12707f93562b7c80875c44716dbccd8854e0d0d77f1ddfad37429ad6e6cf78f`, 1227 bytes.
+Paths: `tests/perf-ref/teardown.ts`. SHA-256 `ec96c09906d87f61634a9c032e2e8cd286e9e48116af56e6a19d009c1af960d2`, 1435 bytes.
 
 ```ts
 // After the perf:ref run: gather the per-run files into report.json and report.md in the same folder.
@@ -41657,7 +41679,9 @@ export default function teardown(): void {
   }
   const runs = readdirSync(dir).filter(name => name.endsWith('.run.json')).sort()
     .map(name => JSON.parse(readFileSync(path.join(dir, name), 'utf8')) as RunFile);
-  const report = buildReport(runs, process.env.PERF_REF_STAMP ?? path.basename(dir), git('rev-parse', 'HEAD') || 'unknown', git('status', '--porcelain') !== '');
+  const stamp = process.env.PERF_REF_STAMP ?? path.basename(dir);
+  // The spec stamps each file with this run's id (PERF_REF_STAMP), so files an earlier run left here are not counted.
+  const report = buildReport(runs, { runId: process.env.PERF_REF_STAMP ?? 'manual', stamp, commit: git('rev-parse', 'HEAD') || 'unknown', dirty: git('status', '--porcelain') !== '' });
   writeFileSync(path.join(dir, 'report.json'), JSON.stringify(report, null, 2) + '\n');
   writeFileSync(path.join(dir, 'report.md'), renderMarkdown(report));
   console.log(`perf:ref: ${report.state}, report in ${dir}`);
@@ -41846,7 +41870,7 @@ export async function loadPurchase(page: Page, [round_, lot, card, paid]: typeof
 
 ### tests/perf/scenarios.ts
 
-Paths: `tests/perf/scenarios.ts`. SHA-256 `7467a50445c13dda9b79eb6db5109b71c1621a90289f63c18e78a287c6d72ce2`, 16864 bytes.
+Paths: `tests/perf/scenarios.ts`. SHA-256 `6aeec6bef848f2038c72f4c7c0fb46dfd8a46f41e9a07264f07896e4f6d16047`, 17148 bytes.
 
 ```ts
 // The MPES §14 scenarios, run the same way by the CI gate (tests/e2e/perf.spec.ts, software graphics) and by the
@@ -41968,12 +41992,17 @@ export class Lab {
   }
 }
 
-/** The renderer and GPU processes' private memory, under `prefix`; null with a note where the OS cannot report it. */
+/**
+ * The renderer and GPU processes' private memory under `prefix`: each, and their sum `${prefix}ProcessMB`, the figure
+ * the memory budget is read against (it holds the textures and buffers the page heap does not); null with a note
+ * where the operating system cannot report it.
+ */
 async function machine(lab: Lab, prefix: string, out: Measured): Promise<void> {
   const mb = await processMB(lab.browser);
   out.values[`${prefix}RendererMB`] = mb?.renderer ?? null;
   out.values[`${prefix}GpuProcessMB`] = mb?.gpu ?? null;
-  if (!mb) out.notes[`${prefix}RendererMB`] = 'the operating system did not report the process memory';
+  out.values[`${prefix}ProcessMB`] = mb ? round(mb.renderer + mb.gpu) : null;
+  if (!mb) out.notes[`${prefix}ProcessMB`] = 'the operating system did not report the process memory';
 }
 
 export const TEN_TEAMS = { teams: 10, reveal: 'JIT' as const, timed: true, missions: ['TROOP', 'RECCE', 'COMBAT', 'COMMAND', 'RECOVERY', 'MINE', 'TROOP', 'RECCE', 'COMBAT', 'COMMAND'] };
@@ -42088,7 +42117,7 @@ export async function model(lab: Lab, after?: (page: Page) => Promise<void>): Pr
     }));
     const gpu = await page.evaluate(() => (globalThis as unknown as { __seaGpu: { times: number[]; available: boolean } }).__seaGpu);
     out.values.turningDraws = turning.costs.length;
-    // The adaptive tier the stage settled on: 0 is full resolution (source/showcase/pace.ts SCALES).
+    // The adaptive tier the stage settled on: 0 is full resolution (source/showcase/pace.ts TIERS).
     out.values.modelTier = Number(await page.locator('#showcase canvas').getAttribute('data-tier') ?? 0);
     out.values.frameP95Ms = turning.costs.length >= MIN_SAMPLES ? round(p95(turning.costs)) : null;
     out.values.drawGapP95Ms = turning.gaps.length >= MIN_SAMPLES ? round(p95(turning.gaps)) : null;
@@ -42142,6 +42171,7 @@ export async function stills(lab: Lab): Promise<Measured> {
   }
   out.values.turntableStepMaxMs = Math.round(Math.max(...scrub));
   out.values.studentMemoryMB = Math.round(await memoryMB(first));
+  await machine(lab, 'student', out);
   await lab.close(first);
   return out;
 }
@@ -42597,16 +42627,16 @@ describe('no GitHub links in the README or the guides (D-13)', () => {
 
 ### tests/unit/encode-cache.test.ts
 
-Paths: `tests/unit/encode-cache.test.ts`. SHA-256 `4baf0b60e98ef04a5d3a98ae038971d0411df5c1cb0087bfaea64c566bc575ac`, 3344 bytes.
+Paths: `tests/unit/encode-cache.test.ts`. SHA-256 `e5922cbdb606c1c080b35b84aa9ac672f45595d4c1ae0ffa6f971671ce51e3f1`, 5030 bytes.
 
 ```ts
 // Encode cache (art/tools/encode-renders.ts): an unchanged master is not re-encoded, the cached bytes equal a clean
 // encode, and changing any setting or the master misses.
-import { mkdirSync, mkdtempSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import sharp from 'sharp';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { cacheKey, trimAndEncode } from '../../art/tools/encode-renders.ts';
+import { SETTINGS, cacheKey, trimAndEncode } from '../../art/tools/encode-renders.ts';
 
 const ROOT = resolve(import.meta.dirname, '..', '..');
 const made: string[] = [];
@@ -42655,6 +42685,34 @@ describe('encode cache', () => {
     const again = await trimAndEncode(master, 'card', 'webp', 70, cache);
     expect(again.hit).toBe(false);
     expect(again.data.equals((await trimAndEncode(master, 'card', 'webp', 70, null)).data)).toBe(true);
+  });
+
+  // Codex G3 review finding 9: the checksum covered the image only, so damaged offsets were a hit.
+  it('re-encodes an entry whose geometry was changed, even to valid JSON', async () => {
+    await trimAndEncode(master, 'card', 'webp', 60, cache);
+    for (const f of readdirSync(cache).filter(n => n.endsWith('.json'))) {
+      const entry = JSON.parse(readFileSync(join(cache, f), 'utf8')) as Record<string, unknown>;
+      writeFileSync(join(cache, f), JSON.stringify({ ...entry, left: Number(entry['left']) + 100 }));
+    }
+    const again = await trimAndEncode(master, 'card', 'webp', 60, cache);
+    expect(again.hit).toBe(false);
+    expect(again.left).toBe((await trimAndEncode(master, 'card', 'webp', 60, null)).left);
+  });
+
+  // Codex G3 review finding 8: the trim used its own literals, so changing the apron in SETTINGS changed nothing.
+  it('trims with the apron in SETTINGS, which is part of the key', async () => {
+    const bytes = await sharp(master).toBuffer(), before = await trimAndEncode(master, 'card', 'webp', 50, null);
+    const key = cacheKey(bytes, 'card', 'webp', 50), apron = SETTINGS.apron;
+    try {
+      SETTINGS.apron = apron + 2;
+      expect(cacheKey(bytes, 'card', 'webp', 50)).not.toBe(key);
+      const wider = await trimAndEncode(master, 'card', 'webp', 50, null);
+      expect([wider.left, wider.top, wider.width, wider.height]).toEqual([before.left - 2, before.top - 2, before.width + 4, before.height + 4]);
+    } finally { SETTINGS.apron = apron; }
+  });
+
+  it('keys on a revision of the trim and encode code, for changes no setting names', () => {
+    expect(Number.isInteger(SETTINGS.revision)).toBe(true);
   });
 });
 ```
@@ -43287,13 +43345,13 @@ describe('docs/MPES.md', () => {
 
 ### tests/unit/pace.test.ts
 
-Paths: `tests/unit/pace.test.ts`. SHA-256 `2165cdf1bae2f75d968ae1f5775780a03536bc4d4c66e31c9ad226f7fd38e87e`, 3410 bytes.
+Paths: `tests/unit/pace.test.ts`. SHA-256 `3946c183895eb995efde7b8c15f95ff0378f741ba5b548c51c1f15441cfc027f`, 5353 bytes.
 
 ```ts
 // MPES §10.3: the 3D showcase never takes more than half the machine. A frame that drew is timed by the gap
 // to the next animation frame; the stage then waits at least twice that long before drawing again.
 import { describe, expect, it } from 'vitest';
-import { FRAME_MS, FramePacer, SCALES, nextTier } from '../../source/showcase/pace.ts';
+import { FRAME_MS, FramePacer, TIERS, nextTier, startTier } from '../../source/showcase/pace.ts';
 
 /** Runs `ms` of animation frames where each drawn frame costs `cost` ms; returns the draw times. */
 function run(pacer: FramePacer, start: number, ms: number, cost: number, vsync = 1000 / 60): number[] {
@@ -43347,6 +43405,17 @@ describe('frame pacer (MPES §10.3)', () => {
     expect(pacer.interval).toBeLessThan(FRAME_MS + 1);
   });
 
+  // G3 (CI run 38571533524): a purchase drawn right after a paced turning draw waited for it on a slow renderer.
+  it('holds paced draws after input from the player, so an answer to it never queues behind one', () => {
+    const pacer = new FramePacer();
+    expect(pacer.due(0)).toBe(true);
+    pacer.drew(0);
+    pacer.hold(1000);
+    expect(pacer.due(500)).toBe(false);
+    expect(pacer.due(999)).toBe(false);
+    expect(pacer.due(1000)).toBe(true);
+  });
+
   it('reports the cheapest of the last eight draws, and nothing before eight', () => {
     const pacer = new FramePacer();
     run(pacer, 0, 7 * 50, 50, 50);
@@ -43368,11 +43437,43 @@ describe('adaptive tiers (MPES §10.3)', () => {
   it('steps down one tier when even the cheapest recent draw is too slow, never below the last', () => {
     expect(nextTier(0, 60)).toBe(1);
     expect(nextTier(1, 60)).toBe(2);
-    expect(nextTier(SCALES.length - 1, 600)).toBe(SCALES.length - 1);
+    expect(nextTier(TIERS.length - 1, 600)).toBe(TIERS.length - 1);
   });
 
   it('never steps back up', () => {
     expect(nextTier(2, 1)).toBe(2);
+  });
+});
+
+// G3 (CI run 38571533524): on a software renderer multisampling made a draw 3.6 times dearer, and each fresh page began
+// at full resolution, so its first purchases waited on draws of about 170 ms before the tiers could step down.
+describe('starting tier (MPES §10.3)', () => {
+  it('runs from dearest to cheapest, and multisampling goes before the last step of resolution', () => {
+    for (let i = 1; i < TIERS.length; i++) {
+      const [a, b] = [TIERS[i - 1]!, TIERS[i]!];
+      expect(b.scale <= a.scale && (b.samples <= a.samples)).toBe(true);
+      expect(b.scale < a.scale || b.samples < a.samples).toBe(true);
+    }
+    expect(TIERS[0]).toEqual({ scale: 1, samples: 4 });
+    expect(TIERS.at(-1)!.samples).toBe(0);
+  });
+
+  it('keeps full quality where one draw fits a 30 fps frame, timing only that one', () => {
+    const timed: number[] = [];
+    expect(startTier(tier => { timed.push(tier); return 4; })).toBe(0);
+    expect(timed).toEqual([0]);
+  });
+
+  it('starts at the first tier whose draw fits', () => {
+    const costs = [50, 30, 12, 8];
+    expect(startTier(tier => costs[tier]!)).toBe(1);
+  });
+
+  it('skips a tier that only lowers resolution when the area alone cannot bring the draw within the frame', () => {
+    const costs = [250, 200, 65, 45], timed: number[] = [];
+    expect(startTier(tier => { timed.push(tier); return costs[tier]!; })).toBe(TIERS.length - 1);
+    expect(timed).not.toContain(1);
+    expect(timed).toContain(2);
   });
 });
 ```
@@ -43405,22 +43506,30 @@ describe('perf measurement protocol (MPES §14)', () => {
 
 ### tests/unit/perf-ref-report.test.ts
 
-Paths: `tests/unit/perf-ref-report.test.ts`. SHA-256 `26f511527ed4bd377515ac76698f0dc6f557cec3dce128568c9db484781759bc`, 2661 bytes.
+Paths: `tests/unit/perf-ref-report.test.ts`. SHA-256 `181b295cb62369d9caf4f9c709ef744a659d5cd64897371a2b31037cd97dac1b`, 4873 bytes.
 
 ```ts
 import { describe, expect, it } from 'vitest';
-import { KPIS, METRICS, buildReport, renderMarkdown, statusOf, type RunFile } from '../perf-ref/report.ts';
+import { BROWSERS, KPIS, METRICS, PROFILES, buildReport, renderMarkdown, statusOf, type RunFile } from '../perf-ref/report.ts';
 
-const run = (profile: string, values: Record<string, number | null>, state: RunFile['state'] = 'OK'): RunFile => ({
-  meta: { browser: 'chromium', browserVersion: '1', profile, viewport: { width: 1366, height: 768, scale: 1 }, cpuThrottle: 4, gpu: { vendor: 'Intel', renderer: 'ANGLE (Intel UHD Graphics 770)' }, idleSeconds: 60 },
+const ID = 'run-1';
+const at = { runId: ID, stamp: 's', commit: 'c', dirty: false };
+/** A value within budget for every budgeted metric. */
+const passing = Object.fromEntries(METRICS.filter(m => m.budget !== null).map(m => [m.id, 0]));
+
+const run = (browser: string, profile: string, values: Record<string, number | null>, state: RunFile['state'] = 'OK', runId = ID): RunFile => ({
+  meta: { runId, browser, browserVersion: '1', profile, viewport: { width: 1366, height: 768, scale: 1 }, cpuThrottle: 4, gpu: { vendor: 'Intel', renderer: 'ANGLE (Intel UHD Graphics 770)' }, idleSeconds: 60 },
   state, values, notes: {},
 });
+/** All six runs of a complete perf:ref, every budgeted metric within budget, with `change` applied to the first. */
+const complete = (change: Record<string, number | null> = {}): RunFile[] =>
+  BROWSERS.flatMap(browser => PROFILES.map(profile => run(browser, profile.id, { ...passing })))
+    .map((r, i) => (i === 0 ? { ...r, values: { ...r.values, ...change } } : r));
 
 describe('perf:ref report', () => {
   it('has one row per KPI of MPES §1.4, in order', () => {
     expect(KPIS).toHaveLength(12);
-    const rows = buildReport([run('a', {})], 's', 'c', false).kpis;
-    expect(rows.map(r => r.kpi)).toEqual([...KPIS]);
+    expect(buildReport(complete(), at).kpis.map(r => r.kpi)).toEqual([...KPIS]);
   });
 
   it('has unique metric ids, each under a known KPI', () => {
@@ -43437,7 +43546,7 @@ describe('perf:ref report', () => {
   });
 
   it('takes the worst value over runs and fails the KPI when one metric is over budget', () => {
-    const report = buildReport([run('a', { chooserMs: 900 }), run('b', { chooserMs: 2500 })], 's', 'c', false);
+    const report = buildReport(complete({ chooserMs: 2500 }), at);
     const browser = report.kpis.find(r => r.kpi === 'Browser performance')!;
     const chooser = browser.metrics.find(m => m.id === 'chooserMs')!;
     expect(chooser.worst).toBe(2500);
@@ -43447,15 +43556,48 @@ describe('perf:ref report', () => {
   });
 
   it('is INCOMPLETE, and keeps no numbers from a run that failed its GPU check', () => {
-    const report = buildReport([run('a', { chooserMs: 100 }, 'GPU_CHECK_FAILED')], 's', 'c', true);
+    const report = buildReport([run('chromium', PROFILES[0].id, { chooserMs: 100 }, 'GPU_CHECK_FAILED')], at);
     expect(report.state).toBe('INCOMPLETE');
-    expect(report.problems[0]).toContain('GPU_CHECK_FAILED');
+    expect(report.problems.join(' ')).toContain('GPU_CHECK_FAILED');
     expect(report.kpis.find(r => r.kpi === 'Browser performance')!.metrics.every(m => m.worst === null)).toBe(true);
-    expect(buildReport([], 's', 'c', false).state).toBe('INCOMPLETE');
+    expect(buildReport([], at).state).toBe('INCOMPLETE');
+  });
+
+  // Codex G3 review finding 2: one Chromium profile holding only chooserMs was reported as a BASELINE.
+  it('is INCOMPLETE unless both browsers ran every screen profile', () => {
+    const five = complete().slice(1);
+    const report = buildReport(five, at);
+    expect(report.state).toBe('INCOMPLETE');
+    expect(report.problems.join(' ')).toContain(`missing run: ${BROWSERS[0]} ${PROFILES[0].id}`);
+    expect(buildReport([run('chromium', PROFILES[0].id, { chooserMs: 100 })], at).state).toBe('INCOMPLETE');
+  });
+
+  it('is INCOMPLETE when a budgeted metric is missing without a reason, and accepts one with a reason', () => {
+    const missing = complete({ modelUpdateP95Ms: null });
+    const report = buildReport(missing, at);
+    expect(report.state).toBe('INCOMPLETE');
+    expect(report.problems.join(' ')).toContain('modelUpdateP95Ms');
+    missing[0]!.notes['modelUpdateP95Ms'] = 'why';
+    expect(buildReport(missing, at).state).toBe('BASELINE');
+  });
+
+  it('is INCOMPLETE when a run file belongs to another run (a reused folder)', () => {
+    const runs = complete();
+    runs.push(run('chromium', PROFILES[0].id, { ...passing }, 'OK', 'run-0'));
+    const report = buildReport(runs, at);
+    expect(report.state).toBe('INCOMPLETE');
+    expect(report.problems.join(' ')).toContain('run-0');
+  });
+
+  it('counts only this run\'s files, so an old file cannot change a number', () => {
+    const runs = complete();
+    runs.push(run('chromium', PROFILES[0].id, { ...passing, chooserMs: 9999 }, 'OK', 'run-0'));
+    const chooser = buildReport(runs, at).kpis.flatMap(r => r.metrics).find(m => m.id === 'chooserMs')!;
+    expect(chooser.worst).toBe(0);
   });
 
   it('renders every KPI and metric in the Markdown', () => {
-    const text = renderMarkdown(buildReport([run('a', { chooserMs: 900 })], 's', 'c', false));
+    const text = renderMarkdown(buildReport(complete(), at));
     for (const kpi of KPIS) expect(text).toContain(kpi);
     for (const metric of METRICS) expect(text).toContain(metric.label);
   });

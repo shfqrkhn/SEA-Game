@@ -117,12 +117,17 @@ export class Lab {
   }
 }
 
-/** The renderer and GPU processes' private memory, under `prefix`; null with a note where the OS cannot report it. */
+/**
+ * The renderer and GPU processes' private memory under `prefix`: each, and their sum `${prefix}ProcessMB`, the figure
+ * the memory budget is read against (it holds the textures and buffers the page heap does not); null with a note
+ * where the operating system cannot report it.
+ */
 async function machine(lab: Lab, prefix: string, out: Measured): Promise<void> {
   const mb = await processMB(lab.browser);
   out.values[`${prefix}RendererMB`] = mb?.renderer ?? null;
   out.values[`${prefix}GpuProcessMB`] = mb?.gpu ?? null;
-  if (!mb) out.notes[`${prefix}RendererMB`] = 'the operating system did not report the process memory';
+  out.values[`${prefix}ProcessMB`] = mb ? round(mb.renderer + mb.gpu) : null;
+  if (!mb) out.notes[`${prefix}ProcessMB`] = 'the operating system did not report the process memory';
 }
 
 export const TEN_TEAMS = { teams: 10, reveal: 'JIT' as const, timed: true, missions: ['TROOP', 'RECCE', 'COMBAT', 'COMMAND', 'RECOVERY', 'MINE', 'TROOP', 'RECCE', 'COMBAT', 'COMMAND'] };
@@ -237,7 +242,7 @@ export async function model(lab: Lab, after?: (page: Page) => Promise<void>): Pr
     }));
     const gpu = await page.evaluate(() => (globalThis as unknown as { __seaGpu: { times: number[]; available: boolean } }).__seaGpu);
     out.values.turningDraws = turning.costs.length;
-    // The adaptive tier the stage settled on: 0 is full resolution (source/showcase/pace.ts SCALES).
+    // The adaptive tier the stage settled on: 0 is full resolution (source/showcase/pace.ts TIERS).
     out.values.modelTier = Number(await page.locator('#showcase canvas').getAttribute('data-tier') ?? 0);
     out.values.frameP95Ms = turning.costs.length >= MIN_SAMPLES ? round(p95(turning.costs)) : null;
     out.values.drawGapP95Ms = turning.gaps.length >= MIN_SAMPLES ? round(p95(turning.gaps)) : null;
@@ -291,6 +296,7 @@ export async function stills(lab: Lab): Promise<Measured> {
   }
   out.values.turntableStepMaxMs = Math.round(Math.max(...scrub));
   out.values.studentMemoryMB = Math.round(await memoryMB(first));
+  await machine(lab, 'student', out);
   await lab.close(first);
   return out;
 }

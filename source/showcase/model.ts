@@ -4,15 +4,16 @@
 // when the player prefers reduced motion. Without WebGL the caller shows the still renders instead.
 import {
   ACESFilmicToneMapping, Box3, Color, DirectionalLight, Group, Mesh, MeshStandardMaterial, type Object3D,
-  PCFShadowMap, PerspectiveCamera, PlaneGeometry, PMREMGenerator, Scene, ShadowMaterial, SRGBColorSpace,
-  Timer, Vector3, WebGLRenderer,
+  HalfFloatType, PCFShadowMap, PerspectiveCamera, PlaneGeometry, PMREMGenerator, Scene, ShadowMaterial, SRGBColorSpace,
+  type Texture, Timer, Vector2, Vector3, WebGLRenderer, WebGLRenderTarget,
 } from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
+import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
 import { vehicleGlb } from './glb.ts';
 import { distanceAt, extentAt, fitTable, zoomed, type FitTable } from './frame.ts';
-import { FramePacer, SCALES, nextTier } from './pace.ts';
+import { FramePacer, INPUT_HOLD_MS, TIERS, nextTier, startTier } from './pace.ts';
 
 /** Seconds per full turn when the stage turns by itself. */
 export const TURN_SECONDS = 40;
@@ -121,8 +122,16 @@ export class ModelStage {
   #dirty = true;
   /** A change the player asked for (a purchase, turn, zoom or resize) waiting to be drawn: it skips the pacer's wait. */
   #urgent = false;
-  /** Index into SCALES: the render resolution this machine can draw in time (adaptive tiers). */
+  /** Index into TIERS: the resolution and edge smoothing this machine can draw in time (adaptive tiers). */
   #tier = 0;
+  /** Where a multisampled tier draws the scene, then resolved to the canvas with tone mapping by #output; none on a
+   *  tier without multisampling. The canvas itself has none, so a tier can drop it without a new context. */
+  #target: WebGLRenderTarget | null = null;
+  #output = Object.assign(new OutputPass(), { renderToScreen: true });
+  #environment: Texture | null = null;
+  #lost = false;
+  /** The player's input anywhere else on the page holds the paced turning draws (input first, MPES §10.3). */
+  #input = (event: Event): void => { if (event.target !== this.canvas) this.#pacer.hold(performance.now() + INPUT_HOLD_MS); };
   #visible = true;
   #observer: IntersectionObserver;
   #resize: ResizeObserver;
@@ -142,8 +151,8 @@ export class ModelStage {
   constructor() {
     this.canvas = document.createElement('canvas');
     this.canvas.className = 'showcase-canvas';
-    this.#renderer = new WebGLRenderer({ canvas: this.canvas, antialias: true, alpha: true, powerPreference: 'low-power' });
-    this.#renderer.setPixelRatio(this.#ratio());
+    this.#renderer = new WebGLRenderer({ canvas: this.canvas, antialias: false, alpha: true, powerPreference: 'low-power' });
+    this.#tierTo(0);
     this.#renderer.outputColorSpace = SRGBColorSpace;
     this.#renderer.toneMapping = ACESFilmicToneMapping;
     this.#renderer.toneMappingExposure = 0.85;
@@ -152,10 +161,7 @@ export class ModelStage {
     // Baked shadows: the sun and the vehicle stand still while the camera orbits, so the shadow map only changes with the
     // fitted parts; drawing it every frame doubled each turning draw (G3). show() asks for it again.
     this.#renderer.shadowMap.autoUpdate = false;
-    const pmrem = new PMREMGenerator(this.#renderer);
-    // A 64 px environment lights matte paint as well as the default 256 px, with a sixteenth of the pixels to render and blur.
-    this.#scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04, 0.1, 100, { size: 64 }).texture;
-    pmrem.dispose();
+    this.#environ();
     this.#scene.background = null;
     const sun = new DirectionalLight(new Color(1, 0.97, 0.92), 1.6);
     sun.position.set(6, 12, 5);
@@ -189,6 +195,26 @@ export class ModelStage {
     this.#resize = new ResizeObserver(() => this.#size());
     this.#resize.observe(this.canvas);
     document.addEventListener('visibilitychange', () => this.#loop());
+    for (const type of ['pointerdown', 'keydown', 'input']) document.addEventListener(type, this.#input, { capture: true, passive: true });
+    // A lost graphics context (driver reset, GPU switch, sleep) stops the stage; three.js rebuilds the context when it is
+    // restored, but what was drawn into textures is gone: the environment and the shadow are made again, then one draw.
+    this.canvas.addEventListener('webglcontextlost', () => { this.#lost = true; this.#stop(); });
+    this.canvas.addEventListener('webglcontextrestored', () => {
+      this.#lost = false;
+      this.#environ();
+      this.#renderer.shadowMap.needsUpdate = true;
+      this.#invalidate(true);
+    });
+  }
+
+  /** The lighting environment, drawn into a texture. A 64 px environment lights matte paint as well as the default
+   *  256 px, with a sixteenth of the pixels to render and blur. */
+  #environ(): void {
+    const pmrem = new PMREMGenerator(this.#renderer);
+    this.#environment?.dispose();
+    this.#environment = pmrem.fromScene(new RoomEnvironment(), 0.04, 0.1, 100, { size: 64 }).texture;
+    this.#scene.environment = this.#environment;
+    pmrem.dispose();
   }
 
   /** Whether the stage turns by itself (off under reduced motion until the player turns it on). */
@@ -230,9 +256,10 @@ export class ModelStage {
    * first draw of each purchase then have nothing left to compile (G3 profile: the first draw was one task of 0.3 to
    * 2.7 s on a software renderer). Draws nothing: the canvas is not on the page yet. False if there is no such vehicle.
    */
-  async prepare(lib: Group, vehicle: string): Promise<boolean> {
+  async prepare(lib: Group, vehicle: string, size = { width: 640, height: 360 }): Promise<boolean> {
     if (!this.show(lib, vehicle, [])) return false;
     await this.#renderer.compileAsync(this.#scene, this.#camera);
+    this.#calibrate(size);
     // Then every part, without delaying the first draw. three.js compiles only what is visible, but only the call itself
     // needs the parts shown: the browser finishes compiling them in parallel after they are hidden again.
     const parts = this.#vehicle!.children.filter(node => !node.visible);
@@ -240,6 +267,31 @@ export class ModelStage {
     void this.#renderer.compileAsync(this.#scene, this.#camera).catch(() => undefined);
     for (const node of parts) node.visible = false;
     return true;
+  }
+
+  /**
+   * Picks the starting tier from one timed draw per tier at the size the stage will have (pace.ts startTier), so a slow
+   * machine starts where it can keep up instead of spending its first purchases at full quality (G3, CI run
+   * 38571533524: about 170 ms a draw). Each draw is waited for by reading one pixel back. The first, at 1 px, only
+   * prepares the resolve to the canvas, so no timed draw includes compiling it.
+   */
+  #calibrate(size: { width: number; height: number }): void {
+    const gl = this.#renderer.getContext(), pixel = new Uint8Array(4);
+    const timed = (): number => {
+      const start = performance.now();
+      this.#render();
+      gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel);
+      return performance.now() - start;
+    };
+    this.#renderer.setSize(1, 1, false);
+    this.#tierTo(0);
+    timed();
+    this.#renderer.setSize(size.width, size.height, false);
+    this.#camera.aspect = size.width / size.height;
+    this.#camera.updateProjectionMatrix();
+    this.#refit();
+    this.#tierTo(startTier(tier => { this.#tierTo(tier); return timed(); }));
+    this.#renderer.shadowMap.needsUpdate = true;
   }
 
   /** Shows one vehicle with the given part nodes; returns false if the library has no such vehicle. */
@@ -313,6 +365,7 @@ export class ModelStage {
     const { clientWidth: w, clientHeight: h } = this.canvas;
     if (!w || !h) return;
     this.#renderer.setSize(w, h, false);
+    this.#fitTarget();
     this.#camera.aspect = w / h;
     this.#camera.updateProjectionMatrix();
     if (this.#camera.aspect !== this.#fittedAspect) this.#refit();
@@ -331,27 +384,46 @@ export class ModelStage {
     this.#loop();
   }
 
-  /** The pixel ratio to draw at: the screen's, at most 1.5, at the tier's share. */
-  #ratio(): number {
-    return Math.min(devicePixelRatio, 1.5) * SCALES[this.#tier]!;
+  /** Draws at `tier`: the screen's pixel ratio, at most 1.5, at the tier's share, multisampled if the tier is. */
+  #tierTo(tier: number): void {
+    this.#tier = tier;
+    this.#renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5) * TIERS[tier]!.scale);
+    this.#fitTarget();
+    this.canvas.setAttribute('data-tier', String(tier));
   }
 
-  /** Steps the resolution down when the recent draws show this machine cannot draw in time (see nextTier). */
+  /** The multisampled target at the canvas's drawing size, or none on a tier without multisampling. */
+  #fitTarget(): void {
+    const samples = TIERS[this.#tier]!.samples, size = this.#renderer.getDrawingBufferSize(new Vector2());
+    if (!samples) { this.#target?.dispose(); this.#target = null; return; }
+    if (this.#target?.samples === samples) { this.#target.setSize(size.x, size.y); return; }
+    this.#target?.dispose();
+    // Half floats keep the scene linear and unclamped until the resolve tone-maps it, as drawing to the canvas does.
+    this.#target = new WebGLRenderTarget(size.x, size.y, { samples, type: HalfFloatType });
+  }
+
+  /** Steps the quality down when the recent draws show this machine cannot draw in time (see nextTier). */
   #adapt(): void {
     const tier = nextTier(this.#tier, this.#pacer.floor);
     if (tier === this.#tier) return;
-    this.#tier = tier;
     this.#pacer.forget();
-    this.#renderer.setPixelRatio(this.#ratio());
-    this.canvas.setAttribute('data-tier', String(tier));
+    this.#tierTo(tier);
     this.#dirty = true;
+  }
+
+  /** The scene to the canvas: straight, or through the multisampled target and its tone-mapping resolve. */
+  #render(): void {
+    if (!this.#target) { this.#renderer.render(this.#scene, this.#camera); return; }
+    this.#renderer.setRenderTarget(this.#target);
+    this.#renderer.render(this.#scene, this.#camera);
+    this.#output.render(this.#renderer, null as unknown as WebGLRenderTarget, this.#target, 0, false);
   }
 
   #draw(): void {
     this.#dirty = false;
     this.#urgent = false;
     this.#distance();
-    this.#renderer.render(this.#scene, this.#camera);
+    this.#render();
     this.#report();
     this.onDraw?.();
     // Observable without reaching into the stage: the reference-laptop run times real draws by this event (MPES §14).
@@ -376,7 +448,7 @@ export class ModelStage {
 
   /** Animates only while the stage is visible and turning or waiting to redraw; the pacer picks the frames that draw. */
   #loop(): void {
-    const running = this.#visible && document.visibilityState === 'visible' && this.canvas.isConnected;
+    const running = !this.#lost && this.#visible && document.visibilityState === 'visible' && this.canvas.isConnected;
     if (!running) { this.#stop(); return; }
     if (this.#frame) return;
     this.#timer.update();
@@ -405,7 +477,11 @@ export class ModelStage {
     cancelAnimationFrame(this.#frame);
     this.#observer.disconnect();
     this.#resize.disconnect();
+    for (const type of ['pointerdown', 'keydown', 'input']) document.removeEventListener(type, this.#input, { capture: true });
     this.#controls.dispose();
+    this.#target?.dispose();
+    this.#output.dispose();
+    this.#environment?.dispose();
     this.#renderer.dispose();
   }
 }

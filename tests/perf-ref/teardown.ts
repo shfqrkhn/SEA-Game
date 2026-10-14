@@ -16,7 +16,9 @@ export default function teardown(): void {
   }
   const runs = readdirSync(dir).filter(name => name.endsWith('.run.json')).sort()
     .map(name => JSON.parse(readFileSync(path.join(dir, name), 'utf8')) as RunFile);
-  const report = buildReport(runs, process.env.PERF_REF_STAMP ?? path.basename(dir), git('rev-parse', 'HEAD') || 'unknown', git('status', '--porcelain') !== '');
+  const stamp = process.env.PERF_REF_STAMP ?? path.basename(dir);
+  // The spec stamps each file with this run's id (PERF_REF_STAMP), so files an earlier run left here are not counted.
+  const report = buildReport(runs, { runId: process.env.PERF_REF_STAMP ?? 'manual', stamp, commit: git('rev-parse', 'HEAD') || 'unknown', dirty: git('status', '--porcelain') !== '' });
   writeFileSync(path.join(dir, 'report.json'), JSON.stringify(report, null, 2) + '\n');
   writeFileSync(path.join(dir, 'report.md'), renderMarkdown(report));
   console.log(`perf:ref: ${report.state}, report in ${dir}`);

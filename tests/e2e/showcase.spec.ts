@@ -124,6 +124,28 @@ for (const viewport of [{ width: 1280, height: 720 }, { width: 360, height: 740 
   });
 }
 
+// G3 (MPES §10.3): a driver reset, a GPU switch or sleep loses the graphics context; the stage must come back by itself.
+test('3D showcase recovers a lost graphics context: it stops drawing, then draws the next purchase once restored', async ({ browser }) => {
+  const { sp } = await trackerFor(browser, 'RECOVERY');
+  const errors = collectConsoleErrors(sp);
+  const stage = sp.locator('#showcase [role="img"]');
+  await expect(stage).toHaveAttribute('data-ready', 'true', { timeout: 30_000 });
+  await sp.evaluate(() => {
+    const gl = document.querySelector<HTMLCanvasElement>('#showcase canvas')!.getContext('webgl2')!;
+    (window as unknown as { seaLose: WEBGL_lose_context }).seaLose = gl.getExtension('WEBGL_lose_context')!;
+    (window as unknown as { seaLose: WEBGL_lose_context }).seaLose.loseContext();
+  });
+  await sp.waitForFunction(() => document.querySelector<HTMLCanvasElement>('#showcase canvas')!.getContext('webgl2')!.isContextLost());
+  await record(sp, 1, 7, 'ACC-F', 350000);
+  await expect(stage).toHaveAttribute('data-layers', 'ACC-F');
+  await expect(stage).not.toHaveAttribute('data-drawn', 'ACC-F');
+  await sp.evaluate(() => (window as unknown as { seaLose: WEBGL_lose_context }).seaLose.restoreContext());
+  await expect(stage).toHaveAttribute('data-drawn', 'ACC-F', { timeout: 30_000 });
+  await record(sp, 2, 7, 'ACC-E', 600000);
+  await expect(stage).toHaveAttribute('data-drawn', 'ACC-E', { timeout: 30_000 });
+  expect(errors).toEqual([]);
+});
+
 test('3D showcase: the confirmed vehicle is prepared during planning, and only then, so the tracker opens with it ready', async ({ browser }) => {
   const prepared = (page: import('@playwright/test').Page) => page.evaluate(() => performance.getEntriesByType('mark').map(m => m.name).filter(n => n.startsWith('sea-model:')));
   const ip = await (await browser.newContext()).newPage();

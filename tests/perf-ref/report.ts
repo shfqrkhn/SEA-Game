@@ -40,34 +40,57 @@ export interface MetricDef {
 const BP = 'Browser performance';
 const RI = 'Responsive interface';
 
+// A budget of null marks context for reading the others: sample counts, the worst case behind a p95, the tier chosen.
 export const METRICS: readonly MetricDef[] = [
   { id: 'htmlMB', label: 'HTML file size', unit: 'MB', budget: 50, kpi: BP, gate: '§14', inExistingSpec: true },
   { id: 'chooserMs', label: 'Time to interactive, chooser', unit: 'ms', budget: 2000, kpi: BP, gate: '§14', inExistingSpec: true },
   { id: 'maxStateStartMs', label: 'Time to interactive, instructor with maximum saved state', unit: 'ms', budget: 3000, kpi: BP, gate: '§14', inExistingSpec: true },
-  { id: 'commandP95Ms', label: 'Command response, p95 (10-team timed auction)', unit: 'ms', budget: 100, kpi: BP, gate: '§14', inExistingSpec: true },
-  { id: 'maxStateMemoryMB', label: 'Memory, 70 lots and 10 teams', unit: 'MB', budget: 400, kpi: BP, gate: '§14', inExistingSpec: true },
-  { id: 'memoryGrowthMB', label: 'Memory growth over 10 re-render cycles', unit: 'MB', budget: 5, kpi: BP, gate: '§14', inExistingSpec: true },
-  { id: 'studentMemoryMB', label: 'Memory, student tracker with stills', unit: 'MB', budget: 400, kpi: BP, gate: '§10.3', inExistingSpec: true },
-  { id: 'showcaseUpdateMaxMs', label: 'Stills update after a purchase, worst of 3', unit: 'ms', budget: 100, kpi: BP, gate: '§10.3', inExistingSpec: true },
+  { id: 'commandSamples', label: 'Command response, samples', unit: '', budget: null, kpi: BP, gate: '§14', inExistingSpec: true },
+  { id: 'commandP95Ms', label: 'Command response, p95 (10-team timed auction, click to painted result)', unit: 'ms', budget: 100, kpi: BP, gate: '§14', inExistingSpec: true },
+  { id: 'commandMaxMs', label: 'Command response, worst', unit: 'ms', budget: null, kpi: BP, gate: '§14', inExistingSpec: true },
+  { id: 'maxStateMemoryMB', label: 'Memory, 70 lots and 10 teams (page heap and images)', unit: 'MB', budget: 400, kpi: BP, gate: '§14', inExistingSpec: true },
+  { id: 'maxStateProcessMB', label: 'Memory, 70 lots and 10 teams (renderer and GPU processes)', unit: 'MB', budget: 400, kpi: BP, gate: '§14', inExistingSpec: false },
+  { id: 'memoryGrowthMB', label: 'Memory growth over 10 phase cycles', unit: 'MB', budget: 5, kpi: BP, gate: '§14', inExistingSpec: true },
+  { id: 'showcaseUpdateSamples', label: 'Stills update, samples', unit: '', budget: null, kpi: BP, gate: '§10.3', inExistingSpec: true },
+  { id: 'showcaseUpdateP95Ms', label: 'Stills update after a purchase, p95', unit: 'ms', budget: 100, kpi: BP, gate: '§10.3', inExistingSpec: true },
+  { id: 'showcaseUpdateMaxMs', label: 'Stills update after a purchase, worst', unit: 'ms', budget: null, kpi: BP, gate: '§10.3', inExistingSpec: true },
   { id: 'angleChangeMs', label: 'Stills angle change', unit: 'ms', budget: 50, kpi: BP, gate: '§10.3', inExistingSpec: true },
   { id: 'turntableStepMaxMs', label: 'Turntable step, worst of 6', unit: 'ms', budget: 50, kpi: BP, gate: '§10.3', inExistingSpec: true },
-  { id: 'modelReadyMs', label: '3D model ready', unit: 'ms', budget: 3000, kpi: BP, gate: '§10.3, §14', inExistingSpec: true },
-  { id: 'modelUpdateMaxMs', label: '3D model update after a purchase, worst of 3', unit: 'ms', budget: 100, kpi: BP, gate: '§10.3', inExistingSpec: true },
-  { id: 'modelMemoryMB', label: 'Memory, 3D showcase (hard limit)', unit: 'MB', budget: 400, kpi: BP, gate: '§10.3', inExistingSpec: true },
-  { id: 'modelMemoryTargetMB', label: 'Memory, 3D showcase (proxy target)', unit: 'MB', budget: 300, kpi: BP, gate: '§14', inExistingSpec: false },
-  { id: 'frameP95Ms', label: '3D showcase, p95 gap between animation frames over 5 s', unit: 'ms', budget: 33, kpi: BP, gate: '§14', inExistingSpec: false },
-  { id: 'gpuFrameMs', label: '3D showcase, GPU time of a frame', unit: 'ms', budget: 16, kpi: BP, gate: '§14', inExistingSpec: false },
+  { id: 'studentMemoryMB', label: 'Memory, student tracker with stills (page heap and images)', unit: 'MB', budget: 400, kpi: BP, gate: '§10.3', inExistingSpec: true },
+  { id: 'studentProcessMB', label: 'Memory, student tracker with stills (renderer and GPU processes)', unit: 'MB', budget: 400, kpi: BP, gate: '§10.3', inExistingSpec: false },
+  { id: 'modelReadyMs', label: '3D model ready, worst tracker (opening click to first drawn model)', unit: 'ms', budget: 3000, kpi: BP, gate: '§10.3, §14', inExistingSpec: true },
+  { id: 'modelReadyFirstMs', label: '3D model ready, first tracker', unit: 'ms', budget: null, kpi: BP, gate: '§10.3, §14', inExistingSpec: true },
+  { id: 'modelUpdateSamples', label: '3D model update, samples', unit: '', budget: null, kpi: BP, gate: '§10.3', inExistingSpec: true },
+  { id: 'modelUpdateP95Ms', label: '3D model update after a purchase, p95 (click to the painted draw with the part)', unit: 'ms', budget: 100, kpi: BP, gate: '§10.3', inExistingSpec: true },
+  { id: 'modelUpdateMaxMs', label: '3D model update after a purchase, worst', unit: 'ms', budget: null, kpi: BP, gate: '§10.3', inExistingSpec: true },
+  { id: 'modelMemoryMB', label: 'Memory, 3D showcase (page heap and images)', unit: 'MB', budget: 400, kpi: BP, gate: '§10.3', inExistingSpec: true },
+  { id: 'modelProcessMB', label: 'Memory, 3D showcase (renderer and GPU processes, textures included)', unit: 'MB', budget: 400, kpi: BP, gate: '§10.3', inExistingSpec: false },
+  { id: 'modelMemoryTargetMB', label: 'Memory, 3D showcase, renderer and GPU processes (proxy target)', unit: 'MB', budget: 300, kpi: BP, gate: '§14', inExistingSpec: false },
+  { id: 'turningDraws', label: '3D showcase, draws in 5 s of turning', unit: '', budget: null, kpi: BP, gate: '§14', inExistingSpec: false },
+  { id: 'frameP95Ms', label: '3D showcase, p95 main-thread time of a draw over 5 s of turning', unit: 'ms', budget: 33, kpi: BP, gate: '§14', inExistingSpec: false },
+  { id: 'drawGapP95Ms', label: '3D showcase, p95 gap between draws (the pacer leaves at least twice a draw cost)', unit: 'ms', budget: null, kpi: BP, gate: '§10.3', inExistingSpec: false },
+  { id: 'modelTier', label: '3D showcase, resolution tier settled on (0 is full)', unit: '', budget: null, kpi: BP, gate: '§10.3', inExistingSpec: false },
+  { id: 'gpuFrameMs', label: '3D showcase, p95 GPU time of a draw', unit: 'ms', budget: 16, kpi: BP, gate: '§14', inExistingSpec: false },
   { id: 'idleCpuChooserPct', label: 'Idle CPU, chooser (all browser processes, % of one core)', unit: '%', budget: 3, kpi: BP, gate: '§14', inExistingSpec: false },
   { id: 'idleCpuInstructorPct', label: 'Idle CPU, instructor with saved state', unit: '%', budget: 3, kpi: BP, gate: '§14', inExistingSpec: false },
   { id: 'idleCpuTrackerPct', label: 'Idle CPU, student tracker with 3D showcase', unit: '%', budget: 3, kpi: BP, gate: '§14', inExistingSpec: false },
   { id: 'idleMainThreadMaxPct', label: 'Idle main-thread busy share, worst of the three views', unit: '%', budget: 3, kpi: BP, gate: '§14', inExistingSpec: false },
   { id: 'inpMs', label: 'Interaction to next paint (real clicks, worst)', unit: 'ms', budget: 200, kpi: RI, gate: '§14, §1.4', inExistingSpec: false },
   { id: 'lcpMs', label: 'Largest contentful paint (chooser)', unit: 'ms', budget: 2500, kpi: RI, gate: '§14, §1.4', inExistingSpec: false },
-  { id: 'clsScore', label: 'Cumulative layout shift (chooser, instructor, tracker; worst)', unit: '', budget: 0.1, kpi: RI, gate: '§14, §1.4', inExistingSpec: false },
-  { id: 'longTaskMaxMs', label: 'Longest task after load (chooser, instructor, tracker; worst)', unit: 'ms', budget: 200, kpi: RI, gate: '§14, §1.4', inExistingSpec: false },
+  { id: 'clsScore', label: 'Cumulative layout shift (every page; worst)', unit: '', budget: 0.1, kpi: RI, gate: '§14, §1.4', inExistingSpec: false },
+  { id: 'longTaskMaxMs', label: 'Longest task after load (every page; worst)', unit: 'ms', budget: 200, kpi: RI, gate: '§14, §1.4', inExistingSpec: false },
   { id: 'pageErrors', label: 'Page errors and console errors', unit: 'count', budget: 0, kpi: 'Runs in any classroom', gate: '§1.4', inExistingSpec: false },
   { id: 'egressAttempts', label: 'Network requests other than the file itself', unit: 'count', budget: 0, kpi: 'Privacy and security', gate: '§13, §1.4', inExistingSpec: false },
 ];
+
+/** The browsers and screens of MPES §14; a baseline needs every pair. Idle windows run on the first screen only. */
+export const BROWSERS = ['chromium', 'msedge'] as const;
+export const PROFILES = [
+  { id: '1366x768at1', width: 1366, height: 768, scale: 1 },
+  { id: '1536x864at1.25', width: 1536, height: 864, scale: 1.25 },
+  { id: '1280x720at1.5', width: 1280, height: 720, scale: 1.5 },
+] as const;
+export type Profile = typeof PROFILES[number];
 
 /** KPIs that perf:ref cannot measure, and where they are measured instead. */
 export const OTHER_KPI_NOTES: Partial<Record<Kpi, string>> = {
@@ -82,6 +105,8 @@ export const OTHER_KPI_NOTES: Partial<Record<Kpi, string>> = {
 };
 
 export interface RunMeta {
+  /** The run that wrote the file (one per `npm run perf:ref`); files from another run are not counted. */
+  runId: string;
   browser: string;
   browserVersion: string;
   profile: string;
@@ -137,7 +162,7 @@ function worstOf(statuses: Status[]): Status {
 }
 
 /** One row per KPI, built from every run file. A KPI is FAIL if any measured metric fails, PASS if at least one was measured and none failed. */
-export function buildKpiRows(runs: RunFile[]): KpiRow[] {
+function buildKpiRows(runs: RunFile[]): KpiRow[] {
   const measuredRuns = runs.filter(run => run.state === 'OK');
   return KPIS.map(kpi => {
     const defs = METRICS.filter(def => def.kpi === kpi);
@@ -171,10 +196,24 @@ export interface Report {
   kpis: KpiRow[];
 }
 
-export function buildReport(runs: RunFile[], stamp: string, commit: string, dirty: boolean): Report {
-  const problems = runs.filter(run => run.state !== 'OK').map(run => `${runName(run)}: ${run.state}${run.message ? ` (${run.message})` : ''}`);
-  if (runs.length === 0) problems.push('no run files were written');
-  return { stamp, commit, dirty, state: problems.length ? 'INCOMPLETE' : 'BASELINE', problems, runs: runs.map(run => run.meta), kpis: buildKpiRows(runs) };
+/**
+ * The report of one run. It is a BASELINE only when this run (`runId`) wrote every browser and screen pair, each
+ * measured, and each gives every budgeted metric a value or the reason it has none; anything else is INCOMPLETE, and
+ * files another run left in the folder are listed as problems and not counted.
+ */
+export function buildReport(all: RunFile[], at: { runId: string; stamp: string; commit: string; dirty: boolean }): Report {
+  const problems: string[] = [];
+  for (const run of all) if (run.meta.runId !== at.runId) problems.push(`${runName(run)}: a file from another run (${run.meta.runId}), not counted`);
+  const runs = all.filter(run => run.meta.runId === at.runId);
+  for (const browser of BROWSERS) for (const profile of PROFILES) {
+    if (!runs.some(run => run.meta.browser === browser && run.meta.profile === profile.id)) problems.push(`missing run: ${browser} ${profile.id}`);
+  }
+  for (const run of runs) {
+    if (run.state !== 'OK') { problems.push(`${runName(run)}: ${run.state}${run.message ? ` (${run.message})` : ''}`); continue; }
+    const unexplained = METRICS.filter(def => def.budget !== null && (run.values[def.id] ?? null) === null && !run.notes[def.id]).map(def => def.id);
+    if (unexplained.length) problems.push(`${runName(run)}: not measured and no reason given: ${unexplained.join(', ')}`);
+  }
+  return { stamp: at.stamp, commit: at.commit, dirty: at.dirty, state: problems.length ? 'INCOMPLETE' : 'BASELINE', problems, runs: runs.map(run => run.meta), kpis: buildKpiRows(runs) };
 }
 
 const fmt = (value: number | null, unit: string) => value === null ? 'n/a' : `${Math.round(value * 100) / 100}${unit ? ` ${unit}` : ''}`;
