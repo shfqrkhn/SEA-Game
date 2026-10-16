@@ -18,10 +18,21 @@ const all = [
   { name: 'msedge', use: { ...devices['Desktop Edge'], channel: 'msedge' } },
 ];
 
-const browsers = all.filter(project => engines.includes(project.name)).map(project => ({ ...project, testIgnore: /perf\.spec\.ts/ }));
-// RQ-26 budgets are measured in Chromium, alone, after every other project has finished.
+// Heavy tests (software WebGL turning the 3D showcase, every still layer, three-tab rehearsals) run one at a time
+// after the rest: beside them on a CI runner's few cores the one-round slice slowed from 17 s to 2 minutes and ran out
+// of its time (run 38609311138, Edge). Each engine's heavy project waits for every light project and for the heavy
+// project before it, so no two heavy tests share the machine.
+const heavy = /(showcase|rehearsal)\.spec\.ts/;
+const chosen = all.filter(project => engines.includes(project.name));
+const browsers = chosen.map(project => ({ ...project, testIgnore: [/perf\.spec\.ts/, heavy] }));
+const heavies = chosen.map((project, i) => ({
+  ...project, name: `${project.name}-heavy`, testMatch: heavy, workers: 1,
+  dependencies: [...browsers.map(light => light.name), ...(i ? [`${chosen[i - 1]!.name}-heavy`] : [])],
+}));
+// RQ-26 budgets are measured in Chromium, alone, after every other project has finished. No trace: its DOM
+// snapshots run in the page on every action, inside the timed window (about 40 ms per click at 4x, G3 profile).
 const perf = engines.includes('chromium')
-  ? [{ name: 'perf', use: { ...devices['Desktop Chrome'] }, testMatch: /perf\.spec\.ts/, dependencies: browsers.map(project => project.name) }]
+  ? [{ name: 'perf', use: { ...devices['Desktop Chrome'], trace: 'off' as const }, testMatch: /perf\.spec\.ts/, dependencies: [...browsers, ...heavies].map(project => project.name) }]
   : [];
 
 export default defineConfig({
@@ -38,5 +49,5 @@ export default defineConfig({
   // test timeout (a lost Firefox click once held J1 for 10 minutes). Not shorter: renderers under parallel
   // load can stall for about 15 s and then recover (local verify, 2026-10-10).
   use: { viewport: { width: 1280, height: 720 }, actionTimeout: 60_000, trace: 'retain-on-failure' },
-  projects: [...browsers, ...perf],
+  projects: [...browsers, ...heavies, ...perf],
 });

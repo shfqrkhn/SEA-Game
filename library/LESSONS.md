@@ -2,6 +2,48 @@
 
 Each entry: what happened, the rule it produced, and the check that now enforces it. Newest first. Examples come from SEA Game (a classroom auction game with photoreal vehicle renders and a real-time 3D showcase, one offline HTML file).
 
+## 2026-10-16 · Contexts left running, and a readback nobody asked for
+
+- **What happened:** one CI test took 43 s, then 1.4 min, then ran out of its 2 minutes, every step uniformly slow. Playwright closes only the contexts it made itself; tests that opened their own with `browser.newContext()` left them, each with a 3D view still animating, on a single-worker project. On the same run a purchase took 133 ms to appear in 3D (budget 100). Two plausible guesses (a smaller DOM update; the purchase queuing behind an animation frame) were measured on both arms and dropped. A trace then showed the browser, with no graphics card, reading each new WebGL frame back before compositing it, waiting for the whole software draw, and the purchase's draw also redrew the shadow map, doubling it. While checking the fix, a page rebuild was found to close every `<details>` panel the reader had opened.
+- **Rule:** close what a test opens in one shared fixture every spec must use. Measure a hypothesis before building on it. In a draw the player waits for, do only what they see now; let the rest follow a frame later. Carry opened panels across a rebuild.
+- **Check (as built in SEA Game):** an auto fixture closes every new context, a two-test spec proves the next test finds none, and a unit test fails any spec that bypasses the fixture; a browser test records which draw makes the shadow pass and fails if the purchase's first draw does; a browser test opens every panel on each page with panels and fails if a render closes one.
+
+## 2026-10-16 · An idle page at 100% of a core, measured by a busy instrument
+
+- **What happened:** the first reference-laptop baseline read idle CPU of 100 to 117% of a core on pages doing nothing. The pages were measured under Chrome's emulated 4x CPU slowdown, which works by keeping the renderer busy: a blank page read 81% throttled and 2.3% not. Probing the DevTools protocol also showed that the slowdown is the browser's, last setter wins, and closing the session that set it clears it, so a naive restore would have left later measurements unthrottled.
+- **Rule:** before trusting a measurement, measure nothing with the same instrument; the blank page is the harness's floor. Measure idle without emulated slowdown, and restore the slowdown in a `finally`, from a session that stays attached.
+- **Check (as built in SEA Game):** a unit test reads the idle window's code and fails unless it unthrottles, restores the throttle in a `finally`, and never detaches that session.
+
+## 2026-10-16 · A thin margin, and a search where a formula would do
+
+- **What happened:** a purchase's 3D update had passed its 100 ms budget at 89 ms; on busier CI runners it measured 116 and 147. A CPU profile of one purchase showed the largest single cost was refitting the camera to the new kit: a numerical search (doubling, then bisection) for each view's distance placed a camera and projected the box about 1 300 times, inside the click.
+- **Rule:** a budget met with thin margin will fail on a slow day; profile the operation and remove its largest cost rather than widen the budget. When a quantity has a closed form (here, a camera looking at its target keeps each point's cross offset fixed as it backs away, so the least distance is solved directly), solve it instead of searching on the user's click.
+- **Check (as built in SEA Game):** a unit test fails if fitting places any camera, and another holds the fit tight (the worst view at the margin to 10⁻⁶); the performance scenario still gates the update at 100 ms.
+
+## 2026-10-16 · A test that was working, not hung, when its time ran out
+
+- **What happened:** the stills contrast test checked the front, the rear and all 24 turntable frames of a vehicle in one test, three screenshots a frame. On a slow CI runner it timed out at two minutes; the trace showed it on frame 23 of 24, every step merely slow. The same test took 50 to 84 seconds elsewhere in the same run.
+- **Rule:** when a test's work grows with what it samples, give it room by splitting, never by raising the timeout: parts that together cover everything, and a guard that fails if the parts stop adding up.
+- **Check (as built in SEA Game):** three stills tests per mission of eight frames each (the first also the front and rear), and an assertion that the turntable still has the 24 frames the parts cover.
+
+## 2026-10-16 · Passed at one pose, failed at the next; blank because lazy; slow because shared
+
+- **What happened:** a 3D vehicle passed its contrast check (3:1) at the pose the test happened to shoot, then failed on CI at another: its key light was fixed in the world, so once turned, the faces the camera saw were unlit (1.5:1). On the same run a screenshot of the first screen found its thumbnails blank: they were loaded lazily and a busy runner had not fetched them yet. And a light browser test ran out of its two minutes, uniformly slow at every step, because it shared a two-core runner with a software-rendered 3D test.
+- **Rule:** a check samples every angle, view and frame the user can reach, never one sample. Light the faces the camera sees from the camera (a fill that rides with it), keep the key in the world for shadows. Load at once whatever the first screen shows; lazy loading is for what needs scrolling. Run heavy tests one at a time in their own group, after the light ones, instead of raising a timeout.
+- **Check (as built in SEA Game):** the per-mission 3D contrast test turns the vehicle through all 16 turntable steps and requires 3:1 at each; the stills test covers front, rear and every turntable frame; the chooser test fails a lazy first-screen image and waits until each is complete; a unit test reads the Playwright configuration and fails unless each engine's heavy specs run in their own one-worker project after the light ones.
+
+## 2026-10-14 · A stage in plain view that never drew; a contrast check blind to dark pixels
+
+- **What happened:** under a loaded local test run, Firefox showed an empty 3D stage. A temporary build that exposed the stage's state showed that the WebGL context was live and the canvas was on screen, but the stage's IntersectionObserver had last reported "not visible" (it first saw the canvas before it was on the page) and never reported again. The stage had drawn once in a minute. Separately, a reviewer showed that two contrast oracles were blind to dark pixels: one took only pixels brighter than the background, and the next took only pixels that differ from it. A vehicle mostly as dark as its stage passed both.
+- **Rule:** when a view re-attaches a canvas, re-ask the browser for its visibility; never let a single missed report stop drawing for good. A test of a canvas waits for the renderer's draw, not for "ready". Find what a contrast check measures without using brightness: shoot on black and on white, and the pixels that stay the same are the subject.
+- **Check (as built in SEA Game):** a browser test replaces IntersectionObserver with one that reports only once per observation, and the stage must still draw; the per-mission contrast test measures the silhouette from the black-and-white shots, waits for the stage's `sea-draw`, and holds the 3D vehicle to 3:1.
+
+## 2026-10-14 · An unchanged attribute that restyled the page; a restore that was not one
+
+- **What happened:** a purchase's 3D update ran over budget on CI. Splitting its timing into phases (input to handled, to draw start, the draw, to paint) and profiling one purchase showed the cause: every command wrote the page's `lang` attribute, unchanged. Writing an attribute on the document root restyles the whole page, even with the same value; with the focused button just replaced, it forced a full style and layout inside the command and slowed the next one. On the same run, Firefox on a software renderer announced a restored WebGL context while it was still lost, then restored it later without any event.
+- **Rule:** write to the document root only what changed. Split a slow timing into its phases before guessing at a fix. Trust an object's own state over the events that report it: ignore a "restored" event while the context still says lost, and while lost, check the state now and then and act on a silent return.
+- **Check (as built in SEA Game):** a helper writes the language and title only when they differ; the performance scenario reports the 3D update's phases beside the gated total; the context-loss browser test covers an early announcement (nothing may draw) and a silent restore (the next purchase must still draw).
+
 ## 2026-10-13 · Green branch, red main
 
 - **What happened:** after two green CI runs, a small docs-only commit was added and the pull request merged straight away. The generated codebase document embeds every doc, so it went stale; CI on `main` failed and the Pages deploy was skipped, leaving the old site live.

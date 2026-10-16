@@ -24,6 +24,7 @@ function corners(box: Box3): Vector3[] {
 
 const camera = new PerspectiveCamera();
 const point = new Vector3();
+const UP = new Vector3(0, 1, 0), across = new Vector3(), upward = new Vector3(), aim = new Vector3();
 
 /** How far the box's farthest corner projects from the frame centre, seen from `distance` along `direction`. */
 export function extentAt(box: Box3, target: Vector3, direction: Vector3, distance: number, fov: number, aspect: number, points = corners(box)): number {
@@ -49,20 +50,28 @@ export function extentAt(box: Box3, target: Vector3, direction: Vector3, distanc
  * at every sampled turn and at each polar angle given (the default view and the drag limits).
  */
 export function fitDistance(box: Box3, target: Vector3, polars: readonly number[], fov: number, aspect: number, margin = FIT_MARGIN): number {
-  const points = corners(box);
-  const radius = Math.max(...points.map(p => p.distanceTo(target)), 1e-3);
+  const points = corners(box).map(p => p.sub(target));
+  const radius = Math.max(...points.map(p => p.length()), 1e-3);
+  // Solved per view, not searched: with the camera at `s` along `place` and aiming along `aim`, a corner's offset across
+  // the view and its depth are both linear in `s`, so each side of the frame bounds `s` from below directly.
+  const slopeY = Math.tan((fov * Math.PI) / 360) * margin, slopeX = slopeY * aspect;
   let distance = radius * 1.01;
   for (const polar of polars) for (let i = 0; i < AZIMUTHS; i++) {
-    const direction = viewDirection(polar, (i / AZIMUTHS) * Math.PI * 2);
-    if (extentAt(box, target, direction, distance, fov, aspect, points) <= margin) continue;
-    // Extent falls as the camera backs away: bisect between this distance and one known to fit.
-    let near = distance, far = distance * 2;
-    while (extentAt(box, target, direction, far, fov, aspect, points) > margin) far *= 2;
-    for (let step = 0; step < 24; step++) {
-      const mid = (near + far) / 2;
-      if (extentAt(box, target, direction, mid, fov, aspect, points) > margin) near = mid; else far = mid;
+    const place = viewDirection(polar, (i / AZIMUTHS) * Math.PI * 2);
+    // The camera's axes as lookAt builds them (up is +Y). Straight up or down three.js nudges the aim, not the place.
+    aim.copy(place);
+    if (across.crossVectors(UP, aim).lengthSq() === 0) { aim.z += 0.0001; aim.normalize(); across.crossVectors(UP, aim); }
+    across.normalize();
+    upward.crossVectors(aim, across);
+    const depthRate = place.dot(aim);
+    for (const [axis, slope] of [[across, slopeX], [upward, slopeY]] as const) {
+      const drift = place.dot(axis);
+      for (const p of points) {
+        const offset = p.dot(axis), depth = p.dot(aim);
+        // |offset - s drift| <= slope (s depthRate - depth), on both sides.
+        distance = Math.max(distance, (offset + slope * depth) / (slope * depthRate + drift), (slope * depth - offset) / (slope * depthRate - drift));
+      }
     }
-    distance = far;
   }
   return distance;
 }

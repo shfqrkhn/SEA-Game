@@ -1,9 +1,9 @@
 // Screenshot baselines (MPES §16.3): every view of both roles in each phase a legacy fixture reaches, both themes
 // on the first screen, and the showcase for every vehicle and angle. Chromium only: the baselines are pixels.
 // Update deliberately with `npx playwright test tests/e2e/visual.spec.ts --update-snapshots` and review the diff.
-import { expect, test, type Page } from '@playwright/test';
+import { expect, type Page } from '@playwright/test';
 import { readFileSync } from 'node:fs';
-import { gameUrl, guardNetwork, withoutWebgl } from './helpers.ts';
+import { gameUrl, guardNetwork, test, withoutWebgl } from './helpers.ts';
 import { confirmDialog, studentJoin } from './roles.ts';
 
 // Edge reports browserName 'chromium' too; its channel tells it apart.

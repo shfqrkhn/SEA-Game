@@ -66,3 +66,13 @@ export function replaceChildren(parent: Element, ...children: Child[]): void {
   parent.replaceChildren();
   append(parent, children);
 }
+
+/**
+ * Names the document's language and title, writing only what changed. Writing the root's `lang`, even unchanged,
+ * restyles the whole page; inside a command that then replaced the focused button, it cost a full style and layout
+ * before the new view existed and slowed the one after it (G3 profile: about 12 and 15 ms a purchase at 4x CPU).
+ */
+export function nameDocument(lang: string, title: string): void {
+  if (document.documentElement.lang !== lang) document.documentElement.lang = lang;
+  if (document.title !== title) document.title = title;
+}

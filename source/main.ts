@@ -7,7 +7,7 @@ import { missionName } from './ui/components.ts';
 import type { MissionId } from './domain/data.ts';
 import { startInstructor } from './ui/instructor.ts';
 import { startStudent } from './ui/student.ts';
-import { h, replaceChildren } from './ui/dom.ts';
+import { h, nameDocument, replaceChildren } from './ui/dom.ts';
 import { detectLanguage, otherLanguage, translate, type Language, type StringKey } from './ui/i18n.ts';
 
 export type Role = 'instructor' | 'student';
@@ -59,7 +59,7 @@ function lineup(lang: Language): HTMLElement | null {
         if (move) { event.preventDefault(); select(move(index), true); }
       },
     },
-  }, h('img', { src: still.src, alt: '', decoding: 'async', loading: 'lazy', ...size(still) }), h('span', { text: missionName(id, lang) })));
+  }, h('img', { src: still.src, alt: '', decoding: 'async', ...size(still) }), h('span', { text: missionName(id, lang) })));
   return h('div', { class: 'hero-lineup' }, large, h('div', { class: 'lineup', role: 'group', 'aria-label': translate(lang, 'chooser.lineup') }, ...buttons));
 }
 
@@ -78,8 +78,7 @@ const fresh = (href: () => string) => (event: Event) => { (event.currentTarget a
 
 function renderChooser(root: HTMLElement, lang: Language, unknownRole: boolean): void {
   const t = (key: StringKey, vars?: Record<string, string>) => translate(lang, key, vars);
-  document.documentElement.lang = lang;
-  document.title = t('app.title');
+  nameDocument(lang, t('app.title'));
   const roleCard = (role: Role, label: StringKey, description: StringKey) => h('section', { class: 'role-card' },
     h('a', { class: 'btn primary big', href: roleHref(role, lang), 'data-role': role, text: t(label), on: { click: fresh(() => roleHref(role, lang)) } }),
     h('p', { class: 'muted', text: t(description) }),

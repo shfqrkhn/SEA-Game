@@ -1,6 +1,6 @@
 # SEA Game codebase
 
-Version 0.5.2.0. Written by `npm run codebase` (scripts/codebase.ts); do not edit by hand. It holds all 1035 tracked files of the repository: 179 text files as 176 unique contents, 854 binary files by hash with the command that regenerates them, and 2 documents kept separately. With docs/MPES.md it is enough to rebuild the project.
+Version 0.6.0.0. Written by `npm run codebase` (scripts/codebase.ts); do not edit by hand. It holds all 1054 tracked files of the repository: 198 text files as 195 unique contents, 854 binary files by hash with the command that regenerates them, and 2 documents kept separately. With docs/MPES.md it is enough to rebuild the project.
 
 ## How to rebuild the tree
 
@@ -27,7 +27,7 @@ Paths: `.gitattributes`. SHA-256 `cb9753404d72096c8f333e1597e7e12445118d89f04f21
 
 ### .github/workflows/ci.yml
 
-Paths: `.github/workflows/ci.yml`. SHA-256 `e8e816bcd20246f09c73ff27b9e630811704597006e07d503596d0c2b0ff22bf`, 2485 bytes.
+Paths: `.github/workflows/ci.yml`. SHA-256 `510b273a607d0ea75d089eeb9590672f4474314b7659cd67f83c3f7878bc67a3`, 3524 bytes.
 
 ```yaml
 name: CI
@@ -37,6 +37,11 @@ on:
   pull_request:
 permissions:
   contents: read
+# A newer push to the same pull request cancels the superseded run. Pushes to main and tags never cancel:
+# the group is unique per run id unless the event is a pull request.
+concurrency:
+  group: ci-${{ github.event_name == 'pull_request' && github.ref || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 jobs:
   verify:
     strategy:
@@ -56,12 +61,23 @@ jobs:
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: ${{ matrix.node }}
+          cache: npm
+          cache-dependency-path: package-lock.json
       - run: npm ci --no-audit --no-fund
       - run: npm run typecheck
       - run: npm run lint
       - run: npm test
       - run: npm run check
       - run: npm run build
+      # Browser downloads are cached per OS, engine set and exact Playwright version; the install below is a
+      # fast no-op on a hit and the fallback on a miss.
+      - id: pw
+        shell: bash
+        run: echo "version=$(node -p "require('./package-lock.json').packages['node_modules/@playwright/test'].version")" >> "$GITHUB_OUTPUT"
+      - uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809 # v4.2.4
+        with:
+          path: ~\AppData\Local\ms-playwright
+          key: playwright-${{ runner.os }}-${{ env.SEA_ENGINES == 'chromium' && 'chromium' || 'chromium-firefox' }}-${{ steps.pw.outputs.version }}
       - run: npx playwright install ${{ env.SEA_ENGINES == 'chromium' && 'chromium' || 'chromium firefox' }}
       - run: npx playwright test
       - if: failure()
@@ -187,7 +203,7 @@ THE SOFTWARE.
 
 ### README.md
 
-Paths: `README.md`. SHA-256 `5cacff2748ce16358bcd2daf20a366ea5e05ed947a834d9dac4a6959b4f0aa57`, 3489 bytes.
+Paths: `README.md`. SHA-256 `0397bce8e01fd8b68658d0cbca82429de0ed3d81ab3e1b600744b6a1fb3a4164`, 3640 bytes.
 
 ````markdown
 # SEA Game: Systems Engineering Awareness
@@ -195,7 +211,7 @@ Paths: `README.md`. SHA-256 `5cacff2748ce16358bcd2daf20a366ea5e05ed947a834d9dac4
 A bilingual (English/French) classroom auction game. Teams plan a vehicle for a mission, bid for components in a facilitator-led auction, reconcile their build and submit a value-for-money bid. The whole game is one offline HTML file with every image embedded.
 
 - **Play:** open the game file (`SEA-Game-<version>.html` in a release package, or `dist/index.html` after a build) in a current Chrome, Edge or Firefox on **Windows 11** (the only supported platform). No installation, no network, no account.
-- **Status:** 0.5.2.0 beta (owner FIX 4: showcase zoom, full-kit framing, sign controls, phone tables), on tag `v0.5.1.0` (G2, owner GO 2026-10-12: owner fixes, six-vehicle chooser, muzzle sightline check, component legibility rules, review gallery, code-free specification, codebase file, backup preparation, creator credit, reusable library); not yet release-qualified. Next: G3 (proxy and runtime, 0.6.0.0). The rollback is tag `v4.1.0-dev.1`.
+- **Status:** 0.6.0.0 beta in progress (G3 proxy and runtime: adaptive quality tiers, timed starting tier, context-loss recovery, the `npm run perf:ref` protocol), after 0.5.2.0 (owner FIX 4: showcase zoom, full-kit framing, sign controls, phone tables), on tag `v0.5.1.0` (G2, owner GO 2026-10-12: owner fixes, six-vehicle chooser, muzzle sightline check, component legibility rules, review gallery, code-free specification, codebase file, backup preparation, creator credit, reusable library); not yet release-qualified. Next: G3 (proxy and runtime, 0.6.0.0). The rollback is tag `v4.1.0-dev.1`.
 - **Created by:** Shafiqur Rahman Khan, with AI assistance.
 - **Licence:** MIT, see [LICENSE](LICENSE).
 - **Specification:** [docs/MPES.md](docs/MPES.md). **Current state and next steps:** [docs/HANDOVER.md](docs/HANDOVER.md). **Working rules:** [AGENTS.md](AGENTS.md).
@@ -714,9 +730,113 @@ def _cab(b):
 
 ```
 
+### _archive/recycle/2026-10-14/g3-caching.md
+
+Paths: `_archive/recycle/2026-10-14/g3-caching.md`. SHA-256 `b4d9076a10719d2d6cb67e36378428c48092b7ada4ef4c5c31ec00c26f792e4b`, 2563 bytes.
+
+```markdown
+# G3 caching: CI and render encoding
+
+Two changes make repeat work faster without changing what is produced.
+
+## CI (.github/workflows/ci.yml)
+
+- A newer push to the same pull request cancels the older, superseded run. Pushes to main and tags never cancel, because outside pull requests each run gets its own unique group.
+- npm downloads are cached through actions/setup-node (cache: npm, keyed on package-lock.json). `npm ci` still runs; node_modules is not cached.
+- The Playwright browser folder is cached per OS, engine set (chromium, or chromium plus firefox) and the exact @playwright/test version read from package-lock.json. The `npx playwright install` step is kept: on a cache hit it finds the browsers already present and finishes at once; on a miss it downloads as before.
+- Matrix, test commands, budgets, timeouts and the Pages deploy are untouched. The one new action, actions/cache, is pinned by commit like the others (v4.2.4).
+
+Evidence: workflow reviewed against the diff. The first CI run after merge is a cache miss; the second should show cache hits in the setup-node and cache steps (to be confirmed on the first two runs).
+
+## Render encoder (art/tools/encode-renders.ts)
+
+- Each master is trimmed and encoded once; the result is stored under `.artifacts/cache/encode/` (already gitignored via `.artifacts/`).
+- The cache key is the sha256 of the master PNG bytes plus every setting that shapes the output (format, quality, effort, chroma or alpha settings, trim threshold and apron, layer kind) plus all sharp and libvips build versions. Change any of them and it re-encodes.
+- A stored entry carries its own checksum; a damaged or half-written entry is ignored and re-encoded. Writes go through a temporary file and a rename, so parallel workers cannot leave partial entries.
+- `--no-cache` bypasses the cache. The run summary reports how many files came from the cache.
+- The command-line behaviour runs only when the file is executed directly, so tests can import its helpers.
+
+Evidence:
+- tests/unit/encode-cache.test.ts (4 tests): a tiny generated PNG misses first, hits second, and the hit is byte-identical to an uncached encode; a changed quality or format misses; the key changes with the master bytes and layer kind; a corrupted entry is re-encoded.
+- Smoke run on a two-image folder: encode, encode again (2 of 2 from cache), encode with `--no-cache`: the three manifests are byte-identical (the manifest lists each output's sha256).
+- `npx tsc --noEmit` and `npm run lint` pass. No full re-encode of content/renders was run.
+```
+
+### _archive/recycle/2026-10-14/g3-perf-ref-protocol.md
+
+Paths: `_archive/recycle/2026-10-14/g3-perf-ref-protocol.md`. SHA-256 `325975cc4bd1e93b366aceecd89d9517f0233a3a3b663de25ee1d68c1117b640`, 6625 bytes.
+
+```markdown
+# Fragment: reference-proxy measurement protocol (for MPES §14, goal G3)
+
+Draft for the owner's merge into MPES §14 and `docs/verification/`. Plain language, no code. Nothing here changes a budget.
+
+## 1. Purpose
+
+No physical reference laptop will be tested. This protocol defines the stand-in: this PC's Intel UHD 770, driven the same way every time, so that a number taken before a change can be compared with a number taken after it. Its result is a baseline, not a verdict: it reports every gate as PASS or FAIL against the budgets in §10.3 and §14, but it never stops because a budget was missed. Only a wrong or missing graphics chip stops it.
+
+## 2. The rig
+
+1. **Browsers.** Chromium and Edge, both full browsers (not the stripped headless build), each started with the owner's graphics flags: Direct3D 11 through ANGLE, GPU on, the GPU blocklist ignored, and the low-power GPU forced. Playwright's own defaults that switch the GPU off are removed.
+2. **Slowdown.** The page's processor is slowed fourfold through the browser's debugging interface, in every scenario.
+3. **Screens.** Three profiles, each run in full: 1366×768 at scale 1, 1536×864 at scale 1.25, and 1280×720 at scale 1.5.
+4. **The game.** The built file `dist/index.html`, opened from disk, rebuilt at the start of the run. The graphics chip is real: nothing pretends to be a GPU.
+5. **A quiet PC.** Close other work first, run one browser at a time, and never alongside Blender, Codex jobs or the full test suite. A baseline taken on a busy PC is void and is taken again.
+
+## 3. Gate zero: prove the graphics chip
+
+Before any measurement, each browser is asked for its unmasked WebGL renderer. If the text does not contain "UHD Graphics 770" (for example the software renderer, or the PC's other graphics chip), the run stops at once, records the text it saw, and measures nothing. The report is then marked INCOMPLETE and is not a baseline.
+
+## 4. What is measured
+
+Each row below is measured on every screen profile in both browsers; the report keeps the worst value.
+
+| Gate (MPES) | How it is read |
+|---|---|
+| File size ≤ 50 MB (§14) | Size of the built file |
+| Chooser ready ≤ 2 s (§14) | Page start to the first frame showing the heading and the role buttons |
+| Instructor with maximum saved state ≤ 3 s (§14) | Page start to the "Results to reconcile" heading, with the largest valid save (210 ledger entries, 70 lots, 10 teams) |
+| Command response ≤ 100 ms, p95 (§14) | 40 bid clicks in a 10-team timed auction, click to finished result |
+| Memory ≤ 400 MB and no growth across 10 cycles (§14) | Page memory plus decoded pixels after a full session; growth over ten rounds of re-rendering |
+| Stills update ≤ 100 ms, angle change ≤ 50 ms, turntable step ≤ 50 ms (§10.3) | Without WebGL: purchase to decoded layer; angle switch; six turntable steps |
+| 3D ready ≤ 3 s (§10.3, §14) | Opening the tracker to the first drawn model, on the real GPU |
+| 3D update ≤ 100 ms (§10.3) | Recording a purchase to the model showing the part, three purchases |
+| 3D memory ≤ 400 MB, proxy target ≤ 300 MB (§10.3, §14) | As above, reported against both limits |
+| 3D frame cadence, p95 ≤ 33 ms (§14) | Gaps between animation frames over five seconds of the model turning |
+| Idle CPU ≤ 3% over 60 s (§14) | After three quiet seconds, the processor time of all browser processes over 60 seconds, as a share of one core, on the chooser, the instructor with saved state and the tracker with the 3D model; plus the page's own busy share |
+| INP ≤ 200 ms (§14) | The slowest of the real, trusted clicks and key presses of the run (setup, bids, tracker steps) |
+| LCP ≤ 2.5 s (§14) | The browser's own figure for the chooser; a page opened from disk may report none, then the chooser-ready time stands in and the report says so |
+| CLS ≤ 0.1 (§14) | Total unexpected layout movement on the chooser, instructor and tracker |
+| No task over 200 ms after load (§14) | The longest main-thread task after the page finished loading, on the same views |
+| Zero page errors; zero network requests (§1.4, §13) | Counted on every page of the run |
+
+Idle windows run on the first screen profile only, to keep the run to about half an hour; set the idle length to zero to skip them (the report then says "not measured").
+
+## 5. What is not measured yet
+
+- **GPU time of a frame (≤ 16 ms, §14).** The page cannot reach the graphics timer of the showcase, so the report leaves it NOT_RUN. The animation-frame gap is the nearest figure and is not the same thing. Closing this needs a hook in the showcase or a browser trace and is a G3 follow-up.
+- **The 2× GPU headroom** in the proxy definition (§14) has no number of its own; it is judged by reading the frame figures, not computed.
+- **Memory "where headroom allows" ≤ 300 MB** is reported but is a target, not a gate.
+- **Battery saver, dim panel, touchpad and 8 GB single-channel memory** cannot be set on this PC; they remain residual risk (§14, D-16).
+- KPIs that are not performance (teaching, reliability, workload, learnability, realism, accessibility, maintainability, longevity) appear in the report as NOT_RUN with the place they are measured instead.
+
+## 6. Procedure
+
+1. Quiet slot: no other heavy work on the PC; note the time.
+2. Run the reference-proxy command. It rebuilds the game, checks the graphics chip in each browser, runs both browsers through all three screen profiles, and writes its results under `.artifacts/perf-ref/<timestamp>/`: one file per browser and screen, then `report.json` and `report.md` with one row per KPI of §1.4.
+3. If the report says INCOMPLETE, read its problem list, fix the rig (never the budget) and run again; keep nothing from an INCOMPLETE run.
+4. The first complete report of a goal is **the baseline**. Copy its `report.md` into `docs/verification/` with the commit it describes before any change is made.
+5. After each change, run again in a quiet slot and compare metric by metric with the baseline. A metric that rose by more than its run-to-run noise is a regression to explain; one over its budget is a FAIL to fix, test first.
+6. Run-to-run noise is learned, not assumed: take the baseline twice and record the spread before relying on small differences.
+
+## 7. Reporting
+
+Every check is reported PASS, FAIL, NOT_RUN or BLOCKED with the command that produced it (AGENTS.md rule 6). A KPI row is FAIL if any of its measured metrics is over budget, PASS if at least one was measured and none failed, and NOT_RUN if none was. The proxy, not a laptop, stays a residual risk in the handover.
+```
+
 ### art/README.md
 
-Paths: `art/README.md`. SHA-256 `7a2d6ec81b0194c1e9940851769d000cac3418b9de26afbc5154c2dd0deb46b8`, 12288 bytes.
+Paths: `art/README.md`. SHA-256 `50f382a2410bc638fe653b49a527aedb3150738b4befca1f92457364560c71ee`, 12402 bytes.
 
 ````markdown
 # Art pipeline (MPES §10, §11)
@@ -749,6 +869,7 @@ $B -b --factory-startup -P art/blender/render.py -- --out .artifacts/renders/pre
 node art/tools/contact-sheet.ts .artifacts/renders/kits.jpg 3 520 wide .artifacts/renders/preview/*-kit.png
 node art/tools/contact-sheet.ts .artifacts/renders/cards.jpg 7 200 square .artifacts/renders/preview/card-*.png
 # Encode and write the manifest the build embeds (replaces content/renders/ entirely).
+# Unchanged masters are reused from .artifacts/cache/encode/ (same bytes out); add --no-cache for a clean encode.
 node art/tools/encode-renders.ts encode .artifacts/renders/v3 content/renders avif 65
 # Review before committing: hero and base stills, cards, a turntable, and base + one part per slot (variants A, D, G).
 R=.artifacts/renders/v3; C=.artifacts/contact; mkdir -p $C/builds
@@ -7552,16 +7673,19 @@ console.log(`${files.length} images -> ${out}`);
 
 ### art/tools/encode-renders.ts
 
-Paths: `art/tools/encode-renders.ts`. SHA-256 `1bc622fe4770fb3189bd83d377fadddb6af96df2fd7d0990edf9c3fe2fe4c1af`, 8441 bytes.
+Paths: `art/tools/encode-renders.ts`. SHA-256 `8da5e9c6226100354aeee9a437b11a42d3d344f2228b98f3275b191b9792583a`, 12985 bytes.
 
 ```ts
 // Encode Blender render masters (16-bit RGBA PNG) for embedding (MPES §10, §11).
 //   node art/tools/encode-renders.ts measure <masters> <report.json>   AVIF vs WebP quality sweep
-//   node art/tools/encode-renders.ts encode <masters> <out-dir> <avif|webp> <quality>
+//   node art/tools/encode-renders.ts encode <masters> <out-dir> <avif|webp> <quality> [--no-cache]
+// Encoded layers are cached under .artifacts/cache/encode/, keyed on the master's bytes, every encoding and trim
+// setting and the sharp/libvips versions, so an unchanged master is not re-encoded. --no-cache bypasses it.
 // Layers are trimmed to their visible pixels; the manifest records each file's offset in its frame.
 import { createHash } from 'node:crypto';
-import { mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readdirSync, readFileSync, renameSync, writeFileSync } from 'node:fs';
 import { basename, join, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import sharp, { type OutputInfo } from 'sharp';
 
 type Format = 'avif' | 'webp';
@@ -7583,41 +7707,103 @@ async function empty(path: string): Promise<boolean> {
   return (stats.channels[3]?.max ?? 255) === 0;
 }
 
+/**
+ * Every setting that shapes the output besides the master and quality. The trim and the encoders read them from here,
+ * and the cache key covers them all, so changing any value misses the cache. `revision` covers a change to the code
+ * itself that no setting names: raise it with any change to trimmed() or encode().
+ */
+export const SETTINGS = {
+  revision: 1,
+  avif: { effort: 6, chromaSubsampling: '4:4:4' }, webp: { alphaQuality: 90, effort: 6, smartSubsample: true },
+  apron: 2, trimThreshold: 1, visibleAlpha16: 129, intermediatePngCompression: 0, colourspace: 'srgb' as const,
+};
+
 /** Images drawn at their offset in a frame (build layers and bases, turntable frames); cards and heroes show whole. */
 const placed = (kind: string) => kind.startsWith('build-') || kind === 'turntable';
 
 async function trimmed(path: string, kind: string): Promise<{ data: Buffer; info: OutputInfo; left: number; top: number; frameWidth: number; frameHeight: number }> {
   const meta = await sharp(path).metadata();
-  const image = sharp(path).toColourspace('srgb');
+  const { apron, trimThreshold, visibleAlpha16, intermediatePngCompression: compressionLevel, colourspace } = SETTINGS;
+  const image = sharp(path).toColourspace(colourspace);
   if (!placed(kind)) {
-    // Trim fully transparent margins (threshold on alpha only), keeping a 2 px apron; this framing is what is shown.
-    const { info } = await image.clone().trim({ background: { r: 0, g: 0, b: 0, alpha: 0 }, threshold: 1 }).toBuffer({ resolveWithObject: true });
-    const left = Math.max(0, -(info.trimOffsetLeft ?? 0) - 2), top = Math.max(0, -(info.trimOffsetTop ?? 0) - 2);
-    const width = Math.min(meta.width! - left, info.width + 4), height = Math.min(meta.height! - top, info.height + 4);
-    const out = await image.extract({ left, top, width, height }).png({ compressionLevel: 0 }).toBuffer({ resolveWithObject: true });
+    // Trim fully transparent margins (threshold on alpha only), keeping the apron; this framing is what is shown.
+    const { info } = await image.clone().trim({ background: { r: 0, g: 0, b: 0, alpha: 0 }, threshold: trimThreshold }).toBuffer({ resolveWithObject: true });
+    const left = Math.max(0, -(info.trimOffsetLeft ?? 0) - apron), top = Math.max(0, -(info.trimOffsetTop ?? 0) - apron);
+    const width = Math.min(meta.width! - left, info.width + 2 * apron), height = Math.min(meta.height! - top, info.height + 2 * apron);
+    const out = await image.extract({ left, top, width, height }).png({ compressionLevel }).toBuffer({ resolveWithObject: true });
     return { data: out.data, info: out.info, left, top, frameWidth: meta.width!, frameHeight: meta.height! };
   }
-  // A placed image is trimmed to its visible pixels, keeping a 2 px apron for soft shadows. Visible means an alpha
+  // A placed image is trimmed to its visible pixels, keeping the apron for soft shadows. Visible means an alpha
   // that survives 8-bit output: 16-bit masters carry faint render noise across the frame, and trimming on any
   // non-zero alpha kept layers near full-frame, so each decode took up to 19 times the pixels (CI run 38136462558).
   const { data, info } = await sharp(path).ensureAlpha().extractChannel(3).raw({ depth: 'ushort' }).toBuffer({ resolveWithObject: true });
   const alpha = new Uint16Array(data.buffer, data.byteOffset, info.width * info.height);
-  const visible = meta.depth === 'ushort' ? 129 : 1; // rounds to at least 1/255
+  const visible = meta.depth === 'ushort' ? visibleAlpha16 : 1; // rounds to at least 1/255
   let x0 = info.width, y0 = info.height, x1 = -1, y1 = -1;
   for (let y = 0; y < info.height; y++) for (let x = 0; x < info.width; x++) {
     if (alpha[y * info.width + x]! < visible) continue;
     x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y);
   }
-  if (x1 < 0) { x0 = 0; y0 = 0; x1 = 0; y1 = 0; } // nothing visible: a 1 px image (5 px with the apron)
-  const left = Math.max(0, x0 - 2), top = Math.max(0, y0 - 2);
-  const width = Math.min(meta.width!, x1 + 3) - left, height = Math.min(meta.height!, y1 + 3) - top;
-  const out = await image.extract({ left, top, width, height }).png({ compressionLevel: 0 }).toBuffer({ resolveWithObject: true });
+  if (x1 < 0) { x0 = 0; y0 = 0; x1 = 0; y1 = 0; } // nothing visible: a 1 px image plus the apron
+  const left = Math.max(0, x0 - apron), top = Math.max(0, y0 - apron);
+  const width = Math.min(meta.width!, x1 + 1 + apron) - left, height = Math.min(meta.height!, y1 + 1 + apron) - top;
+  const out = await image.extract({ left, top, width, height }).png({ compressionLevel }).toBuffer({ resolveWithObject: true });
   return { data: out.data, info: out.info, left, top, frameWidth: meta.width!, frameHeight: meta.height! };
 }
 
+export const ENCODE_CACHE_DIR = resolve(import.meta.dirname, '../../.artifacts/cache/encode');
+
 async function encode(input: Buffer, format: Format, quality: number): Promise<Buffer> {
   const s = sharp(input);
-  return format === 'avif' ? s.avif({ quality, effort: 6, chromaSubsampling: '4:4:4' }).toBuffer() : s.webp({ quality, alphaQuality: 90, effort: 6, smartSubsample: true }).toBuffer();
+  return format === 'avif' ? s.avif({ quality, ...SETTINGS.avif }).toBuffer() : s.webp({ quality, ...SETTINGS.webp }).toBuffer();
+}
+
+export interface Encoded { readonly data: Buffer; readonly left: number; readonly top: number; readonly frameWidth: number; readonly frameHeight: number; readonly width: number; readonly height: number }
+
+/** sha256 over the master bytes, kind, format, quality, all settings and the sharp + libvips build versions. */
+export function cacheKey(master: Buffer, kind: string, format: Format, quality: number): string {
+  const h = createHash('sha256');
+  h.update(createHash('sha256').update(master).digest());
+  h.update(JSON.stringify({ kind, format, quality, settings: SETTINGS, versions: sharp.versions }));
+  return h.digest('hex');
+}
+
+type Geometry = Omit<Encoded, 'data'>;
+const GEOMETRY = ['left', 'top', 'frameWidth', 'frameHeight', 'width', 'height'] as const;
+
+/** sha256 over an entry's geometry and bytes, so damage to either is caught. */
+function entrySum(geo: Geometry, data: Buffer): string {
+  return createHash('sha256').update(JSON.stringify(GEOMETRY.map(k => geo[k]))).update(data).digest('hex');
+}
+
+/** Geometry that can describe a crop of its frame: whole numbers, a non-empty size, inside the frame. */
+function sound(geo: Geometry): boolean {
+  return GEOMETRY.every(k => Number.isInteger(geo[k]) && geo[k] >= 0) && geo.width > 0 && geo.height > 0
+    && geo.left + geo.width <= geo.frameWidth && geo.top + geo.height <= geo.frameHeight;
+}
+
+/** Trim and encode one master, reusing a cached result when its key matches. Output is byte-identical either way. */
+export async function trimAndEncode(path: string, kind: string, format: Format, quality: number, cache: string | null = ENCODE_CACHE_DIR): Promise<Encoded & { hit: boolean }> {
+  const key = cache ? cacheKey(readFileSync(path), kind, format, quality) : '';
+  const bin = cache ? join(cache, `${key}.${format}`) : '', json = cache ? join(cache, `${key}.json`) : '';
+  if (cache && existsSync(bin) && existsSync(json)) {
+    try {
+      const entry = JSON.parse(readFileSync(json, 'utf8')) as Geometry & { sha256: string };
+      const geo = Object.fromEntries(GEOMETRY.map(k => [k, entry[k]])) as unknown as Geometry, data = readFileSync(bin);
+      if (sound(geo) && entrySum(geo, data) === entry.sha256) return { ...geo, data, hit: true };
+    } catch { /* unreadable entry: fall through and re-encode */ }
+  }
+  const t = await trimmed(path, kind);
+  const result: Encoded = { data: await encode(t.data, format, quality), left: t.left, top: t.top, frameWidth: t.frameWidth, frameHeight: t.frameHeight, width: t.info.width, height: t.info.height };
+  if (cache) {
+    mkdirSync(cache, { recursive: true });
+    const { data, ...geo } = result;
+    // Write to a temporary name and rename, so a parallel or interrupted run never leaves a half-written entry.
+    const tmp = `${bin}.${process.pid}.tmp`, tmpJson = `${json}.${process.pid}.tmp`;
+    writeFileSync(tmp, data); renameSync(tmp, bin);
+    writeFileSync(tmpJson, JSON.stringify({ ...geo, sha256: entrySum(geo, data) })); renameSync(tmpJson, json);
+  }
+  return { ...result, hit: false };
 }
 
 /** PSNR of the encoded image against the master, both flattened onto the HUD backdrop. */
@@ -7648,26 +7834,28 @@ async function measure(dir: string, report: string): Promise<void> {
   console.table(rows);
 }
 
-async function encodeAll(dir: string, out: string, format: Format, quality: number): Promise<void> {
+async function encodeAll(dir: string, out: string, format: Format, quality: number, useCache: boolean): Promise<void> {
   mkdirSync(out, { recursive: true });
   const renders = JSON.parse(readFileSync(join(dir, 'renders.json'), 'utf8')) as { blender: string; seed: number; outputs: { file: string; depth: number; slot?: string }[] };
   const meta = new Map(renders.outputs.map(o => [o.file, o]));
   const masters = readdirSync(dir).filter(f => f.endsWith('.png') && meta.has(f)).sort().map(classify);
   const entries: Record<string, unknown>[] = [], hidden: string[] = [];
+  let hits = 0;
   // Encode in parallel; results are sorted by file afterwards so the manifest does not depend on timing.
   let next = 0;
   const work = async () => {
     while (next < masters.length) {
       const m = masters[next++]!;
       if (m.kind === 'build-layer' && await empty(join(dir, m.file))) { hidden.push(m.id); continue; }
-      const t = await trimmed(join(dir, m.file), m.kind);
-      const data = await encode(t.data, format, quality);
+      const t = await trimAndEncode(join(dir, m.file), m.kind, format, quality, useCache ? ENCODE_CACHE_DIR : null);
+      const data = t.data;
+      if (t.hit) hits++;
       const file = basename(m.file, '.png') + '.' + format;
       writeFileSync(join(out, file), data);
       const o = meta.get(m.file)!;
       entries.push({
         file, kind: m.kind, id: m.id, depth: o.depth ?? null, ...(o.slot ? { slot: o.slot } : {}), bytes: data.length, sha256: createHash('sha256').update(data).digest('hex'),
-        frame: { width: t.frameWidth, height: t.frameHeight }, offset: { left: t.left, top: t.top }, size: { width: t.info.width, height: t.info.height },
+        frame: { width: t.frameWidth, height: t.frameHeight }, offset: { left: t.left, top: t.top }, size: { width: t.width, height: t.height },
       });
     }
   };
@@ -7676,13 +7864,17 @@ async function encodeAll(dir: string, out: string, format: Format, quality: numb
   hidden.sort();
   const total = entries.reduce((n, e) => n + (e.bytes as number), 0);
   writeFileSync(join(out, 'manifest.json'), JSON.stringify({ blender: renders.blender, seed: renders.seed, format, quality, totalBytes: total, hidden, entries }, null, 2) + '\n');
-  console.log(`${entries.length} files (${hidden.length} hidden layers), ${total} bytes -> ${out}`);
+  console.log(`${entries.length} files (${hidden.length} hidden layers, ${hits} from cache), ${total} bytes -> ${out}`);
 }
 
-const [mode, a, b, format, quality] = process.argv.slice(2);
-if (mode === 'measure' && a && b) await measure(resolve(a), resolve(b));
-else if (mode === 'encode' && a && b && (format === 'avif' || format === 'webp')) await encodeAll(resolve(a), resolve(b), format, Number(quality));
-else { console.error('usage: measure <masters> <report.json> | encode <masters> <out> <avif|webp> <quality>'); process.exit(2); }
+// Run as a CLI only when executed directly, so tests can import the helpers above.
+if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  const args = process.argv.slice(2), useCache = !args.includes('--no-cache');
+  const [mode, a, b, format, quality] = args.filter(x => x !== '--no-cache');
+  if (mode === 'measure' && a && b) await measure(resolve(a), resolve(b));
+  else if (mode === 'encode' && a && b && (format === 'avif' || format === 'webp')) await encodeAll(resolve(a), resolve(b), format, Number(quality), useCache);
+  else { console.error('usage: measure <masters> <report.json> | encode <masters> <out> <avif|webp> <quality> [--no-cache]'); process.exit(2); }
+}
 ```
 
 ### art/tools/measure-spike.ts
@@ -26849,16 +27041,16 @@ Exportez une sauvegarde par **Menu → Exporter une sauvegarde** après la confi
 
 ### docs/HANDOVER.md
 
-Paths: `docs/HANDOVER.md`. SHA-256 `6ffe4af79e4253be0271f6c52d79b2f1116f9aa070eef85248ac3abc27eb89f1`, 11650 bytes.
+Paths: `docs/HANDOVER.md`. SHA-256 `6f9a93f042b9420c0661cb8da69e5d370f2a0a0d2b0d94dc9277fb98becfbf87`, 13215 bytes.
 
 ```markdown
 # Handover
 
-Updated 2026-10-13 (America/Toronto). Specification: [MPES](MPES.md) 4.4.3. Evidence: [verification/0.5.2.0.md](verification/0.5.2.0.md), [verification/0.5.1.0.md](verification/0.5.1.0.md), [verification/0.5.0.0.md](verification/0.5.0.0.md), [verification/spike-visual.md](verification/spike-visual.md).
+Updated 2026-10-14 (America/Toronto). Specification: [MPES](MPES.md) 4.5.0. Evidence: [verification/0.6.0.0.md](verification/0.6.0.0.md) (in progress), [verification/0.5.2.0.md](verification/0.5.2.0.md), [verification/0.5.1.0.md](verification/0.5.1.0.md), [verification/0.5.0.0.md](verification/0.5.0.0.md), [verification/spike-visual.md](verification/spike-visual.md).
 
 ## 1. Version and milestone
 
-Version 0.5.2.0 beta (four-part MAJOR.MINOR.PATCH.BUILD, MPES §19.2; 1.0.0.0 only once out of beta: MPES §19.2 exit criteria, including every owner gate). M0–M4, V1, V2 (goal G1, tag `v0.5.0.0`) and G2 (owner fixes and the docs regime, tag `v0.5.1.0`, owner GO 2026-10-12) are complete. 0.5.2.0 (tag `v0.5.2.0` on `c2932eb`, owner GO 2026-10-13) is owner FIX 4 on G2: showcase zoom, framing of the full kit at every turn and height, sign controls, and phone tables as labelled cards (`docs/verification/0.5.2.0.md`). The rollback is tag `v4.1.0-dev.1`.
+Version 0.5.2.0 beta (four-part MAJOR.MINOR.PATCH.BUILD, MPES §19.2; 1.0.0.0 only once out of beta: MPES §19.2 exit criteria, including every owner gate). M0–M4, V1, V2 (goal G1, tag `v0.5.0.0`) and G2 (owner fixes and the docs regime, tag `v0.5.1.0`, owner GO 2026-10-12) are complete. 0.5.2.0 (tag `v0.5.2.0` on `c2932eb`, owner GO 2026-10-13) is owner FIX 4 on G2: showcase zoom, framing of the full kit at every turn and height, sign controls, and phone tables as labelled cards (`docs/verification/0.5.2.0.md`). G3 (0.6.0.0, branch `g3/proxy-runtime`, draft PR #27) is in progress. The rollback is tag `v4.1.0-dev.1`.
 
 **Plan to beta exit (MPES §17), one PR and one tag per goal:**
 
@@ -26901,10 +27093,11 @@ Shared rules for every goal: `AGENTS.md`. KPIs and priority: MPES §1.4.
 ## 3. Not done
 
 - **Owner art judgement:** BLOCKED-owner, script `docs/owner/art-review.md`.
-- **G3–G8:** above. `npm run perf:ref` does not exist yet; it is G3's first step.
+- **G3–G8:** above. `npm run perf:ref` exists (MPES §14.1); its first 12-KPI baseline waits for a quiet slot on this PC.
 - **Known timing note:** `tests/unit/codebase.test.ts` usually runs in under half a second but once took 7.1 s (2026-10-11, cause unknown, result correct, not reproduced in 22 runs); it has an explicit 60 s bound with that evidence in a comment. Watch for a repeat.
 - **Known timing note 2:** `tests/unit/build.test.ts` "is deterministic" once timed out (63 s against 5 s) while other projects' test runs loaded this PC (2026-10-12); it passed in 5.3 s on re-run. The same day `tests/unit/archive.test.ts` "refuses a path that holds a tracked file" timed out the same way (5 s; 80 ms alone); its scratch clones had piled up in `.artifacts/tmp` and are now removed after each run (`tests/unit/scratch.test.ts`). On 2026-10-12 at 97% CPU two Firefox tests (`layout.spec.ts` live lot, `showcase.spec.ts` every vehicle) timed out with an unchanged build and passed alone. If either repeats on a quiet machine, find the cause; do not raise the timeout.
 - **Known timing note 3:** CI failed the showcase update budget once too (109 ms against 100, `78cca1f`, 2026-10-12). With Windows Defender and other projects busy, the local perf project fails a 3D update budget in about half of its runs, at the previous commit as often as now (A/B in `docs/verification/0.5.1.0.md`). Run it on a quiet machine; never raise the budgets. G3's `perf:ref` protocol is meant to settle this.
+- **Whole-vehicle contrast (for G4):** measured on the vehicle's silhouette (stage shot on black and on white) at every view the player can reach. In 3D, with the camera-relative fill added after red run 38609311138, every vehicle holds at least 3:1 at all 16 turn steps (least 3.23, RECOVERY's rear view; `docs/verification/0.6.0.0.md`). In stills the front and rear views stand at about 1.6:1 whole on the dark stage and the turntable frames lower; their floors in `tests/e2e/showcase.spec.ts` are the measured least values and may only rise; G4 lifts every still view and frame to 3 through lighting, value separation and the re-render (MPES §10.5). Also for G4: the RECCE roof is pale in 3D side view (realism, under 1% clipped); the vehicle on the light theme's white stage is not yet contrast-checked.
 - **Residual risks:** real learners (S3); Narrator and NVDA users; no physical laptop test (D-16); CI runs Windows Server, not Windows 11; art quality is the owner's judgement.
 
 ## 4. In-progress work
@@ -26913,7 +27106,7 @@ Owner FIX 1 (stills and fit), FIX 2 (one click to close a round nobody can win i
 
 ## 5. Next action
 
-**Agent:** start G3 (proxy + runtime, release 0.6.0.0): branch from `main` at `v0.5.2.0`; first step `npm run perf:ref` on the Intel UHD 770 proxy, measuring a baseline before any change.
+**Agent:** G3 on `g3/proxy-runtime` (PR #27): red run 38609311138 fixed (three causes in `docs/verification/0.6.0.0.md`: contrast at every turn step, eager chooser stills, heavy tests apart), red runs 38921636256 (stills split in three) and 38931516133 (camera fit solved, not searched) fixed; red run 38958721130 fixed (tests' own browser contexts closed by the shared `test`; a purchase's 3D draw skips the shadow pass, which follows a frame later; opened panels stay open across renders); get two consecutive green CI runs on one head; `npm run perf:ref` 12-KPI baseline in a quiet slot (MPES §14.1); finish the verification Checks; gallery and owner GO or FIX. Then G4 (stills to 3:1 in every view and frame, the pale RECCE roof, the light-theme stage contrast).
 **Owner:** `docs/owner/art-review.md` (5 minutes, reply GO or FIX).
 
 ## 6. Rollback
@@ -27505,6 +27698,200 @@ A read-only Codex session (gpt-6.1-sol, medium) reviewed the diff (`.artifacts/c
 | 2 | The label check examined only cells that already had a label and needed just one per table, so lost labels would pass | Confirmed: the test now reads each column's name from the header row and requires it on every data cell under a named column; PASS |
 ```
 
+### docs/verification/0.6.0.0.md
+
+Paths: `docs/verification/0.6.0.0.md`. SHA-256 `1e668e702433ad17d2905dffd856cb8b13bc2302993488c8f82beaf3c41dc64b`, 34558 bytes.
+
+```markdown
+# Verification record: 0.6.0.0 beta (G3 proxy and runtime) — in progress
+
+Branch `g3/proxy-runtime`, from `main` at the 0.5.2.0 release. Specification: MPES 4.4.3 until this goal's changelog row. Environment: Windows 11 Enterprise, Node 24.20.0, Playwright browsers from `npm run browsers`.
+
+## First item: CI `showcaseUpdateMaxMs` 109, 162, 168 > 100 ms (verify (22))
+
+Root causes found so far, each with its fix:
+
+| Cause | Evidence | Fix |
+|---|---|---|
+| Every command rendered the view twice: once through the controller's subscription and again in the view | `tests/e2e/render.spec.ts` counted two rebuilds per command before the fix | A command, saved field or status message rebuilds once (`source/ui/view.ts`) |
+| The perf project recorded a trace, whose DOM snapshots ran inside the timed window | Click-to-paint fell with tracing off, same build | Trace off for the perf project (`playwright.config.ts`) |
+| The frame pacer counted page work after a draw as drawing cost, so a purchase waited for the next paced frame | Phase probe: purchase handled at about 30 ms, drawn one to two paced frames later | A change the player asked for draws in the next animation frame (urgent invalidate, `source/showcase/model.ts`) |
+| Attaching the 3D stage forced a layout | Profile of the attach | The attach only starts the loop |
+| The first draw compiled every shader in one task: 0.25 to 2.7 s, once 35.8 s, on a software renderer | Long-task timings of the first draw | The stage compiles in the background before it is shown (stills stay up), the bare vehicle first, then every part |
+| The shadow map was drawn again in every frame | Renderer inspection | Shadows are baked: drawn again only when the vehicle or its parts change |
+| A software renderer draws a full-resolution frame in about 50 ms, more than a 30 fps frame | Draw gap 104 ms at tier 0, 84 ms at tier 1 | Adaptive tiers (full, 0.75, 0.5 of the pixel ratio), one step down whenever the cheapest of the last eight draws exceeds a 30 fps frame (`source/showcase/pace.ts`, `tests/unit/pace.test.ts`) |
+
+### Red run 38571533524 (verify (22), head d0763a7): 3D update p95 331.6 ms > 100
+
+Diagnosed before any rerun. The stills update was within budget (p95 78.8 ms), so the first item's stills cause is fixed in CI; the 3D update was not. Every CI tracker opens in a fresh context, so the stage started at full quality each time and needed eight slow draws per step down: the tiers never reached the timed purchases (data-tier 2 only at the end, about 170 ms a draw on CI's software renderer).
+
+Draw-cost probe (`.artifacts/tmp/drawcost/`, three.js r0.186.1, SwiftShader, recovery vehicle with three parts: 40 draw calls, 69k triangles), one draw in ms:
+
+| Setting | 0.75 ratio | 4x CPU throttle |
+|---|---|---|
+| As shipped (multisampled canvas, shadow, environment, tone mapping) | 62 | 62 (ratio 1) |
+| No multisampling | 22 | 24 (ratio 1), 16.5 (0.75), 11-12 (0.5) |
+| No shadow | 56 | |
+| No environment | 26-30 | 6.7 (0.5, no multisampling) |
+| No tone mapping | 57-61 | |
+| Lambert instead of standard material | 22 | |
+| Ratio 1.5 | 113 (54 without multisampling) | |
+
+Multisampling made a draw about 3.6 times dearer; the cost is GPU-process work, so CPU throttling barely changes it. Fixes:
+
+| Cause | Fix | Check |
+|---|---|---|
+| Multisampling was fixed in the canvas, so no tier could drop it | Canvas without multisampling; tiers 0 and 1 draw into a multisampled half-float target resolved to the canvas with tone mapping (three.js OutputPass); tiers 2 and 3 draw straight at 0.75 and 0.5 (`source/showcase/pace.ts` TIERS) | `tests/unit/pace.test.ts` |
+| A fresh page started at full quality | Before the stage is shown, one timed draw per tier at the stage's size picks the first tier within a 30 fps frame (startTier); a tier differing only in resolution is skipped when its pixel share cannot bring the cost in budget | `tests/unit/pace.test.ts` starting tier |
+| A paced turning draw could start just before a click and delay its answer | The player's input anywhere else on the page holds paced draws for one second; the purchase's own draw still goes in the next frame | `tests/unit/pace.test.ts` hold |
+| A lost graphics context (driver reset, GPU switch, sleep) left the stage blank | Drawing stops on loss; on restore the environment and shadow are made again and the current parts drawn | `tests/e2e/showcase.spec.ts` context-loss test (all engines) |
+
+The measurement protocol was also corrected (tests/perf/): every timing runs from the trusted input event to after the next paint, with the nearest-rank p95 of at least 30 samples (`tests/unit/perf-measure.test.ts`); the 3D update is timed to the frame that draws the purchased part, the 3D ready time from the tracker's opening click to the first drawn model (MPES §14), each tracker in a fresh context.
+
+Local timings on 2026-10-14 are void: another job held the processor at about 80% (AGENTS.md: a busy PC voids a measurement). CI is the gate.
+
+## Lane: caching (merged from `g3/caching`)
+
+- CI: a newer push to the same pull request cancels the superseded run (pushes to main and tags never cancel); npm downloads cached by `actions/setup-node` keyed on `package-lock.json`; the Playwright browser folder cached per OS, engine set and exact `@playwright/test` version, with `npx playwright install` kept. Matrix, commands, budgets, timeouts and the Pages deploy unchanged; `actions/cache` pinned by commit (v4.2.4).
+- Render encoder (`art/tools/encode-renders.ts`): each master trimmed and encoded once into `.artifacts/cache/encode/`, keyed on the master's bytes, every output setting and the sharp and libvips versions; a damaged entry is re-encoded; writes are atomic; `--no-cache` bypasses it. Evidence: `tests/unit/encode-cache.test.ts`; a two-image smoke run gave byte-identical manifests with, without and from the cache.
+
+## Lane: reference proxy (merged from `g3/perf-ref`)
+
+`npm run perf:ref`, `playwright.perf-ref.config.ts`, `tests/perf-ref/`. Its protocol is written into MPES §14 in this goal; Codex's findings on both lanes are dispositioned below.
+
+### Red run 38577929333 (head 7dd20c2): three causes
+
+Diagnosed before any rerun, from the job logs and the Playwright traces of both jobs.
+
+| Job and test | Evidence | Cause | Fix | Check |
+|---|---|---|---|---|
+| verify (22), perf: 3D update p95 117.4 ms > 100 (max 126.8; stills update p95 66.5, within budget) | Phase breakdown added to the scenario (input to handled, to draw start, the draw, to paint); a CPU profile and a trace of one purchase at 4x CPU on an unminified build | Each command wrote the page's `lang` attribute, unchanged. Writing the root's `lang` restyles the whole page, and the command had just replaced the focused button: a forced full style and layout of 12 to 14 ms before the new view existed (3 ms without the write), and the next layout rose from 5.5 to 21 to 27 ms | The document's language and title are written only when they change (`nameDocument`, `source/ui/dom.ts`), in the views and the chooser alike. A purchase at 4x CPU after the fix: click handled in 38.6 ms, drawn in the next frame, painted at about 66 ms, of which about 11 ms is CI's software compositor reading the canvas back | Phase breakdown reported with the 3D update (`modelUpdateHandleP95Ms`, `…WaitP95Ms`, `…DrawP95Ms`, `…PaintP95Ms`); the gate stays at 100 ms |
+| verify (24), Firefox: context-loss test, `data-drawn` still `ACC-F` | Trace console and screencast; a probe of the event order (`.artifacts/tmp/ctxprobe/`) | On a software renderer Firefox announced `webglcontextrestored` while the context was still lost, and three.js rebuilt onto the dead context; later it restored the context without any event | The context, not the events, decides: an announcement while `isContextLost()` is still true is stopped before three.js sees it, and while lost a 1 s check notices a silent return and announces it, which rebuilds three.js and the stage (`source/showcase/model.ts`) | The context-loss test now also loses the context with an early announcement (nothing may be drawn on it) and restores it with the event suppressed (the purchase must still be drawn); it failed before the fix and passes on Chromium and Firefox |
+| verify (24), Chromium and Edge: "every vehicle …" timed out at 120 s | Six missions, each in 3D and stills, plus eight card renders, in one test | One test held too much work for the time on a software renderer | Split into one test per mission and one for the software renderer and card renders; no timeout raised, no check dropped | `tests/e2e/showcase.spec.ts` |
+
+Local verify of 6dd12fa failed in the codebase and specification tests: two new files (`source/showcase/resolve.ts`, `tests/unit/resolve.test.ts`) were still untracked when `npm run codebase` ran, so the units passed before the commit and failed after it. Fixed by naming both in MPES and regenerating; `tests/unit/codebase.test.ts` now fails while any file in a project folder is untracked (checked with a probe file).
+
+## Codex findings on the lanes (nine) and on the G3 diff (four)
+
+| # | Finding | Disposition |
+|---|---|---|
+| L1 | Reference report read memory as undefined | Fixed: `perf:ref` now runs the CI scenarios (`tests/perf/scenarios.ts`) and reports their values |
+| L2 | A stale or incomplete baseline passed | Fixed: rows are filtered by run, and a missing pair or an unexplained metric is a problem (`tests/unit/perf-ref-report.test.ts`) |
+| L3 | Commands were timed before their paint | Fixed: every timing runs from the trusted input to after the next paint, and waits for the click (`tests/unit/perf-measure.test.ts`) |
+| L4 | Turning cadence measured without draws | Fixed: costs come from the stage's own draw events |
+| L5 | The 3D update was timed before its draw | Fixed: timed to the frame whose `data-drawn` names the purchase |
+| L6 | Memory missed images and GPU allocations | Fixed: renderer and GPU process memory from the browser's system information; null with a note when the system does not report it |
+| L7 | The memory cycles did not pass through every phase | Fixed: each of the ten cycles imports the largest save (results to reconcile), enters submissions privately, opens the debrief, closes the room, then starts a new session through setup, practice, planning and a live auction. The scenario fails unless one cycle saves the instructor's state in all eight phases; that check failed on the old cycle (it saw setup to auction only). Also corrected: the largest save holds 3 teams, not 10 as a comment said |
+| L8 | Trim settings duplicated between the encoder and its cache key | Fixed: one settings object feeds both (`tests/unit/encode-cache.test.ts`) |
+| L9 | A cache entry's geometry was not in its checksum | Fixed: the checksum covers the geometry and the bytes |
+| D1 | The multisampled resolve drew pale fringes at the vehicle's edge | Fixed: colour divided by coverage before tone mapping, multiplied after (`source/showcase/resolve.ts`, `tests/unit/resolve.test.ts`, which also refuses a changed three.js shader) |
+| D2 | The GPU timer query was not bracketed by the draw | Fixed: bracketed by the stage's draw start and draw events |
+| D3 | A late button release could start the timing after the command | Fixed: the timing starts at the trusted input (`tests/e2e/perf.spec.ts`, late-release test) |
+| D4 | Unreadable GPU memory was reported as zero | Fixed: reported as null with a note |
+| D5 | Review of 6dd12fa: a disposed stage left its context, visibility and reduced-motion listeners registered, so a late context loss restarted the check and kept the stage alive | Fixed: every listener outside the orbit controls carries one abort signal, aborted on dispose (`source/showcase/model.ts`). Check `tests/unit/stage-dispose.test.ts` reads the source (the stage needs WebGL, absent in unit tests); it failed before the fix with six unsigned listeners. Sibling sweep: the only other page-level listeners (instructor auction keys, its clock) live as long as the page |
+| D6 | Review of 6dd12fa: the contrast oracle took only pixels brighter than the background, so a near-invisible vehicle with one bright highlight passed (Codex's synthetic case: body 1.01:1, reported 18.4:1) | Fixed by adding, not replacing: the stage is shot with and without the vehicle, and every pixel the vehicle changes, however dark, is measured against the same pixel of the bare stage; the vehicle must also cover more than 5% of the stage. Codex's case scores about 1.0 and fails. The honest figure is lower than the old one (3D 2.75 to 3.06, stills 1.45 to 1.49 on 2026-10-14, Chromium): the olive hull and dark tyres on the dark stage. Inspected side by side (`.artifacts/tmp/contrast/`: shot, bare stage, mask): the masks hold the vehicle and its ground shadow, nothing else. The existing checks (3 and 2.1 on the bright pixels) stay; the new whole-vehicle floors start at the measured values (3D 2.7, stills 1.4), may only rise, and G4 lifts both to 3 (MPES §10.5, HANDOVER §3). All 54 showcase tests pass on Chromium, Firefox and Edge |
+| D7 | Review of fe4df5d: the disposal check accepted the word `signal` anywhere in a call (a comment, another controller's signal) | Fixed: the check now reads each call's options object and requires its `signal` property to be the one destructured from the stage's own controller, bound nowhere else, and dispose to abort that controller. It proves itself against five mutations (a commented-out signal, a fresh controller's signal, a signal in a comment after the listener, a signal from another controller, dispose without the abort); the old check passed all five |
+| D8 | Review of fe4df5d: the whole-vehicle oracle left out every pixel within 8 levels of the stage, the very low-contrast pixels it should measure (Codex's case: 90% of a vehicle invisible, reported 8.89:1) | Fixed: the vehicle is found without looking at its brightness. The stage is shot on black and on white; a pixel that stays the same is opaque vehicle, and its shadow and the stage change. Every silhouette pixel is measured against the same pixel of the bare stage, so in Codex's case the invisible 90% sets the median and it fails. Inspected side by side (`.artifacts/tmp/contrast/sil-grid.png`: shot and silhouette, COMBAT and RECOVERY, 3D and stills): the silhouette is the vehicle alone, crane and antennas included, with no shadow or stage. Measured on Chromium, Firefox and Edge for all six vehicles: 3D 3.16 to 3.72, stills 1.56 to 1.66. These are higher than the old mask's figures because the ground shadow, darker than the stage, no longer counts as vehicle. The floors rise from 2.7 to 3 (3D, now WCAG 3:1) and from 1.4 to 1.5 (stills) |
+| D9 | Local verify of fe4df5d: five of six per-mission showcase tests failed in Firefox with an empty stage (12 workers). Reproduced with 10 workers (2 of 24 failed), and diagnosed with a temporary build that exposed the stage's state: the context was live and the canvas in view, but the stage's visibility observer last said "not visible" and never reported again. The stage had drawn one tick in 60 s | A product defect, not a test flake: a student's stage could stay blank. Fixed: each time the canvas is put on the page the stage asks for its visibility afresh and drops undelivered reports (`source/showcase/model.ts` `attached`). Failing check first: a new browser test in which every observation reports only once failed on all three engines, then passed. The contrast test now also waits for the stage's own draw after pausing, since "ready" means the scene is set, not drawn. The loaded repro then passed 24 of 24. Sibling sweep: the only other observer, the stage's resize observer, reports on the first layout after any change of size; re-asking it would reset the canvas each purchase, so it stays |
+| D10 | Review of d13d6e3: the disposal check still accepted an options spread or a second `signal` that overrides the stage's (Codex ran it: all three checks passed and the listener fired after the stage aborted) | Fixed: the check now reads the source through the TypeScript parser, not text: options must be a plain object literal with exactly one `signal`, that `signal` the only binding of the name and destructured from the stage's controller, and dispose must call the controller's `abort()` as a statement of its own. Eight mutations, the spread, the duplicate and a conditional abort among them, each fail it |
+| D11 | Review of the fix for run 38609311138: the 3D test waited for a new draw after each "Turn right", but a draw does not prove a new pose; a turn wired to nothing would still draw, and all sixteen shots could be the same bright pose | Fixed: the test reads the stage's reported azimuth before each shot and requires each step to turn the vehicle by one sixteenth and the sixteen poses to differ (`tests/e2e/showcase.spec.ts`). Failing first: with "Turn right" turning by nothing, the check failed at every step (pose 1, 2, 3 … sixteenths off). The same pass split each mission's 3D test into two half-turn tests from the same opening pose (reduced motion, so the vehicle does not turn by itself) and shoots the bare stage once per test: sixteen poses in one test ran out of time on a loaded PC (see below) |
+| D12 | Same review: an ad hoc `--project=chromium` now finds no showcase or rehearsal test; they run in `chromium-heavy` (and `firefox-heavy`, `msedge-heavy`) | By design (run 38609311138, third cause). Written into MPES (`playwright.config.ts` row) and HANDOVER; no script or workflow filters by project except the visual baselines, which stay in the light projects |
+
+Local verify of d13d6e3: every functional test passed (173); the three performance gates failed on this shared PC (command p95 100.8 ms, stills update p95 143.6 ms, 3D ready 4.46 s) while its other work held the processor busy. Local timings are void by the standing rule; CI on the pushed head is the gate, and two of the three scenarios do not run the changed stage code.
+
+### Red run 38609311138 (head 5b85c14): three causes
+
+Diagnosed before any rerun, from the job logs, the visual diff and the Playwright traces (`.artifacts/tmp/ci/r24`).
+
+| Job and test | Evidence | Cause | Fix | Check |
+|---|---|---|---|---|
+| verify (24), Chromium and Edge: COMBAT and RECOVERY in 3D, whole-vehicle contrast under 3 | The test measured one pose. A probe turning each vehicle through all 16 steps of the turntable (`.artifacts/tmp/contrast/probe4`) found the far side at 1.43 to 1.55 whole, against 3.2 to 3.7 at the starting pose | The sun is fixed in the world, so as the vehicle turns its lit side turns away from the camera; the camera-relative rim light draws the outline but does not light the faces. Which pose CI happened to shoot decided the result | A cool fill light rides with the camera (beside it, aimed past the vehicle), so the faces the camera sees are always lit; exposure unchanged (1.05), sun and ground shadow unchanged (`source/showcase/model.ts`). Tuned in five steps, each inspected side by side (`.artifacts/tmp/contrast/fill8-grid.png`, `fill9-vs-8.png`): least whole contrast over every vehicle and step 3.0 (RECOVERY 2.57) at fill 3.2, 3.45 (2.96) at 3.6 with exposure 1.15, 3.72 (3.28) at 4.5 with exposure 1.15, final at 5.2 with exposure 1.05 (see the per-vehicle table below). Clipping: at most 0.99% of lit pixels at 235 or above (COMMAND and MINE at step 5); no washout. The RECCE roof is pale in side view: a realism note for G4 | `tests/e2e/showcase.spec.ts`: each mission's 3D test turns the vehicle through all 16 steps and requires bright and whole contrast of 3 at every one. Failing first on the old lighting (Chromium): COMBAT whole 1.54 to 1.67 at steps 4 to 7 (bright 1.8) and RECOVERY failed |
+| verify (24), Chromium: chooser light-theme screenshot, 9511 pixels differ | The diff image: lineup stills blank | The six lineup stills were `loading="lazy"`. They are all on the first screen, but on a loaded runner the browser had not fetched them when the baseline was shot | The lineup stills load eagerly (`source/main.ts`); swept: no other lazy image in the source | `tests/e2e/chooser.spec.ts`: no first-screen image is lazy, and every image in the first screen is complete with pixels before the screenshot; failed first with "not 'lazy'" |
+| verify (24), Edge: one-round slice test timed out at 120 s | Trace: no step hung; every step was uniformly slow. The same test took 16.5 s on verify (22) Chromium, 1.7 min on verify (24) Chromium, 2.0 min on Edge and 32.9 s on Firefox. In the same run the software-WebGL showcase tests took 44 s to 1.6 min each and rehearsal 6.3 min on Edge (2.9 min on Chromium) | Two workers: a light test shared the runner's two cores with a software-rendered 3D test, and the 3D test's renderer took most of them | The heavy specs (showcase, rehearsal) run in their own project per engine, one test at a time, after every light project and after the previous engine's heavy project (`playwright.config.ts`); no timeout changed, no test dropped | `tests/unit/e2e-config.test.ts`: every engine has a heavy twin with one worker, its dependencies and its spec split; two of its four checks failed on the old configuration |
+
+Final 3D lighting, least contrast over the 16 steps (Chromium, local, before the three-engine run):
+
+| Vehicle | Whole | Note |
+|---|---|---|
+| COMBAT | 3.78 | |
+| RECCE | 3.82 | |
+| TROOP | 3.54 | |
+| COMMAND | 3.78 | |
+| RECOVERY | 3.23 | Least at steps 8 and 9: the rear view, small in the frame because the crane widens the framing |
+| MINE | 3.78 | |
+
+Three-engine run of the fixed build (2026-10-16, `.artifacts/tmp/contrast/fixed2.json`, every mission's two 3D half-turn tests and its stills test, Chromium, Firefox and Edge, one worker), least contrast measured:
+
+| View | Bright | Whole | Floor (bright, whole) |
+|---|---|---|---|
+| 3D, all 16 steps, every vehicle | 3.50 (RECOVERY rear, Chromium) | 3.23 (same) | 3, 3 |
+| Stills front and rear | 2.11 | 1.56 | 2.1, 1.5 |
+| Stills, every turntable frame | 1.60 | 1.32 | 1.55, 1.3 (new; the measured least, rounded down) |
+
+The turntable frames that show the side turned from the render's key light are the darkest stills; G4 lifts every still view and frame to 3:1 (HANDOVER §3, MPES §10.5). Each vehicle's least 3D whole contrast: COMBAT 3.81, RECCE 3.78, TROOP 3.57, COMMAND 3.78, RECOVERY 3.23, MINE 3.78.
+
+In that run four Firefox 3D tests (TROOP both halves, RECOVERY steps 8 to 15, MINE steps 0 to 7) failed before measuring anything: the browser stopped answering (a page that could not be opened in 120 s, a checkbox click that never returned, once "RenderCompositorSWGL failed mapping default framebuffer"), while other programs held this PC at 87% CPU, the pattern of HANDOVER timing note 2. Rerun alone on the same build (`.artifacts/tmp/contrast/ff.config.ts`): 6 of 6 passed in 45.8 s, each step at 3:1 or more. Not counted as a pass of the gate: CI is.
+
+Unit tests before the commit of this fix, while other programs held the PC at 66 to 87% CPU: three runs, 256 tests, each failing a different one or two on the 5 s unit timeout (`build.test.ts` "is deterministic", `renders.test.ts` orphans, `build.test.ts` built-game check, whose one `git ls-files` took 84 s); every other test passed, and the archive test took 197 s. The load pattern of HANDOVER timing note 2; no timeout changed. A run on a quiet PC or CI is the gate.
+
+Local `npm run verify` of 5f5cf71 (PC at 93% CPU from other programs): typecheck and lint passed; the unit stage failed one test on the 5 s timeout, a fourth different one (`build.test.ts` "embeds the committed renders once", 48 s), so the browser stage did not run. Pushed for CI, the gate on a busy PC.
+
+### Red run 38921636256 (head a39be42): one cause
+
+verify (22) green; verify (24) failed one test, 206 passed. `[msedge-heavy]` RECCE stills timed out at 120 s. The trace shows no hang: it was on the last of 24 turntable frames (three shots each, about 4.5 s a frame on that runner) when time ran out. The stills test did every view and frame in one test and took 50 to 84 s on Chromium and Edge in the same run, too close to the limit everywhere.
+
+Fix (no timeout changed): each mission's stills test is split into three, front and rear views plus frames 0 to 7, then 8 to 15, then 16 to 23, with a guard that the turntable still has 24 frames so the parts cover them all. Sibling sweep of the same run: the next longest are the rehearsal (90 s on Firefox, one scripted session that cannot be split without losing what it proves; watched) and the journeys (60 s and under).
+
+Local checks of the fix: the 18 split stills tests passed on Chromium (2.0 min); Codex review of the diff: no findings (it checked that the parts cover frames 0 to 23 and both views, none empty). Unit run beside an outside Rust build (CPU 100%, `rustc`): the same 5 s timeouts as before (`build.test.ts` deterministic and renders once, `renders.test.ts` orphans), 254 others passed; load, CI is the gate.
+
+`npm run perf:ref` first run (2026-10-16 11:44): Chromium all three profiles finished; Edge 1366x768 stopped once on a first 3D draw not shown within 10 s. Rerun alone it passed (6.9 min). Unreproduced; the full run is repeated in a quiet slot for the KPI table.
+
+### Red run 38931516133 (head 8ec383d): one cause
+
+Both jobs failed one check, `perf.spec.ts` 3D showcase: `modelUpdateP95Ms` 147.1 (verify (22)) and 115.9 ms (verify (24)), budget 100. The previous green run measured 89: the margin was thin, and runner variance pushed it over. A CPU profile of one purchase (unminified build, 4x throttle) found the largest single cost inside the click. A purchase refits the camera to the new kit (`fitTable`), and the fit searched for each view's distance numerically, placing a camera and projecting the box some 1 300 times a refit. That took 22 to 58 ms of a purchase. The rest of the purchase was the view rebuild and its layout (about 45 ms with the fit, 6 to 16 ms replacing the content).
+
+Fix (no budget changed): each view's distance is solved directly. The camera looks at the target, so a corner's offset across the view does not change with distance, and its depth grows one for one. The least distance that keeps it within the margin is its depth offset plus its larger cross offset over the margin times the view's slope. The fit places no camera at all now. Failing check first: a unit test that fails if fitting a drag table places a camera (it found 1 341). A second test holds the fit tight: at each height the worst sampled turn sits within 10⁻⁶ of the margin, which only the least distance can do. The existing framing tests (every 5° turn, every drag height, three kit shapes, three aspects) stay green.
+
+Codex review of the fix: one finding, P3, accepted. Straight up (polar 0), three.js nudges the camera's aim off the vertical but leaves its position, and the first solve moved both (extent 0.92039 against the margin 0.92 for the long kit). No player reaches it (drags stop at 0.6 rad), but the solve is now general: each side of the frame bounds the distance linearly from the camera's place and its aim taken apart. A failing pole test came first (polar 0 and 10⁻¹⁰ from either pole, three kits). Exactly straight down is left out: sin(π) is not quite 0, so the aim three.js takes is set by rounding, which no fit can match.
+
+Codex re-review of the general solve: no findings (it swept 1 296 cases over polars 0.6 to 1.45, FOV 20 to 60 and aspects 0.001 to 1000; both bounds hold and their denominators stay positive).
+
+Measured after the fix (local, the machine loaded by file sync at 94% CPU, so ratios only): the same distances as the search to five digits at all nine heights; a drag table 6 to 8 times faster warm in Node. The purchase profile repeated: `#update3d` 4.3 and 3.7 ms (was 27 to 58), the whole view rebuild 9.8 and 13.1 ms (was 44 to 67); the draw that follows (25 to 40 ms) is outside the click. The 360 px framing test passed alone (2.2 min); beside the sync load it and the perf scenario first timed out on clicks (load; CI is the gate).
+
+### perf:ref idle windows measured the throttle, not the page
+
+The head baseline (`.artifacts/perf-ref/head-8ec383d`) read idle CPU 100.4, 99.2 and 117.2% of a core and a main-thread busy share of 19.8%. The idle windows ran under the 4x CPU throttle, and Chrome emulates the throttle by keeping the renderer busy. Probe, about:blank for 30 s on this PC: 2.3% unthrottled, 81.1% at 4x. A second probe of the DevTools protocol: the throttle is browser-wide and the last setter wins; detaching the session that set it clears it (spin loop 108 ms at 4x, 26 ms after that detach); detaching a session that only read metrics leaves it.
+
+Fix: each idle window sets the throttle to 1x on the page's session and restores 4x in a `finally` on the same session, which stays attached until the page closes (the window's own detach is removed). Failing check first: a unit test reads the idle window's code and fails unless it unthrottles, restores in a `finally` and never detaches that session; it failed on the old spec and passes on the new. Sibling sweep: the only other detach in the harness (`processMB`) is a browser session that only reads process data.
+
+### Red run 38958721130 (head c2349b2): two causes
+
+Both jobs failed one check each.
+
+**verify (24): `[msedge-heavy]` "stills fallback without WebGL" timed out at 120 s.** The trace shows no hang: every step was uniformly slow (creating the page 7 s, single clicks 1 to 6 s). The same test took 42.7 s, then 1.4 min, then 2.0 min over three successive runs, while Chromium held at 27 to 35 s and Firefox at 10 to 16 s. Cause: Playwright closes only the contexts made by its own `page` and `context` fixtures (`node_modules/playwright/lib/index.js` lines 391 to 398); a context a test opens with `browser.newContext()` lives until its worker ends. Nine specs open their own contexts, and a heavy project has one worker, so every two-tab test left its pages open with a 3D showcase still turning, and each later test on that worker ran slower.
+
+Fix (no timeout changed): `tests/e2e/helpers.ts` exports a `test` whose automatic fixture closes every context a test opened that was not there before it. Failing check first: `tests/e2e/contexts.spec.ts`, two serial tests, the first leaving its own context open and the second expecting none; it failed before the fix and passes after on Chromium, Firefox and Edge. Traces are still kept on failure (checked by a deliberately failing test). Sibling sweep: all 16 specs now import `test` from `helpers.ts`, and a unit test (`tests/unit/e2e-config.test.ts`) fails any spec that imports it from `@playwright/test`.
+
+**verify (22): `perf.spec.ts` 3D showcase, `modelUpdateP95Ms` 132.8 ms, budget 100** (handle 51, wait 5.7, draw 13.1, paint 75.6 ms at p95; tier 3). Two hypotheses were measured and dropped before the cause was found:
+
+- A page update that patches the DOM instead of rebuilding it. Interleaved A/B of 18 purchases each: slower in one run (median 96.1 against 65.6 ms), faster in a second pinned to four cores (p95 100.2 against 124.6). Not shown to help; withdrawn to `_archive/recycle/2026-10-16/dom-patch/` with its README.
+- The purchase's draw queuing behind a software-rendered turning draw still in flight. A/B of 30 purchases each, four cores, software renderer, turning against reduced motion: total p50 29.1 against 28.8 ms, paint p50 12.5 against 12.5. No difference.
+
+Cause: a trace of three purchases on two cores with the software renderer shows, in the frame after each purchase, the commit spending 7 to 14 ms in `LayerTreeHost::DoUpdateLayers`, all of it `GLES2::ReadPixels` waiting on `CommandBufferHelper::Finish`. Without a graphics card Chromium composites in software and reads each new WebGL frame back before showing it, waiting for the whole draw. The purchase frame's readback took 14 ms against 7 for a turning frame: the purchase's draw also redrew the sun's 1024 px shadow map.
+
+Fix (no budget changed): a purchase is drawn at once without the shadow pass; the shadow follows in the next paced draw (one frame, 33 ms or more later). A new vehicle still draws its shadow at once, so it never stands in the last one's shadow, and the shadow is marked due only when the fitted parts change, not on every page render. Failing check first: a `showcase.spec.ts` test under reduced motion records, for each draw, whether it drew into the 1024 px shadow map; the draw that first shows a purchase must not, exactly one later draw must, then the still stage stops. It failed before the fix (the purchase draw made the shadow pass) and passes after; the whole showcase spec passed on Chromium (44 tests).
+
+Measured (local, four cores, software renderer, interleaved, 30 purchases each, ratios only): paint p50 12.7 to 8.2 ms, p95 16.2 to 12.4; total p50 33.2 to 27.3, p95 44.6 to 37.0. CI decides the budget.
+
+**Found while checking: a render shut every panel the reader had opened.** Typing in the tracker's scratch notes, which save as they are typed, hid the field after its first character; an opened guide, ledger or team list shut on the next click elsewhere. Failing check first (`tests/e2e/render.spec.ts`: planning panels 2 open, 0 after one saved field). Fix: a render keeps open each panel the reader opened, keyed by its own id, else its first named control, else its place (`source/ui/view.ts`). Passes on Chromium, Firefox and Edge; swept on every page with panels (student planning, tracker, instructor auction).
+
+Codex review of the diff (contexts fixture, open panels, shadow follow-up, new tests): one finding, P3, accepted. Panels without a name were keyed by their place, so opening the instructor's ledger in the auction and moving on to the build phase would have handed its open state to Team 1's purchases panel (reproduced in Node with the actual key function). Fix: every panel the interface builds has its own id (ledger, each team's purchases, planning guide and requirements, tracker notes, build additions, the About licence texts) and a panel is known only by its id. Sibling check: `tests/unit/panels.test.ts` reads every interface source as TypeScript sees it and fails any `details` made without an id; it failed on the student pages before the ids were added (four panels) and proves itself against a panel without an id, an id only in a comment and a `createElement`. No finding on the shadow follow-up or the fixture.
+
+## Checks
+
+To be completed at close.
+```
+
 ### docs/verification/legibility.md
 
 Paths: `docs/verification/legibility.md`. SHA-256 `da0cb31a104792540a189739d3c26cc59c140e192da37fb8abd6e89a81d265d0`, 9940 bytes.
@@ -27780,12 +28167,54 @@ export default tseslint.config(
 
 ### library/LESSONS.md
 
-Paths: `library/LESSONS.md`. SHA-256 `219a2918e350c76c6157d655452b5dffa4a0e01314bbcdb3db7a56b086b84683`, 8117 bytes.
+Paths: `library/LESSONS.md`. SHA-256 `22878a1f39b5cb14044e6fc767dafaa004691f18252c42042858650248230207`, 16677 bytes.
 
 ```markdown
 # Lessons learned
 
 Each entry: what happened, the rule it produced, and the check that now enforces it. Newest first. Examples come from SEA Game (a classroom auction game with photoreal vehicle renders and a real-time 3D showcase, one offline HTML file).
+
+## 2026-10-16 · Contexts left running, and a readback nobody asked for
+
+- **What happened:** one CI test took 43 s, then 1.4 min, then ran out of its 2 minutes, every step uniformly slow. Playwright closes only the contexts it made itself; tests that opened their own with `browser.newContext()` left them, each with a 3D view still animating, on a single-worker project. On the same run a purchase took 133 ms to appear in 3D (budget 100). Two plausible guesses (a smaller DOM update; the purchase queuing behind an animation frame) were measured on both arms and dropped. A trace then showed the browser, with no graphics card, reading each new WebGL frame back before compositing it, waiting for the whole software draw, and the purchase's draw also redrew the shadow map, doubling it. While checking the fix, a page rebuild was found to close every `<details>` panel the reader had opened.
+- **Rule:** close what a test opens in one shared fixture every spec must use. Measure a hypothesis before building on it. In a draw the player waits for, do only what they see now; let the rest follow a frame later. Carry opened panels across a rebuild.
+- **Check (as built in SEA Game):** an auto fixture closes every new context, a two-test spec proves the next test finds none, and a unit test fails any spec that bypasses the fixture; a browser test records which draw makes the shadow pass and fails if the purchase's first draw does; a browser test opens every panel on each page with panels and fails if a render closes one.
+
+## 2026-10-16 · An idle page at 100% of a core, measured by a busy instrument
+
+- **What happened:** the first reference-laptop baseline read idle CPU of 100 to 117% of a core on pages doing nothing. The pages were measured under Chrome's emulated 4x CPU slowdown, which works by keeping the renderer busy: a blank page read 81% throttled and 2.3% not. Probing the DevTools protocol also showed that the slowdown is the browser's, last setter wins, and closing the session that set it clears it, so a naive restore would have left later measurements unthrottled.
+- **Rule:** before trusting a measurement, measure nothing with the same instrument; the blank page is the harness's floor. Measure idle without emulated slowdown, and restore the slowdown in a `finally`, from a session that stays attached.
+- **Check (as built in SEA Game):** a unit test reads the idle window's code and fails unless it unthrottles, restores the throttle in a `finally`, and never detaches that session.
+
+## 2026-10-16 · A thin margin, and a search where a formula would do
+
+- **What happened:** a purchase's 3D update had passed its 100 ms budget at 89 ms; on busier CI runners it measured 116 and 147. A CPU profile of one purchase showed the largest single cost was refitting the camera to the new kit: a numerical search (doubling, then bisection) for each view's distance placed a camera and projected the box about 1 300 times, inside the click.
+- **Rule:** a budget met with thin margin will fail on a slow day; profile the operation and remove its largest cost rather than widen the budget. When a quantity has a closed form (here, a camera looking at its target keeps each point's cross offset fixed as it backs away, so the least distance is solved directly), solve it instead of searching on the user's click.
+- **Check (as built in SEA Game):** a unit test fails if fitting places any camera, and another holds the fit tight (the worst view at the margin to 10⁻⁶); the performance scenario still gates the update at 100 ms.
+
+## 2026-10-16 · A test that was working, not hung, when its time ran out
+
+- **What happened:** the stills contrast test checked the front, the rear and all 24 turntable frames of a vehicle in one test, three screenshots a frame. On a slow CI runner it timed out at two minutes; the trace showed it on frame 23 of 24, every step merely slow. The same test took 50 to 84 seconds elsewhere in the same run.
+- **Rule:** when a test's work grows with what it samples, give it room by splitting, never by raising the timeout: parts that together cover everything, and a guard that fails if the parts stop adding up.
+- **Check (as built in SEA Game):** three stills tests per mission of eight frames each (the first also the front and rear), and an assertion that the turntable still has the 24 frames the parts cover.
+
+## 2026-10-16 · Passed at one pose, failed at the next; blank because lazy; slow because shared
+
+- **What happened:** a 3D vehicle passed its contrast check (3:1) at the pose the test happened to shoot, then failed on CI at another: its key light was fixed in the world, so once turned, the faces the camera saw were unlit (1.5:1). On the same run a screenshot of the first screen found its thumbnails blank: they were loaded lazily and a busy runner had not fetched them yet. And a light browser test ran out of its two minutes, uniformly slow at every step, because it shared a two-core runner with a software-rendered 3D test.
+- **Rule:** a check samples every angle, view and frame the user can reach, never one sample. Light the faces the camera sees from the camera (a fill that rides with it), keep the key in the world for shadows. Load at once whatever the first screen shows; lazy loading is for what needs scrolling. Run heavy tests one at a time in their own group, after the light ones, instead of raising a timeout.
+- **Check (as built in SEA Game):** the per-mission 3D contrast test turns the vehicle through all 16 turntable steps and requires 3:1 at each; the stills test covers front, rear and every turntable frame; the chooser test fails a lazy first-screen image and waits until each is complete; a unit test reads the Playwright configuration and fails unless each engine's heavy specs run in their own one-worker project after the light ones.
+
+## 2026-10-14 · A stage in plain view that never drew; a contrast check blind to dark pixels
+
+- **What happened:** under a loaded local test run, Firefox showed an empty 3D stage. A temporary build that exposed the stage's state showed that the WebGL context was live and the canvas was on screen, but the stage's IntersectionObserver had last reported "not visible" (it first saw the canvas before it was on the page) and never reported again. The stage had drawn once in a minute. Separately, a reviewer showed that two contrast oracles were blind to dark pixels: one took only pixels brighter than the background, and the next took only pixels that differ from it. A vehicle mostly as dark as its stage passed both.
+- **Rule:** when a view re-attaches a canvas, re-ask the browser for its visibility; never let a single missed report stop drawing for good. A test of a canvas waits for the renderer's draw, not for "ready". Find what a contrast check measures without using brightness: shoot on black and on white, and the pixels that stay the same are the subject.
+- **Check (as built in SEA Game):** a browser test replaces IntersectionObserver with one that reports only once per observation, and the stage must still draw; the per-mission contrast test measures the silhouette from the black-and-white shots, waits for the stage's `sea-draw`, and holds the 3D vehicle to 3:1.
+
+## 2026-10-14 · An unchanged attribute that restyled the page; a restore that was not one
+
+- **What happened:** a purchase's 3D update ran over budget on CI. Splitting its timing into phases (input to handled, to draw start, the draw, to paint) and profiling one purchase showed the cause: every command wrote the page's `lang` attribute, unchanged. Writing an attribute on the document root restyles the whole page, even with the same value; with the focused button just replaced, it forced a full style and layout inside the command and slowed the next one. On the same run, Firefox on a software renderer announced a restored WebGL context while it was still lost, then restored it later without any event.
+- **Rule:** write to the document root only what changed. Split a slow timing into its phases before guessing at a fix. Trust an object's own state over the events that report it: ignore a "restored" event while the context still says lost, and while lost, check the state now and then and act on a silent return.
+- **Check (as built in SEA Game):** a helper writes the language and title only when they differ; the performance scenario reports the 3D update's phases beside the gated total; the context-loss browser test covers an early announcement (nothing may draw) and a silent restore (the next purchase must still draw).
 
 ## 2026-10-13 · Green branch, red main
 
@@ -28232,7 +28661,7 @@ Send the file with a one-page guide: how to open it, a solo walk-through (two ta
 
 ### library/practices/delivery-loop.md
 
-Paths: `library/practices/delivery-loop.md`. SHA-256 `9c8409c4fde1252c7ddbe89e048f736005e12ceb184f506df6cc5fd27bd86588`, 3034 bytes.
+Paths: `library/practices/delivery-loop.md`. SHA-256 `f66543efec06cdb7da7ac39d33ce87c97f7388549afc19036d4b79289e78f161`, 4078 bytes.
 
 ```markdown
 # Delivery loop
@@ -28255,6 +28684,10 @@ A loop that ships one goal at a time with evidence, so any person or agent can p
 - Report every check as PASS, FAIL, NOT_RUN or BLOCKED, with the exact command. No claim without executed evidence.
 - Things only a person can do are BLOCKED-owner with a one-page script in `docs/owner/`, never a vague request.
 - Keep budgets, timeouts and oracles in one place, with the reason for each number.
+- A test that times out while every step is merely slow is starved, not hung: find what shares its processor. Run heavy tests (software-rendered 3D, long rehearsals) one at a time in their own group after the light ones, and never raise the timeout instead.
+- A test whose work grows with what it samples (every view, every frame) outgrows its time on a slow runner while still working: read the trace for where it was, then split it into parts that together cover everything, with a guard that the parts still add up.
+- A slowdown that grows from run to run and from test to test is something left running. In Playwright, contexts a test opens with `browser.newContext()` live until the worker ends; close them in one shared auto fixture that every spec must use (a unit test can enforce the import), never in each test.
+- Measure a performance hypothesis on both arms, interleaved, before building on it; a local A/B with few samples can disagree with itself, so pin it to the CI runner's cores and repeat before trusting a small difference.
 
 ## Versioning
 
@@ -28300,7 +28733,7 @@ Write so that another person or agent can resume development, operations and mai
 
 ### library/practices/performance.md
 
-Paths: `library/practices/performance.md`. SHA-256 `c42b5d253505d0d166b1a384e15176723870dc4cd7db6958ad394e1921f1b053`, 2450 bytes.
+Paths: `library/practices/performance.md`. SHA-256 `175ef557a89efbc1229ff9932f9a103fcace6f359fdc580ecb8896f3cf6c2c6d`, 4359 bytes.
 
 ```markdown
 # Performance on ordinary laptops
@@ -28330,15 +28763,23 @@ Chromium and Edge forced onto an Intel integrated GPU (`--use-angle=d3d11 --enab
 - Parse only the model shown; decode images lazily and never evict one on screen.
 - Small procedural environment map (e.g. 64 px PMREM) instead of HDR files; one shadow map; extra lights unshadowed.
 - Bake ambient occlusion into vertex colours; avoid image textures where size is tight.
-- Fall back to layered stills when WebGL 2 is missing or the context is lost; recover from context loss.
+- Fall back to layered stills when WebGL 2 is missing or the context is lost; recover from context loss, trusting `isContextLost()` over the events (a browser may announce a restore early, or restore silently).
+- Never write the document root's attributes (`lang`, `data-theme`, title) unless the value changed: even an unchanged write restyles the whole page.
+- Split a slow interaction timing into phases (handled, draw start, draw, paint) before fixing; profile one instance on an unminified build.
+- Keep work inside a click to what the click needs; where a quantity has a closed form (camera fit distance, a bound, a layout size) solve it rather than search; treat a budget met with thin margin as a defect to profile.
 - Own every GPU resource: dispose of geometries, materials, textures and render targets when a view closes (three.js does not free them for you); give shared resources a clear owner or a reference count; cancel loads no longer wanted; test repeated open and close for memory growth.
 - Count GPU memory, not file size: a 200 KB AVIF of 2048 px still takes about 16 MB decoded (more with mipmaps).
+- A visibility observer may go stale across a detach and re-attach on a loaded browser: when a view puts its canvas back on the page, ask afresh (drop pending records, unobserve, observe). Test with an observer that reports only once.
+- "Ready" is not "drawn": a screenshot test of a canvas waits for the renderer's own draw event, not a ready flag.
+- Measure nothing first: a blank page with the same instrument is the harness's floor. Emulated CPU slowdown burns CPU itself, so measure idle CPU unthrottled; the slowdown is browser-wide, last setter wins, and closing the session that set it clears it.
+- Without a graphics card (CI runners, some virtual machines) Chromium composites in software and reads every new WebGL frame back before showing it, waiting for the whole draw: a frame the player waits for costs its full software draw time on the main thread. In such a draw do only what the player sees now (here, skip the shadow-map pass) and let the rest follow in the next paced frame.
+- Keep what the reader opened open: a view that rebuilds its DOM recreates every `<details>` closed; carry the open ones across by an id every panel has (never its place, which moves between phases; never its title, which counts and translation change), and enforce the id with a source check.
 - Measure on a quiet machine. Timing failures under load are evidence to investigate, never a reason to raise budgets.
 ```
 
 ### library/practices/visual-legibility.md
 
-Paths: `library/practices/visual-legibility.md`. SHA-256 `6a1270b13397cd7eef9e198f584cfae9a8062271bd330a1825b9c14adc994bcd`, 4527 bytes.
+Paths: `library/practices/visual-legibility.md`. SHA-256 `26d8f2eee0fd9e5a2dcd56aa2a3e1ca57edb95bc1958d680bedf56ae5f43e287`, 5360 bytes.
 
 ```markdown
 # Visual legibility
@@ -28356,6 +28797,7 @@ Every component must read as a separate object at a glance: in a still, in real-
 - Three-point lighting placed relative to the camera, not the world, so each view gets the same roles: key 45° camera-left and 35° up; fill 35° camera-right, 20° up; rim (back light) about 145° and 25° up.
 - Key:fill about 2.5–3:1 (*start*). Projectors lift shadows, so do not go darker than 4:1.
 - Rim light draws outlines against the background and against parts behind. In real-time 3D, parent a weak, unshadowed directional light to the camera (about half the key, slightly cool) so the outline holds as the model turns. Cost: one extra light per fragment, no extra shadow pass.
+- A world-fixed key (the one that casts the shadow) lights only one side: as a model turns, the faces the camera sees go dark. Add a fill that also rides with the camera, beside it and aimed past the model, so every pose stays lit; tune it on the worst pose, then check the brightest for clipping.
 - Keep the rig fixed across all layers of one angle; scale card rigs to the subject's size. Fewer than 1% clipped pixels on non-emissive parts.
 - Colour management: light and shade in linear space; colour textures and final output in sRGB; normal, roughness, metalness and AO maps as non-colour data; check that the exported model looks the same in the target viewer as in the renderer.
 - Tone mapping: AgX or ACES; compare exposures on identical subjects; check hue shifts on the palette.
@@ -28388,6 +28830,8 @@ Every component must read as a separate object at a glance: in a still, in real-
 ## 7. Measured, not judged by eye alone
 
 - In force (example project): picture sightline check, overlap, fit, triangle budgets, WCAG contrast in end-to-end tests.
+- Find the subject before measuring its contrast, and find it without looking at its brightness: shoot it on black and on white; what stays the same is the opaque subject. A mask of "bright pixels" or "pixels that differ from the background" leaves out the dark parts a contrast check exists to catch. Prove the oracle on a synthetic subject that is mostly invisible.
+- Measure every angle, view and frame the viewer can reach (every turntable step, every still), never one sample pose: a pass at one pose says nothing about the next.
 - Next: render a per-component ID mask for each still; fail a component whose visible area falls below a share of its own (start 35% in at least one angle), or whose boundary contrast with neighbours is under 1.5:1 along 70% of its edge; judge the encoded images at displayed sizes, in greyscale and under colour-vision simulation. Simulate projector washout (start: 15% white veil) on the interface.
 
 ## Sources
@@ -28449,18 +28893,18 @@ a { color: var(--accent); }
 
 ### package-lock.json
 
-Paths: `package-lock.json`. SHA-256 `2b46683776f9ee6c6d1b153558b1fcccbb68209ebf02f21104a43564265bd206`, 134039 bytes.
+Paths: `package-lock.json`. SHA-256 `16d1847b103895666a8194a0826854ef72b8225dcaa7b044265691d969494ac6`, 134039 bytes.
 
 ```json
 {
   "name": "sea-game",
-  "version": "0.5.2",
+  "version": "0.6.0",
   "lockfileVersion": 3,
   "requires": true,
   "packages": {
     "": {
       "name": "sea-game",
-      "version": "0.5.2",
+      "version": "0.6.0",
       "license": "MIT",
       "dependencies": {
         "three": "0.186.1"
@@ -32498,13 +32942,13 @@ Paths: `package-lock.json`. SHA-256 `2b46683776f9ee6c6d1b153558b1fcccbb68209ebf0
 
 ### package.json
 
-Paths: `package.json`. SHA-256 `089c1f8f37a85f58f864fc82666b184db97a778d7d73fa94edf76c5dea8e97cb`, 1470 bytes.
+Paths: `package.json`. SHA-256 `ac63da86526a1197fb4bf0fd93b5c0c130bb2c872a836f8aa0436c904fe00bf2`, 1561 bytes.
 
 ```json
 {
   "name": "sea-game",
-  "version": "0.5.2",
-  "gameVersion": "0.5.2.0",
+  "version": "0.6.0",
+  "gameVersion": "0.6.0.0",
   "private": true,
   "description": "Systems Engineering Awareness: offline single-file classroom auction game (EN/FR)",
   "license": "MIT",
@@ -32524,6 +32968,7 @@ Paths: `package.json`. SHA-256 `089c1f8f37a85f58f864fc82666b184db97a778d7d73fa94
     "browsers": "node scripts/browsers.ts",
     "codebase": "node scripts/codebase.ts",
     "gallery": "node scripts/gallery.ts",
+    "perf:ref": "node build/build.ts && playwright test -c playwright.perf-ref.config.ts",
     "verify": "npm run typecheck && npm run lint && npm run test && npm run check && npm run build && npm run e2e"
   },
   "devDependencies": {
@@ -32555,7 +33000,7 @@ Paths: `package.json`. SHA-256 `089c1f8f37a85f58f864fc82666b184db97a778d7d73fa94
 
 ### playwright.config.ts
 
-Paths: `playwright.config.ts`. SHA-256 `d43d59e896edd40f4162e1ac652b715440ca26059342ce77a84f7950585d6155`, 2448 bytes.
+Paths: `playwright.config.ts`. SHA-256 `4cdc43a74e06ca4943f0b507e37d21d6b9237e429b2d68714e407752e69f46b6`, 3355 bytes.
 
 ```ts
 import { defineConfig, devices } from '@playwright/test';
@@ -32578,10 +33023,21 @@ const all = [
   { name: 'msedge', use: { ...devices['Desktop Edge'], channel: 'msedge' } },
 ];
 
-const browsers = all.filter(project => engines.includes(project.name)).map(project => ({ ...project, testIgnore: /perf\.spec\.ts/ }));
-// RQ-26 budgets are measured in Chromium, alone, after every other project has finished.
+// Heavy tests (software WebGL turning the 3D showcase, every still layer, three-tab rehearsals) run one at a time
+// after the rest: beside them on a CI runner's few cores the one-round slice slowed from 17 s to 2 minutes and ran out
+// of its time (run 38609311138, Edge). Each engine's heavy project waits for every light project and for the heavy
+// project before it, so no two heavy tests share the machine.
+const heavy = /(showcase|rehearsal)\.spec\.ts/;
+const chosen = all.filter(project => engines.includes(project.name));
+const browsers = chosen.map(project => ({ ...project, testIgnore: [/perf\.spec\.ts/, heavy] }));
+const heavies = chosen.map((project, i) => ({
+  ...project, name: `${project.name}-heavy`, testMatch: heavy, workers: 1,
+  dependencies: [...browsers.map(light => light.name), ...(i ? [`${chosen[i - 1]!.name}-heavy`] : [])],
+}));
+// RQ-26 budgets are measured in Chromium, alone, after every other project has finished. No trace: its DOM
+// snapshots run in the page on every action, inside the timed window (about 40 ms per click at 4x, G3 profile).
 const perf = engines.includes('chromium')
-  ? [{ name: 'perf', use: { ...devices['Desktop Chrome'] }, testMatch: /perf\.spec\.ts/, dependencies: browsers.map(project => project.name) }]
+  ? [{ name: 'perf', use: { ...devices['Desktop Chrome'], trace: 'off' as const }, testMatch: /perf\.spec\.ts/, dependencies: [...browsers, ...heavies].map(project => project.name) }]
   : [];
 
 export default defineConfig({
@@ -32598,7 +33054,65 @@ export default defineConfig({
   // test timeout (a lost Firefox click once held J1 for 10 minutes). Not shorter: renderers under parallel
   // load can stall for about 15 s and then recover (local verify, 2026-10-10).
   use: { viewport: { width: 1280, height: 720 }, actionTimeout: 60_000, trace: 'retain-on-failure' },
-  projects: [...browsers, ...perf],
+  projects: [...browsers, ...heavies, ...perf],
+});
+```
+
+### playwright.perf-ref.config.ts
+
+Paths: `playwright.perf-ref.config.ts`. SHA-256 `9701ff8901d80ebb3c26afc8a2a6d81e8015aa5a68203ea377b278156dabffde`, 2808 bytes.
+
+```ts
+// G3 `npm run perf:ref`: the MPES §14 reference-laptop proxy. Chromium and Edge forced onto this PC's Intel UHD 770
+// with 4x CPU throttling (set inside the spec). Separate from playwright.config.ts on purpose: it is not part of
+// `npm run verify`, and the existing `perf` project is untouched. The run refuses to measure unless the unmasked
+// WebGL renderer says "UHD Graphics 770". Reports land in .artifacts/perf-ref/<timestamp>/.
+import { defineConfig } from '@playwright/test';
+import path from 'node:path';
+
+if (!process.env.CI && !process.env.PLAYWRIGHT_BROWSERS_PATH) {
+  process.env.PLAYWRIGHT_BROWSERS_PATH = path.resolve('.artifacts/ms-playwright');
+}
+
+// One timestamp for the whole run, shared with the workers and the teardown through the environment.
+const pad = (n: number) => String(n).padStart(2, '0');
+const now = new Date();
+process.env.PERF_REF_STAMP ??= `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}T${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
+process.env.PERF_REF_DIR ??= path.resolve('.artifacts/perf-ref', process.env.PERF_REF_STAMP);
+
+/** The owner's launch flags, verbatim (the underscore form of the last one is Chromium's own spelling). */
+const GPU_ARGS = ['--use-angle=d3d11', '--enable-gpu', '--ignore-gpu-blocklist', '--force_low_power_gpu', '--js-flags=--expose-gc'];
+
+const engines = (process.env.SEA_ENGINES ?? 'chromium,msedge').split(',');
+const launch = {
+  args: GPU_ARGS,
+  // Playwright's own defaults must not undo the flags above.
+  ignoreDefaultArgs: ['--disable-gpu', '--disable-gpu-compositing', '--disable-software-rasterizer'],
+  headless: !process.env.PERF_REF_HEADED,
+};
+const all = [
+  // channel 'chromium' is the full Chromium in its new headless mode; the default headless shell has no real GPU path.
+  { name: 'perf-ref-chromium', use: { channel: 'chromium', launchOptions: launch }, engine: 'chromium' },
+  { name: 'perf-ref-msedge', use: { channel: 'msedge', launchOptions: launch }, engine: 'msedge' },
+];
+
+export default defineConfig({
+  testDir: 'tests/perf-ref',
+  testMatch: /perf-ref\.spec\.ts/,
+  outputDir: '.artifacts/test-results-perf-ref',
+  // One browser at a time, one test at a time: timings must not compete with each other.
+  fullyParallel: false,
+  workers: 1,
+  // Stop at the first failure: a wrong GPU makes every later number meaningless.
+  maxFailures: 1,
+  forbidOnly: true,
+  retries: 0,
+  reporter: [['list']],
+  // Three viewport profiles plus idle windows per browser; generous because the run is slow by design.
+  timeout: 1_200_000,
+  globalTeardown: './tests/perf-ref/teardown.ts',
+  use: { actionTimeout: 60_000, trace: 'off' },
+  projects: all.filter(project => engines.includes(project.engine)).map(project => ({ name: project.name, use: project.use })),
 });
 ```
 
@@ -33192,7 +33706,7 @@ for (const shot of shots()) {
 
 ### scripts/gallery/playwright.config.ts
 
-Paths: `scripts/gallery/playwright.config.ts`. SHA-256 `1b26b9af8289e5554b565ba2222270e96c17e4858fe5388ed674259e43658bac`, 672 bytes.
+Paths: `scripts/gallery/playwright.config.ts`. SHA-256 `a8acd01dbf4a628dbce575e01a878305283b3a79a0a90eebde164b77e3b28ad5`, 1145 bytes.
 
 ```ts
 // Gallery capture only (scripts/gallery.ts); the test suite's config is playwright.config.ts.
@@ -33212,7 +33726,15 @@ export default defineConfig({
   retries: 0,
   reporter: [['line']],
   timeout: 180_000,
-  use: { ...devices['Desktop Chrome'], actionTimeout: 60_000 },
+  // The 3D shots show what a laptop's integrated GPU draws (the full-quality tier), not the software renderer's cheapest
+  // tier: the browser runs on this PC's Intel GPU with npm run perf:ref's flags (G3).
+  use: {
+    ...devices['Desktop Chrome'], channel: 'chromium', actionTimeout: 60_000,
+    launchOptions: {
+      args: ['--use-angle=d3d11', '--enable-gpu', '--ignore-gpu-blocklist', '--force_low_power_gpu'],
+      ignoreDefaultArgs: ['--disable-gpu', '--disable-gpu-compositing', '--disable-software-rasterizer'],
+    },
+  },
 });
 ```
 
@@ -35099,7 +35621,7 @@ declare const __SEA_LICENSE__: string;
 
 ### source/main.ts
 
-Paths: `source/main.ts`. SHA-256 `ef1a94af9f5f17ee821597d56a2fe645dc2d77ab3d1b52fe33dad1db0d979a0e`, 7219 bytes.
+Paths: `source/main.ts`. SHA-256 `9d61928fd22c6f5b6bcca9c7f216bc04ae50cfe663776ef2d3ad1f4f61ee06b4`, 7179 bytes.
 
 ```ts
 // Entry point: route to the role chooser or a single role (MPES §5.3).
@@ -35111,7 +35633,7 @@ import { missionName } from './ui/components.ts';
 import type { MissionId } from './domain/data.ts';
 import { startInstructor } from './ui/instructor.ts';
 import { startStudent } from './ui/student.ts';
-import { h, replaceChildren } from './ui/dom.ts';
+import { h, nameDocument, replaceChildren } from './ui/dom.ts';
 import { detectLanguage, otherLanguage, translate, type Language, type StringKey } from './ui/i18n.ts';
 
 export type Role = 'instructor' | 'student';
@@ -35163,7 +35685,7 @@ function lineup(lang: Language): HTMLElement | null {
         if (move) { event.preventDefault(); select(move(index), true); }
       },
     },
-  }, h('img', { src: still.src, alt: '', decoding: 'async', loading: 'lazy', ...size(still) }), h('span', { text: missionName(id, lang) })));
+  }, h('img', { src: still.src, alt: '', decoding: 'async', ...size(still) }), h('span', { text: missionName(id, lang) })));
   return h('div', { class: 'hero-lineup' }, large, h('div', { class: 'lineup', role: 'group', 'aria-label': translate(lang, 'chooser.lineup') }, ...buttons));
 }
 
@@ -35182,8 +35704,7 @@ const fresh = (href: () => string) => (event: Event) => { (event.currentTarget a
 
 function renderChooser(root: HTMLElement, lang: Language, unknownRole: boolean): void {
   const t = (key: StringKey, vars?: Record<string, string>) => translate(lang, key, vars);
-  document.documentElement.lang = lang;
-  document.title = t('app.title');
+  nameDocument(lang, t('app.title'));
   const roleCard = (role: Role, label: StringKey, description: StringKey) => h('section', { class: 'role-card' },
     h('a', { class: 'btn primary big', href: roleHref(role, lang), 'data-role': role, text: t(label), on: { click: fresh(() => roleHref(role, lang)) } }),
     h('p', { class: 'muted', text: t(description) }),
@@ -35235,7 +35756,7 @@ if (root) start(root);
 
 ### source/showcase/frame.ts
 
-Paths: `source/showcase/frame.ts`. SHA-256 `e8ca87b546c4f8809db8662364248bf452bb945db2763cefc8bcc6a6994bdf8c`, 4760 bytes.
+Paths: `source/showcase/frame.ts`. SHA-256 `8e7cf59f3fc294626ca3d2647f8e4826deadb35c3e798aeedb5f272228942c89`, 5462 bytes.
 
 ```ts
 // Framing and zoom for the 3D showcase (MPES §10.2): the camera stands far enough back that the vehicle as fitted, however
@@ -35264,6 +35785,7 @@ function corners(box: Box3): Vector3[] {
 
 const camera = new PerspectiveCamera();
 const point = new Vector3();
+const UP = new Vector3(0, 1, 0), across = new Vector3(), upward = new Vector3(), aim = new Vector3();
 
 /** How far the box's farthest corner projects from the frame centre, seen from `distance` along `direction`. */
 export function extentAt(box: Box3, target: Vector3, direction: Vector3, distance: number, fov: number, aspect: number, points = corners(box)): number {
@@ -35289,20 +35811,28 @@ export function extentAt(box: Box3, target: Vector3, direction: Vector3, distanc
  * at every sampled turn and at each polar angle given (the default view and the drag limits).
  */
 export function fitDistance(box: Box3, target: Vector3, polars: readonly number[], fov: number, aspect: number, margin = FIT_MARGIN): number {
-  const points = corners(box);
-  const radius = Math.max(...points.map(p => p.distanceTo(target)), 1e-3);
+  const points = corners(box).map(p => p.sub(target));
+  const radius = Math.max(...points.map(p => p.length()), 1e-3);
+  // Solved per view, not searched: with the camera at `s` along `place` and aiming along `aim`, a corner's offset across
+  // the view and its depth are both linear in `s`, so each side of the frame bounds `s` from below directly.
+  const slopeY = Math.tan((fov * Math.PI) / 360) * margin, slopeX = slopeY * aspect;
   let distance = radius * 1.01;
   for (const polar of polars) for (let i = 0; i < AZIMUTHS; i++) {
-    const direction = viewDirection(polar, (i / AZIMUTHS) * Math.PI * 2);
-    if (extentAt(box, target, direction, distance, fov, aspect, points) <= margin) continue;
-    // Extent falls as the camera backs away: bisect between this distance and one known to fit.
-    let near = distance, far = distance * 2;
-    while (extentAt(box, target, direction, far, fov, aspect, points) > margin) far *= 2;
-    for (let step = 0; step < 24; step++) {
-      const mid = (near + far) / 2;
-      if (extentAt(box, target, direction, mid, fov, aspect, points) > margin) near = mid; else far = mid;
+    const place = viewDirection(polar, (i / AZIMUTHS) * Math.PI * 2);
+    // The camera's axes as lookAt builds them (up is +Y). Straight up or down three.js nudges the aim, not the place.
+    aim.copy(place);
+    if (across.crossVectors(UP, aim).lengthSq() === 0) { aim.z += 0.0001; aim.normalize(); across.crossVectors(UP, aim); }
+    across.normalize();
+    upward.crossVectors(aim, across);
+    const depthRate = place.dot(aim);
+    for (const [axis, slope] of [[across, slopeX], [upward, slopeY]] as const) {
+      const drift = place.dot(axis);
+      for (const p of points) {
+        const offset = p.dot(axis), depth = p.dot(aim);
+        // |offset - s drift| <= slope (s depthRate - depth), on both sides.
+        distance = Math.max(distance, (offset + slope * depth) / (slope * depthRate + drift), (slope * depth - offset) / (slope * depthRate - drift));
+      }
     }
-    distance = far;
   }
   return distance;
 }
@@ -35382,7 +35912,7 @@ export function vehicleGlb(glb: ArrayBuffer, vehicle: string): ArrayBuffer | nul
 
 ### source/showcase/model.ts
 
-Paths: `source/showcase/model.ts`. SHA-256 `5b255ade54612974e8ba3d90a646b51b48d79f28f260c26025723eb2b023d485`, 15642 bytes.
+Paths: `source/showcase/model.ts`. SHA-256 `0fdaf0a6ff366fd645435db1ae0c522cb401960eb289cdcdc2c17dd06ff7d37b`, 27373 bytes.
 
 ```ts
 // Real-time vehicle showcase (MPES §10): the embedded glTF model on a slowly turning stage the player can drag.
@@ -35391,15 +35921,17 @@ Paths: `source/showcase/model.ts`. SHA-256 `5b255ade54612974e8ba3d90a646b51b48d7
 // when the player prefers reduced motion. Without WebGL the caller shows the still renders instead.
 import {
   ACESFilmicToneMapping, Box3, Color, DirectionalLight, Group, Mesh, MeshStandardMaterial, type Object3D,
-  PCFShadowMap, PerspectiveCamera, PlaneGeometry, PMREMGenerator, Scene, ShadowMaterial, SRGBColorSpace,
-  Timer, Vector3, WebGLRenderer,
+  HalfFloatType, PCFShadowMap, PerspectiveCamera, PlaneGeometry, PMREMGenerator, Scene, ShadowMaterial, SRGBColorSpace,
+  type Texture, Timer, Vector2, Vector3, WebGLRenderer, WebGLRenderTarget,
 } from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
+import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
 import { vehicleGlb } from './glb.ts';
 import { distanceAt, extentAt, fitTable, zoomed, type FitTable } from './frame.ts';
-import { FramePacer } from './pace.ts';
+import { premultipliedOutput } from './resolve.ts';
+import { FramePacer, INPUT_HOLD_MS, TIERS, nextTier, startTier } from './pace.ts';
 
 /** Seconds per full turn when the stage turns by itself. */
 export const TURN_SECONDS = 40;
@@ -35408,6 +35940,10 @@ const UP = new Vector3(0, 1, 0);
 const OPENING = new Vector3(0.62, 0.32, 0.72).normalize();
 /** How far the player can drag the view up and down (polar angle from straight up). */
 const POLAR_MIN = 0.6, POLAR_MAX = 1.45;
+/** How often a lost graphics context is checked for a return its browser did not announce. */
+const LOST_CHECK_MS = 1000;
+/** Strength of the fill light that follows the viewer (MPES §10.5: the vehicle stands out at every angle). */
+const FILL_INTENSITY = 5.2;
 
 let packed: Promise<ArrayBuffer | null> | null = null;
 const libraries = new Map<string, Promise<Group | null>>();
@@ -35506,6 +36042,24 @@ export class ModelStage {
   #frame = 0;
   #pacer = new FramePacer();
   #dirty = true;
+  /** A change the player asked for (a purchase, turn, zoom or resize) waiting to be drawn: it skips the pacer's wait. */
+  #urgent = false;
+  /** The fitted parts changed since the shadow was drawn: the next paced draw redraws it, never the urgent one. */
+  #shadowDue = false;
+  /** Index into TIERS: the resolution and edge smoothing this machine can draw in time (adaptive tiers). */
+  #tier = 0;
+  /** Where a multisampled tier draws the scene, then resolved to the canvas with tone mapping by #output; none on a
+   *  tier without multisampling. The canvas itself has none, so a tier can drop it without a new context. */
+  #target: WebGLRenderTarget | null = null;
+  #output = resolvePass();
+  #environment: Texture | null = null;
+  #lost = false;
+  /** While the context is lost, the check that notices its return (see the constructor). */
+  #watch: ReturnType<typeof setInterval> | undefined;
+  /** Removes every listener the stage added outside its controls when it is disposed (`tests/unit/stage-dispose.test.ts`). */
+  readonly #listening = new AbortController();
+  /** The player's input anywhere else on the page holds the paced turning draws (input first, MPES §10.3). */
+  #input = (event: Event): void => { if (event.target !== this.canvas) this.#pacer.hold(performance.now() + INPUT_HOLD_MS); };
   #visible = true;
   #observer: IntersectionObserver;
   #resize: ResizeObserver;
@@ -35519,23 +36073,25 @@ export class ModelStage {
   /** Called after every draw with the camera's azimuth (radians), how far the kit reaches from the frame centre
    * (1 = the frame edge) and the zoom. */
   onView: ((azimuth: number, extent: number, zoom: number) => void) | null = null;
+  /** Called after each draw has reached the canvas: what the player sees now matches the last `show`. */
+  onDraw: (() => void) | null = null;
 
   constructor() {
     this.canvas = document.createElement('canvas');
     this.canvas.className = 'showcase-canvas';
-    this.#renderer = new WebGLRenderer({ canvas: this.canvas, antialias: true, alpha: true, powerPreference: 'low-power' });
-    this.#renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
+    this.#renderer = new WebGLRenderer({ canvas: this.canvas, antialias: false, alpha: true, powerPreference: 'low-power' });
+    this.#tierTo(0);
     this.#renderer.outputColorSpace = SRGBColorSpace;
     this.#renderer.toneMapping = ACESFilmicToneMapping;
-    this.#renderer.toneMappingExposure = 0.85;
+    this.#renderer.toneMappingExposure = 1.05;
     this.#renderer.shadowMap.enabled = true;
     this.#renderer.shadowMap.type = PCFShadowMap;
-    const pmrem = new PMREMGenerator(this.#renderer);
-    // A 64 px environment lights matte paint as well as the default 256 px, with a sixteenth of the pixels to render and blur.
-    this.#scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04, 0.1, 100, { size: 64 }).texture;
-    pmrem.dispose();
+    // Baked shadows: the sun and the vehicle stand still while the camera orbits, so the shadow map only changes with the
+    // fitted parts; drawing it every frame doubled each turning draw (G3). show() asks for it again.
+    this.#renderer.shadowMap.autoUpdate = false;
+    this.#environ();
     this.#scene.background = null;
-    const sun = new DirectionalLight(new Color(1, 0.97, 0.92), 1.6);
+    const sun = new DirectionalLight(new Color(1, 0.97, 0.92), 0.9);
     sun.position.set(6, 12, 5);
     sun.castShadow = true;
     sun.shadow.mapSize.set(1024, 1024);
@@ -35548,7 +36104,13 @@ export class ModelStage {
     const rim = new DirectionalLight(new Color(0.85, 0.9, 1), 0.5);
     rim.position.set(6, 5, -18);
     rim.target.position.set(0, 0, -10);
-    this.#camera.add(rim, rim.target);
+    // Fill light from over the viewer's shoulder, whichever way the vehicle turns: the sun stands still so its shadow
+    // is drawn once, and without this the side turned away from it fell to 1.4:1 against the stage for half of every
+    // turn (G3, CI run 38609311138). Unshadowed, so it costs no shadow redraw.
+    const fill = new DirectionalLight(new Color(1, 0.98, 0.95), FILL_INTENSITY);
+    fill.position.set(-2, 1, 6);
+    fill.target.position.set(0, 0, -10);
+    this.#camera.add(rim, rim.target, fill, fill.target);
     this.#scene.add(this.#camera);
     const floor = new Mesh(new PlaneGeometry(30, 30), new ShadowMaterial({ opacity: 0.35 }));
     floor.rotation.x = -Math.PI / 2;
@@ -35559,14 +36121,53 @@ export class ModelStage {
       enableDamping: true, enablePan: false, enableZoom: false, autoRotate: !this.#motion.matches,
       autoRotateSpeed: 60 / TURN_SECONDS, minPolarAngle: POLAR_MIN, maxPolarAngle: POLAR_MAX,
     });
+    // OrbitControls sets touch-action none, which traps a finger swipe over the stage: give vertical swipes back to the
+    // page (the stylesheet's pan-y), so only a sideways drag turns the vehicle (G3 touch safety).
+    this.canvas.style.touchAction = '';
     this.#controls.addEventListener('change', () => this.#invalidate());
     this.#controls.addEventListener('start', () => this.#loop());
-    this.#motion.addEventListener('change', () => { this.turning = !this.#motion.matches; });
+    const { signal } = this.#listening;
+    this.#motion.addEventListener('change', () => { this.turning = !this.#motion.matches; }, { signal });
     this.#observer = new IntersectionObserver(([entry]) => { this.#visible = !!entry?.isIntersecting; this.#loop(); });
     this.#observer.observe(this.canvas);
     this.#resize = new ResizeObserver(() => this.#size());
     this.#resize.observe(this.canvas);
-    document.addEventListener('visibilitychange', () => this.#loop());
+    document.addEventListener('visibilitychange', () => this.#loop(), { signal });
+    for (const type of ['pointerdown', 'keydown', 'input']) document.addEventListener(type, this.#input, { capture: true, passive: true, signal });
+    // A lost graphics context (driver reset, GPU switch, sleep) stops the stage; three.js rebuilds the context when it is
+    // restored, but what was drawn into textures is gone: the environment and the shadow are made again, then one draw.
+    // The context, not the events, says whether it is back: Firefox on a software renderer announced a restore while the
+    // context was still lost, then restored it without a word (G3, CI run 38577929333). So an early announcement is
+    // stopped before three.js rebuilds onto a dead context, and while lost a slow check notices a silent return and
+    // announces it, which rebuilds three.js and the stage alike.
+    this.canvas.addEventListener('webglcontextlost', () => {
+      this.#lost = true;
+      this.#stop();
+      clearInterval(this.#watch);
+      this.#watch = setInterval(() => {
+        if (!this.#renderer.getContext().isContextLost()) this.canvas.dispatchEvent(new Event('webglcontextrestored'));
+      }, LOST_CHECK_MS);
+    }, { signal });
+    this.canvas.addEventListener('webglcontextrestored', event => {
+      if (this.#renderer.getContext().isContextLost()) { event.stopImmediatePropagation(); return; }
+    }, { capture: true, signal });
+    this.canvas.addEventListener('webglcontextrestored', () => {
+      clearInterval(this.#watch);
+      this.#lost = false;
+      this.#environ();
+      this.#renderer.shadowMap.needsUpdate = true;
+      this.#invalidate(true);
+    }, { signal });
+  }
+
+  /** The lighting environment, drawn into a texture. A 64 px environment lights matte paint as well as the default
+   *  256 px, with a sixteenth of the pixels to render and blur. */
+  #environ(): void {
+    const pmrem = new PMREMGenerator(this.#renderer);
+    this.#environment?.dispose();
+    this.#environment = pmrem.fromScene(new RoomEnvironment(), 0.04, 0.1, 100, { size: 64 }).texture;
+    this.#scene.environment = this.#environment;
+    pmrem.dispose();
   }
 
   /** Whether the stage turns by itself (off under reduced motion until the player turns it on). */
@@ -35591,6 +36192,7 @@ export class ModelStage {
     const offset = this.#camera.position.clone().sub(this.#controls.target).applyAxisAngle(UP, radians);
     this.#camera.position.copy(this.#controls.target).add(offset);
     this.#controls.update();
+    this.#invalidate(true);
     this.#report();
   }
 
@@ -35598,6 +36200,53 @@ export class ModelStage {
   zoom(press: 1 | -1): void {
     this.#zoom = zoomed(this.#zoom, press);
     this.#place();
+    this.#invalidate(true);
+  }
+
+  /**
+   * Builds the vehicle and compiles every shader it can need, each part's material whether fitted or not, without
+   * blocking the page where the browser compiles in parallel (KHR_parallel_shader_compile). The first draw and the
+   * first draw of each purchase then have nothing left to compile (G3 profile: the first draw was one task of 0.3 to
+   * 2.7 s on a software renderer). Draws nothing: the canvas is not on the page yet. False if there is no such vehicle.
+   */
+  async prepare(lib: Group, vehicle: string, size = { width: 640, height: 360 }): Promise<boolean> {
+    if (!this.show(lib, vehicle, [])) return false;
+    await this.#renderer.compileAsync(this.#scene, this.#camera);
+    this.#calibrate(size);
+    // Then every part, without delaying the first draw. three.js compiles only what is visible, but only the call itself
+    // needs the parts shown: the browser finishes compiling them in parallel after they are hidden again.
+    const parts = this.#vehicle!.children.filter(node => !node.visible);
+    for (const node of parts) node.visible = true;
+    void this.#renderer.compileAsync(this.#scene, this.#camera).catch(() => undefined);
+    for (const node of parts) node.visible = false;
+    return true;
+  }
+
+  /**
+   * Picks the starting tier from one timed draw per tier at the size the stage will have (pace.ts startTier), so a slow
+   * machine starts where it can keep up instead of spending its first purchases at full quality (G3, CI run
+   * 38571533524: about 170 ms a draw). Each draw is waited for by reading one pixel back. The first, at 1 px, only
+   * prepares the resolve to the canvas, so no timed draw includes compiling it.
+   */
+  #calibrate(size: { width: number; height: number }): void {
+    const gl = this.#renderer.getContext(), pixel = new Uint8Array(4);
+    const timed = (): number => {
+      const start = performance.now();
+      this.#render();
+      gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel);
+      return performance.now() - start;
+    };
+    this.#renderer.setSize(1, 1, false);
+    this.#tierTo(0);
+    timed();
+    this.#renderer.setSize(size.width, size.height, false);
+    this.#camera.aspect = size.width / size.height;
+    this.#camera.updateProjectionMatrix();
+    this.#refit();
+    this.#tierTo(startTier(tier => { this.#tierTo(tier); return timed(); }));
+    // The first draw has nothing on screen to keep waiting, so it draws the shadow itself.
+    this.#renderer.shadowMap.needsUpdate = true;
+    this.#shadowDue = false;
   }
 
   /** Shows one vehicle with the given part nodes; returns false if the library has no such vehicle. */
@@ -35618,8 +36267,15 @@ export class ModelStage {
       this.#scene.add(this.#vehicle);
     }
     const shown = new Set(parts);
-    for (const node of this.#vehicle!.children) node.visible = layerOf(node) === 'base' || shown.has(layerOf(node));
+    for (const node of this.#vehicle!.children) {
+      const visible = layerOf(node) === 'base' || shown.has(layerOf(node));
+      if (node.visible !== visible) this.#shadowDue = true;
+      node.visible = visible;
+    }
+    // A different vehicle must not stand in the last one's shadow, even for one draw.
+    if (fresh) this.#renderer.shadowMap.needsUpdate = true;
     this.#frameCamera(fresh);
+    this.#invalidate(true);
     return true;
   }
 
@@ -35669,23 +36325,75 @@ export class ModelStage {
     const { clientWidth: w, clientHeight: h } = this.canvas;
     if (!w || !h) return;
     this.#renderer.setSize(w, h, false);
+    this.#fitTarget();
     this.#camera.aspect = w / h;
     this.#camera.updateProjectionMatrix();
     if (this.#camera.aspect !== this.#fittedAspect) this.#refit();
-    this.#invalidate();
+    this.#invalidate(true);
   }
 
-  /** Asks for a redraw in the next paced frame; drags and key turns never draw synchronously. */
-  #invalidate(): void {
+  /**
+   * Asks for a redraw: in the next paced frame, or, for a change the player asked for (`urgent`), in the next animation
+   * frame whatever the pacer's wait. The pacer times a draw by the gap to the next frame, so the page work of a
+   * purchase (its re-render) reads as drawing cost and stretched the wait to half a second (G3, CI showcase budget);
+   * one draw per action cannot load the machine. Nothing draws synchronously.
+   */
+  #invalidate(urgent = false): void {
     this.#dirty = true;
+    if (urgent) this.#urgent = true;
     this.#loop();
   }
 
-  #draw(): void {
-    this.#dirty = false;
-    this.#distance();
+  /** Draws at `tier`: the screen's pixel ratio, at most 1.5, at the tier's share, multisampled if the tier is. */
+  #tierTo(tier: number): void {
+    this.#tier = tier;
+    this.#renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5) * TIERS[tier]!.scale);
+    this.#fitTarget();
+    this.canvas.setAttribute('data-tier', String(tier));
+  }
+
+  /** The multisampled target at the canvas's drawing size, or none on a tier without multisampling. */
+  #fitTarget(): void {
+    const samples = TIERS[this.#tier]!.samples, size = this.#renderer.getDrawingBufferSize(new Vector2());
+    if (!samples) { this.#target?.dispose(); this.#target = null; return; }
+    if (this.#target?.samples === samples) { this.#target.setSize(size.x, size.y); return; }
+    this.#target?.dispose();
+    // Half floats keep the scene linear and unclamped until the resolve tone-maps it, as drawing to the canvas does.
+    this.#target = new WebGLRenderTarget(size.x, size.y, { samples, type: HalfFloatType });
+  }
+
+  /** Steps the quality down when the recent draws show this machine cannot draw in time (see nextTier). */
+  #adapt(): void {
+    const tier = nextTier(this.#tier, this.#pacer.floor);
+    if (tier === this.#tier) return;
+    this.#pacer.forget();
+    this.#tierTo(tier);
+    this.#dirty = true;
+  }
+
+  /** The scene to the canvas: straight, or through the multisampled target and its tone-mapping resolve. */
+  #render(): void {
+    if (!this.#target) { this.#renderer.render(this.#scene, this.#camera); return; }
+    this.#renderer.setRenderTarget(this.#target);
     this.#renderer.render(this.#scene, this.#camera);
+    this.#output.render(this.#renderer, null as unknown as WebGLRenderTarget, this.#target, 0, false);
+  }
+
+  #draw(): void {
+    // A purchase is drawn at once; the sun's shadow of it follows in the next paced draw. Without a graphics card the
+    // browser reads each new frame back before showing it, waiting for the whole draw, and redrawing the shadow map
+    // made a purchase's draw about twice a turning draw (G3, CI run 38958721130: 133 ms to show, budget 100).
+    if (this.#shadowDue && !this.#urgent) { this.#renderer.shadowMap.needsUpdate = true; this.#shadowDue = false; }
+    this.#dirty = this.#shadowDue;
+    this.#urgent = false;
+    this.#distance();
+    // Observable without reaching into the stage: the reference-laptop run brackets each draw's GPU time by these (§14.1).
+    this.canvas.dispatchEvent(new Event('sea-drawing'));
+    this.#render();
     this.#report();
+    this.onDraw?.();
+    // Observable without reaching into the stage: the reference-laptop run times real draws by this event (MPES §14).
+    this.canvas.dispatchEvent(new Event('sea-draw'));
   }
 
   /** Tells `onView` where the camera is: each draw, and at once after a pause, turn, zoom or refit, so the reading never
@@ -35706,40 +36414,61 @@ export class ModelStage {
 
   /** Animates only while the stage is visible and turning or waiting to redraw; the pacer picks the frames that draw. */
   #loop(): void {
-    const running = this.#visible && document.visibilityState === 'visible' && this.canvas.isConnected;
+    const running = !this.#lost && this.#visible && document.visibilityState === 'visible' && this.canvas.isConnected;
     if (!running) { this.#stop(); return; }
     if (this.#frame) return;
     this.#timer.update();
     const tick = (now: number) => {
       this.#frame = requestAnimationFrame(tick);
-      if (!this.#pacer.due(now)) return;
+      if (!this.#pacer.due(now) && !this.#urgent) return;
       this.#timer.update(now);
       const moved = this.#controls.update(this.#timer.getDelta());
+      this.#adapt();
       if (this.#dirty) { this.#draw(); this.#pacer.drew(now); }
       if (!moved && !this.#controls.autoRotate && !this.#dirty) this.#stop();
     };
     this.#frame = requestAnimationFrame(tick);
   }
 
-  /** Restarts the loop after the canvas is re-attached to the page. */
+  /**
+   * Restarts the loop after the canvas is re-attached to the page. The size is left to the ResizeObserver: it reports
+   * after the next layout if the size changed. Reading it here would force a layout of the page being replaced
+   * (G3 profile: about 15 ms per purchase at 4x).
+   * The visibility is asked afresh, dropping any report not yet delivered: the observer saw the canvas before it was on
+   * the page, and a loaded Firefox never reported it again once it was, so a stage in plain view drew nothing (G3).
+   */
   attached(): void {
-    this.#size();
+    this.#observer.takeRecords();
+    this.#observer.unobserve(this.canvas);
+    this.#observer.observe(this.canvas);
     this.#loop();
   }
 
   dispose(): void {
     cancelAnimationFrame(this.#frame);
+    this.#listening.abort();
+    clearInterval(this.#watch);
     this.#observer.disconnect();
     this.#resize.disconnect();
     this.#controls.dispose();
+    this.#target?.dispose();
+    this.#output.dispose();
+    this.#environment?.dispose();
     this.#renderer.dispose();
   }
+}
+
+/** The resolve of a multisampled tier to the canvas: tone mapping and sRGB, aware of transparent edges (resolve.ts). */
+function resolvePass(): OutputPass {
+  const pass = Object.assign(new OutputPass(), { renderToScreen: true });
+  pass.material.fragmentShader = premultipliedOutput(pass.material.fragmentShader);
+  return pass;
 }
 ```
 
 ### source/showcase/pace.ts
 
-Paths: `source/showcase/pace.ts`. SHA-256 `13453d99bad904fa98d2a847c1834d90c67beb210bc74617d96202bbe9db98c8`, 1611 bytes.
+Paths: `source/showcase/pace.ts`. SHA-256 `4170eed2da54f3f90ba85a96210da60d6633242fc5d5d87f71606ed64a73016c`, 4653 bytes.
 
 ```ts
 /** Fastest the showcase draws: 30 fps is smooth for a slow turn and halves the GPU work of 60 fps. */
@@ -35748,6 +36477,53 @@ export const FRAME_MS = 1000 / 30;
 const CEILING_MS = 1000;
 /** Animation frames arrive with a little jitter; a frame this close to due counts as due. */
 const SLACK_MS = 2;
+/** Draws behind `floor`: enough that one quiet frame among them shows what drawing alone costs. */
+const RECENT = 8;
+
+/** Paced draws wait this long after the player's input elsewhere on the page, so the answer to it draws first. */
+export const INPUT_HOLD_MS = 1000;
+
+/**
+ * Drawing quality tiers (MPES §10.3 adaptive tiers), dearest first: the share of the full pixel ratio, and the
+ * multisampling of edges. Multisampling goes before the last step of resolution: on a software renderer it made a
+ * draw 3.6 times dearer, where halving the resolution saved less (G3 draw-cost probe).
+ */
+export const TIERS: readonly { scale: number; samples: number }[] = [
+  { scale: 1, samples: 4 },
+  { scale: 0.75, samples: 4 },
+  { scale: 0.75, samples: 0 },
+  { scale: 0.5, samples: 0 },
+];
+
+/**
+ * The tier to draw at next: one step down when even the cheapest recent draw could not hold 30 fps (`floor` above
+ * FRAME_MS), else unchanged. Never up within a session, so the picture cannot flicker between sizes; a hardware GPU
+ * stays at full quality, a slow or software one drops until a draw fits (G3: a software renderer took about 60 ms
+ * a draw, so each purchase waited on two of them).
+ */
+export function nextTier(tier: number, floor: number): number {
+  return floor > FRAME_MS && tier < TIERS.length - 1 ? tier + 1 : tier;
+}
+
+/**
+ * The tier to start at, from single timed draws (`measure` draws once at a tier and returns how long the renderer took,
+ * in ms): the first that fits a 30 fps frame, else the cheapest. Before the stage is shown, so a slow machine does not
+ * begin at full quality and spend seconds of turning stepping down. A tier that differs only in resolution is skipped
+ * when its share of pixels could not bring the last cost within the frame even if a draw cost nothing else.
+ */
+export function startTier(measure: (tier: number) => number, budget = FRAME_MS): number {
+  let last: { tier: number; cost: number } | null = null;
+  for (let tier = 0; tier < TIERS.length; tier++) {
+    if (last) {
+      const [was, now] = [TIERS[last.tier]!, TIERS[tier]!];
+      if (was.samples === now.samples && last.cost * (now.scale / was.scale) ** 2 > budget && tier < TIERS.length - 1) continue;
+    }
+    const cost = measure(tier);
+    if (cost <= budget) return tier;
+    last = { tier, cost };
+  }
+  return TIERS.length - 1;
+}
 
 /**
  * Decides which animation frames draw (MPES §10.3). A drawn frame is timed by the gap to the next animation
@@ -35759,19 +36535,32 @@ export class FramePacer {
   #last = -Infinity;
   #drewAt = Number.NaN;
   #cost = 0;
+  #recent: number[] = [];
+  #held = -Infinity;
 
   /** Milliseconds the pacer currently waits between draws. */
   get interval(): number { return this.#interval; }
+
+  /** The cheapest of the last few draws (page work only ever adds to a sample); NaN until there are enough. */
+  get floor(): number { return this.#recent.length < RECENT ? Number.NaN : Math.min(...this.#recent); }
+
+  /** No paced draw before `until` (the player's input comes first); urgent draws are the caller's and still go. */
+  hold(until: number): void { this.#held = Math.max(this.#held, until); }
+
+  /** Starts `floor` afresh, after the drawing itself changed (a new tier). */
+  forget(): void { this.#recent = []; }
 
   /** Call on every animation frame; true when this frame may draw. */
   due(now: number): boolean {
     if (!Number.isNaN(this.#drewAt)) {
       const sample = now - this.#drewAt;
       this.#cost = this.#cost ? this.#cost * 0.6 + sample * 0.4 : sample;
+      this.#recent.push(sample);
+      if (this.#recent.length > RECENT) this.#recent.shift();
       this.#interval = Math.min(CEILING_MS, Math.max(FRAME_MS, 2 * this.#cost));
       this.#drewAt = Number.NaN;
     }
-    return now - this.#last >= this.#interval - SLACK_MS;
+    return now >= this.#held && now - this.#last >= this.#interval - SLACK_MS;
   }
 
   /** Call after drawing in the frame stamped `now`. */
@@ -35826,9 +36615,33 @@ export function cardRender(cardId: string): Render | undefined {
 }
 ```
 
+### source/showcase/resolve.ts
+
+Paths: `source/showcase/resolve.ts`. SHA-256 `267570117c5ccd681fe6564fc05f2026e35959c434d35a3b7d583760a39dc3b7`, 1136 bytes.
+
+```ts
+/**
+ * The tone-mapping resolve of a multisampled tier (MPES §10.3), made aware of transparency. The scene is drawn into a
+ * target cleared to transparent, so an edge pixel holds its colour already multiplied by how much of it the vehicle
+ * covers (premultiplied). Tone mapping and the sRGB curve are not linear: applied to that product they brighten the
+ * edge into a pale fringe on the dark stage (Codex G3 review). So the colour is divided by its coverage first, mapped,
+ * then multiplied again for the canvas, which expects premultiplied colour.
+ */
+const READ = 'gl_FragColor = texture2D( tDiffuse, vUv );';
+const END = /\}\s*$/;
+
+/** three.js's OutputShader fragment source with the division and multiplication added; throws if its shape changed. */
+export function premultipliedOutput(fragment: string): string {
+  if (!fragment.includes(READ) || !END.test(fragment)) throw new Error('OutputShader changed: review source/showcase/resolve.ts');
+  return fragment
+    .replace(READ, `${READ}\n\tif ( gl_FragColor.a > 0.0 ) gl_FragColor.rgb /= gl_FragColor.a;`)
+    .replace(END, '\tgl_FragColor.rgb *= gl_FragColor.a;\n}');
+}
+```
+
 ### source/showcase/showcase.ts
 
-Paths: `source/showcase/showcase.ts`. SHA-256 `70bee1b4e63351bca552acd0a2fc52dbe9026b51c2c742e0a308be4f6d1db79e`, 18726 bytes.
+Paths: `source/showcase/showcase.ts`. SHA-256 `4439de7dafc8f6e0be8d5414b8596adc66a61edc120e7b7b49f57c9aa72adc1b`, 19669 bytes.
 
 ```ts
 // Vehicle showcase (MPES §10): the team's vehicle with its installed parts, as a slowly turning 3D model the
@@ -35977,15 +36790,25 @@ export class Showcase {
   #start(vehicle: string): void {
     this.#mode = 'stills';
     if (!webglAvailable()) return;
-    void loadVehicle(vehicle).then(library => {
+    void loadVehicle(vehicle).then(async library => {
       if (!library) return;
       const stage = new ModelStage();
+      // Stills stay up while the stage compiles its shaders, so the page never waits on the compiler.
+      // The stills hold the place the stage takes, so their size is the size its starting tier is timed at (one layout read).
+      const box = this.element.querySelector('.showcase-stage')?.getBoundingClientRect();
+      if (!await stage.prepare(library, vehicle, box?.width && box.height ? { width: box.width, height: box.height } : undefined)) { stage.dispose(); return; }
       const element = h('div', { class: 'showcase-stage showcase-3d', role: 'img', 'data-mode': '3d', 'data-ready': 'false' });
       element.appendChild(stage.canvas);
       stage.onView = (azimuth, extent, zoom) => {
         element.setAttribute('data-azimuth', azimuth.toFixed(3));
         element.setAttribute('data-extent', extent.toFixed(3));
         element.setAttribute('data-zoom', zoom.toFixed(3));
+      };
+      // The parts the canvas actually shows: `data-layers` changes when a purchase is recorded, `data-drawn` only once
+      // the next draw has put them on screen (the MPES §14 update and ready budgets end here, not at the request).
+      stage.onDraw = () => {
+        const layers = element.getAttribute('data-layers');
+        if (layers !== null && element.getAttribute('data-drawn') !== layers) element.setAttribute('data-drawn', layers);
       };
       this.#model = { stage, libraries: new Map([[vehicle, library]]), element };
       this.#mode = '3d';
@@ -36153,7 +36976,7 @@ export class Showcase {
 
 ### source/ui/about.ts
 
-Paths: `source/ui/about.ts`. SHA-256 `ea9435a67b449a4dcf2f40b96b52c953c48b020829f93cf8c353c62295031561`, 1317 bytes.
+Paths: `source/ui/about.ts`. SHA-256 `81d58b9955f7aa695ac5d58f3cdb452ff903bba4e1068241f9b01f6cb2db9685`, 1367 bytes.
 
 ```ts
 import { showDialog } from './dialog.ts';
@@ -36162,9 +36985,9 @@ import { translate, type Language, type StringKey } from './i18n.ts';
 import { reflow } from './reflow.ts';
 
 /** A licence file as reflowed text under its summary; a first heading that repeats the summary is dropped. */
-function licenceText(summary: string, source: string): HTMLElement {
+function licenceText(id: string, summary: string, source: string): HTMLElement {
   const blocks = reflow(source).filter((b, i) => !(i === 0 && b.kind === 'heading' && b.text.toLowerCase() === summary.toLowerCase()));
-  return h('details', {}, h('summary', { text: summary }), h('div', { class: 'licence-text' }, ...blocks.map(b =>
+  return h('details', { id }, h('summary', { text: summary }), h('div', { class: 'licence-text' }, ...blocks.map(b =>
     b.kind === 'list' ? h('ul', {}, ...b.items.map(text => h('li', { text }))) : h(b.kind === 'heading' ? 'h3' : 'p', { text: b.text }))));
 }
 
@@ -36174,8 +36997,8 @@ export function showAbout(lang: Language, opener: HTMLElement | null = null): Pr
     title: t('about.title'),
     body: [
       h('p', { text: t('about.body', { version: __SEA_VERSION__ }) }),
-      licenceText(t('about.licence'), __SEA_LICENSE__),
-      licenceText(t('about.notices'), __SEA_NOTICES__),
+      licenceText('about-licence', t('about.licence'), __SEA_LICENSE__),
+      licenceText('about-notices', t('about.notices'), __SEA_NOTICES__),
     ],
     actions: [{ label: t('about.close'), value: 'close', kind: 'primary' }],
     cancelValue: 'close',
@@ -36401,7 +37224,7 @@ export function showDialog(options: DialogOptions): Promise<string> {
 
 ### source/ui/dom.ts
 
-Paths: `source/ui/dom.ts`. SHA-256 `8c421bce744d2290b9f2001b58733b82b76870dddaf027a1e3e4c13fc94a0390`, 3271 bytes.
+Paths: `source/ui/dom.ts`. SHA-256 `882ace1c49f52c0124c1a1ccef72a1822e7b5927b6bab0767dc8add026ae1127`, 3832 bytes.
 
 ```ts
 // Safe DOM construction (MPES C-11): text is always set as text, never parsed as HTML.
@@ -36471,6 +37294,16 @@ export function svg<K extends keyof SVGElementTagNameMap>(tag: K, attributes: Re
 export function replaceChildren(parent: Element, ...children: Child[]): void {
   parent.replaceChildren();
   append(parent, children);
+}
+
+/**
+ * Names the document's language and title, writing only what changed. Writing the root's `lang`, even unchanged,
+ * restyles the whole page; inside a command that then replaced the focused button, it cost a full style and layout
+ * before the new view existed and slowed the one after it (G3 profile: about 12 and 15 ms a purchase at 4x CPU).
+ */
+export function nameDocument(lang: string, title: string): void {
+  if (document.documentElement.lang !== lang) document.documentElement.lang = lang;
+  if (document.title !== title) document.title = title;
 }
 ```
 
@@ -36552,7 +37385,7 @@ export function detectLanguage(search: string, navigatorLanguage: string | undef
 
 ### source/ui/instructor.ts
 
-Paths: `source/ui/instructor.ts`. SHA-256 `afba1ffa7f22ef2509d6d93bfe60b24de8ff6fe6afa46632a0a3c20ed79a39fd`, 37516 bytes.
+Paths: `source/ui/instructor.ts`. SHA-256 `02477f86784270964640fbd5d03d09e0106958dca5ae41181eb36aab897151f9`, 37592 bytes.
 
 ```ts
 // Instructor console (MPES §7.2).
@@ -36690,7 +37523,7 @@ function planningView(v: View): Child {
     h('button', { type: 'button', class: 'btn primary', id: 'start-auction', disabled: missing > 0, text: t('planning.start'), on: {
       click: e => void v.confirm({ title: t('planning.startTitle'), body: h('p', { text: t('planning.startBody') }), confirm: t('planning.start'), opener: e.currentTarget as HTMLElement }, I.startAuction),
     } }),
-    h('details', {}, h('summary', { text: t('planning.requirements') }), missionTable(v.lang)),
+    h('details', { id: 'planning-requirements' }, h('summary', { text: t('planning.requirements') }), missionTable(v.lang)),
   );
 }
 
@@ -36857,7 +37690,7 @@ function teamsPanel(v: View): Child {
 export function ledgerPanel(v: View, open = false): Child {
   const s = v.state, t = v.t;
   const rounds = [...new Set(s.ledger.map(e => e.round))].sort((a, b) => b - a);
-  return h('details', { class: 'panel', open: open || undefined },
+  return h('details', { class: 'panel', id: 'ledger', open: open || undefined },
     h('summary', {}, h('h2', { class: 'inline-heading', text: `${t('auction.ledgerTitle')} (${s.ledger.length})` })),
     rounds.length === 0 ? h('p', { class: 'muted', text: t('auction.ledgerEmpty') }) : rounds.map(round => h('section', { 'aria-label': t('common.round', { n: round }) },
       h('h3', { text: t('common.round', { n: round }) }),
@@ -36905,7 +37738,7 @@ function resultsTable(v: View, withMoney: boolean): Child {
 }
 
 function teamPurchases(v: View): Child {
-  return v.state.teams.map(team => h('details', { class: 'panel' },
+  return v.state.teams.map(team => h('details', { class: 'panel', id: `team-${team.id}-purchases` },
     h('summary', { text: `${v.t('common.team', { n: team.id })} · ${v.t('common.purchases')} (${team.purchases.length})` }),
     purchasesTable(team.purchases, v.lang, team.lockedMission ? { mission: team.lockedMission } : {})));
 }
@@ -37183,7 +38016,7 @@ export function reflow(source: string): Block[] {
 
 ### source/ui/student.ts
 
-Paths: `source/ui/student.ts`. SHA-256 `a7e8b63dfad76094d9d7998b9beddc8265b5bc6df37929899c6e10ee8500e96b`, 24591 bytes.
+Paths: `source/ui/student.ts`. SHA-256 `c897f2f5289cdff58111a49371b46985fc24461e8748cd520da6561be78a984d`, 24672 bytes.
 
 ```ts
 // Student companion (MPES §7.3).
@@ -37336,8 +38169,8 @@ function planningView(v: View): Child {
     h('div', { class: 'stack' },
       missionHero(mission, v.lang, t),
       h('section', { class: 'panel stack' }, h('h2', { text: t('splan.minimums', { mission: missionName(mission, v.lang) }) }), gapMeter(mission, s.team.totals, v.lang)),
-      h('details', { class: 'panel' }, h('summary', { text: t('splan.guide') }), categoryGuide(v.lang, t)),
-      h('details', { class: 'panel' }, h('summary', { text: t('planning.requirements') }), missionTable(v.lang, mission)),
+      h('details', { class: 'panel', id: 'plan-guide' }, h('summary', { text: t('splan.guide') }), categoryGuide(v.lang, t)),
+      h('details', { class: 'panel', id: 'plan-requirements' }, h('summary', { text: t('planning.requirements') }), missionTable(v.lang, mission)),
     ),
   );
 }
@@ -37398,7 +38231,7 @@ function auctionView(v: View): Child {
           click: e => void v.confirm({ title: t('strack.finishTitle'), body: h('p', { text: t('strack.finishBody') }), confirm: t('strack.finish'), opener: e.currentTarget as HTMLElement }, S.finishAuction),
         } }),
       ),
-      h('details', { class: 'stack' }, h('summary', { text: t('strack.notes') }),
+      h('details', { class: 'stack', id: 'scratch-notes' }, h('summary', { text: t('strack.notes') }),
         h('div', { class: 'field' }, h('label', { for: 'scratch-wtp', text: t('strack.wtp') }),
           v.savingInput('scratch-wtp', scratch.wtp, (state, value) => S.editScratch(state, 'wtp', value), { inputmode: 'numeric', autocomplete: 'off' })),
         h('div', { class: 'field' }, h('label', { for: 'scratch-note', text: t('strack.notes') }),
@@ -37428,7 +38261,7 @@ function buildView(v: View): Child {
         click: e => void v.confirm({ title: t('sbuild.removeTitle'), body: h('p', { text: `${p.id} · ${p.title[lang]} · ${money(p.paid, lang)}. ${t('sbuild.removeBody')}` }), confirm: t('sbuild.remove'), danger: true, opener: e.currentTarget as HTMLElement },
           state => S.removeOwnPurchase(state, p.instance)),
       } }) }),
-      h('details', { class: 'panel stack' }, h('summary', { text: t('sbuild.add') }),
+      h('details', { class: 'panel stack', id: 'build-add' }, h('summary', { text: t('sbuild.add') }),
         h('div', { class: 'cluster' },
           field('add-id', 'common.cardId', { autocomplete: 'off', class: 'mono', size: '8', maxlength: '20' }),
           field('add-round', 'strack.round', { type: 'number', min: '1', max: '7', inputmode: 'numeric', size: '3' }),
@@ -37912,7 +38745,7 @@ export function toggleTheme(): Theme {
 
 ### source/ui/view.ts
 
-Paths: `source/ui/view.ts`. SHA-256 `48a0a0f278715e633d70b72a614e1f2c83c201f48eb2b863e325dd009e6e28b0`, 15712 bytes.
+Paths: `source/ui/view.ts`. SHA-256 `6536026da8169fb8720483ae8c75c494d8d9f550490969eadd6001e220c74b79`, 17562 bytes.
 
 ```ts
 // Shared role view: shell (header, progress, menu, notices), rendering with focus preservation,
@@ -37923,7 +38756,7 @@ import { makeBackup, parseBackup, MAX_BACKUP_BYTES, type BackupRole } from '../d
 import { DomainError } from '../domain/errors.ts';
 import { PHASES, type Phase } from '../domain/session.ts';
 import { showDialog } from './dialog.ts';
-import { h, replaceChildren, type Child } from './dom.ts';
+import { h, nameDocument, replaceChildren, type Child } from './dom.ts';
 import { otherLanguage, translate, type Language, type StringKey } from './i18n.ts';
 import { showAbout } from './about.ts';
 import { themeFrom, toggleTheme, withTheme } from './theme.ts';
@@ -37946,6 +38779,17 @@ export interface RoleConfig<S extends RoleState> {
 }
 
 type Tone = 'ok' | 'bad' | 'info';
+
+/**
+ * Which panel a details element is, from one render to the next: its id, which every panel on a page has
+ * (tests/e2e/render.spec.ts). Not its summary text, which counts and the language change, nor its place, which moves
+ * between phases and handed the ledger's open state to a team's panel (Codex G3 review).
+ */
+function panelKeys(content: Element): Map<HTMLDetailsElement, string> {
+  const keys = new Map<HTMLDetailsElement, string>();
+  content.querySelectorAll('details').forEach(panel => { if (panel.id) keys.set(panel, panel.id); });
+  return keys;
+}
 
 /**
  * On a phone each table row becomes a card (styles.css, owner FIX 2026-10-12): every data cell carries its column's
@@ -37978,6 +38822,8 @@ export class RoleView<S extends RoleState> {
   #status: { text: string; tone: Tone } | null = null;
   #undo: S | null = null;
   #rendering = false;
+  /** True while the view commits a change itself and renders once afterwards (see #commit). */
+  #committing = false;
   readonly #content: HTMLElement;
   readonly #statusLine: HTMLElement;
 
@@ -37987,7 +38833,7 @@ export class RoleView<S extends RoleState> {
     this.#content = h('div');
     this.#statusLine = h('div', { class: 'page status-line', role: 'status', 'aria-live': 'polite', id: 'status' });
     replaceChildren(root, this.#content, this.#statusLine);
-    config.controller.subscribe(() => this.render());
+    config.controller.subscribe(() => { if (!this.#committing) this.render(); });
   }
 
   get state(): S { return this.config.controller.state; }
@@ -37995,10 +38841,19 @@ export class RoleView<S extends RoleState> {
   t = (key: StringKey, vars?: Readonly<Record<string, string | number>>): string => translate(this.lang, key, vars);
 
   // ---- Commands ----
+  /**
+   * Commits through the controller without the subscription's render: the caller renders once, after its own updates
+   * (status, drafts), so a click rebuilds the page once rather than twice (MPES §14 command response).
+   */
+  #commit<T>(change: () => T): T {
+    this.#committing = true;
+    try { return change(); } finally { this.#committing = false; }
+  }
+
   /** Run a command; on failure show the localized reason and keep everything unchanged. */
   run(command: (state: S) => S, success?: () => void): Result {
     if (this.#undo) this.#undo = null;
-    const result = this.config.controller.dispatch(command);
+    const result = this.#commit(() => this.config.controller.dispatch(command));
     if (result.ok) { this.#status = null; success?.(); this.render(); }
     else this.say(this.t(`error.${result.code}` as StringKey), 'bad');
     return result;
@@ -38011,7 +38866,7 @@ export class RoleView<S extends RoleState> {
   savingInput(id: string, current: string, command: (state: S, value: string) => S, props: Record<string, unknown> = {}): HTMLInputElement {
     const commit = (value: string, report: boolean) => {
       if (value === current) return;
-      const result = this.config.controller.dispatch(state => command(state, value));
+      const result = this.#commit(() => this.config.controller.dispatch(state => command(state, value)));
       if (result.ok) { this.drafts.delete(id); current = value; this.render(); }
       else if (report) this.say(this.t(`error.${result.code}` as StringKey), 'bad');
     };
@@ -38057,19 +38912,24 @@ export class RoleView<S extends RoleState> {
       const focusId = active?.id || null;
       let selection: [number | null, number | null] | null = null;
       try { if (active && 'selectionStart' in active && typeof active.selectionStart === 'number') selection = [active.selectionStart ?? null, active.selectionEnd ?? null]; } catch { selection = null; }
-      document.documentElement.lang = this.lang;
-      document.title = `${this.config.brand(this)} · ${this.t('app.title')}`;
+      nameDocument(this.lang, `${this.config.brand(this)} · ${this.t('app.title')}`);
+      // A panel the reader opened stays open: a render rebuilds every panel closed, and typing in the tracker's notes
+      // hid the field after its first character (G3). A render may open a panel; only the reader closes one.
+      const opened = new Set([...panelKeys(this.#content)].filter(([panel]) => panel.open).map(([, key]) => key));
       replaceChildren(this.#content, this.shell());
+      if (opened.size) for (const [panel, key] of panelKeys(this.#content)) if (opened.has(key)) panel.open = true;
       this.#statusLine.className = `page status-line ${this.#status?.tone === 'bad' ? 'error' : this.#status?.tone === 'ok' ? 'ok' : ''}`;
       if (this.#statusLine.textContent !== (this.#status?.text ?? '')) this.#statusLine.textContent = this.#status?.text ?? '';
       // Tables wider than the screen become labelled, focusable regions so they can be scrolled by keyboard (WCAG 2.1.1).
-      for (const wrap of this.#content.querySelectorAll<HTMLElement>('.table-wrap')) {
-        labelCells(wrap);
-        if (wrap.scrollWidth > wrap.clientWidth + 1) {
-          wrap.tabIndex = 0;
-          wrap.setAttribute('role', 'region');
-          wrap.setAttribute('aria-label', wrap.querySelector('caption')?.textContent || wrap.closest('section')?.querySelector('h1, h2, h3')?.textContent || this.t('common.purchases'));
-        }
+      // Every cell is labelled before any width is read, and every width is read before any region is marked, so the
+      // page lays out once per render rather than once per table.
+      const wraps = [...this.#content.querySelectorAll<HTMLElement>('.table-wrap')];
+      for (const wrap of wraps) labelCells(wrap);
+      const wide = wraps.filter(wrap => wrap.scrollWidth > wrap.clientWidth + 1);
+      for (const wrap of wide) {
+        wrap.tabIndex = 0;
+        wrap.setAttribute('role', 'region');
+        wrap.setAttribute('aria-label', wrap.querySelector('caption')?.textContent || wrap.closest('section')?.querySelector('h1, h2, h3')?.textContent || this.t('common.purchases'));
       }
       if (focusId) {
         const next = document.getElementById(focusId) as (HTMLElement & Partial<HTMLInputElement>) | null;
@@ -38206,7 +39066,7 @@ export class RoleView<S extends RoleState> {
     candidate = this.config.setLanguage(candidate, this.lang); // keep the language the user is reading
     const previous = this.state;
     this.drafts.clear();
-    this.config.controller.replace(candidate);
+    this.#commit(() => this.config.controller.replace(candidate));
     this.#undo = previous;
     this.say(t(notice), 'ok');
   }
@@ -38215,7 +39075,7 @@ export class RoleView<S extends RoleState> {
     if (!this.#undo) return;
     const previous = this.#undo;
     this.#undo = null;
-    this.config.controller.replace(previous);
+    this.#commit(() => this.config.controller.replace(previous));
     this.say(this.t('backup.undone'), 'ok');
   }
 }
@@ -38223,14 +39083,14 @@ export class RoleView<S extends RoleState> {
 
 ### tests/e2e/a11y.spec.ts
 
-Paths: `tests/e2e/a11y.spec.ts`. SHA-256 `152ad27ad1b3f40801b75a5466281063ac2b3e2c4a43fdd28e7632a9f07c1b39`, 5016 bytes.
+Paths: `tests/e2e/a11y.spec.ts`. SHA-256 `bfee91b0053311c8acfeb6bb0d75ee9890dcfa92b1c7867abaf6cc53a8656e61`, 5016 bytes.
 
 ```ts
 // J6 + RQ-20/RQ-21 (MPES §12, §16.3): keyboard-only student journey and axe scans of every main view
 // at narrow-window and desktop sizes in both languages. Automated checks only: real screen readers are a
 // residual risk recorded in docs/verification.
-import { expect, test, type Page } from '@playwright/test';
-import { expectAccessible, gameUrl, guardNetwork } from './helpers.ts';
+import { expect, type Page } from '@playwright/test';
+import { expectAccessible, gameUrl, guardNetwork, test } from './helpers.ts';
 import { confirmDialog, instructorSetup, studentJoin } from './roles.ts';
 
 /** Tab until the element with `id` has focus (fails after 60 presses), proving it is reachable by keyboard. */
@@ -38333,11 +39193,11 @@ for (const lang of ['en', 'fr'] as const) {
 
 ### tests/e2e/chooser.spec.ts
 
-Paths: `tests/e2e/chooser.spec.ts`. SHA-256 `147964c0aac1a6a0b80bcf26d45a527ebd2dc1ce27161e10680e354aa6418f78`, 10823 bytes.
+Paths: `tests/e2e/chooser.spec.ts`. SHA-256 `51a00e10fd3f4cd6684e1b804abcb0324ade1ccc6a129f066993b5c95ee60397`, 11318 bytes.
 
 ```ts
-import { expect, test } from '@playwright/test';
-import { collectConsoleErrors, expectAccessible, gameUrl, guardNetwork } from './helpers.ts';
+import { expect } from '@playwright/test';
+import { collectConsoleErrors, expectAccessible, gameUrl, guardNetwork, test } from './helpers.ts';
 
 const LINEUP = {
   en: { group: 'Mission vehicles', names: ['Combat', 'RECCE', 'Troop Carrier', 'Command Post', 'Recovery', 'Mine Clearing'] },
@@ -38508,7 +39368,12 @@ test.describe('role chooser over file:// (RQ-01, RQ-19, RQ-20)', () => {
         await expect(img).toHaveAttribute('width', /^\d+$/);
         await expect(img).toHaveAttribute('height', /^\d+$/);
       }
-      for (const img of await page.locator('[role="group"] img').all()) await expect(img).toHaveAttribute('loading', 'lazy');
+      // All six vehicles are on the first screen, so none waits to be scrolled to: lazy lineup stills were still blank
+      // when the light-theme baseline was shot on a loaded CI runner (run 38609311138). Loaded without being asked:
+      // no decode() here.
+      for (const img of await images.all()) expect(await img.getAttribute('loading'), 'first-screen still loads eagerly').not.toBe('lazy');
+      await expect.poll(() => images.evaluateAll(list => (list as HTMLImageElement[])
+        .filter(img => img.getBoundingClientRect().top < innerHeight && !(img.complete && img.naturalWidth > 0)).length)).toBe(0);
       await page.evaluate(() => Promise.all([...document.images].map(img => img.decode())));
       // Sharp: no still is drawn larger than its pixels at 2x device pixels.
       const blurry = await images.evaluateAll(list => (list as HTMLImageElement[])
@@ -38525,14 +39390,14 @@ test.describe('role chooser over file:// (RQ-01, RQ-19, RQ-20)', () => {
 
 ### tests/e2e/close-round.spec.ts
 
-Paths: `tests/e2e/close-round.spec.ts`. SHA-256 `431cb8a1fc0163e2731a489a4f6adc4bb40b3d4f210595516047f981cad837a3`, 10299 bytes.
+Paths: `tests/e2e/close-round.spec.ts`. SHA-256 `3e866c94b9b97f4856a168eab926ed2ba2c593c7e697326d6978c840fdfc460b`, 10299 bytes.
 
 ```ts
 // Owner request 2026-10-11 (MPES §6.5): when every team has its 2 wins in a round, one click records the rest of the
 // round unsold and opens the next; a student whose team has its 2 wins skips to the next round's tracker.
-import { expect, test, type Locator, type Page } from '@playwright/test';
+import { expect, type Locator, type Page } from '@playwright/test';
 import { readFileSync } from 'node:fs';
-import { gameUrl, guardNetwork } from './helpers.ts';
+import { gameUrl, guardNetwork, test } from './helpers.ts';
 import { confirmDialog, instructorLot, instructorSetup, studentJoin, studentRecord } from './roles.ts';
 
 // Owner FIX 2 (2026-10-12): each listed card shows its effects on one line, so a team can re-plan for what left the
@@ -38688,6 +39553,31 @@ test('the instructor closes a full round in one click and the student skips to t
 });
 ```
 
+### tests/e2e/contexts.spec.ts
+
+Paths: `tests/e2e/contexts.spec.ts`. SHA-256 `977a63e06612932f7e6743c1ae475373d48a037e102369b7b92d927aeb3144dc`, 994 bytes.
+
+```ts
+// G3, CI run 38958721130: contexts a test opened itself (browser.newContext) outlived it. Playwright closes only the
+// contexts of its own `page` and `context` fixtures, so on a heavy project's single worker every two-tab test left its
+// pages open, a 3D showcase still turning in each, and every later test ran slower: the Edge stills fallback test took
+// 43 s, then 1.4 min, then ran out of its 2 minutes. The second test here sees whether the first one's context is gone.
+import { expect } from '@playwright/test';
+import { gameUrl, test } from './helpers.ts';
+
+test.describe.configure({ mode: 'serial' });
+
+test('a test opens its own context and leaves it open', async ({ browser }) => {
+  const page = await (await browser.newContext()).newPage();
+  await page.goto(gameUrl('?lang=en'));
+  expect(browser.contexts()).toHaveLength(1);
+});
+
+test('the next test on the same worker finds no context left from it', async ({ browser }) => {
+  expect(browser.contexts()).toHaveLength(0);
+});
+```
+
 ### tests/e2e/fresh-build.ts
 
 Paths: `tests/e2e/fresh-build.ts`. SHA-256 `4ad349017bfce1e741202ba7d0b6e48441b9951934e4134e21cf2a5c29244258`, 702 bytes.
@@ -38709,13 +39599,27 @@ export default async function freshBuild(): Promise<void> {
 
 ### tests/e2e/helpers.ts
 
-Paths: `tests/e2e/helpers.ts`. SHA-256 `4ea88f72d5474759f6dec0697ec0ccbfad5328ae496370a75e52d7b53beac1f1`, 2642 bytes.
+Paths: `tests/e2e/helpers.ts`. SHA-256 `4e4db1b9e0a4afb509d3dfd9c5ccb7b26761068e88b2f331b517d5c7c235b983`, 3391 bytes.
 
 ```ts
-import { expect, type Page } from '@playwright/test';
+import { expect, test as base, type Page } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
+
+/**
+ * Every spec's `test`. Playwright closes only the contexts of its own `page` and `context` fixtures; one a test opens
+ * itself (`browser.newContext`) lived on to the end of its worker, its 3D showcase still turning. On a heavy project's
+ * single worker they piled up until the Edge stills test ran out of time (G3, CI run 38958721130; contexts.spec.ts).
+ * Here every context a test opened is closed when it ends.
+ */
+export const test = base.extend<{ ownContexts: void }>({
+  ownContexts: [async ({ browser }, use) => {
+    const before = new Set(browser.contexts());
+    await use();
+    await Promise.all(browser.contexts().filter(context => !before.has(context)).map(context => context.close()));
+  }, { auto: true }],
+});
 
 export const DIST = pathToFileURL(path.resolve('dist/index.html')).href;
 
@@ -38775,13 +39679,13 @@ export async function withGpu(page: Page): Promise<void> {
 
 ### tests/e2e/increment.spec.ts
 
-Paths: `tests/e2e/increment.spec.ts`. SHA-256 `087928d0aa59d011230eb021a2808ee77f5e7e2affd9385fc13459c52be1dde0`, 2926 bytes.
+Paths: `tests/e2e/increment.spec.ts`. SHA-256 `8bc0f8234d39f55ac456240eeaa064610305a473526e519180975158245b0868`, 2926 bytes.
 
 ```ts
 // Owner request 2026-10-10 (MPES §6.5): the instructor chooses the bid increment at setup; students record the
 // resulting prices without knowing the choice.
-import { expect, test } from '@playwright/test';
-import { gameUrl, guardNetwork } from './helpers.ts';
+import { expect } from '@playwright/test';
+import { gameUrl, guardNetwork, test } from './helpers.ts';
 import { act, confirmDialog, moreOptions, studentJoin } from './roles.ts';
 
 test('a $100,000 bid increment raises each offer by $100,000 and the student records the price', async ({ browser }) => {
@@ -38836,16 +39740,16 @@ test('a $100,000 bid increment raises each offer by $100,000 and the student rec
 
 ### tests/e2e/journey-en.spec.ts
 
-Paths: `tests/e2e/journey-en.spec.ts`. SHA-256 `394d90a08aa81848224724f41371ef62fd8fa2706fd8d2f45badb6f2e7c9cfda`, 11196 bytes.
+Paths: `tests/e2e/journey-en.spec.ts`. SHA-256 `3c71c9fb7d32f2d43869bb90747f3d901002696dcba5d703f28913d62b7a7cf1`, 11196 bytes.
 
 ```ts
 // J1 + J3 + J5 + J7 (MPES §16.3): full English session, 2 teams, TIMED, JIT, all 70 lots, with
 // pause/expiry/extend, unsold-with-leader, void and replacement, corrected sale, keyboard bidding,
 // the two-win limit, reloads (open lot restores paused), a missed student purchase reconciled in build,
 // private submissions, award and close. Every number is checked against the independent oracle.
-import { expect, test, type Page } from '@playwright/test';
+import { expect, type Page } from '@playwright/test';
 import { readFileSync } from 'node:fs';
-import { collectConsoleErrors, expectAccessible, gameUrl, guardNetwork } from './helpers.ts';
+import { collectConsoleErrors, expectAccessible, gameUrl, guardNetwork, test } from './helpers.ts';
 import { compliant, dollars, score, startCents, totals, winners, type OracleTeam } from './oracle.ts';
 import { act, confirmDialog, instructorSetup, studentJoin } from './roles.ts';
 
@@ -39056,18 +39960,18 @@ test('J1/J3: full English timed session with every correction path', async ({ br
 
 ### tests/e2e/journey-fr.spec.ts
 
-Paths: `tests/e2e/journey-fr.spec.ts`. SHA-256 `1662eb85fd0acf22cf8dac2f9e2b98b35a7dceb661a79168bcc32784fe781fc0`, 5758 bytes.
+Paths: `tests/e2e/journey-fr.spec.ts`. SHA-256 `097d166202351a26bf2da9fbff01d8fad0a509e0f77d9acf86538339b9d9088e`, 5758 bytes.
 
 ```ts
 // J2 + J7 (MPES §16.3): full French session, 10 teams, UNTIMED, MANUAL reveal, all 70 lots, ending in a
 // shared award. The session starts from an imported planning backup with a fixed seed so the purchase plan
 // (tests/fixtures/j2-plan.json, found offline) produces two compliant teams with equal scores.
-import { expect, test, type Page } from '@playwright/test';
+import { expect, type Page } from '@playwright/test';
 import { readFileSync, writeFileSync } from 'node:fs';
 import { makeBackup } from '../../source/domain/backup.ts';
 import * as I from '../../source/domain/instructor.ts';
 import { instructorForSave } from '../../source/domain/saves.ts';
-import { collectConsoleErrors, expectAccessible, gameUrl, guardNetwork } from './helpers.ts';
+import { collectConsoleErrors, expectAccessible, gameUrl, guardNetwork, test } from './helpers.ts';
 import { score, totals, winners, type OracleTeam } from './oracle.ts';
 import { act, confirmDialog } from './roles.ts';
 
@@ -39166,13 +40070,13 @@ test('J2: French 10-team MANUAL untimed session with a shared award', async ({ p
 
 ### tests/e2e/layout.spec.ts
 
-Paths: `tests/e2e/layout.spec.ts`. SHA-256 `84f321ae2267c9fe83a987d65fdd5ad6cb10df74c53753753f194a4b9247b0e0`, 1676 bytes.
+Paths: `tests/e2e/layout.spec.ts`. SHA-256 `3da958868a47a42c038db3e38a6274302bfb80195f126f08a105805f6d540f71`, 1676 bytes.
 
 ```ts
 // MPES §7.1 (3.1.0): at 1280×720 the live lot's bid buttons, Sell, No sale and Next lot are fully visible without
 // scrolling, because Firefox loses a click on a half-hidden button when it scrolls it into view.
-import { expect, test, type Page } from '@playwright/test';
-import { gameUrl, guardNetwork } from './helpers.ts';
+import { expect, type Page } from '@playwright/test';
+import { gameUrl, guardNetwork, test } from './helpers.ts';
 import { instructorSetup } from './roles.ts';
 
 async function fullyVisible(page: Page, selectors: string[]): Promise<void> {
@@ -39204,14 +40108,14 @@ for (const lang of ['en', 'fr']) {
 
 ### tests/e2e/mobile.spec.ts
 
-Paths: `tests/e2e/mobile.spec.ts`. SHA-256 `262f8f0cc5b74e169675320acd658e483f11c9d109102b452bf0c0db8a0bb077`, 3093 bytes.
+Paths: `tests/e2e/mobile.spec.ts`. SHA-256 `c36db7983728f90a2d7616ff71b559c4a82f07acc9ad4b3d004abedcebbbc4fd`, 3093 bytes.
 
 ```ts
 // Owner FIX 2026-10-12: on a phone every table shows all of its columns. Tables open inside collapsed sections
 // (the category guide, the mission minimums) hid most columns off screen; below 40rem each row becomes a card whose
 // cells carry their column's name.
-import { expect, test, type Page } from '@playwright/test';
-import { gameUrl, guardNetwork } from './helpers.ts';
+import { expect, type Page } from '@playwright/test';
+import { gameUrl, guardNetwork, test } from './helpers.ts';
 import { confirmDialog, studentJoin } from './roles.ts';
 
 async function everyCellShown(page: Page, where: string): Promise<void> {
@@ -39327,201 +40231,85 @@ export function dollars(cents: number): string {
 
 ### tests/e2e/perf.spec.ts
 
-Paths: `tests/e2e/perf.spec.ts`. SHA-256 `86062b3ae4555e7177ae03cf207abfc0ca4005e2de493250a48a3064eeb515b5`, 10065 bytes.
+Paths: `tests/e2e/perf.spec.ts`. SHA-256 `6b9d9d892e617ded9256830ce831ad39cf01aa8282ea10d80ec2ba4f4b20414b`, 3685 bytes.
 
 ```ts
 // RQ-26 (MPES §14, §10.3): every performance budget, measured in Chromium on the reference profile (4x CPU
 // throttling, D-11). Numbers are attached to the report and copied into docs/verification for the release. This
 // file runs in its own project after every other suite has finished (playwright.config.ts), so timings are not
-// skewed by parallel work.
-import { expect, test, type Page } from '@playwright/test';
-import { readFileSync, statSync } from 'node:fs';
-import { gameUrl, guardNetwork, withGpu, withoutWebgl } from './helpers.ts';
-import { instructorSetup } from './roles.ts';
+// skewed by parallel work; its tests run one after another in one worker. The scenarios and the protocol (input to
+// painted result, nearest-rank p95 of at least 30 samples) are tests/perf/, shared with `npm run perf:ref`, which
+// measures them on the reference GPU; here the runner's software renderer stands in for it (withGpu).
+import { expect, type TestInfo } from '@playwright/test';
+import { MIN_SAMPLES, inputToPaint } from '../perf/measure.ts';
+import { Lab, commands, model, startUp, stills, type Measured } from '../perf/scenarios.ts';
+import { test, withGpu } from './helpers.ts';
 
 test.use({ launchOptions: { args: ['--js-flags=--expose-gc'] } });
+test.describe.configure({ mode: 'default' });
 test.setTimeout(240_000);
 
-const MB = 1024 * 1024;
-
-/** The reference profile: Chromium with 4x CPU throttling stands in for an integrated-graphics laptop (D-11). */
-async function reference(page: Page): Promise<Page> {
-  guardNetwork(page);
-  const cdp = await page.context().newCDPSession(page);
-  await cdp.send('Emulation.setCPUThrottlingRate', { rate: 4 });
-  return page;
+/** Each test reports its numbers; the release's verification record copies them. */
+async function report(info: TestInfo, measured: Measured): Promise<Measured['values']> {
+  await info.attach('performance.json', { body: JSON.stringify(measured, null, 2), contentType: 'application/json' });
+  console.log(JSON.stringify(measured.values));
+  return measured.values;
 }
 
-/** JS heap plus the decoded pixels of every image on screen (4 bytes per pixel). */
-async function memoryMB(page: Page): Promise<number> {
-  return page.evaluate(() => {
-    (globalThis as unknown as { gc?: () => void }).gc?.();
-    const heap = (performance as unknown as { memory: { usedJSHeapSize: number } }).memory.usedJSHeapSize;
-    const pixels = [...document.images].reduce((n, img) => n + img.naturalWidth * img.naturalHeight * 4, 0);
-    return (heap + pixels) / 1048576;
-  });
-}
+test('start-up, size and memory (MPES §14)', async ({ browser }, info) => {
+  const v = await report(info, await startUp(new Lab(browser)));
+  expect(v.htmlMB).toBeLessThanOrEqual(50);
+  expect(v.chooserMs).toBeLessThanOrEqual(2000);
+  expect(v.maxStateStartMs).toBeLessThanOrEqual(3000);
+  expect(v.maxStateMemoryMB).toBeLessThanOrEqual(400);
+});
 
-const p95 = (values: number[]) => [...values].sort((a, b) => a - b)[Math.floor(values.length * 0.95)]!;
+test('command response and memory growth (MPES §14)', async ({ browser }, info) => {
+  const v = await report(info, await commands(new Lab(browser)));
+  expect(v.commandSamples).toBeGreaterThanOrEqual(MIN_SAMPLES);
+  expect(v.commandP95Ms).toBeLessThanOrEqual(100);
+  expect(v.memoryGrowthMB).toBeLessThanOrEqual(5);
+});
 
-test('performance budgets (MPES §14, §10.3)', async ({ page }, info) => {
-  const results: Record<string, number> = {};
-  results.htmlMB = Math.round(statSync('dist/index.html').size / MB * 10) / 10;
+test('3D showcase (MPES §14, §10.3)', async ({ browser }, info) => {
+  const v = await report(info, await model(new Lab(browser, {}, withGpu)));
+  expect(v.modelReadyMs).toBeLessThanOrEqual(3000);
+  expect(v.modelUpdateSamples).toBeGreaterThanOrEqual(MIN_SAMPLES);
+  expect(v.modelUpdateP95Ms).toBeLessThanOrEqual(100);
+  expect(v.modelMemoryMB).toBeLessThanOrEqual(400);
+});
 
-  // Time to interactive, chooser: the first frame showing the heading and the role buttons.
-  // (file:// pages report no paint timing, so a test-side observer records it.)
-  const chooser = await reference(await page.context().newPage());
-  await chooser.addInitScript(() => {
-    new MutationObserver((_, observer) => {
-      if (!document.querySelector('h1') || !document.querySelector('a[data-role]')) return;
-      observer.disconnect();
-      requestAnimationFrame(() => { (window as unknown as { seaPainted: number }).seaPainted = performance.now(); });
-    }).observe(document, { childList: true, subtree: true });
-  });
-  await chooser.goto(gameUrl('?lang=en'));
-  await chooser.waitForFunction(() => (window as unknown as { seaPainted?: number }).seaPainted !== undefined);
-  results.chooserMs = Math.round(await chooser.evaluate(() => (window as unknown as { seaPainted: number }).seaPainted));
-  await chooser.close();
+test('stills showcase (MPES §14, §10.3)', async ({ browser }, info) => {
+  const v = await report(info, await stills(new Lab(browser)));
+  expect(v.showcaseUpdateSamples).toBeGreaterThanOrEqual(MIN_SAMPLES);
+  expect(v.showcaseUpdateP95Ms).toBeLessThanOrEqual(100);
+  expect(v.angleChangeMs).toBeLessThanOrEqual(50);
+  expect(v.turntableStepMaxMs).toBeLessThanOrEqual(50);
+  expect(v.studentMemoryMB).toBeLessThanOrEqual(400);
+});
 
-  // Time to interactive with the largest valid instructor save: 210 ledger entries, all 70 lots, 10 teams.
-  await reference(page);
-  const state = JSON.parse(readFileSync('tests/fixtures/legacy/instructor-max-ledger.json', 'utf8')).state;
-  await page.addInitScript(raw => { if (!sessionStorage.getItem('SEA_INSTRUCTOR_V300')) sessionStorage.setItem('SEA_INSTRUCTOR_V300', raw); }, JSON.stringify(state));
-  const t1 = Date.now();
-  await page.goto(gameUrl('?role=instructor&lang=en'));
-  await page.getByRole('heading', { name: 'Results to reconcile' }).waitFor();
-  results.maxStateStartMs = Date.now() - t1;
-  results.maxStateMemoryMB = Math.round(await memoryMB(page));
-
-  // Command response: click to rendered result in a 10-team timed auction, inside the page.
-  const fresh = await reference(await page.context().newPage());
-  await fresh.goto(gameUrl('?role=instructor&lang=en'));
-  await instructorSetup(fresh, { teams: 10, reveal: 'JIT', timed: true, missions: ['TROOP', 'RECCE', 'COMBAT', 'COMMAND', 'RECOVERY', 'MINE', 'TROOP', 'RECCE', 'COMBAT', 'COMMAND'] });
-  await fresh.click('#open-bidding');
-  const bids = await fresh.evaluate(() => {
-    const out: number[] = [];
-    for (let i = 0; i < 40; i++) {
-      const button = document.querySelector<HTMLButtonElement>(`#bid-${(i % 10) + 1}`);
-      if (!button || button.disabled) continue;
-      const start = performance.now();
-      button.click();
-      out.push(performance.now() - start);
-    }
-    return out;
-  });
-  results.commandP95Ms = Math.round(p95(bids) * 10) / 10;
-
-  // No growth: ten full re-render cycles (language round trips re-render every view) leave the heap flat.
-  const before = await memoryMB(fresh);
-  for (let cycle = 0; cycle < 10; cycle++) await fresh.evaluate(() => { for (let i = 0; i < 20; i++) document.querySelector<HTMLButtonElement>('#lang-toggle')!.click(); });
-  results.memoryGrowthMB = Math.round((await memoryMB(fresh) - before) * 10) / 10;
-
-  // 3D showcase (MPES §10.3): from opening the tracker until the model is drawn; then record a purchase until the
-  // model shows it.
-  const tracker = async (page: Page) => {
-    await page.goto(gameUrl('?role=student&lang=en'));
-    await page.fill('#join-code', 'SEA3-T2-0123456789ABCDEF');
-    await page.selectOption('#join-mission', 'RECOVERY');
-    await page.click('#join'); await page.click('#record-practice'); await page.click('#student-planning');
-    await page.check('#plan-confirm'); await page.click('#student-start-auction');
-  };
-  const model = await reference(await page.context().newPage());
-  await withGpu(model);
-  await tracker(model);
-  const opened = await model.evaluate(() => performance.now());
-  await model.locator('dialog button[data-value="ok"]').click();
-  await model.locator('#showcase [data-mode="3d"][data-ready="true"]').waitFor();
-  results.modelReadyMs = Math.round(await model.evaluate(() => performance.now()) - opened);
-  const modelUpdates: number[] = [];
-  for (const [round, lot, card, paid] of [[1, 5, 'COM-E', 600000], [1, 7, 'ACC-F', 350000], [2, 1, 'CAP-B', 450000]] as const) {
-    if (round > 1) await model.selectOption('#pos-round', String(round));
-    await model.selectOption('#pos-lot', String(lot));
-    await model.fill('#card-id', card); await model.click('#load-card'); await model.fill('#paid', String(paid));
-    modelUpdates.push(await model.evaluate(async id => {
-      const start = performance.now();
-      document.querySelector<HTMLButtonElement>('#record-win')!.click();
-      if (!document.querySelector('#showcase [data-mode="3d"]')!.getAttribute('data-layers')!.split(' ').includes(id)) throw new Error(`model lacks ${id}`);
-      await new Promise(requestAnimationFrame);
-      return performance.now() - start;
-    }, card));
-  }
-  results.modelUpdateMaxMs = Math.round(Math.max(...modelUpdates));
-  results.modelMemoryMB = Math.round(await memoryMB(model));
-  await model.close();
-
-  // Stills showcase without WebGL (MPES §10.3): record a purchase until its layer is decoded; change angle; scrub
-  // the turntable.
-  const student = await reference(await page.context().newPage());
-  await withoutWebgl(student);
-  await tracker(student);
-  await student.locator('dialog button[data-value="ok"]').click();
-  await student.locator('#showcase img[data-layer="base"]').waitFor();
-  const updates: number[] = [];
-  for (const [round, lot, card, paid] of [[1, 5, 'COM-E', 600000], [1, 7, 'ACC-F', 350000], [2, 1, 'CAP-B', 450000]] as const) {
-    if (round > 1) await student.selectOption('#pos-round', String(round));
-    await student.selectOption('#pos-lot', String(lot));
-    await student.fill('#card-id', card); await student.click('#load-card'); await student.fill('#paid', String(paid));
-    updates.push(await student.evaluate(async id => {
-      const start = performance.now();
-      document.querySelector<HTMLButtonElement>('#record-win')!.click();
-      await document.querySelector<HTMLImageElement>(`#showcase img[data-layer="${id}"]`)!.decode();
-      return performance.now() - start;
-    }, card));
-  }
-  results.showcaseUpdateMaxMs = Math.round(Math.max(...updates));
-  results.angleChangeMs = Math.round(await student.evaluate(async () => {
-    const start = performance.now();
-    document.querySelector<HTMLInputElement>('#showcase-view-rear')!.click();
-    await Promise.all([...document.querySelectorAll<HTMLImageElement>('#showcase img')].map(img => img.decode()));
-    return performance.now() - start;
-  }));
-  await student.check('#showcase-view-turntable');
-  await student.locator('#showcase-turn').waitFor();
-  await student.waitForTimeout(300); // neighbouring frames pre-decode while a person pauses
-  const scrub: number[] = [];
-  for (let i = 0; i < 6; i++) {
-    scrub.push(await student.evaluate(async () => {
-      const input = document.querySelector<HTMLInputElement>('#showcase-turn')!;
-      const start = performance.now();
-      input.value = String((Number(input.value) + 1) % (Number(input.max) + 1));
-      input.dispatchEvent(new Event('input', { bubbles: true }));
-      await document.querySelector<HTMLImageElement>('#showcase img[data-frame]')!.decode();
-      return performance.now() - start;
-    }));
-    await student.waitForTimeout(120);
-  }
-  results.turntableStepMaxMs = Math.round(Math.max(...scrub));
-  results.studentMemoryMB = Math.round(await memoryMB(student));
-
-  await info.attach('performance.json', { body: JSON.stringify(results, null, 2), contentType: 'application/json' });
-  console.log(JSON.stringify(results));
-  expect(results.htmlMB).toBeLessThanOrEqual(50);
-  expect(results.chooserMs).toBeLessThanOrEqual(2000);
-  expect(results.maxStateStartMs).toBeLessThanOrEqual(3000);
-  expect(results.commandP95Ms).toBeLessThanOrEqual(100);
-  expect(results.maxStateMemoryMB).toBeLessThanOrEqual(400);
-  expect(results.studentMemoryMB).toBeLessThanOrEqual(400);
-  expect(results.memoryGrowthMB).toBeLessThanOrEqual(5);
-  expect(results.showcaseUpdateMaxMs).toBeLessThanOrEqual(100);
-  expect(results.modelReadyMs).toBeLessThanOrEqual(3000);
-  expect(results.modelUpdateMaxMs).toBeLessThanOrEqual(100);
-  expect(results.modelMemoryMB).toBeLessThanOrEqual(400);
-  expect(results.angleChangeMs).toBeLessThanOrEqual(50);
-  expect(results.turntableStepMaxMs).toBeLessThanOrEqual(50);
+// The protocol itself (Codex G3 review): a click timed to the next paint must include the command, however late the
+// button is released; before the fix a 200 ms press measured 33 ms, the command never inside the timing.
+test('a command timing includes the command, even when the button is released late', async ({ page }) => {
+  await page.setContent('<button id="b">Bid</button><output id="o"></output>');
+  await page.evaluate(() => document.querySelector('#b')!.addEventListener('click', () => { document.querySelector('#o')!.textContent = 'done'; }));
+  const ms = await inputToPaint(page, () => page.click('#b', { delay: 200 }), { kind: 'paint' });
+  await expect(page.locator('#o')).toHaveText('done');
+  expect(ms).toBeGreaterThanOrEqual(200);
 });
 ```
 
 ### tests/e2e/recovery.spec.ts
 
-Paths: `tests/e2e/recovery.spec.ts`. SHA-256 `cf2457d4099ebb9c94564fc9601d4efa774889644029a80965f8e8974c396394`, 5532 bytes.
+Paths: `tests/e2e/recovery.spec.ts`. SHA-256 `e2581a6189d98e465841cee0810582d7982a45757d10bfc34af1286893f33b7c`, 5532 bytes.
 
 ```ts
 // J4 + RQ-15, RQ-16, RQ-28 (MPES §8, §9): storage denied, unreadable save, bad imports, legacy
 // imports and a refused download, each with a designed message and no loss of the current game.
-import { expect, test } from '@playwright/test';
+import { expect } from '@playwright/test';
 import { readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { collectConsoleErrors, gameUrl, guardNetwork } from './helpers.ts';
+import { collectConsoleErrors, gameUrl, guardNetwork, test } from './helpers.ts';
 import { confirmDialog } from './roles.ts';
 
 const legacy = (name: string) => new URL(`../fixtures/legacy/${name}.json`, import.meta.url);
@@ -39637,7 +40425,7 @@ test('a refused download falls back to copyable backup text', async ({ page }) =
 
 ### tests/e2e/rehearsal.spec.ts
 
-Paths: `tests/e2e/rehearsal.spec.ts`. SHA-256 `dc92b8aa0c5abc32ec26f66f3dbf22fd71b9786486f78e6983b7e065d215df86`, 11490 bytes.
+Paths: `tests/e2e/rehearsal.spec.ts`. SHA-256 `74e3faa97ed9fd6fe9a850fda4661f1173ca5559ebcf2f0fe5904000d53dfbf4`, 11490 bytes.
 
 ```ts
 // G-PILOT substitute (MPES §16.6, owner-delegated): scripted classroom rehearsal in French with 10 teams
@@ -39645,8 +40433,8 @@ Paths: `tests/e2e/rehearsal.spec.ts`. SHA-256 `dc92b8aa0c5abc32ec26f66f3dbf22fd7
 // sale, a void, a student interruption and an instructor interruption are each recovered with the
 // documented controls. Results are scored against S1, S2, S4 and S5 and written as a JSON attachment.
 // Real-learner outcome S3 is out of reach for a script and stays a residual risk.
-import { expect, test, type Browser, type Page } from '@playwright/test';
-import { collectConsoleErrors, gameUrl, guardNetwork } from './helpers.ts';
+import { expect, type Browser, type Page } from '@playwright/test';
+import { collectConsoleErrors, gameUrl, guardNetwork, test } from './helpers.ts';
 import { startCents, winners, type OracleTeam } from './oracle.ts';
 import { act, confirmDialog, instructorSetup } from './roles.ts';
 
@@ -39855,6 +40643,97 @@ test('G-PILOT substitute: French classroom rehearsal, 10 teams, three student ta
 });
 ```
 
+### tests/e2e/render.spec.ts
+
+Paths: `tests/e2e/render.spec.ts`. SHA-256 `f5b119e6e94c98ec2bc394990bf9769cabec717e716c20614e13d25bd6467231`, 4632 bytes.
+
+```ts
+// MPES §14 command response: a command, a saved field or a status message rebuilds the view once, never twice (G3: each
+// command used to render through the controller's subscription and again in the view, doubling the click-to-paint time).
+import { expect, type Page } from '@playwright/test';
+import { gameUrl, guardNetwork, test } from './helpers.ts';
+import { instructorLot, instructorSetup } from './roles.ts';
+import { TRACKER_OK } from '../perf/measure.ts';
+
+/** Counts full re-renders: each one empties the view's content element before rebuilding it. */
+async function countRenders(page: Page): Promise<void> {
+  await page.evaluate(() => {
+    const w = window as unknown as { seaRenders: number };
+    w.seaRenders = 0;
+    const content = document.querySelector('#app > div')!;
+    new MutationObserver(records => { for (const r of records) if (r.target === content && r.removedNodes.length) w.seaRenders++; })
+      .observe(content, { childList: true });
+  });
+}
+const renders = (page: Page) => page.evaluate(() => { const w = window as unknown as { seaRenders: number }; const n = w.seaRenders; w.seaRenders = 0; return n; });
+
+test('each command, saved field and message renders the view once', async ({ page }) => {
+  guardNetwork(page);
+  await page.goto(gameUrl('?role=instructor&lang=en'));
+  await countRenders(page);
+  await page.click('#generate');
+  expect(await renders(page), 'command').toBe(1);
+  await page.click('#start-practice');
+  expect(await renders(page), 'command').toBe(1);
+  await page.click('#lang-toggle');
+  expect(await renders(page), 'language').toBe(1);
+
+  await page.goto(gameUrl('?role=student&lang=en'));
+  await countRenders(page);
+  await page.fill('#join-code', 'SEA3-T2-0123456789ABCDEF');
+  await page.selectOption('#join-mission', 'RECOVERY');
+  await renders(page);
+  await page.click('#join');
+  expect(await renders(page), 'join').toBe(1);
+  await page.click('#record-practice'); await page.click('#student-planning');
+  await renders(page);
+  // A field that saves as you type: one render per committed value.
+  await page.locator('#plan-wtp').pressSequentially('5');
+  expect(await renders(page), 'saved field').toBe(1);
+});
+
+/** Opens every closed panel the reader can see, nested ones as they appear; returns how many are open. */
+async function openAll(page: Page): Promise<number> {
+  const closed = page.locator('details:not([open]) > summary').filter({ visible: true });
+  while (await closed.count()) await closed.first().click();
+  return page.locator('details[open]').count();
+}
+
+// G3: a render rebuilt every panel closed, so typing in the tracker's scratch notes hid the field after the first
+// character (it saves as you type), and an opened guide, ledger or team list shut on the next click elsewhere.
+// A panel the reader opened stays open across renders; only the reader closes it.
+test('a panel the reader opened stays open through every render, on every page with panels', async ({ page, browser }) => {
+  guardNetwork(page);
+  await page.goto(gameUrl('?role=student&lang=en'));
+  await page.fill('#join-code', 'SEA3-T2-0123456789ABCDEF');
+  await page.selectOption('#join-mission', 'RECOVERY');
+  await page.click('#join'); await page.click('#record-practice'); await page.click('#student-planning');
+  const planning = await openAll(page);
+  expect(planning, 'planning panels').toBeGreaterThanOrEqual(2);
+  await page.locator('#plan-wtp').pressSequentially('5');
+  await expect(page.locator('details[open]'), 'planning, after a saved field').toHaveCount(planning);
+
+  await page.check('#plan-confirm'); await page.click('#student-start-auction');
+  await page.locator(TRACKER_OK).click();
+  await page.locator('details:has(#scratch-wtp) > summary').click();
+  await page.locator('#scratch-wtp').pressSequentially('42');
+  await expect(page.locator('#scratch-wtp'), 'the field typed in').toBeVisible();
+  await expect(page.locator('#scratch-wtp')).toBeFocused();
+  await expect(page.locator('#scratch-wtp')).toHaveValue('42');
+  await page.click('#lang-toggle');
+  await expect(page.locator('details:has(#scratch-wtp)'), 'after a language change').toHaveAttribute('open', '');
+
+  const ip = await (await browser.newContext()).newPage();
+  guardNetwork(ip);
+  await ip.goto(gameUrl('?role=instructor&lang=en'));
+  await instructorSetup(ip, { teams: 2, reveal: 'JIT', timed: false, missions: ['RECOVERY', 'TROOP'] });
+  const auction = await openAll(ip);
+  expect(auction, 'auction panels').toBeGreaterThanOrEqual(1);
+  await instructorLot(ip, [1], 'sell');
+  await expect(ip.locator('details[open]'), 'auction, after a sale').toHaveCount(auction);
+});
+```
+
 ### tests/e2e/roles.ts
 
 Paths: `tests/e2e/roles.ts`. SHA-256 `513e9d500f2908292aa71aa924d07377797f2540f3833b1df5a52c5c1788a249`, 3379 bytes.
@@ -39935,14 +40814,15 @@ export async function studentRecord(page: Page, cardId: string, paidDollars: num
 
 ### tests/e2e/showcase.spec.ts
 
-Paths: `tests/e2e/showcase.spec.ts`. SHA-256 `172f0dff6e6370a65a638829c345df2080cbd6584fc4e1bdccc09597641300fa`, 22412 bytes.
+Paths: `tests/e2e/showcase.spec.ts`. SHA-256 `f839193d64b1c19fc43b6c8b5018bb456146595059cb06b460259b5e1219a6e7`, 41814 bytes.
 
 ```ts
 // War-room HUD and vehicle showcase (MPES §7.1, §10, §11): the default look of every view. The live lot shows the
 // card's photoreal render; the student tracker shows the team's vehicle with its real purchases, as a slowly turning
 // 3D model where WebGL works and as stacked still renders where it does not.
-import { expect, test } from '@playwright/test';
-import { collectConsoleErrors, expectAccessible, gameUrl, guardNetwork, withGpu, withoutWebgl } from './helpers.ts';
+import { expect, type Locator } from '@playwright/test';
+import sharp from 'sharp';
+import { collectConsoleErrors, expectAccessible, gameUrl, guardNetwork, test, withGpu, withoutWebgl } from './helpers.ts';
 import { confirmDialog, instructorSetup, studentJoin } from './roles.ts';
 
 async function record(page: import('@playwright/test').Page, round: number, lot: number, card: string, paid: number): Promise<void> {
@@ -39952,6 +40832,69 @@ async function record(page: import('@playwright/test').Page, round: number, lot:
   await page.click('#load-card');
   await page.fill('#paid', String(paid));
   await page.click('#record-win');
+}
+
+/** Lowest still contrast of the brighter vehicle pixels allowed until G4 (see the per-mission tests). */
+const STILLS_CONTRAST_FLOOR = 2.1;
+/**
+ * Lowest whole-vehicle contrast (the vehicle's silhouette, see vehicleContrast) allowed until G4 lifts the stills to 3
+ * (MPES §10.5). Measured on 2026-10-14 on Chromium, Firefox and Edge: 3D 3.16 to 3.72, stills 1.56 to 1.66. These floors
+ * may only rise: the 3D floor already holds the whole vehicle to WCAG 3:1.
+ */
+const WHOLE_CONTRAST_FLOOR = { live: 3, stills: 1.5 };
+/**
+ * Lowest contrast allowed in the turntable stills until G4: the frames that show the side turned from the render's key
+ * light are darker than the front and rear views (least 1.60 bright, 1.32 whole on all three engines on 2026-10-16,
+ * docs/verification/0.6.0.0.md; the floor is that, rounded down). An open
+ * G4 item lifts every frame to 3 (MPES §10.5). This floor may only rise.
+ */
+const TURNTABLE_FLOOR = { bright: 1.55, whole: 1.3 };
+
+/**
+ * The vehicle's luminance contrast with its stage (WCAG 1.4.11 asks 3:1 of a graphic that carries meaning). A dim
+ * laptop panel scales vehicle and stage alike, so the ratios survive it (G3 panel safety).
+ * - `bright`: the median of the pixels at least 2.5 times as bright as the brightest corner, against that corner.
+ * - `whole`: the vehicle's silhouette, found without looking at its brightness: the stage is shot on black and on
+ *   white, and a pixel that stays the same is opaque vehicle (its soft shadow and the stage change). Its median
+ *   luminance is compared with the same pixels of the stage shot with the vehicle (`vehicle`: the canvas or the still
+ *   layers) hidden. Codex (G3 review) showed `bright` alone, and then a mask of the pixels that differ from the stage,
+ *   passing a vehicle mostly as dark as its stage; the silhouette counts those pixels too.
+ * - `share`: the part of the stage the silhouette covers.
+ */
+async function vehicleContrast(stage: Locator, vehicle: string, stageOnly?: { data?: Buffer }): Promise<{ bright: number; whole: number; share: number }> {
+  const shoot = async () => sharp(await stage.screenshot()).removeAlpha().raw().toBuffer({ resolveWithObject: true });
+  const style = (css: Record<string, string>, selector?: string) => (selector ? stage.locator(selector) : stage)
+    .evaluateAll((els, c) => els.forEach(e => Object.assign((e as HTMLElement).style, c)), css);
+  const { data: shown, info } = await shoot();
+  await style({ background: '#000' });
+  const { data: black } = await shoot();
+  await style({ background: '#fff' });
+  const { data: white } = await shoot();
+  await style({ background: '' });
+  // The bare stage does not change as the vehicle turns or the frames step: a caller measuring many poses passes
+  // `stageOnly` and it is shot once (sixteen poses in one test outran their time on a loaded machine, 2026-10-16).
+  let bare = stageOnly?.data;
+  if (!bare) {
+    await style({ visibility: 'hidden' }, vehicle);
+    bare = (await shoot()).data;
+    await style({ visibility: '' }, vehicle);
+    if (stageOnly) stageOnly.data = bare;
+  }
+  const linear = (c: number) => (c /= 255) <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+  const at = (data: Buffer, i: number) => 0.2126 * linear(data[i]!) + 0.7152 * linear(data[i + 1]!) + 0.0722 * linear(data[i + 2]!);
+  const median = (values: number[]) => values.sort((a, b) => a - b)[values.length >> 1] ?? 0;
+  const { width: w, height: h } = info;
+  const corner = Math.max(...[[4, 4], [w - 5, 4], [4, h - 5], [w - 5, h - 5]].map(([x, y]) => at(shown, (y! * w + x!) * 3)));
+  const lit: number[] = [], front: number[] = [], back: number[] = [];
+  for (let i = 0; i < shown.length; i += 3) {
+    const l = at(shown, i);
+    if (l > corner * 2.5) lit.push(l);
+    // Opaque: black and white behind it move the pixel by at most a tenth of the way.
+    if (Math.max(white[i]! - black[i]!, white[i + 1]! - black[i + 1]!, white[i + 2]! - black[i + 2]!) > 25) continue;
+    front.push(l); back.push(at(bare, i));
+  }
+  const [f, b] = [median(front), median(back)];
+  return { bright: (median(lit) + 0.05) / (corner + 0.05), whole: (Math.max(f, b) + 0.05) / (Math.min(f, b) + 0.05), share: front.length / (w * h) };
 }
 
 async function trackerFor(browser: import('@playwright/test').Browser, mission: string) {
@@ -40064,6 +41007,103 @@ for (const viewport of [{ width: 1280, height: 720 }, { width: 360, height: 740 
   });
 }
 
+// G3 touchpad and touch safety (MPES §10.2): the page scrolls past the stage, by wheel, touchpad or finger; only a drag turns it.
+test('3D showcase never traps the page scroll: wheel and vertical swipes scroll the page, a drag turns the vehicle', async ({ browser }) => {
+  const { sp } = await trackerFor(browser, 'RECOVERY');
+  await sp.setViewportSize({ width: 360, height: 740 });
+  const showcase = sp.locator('#showcase'), stage = showcase.locator('[role="img"]'), canvas = stage.locator('canvas');
+  await expect(stage).toHaveAttribute('data-ready', 'true', { timeout: 30_000 });
+  await showcase.getByRole('button', { name: 'Pause turning', exact: true }).click();
+  await canvas.scrollIntoViewIfNeeded();
+  expect(await canvas.evaluate(c => getComputedStyle(c).touchAction), 'a vertical swipe on the stage scrolls the page').toBe('pan-y');
+  const box = (await canvas.boundingBox())!, zoom = await stage.getAttribute('data-zoom');
+  await sp.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+  // Towards whichever end of the page has room.
+  const top = await sp.evaluate(() => scrollY), up = top > 0;
+  await sp.mouse.wheel(0, up ? -200 : 200);
+  await expect.poll(async () => Math.abs(await sp.evaluate(() => scrollY) - top), 'a wheel or two-finger touchpad scroll over the stage scrolls the page').toBeGreaterThan(50);
+  expect(await stage.getAttribute('data-zoom'), 'the wheel never zooms').toBe(zoom);
+  const after = (await canvas.boundingBox())!, azimuth = await stage.getAttribute('data-azimuth');
+  await sp.mouse.move(after.x + after.width * 0.3, after.y + after.height / 2);
+  await sp.mouse.down();
+  await sp.mouse.move(after.x + after.width * 0.7, after.y + after.height / 2, { steps: 8 });
+  await sp.mouse.up();
+  await expect(stage).not.toHaveAttribute('data-azimuth', azimuth ?? '');
+});
+
+// G3 (MPES §10.3): a driver reset, a GPU switch or sleep loses the graphics context; the stage must come back by itself.
+test('3D showcase recovers a lost graphics context: it stops drawing, then draws the next purchase once restored', async ({ browser }) => {
+  const { sp } = await trackerFor(browser, 'RECOVERY');
+  const errors = collectConsoleErrors(sp);
+  const stage = sp.locator('#showcase [role="img"]');
+  await expect(stage).toHaveAttribute('data-ready', 'true', { timeout: 30_000 });
+  await sp.evaluate(() => {
+    const gl = document.querySelector<HTMLCanvasElement>('#showcase canvas')!.getContext('webgl2')!;
+    (window as unknown as { seaLose: WEBGL_lose_context }).seaLose = gl.getExtension('WEBGL_lose_context')!;
+    (window as unknown as { seaLose: WEBGL_lose_context }).seaLose.loseContext();
+  });
+  await sp.waitForFunction(() => document.querySelector<HTMLCanvasElement>('#showcase canvas')!.getContext('webgl2')!.isContextLost());
+  await record(sp, 1, 7, 'ACC-F', 350000);
+  await expect(stage).toHaveAttribute('data-layers', 'ACC-F');
+  await expect(stage).not.toHaveAttribute('data-drawn', 'ACC-F');
+  await sp.evaluate(() => (window as unknown as { seaLose: WEBGL_lose_context }).seaLose.restoreContext());
+  await expect(stage).toHaveAttribute('data-drawn', 'ACC-F', { timeout: 30_000 });
+  // Again, as Firefox on a software renderer did in CI run 38577929333: a restore announced while the context is still
+  // lost, then the real restore without a word. The stage must not take the announcement for a context, nor miss the return.
+  await sp.evaluate(() => {
+    const canvas = document.querySelector<HTMLCanvasElement>('#showcase canvas')!;
+    (window as unknown as { seaLose: WEBGL_lose_context }).seaLose.loseContext();
+    canvas.dispatchEvent(new Event('webglcontextrestored'));
+  });
+  await record(sp, 2, 7, 'ACC-E', 600000);
+  await expect(stage).toHaveAttribute('data-layers', 'ACC-E');
+  await sp.waitForTimeout(1000);
+  await expect(stage, 'nothing is drawn on a context still lost').toHaveAttribute('data-drawn', 'ACC-F');
+  await sp.evaluate(() => {
+    const canvas = document.querySelector<HTMLCanvasElement>('#showcase canvas')!;
+    // Silenced before the stage hears it: window listeners in the capture phase run before the canvas's own.
+    window.addEventListener('webglcontextrestored', event => { if (event.target === canvas && event.isTrusted) event.stopImmediatePropagation(); }, { capture: true, once: true });
+    (window as unknown as { seaLose: WEBGL_lose_context }).seaLose.restoreContext();
+  });
+  await expect(stage).toHaveAttribute('data-drawn', 'ACC-E', { timeout: 30_000 });
+  expect(errors).toEqual([]);
+});
+
+// Verify of fe4df5d (Firefox, 12 workers): the stage's visibility observer reported the canvas hidden, before it was
+// on the page, and never again once it was, so a stage in plain view drew nothing for a minute. Here every observation
+// reports once, its first state, and never again: the worst a loaded browser did. The stage must still draw.
+test('3D showcase draws though the browser reports its visibility only once', async ({ page }) => {
+  guardNetwork(page);
+  await withGpu(page);
+  await page.addInitScript(() => {
+    const Native = window.IntersectionObserver;
+    // A plain function: the test compiler turns class private fields into helpers the page does not have.
+    window.IntersectionObserver = function (this: IntersectionObserver, report: IntersectionObserverCallback) {
+      const watching = new Map<Element, IntersectionObserver>();
+      const unobserve = (target: Element) => { watching.get(target)?.disconnect(); watching.delete(target); };
+      return Object.assign(this, {
+        observe: (target: Element) => {
+          unobserve(target);
+          const once = new Native(entries => { unobserve(target); report(entries, this); });
+          watching.set(target, once);
+          once.observe(target);
+        },
+        unobserve,
+        disconnect: () => { for (const target of [...watching.keys()]) unobserve(target); },
+        takeRecords: () => [],
+      });
+    } as unknown as typeof IntersectionObserver;
+  });
+  await page.goto(gameUrl('?role=student&lang=en'));
+  await studentJoin(page, 'SEA3-T2-0123456789ABCDEF', 1, 'COMBAT');
+  await page.check('#plan-confirm');
+  await page.click('#student-start-auction');
+  await confirmDialog(page);
+  const stage = page.locator('#showcase [role="img"]');
+  await expect(stage).toHaveAttribute('data-ready', 'true', { timeout: 30_000 });
+  await expect(stage, 'the stage in view has drawn').toHaveAttribute('data-drawn', /.*/, { timeout: 15_000 });
+});
+
 test('3D showcase: the confirmed vehicle is prepared during planning, and only then, so the tracker opens with it ready', async ({ browser }) => {
   const prepared = (page: import('@playwright/test').Page) => page.evaluate(() => performance.getEntriesByType('mark').map(m => m.name).filter(n => n.startsWith('sea-model:')));
   const ip = await (await browser.newContext()).newPage();
@@ -40103,6 +41143,50 @@ test('3D showcase does not turn by itself when the player prefers reduced motion
   const azimuth = await stage.getAttribute('data-azimuth');
   await sp.waitForTimeout(1500);
   await expect(stage).toHaveAttribute('data-azimuth', azimuth ?? '');
+});
+
+// G3, CI run 38958721130: on a machine without a graphics card the browser reads every new canvas frame back before it
+// shows it, waiting for the whole draw, and a purchase's draw also redrew the sun's shadow map: about twice a turning
+// draw (2-core trace: 14 ms against 7), so the purchase took 133 ms to appear (budget 100). The part is drawn first;
+// its shadow follows on the next paced draw. The shadow pass is the draw into the 1024 px shadow map (its viewport).
+test('3D showcase: a purchase is drawn at once without redrawing the shadow, which follows in the next draw', async ({ browser }) => {
+  const sp = await (await browser.newContext({ reducedMotion: 'reduce' })).newPage();
+  guardNetwork(sp);
+  await withGpu(sp);
+  await sp.addInitScript(() => {
+    const draws: { layers: string; shadow: boolean }[] = [];
+    (window as unknown as { seaDraws: typeof draws }).seaDraws = draws;
+    let shadow = false;
+    const viewport = WebGL2RenderingContext.prototype.viewport;
+    WebGL2RenderingContext.prototype.viewport = function (this: WebGL2RenderingContext, x: number, y: number, w: number, h: number) {
+      if (w === 1024 && h === 1024) shadow = true;
+      return viewport.call(this, x, y, w, h);
+    };
+    document.addEventListener('sea-drawing', () => { shadow = false; }, { capture: true });
+    document.addEventListener('sea-draw', event => {
+      const layers = (event.target as Element).closest('[data-layers]')?.getAttribute('data-layers') ?? '';
+      draws.push({ layers, shadow });
+    }, { capture: true });
+  });
+  await sp.goto(gameUrl('?role=student&lang=en'));
+  await studentJoin(sp, 'SEA3-T2-0123456789ABCDEF', 1, 'RECOVERY');
+  await sp.check('#plan-confirm');
+  await sp.click('#student-start-auction');
+  await confirmDialog(sp);
+  const stage = sp.locator('#showcase [role="img"]');
+  await expect(stage).toHaveAttribute('data-ready', 'true', { timeout: 30_000 });
+  const draws = () => sp.evaluate(() => (window as unknown as { seaDraws: { layers: string; shadow: boolean }[] }).seaDraws);
+  await expect.poll(async () => (await draws()).length, { timeout: 30_000 }).toBeGreaterThan(0);
+  await sp.waitForTimeout(1000);
+  const before = (await draws()).length;
+  await record(sp, 1, 7, 'ACC-F', 350000);
+  await expect(stage).toHaveAttribute('data-drawn', 'ACC-F', { timeout: 30_000 });
+  await sp.waitForTimeout(1500);
+  const after = (await draws()).slice(before);
+  const first = after.findIndex(d => d.layers === 'ACC-F');
+  expect(after[first], 'the draw that first shows the purchase').toEqual({ layers: 'ACC-F', shadow: false });
+  expect(after.slice(first + 1).filter(d => d.shadow), 'the shadow, in a later draw').toHaveLength(1);
+  expect(after.length - first, 'then the still stage stops drawing').toBeLessThanOrEqual(2);
 });
 
 test('stills fallback without WebGL: layers follow recorded purchases; one part per mount; process cards are badges', async ({ browser }) => {
@@ -40242,21 +41326,107 @@ test('stills fallback decodes each layer once: purchases, angle changes and turn
     'background decodes run one at a time').toBe(1);
 });
 
-test('every vehicle has its showcase, in 3D and in stills, and every lot its card render', async ({ page, browser }) => {
+// Every vehicle has its showcase in 3D and in stills, and (G3 panel safety) on a dim laptop panel it still stands out
+// from its stage in both, at every angle the player can see. One test a vehicle and a renderer: six in one test outran
+// its time on a loaded CI runner (run 38577929333). Every angle: one sample at wherever the pause landed passed and
+// failed by timing, because the far side of the vehicle was dark for half of every turn (run 38609311138).
+async function joinMission(page: import('@playwright/test').Page, mission: string): Promise<void> {
   guardNetwork(page);
-  for (const mission of ['COMBAT', 'RECCE', 'TROOP', 'COMMAND', 'RECOVERY', 'MINE']) {
-    const context = await browser.newContext();
-    const sp = await context.newPage();
-    guardNetwork(sp);
-    await withGpu(sp);
-    await sp.goto(gameUrl('?role=student&lang=en'));
-    await studentJoin(sp, 'SEA3-T2-0123456789ABCDEF', 1, mission);
-    await sp.check('#plan-confirm');
-    await sp.click('#student-start-auction');
-    await confirmDialog(sp);
-    await expect(sp.locator('#showcase [role="img"]'), mission).toHaveAttribute('data-ready', 'true', { timeout: 30_000 });
-    await context.close();
-  }
+  await page.goto(gameUrl('?role=student&lang=en'));
+  await studentJoin(page, 'SEA3-T2-0123456789ABCDEF', 1, mission);
+  await page.check('#plan-confirm');
+  await page.click('#student-start-auction');
+  await confirmDialog(page);
+}
+
+/** The 3D showcase turns in sixteen steps (TURN_STEP, a sixteenth of a turn); each test measures half a turn. */
+const TURN_STEPS = 16, HALF = TURN_STEPS / 2;
+
+/** How far `to` lies from `from` round the turn, in sixteenths (0 to 15.99). */
+const sixteenths = (from: number, to: number) => ((((to - from) % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI)) / (Math.PI / 8);
+
+/** The stills turntable has 24 frames; each test checks a third of them (the first also the front and rear views). */
+const STILL_FRAMES = 24, FRAMES_PER_TEST = 8;
+
+for (const mission of ['COMBAT', 'RECCE', 'TROOP', 'COMMAND', 'RECOVERY', 'MINE']) {
+  for (const half of [0, 1]) test(`${mission} vehicle in 3D stands out from its stage on a dim panel at turn steps ${half * HALF} to ${half * HALF + HALF - 1}`, async ({ page }, info) => {
+    // Under reduced motion the vehicle does not turn by itself, so every test starts from the same opening pose and the
+    // two halves together cover all sixteen steps; sixteen in one test outran its time on a loaded machine (2026-10-16).
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await withGpu(page);
+    await joinMission(page, mission);
+    const model = page.locator('#showcase [role="img"]');
+    await expect(model).toHaveAttribute('data-ready', 'true', { timeout: 30_000 });
+    // Ready means the scene is set, not drawn (verify of fe4df5d, Firefox, 12 workers): the shots wait for a draw.
+    await expect(model).toHaveAttribute('data-drawn');
+    const canvas = model.locator('canvas');
+    await canvas.evaluate(c => { c.addEventListener('sea-draw', () => { c.dataset['draws'] = String(Number(c.dataset['draws'] ?? 0) + 1); }); });
+    const pose = async () => Number(await model.getAttribute('data-azimuth'));
+    const opening = await pose();
+    const turn = async () => {
+      const drawn = Number(await canvas.getAttribute('data-draws') ?? 0);
+      await page.getByRole('button', { name: 'Turn right', exact: true }).click();
+      await expect.poll(async () => Number(await canvas.getAttribute('data-draws') ?? 0)).toBeGreaterThan(drawn);
+    };
+    for (let step = 0; step < half * HALF; step++) await turn();
+    const steps: string[] = [], bare = {};
+    for (let step = half * HALF; step < half * HALF + HALF; step++) {
+      // A draw alone does not prove a new pose (Codex D11: a turn by nothing still draws): each shot must be the
+      // vehicle turned by exactly `step` sixteenths from the opening pose.
+      const at = sixteenths(opening, await pose());
+      expect.soft(Math.min(Math.abs(at - step), TURN_STEPS - Math.abs(at - step)), `pose of step ${step}`).toBeLessThan(0.01);
+      const live = await vehicleContrast(model, 'canvas', bare);
+      steps.push(`${step}:${live.bright.toFixed(2)}/${live.whole.toFixed(2)}`);
+      expect.soft(live.share, `3D vehicle covers its stage, step ${step}`).toBeGreaterThan(0.05);
+      expect.soft(live.bright, `3D, step ${step}`).toBeGreaterThanOrEqual(3);
+      expect.soft(live.whole, `3D whole vehicle, step ${step}`).toBeGreaterThanOrEqual(WHOLE_CONTRAST_FLOOR.live);
+      if (step < half * HALF + HALF - 1) await turn();
+    }
+    info.annotations.push({ type: 'contrast', description: `${mission} 3D from ${opening.toFixed(3)} bright/whole by step: ${steps.join(' ')}` });
+  });
+
+  for (let part = 0; part < STILL_FRAMES / FRAMES_PER_TEST; part++) test(`${mission} vehicle in stills stands out from its stage on a dim panel${part === 0 ? ' in the front and rear views and' : ' at'} turntable frames ${part * FRAMES_PER_TEST} to ${part * FRAMES_PER_TEST + FRAMES_PER_TEST - 1}`, async ({ page }, info) => {
+    // Every view and all 24 frames in one test outran its time on a slow runner (run 38921636256, Edge, frame 23 of
+    // 24 at 121 s): the parts together cover them all.
+    await withoutWebgl(page);
+    await joinMission(page, mission);
+    const stage = page.locator('#showcase .showcase-stage').first();
+    const shown = async (selector: string) => {
+      const base = page.locator(`#showcase img[data-layer="base"]${selector}`);
+      await expect(base).toHaveCount(1);
+      await expect.poll(() => base.evaluate(i => (i as HTMLImageElement).complete && (i as HTMLImageElement).naturalWidth > 0)).toBe(true);
+    };
+    const views: string[] = [], bare = {};
+    // The Cycles stills are darker than the real-time model (front and rear 2.11 to 2.24 on 2026-10-14): held there
+    // until the G4 re-render lifts them to 3 (MPES §10.5). These floors may only rise.
+    for (const view of part === 0 ? ['front', 'rear'] : []) {
+      await page.locator(`#showcase-view-${view}`).check();
+      await shown(`[data-angle="${view}"]`);
+      const still = await vehicleContrast(stage, 'img', bare);
+      views.push(`${view}:${still.bright.toFixed(2)}/${still.whole.toFixed(2)}`);
+      expect.soft(still.share, `still vehicle covers its stage, ${view}`).toBeGreaterThan(0.05);
+      expect.soft(still.bright, `stills, ${view}`).toBeGreaterThanOrEqual(STILLS_CONTRAST_FLOOR);
+      expect.soft(still.whole, `stills whole vehicle, ${view}`).toBeGreaterThanOrEqual(WHOLE_CONTRAST_FLOOR.stills);
+    }
+    await page.locator('#showcase-view-turntable').check();
+    const turn = page.locator('#showcase-turn');
+    // The parts cover every frame only while the turntable has exactly STILL_FRAMES of them.
+    expect(Number(await turn.getAttribute('max')) + 1, 'turntable frames').toBe(STILL_FRAMES);
+    for (let frame = part * FRAMES_PER_TEST; frame < (part + 1) * FRAMES_PER_TEST; frame++) {
+      await turn.fill(String(frame));
+      await shown(`[data-frame="${frame}"]`);
+      const still = await vehicleContrast(stage, 'img', bare);
+      views.push(`t${frame}:${still.bright.toFixed(2)}/${still.whole.toFixed(2)}`);
+      expect.soft(still.share, `still vehicle covers its stage, turntable ${frame}`).toBeGreaterThan(0.05);
+      expect.soft(still.bright, `stills, turntable ${frame}`).toBeGreaterThanOrEqual(TURNTABLE_FLOOR.bright);
+      expect.soft(still.whole, `stills whole vehicle, turntable ${frame}`).toBeGreaterThanOrEqual(TURNTABLE_FLOOR.whole);
+    }
+    info.annotations.push({ type: 'contrast', description: `${mission} stills bright/whole by view: ${views.join(' ')}` });
+  });
+}
+
+test('a software renderer gets the stills, and every lot its card render', async ({ page }) => {
+  guardNetwork(page);
   // A software WebGL renderer (no GPU) gets the still renders, as a browser without WebGL does.
   await page.goto(gameUrl('?role=student&lang=en'));
   await studentJoin(page, 'SEA3-T2-0123456789ABCDEF', 1, 'COMBAT');
@@ -40269,17 +41439,6 @@ test('every vehicle has its showcase, in 3D and in stills, and every lot its car
     return !gl || /swiftshader|llvmpipe|basic render|software/i.test(String(gl.getParameter(info ? info.UNMASKED_RENDERER_WEBGL : gl.RENDERER)));
   });
   if (software) await expect(page.locator('#showcase [role="img"]')).toHaveAttribute('data-mode', 'stills');
-  await withoutWebgl(page);
-  for (const mission of ['COMBAT', 'RECCE', 'TROOP', 'COMMAND', 'RECOVERY', 'MINE']) {
-    await page.goto(gameUrl('?role=student&lang=en'));
-    await page.evaluate(() => sessionStorage.clear());
-    await page.reload();
-    await studentJoin(page, 'SEA3-T2-0123456789ABCDEF', 1, mission);
-    await page.check('#plan-confirm');
-    await page.click('#student-start-auction');
-    await confirmDialog(page);
-    await expect(page.locator('#showcase img[data-layer="base"]'), mission).toHaveCount(1);
-  }
   // Each card loads in a lot of its own category (lots 1-8: CAP, MOB, FP, PRO, COM, SA, ACC, SE).
   for (const [lot, card] of ['CAP-A', 'MOB-G', 'FP-C', 'PRO-E', 'COM-D', 'SA-F', 'ACC-B', 'SE-U'].entries()) {
     await page.selectOption('#pos-lot', String(lot + 1));
@@ -40326,14 +41485,14 @@ test('projector theme: switched by hand, kept on navigation, and accessible (MPE
 
 ### tests/e2e/slice.spec.ts
 
-Paths: `tests/e2e/slice.spec.ts`. SHA-256 `1be347f45f1a0ea75585b1de81437686761f4a363de3f6464d36909916bf4555`, 6235 bytes.
+Paths: `tests/e2e/slice.spec.ts`. SHA-256 `65fd73185125938ed0f165ac89f4b0a35d69ccc3183d58ebb8323da5e20aae50`, 6235 bytes.
 
 ```ts
 // M2 vertical slice (MPES §17): both roles over file://, one full round, corrections, persistence,
 // export/import, EN/FR switching, confirmations, accessibility scans, no network.
-import { expect, test } from '@playwright/test';
+import { expect } from '@playwright/test';
 import { writeFileSync } from 'node:fs';
-import { collectConsoleErrors, expectAccessible, gameUrl, guardNetwork } from './helpers.ts';
+import { collectConsoleErrors, expectAccessible, gameUrl, guardNetwork, test } from './helpers.ts';
 import { act, confirmDialog, instructorLot, instructorSetup, studentJoin, studentRecord } from './roles.ts';
 
 test('one-round slice: instructor and student, corrections, backup round trip', async ({ browser }, info) => {
@@ -40449,15 +41608,15 @@ test('one-round slice: instructor and student, corrections, backup round trip', 
 
 ### tests/e2e/visual.spec.ts
 
-Paths: `tests/e2e/visual.spec.ts`. SHA-256 `09035a644a3180c2a97cdf882d76a6a71634ab160ff850245c5fc94b38a45142`, 4992 bytes.
+Paths: `tests/e2e/visual.spec.ts`. SHA-256 `9ec9b9530c4622bcdbcae037ff58aadcd07f1dc0b98e36e3c0cc4e2513ddb4d3`, 4992 bytes.
 
 ```ts
 // Screenshot baselines (MPES §16.3): every view of both roles in each phase a legacy fixture reaches, both themes
 // on the first screen, and the showcase for every vehicle and angle. Chromium only: the baselines are pixels.
 // Update deliberately with `npx playwright test tests/e2e/visual.spec.ts --update-snapshots` and review the diff.
-import { expect, test, type Page } from '@playwright/test';
+import { expect, type Page } from '@playwright/test';
 import { readFileSync } from 'node:fs';
-import { gameUrl, guardNetwork, withoutWebgl } from './helpers.ts';
+import { gameUrl, guardNetwork, test, withoutWebgl } from './helpers.ts';
 import { confirmDialog, studentJoin } from './roles.ts';
 
 // Edge reports browserName 'chromium' too; its channel tells it apart.
@@ -40821,6 +41980,998 @@ Paths: `tests/fixtures/legacy/student-practice.json`. SHA-256 `fbf972503388c8ac6
 {"format":"SEA-GAME-BACKUP","version":1,"appVersion":"4.1.0-dev.1","ruleset":"STANDARD","deck":"synthetic-v1","schema":3,"sessionCode":"SEA3-T3-A1B2C3D4E5F60718","role":"STUDENT","state":{"schema":3,"phase":"practice","lang":"fr","vehicleConfirmed":false,"lockedMission":null,"sessionCode":"SEA3-T3-A1B2C3D4E5F60718","teamCount":3,"teamId":2,"team":{"id":2,"mission":"RECCE","lockedMission":null,"totals":{"CAP":0,"MOB":0,"FP":0,"PRO":0,"COM":0,"SA":0,"REC":0,"MC":0},"cost":0,"purchases":[],"purchasesByRound":[0,0,0,0,0,0,0],"profit":0,"submitted":false},"round":0,"lot":0,"currentCard":null,"plan":"","planBaseline":null,"risks":"","maxWtpCents":85000000,"scratch":{},"profitMode":"AMOUNT","profitInput":"250000","profitCents":25000000,"practiceWon":true,"vehicleChangeNotice":false}}
 ```
 
+### tests/perf-ref/perf-ref.spec.ts
+
+Paths: `tests/perf-ref/perf-ref.spec.ts`. SHA-256 `d020517b3f7406cb2721701b1ddf74fa40155d508e418d20d6ff8db1649be90f`, 7185 bytes.
+
+```ts
+// G3 `npm run perf:ref` (MPES §14, §17): every §14 gate measured on the reference-laptop proxy, i.e. Chromium and
+// Edge on this PC's Intel UHD 770 (launch flags in playwright.perf-ref.config.ts), 4x CPU throttling, three screen
+// profiles. It first proves the GPU, then measures, then writes one run file per browser and profile; the teardown
+// merges this run's files into report.json and report.md (one row per KPI of §1.4).
+//
+// The scenarios and the protocol are the CI gate's own (tests/perf/scenarios.ts, tests/perf/measure.ts: input to
+// painted result, nearest-rank p95 of at least 30 samples). Differences: no GPU spoofing (the real GPU is the point),
+// idle windows, and no budget assertion: a baseline must be recordable before any change, so budgets are only
+// reported (report.ts).
+import { test, type Browser, type Page } from '@playwright/test';
+import { mkdirSync, writeFileSync } from 'node:fs';
+import path from 'node:path';
+import { THROTTLE, round } from '../perf/measure.ts';
+import { Lab, commands, model, startUp, stills, type Measured } from '../perf/scenarios.ts';
+import { PROFILES, type RunFile, type RunMeta } from './report.ts';
+
+const REQUIRED_RENDERER = 'UHD Graphics 770';
+const IDLE_SECONDS = Number(process.env.PERF_REF_IDLE_SECONDS ?? 60);
+const OUT = process.env.PERF_REF_DIR ?? path.resolve('.artifacts/perf-ref', 'manual');
+const RUN_ID = process.env.PERF_REF_STAMP ?? 'manual';
+const IDLE_IDS = { Chooser: 'idleCpuChooserPct', Instructor: 'idleCpuInstructorPct', Tracker: 'idleCpuTrackerPct' } as const;
+
+/** Browser CPU over a quiet window: all processes (GPU included) in % of one core, and the page's main-thread busy share.
+ *  Measured unthrottled: CPU throttling is emulated by keeping the renderer busy, so under it a blank page reads 81% of a
+ *  core (2.3% without). The throttle is the browser's, last setter wins, and it is cleared when the session that set it
+ *  detaches: this session restores the reference throttle and stays attached until the page closes. */
+async function idle(browser: Browser, page: Page, id: string, out: Measured): Promise<void> {
+  if (IDLE_SECONDS <= 0) { out.notes[id] = 'idle window switched off (PERF_REF_IDLE_SECONDS=0)'; return; }
+  try {
+    const browserCdp = await browser.newBrowserCDPSession();
+    const pageCdp = await page.context().newCDPSession(page);
+    const cpu = async () => {
+      const { processInfo } = await browserCdp.send('SystemInfo.getProcessInfo') as { processInfo: { cpuTime: number }[] };
+      return processInfo.reduce((sum, p) => sum + p.cpuTime, 0);
+    };
+    const task = async () => {
+      const { metrics } = await pageCdp.send('Performance.getMetrics') as { metrics: { name: string; value: number }[] };
+      return metrics.find(m => m.name === 'TaskDuration')?.value ?? 0;
+    };
+    await pageCdp.send('Performance.enable');
+    await pageCdp.send('Emulation.setCPUThrottlingRate', { rate: 1 });
+    let window: [number, number, number, number, number, number];
+    try {
+      await page.waitForTimeout(3000); // let start-up work finish before the window opens
+      const [cpu0, task0, t0] = [await cpu(), await task(), Date.now()];
+      await page.waitForTimeout(IDLE_SECONDS * 1000);
+      window = [cpu0, task0, t0, await cpu(), await task(), Date.now()];
+    } finally {
+      // Whatever happened, what is measured next runs at the reference throttle.
+      await pageCdp.send('Emulation.setCPUThrottlingRate', { rate: THROTTLE });
+    }
+    const [cpu0, task0, t0, cpu1, task1, t1] = window;
+    const wall = (t1 - t0) / 1000;
+    out.values[id] = round((cpu1 - cpu0) / wall * 100);
+    const busy = round((task1 - task0) / wall * 100), old = out.values.idleMainThreadMaxPct;
+    out.values.idleMainThreadMaxPct = old === null || old === undefined ? busy : Math.max(old, busy);
+    await browserCdp.detach();
+  } catch (error) {
+    out.notes[id] = `idle CPU could not be read: ${String(error).slice(0, 120)}`;
+  }
+}
+
+for (const profile of PROFILES) {
+  test(`reference proxy ${profile.id}`, async ({ browser }, info) => {
+    test.setTimeout(1_200_000);
+    const engine = info.project.name.replace('perf-ref-', '');
+    const first = profile === PROFILES[0];
+    const out: Measured = { values: {}, notes: {} };
+    const meta: RunMeta = {
+      runId: RUN_ID, browser: engine, browserVersion: browser.version(), profile: profile.id,
+      viewport: { width: profile.width, height: profile.height, scale: profile.scale },
+      cpuThrottle: THROTTLE, gpu: { vendor: 'unknown', renderer: 'unknown' }, idleSeconds: first ? IDLE_SECONDS : 0,
+    };
+    mkdirSync(OUT, { recursive: true });
+    const write = (runState: RunFile['state'], message?: string) => writeFileSync(path.join(OUT, `${engine}-${profile.id}.run.json`),
+      JSON.stringify({ meta, state: runState, ...(message ? { message } : {}), values: out.values, notes: out.notes } satisfies RunFile, null, 2) + '\n');
+
+    // Gate 0, before anything is measured: the unmasked WebGL renderer must be the UHD 770 or nothing else counts.
+    const probe = await browser.newPage();
+    const gpu = await probe.evaluate(() => {
+      const gl = document.createElement('canvas').getContext('webgl2') ?? document.createElement('canvas').getContext('webgl');
+      const ext = gl?.getExtension('WEBGL_debug_renderer_info');
+      return { vendor: String(gl && ext ? gl.getParameter(ext.UNMASKED_VENDOR_WEBGL) : 'no WebGL'), renderer: String(gl && ext ? gl.getParameter(ext.UNMASKED_RENDERER_WEBGL) : 'no WebGL') };
+    });
+    await probe.close();
+    meta.gpu = gpu;
+    if (!gpu.renderer.includes(REQUIRED_RENDERER)) {
+      write('GPU_CHECK_FAILED', `unmasked renderer "${gpu.renderer}" does not contain "${REQUIRED_RENDERER}"`);
+      throw new Error(`perf:ref needs "${REQUIRED_RENDERER}"; ${engine} reports "${gpu.renderer}" (vendor "${gpu.vendor}"). Nothing was measured.`);
+    }
+
+    try {
+      // The real GPU: no spoofing (the CI gate passes withGpu here).
+      const lab = new Lab(browser, { viewport: { width: profile.width, height: profile.height }, deviceScaleFactor: profile.scale });
+      const merge = (part: Measured) => { Object.assign(out.values, part.values); Object.assign(out.notes, part.notes); };
+      merge(await startUp(lab, first ? (page, view) => idle(browser, page, IDLE_IDS[view as 'Chooser' | 'Instructor'], out) : undefined));
+      merge(await commands(lab));
+      merge(await model(lab, first ? page => idle(browser, page, IDLE_IDS.Tracker, out) : undefined));
+      merge(await stills(lab));
+      lab.tally();
+      merge(lab.measured);
+      out.values.modelMemoryTargetMB = out.values.modelProcessMB ?? null;
+      if (out.values.modelMemoryTargetMB === null) out.notes.modelMemoryTargetMB = out.notes.modelProcessMB ?? 'renderer and GPU process memory not reported';
+      if (!first) for (const id of [...Object.values(IDLE_IDS), 'idleMainThreadMaxPct']) out.notes[id] = 'idle windows run on the first profile only';
+      write('OK');
+      console.log(`${engine} ${profile.id} on ${gpu.renderer}: ${JSON.stringify(out.values)}`);
+    } catch (error) {
+      write('ERROR', String(error).slice(0, 500));
+      throw error;
+    }
+  });
+}
+```
+
+### tests/perf-ref/report.ts
+
+Paths: `tests/perf-ref/report.ts`. SHA-256 `7133cea91d79f6a1b84032af8bb53491ae82f784347e5c10185b6283a1412d37`, 15803 bytes.
+
+```ts
+// G3 reference-proxy report (MPES §14, §1.4): the metric catalogue, the budgets it is read against, and the
+// JSON and Markdown the run writes. Pure functions only, so a unit test can check them without a browser.
+//
+// The budgets below repeat MPES §10.3 and §14 for READING a baseline. The enforcing copies stay in
+// tests/e2e/perf.spec.ts and are not changed by this file; a run of perf:ref reports PASS or FAIL per metric but
+// never fails the Playwright run because a budget was exceeded (a baseline must be recordable before any change).
+
+export type Status = 'PASS' | 'FAIL' | 'NOT_RUN' | 'BLOCKED';
+
+/** The 12 KPIs of MPES §1.4, in table order. */
+export const KPIS = [
+  'Teaching effectiveness',
+  'Classroom reliability',
+  'Instructor workload',
+  'Learnability',
+  'Responsive interface',
+  'Browser performance',
+  'Visual realism',
+  'Runs in any classroom',
+  'Accessibility and language',
+  'Privacy and security',
+  'Maintainability after handoff',
+  'Longevity and zero cost',
+] as const;
+export type Kpi = typeof KPIS[number];
+
+export interface MetricDef {
+  id: string;
+  label: string;
+  unit: string;
+  /** Upper limit (the value must be at most this), or null when the metric is informational. */
+  budget: number | null;
+  kpi: Kpi;
+  /** Where the budget comes from. */
+  gate: string;
+  /** Measured by tests/e2e/perf.spec.ts as well as here. */
+  inExistingSpec: boolean;
+}
+
+const BP = 'Browser performance';
+const RI = 'Responsive interface';
+
+// A budget of null marks context for reading the others: sample counts, the worst case behind a p95, the tier chosen.
+export const METRICS: readonly MetricDef[] = [
+  { id: 'htmlMB', label: 'HTML file size', unit: 'MB', budget: 50, kpi: BP, gate: '§14', inExistingSpec: true },
+  { id: 'chooserMs', label: 'Time to interactive, chooser', unit: 'ms', budget: 2000, kpi: BP, gate: '§14', inExistingSpec: true },
+  { id: 'maxStateStartMs', label: 'Time to interactive, instructor with maximum saved state', unit: 'ms', budget: 3000, kpi: BP, gate: '§14', inExistingSpec: true },
+  { id: 'commandSamples', label: 'Command response, samples', unit: '', budget: null, kpi: BP, gate: '§14', inExistingSpec: true },
+  { id: 'commandP95Ms', label: 'Command response, p95 (10-team timed auction, click to painted result)', unit: 'ms', budget: 100, kpi: BP, gate: '§14', inExistingSpec: true },
+  { id: 'commandMaxMs', label: 'Command response, worst', unit: 'ms', budget: null, kpi: BP, gate: '§14', inExistingSpec: true },
+  { id: 'maxStateMemoryMB', label: 'Memory, 70 lots and 10 teams (page heap and images)', unit: 'MB', budget: 400, kpi: BP, gate: '§14', inExistingSpec: true },
+  { id: 'maxStateProcessMB', label: 'Memory, 70 lots and 10 teams (renderer and GPU processes)', unit: 'MB', budget: 400, kpi: BP, gate: '§14', inExistingSpec: false },
+  { id: 'memoryGrowthMB', label: 'Memory growth over 10 phase cycles', unit: 'MB', budget: 5, kpi: BP, gate: '§14', inExistingSpec: true },
+  { id: 'showcaseUpdateSamples', label: 'Stills update, samples', unit: '', budget: null, kpi: BP, gate: '§10.3', inExistingSpec: true },
+  { id: 'showcaseUpdateP95Ms', label: 'Stills update after a purchase, p95', unit: 'ms', budget: 100, kpi: BP, gate: '§10.3', inExistingSpec: true },
+  { id: 'showcaseUpdateMaxMs', label: 'Stills update after a purchase, worst', unit: 'ms', budget: null, kpi: BP, gate: '§10.3', inExistingSpec: true },
+  { id: 'angleChangeMs', label: 'Stills angle change', unit: 'ms', budget: 50, kpi: BP, gate: '§10.3', inExistingSpec: true },
+  { id: 'turntableStepMaxMs', label: 'Turntable step, worst of 6', unit: 'ms', budget: 50, kpi: BP, gate: '§10.3', inExistingSpec: true },
+  { id: 'studentMemoryMB', label: 'Memory, student tracker with stills (page heap and images)', unit: 'MB', budget: 400, kpi: BP, gate: '§10.3', inExistingSpec: true },
+  { id: 'studentProcessMB', label: 'Memory, student tracker with stills (renderer and GPU processes)', unit: 'MB', budget: 400, kpi: BP, gate: '§10.3', inExistingSpec: false },
+  { id: 'modelReadyMs', label: '3D model ready, worst tracker (opening click to first drawn model)', unit: 'ms', budget: 3000, kpi: BP, gate: '§10.3, §14', inExistingSpec: true },
+  { id: 'modelReadyFirstMs', label: '3D model ready, first tracker', unit: 'ms', budget: null, kpi: BP, gate: '§10.3, §14', inExistingSpec: true },
+  { id: 'modelUpdateSamples', label: '3D model update, samples', unit: '', budget: null, kpi: BP, gate: '§10.3', inExistingSpec: true },
+  { id: 'modelUpdateP95Ms', label: '3D model update after a purchase, p95 (click to the painted draw with the part)', unit: 'ms', budget: 100, kpi: BP, gate: '§10.3', inExistingSpec: true },
+  { id: 'modelUpdateMaxMs', label: '3D model update after a purchase, worst', unit: 'ms', budget: null, kpi: BP, gate: '§10.3', inExistingSpec: true },
+  { id: 'modelMemoryMB', label: 'Memory, 3D showcase (page heap and images)', unit: 'MB', budget: 400, kpi: BP, gate: '§10.3', inExistingSpec: true },
+  { id: 'modelProcessMB', label: 'Memory, 3D showcase (renderer and GPU processes, textures included)', unit: 'MB', budget: 400, kpi: BP, gate: '§10.3', inExistingSpec: false },
+  { id: 'modelMemoryTargetMB', label: 'Memory, 3D showcase, renderer and GPU processes (proxy target)', unit: 'MB', budget: 300, kpi: BP, gate: '§14', inExistingSpec: false },
+  { id: 'turningDraws', label: '3D showcase, draws in 5 s of turning', unit: '', budget: null, kpi: BP, gate: '§14', inExistingSpec: false },
+  { id: 'frameP95Ms', label: '3D showcase, p95 main-thread time of a draw over 5 s of turning', unit: 'ms', budget: 33, kpi: BP, gate: '§14', inExistingSpec: false },
+  { id: 'drawGapP95Ms', label: '3D showcase, p95 gap between draws (the pacer leaves at least twice a draw cost)', unit: 'ms', budget: null, kpi: BP, gate: '§10.3', inExistingSpec: false },
+  { id: 'modelTier', label: '3D showcase, resolution tier settled on (0 is full)', unit: '', budget: null, kpi: BP, gate: '§10.3', inExistingSpec: false },
+  { id: 'gpuFrameMs', label: '3D showcase, p95 GPU time of a draw', unit: 'ms', budget: 16, kpi: BP, gate: '§14', inExistingSpec: false },
+  { id: 'idleCpuChooserPct', label: 'Idle CPU, chooser (all browser processes, % of one core)', unit: '%', budget: 3, kpi: BP, gate: '§14', inExistingSpec: false },
+  { id: 'idleCpuInstructorPct', label: 'Idle CPU, instructor with saved state', unit: '%', budget: 3, kpi: BP, gate: '§14', inExistingSpec: false },
+  { id: 'idleCpuTrackerPct', label: 'Idle CPU, student tracker with 3D showcase', unit: '%', budget: 3, kpi: BP, gate: '§14', inExistingSpec: false },
+  { id: 'idleMainThreadMaxPct', label: 'Idle main-thread busy share, worst of the three views', unit: '%', budget: 3, kpi: BP, gate: '§14', inExistingSpec: false },
+  { id: 'inpMs', label: 'Interaction to next paint (real clicks, worst)', unit: 'ms', budget: 200, kpi: RI, gate: '§14, §1.4', inExistingSpec: false },
+  { id: 'lcpMs', label: 'Largest contentful paint (chooser)', unit: 'ms', budget: 2500, kpi: RI, gate: '§14, §1.4', inExistingSpec: false },
+  { id: 'clsScore', label: 'Cumulative layout shift (every page; worst)', unit: '', budget: 0.1, kpi: RI, gate: '§14, §1.4', inExistingSpec: false },
+  { id: 'longTaskMaxMs', label: 'Longest task after load (every page; worst)', unit: 'ms', budget: 200, kpi: RI, gate: '§14, §1.4', inExistingSpec: false },
+  { id: 'pageErrors', label: 'Page errors and console errors', unit: 'count', budget: 0, kpi: 'Runs in any classroom', gate: '§1.4', inExistingSpec: false },
+  { id: 'egressAttempts', label: 'Network requests other than the file itself', unit: 'count', budget: 0, kpi: 'Privacy and security', gate: '§13, §1.4', inExistingSpec: false },
+];
+
+/** The browsers and screens of MPES §14; a baseline needs every pair. Idle windows run on the first screen only. */
+export const BROWSERS = ['chromium', 'msedge'] as const;
+export const PROFILES = [
+  { id: '1366x768at1', width: 1366, height: 768, scale: 1 },
+  { id: '1536x864at1.25', width: 1536, height: 864, scale: 1.25 },
+  { id: '1280x720at1.5', width: 1280, height: 720, scale: 1.5 },
+] as const;
+export type Profile = typeof PROFILES[number];
+
+/** KPIs that perf:ref cannot measure, and where they are measured instead. */
+export const OTHER_KPI_NOTES: Partial<Record<Kpi, string>> = {
+  'Teaching effectiveness': 'Owner rubric and pre/post check (BLOCKED-owner); not a performance measure.',
+  'Classroom reliability': 'Fault tests (G3, tests/e2e); not a performance measure.',
+  'Instructor workload': 'Click and key counts from e2e traces (G3); dry run by the owner.',
+  Learnability: 'Scripted novice e2e (G3); dry run by the owner.',
+  'Visual realism': 'Owner side-by-side review; size and contrast tests elsewhere.',
+  'Accessibility and language': 'axe and manual passes (tests/e2e/a11y.spec.ts, G4).',
+  'Maintainability after handoff': 'Two-build comparison (npm run check).',
+  'Longevity and zero cost': 'Dependency and API review.',
+};
+
+export interface RunMeta {
+  /** The run that wrote the file (one per `npm run perf:ref`); files from another run are not counted. */
+  runId: string;
+  browser: string;
+  browserVersion: string;
+  profile: string;
+  viewport: { width: number; height: number; scale: number };
+  cpuThrottle: number;
+  gpu: { vendor: string; renderer: string };
+  idleSeconds: number;
+}
+
+export interface RunFile {
+  meta: RunMeta;
+  /** 'OK', or the reason the run stopped before measuring (for example a wrong GPU). */
+  state: 'OK' | 'GPU_CHECK_FAILED' | 'ERROR';
+  message?: string;
+  /** Metric id to value; absent or null means not measured in this run. */
+  values: Record<string, number | null>;
+  /** Metric id to a short note (proxy used, why not measured). */
+  notes: Record<string, string>;
+}
+
+export function statusOf(def: MetricDef, value: number | null | undefined): Status {
+  if (value === null || value === undefined || Number.isNaN(value)) return 'NOT_RUN';
+  if (def.budget === null) return 'PASS';
+  return value <= def.budget ? 'PASS' : 'FAIL';
+}
+
+export interface MetricRow {
+  id: string;
+  label: string;
+  unit: string;
+  budget: number | null;
+  gate: string;
+  /** Worst value over all runs that measured it. */
+  worst: number | null;
+  runs: { run: string; value: number | null; status: Status; note?: string }[];
+  status: Status;
+}
+
+export interface KpiRow {
+  kpi: Kpi;
+  status: Status;
+  detail: string;
+  metrics: MetricRow[];
+}
+
+const runName = (run: RunFile) => `${run.meta.browser} ${run.meta.profile}`;
+
+/** FAIL if any entry failed, PASS if at least one passed, else NOT_RUN. */
+function worstOf(statuses: Status[]): Status {
+  if (statuses.includes('FAIL')) return 'FAIL';
+  if (statuses.includes('PASS')) return 'PASS';
+  return 'NOT_RUN';
+}
+
+/** One row per KPI, built from every run file. A KPI is FAIL if any measured metric fails, PASS if at least one was measured and none failed. */
+function buildKpiRows(runs: RunFile[]): KpiRow[] {
+  const measuredRuns = runs.filter(run => run.state === 'OK');
+  return KPIS.map(kpi => {
+    const defs = METRICS.filter(def => def.kpi === kpi);
+    if (defs.length === 0) return { kpi, status: 'NOT_RUN' as Status, detail: OTHER_KPI_NOTES[kpi] ?? 'Not measured by perf:ref.', metrics: [] };
+    const metrics: MetricRow[] = defs.map(def => {
+      const perRun = measuredRuns.map(run => {
+        const value = run.values[def.id] ?? null;
+        const note = run.notes[def.id];
+        return { run: runName(run), value, status: statusOf(def, value), ...(note ? { note } : {}) };
+      });
+      const numbers = perRun.map(r => r.value).filter((v): v is number => v !== null);
+      const worst = numbers.length ? Math.max(...numbers) : null;
+      return { id: def.id, label: def.label, unit: def.unit, budget: def.budget, gate: def.gate, worst, runs: perRun, status: worstOf(perRun.map(r => r.status)) };
+    });
+    const status = worstOf(metrics.map(m => m.status));
+    const failed = metrics.filter(m => m.status === 'FAIL').map(m => m.id);
+    const unmeasured = metrics.filter(m => m.status === 'NOT_RUN').map(m => m.id);
+    const detail = [failed.length ? `over budget: ${failed.join(', ')}` : '', unmeasured.length ? `not measured: ${unmeasured.join(', ')}` : ''].filter(Boolean).join('; ') || 'every metric within budget';
+    return { kpi, status, detail, metrics };
+  });
+}
+
+export interface Report {
+  stamp: string;
+  commit: string;
+  dirty: boolean;
+  /** INCOMPLETE when any run stopped before measuring; the rows are then not a baseline. */
+  state: 'BASELINE' | 'INCOMPLETE';
+  problems: string[];
+  runs: RunMeta[];
+  kpis: KpiRow[];
+}
+
+/**
+ * The report of one run. It is a BASELINE only when this run (`runId`) wrote every browser and screen pair, each
+ * measured, and each gives every budgeted metric a value or the reason it has none; anything else is INCOMPLETE, and
+ * files another run left in the folder are listed as problems and not counted.
+ */
+export function buildReport(all: RunFile[], at: { runId: string; stamp: string; commit: string; dirty: boolean }): Report {
+  const problems: string[] = [];
+  for (const run of all) if (run.meta.runId !== at.runId) problems.push(`${runName(run)}: a file from another run (${run.meta.runId}), not counted`);
+  const runs = all.filter(run => run.meta.runId === at.runId);
+  for (const browser of BROWSERS) for (const profile of PROFILES) {
+    if (!runs.some(run => run.meta.browser === browser && run.meta.profile === profile.id)) problems.push(`missing run: ${browser} ${profile.id}`);
+  }
+  for (const run of runs) {
+    if (run.state !== 'OK') { problems.push(`${runName(run)}: ${run.state}${run.message ? ` (${run.message})` : ''}`); continue; }
+    const unexplained = METRICS.filter(def => def.budget !== null && (run.values[def.id] ?? null) === null && !run.notes[def.id]).map(def => def.id);
+    if (unexplained.length) problems.push(`${runName(run)}: not measured and no reason given: ${unexplained.join(', ')}`);
+  }
+  return { stamp: at.stamp, commit: at.commit, dirty: at.dirty, state: problems.length ? 'INCOMPLETE' : 'BASELINE', problems, runs: runs.map(run => run.meta), kpis: buildKpiRows(runs) };
+}
+
+const fmt = (value: number | null, unit: string) => value === null ? 'n/a' : `${Math.round(value * 100) / 100}${unit ? ` ${unit}` : ''}`;
+
+export function renderMarkdown(report: Report): string {
+  const lines: string[] = [];
+  lines.push(`# Reference-proxy baseline ${report.stamp}`, '');
+  lines.push(`State: **${report.state}**. Commit ${report.commit}${report.dirty ? ' (working tree had uncommitted changes)' : ''}.`, '');
+  if (report.problems.length) lines.push('Problems:', ...report.problems.map(p => `- ${p}`), '');
+  lines.push('Runs:', ...report.runs.map(r => `- ${r.browser} ${r.browserVersion}, profile ${r.profile} (${r.viewport.width}x${r.viewport.height} at ${r.viewport.scale}), ${r.cpuThrottle}x CPU throttle, GPU ${r.gpu.renderer}, idle window ${r.idleSeconds} s`), '');
+  lines.push('## KPIs (MPES §1.4)', '', '| KPI | Status | Detail |', '|---|---|---|');
+  for (const row of report.kpis) lines.push(`| ${row.kpi} | ${row.status} | ${row.detail} |`);
+  lines.push('', '## Metrics (worst value over all runs)', '', '| KPI | Metric | Worst | Budget | Status | Gate |', '|---|---|---|---|---|---|');
+  for (const row of report.kpis) for (const m of row.metrics) lines.push(`| ${row.kpi} | ${m.label} | ${fmt(m.worst, m.unit)} | ${m.budget === null ? 'none' : fmt(m.budget, m.unit)} | ${m.status} | ${m.gate} |`);
+  lines.push('', '## Every run', '');
+  for (const row of report.kpis) for (const m of row.metrics) {
+    lines.push(`- ${m.id}: ${m.runs.map(r => `${r.run} ${fmt(r.value, '')} ${r.status}${r.note ? ` [${r.note}]` : ''}`).join('; ') || 'no run'}`);
+  }
+  lines.push('');
+  return lines.join('\n');
+}
+```
+
+### tests/perf-ref/teardown.ts
+
+Paths: `tests/perf-ref/teardown.ts`. SHA-256 `ec96c09906d87f61634a9c032e2e8cd286e9e48116af56e6a19d009c1af960d2`, 1435 bytes.
+
+```ts
+// After the perf:ref run: gather the per-run files into report.json and report.md in the same folder.
+import { execFileSync } from 'node:child_process';
+import { existsSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
+import path from 'node:path';
+import { buildReport, renderMarkdown, type RunFile } from './report.ts';
+
+function git(...args: string[]): string {
+  try { return execFileSync('git', args, { encoding: 'utf8' }).trim(); } catch { return ''; }
+}
+
+export default function teardown(): void {
+  const dir = process.env.PERF_REF_DIR;
+  if (!dir || !existsSync(dir)) {
+    console.log('perf:ref: no output folder, nothing to report');
+    return;
+  }
+  const runs = readdirSync(dir).filter(name => name.endsWith('.run.json')).sort()
+    .map(name => JSON.parse(readFileSync(path.join(dir, name), 'utf8')) as RunFile);
+  const stamp = process.env.PERF_REF_STAMP ?? path.basename(dir);
+  // The spec stamps each file with this run's id (PERF_REF_STAMP), so files an earlier run left here are not counted.
+  const report = buildReport(runs, { runId: process.env.PERF_REF_STAMP ?? 'manual', stamp, commit: git('rev-parse', 'HEAD') || 'unknown', dirty: git('status', '--porcelain') !== '' });
+  writeFileSync(path.join(dir, 'report.json'), JSON.stringify(report, null, 2) + '\n');
+  writeFileSync(path.join(dir, 'report.md'), renderMarkdown(report));
+  console.log(`perf:ref: ${report.state}, report in ${dir}`);
+}
+```
+
+### tests/perf/measure.ts
+
+Paths: `tests/perf/measure.ts`. SHA-256 `bb01cf756596a8af6ba2c8acf091c19b68960fa4163ba64c40f39be88d53628d`, 10658 bytes.
+
+```ts
+// The MPES §14 measurement protocol, shared by the CI gate (tests/e2e/perf.spec.ts) and the reference-laptop proxy
+// (tests/perf-ref/perf-ref.spec.ts) so both measure the same thing the same way:
+// - an update is timed from the trusted input event (a real click through the browser) until the frame that shows
+//   its result has been painted, never from a script call until a promise settles;
+// - a budget stated as p95 is checked on the nearest-rank p95 of enough samples (MIN_SAMPLES), and a run with fewer
+//   samples fails instead of passing on an empty or tiny set; the maximum is reported alongside;
+// - memory is the JS heap plus every decoded image on screen (an estimate), and, where the operating system can
+//   report it, the private memory of the page's renderer and the GPU process (the real figure).
+import type { Browser, Locator, Page } from '@playwright/test';
+import { execFileSync } from 'node:child_process';
+import { readFileSync } from 'node:fs';
+
+export const MB = 1024 * 1024;
+/** The CPU slowdown that stands in for a reference laptop's processor (D-11). */
+export const THROTTLE = 4;
+/** Samples behind every p95: with 30, the p95 is the second-worst sample, so one stray stall cannot decide it. */
+export const MIN_SAMPLES = 30;
+
+export const round = (value: number, places = 1): number => Math.round(value * 10 ** places) / 10 ** places;
+
+/** Nearest-rank p95 (the smallest value at or above 95% of the samples); throws below `minimum` samples. */
+export function p95(values: readonly number[], minimum = MIN_SAMPLES): number {
+  if (values.length < minimum || values.some(value => !Number.isFinite(value))) {
+    throw new Error(`p95 needs at least ${minimum} finite samples, got ${values.length}`);
+  }
+  const sorted = [...values].sort((a, b) => a - b);
+  return sorted[Math.ceil(sorted.length * 0.95) - 1]!;
+}
+
+/** Applies the reference CPU throttling to a page. */
+export async function throttle(page: Page, rate = THROTTLE): Promise<void> {
+  const cdp = await page.context().newCDPSession(page);
+  await cdp.send('Emulation.setCPUThrottlingRate', { rate });
+}
+
+/** What the result of an input looks like once it is on screen. */
+export type Shown =
+  /** The click has been handled (every listener on its path, the page's own delegation included); the next painted
+   *  frame shows it. Waiting for the click, not only the press, keeps a slow release from ending the timing on a frame
+   *  painted before the command ran (Codex G3 review). */
+  | { kind: 'paint' }
+  /** Images matching `selector` exist and are all decoded; then painted. */
+  | { kind: 'image'; selector: string }
+  /** The element's attribute lists `token` (space-separated), or merely exists when `token` is left out; it is set
+   *  during a frame (a canvas draw), and that frame has been painted. */
+  | { kind: 'drawn'; selector: string; attribute: string; token?: string };
+
+/**
+ * Milliseconds from the input event that `act` causes (pointer down, key down or click, whichever comes first) until
+ * the first frame showing `shown` has been painted. `act` must give a trusted input (a Playwright click or key press).
+ */
+export async function inputToPaint(page: Page, act: () => Promise<unknown>, shown: Shown, timeout = 10_000): Promise<number> {
+  await page.evaluate(({ shown, timeout }) => {
+    type Probe = { start: number | null; done: Promise<number> };
+    const probe = { start: null } as unknown as Probe;
+    (globalThis as unknown as { __seaInput: Probe }).__seaInput = probe;
+    const first = (event: Event) => { if (probe.start === null) probe.start = event.timeStamp; };
+    for (const type of ['pointerdown', 'keydown', 'click']) addEventListener(type, first, { capture: true, once: true });
+    // On the window, bubbling: the last listener a click reaches, so every handler of the command has run.
+    const clicked = shown.kind !== 'paint' ? null : new Promise<void>(resolve => addEventListener('click', () => resolve(), { once: true }));
+    // A message posted during a frame runs after that frame is painted; outside a frame, the next frame comes first.
+    const afterPaint = (inFrame: boolean) => new Promise<number>(resolve => {
+      const post = () => { const channel = new MessageChannel(); channel.port1.onmessage = () => resolve(performance.now()); channel.port2.postMessage(0); };
+      if (inFrame) post(); else requestAnimationFrame(post);
+    });
+    const started = () => new Promise<void>(resolve => {
+      const check = () => (probe.start !== null ? resolve() : setTimeout(check, 0));
+      check();
+    });
+    const deadline = <T>(work: Promise<T>) => Promise.race([work, new Promise<never>((_, reject) => setTimeout(() => reject(new Error(`not shown within ${timeout} ms: ${JSON.stringify(shown)}`)), timeout))]);
+    // Watched from before the input, so a draw in the first frame after it cannot be missed.
+    const drawn = shown.kind !== 'drawn' ? null : new Promise<void>(resolve => {
+      const lists = () => {
+        const value = document.querySelector(shown.selector)?.getAttribute(shown.attribute);
+        return value != null && (shown.token === undefined || value.split(' ').includes(shown.token));
+      };
+      const observer = new MutationObserver(() => { if (lists()) { observer.disconnect(); resolve(); } });
+      observer.observe(document, { subtree: true, attributes: true, attributeFilter: [shown.attribute] });
+    });
+    probe.done = deadline((async () => {
+      await started();
+      if (drawn) { await drawn; return afterPaint(true); }
+      if (shown.kind === 'image') {
+        let images = [...document.querySelectorAll<HTMLImageElement>(shown.selector)];
+        while (!images.length) { await new Promise(requestAnimationFrame); images = [...document.querySelectorAll<HTMLImageElement>(shown.selector)]; }
+        await Promise.all(images.map(img => img.decode()));
+      }
+      if (clicked) await clicked;
+      return afterPaint(false);
+    })());
+  }, { shown, timeout });
+  await act();
+  return page.evaluate(async () => {
+    const probe = (globalThis as unknown as { __seaInput: { start: number | null; done: Promise<number>; end?: number } }).__seaInput;
+    const end = probe.end = await probe.done;
+    return end - probe.start!;
+  });
+}
+
+/** Clicks a control as a person would (trusted events) after centring it, so the press cannot land elsewhere. */
+export async function press(target: Locator): Promise<void> {
+  await target.evaluate(element => element.scrollIntoView({ block: 'center' }));
+  await target.click();
+}
+
+/** Estimate: JS heap after a full collection plus the decoded pixels of every image on screen (4 bytes per pixel). */
+export async function memoryMB(page: Page): Promise<number> {
+  return page.evaluate(mb => {
+    (globalThis as unknown as { gc?: () => void }).gc?.();
+    const heap = (performance as unknown as { memory: { usedJSHeapSize: number } }).memory.usedJSHeapSize;
+    const pixels = [...document.images].reduce((n, img) => n + img.naturalWidth * img.naturalHeight * 4, 0);
+    return (heap + pixels) / mb;
+  }, MB);
+}
+
+/** Private memory of one process in bytes, from the operating system, or null where it cannot be read. */
+function privateBytes(pid: number): number | null {
+  try {
+    if (process.platform === 'linux') {
+      const rollup = readFileSync(`/proc/${pid}/smaps_rollup`, 'utf8');
+      const kb = [...rollup.matchAll(/^Private_(?:Clean|Dirty):\s+(\d+) kB/gm)].reduce((n, m) => n + Number(m[1]), 0);
+      return kb * 1024;
+    }
+    if (process.platform === 'win32') {
+      const out = execFileSync('powershell', ['-NoProfile', '-NonInteractive', '-Command', `(Get-Process -Id ${pid}).PrivateMemorySize64`], { encoding: 'utf8', timeout: 20_000 });
+      const bytes = Number(out.trim());
+      return Number.isFinite(bytes) ? bytes : null;
+    }
+  } catch { /* the process ended or the platform hides it */ }
+  return null;
+}
+
+/**
+ * The browser's renderer and GPU processes, in MB of private memory (what the page costs the machine, decoded images
+ * and GPU uploads included). Every renderer counts, so close other pages first; null where the OS cannot report it.
+ */
+export async function processMB(browser: Browser): Promise<{ renderer: number; gpu: number } | null> {
+  const cdp = await browser.newBrowserCDPSession();
+  try {
+    const { processInfo } = await cdp.send('SystemInfo.getProcessInfo') as { processInfo: { type: string; id: number }[] };
+    const sum = (type: string) => {
+      const sizes = processInfo.filter(p => p.type === type).map(p => privateBytes(p.id));
+      return sizes.length && sizes.every(size => size !== null) ? (sizes as number[]).reduce((a, b) => a + b, 0) / MB : null;
+    };
+    // No GPU process at all (software drawing in the renderer) is zero; a GPU process that cannot be read is unmeasured,
+    // never zero, or a renderer-only total would pass the memory gates (Codex G3 review).
+    const renderer = sum('renderer'), gpu = processInfo.some(p => p.type === 'GPU') ? sum('GPU') : 0;
+    return renderer === null || gpu === null ? null : { renderer: round(renderer), gpu: round(gpu) };
+  } finally {
+    await cdp.detach();
+  }
+}
+
+/** A RECOVERY team at the dialog that opens its auction tracker; the tracker opens on `TRACKER_OK`. */
+export async function beforeTracker(page: Page, url: string): Promise<void> {
+  await page.goto(url);
+  await page.fill('#join-code', 'SEA3-T2-0123456789ABCDEF');
+  await page.selectOption('#join-mission', 'RECOVERY');
+  await page.click('#join'); await page.click('#record-practice'); await page.click('#student-planning');
+  await page.check('#plan-confirm'); await page.click('#student-start-auction');
+}
+
+/** The button that opens the tracker from `beforeTracker`. */
+export const TRACKER_OK = 'dialog button[data-value="ok"]';
+
+/** The student tracker on the auction step for a RECOVERY team, ready to record purchases. */
+export async function openTracker(page: Page, url: string): Promise<void> {
+  await beforeTracker(page, url);
+  await page.locator(TRACKER_OK).click();
+}
+
+/** Three purchases a RECOVERY team can record in a row: round, lot, card, price paid. */
+export const PURCHASES = [[1, 5, 'COM-E', 600000], [1, 7, 'ACC-F', 350000], [2, 1, 'CAP-B', 450000]] as const;
+
+/** Loads a purchase into the tracker's form, ready for #record-win. */
+export async function loadPurchase(page: Page, [round_, lot, card, paid]: typeof PURCHASES[number]): Promise<void> {
+  if (round_ > 1) await page.selectOption('#pos-round', String(round_));
+  await page.selectOption('#pos-lot', String(lot));
+  await page.fill('#card-id', card); await page.click('#load-card'); await page.fill('#paid', String(paid));
+}
+```
+
+### tests/perf/scenarios.ts
+
+Paths: `tests/perf/scenarios.ts`. SHA-256 `8a687c6128aeaf08aaefcdc38314e75378760004d678082bcff389378cb95740`, 23564 bytes.
+
+```ts
+// The MPES §14 scenarios, run the same way by the CI gate (tests/e2e/perf.spec.ts, software graphics) and by the
+// reference-laptop proxy (`npm run perf:ref`, the real Intel UHD 770). Each scenario opens its pages through a Lab,
+// which sets the screen profile, throttling, network guard and vitals, and returns its numbers; the caller asserts
+// (CI) or reports against the budgets (proxy). Timing follows tests/perf/measure.ts.
+import type { Browser, BrowserContextOptions, Page } from '@playwright/test';
+import { readFileSync, statSync } from 'node:fs';
+import { collectConsoleErrors, gameUrl, guardNetwork, withoutWebgl } from '../e2e/helpers.ts';
+import { confirmDialog, instructorSetup } from '../e2e/roles.ts';
+import {
+  MB, MIN_SAMPLES, PURCHASES, TRACKER_OK, beforeTracker, inputToPaint, loadPurchase, memoryMB, openTracker, p95, press,
+  processMB, round, throttle,
+} from './measure.ts';
+
+export type Values = Record<string, number | null>;
+export interface Measured { values: Values; notes: Record<string, string> }
+
+interface Vitals { cls: number; lcp: number | null; long: { s: number; d: number }[]; inter: number[]; loaded: number | null }
+
+/** Runs in every page before its scripts: layout shift, LCP, long tasks and interaction durations (MPES §14). */
+function installVitals(): void {
+  const sea: Vitals = { cls: 0, lcp: null, long: [], inter: [], loaded: null };
+  (globalThis as unknown as { __seaVitals: Vitals }).__seaVitals = sea;
+  const watch = (type: string, handle: (entry: PerformanceEntry) => void, extra: Record<string, unknown> = {}) => {
+    try { new PerformanceObserver(list => list.getEntries().forEach(handle)).observe({ type, buffered: true, ...extra } as PerformanceObserverInit); } catch { /* entry type not supported here */ }
+  };
+  watch('layout-shift', entry => { const shift = entry as unknown as { value: number; hadRecentInput: boolean }; if (!shift.hadRecentInput) sea.cls += shift.value; });
+  watch('largest-contentful-paint', entry => { sea.lcp = entry.startTime; });
+  watch('longtask', entry => { sea.long.push({ s: entry.startTime, d: entry.duration }); });
+  watch('event', entry => { const timing = entry as unknown as { interactionId?: number }; if (timing.interactionId) sea.inter.push(entry.duration); }, { durationThreshold: 16 });
+  addEventListener('load', () => requestAnimationFrame(() => { sea.loaded = performance.now(); }));
+}
+
+/**
+ * GPU time of each showcase draw, where the browser offers a GPU timer (EXT_disjoint_timer_query_webgl2): a query
+ * brackets each draw, from the stage's `sea-drawing` to its `sea-draw`, so the wait between paced draws is never counted
+ * (Codex G3 review). Results arrive a few frames late; each is kept with the time its draw began.
+ */
+function installGpuTimer(): void {
+  const times: { at: number; ms: number }[] = [];
+  const sea = { times, available: false };
+  (globalThis as unknown as { __seaGpu: typeof sea }).__seaGpu = sea;
+  const original = HTMLCanvasElement.prototype.getContext;
+  HTMLCanvasElement.prototype.getContext = function (this: HTMLCanvasElement, type: string, ...rest: unknown[]) {
+    const gl = (original as (...args: unknown[]) => unknown).call(this, type, ...rest) as WebGL2RenderingContext | null;
+    if (type !== 'webgl2' || !gl || (this as unknown as { seaTimed?: boolean }).seaTimed) return gl;
+    (this as unknown as { seaTimed: boolean }).seaTimed = true;
+    const ext = gl.getExtension('EXT_disjoint_timer_query_webgl2') as { TIME_ELAPSED_EXT: number; GPU_DISJOINT_EXT: number } | null;
+    if (!ext) return gl;
+    sea.available = true;
+    const pending: { query: WebGLQuery; at: number }[] = [];
+    let open: { query: WebGLQuery; at: number } | null = null;
+    this.addEventListener('sea-drawing', () => {
+      const query = open ? null : gl.createQuery();
+      if (query) { gl.beginQuery(ext.TIME_ELAPSED_EXT, query); open = { query, at: performance.now() }; }
+    });
+    this.addEventListener('sea-draw', () => {
+      if (open) { gl.endQuery(ext.TIME_ELAPSED_EXT); pending.push(open); open = null; }
+      while (pending.length && gl.getQueryParameter(pending[0]!.query, gl.QUERY_RESULT_AVAILABLE)) {
+        const { query, at } = pending.shift()!;
+        if (!gl.getParameter(ext.GPU_DISJOINT_EXT)) times.push({ at, ms: gl.getQueryParameter(query, gl.QUERY_RESULT) / 1e6 });
+        gl.deleteQuery(query);
+      }
+    });
+    return gl;
+  } as typeof original;
+}
+
+/** Pages on one screen profile with throttling and a network guard; it collects vitals, errors and egress as pages close. */
+export class Lab {
+  readonly errors: string[] = [];
+  readonly egress: string[] = [];
+  readonly measured: Measured = { values: {}, notes: {} };
+  readonly #pages = new Map<Page, { errors: string[]; egress: string[] }>();
+
+  readonly browser: Browser;
+  readonly context: BrowserContextOptions;
+  readonly gpu: ((page: Page) => Promise<void>) | undefined;
+
+  /** `gpu` makes WebGL count as a graphics card where there is none (CI); on the reference laptop it is left out. */
+  constructor(browser: Browser, context: BrowserContextOptions = {}, gpu?: (page: Page) => Promise<void>) {
+    this.browser = browser;
+    this.context = context;
+    this.gpu = gpu;
+  }
+
+  /** A fresh page in its own context; `prepare` runs before its first navigation. */
+  async open(prepare?: (page: Page) => Promise<unknown>): Promise<Page> {
+    const page = await (await this.browser.newContext(this.context)).newPage();
+    this.#pages.set(page, { egress: guardNetwork(page), errors: collectConsoleErrors(page) });
+    await throttle(page);
+    await page.addInitScript(installVitals);
+    await page.addInitScript(installGpuTimer);
+    await prepare?.(page);
+    return page;
+  }
+
+  /** The page's vitals (layout shift, longest task after load, slowest interaction), folded into the worst so far. */
+  async close(page: Page): Promise<void> {
+    const vitals = await page.evaluate(() => (globalThis as unknown as { __seaVitals: Vitals }).__seaVitals);
+    this.#worst('clsScore', round(vitals.cls, 3));
+    this.#worst('longTaskMaxMs', Math.round(Math.max(0, ...vitals.long.filter(task => task.s >= (vitals.loaded ?? 0)).map(task => task.d))));
+    if (vitals.inter.length) this.#worst('inpMs', Math.round(Math.max(...vitals.inter)));
+    const seen = this.#pages.get(page);
+    if (seen) { this.errors.push(...seen.errors); this.egress.push(...seen.egress); this.#pages.delete(page); }
+    await page.context().close();
+  }
+
+  /** Every error and request so far, as counts (with the first few as notes). */
+  tally(): void {
+    const { values, notes } = this.measured;
+    values.pageErrors = this.errors.length;
+    if (this.errors.length) notes.pageErrors = this.errors.slice(0, 3).join(' | ').slice(0, 300);
+    values.egressAttempts = this.egress.length;
+    if (this.egress.length) notes.egressAttempts = this.egress.slice(0, 3).join(' | ').slice(0, 300);
+  }
+
+  #worst(id: string, value: number): void {
+    const old = this.measured.values[id];
+    this.measured.values[id] = old === null || old === undefined ? value : Math.max(old, value);
+  }
+}
+
+/**
+ * The renderer and GPU processes' private memory under `prefix`: each, and their sum `${prefix}ProcessMB`, the figure
+ * the memory budget is read against (it holds the textures and buffers the page heap does not); null with a note
+ * where the operating system cannot report it.
+ */
+async function machine(lab: Lab, prefix: string, out: Measured): Promise<void> {
+  const mb = await processMB(lab.browser);
+  out.values[`${prefix}RendererMB`] = mb?.renderer ?? null;
+  out.values[`${prefix}GpuProcessMB`] = mb?.gpu ?? null;
+  out.values[`${prefix}ProcessMB`] = mb ? round(mb.renderer + mb.gpu) : null;
+  if (!mb) out.notes[`${prefix}ProcessMB`] = 'the operating system did not report the process memory';
+}
+
+/** The largest valid instructor save: 210 ledger entries, all 70 lots, 3 teams, results to reconcile. */
+const MAX_LEDGER = 'tests/fixtures/legacy/instructor-max-ledger.json';
+const MAX_LEDGER_TEAMS = (JSON.parse(readFileSync(MAX_LEDGER, 'utf8')) as { state: { teams: unknown[] } }).state.teams.length;
+
+export const TEN_TEAMS = { teams: 10, reveal: 'JIT' as const, timed: true, missions: ['TROOP', 'RECCE', 'COMBAT', 'COMMAND', 'RECOVERY', 'MINE', 'TROOP', 'RECCE', 'COMBAT', 'COMMAND'] };
+
+/** Size, the chooser's first painted frame and LCP, and the largest valid instructor save: start time and memory. */
+export async function startUp(lab: Lab, after?: (page: Page, view: string) => Promise<void>): Promise<Measured> {
+  const out: Measured = { values: {}, notes: {} };
+  out.values.htmlMB = round(statSync('dist/index.html').size / MB);
+  // file:// pages report no paint timing, so a page-side observer records the first frame with the heading and buttons.
+  const chooser = await lab.open(page => page.addInitScript(() => {
+    new MutationObserver((_, observer) => {
+      if (!document.querySelector('h1') || !document.querySelector('a[data-role]')) return;
+      observer.disconnect();
+      requestAnimationFrame(() => { (window as unknown as { seaPainted: number }).seaPainted = performance.now(); });
+    }).observe(document, { childList: true, subtree: true });
+  }));
+  await chooser.goto(gameUrl('?lang=en'));
+  await chooser.waitForFunction(() => (window as unknown as { seaPainted?: number }).seaPainted !== undefined);
+  out.values.chooserMs = Math.round(await chooser.evaluate(() => (window as unknown as { seaPainted: number }).seaPainted));
+  const lcp = await chooser.evaluate(() => (globalThis as unknown as { __seaVitals: Vitals }).__seaVitals.lcp);
+  out.values.lcpMs = lcp === null ? out.values.chooserMs : Math.round(lcp);
+  if (lcp === null) out.notes.lcpMs = 'no LCP entry on file://; the first frame with the heading and buttons stands in';
+  await after?.(chooser, 'Chooser');
+  await lab.close(chooser);
+
+  // 210 ledger entries, all 70 lots, 3 teams.
+  const saved = JSON.parse(readFileSync(MAX_LEDGER, 'utf8')).state;
+  const big = await lab.open(page => page.addInitScript(raw => { if (!sessionStorage.getItem('SEA_INSTRUCTOR_V300')) sessionStorage.setItem('SEA_INSTRUCTOR_V300', raw); }, JSON.stringify(saved)));
+  const t1 = Date.now();
+  await big.goto(gameUrl('?role=instructor&lang=en'));
+  await big.getByRole('heading', { name: 'Results to reconcile' }).waitFor();
+  out.values.maxStateStartMs = Date.now() - t1;
+  out.values.maxStateMemoryMB = Math.round(await memoryMB(big));
+  await machine(lab, 'maxState', out);
+  await after?.(big, 'Instructor');
+  await lab.close(big);
+  return out;
+}
+
+/** Real clicks on the bid buttons of a 10-team timed auction, each until painted; then ten full phase cycles. */
+export async function commands(lab: Lab): Promise<Measured> {
+  const out: Measured = { values: {}, notes: {} };
+  const page = await lab.open();
+  await page.goto(gameUrl('?role=instructor&lang=en'));
+  await instructorSetup(page, TEN_TEAMS);
+  await page.click('#open-bidding');
+  const bids: number[] = [];
+  for (let i = 0; i < 40; i++) {
+    const button = page.locator(`#bid-${(i % 10) + 1}`);
+    if (!await button.isEnabled()) continue;
+    bids.push(await inputToPaint(page, () => button.click(), { kind: 'paint' }));
+  }
+  out.values.commandSamples = bids.length;
+  out.values.commandP95Ms = round(p95(bids));
+  out.values.commandMaxMs = round(Math.max(...bids));
+
+  // No growth across 10 phase cycles, each through every phase: the largest save imported from the menu (results to
+  // reconcile), submissions entered privately, the debrief, the room closed; then a new session from the menu, setup,
+  // practice, planning and a live auction.
+  const cycle = async () => {
+    await press(page.locator('#menu-button'));
+    const chooser = page.waitForEvent('filechooser');
+    await page.locator('dialog[open] button[data-value="import"]').click();
+    await (await chooser).setFiles(MAX_LEDGER);
+    await confirmDialog(page);
+    await page.click('#open-submissions');
+    await page.click('#enter-private');
+    for (let id = 1; id <= MAX_LEDGER_TEAMS; id++) {
+      await page.fill(`#profit-${id}`, '1000');
+      await page.locator(`#profit-${id}`).blur();
+      await page.check(`#submitted-${id}`);
+    }
+    await page.click('#close-submissions');
+    await confirmDialog(page);
+    await page.locator('#award').waitFor();
+    await page.click('#close-room');
+    await confirmDialog(page);
+    await page.getByRole('heading', { name: 'Session closed' }).waitFor();
+    await press(page.locator('#menu-button'));
+    await page.locator('dialog[open] button[data-value="new"]').click();
+    await confirmDialog(page);
+    await instructorSetup(page, TEN_TEAMS);
+    await page.click('#open-bidding');
+  };
+  await phasesSeen(page, true);
+  await cycle();
+  const seen = await phasesSeen(page, false);
+  if (PHASES.some(phase => !seen.includes(phase))) throw new Error(`the memory cycle missed phases: it saw ${seen.join(', ')}`);
+  const before = await memoryMB(page);
+  for (let i = 0; i < 10; i++) await cycle();
+  out.values.memoryGrowthMB = round(await memoryMB(page) - before);
+  await lab.close(page);
+  return out;
+}
+
+const MODEL = '#showcase [data-mode="3d"]';
+
+/**
+ * The 3D showcase: fresh trackers, one at a time (an open one keeps turning and would load the GPU of the next), until
+ * there are enough purchases. Ready: a real click on the button that opens the tracker until the first draw is painted;
+ * every tracker counts. Update: a real click on "record" until the draw showing the new part is painted. Then, on the
+ * last tracker, five seconds of turning: each draw's main-thread time in its frame, the gap between draws, and its GPU
+ * time where the browser can time it.
+ */
+export async function model(lab: Lab, after?: (page: Page) => Promise<void>): Promise<Measured> {
+  const out: Measured = { values: {}, notes: {} };
+  const readies: number[] = [], updates: number[] = [], phases: Phases[] = [];
+  for (let n = 0; ; n++) {
+    const page = await lab.open(lab.gpu);
+    await beforeTracker(page, gameUrl('?role=student&lang=en'));
+    readies.push(await inputToPaint(page, () => page.locator(TRACKER_OK).click(), { kind: 'drawn', selector: MODEL, attribute: 'data-drawn' }));
+    for (const purchase of PURCHASES) {
+      await loadPurchase(page, purchase);
+      await phasesWatch(page, purchase[2]);
+      updates.push(await inputToPaint(page, () => page.click('#record-win'), { kind: 'drawn', selector: MODEL, attribute: 'data-drawn', token: purchase[2] }));
+      phases.push(await phasesRead(page));
+    }
+    if (n === 0) {
+      out.values.modelMemoryMB = Math.round(await memoryMB(page));
+      await machine(lab, 'model', out);
+    }
+    if (updates.length < MIN_SAMPLES) { await lab.close(page); continue; }
+
+    await page.locator(MODEL).scrollIntoViewIfNeeded();
+    const turning = await page.evaluate(() => new Promise<{ costs: number[]; gaps: number[]; from: number; to: number }>(resolve => {
+      const from = performance.now();
+      const canvas = document.querySelector('#showcase canvas')!;
+      const costs: number[] = [], gaps: number[] = [];
+      let last: number | null = null;
+      const draw = () => {
+        const now = performance.now(), frame = document.timeline.currentTime as number;
+        costs.push(now - frame);
+        if (last !== null) gaps.push(now - last);
+        last = now;
+      };
+      canvas.addEventListener('sea-draw', draw);
+      setTimeout(() => { canvas.removeEventListener('sea-draw', draw); resolve({ costs, gaps, from, to: performance.now() }); }, 5000);
+    }));
+    await page.waitForTimeout(500); // the last draws' GPU results arrive a few frames late
+    // Only the draws of the five seconds of turning: not the purchases' nor the calibration's.
+    const gpu = await page.evaluate(({ from, to }) => {
+      const sea = (globalThis as unknown as { __seaGpu: { times: { at: number; ms: number }[]; available: boolean } }).__seaGpu;
+      return { available: sea.available, times: sea.times.filter(t => t.at >= from && t.at < to).map(t => t.ms) };
+    }, turning);
+    out.values.turningDraws = turning.costs.length;
+    // The adaptive tier the stage settled on: 0 is full resolution (source/showcase/pace.ts TIERS).
+    out.values.modelTier = Number(await page.locator('#showcase canvas').getAttribute('data-tier') ?? 0);
+    out.values.frameP95Ms = turning.costs.length >= MIN_SAMPLES ? round(p95(turning.costs)) : null;
+    out.values.drawGapP95Ms = turning.gaps.length >= MIN_SAMPLES ? round(p95(turning.gaps)) : null;
+    if (out.values.frameP95Ms === null) out.notes.frameP95Ms = `only ${turning.costs.length} draws in 5 s of turning`;
+    out.values.gpuFrameMs = gpu.available && gpu.times.length >= MIN_SAMPLES ? round(p95(gpu.times)) : null;
+    if (out.values.gpuFrameMs === null) out.notes.gpuFrameMs = gpu.available ? `only ${gpu.times.length} timed draws` : 'this browser offers no WebGL GPU timer (EXT_disjoint_timer_query_webgl2)';
+    await after?.(page);
+    await lab.close(page);
+    break;
+  }
+  out.values.modelReadyMs = round(Math.max(...readies));
+  out.values.modelReadyFirstMs = round(readies[0]!);
+  out.values.modelUpdateSamples = updates.length;
+  out.values.modelUpdateP95Ms = round(p95(updates));
+  out.values.modelUpdateMaxMs = round(Math.max(...updates));
+  // Where an update's time goes (§14.1 per-draw report): each phase's p95 on its own, so they need not sum to the total.
+  for (const phase of ['handle', 'wait', 'draw', 'paint'] as const) {
+    const times = phases.map(p => p[phase]).filter((t): t is number => t !== null);
+    out.values[`modelUpdate${phase[0]!.toUpperCase()}${phase.slice(1)}P95Ms`] = times.length >= MIN_SAMPLES ? round(p95(times)) : null;
+  }
+  return out;
+}
+
+/** One 3D update in phases: input to the purchase shown in `data-layers` (the command handled), then to the start of
+ *  the draw that shows it (waiting for a frame), the draw, and the draw's end to the input-to-paint end (painting). */
+interface Phases { handle: number | null; wait: number | null; draw: number | null; paint: number | null }
+
+/** Watches the next update for `token`, alongside inputToPaint: timestamps only, so it changes nothing it measures. */
+async function phasesWatch(page: Page, token: string): Promise<void> {
+  await page.evaluate(({ selector, token }) => {
+    const t: Record<string, number> = {};
+    (globalThis as unknown as { __seaPhases: Record<string, number> }).__seaPhases = t;
+    addEventListener('pointerdown', e => { t.input ??= e.timeStamp; }, { capture: true, once: true });
+    const has = (name: string) => (document.querySelector(selector)?.getAttribute(name) ?? '').split(' ').includes(token);
+    const observer = new MutationObserver(() => {
+      if (t.layers === undefined && has('data-layers')) t.layers = performance.now();
+      if (t.drawn === undefined && has('data-drawn')) { t.drawn = performance.now(); observer.disconnect(); }
+    });
+    observer.observe(document, { subtree: true, attributes: true, attributeFilter: ['data-layers', 'data-drawn'] });
+    // The canvas may be replaced by the command: listen where the events pass on their way, the document's capture phase.
+    const done = new AbortController();
+    document.addEventListener('sea-drawing', () => { if (t.layers !== undefined && t.drawing === undefined) t.drawing = performance.now(); }, { capture: true, signal: done.signal });
+    document.addEventListener('sea-draw', () => { if (t.drawing !== undefined) { t.draw = performance.now(); done.abort(); } }, { capture: true, signal: done.signal });
+  }, { selector: MODEL, token });
+}
+
+async function phasesRead(page: Page): Promise<Phases> {
+  return page.evaluate(() => {
+    const t = (globalThis as unknown as { __seaPhases: Record<string, number> }).__seaPhases;
+    const end = (globalThis as unknown as { __seaInput: { end?: number } }).__seaInput.end;
+    const span = (a?: number, b?: number) => (a === undefined || b === undefined ? null : b - a);
+    return { handle: span(t.input, t.layers), wait: span(t.layers, t.drawing), draw: span(t.drawing, t.draw), paint: span(t.draw, end) };
+  });
+}
+
+/**
+ * Without WebGL: a real click on "record" until the new layer is decoded and painted, on fresh trackers until there are
+ * enough samples; then, on the first tracker, a real click on another angle and real key presses on the turntable.
+ */
+export async function stills(lab: Lab): Promise<Measured> {
+  const out: Measured = { values: {}, notes: {} };
+  const updates: number[] = [];
+  const first = await lab.open(withoutWebgl);
+  for (let n = 0; updates.length < MIN_SAMPLES; n++) {
+    const page = n === 0 ? first : await lab.open(withoutWebgl);
+    await openTracker(page, gameUrl('?role=student&lang=en'));
+    await page.locator('#showcase img[data-layer="base"]').waitFor();
+    for (const purchase of PURCHASES) {
+      await loadPurchase(page, purchase);
+      updates.push(await inputToPaint(page, () => page.click('#record-win'), { kind: 'image', selector: `#showcase img[data-layer="${purchase[2]}"]` }));
+    }
+    if (n > 0) await lab.close(page);
+  }
+  out.values.showcaseUpdateSamples = updates.length;
+  out.values.showcaseUpdateP95Ms = round(p95(updates));
+  out.values.showcaseUpdateMaxMs = round(Math.max(...updates));
+
+  out.values.angleChangeMs = Math.round(await inputToPaint(first, () => first.click('#showcase-view-rear'), { kind: 'image', selector: '#showcase img[data-angle="rear"]' }));
+  await first.check('#showcase-view-turntable');
+  await first.locator('#showcase-turn').waitFor();
+  await first.waitForTimeout(300); // neighbouring frames pre-decode while a person pauses
+  await first.focus('#showcase-turn');
+  const scrub: number[] = [];
+  for (let i = 0; i < 6; i++) {
+    const next = await first.evaluate(() => { const input = document.querySelector<HTMLInputElement>('#showcase-turn')!; return Math.min(Number(input.value) + 1, Number(input.max)); });
+    scrub.push(await inputToPaint(first, () => first.keyboard.press('ArrowRight'), { kind: 'image', selector: `#showcase img[data-frame="${next}"]` }));
+    await first.waitForTimeout(120);
+  }
+  out.values.turntableStepMaxMs = Math.round(Math.max(...scrub));
+  out.values.studentMemoryMB = Math.round(await memoryMB(first));
+  await machine(lab, 'student', out);
+  await lab.close(first);
+  return out;
+}
+
+/** Every instructor phase, in order; one memory cycle passes through each (Codex G3 review). */
+const PHASES = ['setup', 'practice', 'planning', 'auction', 'build', 'submit', 'debrief', 'closed'];
+
+/**
+ * Starts (`on`) or stops noting each phase the instructor's state is saved in, and returns those noted, in order of
+ * first sight. Off while commands are timed, so the timings carry no extra parse of the saved state.
+ */
+async function phasesSeen(page: Page, on: boolean): Promise<string[]> {
+  return page.evaluate(([key, start]) => {
+    const w = window as unknown as { __seaPhases?: { on: boolean; seen: string[] } };
+    if (!w.__seaPhases) {
+      const watch = w.__seaPhases = { on: false, seen: [] as string[] }, write = Storage.prototype.setItem;
+      Storage.prototype.setItem = function (this: Storage, name: string, value: string) {
+        if (watch.on && name === key) {
+          const phase = (JSON.parse(value) as { phase?: unknown }).phase;
+          if (typeof phase === 'string' && !watch.seen.includes(phase)) watch.seen.push(phase);
+        }
+        write.call(this, name, value);
+      };
+    }
+    if (start) w.__seaPhases.seen = [];
+    w.__seaPhases.on = start;
+    return w.__seaPhases.seen;
+  }, ['SEA_INSTRUCTOR_V300', on] as const);
+}
+```
+
 ### tests/unit/archive.test.ts
 
 Paths: `tests/unit/archive.test.ts`. SHA-256 `51bf560e0e35ff899918d2cb6e3ba7922621cbb0c09a2f7a17d696496c0643e7`, 5220 bytes.
@@ -41032,7 +43183,7 @@ describe('single-file build (RQ-01, RQ-24, RQ-25, RQ-27)', async () => {
 
 ### tests/unit/codebase.test.ts
 
-Paths: `tests/unit/codebase.test.ts`. SHA-256 `a663822ecd3e948fc07a49e5a4c01f4df5af92a1a3b27263e200f63dc2637802`, 4508 bytes.
+Paths: `tests/unit/codebase.test.ts`. SHA-256 `3ee4fc5ff824bc91a1c0e1f766e78f97a59a5075a0840e06809d988f46e00e49`, 5024 bytes.
 
 ```ts
 // G2 item 7: docs/CODEBASE.md rebuilds the tree. This test reads it with its own parser, following only the rules the
@@ -41108,6 +43259,12 @@ describe('docs/CODEBASE.md', () => {
     // Explicit bound: it writes about 150 files and hashes about 1,000 (60 MB). Usually 0.2-0.4 s, but one run on
     // 2026-10-11 took 7.1 s and hit the 5 s default (cause unknown; correct result; not reproduced in 22 runs).
   }, 60_000);
+
+  // G3: two new files, still untracked when the codebase was written, passed locally and failed in verify once added.
+  it('has no new project file left untracked, which the codebase would miss', () => {
+    const untracked = execFileSync('git', ['ls-files', '--others', '--exclude-standard', '-z', '--', 'source', 'tests', 'scripts', 'build', 'content', 'art', 'library'], { encoding: 'utf8' }).split('\0').filter(Boolean);
+    expect(untracked, 'git add the new files, then npm run codebase').toEqual([]);
+  });
 
   it('keeps the specification out and has no hand edits', () => {
     expect(DOC).not.toMatch(/^Paths: .*`docs\/MPES\.md`/m);
@@ -41269,6 +43426,154 @@ describe('no GitHub links in the README or the guides (D-13)', () => {
 });
 ```
 
+### tests/unit/e2e-config.test.ts
+
+Paths: `tests/unit/e2e-config.test.ts`. SHA-256 `f963e93d4dacd32da1b7e707fa873191d3c3f59aa4882b0832ef794eb128a618`, 2928 bytes.
+
+```ts
+// The browser suite keeps its heavy tests apart (playwright.config.ts): beside a software-WebGL showcase test on a CI
+// runner the one-round slice slowed from 17 s to 2 minutes and ran out of its time (run 38609311138, Edge).
+import { readdirSync, readFileSync } from 'node:fs';
+import { describe, expect, it } from 'vitest';
+import config from '../../playwright.config.ts';
+
+const projects = config.projects ?? [];
+const heavy = projects.filter(project => project.name?.endsWith('-heavy'));
+const light = projects.filter(project => project.name !== 'perf' && !project.name?.endsWith('-heavy'));
+const matches = (pattern: unknown, file: string): boolean =>
+  (Array.isArray(pattern) ? pattern : [pattern]).some(p => p instanceof RegExp ? p.test(file) : false);
+
+describe('browser suite projects', () => {
+  it('give every engine a heavy project that runs one test at a time', () => {
+    expect(heavy.map(project => project.name)).toEqual(light.map(project => `${project.name}-heavy`));
+    for (const project of heavy) expect(project.workers, project.name).toBe(1);
+  });
+
+  it('run the heavy tests only after every light project and the heavy project before them', () => {
+    heavy.forEach((project, i) => {
+      expect(project.dependencies, project.name).toEqual(expect.arrayContaining(light.map(l => l.name)));
+      if (i) expect(project.dependencies, project.name).toContain(heavy[i - 1]!.name);
+    });
+  });
+
+  it('keep the heavy specs out of the light projects and the light specs out of the heavy ones', () => {
+    for (const file of ['tests/e2e/showcase.spec.ts', 'tests/e2e/rehearsal.spec.ts']) {
+      for (const project of light) expect(matches(project.testIgnore, file), `${project.name} ignores ${file}`).toBe(true);
+      for (const project of heavy) expect(matches(project.testMatch, file), `${project.name} runs ${file}`).toBe(true);
+    }
+    for (const project of heavy) expect(matches(project.testMatch, 'tests/e2e/slice.spec.ts'), project.name).toBe(false);
+  });
+
+  it('measure performance after everything else', () => {
+    const perf = projects.find(project => project.name === 'perf');
+    if (perf) expect(perf.dependencies).toEqual(expect.arrayContaining([...light, ...heavy].map(project => project.name)));
+  });
+
+  // Contexts a test opens itself outlived it with Playwright's own `test` (G3, run 38958721130); helpers' `test` closes them.
+  it('take `test` from the helpers, which close the contexts a test opened, never from Playwright directly', () => {
+    const specs = readdirSync('tests/e2e').filter(file => file.endsWith('.spec.ts'));
+    expect(specs.length).toBeGreaterThan(10);
+    for (const file of specs) {
+      const source = readFileSync(`tests/e2e/${file}`, 'utf8');
+      expect(source, file).not.toMatch(/import \{[^}]*\btest\b[^}]*\} from '@playwright\/test'/);
+      expect(source, file).toMatch(/import \{[^}]*\btest\b[^}]*\} from '\.\/helpers\.ts'/);
+    }
+  });
+});
+```
+
+### tests/unit/encode-cache.test.ts
+
+Paths: `tests/unit/encode-cache.test.ts`. SHA-256 `e5922cbdb606c1c080b35b84aa9ac672f45595d4c1ae0ffa6f971671ce51e3f1`, 5030 bytes.
+
+```ts
+// Encode cache (art/tools/encode-renders.ts): an unchanged master is not re-encoded, the cached bytes equal a clean
+// encode, and changing any setting or the master misses.
+import { mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import { join, resolve } from 'node:path';
+import sharp from 'sharp';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { SETTINGS, cacheKey, trimAndEncode } from '../../art/tools/encode-renders.ts';
+
+const ROOT = resolve(import.meta.dirname, '..', '..');
+const made: string[] = [];
+let dir = '', cache = '', master = '';
+beforeAll(async () => {
+  mkdirSync(join(ROOT, '.artifacts', 'tmp'), { recursive: true });
+  dir = mkdtempSync(join(ROOT, '.artifacts', 'tmp', 'sea-encode-'));
+  made.push(dir);
+  cache = join(dir, 'cache');
+  master = join(dir, 'card-test.png');
+  // 32x32 transparent frame with a visible 12x12 square, so the trim has something to do.
+  const square = await sharp({ create: { width: 12, height: 12, channels: 4, background: { r: 200, g: 80, b: 40, alpha: 1 } } }).png().toBuffer();
+  await sharp({ create: { width: 32, height: 32, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } } }).composite([{ input: square, left: 10, top: 9 }]).png().toFile(master);
+});
+afterAll(() => { for (const dir of made) rmSync(dir, { recursive: true, force: true, maxRetries: 5 }); });
+
+describe('encode cache', () => {
+  it('misses once, then hits, and a hit is byte-identical to an uncached encode', async () => {
+    const first = await trimAndEncode(master, 'card', 'webp', 80, cache);
+    const second = await trimAndEncode(master, 'card', 'webp', 80, cache);
+    const clean = await trimAndEncode(master, 'card', 'webp', 80, null);
+    expect(first.hit).toBe(false);
+    expect(second.hit).toBe(true);
+    expect(second.data.equals(clean.data)).toBe(true);
+    expect(second.data.equals(first.data)).toBe(true);
+    expect([second.left, second.top, second.width, second.height]).toEqual([clean.left, clean.top, clean.width, clean.height]);
+  });
+
+  it('misses when quality or format changes', async () => {
+    await trimAndEncode(master, 'card', 'webp', 80, cache);
+    expect((await trimAndEncode(master, 'card', 'webp', 81, cache)).hit).toBe(false);
+    expect((await trimAndEncode(master, 'card', 'avif', 80, cache)).hit).toBe(false);
+    expect((await trimAndEncode(master, 'card', 'webp', 81, cache)).hit).toBe(true);
+  });
+
+  it('keys on the master bytes and the kind', async () => {
+    const bytes = await sharp(master).toBuffer();
+    expect(cacheKey(bytes, 'card', 'webp', 80)).toBe(cacheKey(bytes, 'card', 'webp', 80));
+    expect(cacheKey(bytes, 'card', 'webp', 80)).not.toBe(cacheKey(bytes, 'hero', 'webp', 80));
+    expect(cacheKey(Buffer.concat([bytes, Buffer.from([0])]), 'card', 'webp', 80)).not.toBe(cacheKey(bytes, 'card', 'webp', 80));
+  });
+
+  it('re-encodes a corrupted entry instead of trusting it', async () => {
+    await trimAndEncode(master, 'card', 'webp', 70, cache);
+    for (const f of readdirSync(cache).filter(n => n.endsWith('.webp'))) writeFileSync(join(cache, f), Buffer.from('corrupt'));
+    const again = await trimAndEncode(master, 'card', 'webp', 70, cache);
+    expect(again.hit).toBe(false);
+    expect(again.data.equals((await trimAndEncode(master, 'card', 'webp', 70, null)).data)).toBe(true);
+  });
+
+  // Codex G3 review finding 9: the checksum covered the image only, so damaged offsets were a hit.
+  it('re-encodes an entry whose geometry was changed, even to valid JSON', async () => {
+    await trimAndEncode(master, 'card', 'webp', 60, cache);
+    for (const f of readdirSync(cache).filter(n => n.endsWith('.json'))) {
+      const entry = JSON.parse(readFileSync(join(cache, f), 'utf8')) as Record<string, unknown>;
+      writeFileSync(join(cache, f), JSON.stringify({ ...entry, left: Number(entry['left']) + 100 }));
+    }
+    const again = await trimAndEncode(master, 'card', 'webp', 60, cache);
+    expect(again.hit).toBe(false);
+    expect(again.left).toBe((await trimAndEncode(master, 'card', 'webp', 60, null)).left);
+  });
+
+  // Codex G3 review finding 8: the trim used its own literals, so changing the apron in SETTINGS changed nothing.
+  it('trims with the apron in SETTINGS, which is part of the key', async () => {
+    const bytes = await sharp(master).toBuffer(), before = await trimAndEncode(master, 'card', 'webp', 50, null);
+    const key = cacheKey(bytes, 'card', 'webp', 50), apron = SETTINGS.apron;
+    try {
+      SETTINGS.apron = apron + 2;
+      expect(cacheKey(bytes, 'card', 'webp', 50)).not.toBe(key);
+      const wider = await trimAndEncode(master, 'card', 'webp', 50, null);
+      expect([wider.left, wider.top, wider.width, wider.height]).toEqual([before.left - 2, before.top - 2, before.width + 4, before.height + 4]);
+    } finally { SETTINGS.apron = apron; }
+  });
+
+  it('keys on a revision of the trim and encode code, for changes no setting names', () => {
+    expect(Number.isInteger(SETTINGS.revision)).toBe(true);
+  });
+});
+```
+
 ### tests/unit/format.test.ts
 
 Paths: `tests/unit/format.test.ts`. SHA-256 `279b08e6378d2a916a62f9fa5985a5360a4f882950e79d1cdcadb5bd1d88ab0a`, 1177 bytes.
@@ -41305,13 +43610,13 @@ describe('money display', () => {
 
 ### tests/unit/frame.test.ts
 
-Paths: `tests/unit/frame.test.ts`. SHA-256 `ecef243c2de24f6eabbcd5d1f9600e1e61d7fbfc829082513952176e9b166c48`, 2752 bytes.
+Paths: `tests/unit/frame.test.ts`. SHA-256 `5aa2e02da5d0abd2e3af55b77d968ee845797f430eb37778bc6c5c34c62ac095`, 5050 bytes.
 
 ```ts
 // MPES §10.2 (owner FIX 2026-10-12): the 3D showcase frames the vehicle as fitted, however fully kitted out, every part
 // in view at every turn and at every height the player can drag to, and zooms in and out within set limits.
-import { describe, expect, it } from 'vitest';
-import { Box3, Vector3 } from 'three';
+import { describe, expect, it, vi } from 'vitest';
+import { Box3, Object3D, Vector3 } from 'three';
 import { distanceAt, extentAt, FIT_MARGIN, fitDistance, fitTable, viewDirection, ZOOM_IN_LIMIT, ZOOM_OUT_LIMIT, zoomed } from '../../source/showcase/frame.ts';
 
 const FOV = 30, POLARS = [0.6, 1.25, 1.45];
@@ -41346,6 +43651,43 @@ describe('showcase framing (MPES §10.2)', () => {
     }
     expect(distanceAt(table, 0.1)).toBe(table.distances[0]);
     expect(distanceAt(table, 3)).toBe(table.distances.at(-1));
+  });
+
+  // A purchase refits the camera inside the click: a numerical search placed the camera some 30 times a view, 13 000
+  // times a refit, 22 to 58 ms of a purchase at a 4x CPU throttle (red run 38931516133). Each view is now solved directly.
+  it('fits a whole drag table without placing a camera', () => {
+    const box = boxes.long, target = box.getCenter(new Vector3());
+    const lookAt = vi.spyOn(Object3D.prototype, 'lookAt');
+    try {
+      fitTable(box, target, 0.6, 1.45, FOV, 16 / 9);
+      expect(lookAt).not.toHaveBeenCalled();
+    } finally { lookAt.mockRestore(); }
+  });
+
+  for (const [name, box] of Object.entries(boxes)) for (const aspect of [16 / 9, 1, 9 / 16]) {
+    it(`fits the ${name} kit, aspect ${aspect.toFixed(2)}, as close as the margin allows at its worst view`, () => {
+      const target = box.getCenter(new Vector3());
+      for (const polar of POLARS) {
+        const distance = fitDistance(box, target, [polar], FOV, aspect);
+        let worst = 0;
+        for (let i = 0; i < 48; i++) worst = Math.max(worst, extentAt(box, target, viewDirection(polar, (i / 48) * Math.PI * 2), distance, FOV, aspect));
+        // At the margin at the worst sampled view: as close as it can stand.
+        expect(worst, `polar ${polar}`).toBeLessThanOrEqual(FIT_MARGIN + 1e-6);
+        expect(worst, `polar ${polar}`).toBeGreaterThan(FIT_MARGIN - 1e-6);
+      }
+    });
+  }
+
+  // Codex review: straight up, three.js tilts the camera's aim off the vertical but not its position. (Straight down,
+  // sin(pi) is not quite 0 and the aim three.js takes is set by rounding: no fit can match it, and no player reaches it.)
+  it('fits tight at the poles too, where the camera aim is nudged', () => {
+    for (const [name, box] of Object.entries(boxes)) for (const polar of [0, 1e-10, Math.PI - 1e-10]) {
+      const target = box.getCenter(new Vector3()), distance = fitDistance(box, target, [polar], FOV, 16 / 9);
+      let worst = 0;
+      for (let i = 0; i < 48; i++) worst = Math.max(worst, extentAt(box, target, viewDirection(polar, (i / 48) * Math.PI * 2), distance, FOV, 16 / 9));
+      expect(worst, `${name} at polar ${polar}`).toBeLessThanOrEqual(FIT_MARGIN + 1e-6);
+      expect(worst, `${name} at polar ${polar}`).toBeGreaterThan(FIT_MARGIN - 1e-6);
+    }
   });
 
   it('zooms in and out by steps, within its limits', () => {
@@ -41897,13 +44239,13 @@ describe('docs/MPES.md', () => {
 
 ### tests/unit/pace.test.ts
 
-Paths: `tests/unit/pace.test.ts`. SHA-256 `c3296555d99e89e234dbaebf2003c0fa6edb04ac1f6f5c6546a9be7deeef0def`, 2461 bytes.
+Paths: `tests/unit/pace.test.ts`. SHA-256 `3946c183895eb995efde7b8c15f95ff0378f741ba5b548c51c1f15441cfc027f`, 5353 bytes.
 
 ```ts
 // MPES §10.3: the 3D showcase never takes more than half the machine. A frame that drew is timed by the gap
 // to the next animation frame; the stage then waits at least twice that long before drawing again.
 import { describe, expect, it } from 'vitest';
-import { FRAME_MS, FramePacer } from '../../source/showcase/pace.ts';
+import { FRAME_MS, FramePacer, TIERS, nextTier, startTier } from '../../source/showcase/pace.ts';
 
 /** Runs `ms` of animation frames where each drawn frame costs `cost` ms; returns the draw times. */
 function run(pacer: FramePacer, start: number, ms: number, cost: number, vsync = 1000 / 60): number[] {
@@ -41955,6 +44297,275 @@ describe('frame pacer (MPES §10.3)', () => {
     pacer.pause();
     expect(pacer.due(60_000)).toBe(true);
     expect(pacer.interval).toBeLessThan(FRAME_MS + 1);
+  });
+
+  // G3 (CI run 38571533524): a purchase drawn right after a paced turning draw waited for it on a slow renderer.
+  it('holds paced draws after input from the player, so an answer to it never queues behind one', () => {
+    const pacer = new FramePacer();
+    expect(pacer.due(0)).toBe(true);
+    pacer.drew(0);
+    pacer.hold(1000);
+    expect(pacer.due(500)).toBe(false);
+    expect(pacer.due(999)).toBe(false);
+    expect(pacer.due(1000)).toBe(true);
+  });
+
+  it('reports the cheapest of the last eight draws, and nothing before eight', () => {
+    const pacer = new FramePacer();
+    run(pacer, 0, 7 * 50, 50, 50);
+    expect(pacer.floor).toBeNaN();
+    run(pacer, 350, 20 * 50, 50, 50);
+    expect(pacer.floor).toBe(50);
+    pacer.forget();
+    expect(pacer.floor).toBeNaN();
+  });
+});
+
+describe('adaptive tiers (MPES §10.3)', () => {
+  it('stays at full resolution while a draw fits in a 30 fps frame', () => {
+    expect(nextTier(0, 1000 / 60)).toBe(0);
+    expect(nextTier(0, FRAME_MS)).toBe(0);
+    expect(nextTier(0, Number.NaN)).toBe(0);
+  });
+
+  it('steps down one tier when even the cheapest recent draw is too slow, never below the last', () => {
+    expect(nextTier(0, 60)).toBe(1);
+    expect(nextTier(1, 60)).toBe(2);
+    expect(nextTier(TIERS.length - 1, 600)).toBe(TIERS.length - 1);
+  });
+
+  it('never steps back up', () => {
+    expect(nextTier(2, 1)).toBe(2);
+  });
+});
+
+// G3 (CI run 38571533524): on a software renderer multisampling made a draw 3.6 times dearer, and each fresh page began
+// at full resolution, so its first purchases waited on draws of about 170 ms before the tiers could step down.
+describe('starting tier (MPES §10.3)', () => {
+  it('runs from dearest to cheapest, and multisampling goes before the last step of resolution', () => {
+    for (let i = 1; i < TIERS.length; i++) {
+      const [a, b] = [TIERS[i - 1]!, TIERS[i]!];
+      expect(b.scale <= a.scale && (b.samples <= a.samples)).toBe(true);
+      expect(b.scale < a.scale || b.samples < a.samples).toBe(true);
+    }
+    expect(TIERS[0]).toEqual({ scale: 1, samples: 4 });
+    expect(TIERS.at(-1)!.samples).toBe(0);
+  });
+
+  it('keeps full quality where one draw fits a 30 fps frame, timing only that one', () => {
+    const timed: number[] = [];
+    expect(startTier(tier => { timed.push(tier); return 4; })).toBe(0);
+    expect(timed).toEqual([0]);
+  });
+
+  it('starts at the first tier whose draw fits', () => {
+    const costs = [50, 30, 12, 8];
+    expect(startTier(tier => costs[tier]!)).toBe(1);
+  });
+
+  it('skips a tier that only lowers resolution when the area alone cannot bring the draw within the frame', () => {
+    const costs = [250, 200, 65, 45], timed: number[] = [];
+    expect(startTier(tier => { timed.push(tier); return costs[tier]!; })).toBe(TIERS.length - 1);
+    expect(timed).not.toContain(1);
+    expect(timed).toContain(2);
+  });
+});
+```
+
+### tests/unit/panels.test.ts
+
+Paths: `tests/unit/panels.test.ts`. SHA-256 `d15e4b10994addaddbcac3e50ffac681465108ee927aca65104d51ba5d52caac`, 3091 bytes.
+
+```ts
+// MPES §7, Codex G3 review: a render keeps open each panel the reader opened, known by its id (source/ui/view.ts
+// panelKeys). A panel without an id would close on every render, and keying it by its place instead handed the
+// instructor ledger's open state to a team's panel when the phase changed. So every panel the interface builds has an
+// id. Read as TypeScript sees it: each `h('details', props, ...)` passes an object literal with an `id` property; the
+// check proves itself against a panel without one and against an id only mentioned in a comment.
+import { readdirSync, readFileSync } from 'node:fs';
+import ts from 'typescript';
+import { describe, expect, it } from 'vitest';
+
+/** The `h('details', ...)` calls in a source that pass no `id`, by line; a details made any other way counts too. */
+function panelsWithoutId(source: string): number[] {
+  const file = ts.createSourceFile('ui.ts', source, ts.ScriptTarget.Latest, true);
+  const faults: number[] = [];
+  const line = (node: ts.Node) => file.getLineAndCharacterOfPosition(node.getStart()).line + 1;
+  const visit = (node: ts.Node): void => {
+    const callee = ts.isCallExpression(node) ? node.expression : null;
+    const makes = callee && ((ts.isIdentifier(callee) && callee.text === 'h') || (ts.isPropertyAccessExpression(callee) && callee.name.text === 'createElement'));
+    if (makes && ts.isCallExpression(node) && node.arguments[0] && ts.isStringLiteral(node.arguments[0]) && node.arguments[0].text === 'details') {
+      const named = ts.isIdentifier(callee) && callee.text === 'h';
+      const props = node.arguments[1];
+      const id = props && ts.isObjectLiteralExpression(props) && props.properties.some(p =>
+        (ts.isPropertyAssignment(p) || ts.isShorthandPropertyAssignment(p)) && p.name.getText() === 'id');
+      if (!named || !id) faults.push(line(node));
+    }
+    ts.forEachChild(node, visit);
+  };
+  visit(file);
+  return faults;
+}
+
+describe('every panel has an id, so a render keeps it open (MPES §7)', () => {
+  it('holds for every interface source', () => {
+    const files = readdirSync('source/ui').filter(f => f.endsWith('.ts'));
+    const found = files.flatMap(f => {
+      const source = readFileSync(`source/ui/${f}`, 'utf8');
+      return panelsWithoutId(source).map(line => `${f}:${line}`);
+    });
+    expect(found).toEqual([]);
+    // Some panel is found at all, so a rename of `h` cannot pass the check by finding nothing.
+    expect(files.some(f => readFileSync(`source/ui/${f}`, 'utf8').includes("h('details', { "))).toBe(true);
+  });
+
+  it('fails a panel without an id, and one whose id is only in a comment', () => {
+    expect(panelsWithoutId("h('details', { class: 'panel' }, h('summary', {}))")).toEqual([1]);
+    expect(panelsWithoutId("h('details', {} /* id: 'x' */, h('summary', {}))")).toEqual([1]);
+    expect(panelsWithoutId("document.createElement('details')")).toEqual([1]);
+    expect(panelsWithoutId("h('details', { id }, h('summary', {}))")).toEqual([]);
+    expect(panelsWithoutId("h('details', { class: 'panel', id: 'ledger' })")).toEqual([]);
+  });
+});
+```
+
+### tests/unit/perf-measure.test.ts
+
+Paths: `tests/unit/perf-measure.test.ts`. SHA-256 `77d839ae45ed8c8115812109d0ecea326caff92c7da6beec394209bbacdd0eea`, 776 bytes.
+
+```ts
+import { describe, expect, it } from 'vitest';
+import { MIN_SAMPLES, p95 } from '../perf/measure.ts';
+
+describe('perf measurement protocol (MPES §14)', () => {
+  it('takes the nearest-rank p95', () => {
+    const values = Array.from({ length: 40 }, (_, i) => i + 1);
+    expect(p95(values)).toBe(38);
+    expect(p95(values.slice(0, 30).reverse())).toBe(29);
+    expect(p95(Array.from({ length: 100 }, (_, i) => i + 1))).toBe(95);
+  });
+
+  it('refuses too few samples instead of passing on them', () => {
+    expect(MIN_SAMPLES).toBeGreaterThanOrEqual(30);
+    expect(() => p95([])).toThrow(/at least 30/);
+    expect(() => p95([1, 2, 3])).toThrow();
+    expect(() => p95(Array.from({ length: 30 }, () => Number.NaN))).toThrow();
+    expect(p95([5, 7], 2)).toBe(7);
+  });
+});
+```
+
+### tests/unit/perf-ref-report.test.ts
+
+Paths: `tests/unit/perf-ref-report.test.ts`. SHA-256 `ffc26a7cd9b85c60d2e7bb4c83c47e03f1b7aa7234fd6fdfb190e58bba4863be`, 5866 bytes.
+
+```ts
+import { describe, expect, it } from 'vitest';
+import { readFileSync } from 'node:fs';
+import { BROWSERS, KPIS, METRICS, PROFILES, buildReport, renderMarkdown, statusOf, type RunFile } from '../perf-ref/report.ts';
+
+const ID = 'run-1';
+const at = { runId: ID, stamp: 's', commit: 'c', dirty: false };
+/** A value within budget for every budgeted metric. */
+const passing = Object.fromEntries(METRICS.filter(m => m.budget !== null).map(m => [m.id, 0]));
+
+const run = (browser: string, profile: string, values: Record<string, number | null>, state: RunFile['state'] = 'OK', runId = ID): RunFile => ({
+  meta: { runId, browser, browserVersion: '1', profile, viewport: { width: 1366, height: 768, scale: 1 }, cpuThrottle: 4, gpu: { vendor: 'Intel', renderer: 'ANGLE (Intel UHD Graphics 770)' }, idleSeconds: 60 },
+  state, values, notes: {},
+});
+/** All six runs of a complete perf:ref, every budgeted metric within budget, with `change` applied to the first. */
+const complete = (change: Record<string, number | null> = {}): RunFile[] =>
+  BROWSERS.flatMap(browser => PROFILES.map(profile => run(browser, profile.id, { ...passing })))
+    .map((r, i) => (i === 0 ? { ...r, values: { ...r.values, ...change } } : r));
+
+describe('perf:ref report', () => {
+  it('has one row per KPI of MPES §1.4, in order', () => {
+    expect(KPIS).toHaveLength(12);
+    expect(buildReport(complete(), at).kpis.map(r => r.kpi)).toEqual([...KPIS]);
+  });
+
+  it('has unique metric ids, each under a known KPI', () => {
+    expect(new Set(METRICS.map(m => m.id)).size).toBe(METRICS.length);
+    for (const metric of METRICS) expect(KPIS).toContain(metric.kpi);
+  });
+
+  it('reads a value against its budget, and a missing one as NOT_RUN', () => {
+    const chooser = METRICS.find(m => m.id === 'chooserMs')!;
+    expect(statusOf(chooser, 2000)).toBe('PASS');
+    expect(statusOf(chooser, 2001)).toBe('FAIL');
+    expect(statusOf(chooser, null)).toBe('NOT_RUN');
+    expect(statusOf(chooser, undefined)).toBe('NOT_RUN');
+  });
+
+  it('takes the worst value over runs and fails the KPI when one metric is over budget', () => {
+    const report = buildReport(complete({ chooserMs: 2500 }), at);
+    const browser = report.kpis.find(r => r.kpi === 'Browser performance')!;
+    const chooser = browser.metrics.find(m => m.id === 'chooserMs')!;
+    expect(chooser.worst).toBe(2500);
+    expect(chooser.status).toBe('FAIL');
+    expect(browser.status).toBe('FAIL');
+    expect(report.state).toBe('BASELINE');
+  });
+
+  it('is INCOMPLETE, and keeps no numbers from a run that failed its GPU check', () => {
+    const report = buildReport([run('chromium', PROFILES[0].id, { chooserMs: 100 }, 'GPU_CHECK_FAILED')], at);
+    expect(report.state).toBe('INCOMPLETE');
+    expect(report.problems.join(' ')).toContain('GPU_CHECK_FAILED');
+    expect(report.kpis.find(r => r.kpi === 'Browser performance')!.metrics.every(m => m.worst === null)).toBe(true);
+    expect(buildReport([], at).state).toBe('INCOMPLETE');
+  });
+
+  // Codex G3 review finding 2: one Chromium profile holding only chooserMs was reported as a BASELINE.
+  it('is INCOMPLETE unless both browsers ran every screen profile', () => {
+    const five = complete().slice(1);
+    const report = buildReport(five, at);
+    expect(report.state).toBe('INCOMPLETE');
+    expect(report.problems.join(' ')).toContain(`missing run: ${BROWSERS[0]} ${PROFILES[0].id}`);
+    expect(buildReport([run('chromium', PROFILES[0].id, { chooserMs: 100 })], at).state).toBe('INCOMPLETE');
+  });
+
+  it('is INCOMPLETE when a budgeted metric is missing without a reason, and accepts one with a reason', () => {
+    const missing = complete({ modelUpdateP95Ms: null });
+    const report = buildReport(missing, at);
+    expect(report.state).toBe('INCOMPLETE');
+    expect(report.problems.join(' ')).toContain('modelUpdateP95Ms');
+    missing[0]!.notes['modelUpdateP95Ms'] = 'why';
+    expect(buildReport(missing, at).state).toBe('BASELINE');
+  });
+
+  it('is INCOMPLETE when a run file belongs to another run (a reused folder)', () => {
+    const runs = complete();
+    runs.push(run('chromium', PROFILES[0].id, { ...passing }, 'OK', 'run-0'));
+    const report = buildReport(runs, at);
+    expect(report.state).toBe('INCOMPLETE');
+    expect(report.problems.join(' ')).toContain('run-0');
+  });
+
+  it('counts only this run\'s files, so an old file cannot change a number', () => {
+    const runs = complete();
+    runs.push(run('chromium', PROFILES[0].id, { ...passing, chooserMs: 9999 }, 'OK', 'run-0'));
+    const chooser = buildReport(runs, at).kpis.flatMap(r => r.metrics).find(m => m.id === 'chooserMs')!;
+    expect(chooser.worst).toBe(0);
+  });
+
+  it('renders every KPI and metric in the Markdown', () => {
+    const text = renderMarkdown(buildReport(complete(), at));
+    for (const kpi of KPIS) expect(text).toContain(kpi);
+    for (const metric of METRICS) expect(text).toContain(metric.label);
+  });
+});
+
+// The first idle baseline read 100% of a core on a page doing nothing: it was measured under the 4x CPU throttle, which
+// is emulated by keeping the renderer busy (a blank page: 81% throttled, 2.3% not). Detaching the session that set a
+// throttle clears it for the page, so the restore must come from a session that stays attached.
+describe('perf:ref idle windows', () => {
+  const spec = readFileSync('tests/perf-ref/perf-ref.spec.ts', 'utf8');
+  const start = spec.indexOf('async function idle('), idle = spec.slice(start, spec.indexOf('\n}\n', start));
+
+  it('measure unthrottled and restore the reference throttle, even on failure, on a session left attached', () => {
+    expect(idle).toMatch(/pageCdp\.send\('Emulation\.setCPUThrottlingRate', \{ rate: 1 \}\)/);
+    expect(idle).toMatch(/finally \{[^}]*pageCdp\.send\('Emulation\.setCPUThrottlingRate', \{ rate: THROTTLE \}\)/);
+    expect(idle).not.toMatch(/pageCdp\.detach\(\)/);
   });
 });
 ```
@@ -42102,6 +44713,34 @@ describe('render manifest (MPES §10.2, §11)', () => {
     const total = manifest.entries.reduce((n, e) => n + e.bytes, 0);
     expect(manifest.totalBytes).toBe(total);
     expect(total).toBeLessThanOrEqual(40 * MB);
+  });
+});
+```
+
+### tests/unit/resolve.test.ts
+
+Paths: `tests/unit/resolve.test.ts`. SHA-256 `b416b6525615569093dfeec553587882d70cbab30de22c6f58cbc2673eb28424`, 1289 bytes.
+
+```ts
+import { describe, expect, it } from 'vitest';
+import { OutputShader } from 'three/examples/jsm/shaders/OutputShader.js';
+import { premultipliedOutput } from '../../source/showcase/resolve.ts';
+
+describe('multisampled resolve (MPES §10.3, Codex G3 review)', () => {
+  const fragment = premultipliedOutput(OutputShader.fragmentShader);
+
+  it('divides by coverage before tone mapping and multiplies after the sRGB curve', () => {
+    const read = fragment.indexOf('texture2D( tDiffuse, vUv )'), divide = fragment.indexOf('gl_FragColor.rgb /= gl_FragColor.a');
+    const tone = fragment.indexOf('ToneMapping( gl_FragColor.rgb )'), srgb = fragment.indexOf('sRGBTransferOETF( gl_FragColor )');
+    const multiply = fragment.indexOf('gl_FragColor.rgb *= gl_FragColor.a');
+    expect(read).toBeGreaterThan(0);
+    expect([read, divide, tone, srgb, multiply].every((at, i, all) => at > 0 && (i === 0 || at > all[i - 1]!))).toBe(true);
+    expect(fragment).toContain('if ( gl_FragColor.a > 0.0 )');
+    expect(fragment.trimEnd().endsWith('}')).toBe(true);
+  });
+
+  it('refuses a three.js OutputShader whose shape changed, rather than drawing fringes silently', () => {
+    expect(() => premultipliedOutput('void main() { gl_FragColor = vec4( 1.0 ); }')).toThrow(/OutputShader changed/);
   });
 });
 ```
@@ -42464,7 +45103,7 @@ describe('stricter state invariants', () => {
 
 ### tests/unit/scratch.test.ts
 
-Paths: `tests/unit/scratch.test.ts`. SHA-256 `4cb44f28bb782807d45907e872c47055f482da2224083ca865ca5bf6719cd9d9`, 967 bytes.
+Paths: `tests/unit/scratch.test.ts`. SHA-256 `37d01472eb4a1b528caa3fc9f93fe0becfcb81b4d9ad0edf7634514fc746314a`, 991 bytes.
 
 ```ts
 // Unit tests that make scratch folders in .artifacts/tmp remove them afterwards: the archive and codebase tests once
@@ -42479,7 +45118,7 @@ describe('unit-test scratch', () => {
   it('every test file that makes a scratch folder removes it in afterAll', () => {
     const makers = readdirSync(DIR).filter(f => f.endsWith('.ts') && f !== 'scratch.test.ts').map(f => [f, readFileSync(join(DIR, f), 'utf8')] as const)
       .filter(([, text]) => /mkdtemp(Sync)?\(/.test(text));
-    expect(makers.map(([f]) => f).sort()).toEqual(['archive.test.ts', 'codebase.test.ts']);
+    expect(makers.map(([f]) => f).sort()).toEqual(['archive.test.ts', 'codebase.test.ts', 'encode-cache.test.ts']);
     for (const [f, text] of makers) expect(text, f).toMatch(/afterAll\(\(\) => \{ for \(const dir of made\) rmSync\(dir, \{ recursive: true/);
   });
 });
@@ -42650,6 +45289,106 @@ export function specDealVectors(): Record<string, string[][]> {
   }
   return result;
 }
+```
+
+### tests/unit/stage-dispose.test.ts
+
+Paths: `tests/unit/stage-dispose.test.ts`. SHA-256 `4be4c8cf6d8578f25f4848bd167b93756160a6b0c6bae09d78f36dcfd693f1af`, 6399 bytes.
+
+```ts
+// MPES §10.3, Codex G3 review: a disposed 3D stage leaves nothing listening. A listener left on the document, the
+// motion query or the canvas kept a disposed stage alive and could restart its lost-context check after disposal.
+// The stage cannot be built without WebGL here, so this reads its source as TypeScript sees it: every listener it adds,
+// except on the orbit controls (which their own dispose removes), passes a plain options object whose one `signal` is
+// the stage's own controller's, and dispose aborts that same controller. Two reviews found earlier text matching fooled
+// (the word `signal` in a comment, another controller's signal, a spread overriding it), so the check proves itself
+// against each.
+import { readFileSync } from 'node:fs';
+import ts from 'typescript';
+import { describe, expect, it } from 'vitest';
+
+const SOURCE = readFileSync('source/showcase/model.ts', 'utf8');
+
+/** `this.#listening`, and `this.#listening.signal`, as written. */
+const isListening = (node: ts.Node): boolean => ts.isPropertyAccessExpression(node) && node.expression.kind === ts.SyntaxKind.ThisKeyword && node.name.getText() === '#listening';
+const isListeningSignal = (node: ts.Node): boolean => ts.isPropertyAccessExpression(node) && node.name.text === 'signal' && isListening(node.expression);
+
+/** Every `addEventListener` call in the source. */
+function listenerCalls(file: ts.SourceFile): ts.CallExpression[] {
+  const calls: ts.CallExpression[] = [];
+  const visit = (node: ts.Node): void => {
+    if (ts.isCallExpression(node) && ts.isPropertyAccessExpression(node.expression) && node.expression.name.text === 'addEventListener') calls.push(node);
+    ts.forEachChild(node, visit);
+  };
+  visit(file);
+  return calls;
+}
+
+/** What is wrong with a stage source's listener disposal; empty when every listener goes with the stage. */
+function disposalFaults(source: string): string[] {
+  const file = ts.createSourceFile('model.ts', source, ts.ScriptTarget.Latest, true);
+  const faults: string[] = [];
+  // The one `signal` binding in the file is destructured from the stage's controller.
+  const bindings: ts.Node[] = [];
+  const visit = (node: ts.Node): void => {
+    if ((ts.isVariableDeclaration(node) || ts.isParameter(node) || ts.isBindingElement(node)) && ts.isIdentifier(node.name) && node.name.text === 'signal') bindings.push(node);
+    ts.forEachChild(node, visit);
+  };
+  visit(file);
+  const own = bindings.length === 1 && ts.isBindingElement(bindings[0]!) && !bindings[0].propertyName && !bindings[0].dotDotDotToken
+    && ts.isVariableDeclaration(bindings[0].parent.parent) && !!bindings[0].parent.parent.initializer && isListening(bindings[0].parent.parent.initializer);
+  if (!own) faults.push('signal is not the #listening signal');
+  let controller = false;
+  for (const member of file.statements.filter(ts.isClassDeclaration).flatMap(c => [...c.members])) {
+    if (ts.isPropertyDeclaration(member) && member.name.getText() === '#listening' && member.initializer && ts.isNewExpression(member.initializer)
+      && member.initializer.expression.getText() === 'AbortController') controller = true;
+  }
+  if (!controller) faults.push('no #listening controller');
+  for (const call of listenerCalls(file)) {
+    const receiver = (call.expression as ts.PropertyAccessExpression).expression.getText();
+    if (receiver === 'this.#controls') continue;
+    const options = call.arguments[2];
+    const name = `${receiver} ${call.arguments[0]?.getText()}`;
+    if (call.arguments.length !== 3 || !options || !ts.isObjectLiteralExpression(options)) { faults.push(`${name} has no options object`); continue; }
+    if (options.properties.some(p => !ts.isPropertyAssignment(p) && !ts.isShorthandPropertyAssignment(p))) { faults.push(`${name} options are not plain properties`); continue; }
+    const signals = options.properties.filter(p => p.name?.getText() === 'signal');
+    const value = signals.length === 1 ? (ts.isShorthandPropertyAssignment(signals[0]!) ? signals[0].name : (signals[0] as ts.PropertyAssignment).initializer) : undefined;
+    if (!value || !((ts.isIdentifier(value) && value.text === 'signal' && own) || isListeningSignal(value))) faults.push(`${name} has no stage signal`);
+  }
+  const dispose = file.statements.filter(ts.isClassDeclaration).flatMap(c => [...c.members])
+    .find((m): m is ts.MethodDeclaration => ts.isMethodDeclaration(m) && m.name.getText() === 'dispose');
+  const aborts = dispose?.body?.statements.some(s => ts.isExpressionStatement(s) && ts.isCallExpression(s.expression) && s.expression.arguments.length === 0
+    && ts.isPropertyAccessExpression(s.expression.expression) && s.expression.expression.name.text === 'abort' && isListening(s.expression.expression.expression));
+  if (!aborts) faults.push('dispose does not abort #listening');
+  return faults;
+}
+
+describe('3D stage disposal (MPES §10.3)', () => {
+  it('finds the stage listeners', () => {
+    expect(listenerCalls(ts.createSourceFile('model.ts', SOURCE, ts.ScriptTarget.Latest, true)).length).toBeGreaterThanOrEqual(8);
+  });
+
+  it('removes every listener outside the orbit controls on dispose', () => {
+    expect(disposalFaults(SOURCE)).toEqual([]);
+  });
+
+  it('catches a listener the stage controller would not remove', () => {
+    const mutations: [string, string][] = [
+      ["}, { signal });\n    this.canvas.addEventListener('webglcontextrestored', event", "}, { /* signal */ });\n    this.canvas.addEventListener('webglcontextrestored', event"],
+      ["() => this.#loop(), { signal });", "() => this.#loop(), { signal: new AbortController().signal });"],
+      ["() => this.#loop(), { signal });", "() => this.#loop() /* signal */);"],
+      ['const { signal } = this.#listening;', 'const { signal } = new AbortController();'],
+      ['this.#listening.abort();', '// this.#listening.abort();'],
+      ['{ capture: true, passive: true, signal });', '{ capture: true, passive: true, signal, ...{ signal: new AbortController().signal } });'],
+      ['{ capture: true, passive: true, signal });', '{ capture: true, passive: true, signal, signal: new AbortController().signal });'],
+      ['this.#listening.abort();', 'if (Math.random() > 2) this.#listening.abort();'],
+    ];
+    for (const [from, to] of mutations) {
+      expect(SOURCE, from).toContain(from);
+      expect(disposalFaults(SOURCE.replace(from, to)), to).not.toEqual([]);
+    }
+  });
+});
 ```
 
 ### tests/unit/student.test.ts
@@ -43714,5 +46453,5 @@ Keys and the commands that make each kind again:
 
 | Path | Bytes | SHA-256 | Why |
 |---|---:|---|---|
-| `docs/MPES.md` | 169668 | `09225c2edd3612658d4620aba7de0f06347940a919f7d9aa27146abbf0b2ddf8` | The specification, a clean-room document of its own (Omni 5.1.1 §333). |
+| `docs/MPES.md` | 187687 | `75d01216f1e243b4e63086938b261bc9de60a3f3d1fac0ba319a21b006c660d1` | The specification, a clean-room document of its own (Omni 5.1.1 §333). |
 | `docs/CODEBASE.md` | | | This file. |

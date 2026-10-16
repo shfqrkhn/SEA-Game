@@ -2,9 +2,9 @@
 // pause/expiry/extend, unsold-with-leader, void and replacement, corrected sale, keyboard bidding,
 // the two-win limit, reloads (open lot restores paused), a missed student purchase reconciled in build,
 // private submissions, award and close. Every number is checked against the independent oracle.
-import { expect, test, type Page } from '@playwright/test';
+import { expect, type Page } from '@playwright/test';
 import { readFileSync } from 'node:fs';
-import { collectConsoleErrors, expectAccessible, gameUrl, guardNetwork } from './helpers.ts';
+import { collectConsoleErrors, expectAccessible, gameUrl, guardNetwork, test } from './helpers.ts';
 import { compliant, dollars, score, startCents, totals, winners, type OracleTeam } from './oracle.ts';
 import { act, confirmDialog, instructorSetup, studentJoin } from './roles.ts';
 

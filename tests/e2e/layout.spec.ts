@@ -1,7 +1,7 @@
 // MPES §7.1 (3.1.0): at 1280×720 the live lot's bid buttons, Sell, No sale and Next lot are fully visible without
 // scrolling, because Firefox loses a click on a half-hidden button when it scrolls it into view.
-import { expect, test, type Page } from '@playwright/test';
-import { gameUrl, guardNetwork } from './helpers.ts';
+import { expect, type Page } from '@playwright/test';
+import { gameUrl, guardNetwork, test } from './helpers.ts';
 import { instructorSetup } from './roles.ts';
 
 async function fullyVisible(page: Page, selectors: string[]): Promise<void> {

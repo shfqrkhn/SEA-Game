@@ -1,9 +1,9 @@
 // J4 + RQ-15, RQ-16, RQ-28 (MPES §8, §9): storage denied, unreadable save, bad imports, legacy
 // imports and a refused download, each with a designed message and no loss of the current game.
-import { expect, test } from '@playwright/test';
+import { expect } from '@playwright/test';
 import { readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { collectConsoleErrors, gameUrl, guardNetwork } from './helpers.ts';
+import { collectConsoleErrors, gameUrl, guardNetwork, test } from './helpers.ts';
 import { confirmDialog } from './roles.ts';
 
 const legacy = (name: string) => new URL(`../fixtures/legacy/${name}.json`, import.meta.url);

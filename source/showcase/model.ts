@@ -4,15 +4,17 @@
 // when the player prefers reduced motion. Without WebGL the caller shows the still renders instead.
 import {
   ACESFilmicToneMapping, Box3, Color, DirectionalLight, Group, Mesh, MeshStandardMaterial, type Object3D,
-  PCFShadowMap, PerspectiveCamera, PlaneGeometry, PMREMGenerator, Scene, ShadowMaterial, SRGBColorSpace,
-  Timer, Vector3, WebGLRenderer,
+  HalfFloatType, PCFShadowMap, PerspectiveCamera, PlaneGeometry, PMREMGenerator, Scene, ShadowMaterial, SRGBColorSpace,
+  type Texture, Timer, Vector2, Vector3, WebGLRenderer, WebGLRenderTarget,
 } from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
+import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
 import { vehicleGlb } from './glb.ts';
 import { distanceAt, extentAt, fitTable, zoomed, type FitTable } from './frame.ts';
-import { FramePacer } from './pace.ts';
+import { premultipliedOutput } from './resolve.ts';
+import { FramePacer, INPUT_HOLD_MS, TIERS, nextTier, startTier } from './pace.ts';
 
 /** Seconds per full turn when the stage turns by itself. */
 export const TURN_SECONDS = 40;
@@ -21,6 +23,10 @@ const UP = new Vector3(0, 1, 0);
 const OPENING = new Vector3(0.62, 0.32, 0.72).normalize();
 /** How far the player can drag the view up and down (polar angle from straight up). */
 const POLAR_MIN = 0.6, POLAR_MAX = 1.45;
+/** How often a lost graphics context is checked for a return its browser did not announce. */
+const LOST_CHECK_MS = 1000;
+/** Strength of the fill light that follows the viewer (MPES §10.5: the vehicle stands out at every angle). */
+const FILL_INTENSITY = 5.2;
 
 let packed: Promise<ArrayBuffer | null> | null = null;
 const libraries = new Map<string, Promise<Group | null>>();
@@ -119,6 +125,24 @@ export class ModelStage {
   #frame = 0;
   #pacer = new FramePacer();
   #dirty = true;
+  /** A change the player asked for (a purchase, turn, zoom or resize) waiting to be drawn: it skips the pacer's wait. */
+  #urgent = false;
+  /** The fitted parts changed since the shadow was drawn: the next paced draw redraws it, never the urgent one. */
+  #shadowDue = false;
+  /** Index into TIERS: the resolution and edge smoothing this machine can draw in time (adaptive tiers). */
+  #tier = 0;
+  /** Where a multisampled tier draws the scene, then resolved to the canvas with tone mapping by #output; none on a
+   *  tier without multisampling. The canvas itself has none, so a tier can drop it without a new context. */
+  #target: WebGLRenderTarget | null = null;
+  #output = resolvePass();
+  #environment: Texture | null = null;
+  #lost = false;
+  /** While the context is lost, the check that notices its return (see the constructor). */
+  #watch: ReturnType<typeof setInterval> | undefined;
+  /** Removes every listener the stage added outside its controls when it is disposed (`tests/unit/stage-dispose.test.ts`). */
+  readonly #listening = new AbortController();
+  /** The player's input anywhere else on the page holds the paced turning draws (input first, MPES §10.3). */
+  #input = (event: Event): void => { if (event.target !== this.canvas) this.#pacer.hold(performance.now() + INPUT_HOLD_MS); };
   #visible = true;
   #observer: IntersectionObserver;
   #resize: ResizeObserver;
@@ -132,23 +156,25 @@ export class ModelStage {
   /** Called after every draw with the camera's azimuth (radians), how far the kit reaches from the frame centre
    * (1 = the frame edge) and the zoom. */
   onView: ((azimuth: number, extent: number, zoom: number) => void) | null = null;
+  /** Called after each draw has reached the canvas: what the player sees now matches the last `show`. */
+  onDraw: (() => void) | null = null;
 
   constructor() {
     this.canvas = document.createElement('canvas');
     this.canvas.className = 'showcase-canvas';
-    this.#renderer = new WebGLRenderer({ canvas: this.canvas, antialias: true, alpha: true, powerPreference: 'low-power' });
-    this.#renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
+    this.#renderer = new WebGLRenderer({ canvas: this.canvas, antialias: false, alpha: true, powerPreference: 'low-power' });
+    this.#tierTo(0);
     this.#renderer.outputColorSpace = SRGBColorSpace;
     this.#renderer.toneMapping = ACESFilmicToneMapping;
-    this.#renderer.toneMappingExposure = 0.85;
+    this.#renderer.toneMappingExposure = 1.05;
     this.#renderer.shadowMap.enabled = true;
     this.#renderer.shadowMap.type = PCFShadowMap;
-    const pmrem = new PMREMGenerator(this.#renderer);
-    // A 64 px environment lights matte paint as well as the default 256 px, with a sixteenth of the pixels to render and blur.
-    this.#scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04, 0.1, 100, { size: 64 }).texture;
-    pmrem.dispose();
+    // Baked shadows: the sun and the vehicle stand still while the camera orbits, so the shadow map only changes with the
+    // fitted parts; drawing it every frame doubled each turning draw (G3). show() asks for it again.
+    this.#renderer.shadowMap.autoUpdate = false;
+    this.#environ();
     this.#scene.background = null;
-    const sun = new DirectionalLight(new Color(1, 0.97, 0.92), 1.6);
+    const sun = new DirectionalLight(new Color(1, 0.97, 0.92), 0.9);
     sun.position.set(6, 12, 5);
     sun.castShadow = true;
     sun.shadow.mapSize.set(1024, 1024);
@@ -161,7 +187,13 @@ export class ModelStage {
     const rim = new DirectionalLight(new Color(0.85, 0.9, 1), 0.5);
     rim.position.set(6, 5, -18);
     rim.target.position.set(0, 0, -10);
-    this.#camera.add(rim, rim.target);
+    // Fill light from over the viewer's shoulder, whichever way the vehicle turns: the sun stands still so its shadow
+    // is drawn once, and without this the side turned away from it fell to 1.4:1 against the stage for half of every
+    // turn (G3, CI run 38609311138). Unshadowed, so it costs no shadow redraw.
+    const fill = new DirectionalLight(new Color(1, 0.98, 0.95), FILL_INTENSITY);
+    fill.position.set(-2, 1, 6);
+    fill.target.position.set(0, 0, -10);
+    this.#camera.add(rim, rim.target, fill, fill.target);
     this.#scene.add(this.#camera);
     const floor = new Mesh(new PlaneGeometry(30, 30), new ShadowMaterial({ opacity: 0.35 }));
     floor.rotation.x = -Math.PI / 2;
@@ -172,14 +204,53 @@ export class ModelStage {
       enableDamping: true, enablePan: false, enableZoom: false, autoRotate: !this.#motion.matches,
       autoRotateSpeed: 60 / TURN_SECONDS, minPolarAngle: POLAR_MIN, maxPolarAngle: POLAR_MAX,
     });
+    // OrbitControls sets touch-action none, which traps a finger swipe over the stage: give vertical swipes back to the
+    // page (the stylesheet's pan-y), so only a sideways drag turns the vehicle (G3 touch safety).
+    this.canvas.style.touchAction = '';
     this.#controls.addEventListener('change', () => this.#invalidate());
     this.#controls.addEventListener('start', () => this.#loop());
-    this.#motion.addEventListener('change', () => { this.turning = !this.#motion.matches; });
+    const { signal } = this.#listening;
+    this.#motion.addEventListener('change', () => { this.turning = !this.#motion.matches; }, { signal });
     this.#observer = new IntersectionObserver(([entry]) => { this.#visible = !!entry?.isIntersecting; this.#loop(); });
     this.#observer.observe(this.canvas);
     this.#resize = new ResizeObserver(() => this.#size());
     this.#resize.observe(this.canvas);
-    document.addEventListener('visibilitychange', () => this.#loop());
+    document.addEventListener('visibilitychange', () => this.#loop(), { signal });
+    for (const type of ['pointerdown', 'keydown', 'input']) document.addEventListener(type, this.#input, { capture: true, passive: true, signal });
+    // A lost graphics context (driver reset, GPU switch, sleep) stops the stage; three.js rebuilds the context when it is
+    // restored, but what was drawn into textures is gone: the environment and the shadow are made again, then one draw.
+    // The context, not the events, says whether it is back: Firefox on a software renderer announced a restore while the
+    // context was still lost, then restored it without a word (G3, CI run 38577929333). So an early announcement is
+    // stopped before three.js rebuilds onto a dead context, and while lost a slow check notices a silent return and
+    // announces it, which rebuilds three.js and the stage alike.
+    this.canvas.addEventListener('webglcontextlost', () => {
+      this.#lost = true;
+      this.#stop();
+      clearInterval(this.#watch);
+      this.#watch = setInterval(() => {
+        if (!this.#renderer.getContext().isContextLost()) this.canvas.dispatchEvent(new Event('webglcontextrestored'));
+      }, LOST_CHECK_MS);
+    }, { signal });
+    this.canvas.addEventListener('webglcontextrestored', event => {
+      if (this.#renderer.getContext().isContextLost()) { event.stopImmediatePropagation(); return; }
+    }, { capture: true, signal });
+    this.canvas.addEventListener('webglcontextrestored', () => {
+      clearInterval(this.#watch);
+      this.#lost = false;
+      this.#environ();
+      this.#renderer.shadowMap.needsUpdate = true;
+      this.#invalidate(true);
+    }, { signal });
+  }
+
+  /** The lighting environment, drawn into a texture. A 64 px environment lights matte paint as well as the default
+   *  256 px, with a sixteenth of the pixels to render and blur. */
+  #environ(): void {
+    const pmrem = new PMREMGenerator(this.#renderer);
+    this.#environment?.dispose();
+    this.#environment = pmrem.fromScene(new RoomEnvironment(), 0.04, 0.1, 100, { size: 64 }).texture;
+    this.#scene.environment = this.#environment;
+    pmrem.dispose();
   }
 
   /** Whether the stage turns by itself (off under reduced motion until the player turns it on). */
@@ -204,6 +275,7 @@ export class ModelStage {
     const offset = this.#camera.position.clone().sub(this.#controls.target).applyAxisAngle(UP, radians);
     this.#camera.position.copy(this.#controls.target).add(offset);
     this.#controls.update();
+    this.#invalidate(true);
     this.#report();
   }
 
@@ -211,6 +283,53 @@ export class ModelStage {
   zoom(press: 1 | -1): void {
     this.#zoom = zoomed(this.#zoom, press);
     this.#place();
+    this.#invalidate(true);
+  }
+
+  /**
+   * Builds the vehicle and compiles every shader it can need, each part's material whether fitted or not, without
+   * blocking the page where the browser compiles in parallel (KHR_parallel_shader_compile). The first draw and the
+   * first draw of each purchase then have nothing left to compile (G3 profile: the first draw was one task of 0.3 to
+   * 2.7 s on a software renderer). Draws nothing: the canvas is not on the page yet. False if there is no such vehicle.
+   */
+  async prepare(lib: Group, vehicle: string, size = { width: 640, height: 360 }): Promise<boolean> {
+    if (!this.show(lib, vehicle, [])) return false;
+    await this.#renderer.compileAsync(this.#scene, this.#camera);
+    this.#calibrate(size);
+    // Then every part, without delaying the first draw. three.js compiles only what is visible, but only the call itself
+    // needs the parts shown: the browser finishes compiling them in parallel after they are hidden again.
+    const parts = this.#vehicle!.children.filter(node => !node.visible);
+    for (const node of parts) node.visible = true;
+    void this.#renderer.compileAsync(this.#scene, this.#camera).catch(() => undefined);
+    for (const node of parts) node.visible = false;
+    return true;
+  }
+
+  /**
+   * Picks the starting tier from one timed draw per tier at the size the stage will have (pace.ts startTier), so a slow
+   * machine starts where it can keep up instead of spending its first purchases at full quality (G3, CI run
+   * 38571533524: about 170 ms a draw). Each draw is waited for by reading one pixel back. The first, at 1 px, only
+   * prepares the resolve to the canvas, so no timed draw includes compiling it.
+   */
+  #calibrate(size: { width: number; height: number }): void {
+    const gl = this.#renderer.getContext(), pixel = new Uint8Array(4);
+    const timed = (): number => {
+      const start = performance.now();
+      this.#render();
+      gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel);
+      return performance.now() - start;
+    };
+    this.#renderer.setSize(1, 1, false);
+    this.#tierTo(0);
+    timed();
+    this.#renderer.setSize(size.width, size.height, false);
+    this.#camera.aspect = size.width / size.height;
+    this.#camera.updateProjectionMatrix();
+    this.#refit();
+    this.#tierTo(startTier(tier => { this.#tierTo(tier); return timed(); }));
+    // The first draw has nothing on screen to keep waiting, so it draws the shadow itself.
+    this.#renderer.shadowMap.needsUpdate = true;
+    this.#shadowDue = false;
   }
 
   /** Shows one vehicle with the given part nodes; returns false if the library has no such vehicle. */
@@ -231,8 +350,15 @@ export class ModelStage {
       this.#scene.add(this.#vehicle);
     }
     const shown = new Set(parts);
-    for (const node of this.#vehicle!.children) node.visible = layerOf(node) === 'base' || shown.has(layerOf(node));
+    for (const node of this.#vehicle!.children) {
+      const visible = layerOf(node) === 'base' || shown.has(layerOf(node));
+      if (node.visible !== visible) this.#shadowDue = true;
+      node.visible = visible;
+    }
+    // A different vehicle must not stand in the last one's shadow, even for one draw.
+    if (fresh) this.#renderer.shadowMap.needsUpdate = true;
     this.#frameCamera(fresh);
+    this.#invalidate(true);
     return true;
   }
 
@@ -282,23 +408,75 @@ export class ModelStage {
     const { clientWidth: w, clientHeight: h } = this.canvas;
     if (!w || !h) return;
     this.#renderer.setSize(w, h, false);
+    this.#fitTarget();
     this.#camera.aspect = w / h;
     this.#camera.updateProjectionMatrix();
     if (this.#camera.aspect !== this.#fittedAspect) this.#refit();
-    this.#invalidate();
+    this.#invalidate(true);
   }
 
-  /** Asks for a redraw in the next paced frame; drags and key turns never draw synchronously. */
-  #invalidate(): void {
+  /**
+   * Asks for a redraw: in the next paced frame, or, for a change the player asked for (`urgent`), in the next animation
+   * frame whatever the pacer's wait. The pacer times a draw by the gap to the next frame, so the page work of a
+   * purchase (its re-render) reads as drawing cost and stretched the wait to half a second (G3, CI showcase budget);
+   * one draw per action cannot load the machine. Nothing draws synchronously.
+   */
+  #invalidate(urgent = false): void {
     this.#dirty = true;
+    if (urgent) this.#urgent = true;
     this.#loop();
   }
 
-  #draw(): void {
-    this.#dirty = false;
-    this.#distance();
+  /** Draws at `tier`: the screen's pixel ratio, at most 1.5, at the tier's share, multisampled if the tier is. */
+  #tierTo(tier: number): void {
+    this.#tier = tier;
+    this.#renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5) * TIERS[tier]!.scale);
+    this.#fitTarget();
+    this.canvas.setAttribute('data-tier', String(tier));
+  }
+
+  /** The multisampled target at the canvas's drawing size, or none on a tier without multisampling. */
+  #fitTarget(): void {
+    const samples = TIERS[this.#tier]!.samples, size = this.#renderer.getDrawingBufferSize(new Vector2());
+    if (!samples) { this.#target?.dispose(); this.#target = null; return; }
+    if (this.#target?.samples === samples) { this.#target.setSize(size.x, size.y); return; }
+    this.#target?.dispose();
+    // Half floats keep the scene linear and unclamped until the resolve tone-maps it, as drawing to the canvas does.
+    this.#target = new WebGLRenderTarget(size.x, size.y, { samples, type: HalfFloatType });
+  }
+
+  /** Steps the quality down when the recent draws show this machine cannot draw in time (see nextTier). */
+  #adapt(): void {
+    const tier = nextTier(this.#tier, this.#pacer.floor);
+    if (tier === this.#tier) return;
+    this.#pacer.forget();
+    this.#tierTo(tier);
+    this.#dirty = true;
+  }
+
+  /** The scene to the canvas: straight, or through the multisampled target and its tone-mapping resolve. */
+  #render(): void {
+    if (!this.#target) { this.#renderer.render(this.#scene, this.#camera); return; }
+    this.#renderer.setRenderTarget(this.#target);
     this.#renderer.render(this.#scene, this.#camera);
+    this.#output.render(this.#renderer, null as unknown as WebGLRenderTarget, this.#target, 0, false);
+  }
+
+  #draw(): void {
+    // A purchase is drawn at once; the sun's shadow of it follows in the next paced draw. Without a graphics card the
+    // browser reads each new frame back before showing it, waiting for the whole draw, and redrawing the shadow map
+    // made a purchase's draw about twice a turning draw (G3, CI run 38958721130: 133 ms to show, budget 100).
+    if (this.#shadowDue && !this.#urgent) { this.#renderer.shadowMap.needsUpdate = true; this.#shadowDue = false; }
+    this.#dirty = this.#shadowDue;
+    this.#urgent = false;
+    this.#distance();
+    // Observable without reaching into the stage: the reference-laptop run brackets each draw's GPU time by these (§14.1).
+    this.canvas.dispatchEvent(new Event('sea-drawing'));
+    this.#render();
     this.#report();
+    this.onDraw?.();
+    // Observable without reaching into the stage: the reference-laptop run times real draws by this event (MPES §14).
+    this.canvas.dispatchEvent(new Event('sea-draw'));
   }
 
   /** Tells `onView` where the camera is: each draw, and at once after a pause, turn, zoom or refit, so the reading never
@@ -319,32 +497,53 @@ export class ModelStage {
 
   /** Animates only while the stage is visible and turning or waiting to redraw; the pacer picks the frames that draw. */
   #loop(): void {
-    const running = this.#visible && document.visibilityState === 'visible' && this.canvas.isConnected;
+    const running = !this.#lost && this.#visible && document.visibilityState === 'visible' && this.canvas.isConnected;
     if (!running) { this.#stop(); return; }
     if (this.#frame) return;
     this.#timer.update();
     const tick = (now: number) => {
       this.#frame = requestAnimationFrame(tick);
-      if (!this.#pacer.due(now)) return;
+      if (!this.#pacer.due(now) && !this.#urgent) return;
       this.#timer.update(now);
       const moved = this.#controls.update(this.#timer.getDelta());
+      this.#adapt();
       if (this.#dirty) { this.#draw(); this.#pacer.drew(now); }
       if (!moved && !this.#controls.autoRotate && !this.#dirty) this.#stop();
     };
     this.#frame = requestAnimationFrame(tick);
   }
 
-  /** Restarts the loop after the canvas is re-attached to the page. */
+  /**
+   * Restarts the loop after the canvas is re-attached to the page. The size is left to the ResizeObserver: it reports
+   * after the next layout if the size changed. Reading it here would force a layout of the page being replaced
+   * (G3 profile: about 15 ms per purchase at 4x).
+   * The visibility is asked afresh, dropping any report not yet delivered: the observer saw the canvas before it was on
+   * the page, and a loaded Firefox never reported it again once it was, so a stage in plain view drew nothing (G3).
+   */
   attached(): void {
-    this.#size();
+    this.#observer.takeRecords();
+    this.#observer.unobserve(this.canvas);
+    this.#observer.observe(this.canvas);
     this.#loop();
   }
 
   dispose(): void {
     cancelAnimationFrame(this.#frame);
+    this.#listening.abort();
+    clearInterval(this.#watch);
     this.#observer.disconnect();
     this.#resize.disconnect();
     this.#controls.dispose();
+    this.#target?.dispose();
+    this.#output.dispose();
+    this.#environment?.dispose();
     this.#renderer.dispose();
   }
+}
+
+/** The resolve of a multisampled tier to the canvas: tone mapping and sRGB, aware of transparent edges (resolve.ts). */
+function resolvePass(): OutputPass {
+  const pass = Object.assign(new OutputPass(), { renderToScreen: true });
+  pass.material.fragmentShader = premultipliedOutput(pass.material.fragmentShader);
+  return pass;
 }

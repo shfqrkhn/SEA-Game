@@ -72,6 +72,12 @@ describe('docs/CODEBASE.md', () => {
     // 2026-10-11 took 7.1 s and hit the 5 s default (cause unknown; correct result; not reproduced in 22 runs).
   }, 60_000);
 
+  // G3: two new files, still untracked when the codebase was written, passed locally and failed in verify once added.
+  it('has no new project file left untracked, which the codebase would miss', () => {
+    const untracked = execFileSync('git', ['ls-files', '--others', '--exclude-standard', '-z', '--', 'source', 'tests', 'scripts', 'build', 'content', 'art', 'library'], { encoding: 'utf8' }).split('\0').filter(Boolean);
+    expect(untracked, 'git add the new files, then npm run codebase').toEqual([]);
+  });
+
   it('keeps the specification out and has no hand edits', () => {
     expect(DOC).not.toMatch(/^Paths: .*`docs\/MPES\.md`/m);
     expect(DOC, 'run npm run codebase').toBe(codebase());

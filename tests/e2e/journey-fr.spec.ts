@@ -1,12 +1,12 @@
 // J2 + J7 (MPES §16.3): full French session, 10 teams, UNTIMED, MANUAL reveal, all 70 lots, ending in a
 // shared award. The session starts from an imported planning backup with a fixed seed so the purchase plan
 // (tests/fixtures/j2-plan.json, found offline) produces two compliant teams with equal scores.
-import { expect, test, type Page } from '@playwright/test';
+import { expect, type Page } from '@playwright/test';
 import { readFileSync, writeFileSync } from 'node:fs';
 import { makeBackup } from '../../source/domain/backup.ts';
 import * as I from '../../source/domain/instructor.ts';
 import { instructorForSave } from '../../source/domain/saves.ts';
-import { collectConsoleErrors, expectAccessible, gameUrl, guardNetwork } from './helpers.ts';
+import { collectConsoleErrors, expectAccessible, gameUrl, guardNetwork, test } from './helpers.ts';
 import { score, totals, winners, type OracleTeam } from './oracle.ts';
 import { act, confirmDialog } from './roles.ts';
 

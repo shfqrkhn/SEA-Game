@@ -1,8 +1,8 @@
 // Owner request 2026-10-11 (MPES §6.5): when every team has its 2 wins in a round, one click records the rest of the
 // round unsold and opens the next; a student whose team has its 2 wins skips to the next round's tracker.
-import { expect, test, type Locator, type Page } from '@playwright/test';
+import { expect, type Locator, type Page } from '@playwright/test';
 import { readFileSync } from 'node:fs';
-import { gameUrl, guardNetwork } from './helpers.ts';
+import { gameUrl, guardNetwork, test } from './helpers.ts';
 import { confirmDialog, instructorLot, instructorSetup, studentJoin, studentRecord } from './roles.ts';
 
 // Owner FIX 2 (2026-10-12): each listed card shows its effects on one line, so a team can re-plan for what left the

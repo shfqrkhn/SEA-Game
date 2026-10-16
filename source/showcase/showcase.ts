@@ -144,15 +144,25 @@ export class Showcase {
   #start(vehicle: string): void {
     this.#mode = 'stills';
     if (!webglAvailable()) return;
-    void loadVehicle(vehicle).then(library => {
+    void loadVehicle(vehicle).then(async library => {
       if (!library) return;
       const stage = new ModelStage();
+      // Stills stay up while the stage compiles its shaders, so the page never waits on the compiler.
+      // The stills hold the place the stage takes, so their size is the size its starting tier is timed at (one layout read).
+      const box = this.element.querySelector('.showcase-stage')?.getBoundingClientRect();
+      if (!await stage.prepare(library, vehicle, box?.width && box.height ? { width: box.width, height: box.height } : undefined)) { stage.dispose(); return; }
       const element = h('div', { class: 'showcase-stage showcase-3d', role: 'img', 'data-mode': '3d', 'data-ready': 'false' });
       element.appendChild(stage.canvas);
       stage.onView = (azimuth, extent, zoom) => {
         element.setAttribute('data-azimuth', azimuth.toFixed(3));
         element.setAttribute('data-extent', extent.toFixed(3));
         element.setAttribute('data-zoom', zoom.toFixed(3));
+      };
+      // The parts the canvas actually shows: `data-layers` changes when a purchase is recorded, `data-drawn` only once
+      // the next draw has put them on screen (the MPES §14 update and ready budgets end here, not at the request).
+      stage.onDraw = () => {
+        const layers = element.getAttribute('data-layers');
+        if (layers !== null && element.getAttribute('data-drawn') !== layers) element.setAttribute('data-drawn', layers);
       };
       this.#model = { stage, libraries: new Map([[vehicle, library]]), element };
       this.#mode = '3d';
