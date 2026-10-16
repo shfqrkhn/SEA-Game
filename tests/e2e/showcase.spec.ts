@@ -482,6 +482,9 @@ const TURN_STEPS = 16, HALF = TURN_STEPS / 2;
 /** How far `to` lies from `from` round the turn, in sixteenths (0 to 15.99). */
 const sixteenths = (from: number, to: number) => ((((to - from) % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI)) / (Math.PI / 8);
 
+/** The stills turntable has 24 frames; each test checks a third of them (the first also the front and rear views). */
+const STILL_FRAMES = 24, FRAMES_PER_TEST = 8;
+
 for (const mission of ['COMBAT', 'RECCE', 'TROOP', 'COMMAND', 'RECOVERY', 'MINE']) {
   for (const half of [0, 1]) test(`${mission} vehicle in 3D stands out from its stage on a dim panel at turn steps ${half * HALF} to ${half * HALF + HALF - 1}`, async ({ page }, info) => {
     // Under reduced motion the vehicle does not turn by itself, so every test starts from the same opening pose and the
@@ -519,7 +522,9 @@ for (const mission of ['COMBAT', 'RECCE', 'TROOP', 'COMMAND', 'RECOVERY', 'MINE'
     info.annotations.push({ type: 'contrast', description: `${mission} 3D from ${opening.toFixed(3)} bright/whole by step: ${steps.join(' ')}` });
   });
 
-  test(`${mission} vehicle in stills stands out from its stage on a dim panel in every view and turntable frame`, async ({ page }, info) => {
+  for (let part = 0; part < STILL_FRAMES / FRAMES_PER_TEST; part++) test(`${mission} vehicle in stills stands out from its stage on a dim panel${part === 0 ? ' in the front and rear views and' : ' at'} turntable frames ${part * FRAMES_PER_TEST} to ${part * FRAMES_PER_TEST + FRAMES_PER_TEST - 1}`, async ({ page }, info) => {
+    // Every view and all 24 frames in one test outran its time on a slow runner (run 38921636256, Edge, frame 23 of
+    // 24 at 121 s): the parts together cover them all.
     await withoutWebgl(page);
     await joinMission(page, mission);
     const stage = page.locator('#showcase .showcase-stage').first();
@@ -531,7 +536,7 @@ for (const mission of ['COMBAT', 'RECCE', 'TROOP', 'COMMAND', 'RECOVERY', 'MINE'
     const views: string[] = [], bare = {};
     // The Cycles stills are darker than the real-time model (front and rear 2.11 to 2.24 on 2026-10-14): held there
     // until the G4 re-render lifts them to 3 (MPES §10.5). These floors may only rise.
-    for (const view of ['front', 'rear']) {
+    for (const view of part === 0 ? ['front', 'rear'] : []) {
       await page.locator(`#showcase-view-${view}`).check();
       await shown(`[data-angle="${view}"]`);
       const still = await vehicleContrast(stage, 'img', bare);
@@ -542,8 +547,9 @@ for (const mission of ['COMBAT', 'RECCE', 'TROOP', 'COMMAND', 'RECOVERY', 'MINE'
     }
     await page.locator('#showcase-view-turntable').check();
     const turn = page.locator('#showcase-turn');
-    const last = Number(await turn.getAttribute('max'));
-    for (let frame = 0; frame <= last; frame++) {
+    // The parts cover every frame only while the turntable has exactly STILL_FRAMES of them.
+    expect(Number(await turn.getAttribute('max')) + 1, 'turntable frames').toBe(STILL_FRAMES);
+    for (let frame = part * FRAMES_PER_TEST; frame < (part + 1) * FRAMES_PER_TEST; frame++) {
       await turn.fill(String(frame));
       await shown(`[data-frame="${frame}"]`);
       const still = await vehicleContrast(stage, 'img', bare);

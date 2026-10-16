@@ -19,6 +19,7 @@ A loop that ships one goal at a time with evidence, so any person or agent can p
 - Things only a person can do are BLOCKED-owner with a one-page script in `docs/owner/`, never a vague request.
 - Keep budgets, timeouts and oracles in one place, with the reason for each number.
 - A test that times out while every step is merely slow is starved, not hung: find what shares its processor. Run heavy tests (software-rendered 3D, long rehearsals) one at a time in their own group after the light ones, and never raise the timeout instead.
+- A test whose work grows with what it samples (every view, every frame) outgrows its time on a slow runner while still working: read the trace for where it was, then split it into parts that together cover everything, with a guard that the parts still add up.
 
 ## Versioning
 

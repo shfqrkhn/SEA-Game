@@ -2,6 +2,12 @@
 
 Each entry: what happened, the rule it produced, and the check that now enforces it. Newest first. Examples come from SEA Game (a classroom auction game with photoreal vehicle renders and a real-time 3D showcase, one offline HTML file).
 
+## 2026-10-16 · A test that was working, not hung, when its time ran out
+
+- **What happened:** the stills contrast test checked the front, the rear and all 24 turntable frames of a vehicle in one test, three screenshots a frame. On a slow CI runner it timed out at two minutes; the trace showed it on frame 23 of 24, every step merely slow. The same test took 50 to 84 seconds elsewhere in the same run.
+- **Rule:** when a test's work grows with what it samples, give it room by splitting, never by raising the timeout: parts that together cover everything, and a guard that fails if the parts stop adding up.
+- **Check (as built in SEA Game):** three stills tests per mission of eight frames each (the first also the front and rear), and an assertion that the turntable still has the 24 frames the parts cover.
+
 ## 2026-10-16 · Passed at one pose, failed at the next; blank because lazy; slow because shared
 
 - **What happened:** a 3D vehicle passed its contrast check (3:1) at the pose the test happened to shoot, then failed on CI at another: its key light was fixed in the world, so once turned, the faces the camera saw were unlit (1.5:1). On the same run a screenshot of the first screen found its thumbnails blank: they were loaded lazily and a busy runner had not fetched them yet. And a light browser test ran out of its two minutes, uniformly slow at every step, because it shared a two-core runner with a software-rendered 3D test.

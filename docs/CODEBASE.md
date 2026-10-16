@@ -27041,7 +27041,7 @@ Exportez une sauvegarde par **Menu → Exporter une sauvegarde** après la confi
 
 ### docs/HANDOVER.md
 
-Paths: `docs/HANDOVER.md`. SHA-256 `2f54ca0c97c4a0292cafef90730075847cc51055b9baf8bf36f6ffc664f1798c`, 12882 bytes.
+Paths: `docs/HANDOVER.md`. SHA-256 `3aeacb1d50321345237d167c8163af43498c6e131541217a84312e6fb5b9915e`, 12915 bytes.
 
 ```markdown
 # Handover
@@ -27106,7 +27106,7 @@ Owner FIX 1 (stills and fit), FIX 2 (one click to close a round nobody can win i
 
 ## 5. Next action
 
-**Agent:** G3 on `g3/proxy-runtime` (PR #27): get two consecutive green CI runs on one head with the 3D update within 100 ms (red runs 38571533524 and 38577929333 diagnosed and fixed in `docs/verification/0.6.0.0.md`; Codex findings on the lanes and the G3 diff dispositioned there); `npm run perf:ref` 12-KPI baseline in a quiet slot (MPES §14.1); touchpad and panel safety; Codex review of the G3 diff; gallery and owner GO or FIX.
+**Agent:** G3 on `g3/proxy-runtime` (PR #27): red run 38609311138 fixed (three causes in `docs/verification/0.6.0.0.md`: contrast at every turn step, eager chooser stills, heavy tests apart); get two consecutive green CI runs on one head; `npm run perf:ref` 12-KPI baseline in a quiet slot (MPES §14.1); finish the verification Checks; gallery and owner GO or FIX. Then G4 (stills to 3:1 in every view and frame, the pale RECCE roof, the light-theme stage contrast).
 **Owner:** `docs/owner/art-review.md` (5 minutes, reply GO or FIX).
 
 ## 6. Rollback
@@ -27700,7 +27700,7 @@ A read-only Codex session (gpt-6.1-sol, medium) reviewed the diff (`.artifacts/c
 
 ### docs/verification/0.6.0.0.md
 
-Paths: `docs/verification/0.6.0.0.md`. SHA-256 `7b59ca224e703b023890a4969e0839c00fac17c0682c5932819ed53fad230b1f`, 23796 bytes.
+Paths: `docs/verification/0.6.0.0.md`. SHA-256 `67cb232fb190fbf5950ee5eb3f56b4f9ee35a5e88d988e1b0bae3781f85742df`, 25342 bytes.
 
 ```markdown
 # Verification record: 0.6.0.0 beta (G3 proxy and runtime) — in progress
@@ -27835,6 +27835,16 @@ In that run four Firefox 3D tests (TROOP both halves, RECOVERY steps 8 to 15, MI
 Unit tests before the commit of this fix, while other programs held the PC at 66 to 87% CPU: three runs, 256 tests, each failing a different one or two on the 5 s unit timeout (`build.test.ts` "is deterministic", `renders.test.ts` orphans, `build.test.ts` built-game check, whose one `git ls-files` took 84 s); every other test passed, and the archive test took 197 s. The load pattern of HANDOVER timing note 2; no timeout changed. A run on a quiet PC or CI is the gate.
 
 Local `npm run verify` of 5f5cf71 (PC at 93% CPU from other programs): typecheck and lint passed; the unit stage failed one test on the 5 s timeout, a fourth different one (`build.test.ts` "embeds the committed renders once", 48 s), so the browser stage did not run. Pushed for CI, the gate on a busy PC.
+
+### Red run 38921636256 (head a39be42): one cause
+
+verify (22) green; verify (24) failed one test, 206 passed. `[msedge-heavy]` RECCE stills timed out at 120 s. The trace shows no hang: it was on the last of 24 turntable frames (three shots each, about 4.5 s a frame on that runner) when time ran out. The stills test did every view and frame in one test and took 50 to 84 s on Chromium and Edge in the same run, too close to the limit everywhere.
+
+Fix (no timeout changed): each mission's stills test is split into three, front and rear views plus frames 0 to 7, then 8 to 15, then 16 to 23, with a guard that the turntable still has 24 frames so the parts cover them all. Sibling sweep of the same run: the next longest are the rehearsal (90 s on Firefox, one scripted session that cannot be split without losing what it proves; watched) and the journeys (60 s and under).
+
+Local checks of the fix: the 18 split stills tests passed on Chromium (2.0 min); Codex review of the diff: no findings (it checked that the parts cover frames 0 to 23 and both views, none empty). Unit run beside an outside Rust build (CPU 100%, `rustc`): the same 5 s timeouts as before (`build.test.ts` deterministic and renders once, `renders.test.ts` orphans), 254 others passed; load, CI is the gate.
+
+`npm run perf:ref` first run (2026-10-16 11:44): Chromium all three profiles finished; Edge 1366x768 stopped once on a first 3D draw not shown within 10 s. Rerun alone it passed (6.9 min). Unreproduced; the full run is repeated in a quiet slot for the KPI table.
 
 ## Checks
 
@@ -28116,12 +28126,18 @@ export default tseslint.config(
 
 ### library/LESSONS.md
 
-Paths: `library/LESSONS.md`. SHA-256 `6bf9df95d407acc267ce24b81d4d1f03184f6b916ef0264bdbed066bb0e9a243`, 12311 bytes.
+Paths: `library/LESSONS.md`. SHA-256 `20d8901ca738b4f12ec152e8190b2d4ef8b7cf33b9b887209cae4a9dd223a11d`, 13125 bytes.
 
 ```markdown
 # Lessons learned
 
 Each entry: what happened, the rule it produced, and the check that now enforces it. Newest first. Examples come from SEA Game (a classroom auction game with photoreal vehicle renders and a real-time 3D showcase, one offline HTML file).
+
+## 2026-10-16 · A test that was working, not hung, when its time ran out
+
+- **What happened:** the stills contrast test checked the front, the rear and all 24 turntable frames of a vehicle in one test, three screenshots a frame. On a slow CI runner it timed out at two minutes; the trace showed it on frame 23 of 24, every step merely slow. The same test took 50 to 84 seconds elsewhere in the same run.
+- **Rule:** when a test's work grows with what it samples, give it room by splitting, never by raising the timeout: parts that together cover everything, and a guard that fails if the parts stop adding up.
+- **Check (as built in SEA Game):** three stills tests per mission of eight frames each (the first also the front and rear), and an assertion that the turntable still has the 24 frames the parts cover.
 
 ## 2026-10-16 · Passed at one pose, failed at the next; blank because lazy; slow because shared
 
@@ -28586,7 +28602,7 @@ Send the file with a one-page guide: how to open it, a solo walk-through (two ta
 
 ### library/practices/delivery-loop.md
 
-Paths: `library/practices/delivery-loop.md`. SHA-256 `ec5c0dfeb892356f32754dd065f7387db0f23568dabcb3bf120d27f4e08ea140`, 3292 bytes.
+Paths: `library/practices/delivery-loop.md`. SHA-256 `57ccd531db9b22fbebce8802d2ea421bae2820d3cff7d1cccb40bf47dd095828`, 3553 bytes.
 
 ```markdown
 # Delivery loop
@@ -28610,6 +28626,7 @@ A loop that ships one goal at a time with evidence, so any person or agent can p
 - Things only a person can do are BLOCKED-owner with a one-page script in `docs/owner/`, never a vague request.
 - Keep budgets, timeouts and oracles in one place, with the reason for each number.
 - A test that times out while every step is merely slow is starved, not hung: find what shares its processor. Run heavy tests (software-rendered 3D, long rehearsals) one at a time in their own group after the light ones, and never raise the timeout instead.
+- A test whose work grows with what it samples (every view, every frame) outgrows its time on a slow runner while still working: read the trace for where it was, then split it into parts that together cover everything, with a guard that the parts still add up.
 
 ## Versioning
 
@@ -40613,7 +40630,7 @@ export async function studentRecord(page: Page, cardId: string, paidDollars: num
 
 ### tests/e2e/showcase.spec.ts
 
-Paths: `tests/e2e/showcase.spec.ts`. SHA-256 `f12a330c84bc40beb9c598b00217661973bde92d2156c3f8e8bd2bcbda09f401`, 38309 bytes.
+Paths: `tests/e2e/showcase.spec.ts`. SHA-256 `ebfe6eb35dec21cb96ad2499e133c9772e857d6762f47b08849554065f5a3b54`, 39026 bytes.
 
 ```ts
 // War-room HUD and vehicle showcase (MPES §7.1, §10, §11): the default look of every view. The live lot shows the
@@ -41100,6 +41117,9 @@ const TURN_STEPS = 16, HALF = TURN_STEPS / 2;
 /** How far `to` lies from `from` round the turn, in sixteenths (0 to 15.99). */
 const sixteenths = (from: number, to: number) => ((((to - from) % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI)) / (Math.PI / 8);
 
+/** The stills turntable has 24 frames; each test checks a third of them (the first also the front and rear views). */
+const STILL_FRAMES = 24, FRAMES_PER_TEST = 8;
+
 for (const mission of ['COMBAT', 'RECCE', 'TROOP', 'COMMAND', 'RECOVERY', 'MINE']) {
   for (const half of [0, 1]) test(`${mission} vehicle in 3D stands out from its stage on a dim panel at turn steps ${half * HALF} to ${half * HALF + HALF - 1}`, async ({ page }, info) => {
     // Under reduced motion the vehicle does not turn by itself, so every test starts from the same opening pose and the
@@ -41137,7 +41157,9 @@ for (const mission of ['COMBAT', 'RECCE', 'TROOP', 'COMMAND', 'RECOVERY', 'MINE'
     info.annotations.push({ type: 'contrast', description: `${mission} 3D from ${opening.toFixed(3)} bright/whole by step: ${steps.join(' ')}` });
   });
 
-  test(`${mission} vehicle in stills stands out from its stage on a dim panel in every view and turntable frame`, async ({ page }, info) => {
+  for (let part = 0; part < STILL_FRAMES / FRAMES_PER_TEST; part++) test(`${mission} vehicle in stills stands out from its stage on a dim panel${part === 0 ? ' in the front and rear views and' : ' at'} turntable frames ${part * FRAMES_PER_TEST} to ${part * FRAMES_PER_TEST + FRAMES_PER_TEST - 1}`, async ({ page }, info) => {
+    // Every view and all 24 frames in one test outran its time on a slow runner (run 38921636256, Edge, frame 23 of
+    // 24 at 121 s): the parts together cover them all.
     await withoutWebgl(page);
     await joinMission(page, mission);
     const stage = page.locator('#showcase .showcase-stage').first();
@@ -41149,7 +41171,7 @@ for (const mission of ['COMBAT', 'RECCE', 'TROOP', 'COMMAND', 'RECOVERY', 'MINE'
     const views: string[] = [], bare = {};
     // The Cycles stills are darker than the real-time model (front and rear 2.11 to 2.24 on 2026-10-14): held there
     // until the G4 re-render lifts them to 3 (MPES §10.5). These floors may only rise.
-    for (const view of ['front', 'rear']) {
+    for (const view of part === 0 ? ['front', 'rear'] : []) {
       await page.locator(`#showcase-view-${view}`).check();
       await shown(`[data-angle="${view}"]`);
       const still = await vehicleContrast(stage, 'img', bare);
@@ -41160,8 +41182,9 @@ for (const mission of ['COMBAT', 'RECCE', 'TROOP', 'COMMAND', 'RECOVERY', 'MINE'
     }
     await page.locator('#showcase-view-turntable').check();
     const turn = page.locator('#showcase-turn');
-    const last = Number(await turn.getAttribute('max'));
-    for (let frame = 0; frame <= last; frame++) {
+    // The parts cover every frame only while the turntable has exactly STILL_FRAMES of them.
+    expect(Number(await turn.getAttribute('max')) + 1, 'turntable frames').toBe(STILL_FRAMES);
+    for (let frame = part * FRAMES_PER_TEST; frame < (part + 1) * FRAMES_PER_TEST; frame++) {
       await turn.fill(String(frame));
       await shown(`[data-frame="${frame}"]`);
       const still = await vehicleContrast(stage, 'img', bare);
@@ -46071,5 +46094,5 @@ Keys and the commands that make each kind again:
 
 | Path | Bytes | SHA-256 | Why |
 |---|---:|---|---|
-| `docs/MPES.md` | 182847 | `806543565891b6bfc5961fcc89fb4c981f7aa23db659f5e46aaf0731e25e40f1` | The specification, a clean-room document of its own (Omni 5.1.1 §333). |
+| `docs/MPES.md` | 183044 | `2930c22de5f2e86694e427fd9f935c7c90d9074d888e0ca858b4d35ab67f17f0` | The specification, a clean-room document of its own (Omni 5.1.1 §333). |
 | `docs/CODEBASE.md` | | | This file. |
