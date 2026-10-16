@@ -27700,7 +27700,7 @@ A read-only Codex session (gpt-6.1-sol, medium) reviewed the diff (`.artifacts/c
 
 ### docs/verification/0.6.0.0.md
 
-Paths: `docs/verification/0.6.0.0.md`. SHA-256 `a507eab21fa5d1d2c2d73e5e27a1b20186096b36491a602f8bb10a10a62c0808`, 23490 bytes.
+Paths: `docs/verification/0.6.0.0.md`. SHA-256 `7b59ca224e703b023890a4969e0839c00fac17c0682c5932819ed53fad230b1f`, 23796 bytes.
 
 ```markdown
 # Verification record: 0.6.0.0 beta (G3 proxy and runtime) — in progress
@@ -27833,6 +27833,8 @@ The turntable frames that show the side turned from the render's key light are t
 In that run four Firefox 3D tests (TROOP both halves, RECOVERY steps 8 to 15, MINE steps 0 to 7) failed before measuring anything: the browser stopped answering (a page that could not be opened in 120 s, a checkbox click that never returned, once "RenderCompositorSWGL failed mapping default framebuffer"), while other programs held this PC at 87% CPU, the pattern of HANDOVER timing note 2. Rerun alone on the same build (`.artifacts/tmp/contrast/ff.config.ts`): 6 of 6 passed in 45.8 s, each step at 3:1 or more. Not counted as a pass of the gate: CI is.
 
 Unit tests before the commit of this fix, while other programs held the PC at 66 to 87% CPU: three runs, 256 tests, each failing a different one or two on the 5 s unit timeout (`build.test.ts` "is deterministic", `renders.test.ts` orphans, `build.test.ts` built-game check, whose one `git ls-files` took 84 s); every other test passed, and the archive test took 197 s. The load pattern of HANDOVER timing note 2; no timeout changed. A run on a quiet PC or CI is the gate.
+
+Local `npm run verify` of 5f5cf71 (PC at 93% CPU from other programs): typecheck and lint passed; the unit stage failed one test on the 5 s timeout, a fourth different one (`build.test.ts` "embeds the committed renders once", 48 s), so the browser stage did not run. Pushed for CI, the gate on a busy PC.
 
 ## Checks
 
