@@ -23,6 +23,13 @@ const STILLS_CONTRAST_FLOOR = 2.1;
  * may only rise: the 3D floor already holds the whole vehicle to WCAG 3:1.
  */
 const WHOLE_CONTRAST_FLOOR = { live: 3, stills: 1.5 };
+/**
+ * Lowest contrast allowed in the turntable stills until G4: the frames that show the side turned from the render's key
+ * light are darker than the front and rear views (least 1.60 bright, 1.32 whole on all three engines on 2026-10-16,
+ * docs/verification/0.6.0.0.md; the floor is that, rounded down). An open
+ * G4 item lifts every frame to 3 (MPES §10.5). This floor may only rise.
+ */
+const TURNTABLE_FLOOR = { bright: 1.55, whole: 1.3 };
 
 /**
  * The vehicle's luminance contrast with its stage (WCAG 1.4.11 asks 3:1 of a graphic that carries meaning). A dim
@@ -35,7 +42,7 @@ const WHOLE_CONTRAST_FLOOR = { live: 3, stills: 1.5 };
  *   passing a vehicle mostly as dark as its stage; the silhouette counts those pixels too.
  * - `share`: the part of the stage the silhouette covers.
  */
-async function vehicleContrast(stage: Locator, vehicle: string): Promise<{ bright: number; whole: number; share: number }> {
+async function vehicleContrast(stage: Locator, vehicle: string, stageOnly?: { data?: Buffer }): Promise<{ bright: number; whole: number; share: number }> {
   const shoot = async () => sharp(await stage.screenshot()).removeAlpha().raw().toBuffer({ resolveWithObject: true });
   const style = (css: Record<string, string>, selector?: string) => (selector ? stage.locator(selector) : stage)
     .evaluateAll((els, c) => els.forEach(e => Object.assign((e as HTMLElement).style, c)), css);
@@ -45,9 +52,15 @@ async function vehicleContrast(stage: Locator, vehicle: string): Promise<{ brigh
   await style({ background: '#fff' });
   const { data: white } = await shoot();
   await style({ background: '' });
-  await style({ visibility: 'hidden' }, vehicle);
-  const { data: bare } = await shoot();
-  await style({ visibility: '' }, vehicle);
+  // The bare stage does not change as the vehicle turns or the frames step: a caller measuring many poses passes
+  // `stageOnly` and it is shot once (sixteen poses in one test outran their time on a loaded machine, 2026-10-16).
+  let bare = stageOnly?.data;
+  if (!bare) {
+    await style({ visibility: 'hidden' }, vehicle);
+    bare = (await shoot()).data;
+    await style({ visibility: '' }, vehicle);
+    if (stageOnly) stageOnly.data = bare;
+  }
   const linear = (c: number) => (c /= 255) <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
   const at = (data: Buffer, i: number) => 0.2126 * linear(data[i]!) + 0.7152 * linear(data[i + 1]!) + 0.0722 * linear(data[i + 2]!);
   const median = (values: number[]) => values.sort((a, b) => a - b)[values.length >> 1] ?? 0;
@@ -451,46 +464,95 @@ test('stills fallback decodes each layer once: purchases, angle changes and turn
 });
 
 // Every vehicle has its showcase in 3D and in stills, and (G3 panel safety) on a dim laptop panel it still stands out
-// from its stage in both. One test a vehicle: six in one test outran its time on a loaded CI runner (run 38577929333).
+// from its stage in both, at every angle the player can see. One test a vehicle and a renderer: six in one test outran
+// its time on a loaded CI runner (run 38577929333). Every angle: one sample at wherever the pause landed passed and
+// failed by timing, because the far side of the vehicle was dark for half of every turn (run 38609311138).
+async function joinMission(page: import('@playwright/test').Page, mission: string): Promise<void> {
+  guardNetwork(page);
+  await page.goto(gameUrl('?role=student&lang=en'));
+  await studentJoin(page, 'SEA3-T2-0123456789ABCDEF', 1, mission);
+  await page.check('#plan-confirm');
+  await page.click('#student-start-auction');
+  await confirmDialog(page);
+}
+
+/** The 3D showcase turns in sixteen steps (TURN_STEP, a sixteenth of a turn); each test measures half a turn. */
+const TURN_STEPS = 16, HALF = TURN_STEPS / 2;
+
+/** How far `to` lies from `from` round the turn, in sixteenths (0 to 15.99). */
+const sixteenths = (from: number, to: number) => ((((to - from) % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI)) / (Math.PI / 8);
+
 for (const mission of ['COMBAT', 'RECCE', 'TROOP', 'COMMAND', 'RECOVERY', 'MINE']) {
-  test(`${mission} vehicle has its showcase in 3D and in stills, and stands out from its stage on a dim panel`, async ({ browser }) => {
-    const join = async (page: import('@playwright/test').Page) => {
-      guardNetwork(page);
-      await page.goto(gameUrl('?role=student&lang=en'));
-      await studentJoin(page, 'SEA3-T2-0123456789ABCDEF', 1, mission);
-      await page.check('#plan-confirm');
-      await page.click('#student-start-auction');
-      await confirmDialog(page);
-    };
-    const gpuContext = await browser.newContext(), gpu = await gpuContext.newPage();
-    await withGpu(gpu);
-    await join(gpu);
-    const model = gpu.locator('#showcase [role="img"]');
+  for (const half of [0, 1]) test(`${mission} vehicle in 3D stands out from its stage on a dim panel at turn steps ${half * HALF} to ${half * HALF + HALF - 1}`, async ({ page }, info) => {
+    // Under reduced motion the vehicle does not turn by itself, so every test starts from the same opening pose and the
+    // two halves together cover all sixteen steps; sixteen in one test outran its time on a loaded machine (2026-10-16).
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await withGpu(page);
+    await joinMission(page, mission);
+    const model = page.locator('#showcase [role="img"]');
     await expect(model).toHaveAttribute('data-ready', 'true', { timeout: 30_000 });
-    // Ready means the scene is set, not drawn: on a loaded machine the first frame came after the shots, so all four
-    // were an empty stage (verify of fe4df5d, Firefox, 12 workers). The pause draws once; the shots wait for that draw.
+    // Ready means the scene is set, not drawn (verify of fe4df5d, Firefox, 12 workers): the shots wait for a draw.
+    await expect(model).toHaveAttribute('data-drawn');
     const canvas = model.locator('canvas');
     await canvas.evaluate(c => { c.addEventListener('sea-draw', () => { c.dataset['draws'] = String(Number(c.dataset['draws'] ?? 0) + 1); }); });
-    await gpu.getByRole('button', { name: 'Pause turning', exact: true }).click();
-    await expect(canvas).toHaveAttribute('data-draws', /\d/);
-    const live = await vehicleContrast(model, 'canvas');
-    expect(live.share, '3D vehicle covers its stage').toBeGreaterThan(0.05);
-    expect(live.bright, '3D').toBeGreaterThanOrEqual(3);
-    expect(live.whole, '3D whole vehicle').toBeGreaterThanOrEqual(WHOLE_CONTRAST_FLOOR.live);
-    await gpuContext.close();
-    const flatContext = await browser.newContext(), flat = await flatContext.newPage();
-    await withoutWebgl(flat);
-    await join(flat);
-    const base = flat.locator('#showcase img[data-layer="base"]');
-    await expect(base).toHaveCount(1);
-    await expect.poll(() => base.evaluate(i => (i as HTMLImageElement).complete && (i as HTMLImageElement).naturalWidth > 0)).toBe(true);
-    // The Cycles stills are darker than the real-time model (2.11 to 2.14 on 2026-10-14): held there until the G4
-    // re-render lifts them to 3 (MPES §10.5). This floor may only rise.
-    const still = await vehicleContrast(flat.locator('#showcase .showcase-stage').first(), 'img');
-    expect(still.share, 'still vehicle covers its stage').toBeGreaterThan(0.05);
-    expect(still.bright, 'stills').toBeGreaterThanOrEqual(STILLS_CONTRAST_FLOOR);
-    expect(still.whole, 'stills whole vehicle').toBeGreaterThanOrEqual(WHOLE_CONTRAST_FLOOR.stills);
-    await flatContext.close();
+    const pose = async () => Number(await model.getAttribute('data-azimuth'));
+    const opening = await pose();
+    const turn = async () => {
+      const drawn = Number(await canvas.getAttribute('data-draws') ?? 0);
+      await page.getByRole('button', { name: 'Turn right', exact: true }).click();
+      await expect.poll(async () => Number(await canvas.getAttribute('data-draws') ?? 0)).toBeGreaterThan(drawn);
+    };
+    for (let step = 0; step < half * HALF; step++) await turn();
+    const steps: string[] = [], bare = {};
+    for (let step = half * HALF; step < half * HALF + HALF; step++) {
+      // A draw alone does not prove a new pose (Codex D11: a turn by nothing still draws): each shot must be the
+      // vehicle turned by exactly `step` sixteenths from the opening pose.
+      const at = sixteenths(opening, await pose());
+      expect.soft(Math.min(Math.abs(at - step), TURN_STEPS - Math.abs(at - step)), `pose of step ${step}`).toBeLessThan(0.01);
+      const live = await vehicleContrast(model, 'canvas', bare);
+      steps.push(`${step}:${live.bright.toFixed(2)}/${live.whole.toFixed(2)}`);
+      expect.soft(live.share, `3D vehicle covers its stage, step ${step}`).toBeGreaterThan(0.05);
+      expect.soft(live.bright, `3D, step ${step}`).toBeGreaterThanOrEqual(3);
+      expect.soft(live.whole, `3D whole vehicle, step ${step}`).toBeGreaterThanOrEqual(WHOLE_CONTRAST_FLOOR.live);
+      if (step < half * HALF + HALF - 1) await turn();
+    }
+    info.annotations.push({ type: 'contrast', description: `${mission} 3D from ${opening.toFixed(3)} bright/whole by step: ${steps.join(' ')}` });
+  });
+
+  test(`${mission} vehicle in stills stands out from its stage on a dim panel in every view and turntable frame`, async ({ page }, info) => {
+    await withoutWebgl(page);
+    await joinMission(page, mission);
+    const stage = page.locator('#showcase .showcase-stage').first();
+    const shown = async (selector: string) => {
+      const base = page.locator(`#showcase img[data-layer="base"]${selector}`);
+      await expect(base).toHaveCount(1);
+      await expect.poll(() => base.evaluate(i => (i as HTMLImageElement).complete && (i as HTMLImageElement).naturalWidth > 0)).toBe(true);
+    };
+    const views: string[] = [], bare = {};
+    // The Cycles stills are darker than the real-time model (front and rear 2.11 to 2.24 on 2026-10-14): held there
+    // until the G4 re-render lifts them to 3 (MPES §10.5). These floors may only rise.
+    for (const view of ['front', 'rear']) {
+      await page.locator(`#showcase-view-${view}`).check();
+      await shown(`[data-angle="${view}"]`);
+      const still = await vehicleContrast(stage, 'img', bare);
+      views.push(`${view}:${still.bright.toFixed(2)}/${still.whole.toFixed(2)}`);
+      expect.soft(still.share, `still vehicle covers its stage, ${view}`).toBeGreaterThan(0.05);
+      expect.soft(still.bright, `stills, ${view}`).toBeGreaterThanOrEqual(STILLS_CONTRAST_FLOOR);
+      expect.soft(still.whole, `stills whole vehicle, ${view}`).toBeGreaterThanOrEqual(WHOLE_CONTRAST_FLOOR.stills);
+    }
+    await page.locator('#showcase-view-turntable').check();
+    const turn = page.locator('#showcase-turn');
+    const last = Number(await turn.getAttribute('max'));
+    for (let frame = 0; frame <= last; frame++) {
+      await turn.fill(String(frame));
+      await shown(`[data-frame="${frame}"]`);
+      const still = await vehicleContrast(stage, 'img', bare);
+      views.push(`t${frame}:${still.bright.toFixed(2)}/${still.whole.toFixed(2)}`);
+      expect.soft(still.share, `still vehicle covers its stage, turntable ${frame}`).toBeGreaterThan(0.05);
+      expect.soft(still.bright, `stills, turntable ${frame}`).toBeGreaterThanOrEqual(TURNTABLE_FLOOR.bright);
+      expect.soft(still.whole, `stills whole vehicle, turntable ${frame}`).toBeGreaterThanOrEqual(TURNTABLE_FLOOR.whole);
+    }
+    info.annotations.push({ type: 'contrast', description: `${mission} stills bright/whole by view: ${views.join(' ')}` });
   });
 }
 

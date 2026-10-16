@@ -13,6 +13,7 @@ Every component must read as a separate object at a glance: in a still, in real-
 - Three-point lighting placed relative to the camera, not the world, so each view gets the same roles: key 45° camera-left and 35° up; fill 35° camera-right, 20° up; rim (back light) about 145° and 25° up.
 - Key:fill about 2.5–3:1 (*start*). Projectors lift shadows, so do not go darker than 4:1.
 - Rim light draws outlines against the background and against parts behind. In real-time 3D, parent a weak, unshadowed directional light to the camera (about half the key, slightly cool) so the outline holds as the model turns. Cost: one extra light per fragment, no extra shadow pass.
+- A world-fixed key (the one that casts the shadow) lights only one side: as a model turns, the faces the camera sees go dark. Add a fill that also rides with the camera, beside it and aimed past the model, so every pose stays lit; tune it on the worst pose, then check the brightest for clipping.
 - Keep the rig fixed across all layers of one angle; scale card rigs to the subject's size. Fewer than 1% clipped pixels on non-emissive parts.
 - Colour management: light and shade in linear space; colour textures and final output in sRGB; normal, roughness, metalness and AO maps as non-colour data; check that the exported model looks the same in the target viewer as in the renderer.
 - Tone mapping: AgX or ACES; compare exposures on identical subjects; check hue shifts on the palette.
@@ -46,6 +47,7 @@ Every component must read as a separate object at a glance: in a still, in real-
 
 - In force (example project): picture sightline check, overlap, fit, triangle budgets, WCAG contrast in end-to-end tests.
 - Find the subject before measuring its contrast, and find it without looking at its brightness: shoot it on black and on white; what stays the same is the opaque subject. A mask of "bright pixels" or "pixels that differ from the background" leaves out the dark parts a contrast check exists to catch. Prove the oracle on a synthetic subject that is mostly invisible.
+- Measure every angle, view and frame the viewer can reach (every turntable step, every still), never one sample pose: a pass at one pose says nothing about the next.
 - Next: render a per-component ID mask for each still; fail a component whose visible area falls below a share of its own (start 35% in at least one angle), or whose boundary contrast with neighbours is under 1.5:1 along 70% of its edge; judge the encoded images at displayed sizes, in greyscale and under colour-vision simulation. Simulate projector washout (start: 15% white veil) on the interface.
 
 ## Sources

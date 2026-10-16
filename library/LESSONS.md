@@ -2,6 +2,12 @@
 
 Each entry: what happened, the rule it produced, and the check that now enforces it. Newest first. Examples come from SEA Game (a classroom auction game with photoreal vehicle renders and a real-time 3D showcase, one offline HTML file).
 
+## 2026-10-16 · Passed at one pose, failed at the next; blank because lazy; slow because shared
+
+- **What happened:** a 3D vehicle passed its contrast check (3:1) at the pose the test happened to shoot, then failed on CI at another: its key light was fixed in the world, so once turned, the faces the camera saw were unlit (1.5:1). On the same run a screenshot of the first screen found its thumbnails blank: they were loaded lazily and a busy runner had not fetched them yet. And a light browser test ran out of its two minutes, uniformly slow at every step, because it shared a two-core runner with a software-rendered 3D test.
+- **Rule:** a check samples every angle, view and frame the user can reach, never one sample. Light the faces the camera sees from the camera (a fill that rides with it), keep the key in the world for shadows. Load at once whatever the first screen shows; lazy loading is for what needs scrolling. Run heavy tests one at a time in their own group, after the light ones, instead of raising a timeout.
+- **Check (as built in SEA Game):** the per-mission 3D contrast test turns the vehicle through all 16 turntable steps and requires 3:1 at each; the stills test covers front, rear and every turntable frame; the chooser test fails a lazy first-screen image and waits until each is complete; a unit test reads the Playwright configuration and fails unless each engine's heavy specs run in their own one-worker project after the light ones.
+
 ## 2026-10-14 · A stage in plain view that never drew; a contrast check blind to dark pixels
 
 - **What happened:** under a loaded local test run, Firefox showed an empty 3D stage. A temporary build that exposed the stage's state showed that the WebGL context was live and the canvas was on screen, but the stage's IntersectionObserver had last reported "not visible" (it first saw the canvas before it was on the page) and never reported again. The stage had drawn once in a minute. Separately, a reviewer showed that two contrast oracles were blind to dark pixels: one took only pixels brighter than the background, and the next took only pixels that differ from it. A vehicle mostly as dark as its stage passed both.

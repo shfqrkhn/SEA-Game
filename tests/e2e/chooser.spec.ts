@@ -170,7 +170,12 @@ test.describe('role chooser over file:// (RQ-01, RQ-19, RQ-20)', () => {
         await expect(img).toHaveAttribute('width', /^\d+$/);
         await expect(img).toHaveAttribute('height', /^\d+$/);
       }
-      for (const img of await page.locator('[role="group"] img').all()) await expect(img).toHaveAttribute('loading', 'lazy');
+      // All six vehicles are on the first screen, so none waits to be scrolled to: lazy lineup stills were still blank
+      // when the light-theme baseline was shot on a loaded CI runner (run 38609311138). Loaded without being asked:
+      // no decode() here.
+      for (const img of await images.all()) expect(await img.getAttribute('loading'), 'first-screen still loads eagerly').not.toBe('lazy');
+      await expect.poll(() => images.evaluateAll(list => (list as HTMLImageElement[])
+        .filter(img => img.getBoundingClientRect().top < innerHeight && !(img.complete && img.naturalWidth > 0)).length)).toBe(0);
       await page.evaluate(() => Promise.all([...document.images].map(img => img.decode())));
       // Sharp: no still is drawn larger than its pixels at 2x device pixels.
       const blurry = await images.evaluateAll(list => (list as HTMLImageElement[])

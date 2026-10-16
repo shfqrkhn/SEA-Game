@@ -59,7 +59,7 @@ function lineup(lang: Language): HTMLElement | null {
         if (move) { event.preventDefault(); select(move(index), true); }
       },
     },
-  }, h('img', { src: still.src, alt: '', decoding: 'async', loading: 'lazy', ...size(still) }), h('span', { text: missionName(id, lang) })));
+  }, h('img', { src: still.src, alt: '', decoding: 'async', ...size(still) }), h('span', { text: missionName(id, lang) })));
   return h('div', { class: 'hero-lineup' }, large, h('div', { class: 'lineup', role: 'group', 'aria-label': translate(lang, 'chooser.lineup') }, ...buttons));
 }
 

@@ -1,6 +1,6 @@
 # SEA Game codebase
 
-Version 0.6.0.0. Written by `npm run codebase` (scripts/codebase.ts); do not edit by hand. It holds all 1051 tracked files of the repository: 195 text files as 192 unique contents, 854 binary files by hash with the command that regenerates them, and 2 documents kept separately. With docs/MPES.md it is enough to rebuild the project.
+Version 0.6.0.0. Written by `npm run codebase` (scripts/codebase.ts); do not edit by hand. It holds all 1052 tracked files of the repository: 196 text files as 193 unique contents, 854 binary files by hash with the command that regenerates them, and 2 documents kept separately. With docs/MPES.md it is enough to rebuild the project.
 
 ## How to rebuild the tree
 
@@ -27041,7 +27041,7 @@ Exportez une sauvegarde par **Menu → Exporter une sauvegarde** après la confi
 
 ### docs/HANDOVER.md
 
-Paths: `docs/HANDOVER.md`. SHA-256 `64fa00ad64565b0239bdb2aa610c188158730c87b786c6583bba9ff43d6b2ae9`, 12461 bytes.
+Paths: `docs/HANDOVER.md`. SHA-256 `2f54ca0c97c4a0292cafef90730075847cc51055b9baf8bf36f6ffc664f1798c`, 12882 bytes.
 
 ```markdown
 # Handover
@@ -27097,7 +27097,7 @@ Shared rules for every goal: `AGENTS.md`. KPIs and priority: MPES §1.4.
 - **Known timing note:** `tests/unit/codebase.test.ts` usually runs in under half a second but once took 7.1 s (2026-10-11, cause unknown, result correct, not reproduced in 22 runs); it has an explicit 60 s bound with that evidence in a comment. Watch for a repeat.
 - **Known timing note 2:** `tests/unit/build.test.ts` "is deterministic" once timed out (63 s against 5 s) while other projects' test runs loaded this PC (2026-10-12); it passed in 5.3 s on re-run. The same day `tests/unit/archive.test.ts` "refuses a path that holds a tracked file" timed out the same way (5 s; 80 ms alone); its scratch clones had piled up in `.artifacts/tmp` and are now removed after each run (`tests/unit/scratch.test.ts`). On 2026-10-12 at 97% CPU two Firefox tests (`layout.spec.ts` live lot, `showcase.spec.ts` every vehicle) timed out with an unchanged build and passed alone. If either repeats on a quiet machine, find the cause; do not raise the timeout.
 - **Known timing note 3:** CI failed the showcase update budget once too (109 ms against 100, `78cca1f`, 2026-10-12). With Windows Defender and other projects busy, the local perf project fails a 3D update budget in about half of its runs, at the previous commit as often as now (A/B in `docs/verification/0.5.1.0.md`). Run it on a quiet machine; never raise the budgets. G3's `perf:ref` protocol is meant to settle this.
-- **Whole-vehicle contrast (for G4):** measured on the vehicle's silhouette (stage shot on black and on white), the vehicles stand at 3.16 to 3.72:1 in 3D, meeting WCAG 1.4.11, and 1.56 to 1.66:1 in stills on the dark stage. The floors (3 and 1.5 in `tests/e2e/showcase.spec.ts`) may only rise; G4 lifts the stills to 3 through lighting, value separation and the re-render (MPES §10.5).
+- **Whole-vehicle contrast (for G4):** measured on the vehicle's silhouette (stage shot on black and on white) at every view the player can reach. In 3D, with the camera-relative fill added after red run 38609311138, every vehicle holds at least 3:1 at all 16 turn steps (least 3.23, RECOVERY's rear view; `docs/verification/0.6.0.0.md`). In stills the front and rear views stand at about 1.6:1 whole on the dark stage and the turntable frames lower; their floors in `tests/e2e/showcase.spec.ts` are the measured least values and may only rise; G4 lifts every still view and frame to 3 through lighting, value separation and the re-render (MPES §10.5). Also for G4: the RECCE roof is pale in 3D side view (realism, under 1% clipped); the vehicle on the light theme's white stage is not yet contrast-checked.
 - **Residual risks:** real learners (S3); Narrator and NVDA users; no physical laptop test (D-16); CI runs Windows Server, not Windows 11; art quality is the owner's judgement.
 
 ## 4. In-progress work
@@ -27700,7 +27700,7 @@ A read-only Codex session (gpt-6.1-sol, medium) reviewed the diff (`.artifacts/c
 
 ### docs/verification/0.6.0.0.md
 
-Paths: `docs/verification/0.6.0.0.md`. SHA-256 `6f9f0fc891ba1de6fd4080eed04c9d76b38b4388bcfa3ac19598cad2fd82aac9`, 16885 bytes.
+Paths: `docs/verification/0.6.0.0.md`. SHA-256 `a507eab21fa5d1d2c2d73e5e27a1b20186096b36491a602f8bb10a10a62c0808`, 23490 bytes.
 
 ```markdown
 # Verification record: 0.6.0.0 beta (G3 proxy and runtime) — in progress
@@ -27794,8 +27794,45 @@ Local verify of 6dd12fa failed in the codebase and specification tests: two new 
 | D8 | Review of fe4df5d: the whole-vehicle oracle left out every pixel within 8 levels of the stage, the very low-contrast pixels it should measure (Codex's case: 90% of a vehicle invisible, reported 8.89:1) | Fixed: the vehicle is found without looking at its brightness. The stage is shot on black and on white; a pixel that stays the same is opaque vehicle, and its shadow and the stage change. Every silhouette pixel is measured against the same pixel of the bare stage, so in Codex's case the invisible 90% sets the median and it fails. Inspected side by side (`.artifacts/tmp/contrast/sil-grid.png`: shot and silhouette, COMBAT and RECOVERY, 3D and stills): the silhouette is the vehicle alone, crane and antennas included, with no shadow or stage. Measured on Chromium, Firefox and Edge for all six vehicles: 3D 3.16 to 3.72, stills 1.56 to 1.66. These are higher than the old mask's figures because the ground shadow, darker than the stage, no longer counts as vehicle. The floors rise from 2.7 to 3 (3D, now WCAG 3:1) and from 1.4 to 1.5 (stills) |
 | D9 | Local verify of fe4df5d: five of six per-mission showcase tests failed in Firefox with an empty stage (12 workers). Reproduced with 10 workers (2 of 24 failed), and diagnosed with a temporary build that exposed the stage's state: the context was live and the canvas in view, but the stage's visibility observer last said "not visible" and never reported again. The stage had drawn one tick in 60 s | A product defect, not a test flake: a student's stage could stay blank. Fixed: each time the canvas is put on the page the stage asks for its visibility afresh and drops undelivered reports (`source/showcase/model.ts` `attached`). Failing check first: a new browser test in which every observation reports only once failed on all three engines, then passed. The contrast test now also waits for the stage's own draw after pausing, since "ready" means the scene is set, not drawn. The loaded repro then passed 24 of 24. Sibling sweep: the only other observer, the stage's resize observer, reports on the first layout after any change of size; re-asking it would reset the canvas each purchase, so it stays |
 | D10 | Review of d13d6e3: the disposal check still accepted an options spread or a second `signal` that overrides the stage's (Codex ran it: all three checks passed and the listener fired after the stage aborted) | Fixed: the check now reads the source through the TypeScript parser, not text: options must be a plain object literal with exactly one `signal`, that `signal` the only binding of the name and destructured from the stage's controller, and dispose must call the controller's `abort()` as a statement of its own. Eight mutations, the spread, the duplicate and a conditional abort among them, each fail it |
+| D11 | Review of the fix for run 38609311138: the 3D test waited for a new draw after each "Turn right", but a draw does not prove a new pose; a turn wired to nothing would still draw, and all sixteen shots could be the same bright pose | Fixed: the test reads the stage's reported azimuth before each shot and requires each step to turn the vehicle by one sixteenth and the sixteen poses to differ (`tests/e2e/showcase.spec.ts`). Failing first: with "Turn right" turning by nothing, the check failed at every step (pose 1, 2, 3 … sixteenths off). The same pass split each mission's 3D test into two half-turn tests from the same opening pose (reduced motion, so the vehicle does not turn by itself) and shoots the bare stage once per test: sixteen poses in one test ran out of time on a loaded PC (see below) |
+| D12 | Same review: an ad hoc `--project=chromium` now finds no showcase or rehearsal test; they run in `chromium-heavy` (and `firefox-heavy`, `msedge-heavy`) | By design (run 38609311138, third cause). Written into MPES (`playwright.config.ts` row) and HANDOVER; no script or workflow filters by project except the visual baselines, which stay in the light projects |
 
 Local verify of d13d6e3: every functional test passed (173); the three performance gates failed on this shared PC (command p95 100.8 ms, stills update p95 143.6 ms, 3D ready 4.46 s) while its other work held the processor busy. Local timings are void by the standing rule; CI on the pushed head is the gate, and two of the three scenarios do not run the changed stage code.
+
+### Red run 38609311138 (head 5b85c14): three causes
+
+Diagnosed before any rerun, from the job logs, the visual diff and the Playwright traces (`.artifacts/tmp/ci/r24`).
+
+| Job and test | Evidence | Cause | Fix | Check |
+|---|---|---|---|---|
+| verify (24), Chromium and Edge: COMBAT and RECOVERY in 3D, whole-vehicle contrast under 3 | The test measured one pose. A probe turning each vehicle through all 16 steps of the turntable (`.artifacts/tmp/contrast/probe4`) found the far side at 1.43 to 1.55 whole, against 3.2 to 3.7 at the starting pose | The sun is fixed in the world, so as the vehicle turns its lit side turns away from the camera; the camera-relative rim light draws the outline but does not light the faces. Which pose CI happened to shoot decided the result | A cool fill light rides with the camera (beside it, aimed past the vehicle), so the faces the camera sees are always lit; exposure unchanged (1.05), sun and ground shadow unchanged (`source/showcase/model.ts`). Tuned in five steps, each inspected side by side (`.artifacts/tmp/contrast/fill8-grid.png`, `fill9-vs-8.png`): least whole contrast over every vehicle and step 3.0 (RECOVERY 2.57) at fill 3.2, 3.45 (2.96) at 3.6 with exposure 1.15, 3.72 (3.28) at 4.5 with exposure 1.15, final at 5.2 with exposure 1.05 (see the per-vehicle table below). Clipping: at most 0.99% of lit pixels at 235 or above (COMMAND and MINE at step 5); no washout. The RECCE roof is pale in side view: a realism note for G4 | `tests/e2e/showcase.spec.ts`: each mission's 3D test turns the vehicle through all 16 steps and requires bright and whole contrast of 3 at every one. Failing first on the old lighting (Chromium): COMBAT whole 1.54 to 1.67 at steps 4 to 7 (bright 1.8) and RECOVERY failed |
+| verify (24), Chromium: chooser light-theme screenshot, 9511 pixels differ | The diff image: lineup stills blank | The six lineup stills were `loading="lazy"`. They are all on the first screen, but on a loaded runner the browser had not fetched them when the baseline was shot | The lineup stills load eagerly (`source/main.ts`); swept: no other lazy image in the source | `tests/e2e/chooser.spec.ts`: no first-screen image is lazy, and every image in the first screen is complete with pixels before the screenshot; failed first with "not 'lazy'" |
+| verify (24), Edge: one-round slice test timed out at 120 s | Trace: no step hung; every step was uniformly slow. The same test took 16.5 s on verify (22) Chromium, 1.7 min on verify (24) Chromium, 2.0 min on Edge and 32.9 s on Firefox. In the same run the software-WebGL showcase tests took 44 s to 1.6 min each and rehearsal 6.3 min on Edge (2.9 min on Chromium) | Two workers: a light test shared the runner's two cores with a software-rendered 3D test, and the 3D test's renderer took most of them | The heavy specs (showcase, rehearsal) run in their own project per engine, one test at a time, after every light project and after the previous engine's heavy project (`playwright.config.ts`); no timeout changed, no test dropped | `tests/unit/e2e-config.test.ts`: every engine has a heavy twin with one worker, its dependencies and its spec split; two of its four checks failed on the old configuration |
+
+Final 3D lighting, least contrast over the 16 steps (Chromium, local, before the three-engine run):
+
+| Vehicle | Whole | Note |
+|---|---|---|
+| COMBAT | 3.78 | |
+| RECCE | 3.82 | |
+| TROOP | 3.54 | |
+| COMMAND | 3.78 | |
+| RECOVERY | 3.23 | Least at steps 8 and 9: the rear view, small in the frame because the crane widens the framing |
+| MINE | 3.78 | |
+
+Three-engine run of the fixed build (2026-10-16, `.artifacts/tmp/contrast/fixed2.json`, every mission's two 3D half-turn tests and its stills test, Chromium, Firefox and Edge, one worker), least contrast measured:
+
+| View | Bright | Whole | Floor (bright, whole) |
+|---|---|---|---|
+| 3D, all 16 steps, every vehicle | 3.50 (RECOVERY rear, Chromium) | 3.23 (same) | 3, 3 |
+| Stills front and rear | 2.11 | 1.56 | 2.1, 1.5 |
+| Stills, every turntable frame | 1.60 | 1.32 | 1.55, 1.3 (new; the measured least, rounded down) |
+
+The turntable frames that show the side turned from the render's key light are the darkest stills; G4 lifts every still view and frame to 3:1 (HANDOVER §3, MPES §10.5). Each vehicle's least 3D whole contrast: COMBAT 3.81, RECCE 3.78, TROOP 3.57, COMMAND 3.78, RECOVERY 3.23, MINE 3.78.
+
+In that run four Firefox 3D tests (TROOP both halves, RECOVERY steps 8 to 15, MINE steps 0 to 7) failed before measuring anything: the browser stopped answering (a page that could not be opened in 120 s, a checkbox click that never returned, once "RenderCompositorSWGL failed mapping default framebuffer"), while other programs held this PC at 87% CPU, the pattern of HANDOVER timing note 2. Rerun alone on the same build (`.artifacts/tmp/contrast/ff.config.ts`): 6 of 6 passed in 45.8 s, each step at 3:1 or more. Not counted as a pass of the gate: CI is.
+
+Unit tests before the commit of this fix, while other programs held the PC at 66 to 87% CPU: three runs, 256 tests, each failing a different one or two on the 5 s unit timeout (`build.test.ts` "is deterministic", `renders.test.ts` orphans, `build.test.ts` built-game check, whose one `git ls-files` took 84 s); every other test passed, and the archive test took 197 s. The load pattern of HANDOVER timing note 2; no timeout changed. A run on a quiet PC or CI is the gate.
 
 ## Checks
 
@@ -28077,12 +28114,18 @@ export default tseslint.config(
 
 ### library/LESSONS.md
 
-Paths: `library/LESSONS.md`. SHA-256 `e0b64a4c2950aaba205f49fb199420d26bbd4a76640fa4f8bd3ba7bc566f61c6`, 10842 bytes.
+Paths: `library/LESSONS.md`. SHA-256 `6bf9df95d407acc267ce24b81d4d1f03184f6b916ef0264bdbed066bb0e9a243`, 12311 bytes.
 
 ```markdown
 # Lessons learned
 
 Each entry: what happened, the rule it produced, and the check that now enforces it. Newest first. Examples come from SEA Game (a classroom auction game with photoreal vehicle renders and a real-time 3D showcase, one offline HTML file).
+
+## 2026-10-16 · Passed at one pose, failed at the next; blank because lazy; slow because shared
+
+- **What happened:** a 3D vehicle passed its contrast check (3:1) at the pose the test happened to shoot, then failed on CI at another: its key light was fixed in the world, so once turned, the faces the camera saw were unlit (1.5:1). On the same run a screenshot of the first screen found its thumbnails blank: they were loaded lazily and a busy runner had not fetched them yet. And a light browser test ran out of its two minutes, uniformly slow at every step, because it shared a two-core runner with a software-rendered 3D test.
+- **Rule:** a check samples every angle, view and frame the user can reach, never one sample. Light the faces the camera sees from the camera (a fill that rides with it), keep the key in the world for shadows. Load at once whatever the first screen shows; lazy loading is for what needs scrolling. Run heavy tests one at a time in their own group, after the light ones, instead of raising a timeout.
+- **Check (as built in SEA Game):** the per-mission 3D contrast test turns the vehicle through all 16 turntable steps and requires 3:1 at each; the stills test covers front, rear and every turntable frame; the chooser test fails a lazy first-screen image and waits until each is complete; a unit test reads the Playwright configuration and fails unless each engine's heavy specs run in their own one-worker project after the light ones.
 
 ## 2026-10-14 · A stage in plain view that never drew; a contrast check blind to dark pixels
 
@@ -28541,7 +28584,7 @@ Send the file with a one-page guide: how to open it, a solo walk-through (two ta
 
 ### library/practices/delivery-loop.md
 
-Paths: `library/practices/delivery-loop.md`. SHA-256 `9c8409c4fde1252c7ddbe89e048f736005e12ceb184f506df6cc5fd27bd86588`, 3034 bytes.
+Paths: `library/practices/delivery-loop.md`. SHA-256 `ec5c0dfeb892356f32754dd065f7387db0f23568dabcb3bf120d27f4e08ea140`, 3292 bytes.
 
 ```markdown
 # Delivery loop
@@ -28564,6 +28607,7 @@ A loop that ships one goal at a time with evidence, so any person or agent can p
 - Report every check as PASS, FAIL, NOT_RUN or BLOCKED, with the exact command. No claim without executed evidence.
 - Things only a person can do are BLOCKED-owner with a one-page script in `docs/owner/`, never a vague request.
 - Keep budgets, timeouts and oracles in one place, with the reason for each number.
+- A test that times out while every step is merely slow is starved, not hung: find what shares its processor. Run heavy tests (software-rendered 3D, long rehearsals) one at a time in their own group after the light ones, and never raise the timeout instead.
 
 ## Versioning
 
@@ -28651,7 +28695,7 @@ Chromium and Edge forced onto an Intel integrated GPU (`--use-angle=d3d11 --enab
 
 ### library/practices/visual-legibility.md
 
-Paths: `library/practices/visual-legibility.md`. SHA-256 `0fa06b29aaa9eb5ef5ae43a99416dedeff936dbcc979b7e7e112080105e7b979`, 4895 bytes.
+Paths: `library/practices/visual-legibility.md`. SHA-256 `26d8f2eee0fd9e5a2dcd56aa2a3e1ca57edb95bc1958d680bedf56ae5f43e287`, 5360 bytes.
 
 ```markdown
 # Visual legibility
@@ -28669,6 +28713,7 @@ Every component must read as a separate object at a glance: in a still, in real-
 - Three-point lighting placed relative to the camera, not the world, so each view gets the same roles: key 45° camera-left and 35° up; fill 35° camera-right, 20° up; rim (back light) about 145° and 25° up.
 - Key:fill about 2.5–3:1 (*start*). Projectors lift shadows, so do not go darker than 4:1.
 - Rim light draws outlines against the background and against parts behind. In real-time 3D, parent a weak, unshadowed directional light to the camera (about half the key, slightly cool) so the outline holds as the model turns. Cost: one extra light per fragment, no extra shadow pass.
+- A world-fixed key (the one that casts the shadow) lights only one side: as a model turns, the faces the camera sees go dark. Add a fill that also rides with the camera, beside it and aimed past the model, so every pose stays lit; tune it on the worst pose, then check the brightest for clipping.
 - Keep the rig fixed across all layers of one angle; scale card rigs to the subject's size. Fewer than 1% clipped pixels on non-emissive parts.
 - Colour management: light and shade in linear space; colour textures and final output in sRGB; normal, roughness, metalness and AO maps as non-colour data; check that the exported model looks the same in the target viewer as in the renderer.
 - Tone mapping: AgX or ACES; compare exposures on identical subjects; check hue shifts on the palette.
@@ -28702,6 +28747,7 @@ Every component must read as a separate object at a glance: in a still, in real-
 
 - In force (example project): picture sightline check, overlap, fit, triangle budgets, WCAG contrast in end-to-end tests.
 - Find the subject before measuring its contrast, and find it without looking at its brightness: shoot it on black and on white; what stays the same is the opaque subject. A mask of "bright pixels" or "pixels that differ from the background" leaves out the dark parts a contrast check exists to catch. Prove the oracle on a synthetic subject that is mostly invisible.
+- Measure every angle, view and frame the viewer can reach (every turntable step, every still), never one sample pose: a pass at one pose says nothing about the next.
 - Next: render a per-component ID mask for each still; fail a component whose visible area falls below a share of its own (start 35% in at least one angle), or whose boundary contrast with neighbours is under 1.5:1 along 70% of its edge; judge the encoded images at displayed sizes, in greyscale and under colour-vision simulation. Simulate projector washout (start: 15% white veil) on the interface.
 
 ## Sources
@@ -32870,7 +32916,7 @@ Paths: `package.json`. SHA-256 `ac63da86526a1197fb4bf0fd93b5c0c130bb2c872a836f8a
 
 ### playwright.config.ts
 
-Paths: `playwright.config.ts`. SHA-256 `14fdbbff372def5088a3d721df70b6cb78625a419e6faf193fb5265aae152f09`, 2602 bytes.
+Paths: `playwright.config.ts`. SHA-256 `4cdc43a74e06ca4943f0b507e37d21d6b9237e429b2d68714e407752e69f46b6`, 3355 bytes.
 
 ```ts
 import { defineConfig, devices } from '@playwright/test';
@@ -32893,11 +32939,21 @@ const all = [
   { name: 'msedge', use: { ...devices['Desktop Edge'], channel: 'msedge' } },
 ];
 
-const browsers = all.filter(project => engines.includes(project.name)).map(project => ({ ...project, testIgnore: /perf\.spec\.ts/ }));
+// Heavy tests (software WebGL turning the 3D showcase, every still layer, three-tab rehearsals) run one at a time
+// after the rest: beside them on a CI runner's few cores the one-round slice slowed from 17 s to 2 minutes and ran out
+// of its time (run 38609311138, Edge). Each engine's heavy project waits for every light project and for the heavy
+// project before it, so no two heavy tests share the machine.
+const heavy = /(showcase|rehearsal)\.spec\.ts/;
+const chosen = all.filter(project => engines.includes(project.name));
+const browsers = chosen.map(project => ({ ...project, testIgnore: [/perf\.spec\.ts/, heavy] }));
+const heavies = chosen.map((project, i) => ({
+  ...project, name: `${project.name}-heavy`, testMatch: heavy, workers: 1,
+  dependencies: [...browsers.map(light => light.name), ...(i ? [`${chosen[i - 1]!.name}-heavy`] : [])],
+}));
 // RQ-26 budgets are measured in Chromium, alone, after every other project has finished. No trace: its DOM
 // snapshots run in the page on every action, inside the timed window (about 40 ms per click at 4x, G3 profile).
 const perf = engines.includes('chromium')
-  ? [{ name: 'perf', use: { ...devices['Desktop Chrome'], trace: 'off' as const }, testMatch: /perf\.spec\.ts/, dependencies: browsers.map(project => project.name) }]
+  ? [{ name: 'perf', use: { ...devices['Desktop Chrome'], trace: 'off' as const }, testMatch: /perf\.spec\.ts/, dependencies: [...browsers, ...heavies].map(project => project.name) }]
   : [];
 
 export default defineConfig({
@@ -32914,7 +32970,7 @@ export default defineConfig({
   // test timeout (a lost Firefox click once held J1 for 10 minutes). Not shorter: renderers under parallel
   // load can stall for about 15 s and then recover (local verify, 2026-10-10).
   use: { viewport: { width: 1280, height: 720 }, actionTimeout: 60_000, trace: 'retain-on-failure' },
-  projects: [...browsers, ...perf],
+  projects: [...browsers, ...heavies, ...perf],
 });
 ```
 
@@ -35481,7 +35537,7 @@ declare const __SEA_LICENSE__: string;
 
 ### source/main.ts
 
-Paths: `source/main.ts`. SHA-256 `672cfd392a3f08e93f3a0bb9bd194715a73b54656346e3cb9a12b506ab9b1288`, 7196 bytes.
+Paths: `source/main.ts`. SHA-256 `9d61928fd22c6f5b6bcca9c7f216bc04ae50cfe663776ef2d3ad1f4f61ee06b4`, 7179 bytes.
 
 ```ts
 // Entry point: route to the role chooser or a single role (MPES §5.3).
@@ -35545,7 +35601,7 @@ function lineup(lang: Language): HTMLElement | null {
         if (move) { event.preventDefault(); select(move(index), true); }
       },
     },
-  }, h('img', { src: still.src, alt: '', decoding: 'async', loading: 'lazy', ...size(still) }), h('span', { text: missionName(id, lang) })));
+  }, h('img', { src: still.src, alt: '', decoding: 'async', ...size(still) }), h('span', { text: missionName(id, lang) })));
   return h('div', { class: 'hero-lineup' }, large, h('div', { class: 'lineup', role: 'group', 'aria-label': translate(lang, 'chooser.lineup') }, ...buttons));
 }
 
@@ -35763,7 +35819,7 @@ export function vehicleGlb(glb: ArrayBuffer, vehicle: string): ArrayBuffer | nul
 
 ### source/showcase/model.ts
 
-Paths: `source/showcase/model.ts`. SHA-256 `7adadac69817d44d7b8f91cb311273ffdff9390f878e61ef0a33389a13d5cb7c`, 25807 bytes.
+Paths: `source/showcase/model.ts`. SHA-256 `0164ad2c8f7ce3bf73396093c87bdbb89ed52e4a72b82b5375293292d46ed3b2`, 26438 bytes.
 
 ```ts
 // Real-time vehicle showcase (MPES §10): the embedded glTF model on a slowly turning stage the player can drag.
@@ -35793,6 +35849,8 @@ const OPENING = new Vector3(0.62, 0.32, 0.72).normalize();
 const POLAR_MIN = 0.6, POLAR_MAX = 1.45;
 /** How often a lost graphics context is checked for a return its browser did not announce. */
 const LOST_CHECK_MS = 1000;
+/** Strength of the fill light that follows the viewer (MPES §10.5: the vehicle stands out at every angle). */
+const FILL_INTENSITY = 5.2;
 
 let packed: Promise<ArrayBuffer | null> | null = null;
 const libraries = new Map<string, Promise<Group | null>>();
@@ -35930,7 +35988,7 @@ export class ModelStage {
     this.#tierTo(0);
     this.#renderer.outputColorSpace = SRGBColorSpace;
     this.#renderer.toneMapping = ACESFilmicToneMapping;
-    this.#renderer.toneMappingExposure = 0.85;
+    this.#renderer.toneMappingExposure = 1.05;
     this.#renderer.shadowMap.enabled = true;
     this.#renderer.shadowMap.type = PCFShadowMap;
     // Baked shadows: the sun and the vehicle stand still while the camera orbits, so the shadow map only changes with the
@@ -35938,7 +35996,7 @@ export class ModelStage {
     this.#renderer.shadowMap.autoUpdate = false;
     this.#environ();
     this.#scene.background = null;
-    const sun = new DirectionalLight(new Color(1, 0.97, 0.92), 1.6);
+    const sun = new DirectionalLight(new Color(1, 0.97, 0.92), 0.9);
     sun.position.set(6, 12, 5);
     sun.castShadow = true;
     sun.shadow.mapSize.set(1024, 1024);
@@ -35951,7 +36009,13 @@ export class ModelStage {
     const rim = new DirectionalLight(new Color(0.85, 0.9, 1), 0.5);
     rim.position.set(6, 5, -18);
     rim.target.position.set(0, 0, -10);
-    this.#camera.add(rim, rim.target);
+    // Fill light from over the viewer's shoulder, whichever way the vehicle turns: the sun stands still so its shadow
+    // is drawn once, and without this the side turned away from it fell to 1.4:1 against the stage for half of every
+    // turn (G3, CI run 38609311138). Unshadowed, so it costs no shadow redraw.
+    const fill = new DirectionalLight(new Color(1, 0.98, 0.95), FILL_INTENSITY);
+    fill.position.set(-2, 1, 6);
+    fill.target.position.set(0, 0, -10);
+    this.#camera.add(rim, rim.target, fill, fill.target);
     this.#scene.add(this.#camera);
     const floor = new Mesh(new PlaneGeometry(30, 30), new ShadowMaterial({ opacity: 0.35 }));
     floor.rotation.x = -Math.PI / 2;
@@ -39008,7 +39072,7 @@ for (const lang of ['en', 'fr'] as const) {
 
 ### tests/e2e/chooser.spec.ts
 
-Paths: `tests/e2e/chooser.spec.ts`. SHA-256 `147964c0aac1a6a0b80bcf26d45a527ebd2dc1ce27161e10680e354aa6418f78`, 10823 bytes.
+Paths: `tests/e2e/chooser.spec.ts`. SHA-256 `ee6c25c9eaf69615d96030ba49ea22275dbd93d9cd5639b0e0eae8bb7afc7d7b`, 11318 bytes.
 
 ```ts
 import { expect, test } from '@playwright/test';
@@ -39183,7 +39247,12 @@ test.describe('role chooser over file:// (RQ-01, RQ-19, RQ-20)', () => {
         await expect(img).toHaveAttribute('width', /^\d+$/);
         await expect(img).toHaveAttribute('height', /^\d+$/);
       }
-      for (const img of await page.locator('[role="group"] img').all()) await expect(img).toHaveAttribute('loading', 'lazy');
+      // All six vehicles are on the first screen, so none waits to be scrolled to: lazy lineup stills were still blank
+      // when the light-theme baseline was shot on a loaded CI runner (run 38609311138). Loaded without being asked:
+      // no decode() here.
+      for (const img of await images.all()) expect(await img.getAttribute('loading'), 'first-screen still loads eagerly').not.toBe('lazy');
+      await expect.poll(() => images.evaluateAll(list => (list as HTMLImageElement[])
+        .filter(img => img.getBoundingClientRect().top < innerHeight && !(img.complete && img.naturalWidth > 0)).length)).toBe(0);
       await page.evaluate(() => Promise.all([...document.images].map(img => img.decode())));
       // Sharp: no still is drawn larger than its pixels at 2x device pixels.
       const blurry = await images.evaluateAll(list => (list as HTMLImageElement[])
@@ -40542,7 +40611,7 @@ export async function studentRecord(page: Page, cardId: string, paidDollars: num
 
 ### tests/e2e/showcase.spec.ts
 
-Paths: `tests/e2e/showcase.spec.ts`. SHA-256 `eb7ddcfa6365976c460d861d44971986eaf7b57bc00cbd2c5e7c6ac8a9650938`, 34124 bytes.
+Paths: `tests/e2e/showcase.spec.ts`. SHA-256 `f12a330c84bc40beb9c598b00217661973bde92d2156c3f8e8bd2bcbda09f401`, 38309 bytes.
 
 ```ts
 // War-room HUD and vehicle showcase (MPES §7.1, §10, §11): the default look of every view. The live lot shows the
@@ -40570,6 +40639,13 @@ const STILLS_CONTRAST_FLOOR = 2.1;
  * may only rise: the 3D floor already holds the whole vehicle to WCAG 3:1.
  */
 const WHOLE_CONTRAST_FLOOR = { live: 3, stills: 1.5 };
+/**
+ * Lowest contrast allowed in the turntable stills until G4: the frames that show the side turned from the render's key
+ * light are darker than the front and rear views (least 1.60 bright, 1.32 whole on all three engines on 2026-10-16,
+ * docs/verification/0.6.0.0.md; the floor is that, rounded down). An open
+ * G4 item lifts every frame to 3 (MPES §10.5). This floor may only rise.
+ */
+const TURNTABLE_FLOOR = { bright: 1.55, whole: 1.3 };
 
 /**
  * The vehicle's luminance contrast with its stage (WCAG 1.4.11 asks 3:1 of a graphic that carries meaning). A dim
@@ -40582,7 +40658,7 @@ const WHOLE_CONTRAST_FLOOR = { live: 3, stills: 1.5 };
  *   passing a vehicle mostly as dark as its stage; the silhouette counts those pixels too.
  * - `share`: the part of the stage the silhouette covers.
  */
-async function vehicleContrast(stage: Locator, vehicle: string): Promise<{ bright: number; whole: number; share: number }> {
+async function vehicleContrast(stage: Locator, vehicle: string, stageOnly?: { data?: Buffer }): Promise<{ bright: number; whole: number; share: number }> {
   const shoot = async () => sharp(await stage.screenshot()).removeAlpha().raw().toBuffer({ resolveWithObject: true });
   const style = (css: Record<string, string>, selector?: string) => (selector ? stage.locator(selector) : stage)
     .evaluateAll((els, c) => els.forEach(e => Object.assign((e as HTMLElement).style, c)), css);
@@ -40592,9 +40668,15 @@ async function vehicleContrast(stage: Locator, vehicle: string): Promise<{ brigh
   await style({ background: '#fff' });
   const { data: white } = await shoot();
   await style({ background: '' });
-  await style({ visibility: 'hidden' }, vehicle);
-  const { data: bare } = await shoot();
-  await style({ visibility: '' }, vehicle);
+  // The bare stage does not change as the vehicle turns or the frames step: a caller measuring many poses passes
+  // `stageOnly` and it is shot once (sixteen poses in one test outran their time on a loaded machine, 2026-10-16).
+  let bare = stageOnly?.data;
+  if (!bare) {
+    await style({ visibility: 'hidden' }, vehicle);
+    bare = (await shoot()).data;
+    await style({ visibility: '' }, vehicle);
+    if (stageOnly) stageOnly.data = bare;
+  }
   const linear = (c: number) => (c /= 255) <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
   const at = (data: Buffer, i: number) => 0.2126 * linear(data[i]!) + 0.7152 * linear(data[i + 1]!) + 0.0722 * linear(data[i + 2]!);
   const median = (values: number[]) => values.sort((a, b) => a - b)[values.length >> 1] ?? 0;
@@ -40998,46 +41080,95 @@ test('stills fallback decodes each layer once: purchases, angle changes and turn
 });
 
 // Every vehicle has its showcase in 3D and in stills, and (G3 panel safety) on a dim laptop panel it still stands out
-// from its stage in both. One test a vehicle: six in one test outran its time on a loaded CI runner (run 38577929333).
+// from its stage in both, at every angle the player can see. One test a vehicle and a renderer: six in one test outran
+// its time on a loaded CI runner (run 38577929333). Every angle: one sample at wherever the pause landed passed and
+// failed by timing, because the far side of the vehicle was dark for half of every turn (run 38609311138).
+async function joinMission(page: import('@playwright/test').Page, mission: string): Promise<void> {
+  guardNetwork(page);
+  await page.goto(gameUrl('?role=student&lang=en'));
+  await studentJoin(page, 'SEA3-T2-0123456789ABCDEF', 1, mission);
+  await page.check('#plan-confirm');
+  await page.click('#student-start-auction');
+  await confirmDialog(page);
+}
+
+/** The 3D showcase turns in sixteen steps (TURN_STEP, a sixteenth of a turn); each test measures half a turn. */
+const TURN_STEPS = 16, HALF = TURN_STEPS / 2;
+
+/** How far `to` lies from `from` round the turn, in sixteenths (0 to 15.99). */
+const sixteenths = (from: number, to: number) => ((((to - from) % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI)) / (Math.PI / 8);
+
 for (const mission of ['COMBAT', 'RECCE', 'TROOP', 'COMMAND', 'RECOVERY', 'MINE']) {
-  test(`${mission} vehicle has its showcase in 3D and in stills, and stands out from its stage on a dim panel`, async ({ browser }) => {
-    const join = async (page: import('@playwright/test').Page) => {
-      guardNetwork(page);
-      await page.goto(gameUrl('?role=student&lang=en'));
-      await studentJoin(page, 'SEA3-T2-0123456789ABCDEF', 1, mission);
-      await page.check('#plan-confirm');
-      await page.click('#student-start-auction');
-      await confirmDialog(page);
-    };
-    const gpuContext = await browser.newContext(), gpu = await gpuContext.newPage();
-    await withGpu(gpu);
-    await join(gpu);
-    const model = gpu.locator('#showcase [role="img"]');
+  for (const half of [0, 1]) test(`${mission} vehicle in 3D stands out from its stage on a dim panel at turn steps ${half * HALF} to ${half * HALF + HALF - 1}`, async ({ page }, info) => {
+    // Under reduced motion the vehicle does not turn by itself, so every test starts from the same opening pose and the
+    // two halves together cover all sixteen steps; sixteen in one test outran its time on a loaded machine (2026-10-16).
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await withGpu(page);
+    await joinMission(page, mission);
+    const model = page.locator('#showcase [role="img"]');
     await expect(model).toHaveAttribute('data-ready', 'true', { timeout: 30_000 });
-    // Ready means the scene is set, not drawn: on a loaded machine the first frame came after the shots, so all four
-    // were an empty stage (verify of fe4df5d, Firefox, 12 workers). The pause draws once; the shots wait for that draw.
+    // Ready means the scene is set, not drawn (verify of fe4df5d, Firefox, 12 workers): the shots wait for a draw.
+    await expect(model).toHaveAttribute('data-drawn');
     const canvas = model.locator('canvas');
     await canvas.evaluate(c => { c.addEventListener('sea-draw', () => { c.dataset['draws'] = String(Number(c.dataset['draws'] ?? 0) + 1); }); });
-    await gpu.getByRole('button', { name: 'Pause turning', exact: true }).click();
-    await expect(canvas).toHaveAttribute('data-draws', /\d/);
-    const live = await vehicleContrast(model, 'canvas');
-    expect(live.share, '3D vehicle covers its stage').toBeGreaterThan(0.05);
-    expect(live.bright, '3D').toBeGreaterThanOrEqual(3);
-    expect(live.whole, '3D whole vehicle').toBeGreaterThanOrEqual(WHOLE_CONTRAST_FLOOR.live);
-    await gpuContext.close();
-    const flatContext = await browser.newContext(), flat = await flatContext.newPage();
-    await withoutWebgl(flat);
-    await join(flat);
-    const base = flat.locator('#showcase img[data-layer="base"]');
-    await expect(base).toHaveCount(1);
-    await expect.poll(() => base.evaluate(i => (i as HTMLImageElement).complete && (i as HTMLImageElement).naturalWidth > 0)).toBe(true);
-    // The Cycles stills are darker than the real-time model (2.11 to 2.14 on 2026-10-14): held there until the G4
-    // re-render lifts them to 3 (MPES §10.5). This floor may only rise.
-    const still = await vehicleContrast(flat.locator('#showcase .showcase-stage').first(), 'img');
-    expect(still.share, 'still vehicle covers its stage').toBeGreaterThan(0.05);
-    expect(still.bright, 'stills').toBeGreaterThanOrEqual(STILLS_CONTRAST_FLOOR);
-    expect(still.whole, 'stills whole vehicle').toBeGreaterThanOrEqual(WHOLE_CONTRAST_FLOOR.stills);
-    await flatContext.close();
+    const pose = async () => Number(await model.getAttribute('data-azimuth'));
+    const opening = await pose();
+    const turn = async () => {
+      const drawn = Number(await canvas.getAttribute('data-draws') ?? 0);
+      await page.getByRole('button', { name: 'Turn right', exact: true }).click();
+      await expect.poll(async () => Number(await canvas.getAttribute('data-draws') ?? 0)).toBeGreaterThan(drawn);
+    };
+    for (let step = 0; step < half * HALF; step++) await turn();
+    const steps: string[] = [], bare = {};
+    for (let step = half * HALF; step < half * HALF + HALF; step++) {
+      // A draw alone does not prove a new pose (Codex D11: a turn by nothing still draws): each shot must be the
+      // vehicle turned by exactly `step` sixteenths from the opening pose.
+      const at = sixteenths(opening, await pose());
+      expect.soft(Math.min(Math.abs(at - step), TURN_STEPS - Math.abs(at - step)), `pose of step ${step}`).toBeLessThan(0.01);
+      const live = await vehicleContrast(model, 'canvas', bare);
+      steps.push(`${step}:${live.bright.toFixed(2)}/${live.whole.toFixed(2)}`);
+      expect.soft(live.share, `3D vehicle covers its stage, step ${step}`).toBeGreaterThan(0.05);
+      expect.soft(live.bright, `3D, step ${step}`).toBeGreaterThanOrEqual(3);
+      expect.soft(live.whole, `3D whole vehicle, step ${step}`).toBeGreaterThanOrEqual(WHOLE_CONTRAST_FLOOR.live);
+      if (step < half * HALF + HALF - 1) await turn();
+    }
+    info.annotations.push({ type: 'contrast', description: `${mission} 3D from ${opening.toFixed(3)} bright/whole by step: ${steps.join(' ')}` });
+  });
+
+  test(`${mission} vehicle in stills stands out from its stage on a dim panel in every view and turntable frame`, async ({ page }, info) => {
+    await withoutWebgl(page);
+    await joinMission(page, mission);
+    const stage = page.locator('#showcase .showcase-stage').first();
+    const shown = async (selector: string) => {
+      const base = page.locator(`#showcase img[data-layer="base"]${selector}`);
+      await expect(base).toHaveCount(1);
+      await expect.poll(() => base.evaluate(i => (i as HTMLImageElement).complete && (i as HTMLImageElement).naturalWidth > 0)).toBe(true);
+    };
+    const views: string[] = [], bare = {};
+    // The Cycles stills are darker than the real-time model (front and rear 2.11 to 2.24 on 2026-10-14): held there
+    // until the G4 re-render lifts them to 3 (MPES §10.5). These floors may only rise.
+    for (const view of ['front', 'rear']) {
+      await page.locator(`#showcase-view-${view}`).check();
+      await shown(`[data-angle="${view}"]`);
+      const still = await vehicleContrast(stage, 'img', bare);
+      views.push(`${view}:${still.bright.toFixed(2)}/${still.whole.toFixed(2)}`);
+      expect.soft(still.share, `still vehicle covers its stage, ${view}`).toBeGreaterThan(0.05);
+      expect.soft(still.bright, `stills, ${view}`).toBeGreaterThanOrEqual(STILLS_CONTRAST_FLOOR);
+      expect.soft(still.whole, `stills whole vehicle, ${view}`).toBeGreaterThanOrEqual(WHOLE_CONTRAST_FLOOR.stills);
+    }
+    await page.locator('#showcase-view-turntable').check();
+    const turn = page.locator('#showcase-turn');
+    const last = Number(await turn.getAttribute('max'));
+    for (let frame = 0; frame <= last; frame++) {
+      await turn.fill(String(frame));
+      await shown(`[data-frame="${frame}"]`);
+      const still = await vehicleContrast(stage, 'img', bare);
+      views.push(`t${frame}:${still.bright.toFixed(2)}/${still.whole.toFixed(2)}`);
+      expect.soft(still.share, `still vehicle covers its stage, turntable ${frame}`).toBeGreaterThan(0.05);
+      expect.soft(still.bright, `stills, turntable ${frame}`).toBeGreaterThanOrEqual(TURNTABLE_FLOOR.bright);
+      expect.soft(still.whole, `stills whole vehicle, turntable ${frame}`).toBeGreaterThanOrEqual(TURNTABLE_FLOOR.whole);
+    }
+    info.annotations.push({ type: 'contrast', description: `${mission} stills bright/whole by view: ${views.join(' ')}` });
   });
 }
 
@@ -43029,6 +43160,50 @@ describe('no GitHub links in the README or the guides (D-13)', () => {
   for (const file of ['README.md', 'docs/CLASSROOM_QUICK_START.md', 'docs/RECOVERY_GUIDE.md']) {
     it(file, () => expect(readFileSync(new URL(`../../${file}`, import.meta.url), 'utf8')).not.toMatch(/github/i));
   }
+});
+```
+
+### tests/unit/e2e-config.test.ts
+
+Paths: `tests/unit/e2e-config.test.ts`. SHA-256 `b7bb3dfe9019edc54e8dcd32fb090fe07d8b74ec5df87e0ab52dc2f031fa8b59`, 2200 bytes.
+
+```ts
+// The browser suite keeps its heavy tests apart (playwright.config.ts): beside a software-WebGL showcase test on a CI
+// runner the one-round slice slowed from 17 s to 2 minutes and ran out of its time (run 38609311138, Edge).
+import { describe, expect, it } from 'vitest';
+import config from '../../playwright.config.ts';
+
+const projects = config.projects ?? [];
+const heavy = projects.filter(project => project.name?.endsWith('-heavy'));
+const light = projects.filter(project => project.name !== 'perf' && !project.name?.endsWith('-heavy'));
+const matches = (pattern: unknown, file: string): boolean =>
+  (Array.isArray(pattern) ? pattern : [pattern]).some(p => p instanceof RegExp ? p.test(file) : false);
+
+describe('browser suite projects', () => {
+  it('give every engine a heavy project that runs one test at a time', () => {
+    expect(heavy.map(project => project.name)).toEqual(light.map(project => `${project.name}-heavy`));
+    for (const project of heavy) expect(project.workers, project.name).toBe(1);
+  });
+
+  it('run the heavy tests only after every light project and the heavy project before them', () => {
+    heavy.forEach((project, i) => {
+      expect(project.dependencies, project.name).toEqual(expect.arrayContaining(light.map(l => l.name)));
+      if (i) expect(project.dependencies, project.name).toContain(heavy[i - 1]!.name);
+    });
+  });
+
+  it('keep the heavy specs out of the light projects and the light specs out of the heavy ones', () => {
+    for (const file of ['tests/e2e/showcase.spec.ts', 'tests/e2e/rehearsal.spec.ts']) {
+      for (const project of light) expect(matches(project.testIgnore, file), `${project.name} ignores ${file}`).toBe(true);
+      for (const project of heavy) expect(matches(project.testMatch, file), `${project.name} runs ${file}`).toBe(true);
+    }
+    for (const project of heavy) expect(matches(project.testMatch, 'tests/e2e/slice.spec.ts'), project.name).toBe(false);
+  });
+
+  it('measure performance after everything else', () => {
+    const perf = projects.find(project => project.name === 'perf');
+    if (perf) expect(perf.dependencies).toEqual(expect.arrayContaining([...light, ...heavy].map(project => project.name)));
+  });
 });
 ```
 
@@ -45894,5 +46069,5 @@ Keys and the commands that make each kind again:
 
 | Path | Bytes | SHA-256 | Why |
 |---|---:|---|---|
-| `docs/MPES.md` | 180931 | `a67c0292c8b19448c1c2b83530db696b38ae85d4d61118376ba6a3f6369ff506` | The specification, a clean-room document of its own (Omni 5.1.1 §333). |
+| `docs/MPES.md` | 182847 | `806543565891b6bfc5961fcc89fb4c981f7aa23db659f5e46aaf0731e25e40f1` | The specification, a clean-room document of its own (Omni 5.1.1 §333). |
 | `docs/CODEBASE.md` | | | This file. |

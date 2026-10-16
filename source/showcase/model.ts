@@ -25,6 +25,8 @@ const OPENING = new Vector3(0.62, 0.32, 0.72).normalize();
 const POLAR_MIN = 0.6, POLAR_MAX = 1.45;
 /** How often a lost graphics context is checked for a return its browser did not announce. */
 const LOST_CHECK_MS = 1000;
+/** Strength of the fill light that follows the viewer (MPES §10.5: the vehicle stands out at every angle). */
+const FILL_INTENSITY = 5.2;
 
 let packed: Promise<ArrayBuffer | null> | null = null;
 const libraries = new Map<string, Promise<Group | null>>();
@@ -162,7 +164,7 @@ export class ModelStage {
     this.#tierTo(0);
     this.#renderer.outputColorSpace = SRGBColorSpace;
     this.#renderer.toneMapping = ACESFilmicToneMapping;
-    this.#renderer.toneMappingExposure = 0.85;
+    this.#renderer.toneMappingExposure = 1.05;
     this.#renderer.shadowMap.enabled = true;
     this.#renderer.shadowMap.type = PCFShadowMap;
     // Baked shadows: the sun and the vehicle stand still while the camera orbits, so the shadow map only changes with the
@@ -170,7 +172,7 @@ export class ModelStage {
     this.#renderer.shadowMap.autoUpdate = false;
     this.#environ();
     this.#scene.background = null;
-    const sun = new DirectionalLight(new Color(1, 0.97, 0.92), 1.6);
+    const sun = new DirectionalLight(new Color(1, 0.97, 0.92), 0.9);
     sun.position.set(6, 12, 5);
     sun.castShadow = true;
     sun.shadow.mapSize.set(1024, 1024);
@@ -183,7 +185,13 @@ export class ModelStage {
     const rim = new DirectionalLight(new Color(0.85, 0.9, 1), 0.5);
     rim.position.set(6, 5, -18);
     rim.target.position.set(0, 0, -10);
-    this.#camera.add(rim, rim.target);
+    // Fill light from over the viewer's shoulder, whichever way the vehicle turns: the sun stands still so its shadow
+    // is drawn once, and without this the side turned away from it fell to 1.4:1 against the stage for half of every
+    // turn (G3, CI run 38609311138). Unshadowed, so it costs no shadow redraw.
+    const fill = new DirectionalLight(new Color(1, 0.98, 0.95), FILL_INTENSITY);
+    fill.position.set(-2, 1, 6);
+    fill.target.position.set(0, 0, -10);
+    this.#camera.add(rim, rim.target, fill, fill.target);
     this.#scene.add(this.#camera);
     const floor = new Mesh(new PlaneGeometry(30, 30), new ShadowMaterial({ opacity: 0.35 }));
     floor.rotation.x = -Math.PI / 2;
