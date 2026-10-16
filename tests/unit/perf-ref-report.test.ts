@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { readFileSync } from 'node:fs';
 import { BROWSERS, KPIS, METRICS, PROFILES, buildReport, renderMarkdown, statusOf, type RunFile } from '../perf-ref/report.ts';
 
 const ID = 'run-1';
@@ -89,5 +90,19 @@ describe('perf:ref report', () => {
     const text = renderMarkdown(buildReport(complete(), at));
     for (const kpi of KPIS) expect(text).toContain(kpi);
     for (const metric of METRICS) expect(text).toContain(metric.label);
+  });
+});
+
+// The first idle baseline read 100% of a core on a page doing nothing: it was measured under the 4x CPU throttle, which
+// is emulated by keeping the renderer busy (a blank page: 81% throttled, 2.3% not). Detaching the session that set a
+// throttle clears it for the page, so the restore must come from a session that stays attached.
+describe('perf:ref idle windows', () => {
+  const spec = readFileSync('tests/perf-ref/perf-ref.spec.ts', 'utf8');
+  const start = spec.indexOf('async function idle('), idle = spec.slice(start, spec.indexOf('\n}\n', start));
+
+  it('measure unthrottled and restore the reference throttle, even on failure, on a session left attached', () => {
+    expect(idle).toMatch(/pageCdp\.send\('Emulation\.setCPUThrottlingRate', \{ rate: 1 \}\)/);
+    expect(idle).toMatch(/finally \{[^}]*pageCdp\.send\('Emulation\.setCPUThrottlingRate', \{ rate: THROTTLE \}\)/);
+    expect(idle).not.toMatch(/pageCdp\.detach\(\)/);
   });
 });

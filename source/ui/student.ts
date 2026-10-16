@@ -148,8 +148,8 @@ function planningView(v: View): Child {
     h('div', { class: 'stack' },
       missionHero(mission, v.lang, t),
       h('section', { class: 'panel stack' }, h('h2', { text: t('splan.minimums', { mission: missionName(mission, v.lang) }) }), gapMeter(mission, s.team.totals, v.lang)),
-      h('details', { class: 'panel' }, h('summary', { text: t('splan.guide') }), categoryGuide(v.lang, t)),
-      h('details', { class: 'panel' }, h('summary', { text: t('planning.requirements') }), missionTable(v.lang, mission)),
+      h('details', { class: 'panel', id: 'plan-guide' }, h('summary', { text: t('splan.guide') }), categoryGuide(v.lang, t)),
+      h('details', { class: 'panel', id: 'plan-requirements' }, h('summary', { text: t('planning.requirements') }), missionTable(v.lang, mission)),
     ),
   );
 }
@@ -210,7 +210,7 @@ function auctionView(v: View): Child {
           click: e => void v.confirm({ title: t('strack.finishTitle'), body: h('p', { text: t('strack.finishBody') }), confirm: t('strack.finish'), opener: e.currentTarget as HTMLElement }, S.finishAuction),
         } }),
       ),
-      h('details', { class: 'stack' }, h('summary', { text: t('strack.notes') }),
+      h('details', { class: 'stack', id: 'scratch-notes' }, h('summary', { text: t('strack.notes') }),
         h('div', { class: 'field' }, h('label', { for: 'scratch-wtp', text: t('strack.wtp') }),
           v.savingInput('scratch-wtp', scratch.wtp, (state, value) => S.editScratch(state, 'wtp', value), { inputmode: 'numeric', autocomplete: 'off' })),
         h('div', { class: 'field' }, h('label', { for: 'scratch-note', text: t('strack.notes') }),
@@ -240,7 +240,7 @@ function buildView(v: View): Child {
         click: e => void v.confirm({ title: t('sbuild.removeTitle'), body: h('p', { text: `${p.id} · ${p.title[lang]} · ${money(p.paid, lang)}. ${t('sbuild.removeBody')}` }), confirm: t('sbuild.remove'), danger: true, opener: e.currentTarget as HTMLElement },
           state => S.removeOwnPurchase(state, p.instance)),
       } }) }),
-      h('details', { class: 'panel stack' }, h('summary', { text: t('sbuild.add') }),
+      h('details', { class: 'panel stack', id: 'build-add' }, h('summary', { text: t('sbuild.add') }),
         h('div', { class: 'cluster' },
           field('add-id', 'common.cardId', { autocomplete: 'off', class: 'mono', size: '8', maxlength: '20' }),
           field('add-round', 'strack.round', { type: 'number', min: '1', max: '7', inputmode: 'numeric', size: '3' }),

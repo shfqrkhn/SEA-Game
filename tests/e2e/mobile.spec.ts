@@ -1,8 +1,8 @@
 // Owner FIX 2026-10-12: on a phone every table shows all of its columns. Tables open inside collapsed sections
 // (the category guide, the mission minimums) hid most columns off screen; below 40rem each row becomes a card whose
 // cells carry their column's name.
-import { expect, test, type Page } from '@playwright/test';
-import { gameUrl, guardNetwork } from './helpers.ts';
+import { expect, type Page } from '@playwright/test';
+import { gameUrl, guardNetwork, test } from './helpers.ts';
 import { confirmDialog, studentJoin } from './roles.ts';
 
 async function everyCellShown(page: Page, where: string): Promise<void> {

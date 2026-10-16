@@ -127,6 +127,8 @@ export class ModelStage {
   #dirty = true;
   /** A change the player asked for (a purchase, turn, zoom or resize) waiting to be drawn: it skips the pacer's wait. */
   #urgent = false;
+  /** The fitted parts changed since the shadow was drawn: the next paced draw redraws it, never the urgent one. */
+  #shadowDue = false;
   /** Index into TIERS: the resolution and edge smoothing this machine can draw in time (adaptive tiers). */
   #tier = 0;
   /** Where a multisampled tier draws the scene, then resolved to the canvas with tone mapping by #output; none on a
@@ -325,7 +327,9 @@ export class ModelStage {
     this.#camera.updateProjectionMatrix();
     this.#refit();
     this.#tierTo(startTier(tier => { this.#tierTo(tier); return timed(); }));
+    // The first draw has nothing on screen to keep waiting, so it draws the shadow itself.
     this.#renderer.shadowMap.needsUpdate = true;
+    this.#shadowDue = false;
   }
 
   /** Shows one vehicle with the given part nodes; returns false if the library has no such vehicle. */
@@ -346,8 +350,13 @@ export class ModelStage {
       this.#scene.add(this.#vehicle);
     }
     const shown = new Set(parts);
-    for (const node of this.#vehicle!.children) node.visible = layerOf(node) === 'base' || shown.has(layerOf(node));
-    this.#renderer.shadowMap.needsUpdate = true;
+    for (const node of this.#vehicle!.children) {
+      const visible = layerOf(node) === 'base' || shown.has(layerOf(node));
+      if (node.visible !== visible) this.#shadowDue = true;
+      node.visible = visible;
+    }
+    // A different vehicle must not stand in the last one's shadow, even for one draw.
+    if (fresh) this.#renderer.shadowMap.needsUpdate = true;
     this.#frameCamera(fresh);
     this.#invalidate(true);
     return true;
@@ -454,7 +463,11 @@ export class ModelStage {
   }
 
   #draw(): void {
-    this.#dirty = false;
+    // A purchase is drawn at once; the sun's shadow of it follows in the next paced draw. Without a graphics card the
+    // browser reads each new frame back before showing it, waiting for the whole draw, and redrawing the shadow map
+    // made a purchase's draw about twice a turning draw (G3, CI run 38958721130: 133 ms to show, budget 100).
+    if (this.#shadowDue && !this.#urgent) { this.#renderer.shadowMap.needsUpdate = true; this.#shadowDue = false; }
+    this.#dirty = this.#shadowDue;
     this.#urgent = false;
     this.#distance();
     // Observable without reaching into the stage: the reference-laptop run brackets each draw's GPU time by these (§14.1).

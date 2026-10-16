@@ -1,8 +1,8 @@
 // J6 + RQ-20/RQ-21 (MPES §12, §16.3): keyboard-only student journey and axe scans of every main view
 // at narrow-window and desktop sizes in both languages. Automated checks only: real screen readers are a
 // residual risk recorded in docs/verification.
-import { expect, test, type Page } from '@playwright/test';
-import { expectAccessible, gameUrl, guardNetwork } from './helpers.ts';
+import { expect, type Page } from '@playwright/test';
+import { expectAccessible, gameUrl, guardNetwork, test } from './helpers.ts';
 import { confirmDialog, instructorSetup, studentJoin } from './roles.ts';
 
 /** Tab until the element with `id` has focus (fails after 60 presses), proving it is reachable by keyboard. */

@@ -1,5 +1,5 @@
-import { expect, test } from '@playwright/test';
-import { collectConsoleErrors, expectAccessible, gameUrl, guardNetwork } from './helpers.ts';
+import { expect } from '@playwright/test';
+import { collectConsoleErrors, expectAccessible, gameUrl, guardNetwork, test } from './helpers.ts';
 
 const LINEUP = {
   en: { group: 'Mission vehicles', names: ['Combat', 'RECCE', 'Troop Carrier', 'Command Post', 'Recovery', 'Mine Clearing'] },

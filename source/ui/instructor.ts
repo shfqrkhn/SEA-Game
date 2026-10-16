@@ -133,7 +133,7 @@ function planningView(v: View): Child {
     h('button', { type: 'button', class: 'btn primary', id: 'start-auction', disabled: missing > 0, text: t('planning.start'), on: {
       click: e => void v.confirm({ title: t('planning.startTitle'), body: h('p', { text: t('planning.startBody') }), confirm: t('planning.start'), opener: e.currentTarget as HTMLElement }, I.startAuction),
     } }),
-    h('details', {}, h('summary', { text: t('planning.requirements') }), missionTable(v.lang)),
+    h('details', { id: 'planning-requirements' }, h('summary', { text: t('planning.requirements') }), missionTable(v.lang)),
   );
 }
 
@@ -300,7 +300,7 @@ function teamsPanel(v: View): Child {
 export function ledgerPanel(v: View, open = false): Child {
   const s = v.state, t = v.t;
   const rounds = [...new Set(s.ledger.map(e => e.round))].sort((a, b) => b - a);
-  return h('details', { class: 'panel', open: open || undefined },
+  return h('details', { class: 'panel', id: 'ledger', open: open || undefined },
     h('summary', {}, h('h2', { class: 'inline-heading', text: `${t('auction.ledgerTitle')} (${s.ledger.length})` })),
     rounds.length === 0 ? h('p', { class: 'muted', text: t('auction.ledgerEmpty') }) : rounds.map(round => h('section', { 'aria-label': t('common.round', { n: round }) },
       h('h3', { text: t('common.round', { n: round }) }),
@@ -348,7 +348,7 @@ function resultsTable(v: View, withMoney: boolean): Child {
 }
 
 function teamPurchases(v: View): Child {
-  return v.state.teams.map(team => h('details', { class: 'panel' },
+  return v.state.teams.map(team => h('details', { class: 'panel', id: `team-${team.id}-purchases` },
     h('summary', { text: `${v.t('common.team', { n: team.id })} · ${v.t('common.purchases')} (${team.purchases.length})` }),
     purchasesTable(team.purchases, v.lang, team.lockedMission ? { mission: team.lockedMission } : {})));
 }

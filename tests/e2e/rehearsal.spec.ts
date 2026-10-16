@@ -3,8 +3,8 @@
 // sale, a void, a student interruption and an instructor interruption are each recovered with the
 // documented controls. Results are scored against S1, S2, S4 and S5 and written as a JSON attachment.
 // Real-learner outcome S3 is out of reach for a script and stays a residual risk.
-import { expect, test, type Browser, type Page } from '@playwright/test';
-import { collectConsoleErrors, gameUrl, guardNetwork } from './helpers.ts';
+import { expect, type Browser, type Page } from '@playwright/test';
+import { collectConsoleErrors, gameUrl, guardNetwork, test } from './helpers.ts';
 import { startCents, winners, type OracleTeam } from './oracle.ts';
 import { act, confirmDialog, instructorSetup } from './roles.ts';
 

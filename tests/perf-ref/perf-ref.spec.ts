@@ -20,7 +20,10 @@ const OUT = process.env.PERF_REF_DIR ?? path.resolve('.artifacts/perf-ref', 'man
 const RUN_ID = process.env.PERF_REF_STAMP ?? 'manual';
 const IDLE_IDS = { Chooser: 'idleCpuChooserPct', Instructor: 'idleCpuInstructorPct', Tracker: 'idleCpuTrackerPct' } as const;
 
-/** Browser CPU over a quiet window: all processes (GPU included) in % of one core, and the page's main-thread busy share. */
+/** Browser CPU over a quiet window: all processes (GPU included) in % of one core, and the page's main-thread busy share.
+ *  Measured unthrottled: CPU throttling is emulated by keeping the renderer busy, so under it a blank page reads 81% of a
+ *  core (2.3% without). The throttle is the browser's, last setter wins, and it is cleared when the session that set it
+ *  detaches: this session restores the reference throttle and stays attached until the page closes. */
 async function idle(browser: Browser, page: Page, id: string, out: Measured): Promise<void> {
   if (IDLE_SECONDS <= 0) { out.notes[id] = 'idle window switched off (PERF_REF_IDLE_SECONDS=0)'; return; }
   try {
@@ -35,15 +38,22 @@ async function idle(browser: Browser, page: Page, id: string, out: Measured): Pr
       return metrics.find(m => m.name === 'TaskDuration')?.value ?? 0;
     };
     await pageCdp.send('Performance.enable');
-    await page.waitForTimeout(3000); // let start-up work finish before the window opens
-    const [cpu0, task0, t0] = [await cpu(), await task(), Date.now()];
-    await page.waitForTimeout(IDLE_SECONDS * 1000);
-    const [cpu1, task1, t1] = [await cpu(), await task(), Date.now()];
+    await pageCdp.send('Emulation.setCPUThrottlingRate', { rate: 1 });
+    let window: [number, number, number, number, number, number];
+    try {
+      await page.waitForTimeout(3000); // let start-up work finish before the window opens
+      const [cpu0, task0, t0] = [await cpu(), await task(), Date.now()];
+      await page.waitForTimeout(IDLE_SECONDS * 1000);
+      window = [cpu0, task0, t0, await cpu(), await task(), Date.now()];
+    } finally {
+      // Whatever happened, what is measured next runs at the reference throttle.
+      await pageCdp.send('Emulation.setCPUThrottlingRate', { rate: THROTTLE });
+    }
+    const [cpu0, task0, t0, cpu1, task1, t1] = window;
     const wall = (t1 - t0) / 1000;
     out.values[id] = round((cpu1 - cpu0) / wall * 100);
     const busy = round((task1 - task0) / wall * 100), old = out.values.idleMainThreadMaxPct;
     out.values.idleMainThreadMaxPct = old === null || old === undefined ? busy : Math.max(old, busy);
-    await pageCdp.detach();
     await browserCdp.detach();
   } catch (error) {
     out.notes[id] = `idle CPU could not be read: ${String(error).slice(0, 120)}`;

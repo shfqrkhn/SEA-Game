@@ -1,7 +1,21 @@
-import { expect, type Page } from '@playwright/test';
+import { expect, test as base, type Page } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
+
+/**
+ * Every spec's `test`. Playwright closes only the contexts of its own `page` and `context` fixtures; one a test opens
+ * itself (`browser.newContext`) lived on to the end of its worker, its 3D showcase still turning. On a heavy project's
+ * single worker they piled up until the Edge stills test ran out of time (G3, CI run 38958721130; contexts.spec.ts).
+ * Here every context a test opened is closed when it ends.
+ */
+export const test = base.extend<{ ownContexts: void }>({
+  ownContexts: [async ({ browser }, use) => {
+    const before = new Set(browser.contexts());
+    await use();
+    await Promise.all(browser.contexts().filter(context => !before.has(context)).map(context => context.close()));
+  }, { auto: true }],
+});
 
 export const DIST = pathToFileURL(path.resolve('dist/index.html')).href;
 

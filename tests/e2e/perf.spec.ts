@@ -4,10 +4,10 @@
 // skewed by parallel work; its tests run one after another in one worker. The scenarios and the protocol (input to
 // painted result, nearest-rank p95 of at least 30 samples) are tests/perf/, shared with `npm run perf:ref`, which
 // measures them on the reference GPU; here the runner's software renderer stands in for it (withGpu).
-import { expect, test, type TestInfo } from '@playwright/test';
+import { expect, type TestInfo } from '@playwright/test';
 import { MIN_SAMPLES, inputToPaint } from '../perf/measure.ts';
 import { Lab, commands, model, startUp, stills, type Measured } from '../perf/scenarios.ts';
-import { withGpu } from './helpers.ts';
+import { test, withGpu } from './helpers.ts';
 
 test.use({ launchOptions: { args: ['--js-flags=--expose-gc'] } });
 test.describe.configure({ mode: 'default' });

@@ -1,6 +1,6 @@
 # SEA Game codebase
 
-Version 0.6.0.0. Written by `npm run codebase` (scripts/codebase.ts); do not edit by hand. It holds all 1052 tracked files of the repository: 196 text files as 193 unique contents, 854 binary files by hash with the command that regenerates them, and 2 documents kept separately. With docs/MPES.md it is enough to rebuild the project.
+Version 0.6.0.0. Written by `npm run codebase` (scripts/codebase.ts); do not edit by hand. It holds all 1054 tracked files of the repository: 198 text files as 195 unique contents, 854 binary files by hash with the command that regenerates them, and 2 documents kept separately. With docs/MPES.md it is enough to rebuild the project.
 
 ## How to rebuild the tree
 
@@ -27041,7 +27041,7 @@ Exportez une sauvegarde par **Menu → Exporter une sauvegarde** après la confi
 
 ### docs/HANDOVER.md
 
-Paths: `docs/HANDOVER.md`. SHA-256 `ccfdcda95e7aa68b733652e91bb3a8eb909cff843f1152c6ec2f358e2e05ae77`, 13017 bytes.
+Paths: `docs/HANDOVER.md`. SHA-256 `6f9a93f042b9420c0661cb8da69e5d370f2a0a0d2b0d94dc9277fb98becfbf87`, 13215 bytes.
 
 ```markdown
 # Handover
@@ -27106,7 +27106,7 @@ Owner FIX 1 (stills and fit), FIX 2 (one click to close a round nobody can win i
 
 ## 5. Next action
 
-**Agent:** G3 on `g3/proxy-runtime` (PR #27): red run 38609311138 fixed (three causes in `docs/verification/0.6.0.0.md`: contrast at every turn step, eager chooser stills, heavy tests apart), red runs 38921636256 (stills split in three) and 38931516133 (camera fit solved, not searched) fixed; get two consecutive green CI runs on one head; `npm run perf:ref` 12-KPI baseline in a quiet slot (MPES §14.1); finish the verification Checks; gallery and owner GO or FIX. Then G4 (stills to 3:1 in every view and frame, the pale RECCE roof, the light-theme stage contrast).
+**Agent:** G3 on `g3/proxy-runtime` (PR #27): red run 38609311138 fixed (three causes in `docs/verification/0.6.0.0.md`: contrast at every turn step, eager chooser stills, heavy tests apart), red runs 38921636256 (stills split in three) and 38931516133 (camera fit solved, not searched) fixed; red run 38958721130 fixed (tests' own browser contexts closed by the shared `test`; a purchase's 3D draw skips the shadow pass, which follows a frame later; opened panels stay open across renders); get two consecutive green CI runs on one head; `npm run perf:ref` 12-KPI baseline in a quiet slot (MPES §14.1); finish the verification Checks; gallery and owner GO or FIX. Then G4 (stills to 3:1 in every view and frame, the pale RECCE roof, the light-theme stage contrast).
 **Owner:** `docs/owner/art-review.md` (5 minutes, reply GO or FIX).
 
 ## 6. Rollback
@@ -27700,7 +27700,7 @@ A read-only Codex session (gpt-6.1-sol, medium) reviewed the diff (`.artifacts/c
 
 ### docs/verification/0.6.0.0.md
 
-Paths: `docs/verification/0.6.0.0.md`. SHA-256 `6f9909e879b8a92d0f80973a976076dd1182969ac511ecd393f0d2222e06fc6d`, 28176 bytes.
+Paths: `docs/verification/0.6.0.0.md`. SHA-256 `1e668e702433ad17d2905dffd856cb8b13bc2302993488c8f82beaf3c41dc64b`, 34558 bytes.
 
 ```markdown
 # Verification record: 0.6.0.0 beta (G3 proxy and runtime) — in progress
@@ -27857,6 +27857,35 @@ Codex review of the fix: one finding, P3, accepted. Straight up (polar 0), three
 Codex re-review of the general solve: no findings (it swept 1 296 cases over polars 0.6 to 1.45, FOV 20 to 60 and aspects 0.001 to 1000; both bounds hold and their denominators stay positive).
 
 Measured after the fix (local, the machine loaded by file sync at 94% CPU, so ratios only): the same distances as the search to five digits at all nine heights; a drag table 6 to 8 times faster warm in Node. The purchase profile repeated: `#update3d` 4.3 and 3.7 ms (was 27 to 58), the whole view rebuild 9.8 and 13.1 ms (was 44 to 67); the draw that follows (25 to 40 ms) is outside the click. The 360 px framing test passed alone (2.2 min); beside the sync load it and the perf scenario first timed out on clicks (load; CI is the gate).
+
+### perf:ref idle windows measured the throttle, not the page
+
+The head baseline (`.artifacts/perf-ref/head-8ec383d`) read idle CPU 100.4, 99.2 and 117.2% of a core and a main-thread busy share of 19.8%. The idle windows ran under the 4x CPU throttle, and Chrome emulates the throttle by keeping the renderer busy. Probe, about:blank for 30 s on this PC: 2.3% unthrottled, 81.1% at 4x. A second probe of the DevTools protocol: the throttle is browser-wide and the last setter wins; detaching the session that set it clears it (spin loop 108 ms at 4x, 26 ms after that detach); detaching a session that only read metrics leaves it.
+
+Fix: each idle window sets the throttle to 1x on the page's session and restores 4x in a `finally` on the same session, which stays attached until the page closes (the window's own detach is removed). Failing check first: a unit test reads the idle window's code and fails unless it unthrottles, restores in a `finally` and never detaches that session; it failed on the old spec and passes on the new. Sibling sweep: the only other detach in the harness (`processMB`) is a browser session that only reads process data.
+
+### Red run 38958721130 (head c2349b2): two causes
+
+Both jobs failed one check each.
+
+**verify (24): `[msedge-heavy]` "stills fallback without WebGL" timed out at 120 s.** The trace shows no hang: every step was uniformly slow (creating the page 7 s, single clicks 1 to 6 s). The same test took 42.7 s, then 1.4 min, then 2.0 min over three successive runs, while Chromium held at 27 to 35 s and Firefox at 10 to 16 s. Cause: Playwright closes only the contexts made by its own `page` and `context` fixtures (`node_modules/playwright/lib/index.js` lines 391 to 398); a context a test opens with `browser.newContext()` lives until its worker ends. Nine specs open their own contexts, and a heavy project has one worker, so every two-tab test left its pages open with a 3D showcase still turning, and each later test on that worker ran slower.
+
+Fix (no timeout changed): `tests/e2e/helpers.ts` exports a `test` whose automatic fixture closes every context a test opened that was not there before it. Failing check first: `tests/e2e/contexts.spec.ts`, two serial tests, the first leaving its own context open and the second expecting none; it failed before the fix and passes after on Chromium, Firefox and Edge. Traces are still kept on failure (checked by a deliberately failing test). Sibling sweep: all 16 specs now import `test` from `helpers.ts`, and a unit test (`tests/unit/e2e-config.test.ts`) fails any spec that imports it from `@playwright/test`.
+
+**verify (22): `perf.spec.ts` 3D showcase, `modelUpdateP95Ms` 132.8 ms, budget 100** (handle 51, wait 5.7, draw 13.1, paint 75.6 ms at p95; tier 3). Two hypotheses were measured and dropped before the cause was found:
+
+- A page update that patches the DOM instead of rebuilding it. Interleaved A/B of 18 purchases each: slower in one run (median 96.1 against 65.6 ms), faster in a second pinned to four cores (p95 100.2 against 124.6). Not shown to help; withdrawn to `_archive/recycle/2026-10-16/dom-patch/` with its README.
+- The purchase's draw queuing behind a software-rendered turning draw still in flight. A/B of 30 purchases each, four cores, software renderer, turning against reduced motion: total p50 29.1 against 28.8 ms, paint p50 12.5 against 12.5. No difference.
+
+Cause: a trace of three purchases on two cores with the software renderer shows, in the frame after each purchase, the commit spending 7 to 14 ms in `LayerTreeHost::DoUpdateLayers`, all of it `GLES2::ReadPixels` waiting on `CommandBufferHelper::Finish`. Without a graphics card Chromium composites in software and reads each new WebGL frame back before showing it, waiting for the whole draw. The purchase frame's readback took 14 ms against 7 for a turning frame: the purchase's draw also redrew the sun's 1024 px shadow map.
+
+Fix (no budget changed): a purchase is drawn at once without the shadow pass; the shadow follows in the next paced draw (one frame, 33 ms or more later). A new vehicle still draws its shadow at once, so it never stands in the last one's shadow, and the shadow is marked due only when the fitted parts change, not on every page render. Failing check first: a `showcase.spec.ts` test under reduced motion records, for each draw, whether it drew into the 1024 px shadow map; the draw that first shows a purchase must not, exactly one later draw must, then the still stage stops. It failed before the fix (the purchase draw made the shadow pass) and passes after; the whole showcase spec passed on Chromium (44 tests).
+
+Measured (local, four cores, software renderer, interleaved, 30 purchases each, ratios only): paint p50 12.7 to 8.2 ms, p95 16.2 to 12.4; total p50 33.2 to 27.3, p95 44.6 to 37.0. CI decides the budget.
+
+**Found while checking: a render shut every panel the reader had opened.** Typing in the tracker's scratch notes, which save as they are typed, hid the field after its first character; an opened guide, ledger or team list shut on the next click elsewhere. Failing check first (`tests/e2e/render.spec.ts`: planning panels 2 open, 0 after one saved field). Fix: a render keeps open each panel the reader opened, keyed by its own id, else its first named control, else its place (`source/ui/view.ts`). Passes on Chromium, Firefox and Edge; swept on every page with panels (student planning, tracker, instructor auction).
+
+Codex review of the diff (contexts fixture, open panels, shadow follow-up, new tests): one finding, P3, accepted. Panels without a name were keyed by their place, so opening the instructor's ledger in the auction and moving on to the build phase would have handed its open state to Team 1's purchases panel (reproduced in Node with the actual key function). Fix: every panel the interface builds has its own id (ledger, each team's purchases, planning guide and requirements, tracker notes, build additions, the About licence texts) and a panel is known only by its id. Sibling check: `tests/unit/panels.test.ts` reads every interface source as TypeScript sees it and fails any `details` made without an id; it failed on the student pages before the ids were added (four panels) and proves itself against a panel without an id, an id only in a comment and a `createElement`. No finding on the shadow follow-up or the fixture.
 
 ## Checks
 
@@ -28138,12 +28167,24 @@ export default tseslint.config(
 
 ### library/LESSONS.md
 
-Paths: `library/LESSONS.md`. SHA-256 `ffc6e3188920c3e7f7be34a86f02546036a7fb052370cbfdc3a9c1ed5c9ba337`, 14162 bytes.
+Paths: `library/LESSONS.md`. SHA-256 `22878a1f39b5cb14044e6fc767dafaa004691f18252c42042858650248230207`, 16677 bytes.
 
 ```markdown
 # Lessons learned
 
 Each entry: what happened, the rule it produced, and the check that now enforces it. Newest first. Examples come from SEA Game (a classroom auction game with photoreal vehicle renders and a real-time 3D showcase, one offline HTML file).
+
+## 2026-10-16 · Contexts left running, and a readback nobody asked for
+
+- **What happened:** one CI test took 43 s, then 1.4 min, then ran out of its 2 minutes, every step uniformly slow. Playwright closes only the contexts it made itself; tests that opened their own with `browser.newContext()` left them, each with a 3D view still animating, on a single-worker project. On the same run a purchase took 133 ms to appear in 3D (budget 100). Two plausible guesses (a smaller DOM update; the purchase queuing behind an animation frame) were measured on both arms and dropped. A trace then showed the browser, with no graphics card, reading each new WebGL frame back before compositing it, waiting for the whole software draw, and the purchase's draw also redrew the shadow map, doubling it. While checking the fix, a page rebuild was found to close every `<details>` panel the reader had opened.
+- **Rule:** close what a test opens in one shared fixture every spec must use. Measure a hypothesis before building on it. In a draw the player waits for, do only what they see now; let the rest follow a frame later. Carry opened panels across a rebuild.
+- **Check (as built in SEA Game):** an auto fixture closes every new context, a two-test spec proves the next test finds none, and a unit test fails any spec that bypasses the fixture; a browser test records which draw makes the shadow pass and fails if the purchase's first draw does; a browser test opens every panel on each page with panels and fails if a render closes one.
+
+## 2026-10-16 · An idle page at 100% of a core, measured by a busy instrument
+
+- **What happened:** the first reference-laptop baseline read idle CPU of 100 to 117% of a core on pages doing nothing. The pages were measured under Chrome's emulated 4x CPU slowdown, which works by keeping the renderer busy: a blank page read 81% throttled and 2.3% not. Probing the DevTools protocol also showed that the slowdown is the browser's, last setter wins, and closing the session that set it clears it, so a naive restore would have left later measurements unthrottled.
+- **Rule:** before trusting a measurement, measure nothing with the same instrument; the blank page is the harness's floor. Measure idle without emulated slowdown, and restore the slowdown in a `finally`, from a session that stays attached.
+- **Check (as built in SEA Game):** a unit test reads the idle window's code and fails unless it unthrottles, restores the throttle in a `finally`, and never detaches that session.
 
 ## 2026-10-16 · A thin margin, and a search where a formula would do
 
@@ -28620,7 +28661,7 @@ Send the file with a one-page guide: how to open it, a solo walk-through (two ta
 
 ### library/practices/delivery-loop.md
 
-Paths: `library/practices/delivery-loop.md`. SHA-256 `57ccd531db9b22fbebce8802d2ea421bae2820d3cff7d1cccb40bf47dd095828`, 3553 bytes.
+Paths: `library/practices/delivery-loop.md`. SHA-256 `f66543efec06cdb7da7ac39d33ce87c97f7388549afc19036d4b79289e78f161`, 4078 bytes.
 
 ```markdown
 # Delivery loop
@@ -28645,6 +28686,8 @@ A loop that ships one goal at a time with evidence, so any person or agent can p
 - Keep budgets, timeouts and oracles in one place, with the reason for each number.
 - A test that times out while every step is merely slow is starved, not hung: find what shares its processor. Run heavy tests (software-rendered 3D, long rehearsals) one at a time in their own group after the light ones, and never raise the timeout instead.
 - A test whose work grows with what it samples (every view, every frame) outgrows its time on a slow runner while still working: read the trace for where it was, then split it into parts that together cover everything, with a guard that the parts still add up.
+- A slowdown that grows from run to run and from test to test is something left running. In Playwright, contexts a test opens with `browser.newContext()` live until the worker ends; close them in one shared auto fixture that every spec must use (a unit test can enforce the import), never in each test.
+- Measure a performance hypothesis on both arms, interleaved, before building on it; a local A/B with few samples can disagree with itself, so pin it to the CI runner's cores and repeat before trusting a small difference.
 
 ## Versioning
 
@@ -28690,7 +28733,7 @@ Write so that another person or agent can resume development, operations and mai
 
 ### library/practices/performance.md
 
-Paths: `library/practices/performance.md`. SHA-256 `3121d1b40c80e4b089ce08238b0c7c0544957937cb3645be201d045f9ebf39a1`, 3419 bytes.
+Paths: `library/practices/performance.md`. SHA-256 `175ef557a89efbc1229ff9932f9a103fcace6f359fdc580ecb8896f3cf6c2c6d`, 4359 bytes.
 
 ```markdown
 # Performance on ordinary laptops
@@ -28728,6 +28771,9 @@ Chromium and Edge forced onto an Intel integrated GPU (`--use-angle=d3d11 --enab
 - Count GPU memory, not file size: a 200 KB AVIF of 2048 px still takes about 16 MB decoded (more with mipmaps).
 - A visibility observer may go stale across a detach and re-attach on a loaded browser: when a view puts its canvas back on the page, ask afresh (drop pending records, unobserve, observe). Test with an observer that reports only once.
 - "Ready" is not "drawn": a screenshot test of a canvas waits for the renderer's own draw event, not a ready flag.
+- Measure nothing first: a blank page with the same instrument is the harness's floor. Emulated CPU slowdown burns CPU itself, so measure idle CPU unthrottled; the slowdown is browser-wide, last setter wins, and closing the session that set it clears it.
+- Without a graphics card (CI runners, some virtual machines) Chromium composites in software and reads every new WebGL frame back before showing it, waiting for the whole draw: a frame the player waits for costs its full software draw time on the main thread. In such a draw do only what the player sees now (here, skip the shadow-map pass) and let the rest follow in the next paced frame.
+- Keep what the reader opened open: a view that rebuilds its DOM recreates every `<details>` closed; carry the open ones across by an id every panel has (never its place, which moves between phases; never its title, which counts and translation change), and enforce the id with a source check.
 - Measure on a quiet machine. Timing failures under load are evidence to investigate, never a reason to raise budgets.
 ```
 
@@ -35866,7 +35912,7 @@ export function vehicleGlb(glb: ArrayBuffer, vehicle: string): ArrayBuffer | nul
 
 ### source/showcase/model.ts
 
-Paths: `source/showcase/model.ts`. SHA-256 `0164ad2c8f7ce3bf73396093c87bdbb89ed52e4a72b82b5375293292d46ed3b2`, 26438 bytes.
+Paths: `source/showcase/model.ts`. SHA-256 `0fdaf0a6ff366fd645435db1ae0c522cb401960eb289cdcdc2c17dd06ff7d37b`, 27373 bytes.
 
 ```ts
 // Real-time vehicle showcase (MPES §10): the embedded glTF model on a slowly turning stage the player can drag.
@@ -35998,6 +36044,8 @@ export class ModelStage {
   #dirty = true;
   /** A change the player asked for (a purchase, turn, zoom or resize) waiting to be drawn: it skips the pacer's wait. */
   #urgent = false;
+  /** The fitted parts changed since the shadow was drawn: the next paced draw redraws it, never the urgent one. */
+  #shadowDue = false;
   /** Index into TIERS: the resolution and edge smoothing this machine can draw in time (adaptive tiers). */
   #tier = 0;
   /** Where a multisampled tier draws the scene, then resolved to the canvas with tone mapping by #output; none on a
@@ -36196,7 +36244,9 @@ export class ModelStage {
     this.#camera.updateProjectionMatrix();
     this.#refit();
     this.#tierTo(startTier(tier => { this.#tierTo(tier); return timed(); }));
+    // The first draw has nothing on screen to keep waiting, so it draws the shadow itself.
     this.#renderer.shadowMap.needsUpdate = true;
+    this.#shadowDue = false;
   }
 
   /** Shows one vehicle with the given part nodes; returns false if the library has no such vehicle. */
@@ -36217,8 +36267,13 @@ export class ModelStage {
       this.#scene.add(this.#vehicle);
     }
     const shown = new Set(parts);
-    for (const node of this.#vehicle!.children) node.visible = layerOf(node) === 'base' || shown.has(layerOf(node));
-    this.#renderer.shadowMap.needsUpdate = true;
+    for (const node of this.#vehicle!.children) {
+      const visible = layerOf(node) === 'base' || shown.has(layerOf(node));
+      if (node.visible !== visible) this.#shadowDue = true;
+      node.visible = visible;
+    }
+    // A different vehicle must not stand in the last one's shadow, even for one draw.
+    if (fresh) this.#renderer.shadowMap.needsUpdate = true;
     this.#frameCamera(fresh);
     this.#invalidate(true);
     return true;
@@ -36325,7 +36380,11 @@ export class ModelStage {
   }
 
   #draw(): void {
-    this.#dirty = false;
+    // A purchase is drawn at once; the sun's shadow of it follows in the next paced draw. Without a graphics card the
+    // browser reads each new frame back before showing it, waiting for the whole draw, and redrawing the shadow map
+    // made a purchase's draw about twice a turning draw (G3, CI run 38958721130: 133 ms to show, budget 100).
+    if (this.#shadowDue && !this.#urgent) { this.#renderer.shadowMap.needsUpdate = true; this.#shadowDue = false; }
+    this.#dirty = this.#shadowDue;
     this.#urgent = false;
     this.#distance();
     // Observable without reaching into the stage: the reference-laptop run brackets each draw's GPU time by these (§14.1).
@@ -36917,7 +36976,7 @@ export class Showcase {
 
 ### source/ui/about.ts
 
-Paths: `source/ui/about.ts`. SHA-256 `ea9435a67b449a4dcf2f40b96b52c953c48b020829f93cf8c353c62295031561`, 1317 bytes.
+Paths: `source/ui/about.ts`. SHA-256 `81d58b9955f7aa695ac5d58f3cdb452ff903bba4e1068241f9b01f6cb2db9685`, 1367 bytes.
 
 ```ts
 import { showDialog } from './dialog.ts';
@@ -36926,9 +36985,9 @@ import { translate, type Language, type StringKey } from './i18n.ts';
 import { reflow } from './reflow.ts';
 
 /** A licence file as reflowed text under its summary; a first heading that repeats the summary is dropped. */
-function licenceText(summary: string, source: string): HTMLElement {
+function licenceText(id: string, summary: string, source: string): HTMLElement {
   const blocks = reflow(source).filter((b, i) => !(i === 0 && b.kind === 'heading' && b.text.toLowerCase() === summary.toLowerCase()));
-  return h('details', {}, h('summary', { text: summary }), h('div', { class: 'licence-text' }, ...blocks.map(b =>
+  return h('details', { id }, h('summary', { text: summary }), h('div', { class: 'licence-text' }, ...blocks.map(b =>
     b.kind === 'list' ? h('ul', {}, ...b.items.map(text => h('li', { text }))) : h(b.kind === 'heading' ? 'h3' : 'p', { text: b.text }))));
 }
 
@@ -36938,8 +36997,8 @@ export function showAbout(lang: Language, opener: HTMLElement | null = null): Pr
     title: t('about.title'),
     body: [
       h('p', { text: t('about.body', { version: __SEA_VERSION__ }) }),
-      licenceText(t('about.licence'), __SEA_LICENSE__),
-      licenceText(t('about.notices'), __SEA_NOTICES__),
+      licenceText('about-licence', t('about.licence'), __SEA_LICENSE__),
+      licenceText('about-notices', t('about.notices'), __SEA_NOTICES__),
     ],
     actions: [{ label: t('about.close'), value: 'close', kind: 'primary' }],
     cancelValue: 'close',
@@ -37326,7 +37385,7 @@ export function detectLanguage(search: string, navigatorLanguage: string | undef
 
 ### source/ui/instructor.ts
 
-Paths: `source/ui/instructor.ts`. SHA-256 `afba1ffa7f22ef2509d6d93bfe60b24de8ff6fe6afa46632a0a3c20ed79a39fd`, 37516 bytes.
+Paths: `source/ui/instructor.ts`. SHA-256 `02477f86784270964640fbd5d03d09e0106958dca5ae41181eb36aab897151f9`, 37592 bytes.
 
 ```ts
 // Instructor console (MPES §7.2).
@@ -37464,7 +37523,7 @@ function planningView(v: View): Child {
     h('button', { type: 'button', class: 'btn primary', id: 'start-auction', disabled: missing > 0, text: t('planning.start'), on: {
       click: e => void v.confirm({ title: t('planning.startTitle'), body: h('p', { text: t('planning.startBody') }), confirm: t('planning.start'), opener: e.currentTarget as HTMLElement }, I.startAuction),
     } }),
-    h('details', {}, h('summary', { text: t('planning.requirements') }), missionTable(v.lang)),
+    h('details', { id: 'planning-requirements' }, h('summary', { text: t('planning.requirements') }), missionTable(v.lang)),
   );
 }
 
@@ -37631,7 +37690,7 @@ function teamsPanel(v: View): Child {
 export function ledgerPanel(v: View, open = false): Child {
   const s = v.state, t = v.t;
   const rounds = [...new Set(s.ledger.map(e => e.round))].sort((a, b) => b - a);
-  return h('details', { class: 'panel', open: open || undefined },
+  return h('details', { class: 'panel', id: 'ledger', open: open || undefined },
     h('summary', {}, h('h2', { class: 'inline-heading', text: `${t('auction.ledgerTitle')} (${s.ledger.length})` })),
     rounds.length === 0 ? h('p', { class: 'muted', text: t('auction.ledgerEmpty') }) : rounds.map(round => h('section', { 'aria-label': t('common.round', { n: round }) },
       h('h3', { text: t('common.round', { n: round }) }),
@@ -37679,7 +37738,7 @@ function resultsTable(v: View, withMoney: boolean): Child {
 }
 
 function teamPurchases(v: View): Child {
-  return v.state.teams.map(team => h('details', { class: 'panel' },
+  return v.state.teams.map(team => h('details', { class: 'panel', id: `team-${team.id}-purchases` },
     h('summary', { text: `${v.t('common.team', { n: team.id })} · ${v.t('common.purchases')} (${team.purchases.length})` }),
     purchasesTable(team.purchases, v.lang, team.lockedMission ? { mission: team.lockedMission } : {})));
 }
@@ -37957,7 +38016,7 @@ export function reflow(source: string): Block[] {
 
 ### source/ui/student.ts
 
-Paths: `source/ui/student.ts`. SHA-256 `a7e8b63dfad76094d9d7998b9beddc8265b5bc6df37929899c6e10ee8500e96b`, 24591 bytes.
+Paths: `source/ui/student.ts`. SHA-256 `c897f2f5289cdff58111a49371b46985fc24461e8748cd520da6561be78a984d`, 24672 bytes.
 
 ```ts
 // Student companion (MPES §7.3).
@@ -38110,8 +38169,8 @@ function planningView(v: View): Child {
     h('div', { class: 'stack' },
       missionHero(mission, v.lang, t),
       h('section', { class: 'panel stack' }, h('h2', { text: t('splan.minimums', { mission: missionName(mission, v.lang) }) }), gapMeter(mission, s.team.totals, v.lang)),
-      h('details', { class: 'panel' }, h('summary', { text: t('splan.guide') }), categoryGuide(v.lang, t)),
-      h('details', { class: 'panel' }, h('summary', { text: t('planning.requirements') }), missionTable(v.lang, mission)),
+      h('details', { class: 'panel', id: 'plan-guide' }, h('summary', { text: t('splan.guide') }), categoryGuide(v.lang, t)),
+      h('details', { class: 'panel', id: 'plan-requirements' }, h('summary', { text: t('planning.requirements') }), missionTable(v.lang, mission)),
     ),
   );
 }
@@ -38172,7 +38231,7 @@ function auctionView(v: View): Child {
           click: e => void v.confirm({ title: t('strack.finishTitle'), body: h('p', { text: t('strack.finishBody') }), confirm: t('strack.finish'), opener: e.currentTarget as HTMLElement }, S.finishAuction),
         } }),
       ),
-      h('details', { class: 'stack' }, h('summary', { text: t('strack.notes') }),
+      h('details', { class: 'stack', id: 'scratch-notes' }, h('summary', { text: t('strack.notes') }),
         h('div', { class: 'field' }, h('label', { for: 'scratch-wtp', text: t('strack.wtp') }),
           v.savingInput('scratch-wtp', scratch.wtp, (state, value) => S.editScratch(state, 'wtp', value), { inputmode: 'numeric', autocomplete: 'off' })),
         h('div', { class: 'field' }, h('label', { for: 'scratch-note', text: t('strack.notes') }),
@@ -38202,7 +38261,7 @@ function buildView(v: View): Child {
         click: e => void v.confirm({ title: t('sbuild.removeTitle'), body: h('p', { text: `${p.id} · ${p.title[lang]} · ${money(p.paid, lang)}. ${t('sbuild.removeBody')}` }), confirm: t('sbuild.remove'), danger: true, opener: e.currentTarget as HTMLElement },
           state => S.removeOwnPurchase(state, p.instance)),
       } }) }),
-      h('details', { class: 'panel stack' }, h('summary', { text: t('sbuild.add') }),
+      h('details', { class: 'panel stack', id: 'build-add' }, h('summary', { text: t('sbuild.add') }),
         h('div', { class: 'cluster' },
           field('add-id', 'common.cardId', { autocomplete: 'off', class: 'mono', size: '8', maxlength: '20' }),
           field('add-round', 'strack.round', { type: 'number', min: '1', max: '7', inputmode: 'numeric', size: '3' }),
@@ -38686,7 +38745,7 @@ export function toggleTheme(): Theme {
 
 ### source/ui/view.ts
 
-Paths: `source/ui/view.ts`. SHA-256 `092316b41c66b2f67810d4bfeaafc73d565ef5b883c01bfd83b22a247d17ef3e`, 16534 bytes.
+Paths: `source/ui/view.ts`. SHA-256 `6536026da8169fb8720483ae8c75c494d8d9f550490969eadd6001e220c74b79`, 17562 bytes.
 
 ```ts
 // Shared role view: shell (header, progress, menu, notices), rendering with focus preservation,
@@ -38720,6 +38779,17 @@ export interface RoleConfig<S extends RoleState> {
 }
 
 type Tone = 'ok' | 'bad' | 'info';
+
+/**
+ * Which panel a details element is, from one render to the next: its id, which every panel on a page has
+ * (tests/e2e/render.spec.ts). Not its summary text, which counts and the language change, nor its place, which moves
+ * between phases and handed the ledger's open state to a team's panel (Codex G3 review).
+ */
+function panelKeys(content: Element): Map<HTMLDetailsElement, string> {
+  const keys = new Map<HTMLDetailsElement, string>();
+  content.querySelectorAll('details').forEach(panel => { if (panel.id) keys.set(panel, panel.id); });
+  return keys;
+}
 
 /**
  * On a phone each table row becomes a card (styles.css, owner FIX 2026-10-12): every data cell carries its column's
@@ -38843,7 +38913,11 @@ export class RoleView<S extends RoleState> {
       let selection: [number | null, number | null] | null = null;
       try { if (active && 'selectionStart' in active && typeof active.selectionStart === 'number') selection = [active.selectionStart ?? null, active.selectionEnd ?? null]; } catch { selection = null; }
       nameDocument(this.lang, `${this.config.brand(this)} · ${this.t('app.title')}`);
+      // A panel the reader opened stays open: a render rebuilds every panel closed, and typing in the tracker's notes
+      // hid the field after its first character (G3). A render may open a panel; only the reader closes one.
+      const opened = new Set([...panelKeys(this.#content)].filter(([panel]) => panel.open).map(([, key]) => key));
       replaceChildren(this.#content, this.shell());
+      if (opened.size) for (const [panel, key] of panelKeys(this.#content)) if (opened.has(key)) panel.open = true;
       this.#statusLine.className = `page status-line ${this.#status?.tone === 'bad' ? 'error' : this.#status?.tone === 'ok' ? 'ok' : ''}`;
       if (this.#statusLine.textContent !== (this.#status?.text ?? '')) this.#statusLine.textContent = this.#status?.text ?? '';
       // Tables wider than the screen become labelled, focusable regions so they can be scrolled by keyboard (WCAG 2.1.1).
@@ -39009,14 +39083,14 @@ export class RoleView<S extends RoleState> {
 
 ### tests/e2e/a11y.spec.ts
 
-Paths: `tests/e2e/a11y.spec.ts`. SHA-256 `152ad27ad1b3f40801b75a5466281063ac2b3e2c4a43fdd28e7632a9f07c1b39`, 5016 bytes.
+Paths: `tests/e2e/a11y.spec.ts`. SHA-256 `bfee91b0053311c8acfeb6bb0d75ee9890dcfa92b1c7867abaf6cc53a8656e61`, 5016 bytes.
 
 ```ts
 // J6 + RQ-20/RQ-21 (MPES §12, §16.3): keyboard-only student journey and axe scans of every main view
 // at narrow-window and desktop sizes in both languages. Automated checks only: real screen readers are a
 // residual risk recorded in docs/verification.
-import { expect, test, type Page } from '@playwright/test';
-import { expectAccessible, gameUrl, guardNetwork } from './helpers.ts';
+import { expect, type Page } from '@playwright/test';
+import { expectAccessible, gameUrl, guardNetwork, test } from './helpers.ts';
 import { confirmDialog, instructorSetup, studentJoin } from './roles.ts';
 
 /** Tab until the element with `id` has focus (fails after 60 presses), proving it is reachable by keyboard. */
@@ -39119,11 +39193,11 @@ for (const lang of ['en', 'fr'] as const) {
 
 ### tests/e2e/chooser.spec.ts
 
-Paths: `tests/e2e/chooser.spec.ts`. SHA-256 `ee6c25c9eaf69615d96030ba49ea22275dbd93d9cd5639b0e0eae8bb7afc7d7b`, 11318 bytes.
+Paths: `tests/e2e/chooser.spec.ts`. SHA-256 `51a00e10fd3f4cd6684e1b804abcb0324ade1ccc6a129f066993b5c95ee60397`, 11318 bytes.
 
 ```ts
-import { expect, test } from '@playwright/test';
-import { collectConsoleErrors, expectAccessible, gameUrl, guardNetwork } from './helpers.ts';
+import { expect } from '@playwright/test';
+import { collectConsoleErrors, expectAccessible, gameUrl, guardNetwork, test } from './helpers.ts';
 
 const LINEUP = {
   en: { group: 'Mission vehicles', names: ['Combat', 'RECCE', 'Troop Carrier', 'Command Post', 'Recovery', 'Mine Clearing'] },
@@ -39316,14 +39390,14 @@ test.describe('role chooser over file:// (RQ-01, RQ-19, RQ-20)', () => {
 
 ### tests/e2e/close-round.spec.ts
 
-Paths: `tests/e2e/close-round.spec.ts`. SHA-256 `431cb8a1fc0163e2731a489a4f6adc4bb40b3d4f210595516047f981cad837a3`, 10299 bytes.
+Paths: `tests/e2e/close-round.spec.ts`. SHA-256 `3e866c94b9b97f4856a168eab926ed2ba2c593c7e697326d6978c840fdfc460b`, 10299 bytes.
 
 ```ts
 // Owner request 2026-10-11 (MPES §6.5): when every team has its 2 wins in a round, one click records the rest of the
 // round unsold and opens the next; a student whose team has its 2 wins skips to the next round's tracker.
-import { expect, test, type Locator, type Page } from '@playwright/test';
+import { expect, type Locator, type Page } from '@playwright/test';
 import { readFileSync } from 'node:fs';
-import { gameUrl, guardNetwork } from './helpers.ts';
+import { gameUrl, guardNetwork, test } from './helpers.ts';
 import { confirmDialog, instructorLot, instructorSetup, studentJoin, studentRecord } from './roles.ts';
 
 // Owner FIX 2 (2026-10-12): each listed card shows its effects on one line, so a team can re-plan for what left the
@@ -39479,6 +39553,31 @@ test('the instructor closes a full round in one click and the student skips to t
 });
 ```
 
+### tests/e2e/contexts.spec.ts
+
+Paths: `tests/e2e/contexts.spec.ts`. SHA-256 `977a63e06612932f7e6743c1ae475373d48a037e102369b7b92d927aeb3144dc`, 994 bytes.
+
+```ts
+// G3, CI run 38958721130: contexts a test opened itself (browser.newContext) outlived it. Playwright closes only the
+// contexts of its own `page` and `context` fixtures, so on a heavy project's single worker every two-tab test left its
+// pages open, a 3D showcase still turning in each, and every later test ran slower: the Edge stills fallback test took
+// 43 s, then 1.4 min, then ran out of its 2 minutes. The second test here sees whether the first one's context is gone.
+import { expect } from '@playwright/test';
+import { gameUrl, test } from './helpers.ts';
+
+test.describe.configure({ mode: 'serial' });
+
+test('a test opens its own context and leaves it open', async ({ browser }) => {
+  const page = await (await browser.newContext()).newPage();
+  await page.goto(gameUrl('?lang=en'));
+  expect(browser.contexts()).toHaveLength(1);
+});
+
+test('the next test on the same worker finds no context left from it', async ({ browser }) => {
+  expect(browser.contexts()).toHaveLength(0);
+});
+```
+
 ### tests/e2e/fresh-build.ts
 
 Paths: `tests/e2e/fresh-build.ts`. SHA-256 `4ad349017bfce1e741202ba7d0b6e48441b9951934e4134e21cf2a5c29244258`, 702 bytes.
@@ -39500,13 +39599,27 @@ export default async function freshBuild(): Promise<void> {
 
 ### tests/e2e/helpers.ts
 
-Paths: `tests/e2e/helpers.ts`. SHA-256 `4ea88f72d5474759f6dec0697ec0ccbfad5328ae496370a75e52d7b53beac1f1`, 2642 bytes.
+Paths: `tests/e2e/helpers.ts`. SHA-256 `4e4db1b9e0a4afb509d3dfd9c5ccb7b26761068e88b2f331b517d5c7c235b983`, 3391 bytes.
 
 ```ts
-import { expect, type Page } from '@playwright/test';
+import { expect, test as base, type Page } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
+
+/**
+ * Every spec's `test`. Playwright closes only the contexts of its own `page` and `context` fixtures; one a test opens
+ * itself (`browser.newContext`) lived on to the end of its worker, its 3D showcase still turning. On a heavy project's
+ * single worker they piled up until the Edge stills test ran out of time (G3, CI run 38958721130; contexts.spec.ts).
+ * Here every context a test opened is closed when it ends.
+ */
+export const test = base.extend<{ ownContexts: void }>({
+  ownContexts: [async ({ browser }, use) => {
+    const before = new Set(browser.contexts());
+    await use();
+    await Promise.all(browser.contexts().filter(context => !before.has(context)).map(context => context.close()));
+  }, { auto: true }],
+});
 
 export const DIST = pathToFileURL(path.resolve('dist/index.html')).href;
 
@@ -39566,13 +39679,13 @@ export async function withGpu(page: Page): Promise<void> {
 
 ### tests/e2e/increment.spec.ts
 
-Paths: `tests/e2e/increment.spec.ts`. SHA-256 `087928d0aa59d011230eb021a2808ee77f5e7e2affd9385fc13459c52be1dde0`, 2926 bytes.
+Paths: `tests/e2e/increment.spec.ts`. SHA-256 `8bc0f8234d39f55ac456240eeaa064610305a473526e519180975158245b0868`, 2926 bytes.
 
 ```ts
 // Owner request 2026-10-10 (MPES §6.5): the instructor chooses the bid increment at setup; students record the
 // resulting prices without knowing the choice.
-import { expect, test } from '@playwright/test';
-import { gameUrl, guardNetwork } from './helpers.ts';
+import { expect } from '@playwright/test';
+import { gameUrl, guardNetwork, test } from './helpers.ts';
 import { act, confirmDialog, moreOptions, studentJoin } from './roles.ts';
 
 test('a $100,000 bid increment raises each offer by $100,000 and the student records the price', async ({ browser }) => {
@@ -39627,16 +39740,16 @@ test('a $100,000 bid increment raises each offer by $100,000 and the student rec
 
 ### tests/e2e/journey-en.spec.ts
 
-Paths: `tests/e2e/journey-en.spec.ts`. SHA-256 `394d90a08aa81848224724f41371ef62fd8fa2706fd8d2f45badb6f2e7c9cfda`, 11196 bytes.
+Paths: `tests/e2e/journey-en.spec.ts`. SHA-256 `3c71c9fb7d32f2d43869bb90747f3d901002696dcba5d703f28913d62b7a7cf1`, 11196 bytes.
 
 ```ts
 // J1 + J3 + J5 + J7 (MPES §16.3): full English session, 2 teams, TIMED, JIT, all 70 lots, with
 // pause/expiry/extend, unsold-with-leader, void and replacement, corrected sale, keyboard bidding,
 // the two-win limit, reloads (open lot restores paused), a missed student purchase reconciled in build,
 // private submissions, award and close. Every number is checked against the independent oracle.
-import { expect, test, type Page } from '@playwright/test';
+import { expect, type Page } from '@playwright/test';
 import { readFileSync } from 'node:fs';
-import { collectConsoleErrors, expectAccessible, gameUrl, guardNetwork } from './helpers.ts';
+import { collectConsoleErrors, expectAccessible, gameUrl, guardNetwork, test } from './helpers.ts';
 import { compliant, dollars, score, startCents, totals, winners, type OracleTeam } from './oracle.ts';
 import { act, confirmDialog, instructorSetup, studentJoin } from './roles.ts';
 
@@ -39847,18 +39960,18 @@ test('J1/J3: full English timed session with every correction path', async ({ br
 
 ### tests/e2e/journey-fr.spec.ts
 
-Paths: `tests/e2e/journey-fr.spec.ts`. SHA-256 `1662eb85fd0acf22cf8dac2f9e2b98b35a7dceb661a79168bcc32784fe781fc0`, 5758 bytes.
+Paths: `tests/e2e/journey-fr.spec.ts`. SHA-256 `097d166202351a26bf2da9fbff01d8fad0a509e0f77d9acf86538339b9d9088e`, 5758 bytes.
 
 ```ts
 // J2 + J7 (MPES §16.3): full French session, 10 teams, UNTIMED, MANUAL reveal, all 70 lots, ending in a
 // shared award. The session starts from an imported planning backup with a fixed seed so the purchase plan
 // (tests/fixtures/j2-plan.json, found offline) produces two compliant teams with equal scores.
-import { expect, test, type Page } from '@playwright/test';
+import { expect, type Page } from '@playwright/test';
 import { readFileSync, writeFileSync } from 'node:fs';
 import { makeBackup } from '../../source/domain/backup.ts';
 import * as I from '../../source/domain/instructor.ts';
 import { instructorForSave } from '../../source/domain/saves.ts';
-import { collectConsoleErrors, expectAccessible, gameUrl, guardNetwork } from './helpers.ts';
+import { collectConsoleErrors, expectAccessible, gameUrl, guardNetwork, test } from './helpers.ts';
 import { score, totals, winners, type OracleTeam } from './oracle.ts';
 import { act, confirmDialog } from './roles.ts';
 
@@ -39957,13 +40070,13 @@ test('J2: French 10-team MANUAL untimed session with a shared award', async ({ p
 
 ### tests/e2e/layout.spec.ts
 
-Paths: `tests/e2e/layout.spec.ts`. SHA-256 `84f321ae2267c9fe83a987d65fdd5ad6cb10df74c53753753f194a4b9247b0e0`, 1676 bytes.
+Paths: `tests/e2e/layout.spec.ts`. SHA-256 `3da958868a47a42c038db3e38a6274302bfb80195f126f08a105805f6d540f71`, 1676 bytes.
 
 ```ts
 // MPES §7.1 (3.1.0): at 1280×720 the live lot's bid buttons, Sell, No sale and Next lot are fully visible without
 // scrolling, because Firefox loses a click on a half-hidden button when it scrolls it into view.
-import { expect, test, type Page } from '@playwright/test';
-import { gameUrl, guardNetwork } from './helpers.ts';
+import { expect, type Page } from '@playwright/test';
+import { gameUrl, guardNetwork, test } from './helpers.ts';
 import { instructorSetup } from './roles.ts';
 
 async function fullyVisible(page: Page, selectors: string[]): Promise<void> {
@@ -39995,14 +40108,14 @@ for (const lang of ['en', 'fr']) {
 
 ### tests/e2e/mobile.spec.ts
 
-Paths: `tests/e2e/mobile.spec.ts`. SHA-256 `262f8f0cc5b74e169675320acd658e483f11c9d109102b452bf0c0db8a0bb077`, 3093 bytes.
+Paths: `tests/e2e/mobile.spec.ts`. SHA-256 `c36db7983728f90a2d7616ff71b559c4a82f07acc9ad4b3d004abedcebbbc4fd`, 3093 bytes.
 
 ```ts
 // Owner FIX 2026-10-12: on a phone every table shows all of its columns. Tables open inside collapsed sections
 // (the category guide, the mission minimums) hid most columns off screen; below 40rem each row becomes a card whose
 // cells carry their column's name.
-import { expect, test, type Page } from '@playwright/test';
-import { gameUrl, guardNetwork } from './helpers.ts';
+import { expect, type Page } from '@playwright/test';
+import { gameUrl, guardNetwork, test } from './helpers.ts';
 import { confirmDialog, studentJoin } from './roles.ts';
 
 async function everyCellShown(page: Page, where: string): Promise<void> {
@@ -40118,7 +40231,7 @@ export function dollars(cents: number): string {
 
 ### tests/e2e/perf.spec.ts
 
-Paths: `tests/e2e/perf.spec.ts`. SHA-256 `6de3cbc22b19a8e855e69d63f71bcb8685b99bac5d3b161461cf51f5bd3f6d45`, 3685 bytes.
+Paths: `tests/e2e/perf.spec.ts`. SHA-256 `6b9d9d892e617ded9256830ce831ad39cf01aa8282ea10d80ec2ba4f4b20414b`, 3685 bytes.
 
 ```ts
 // RQ-26 (MPES §14, §10.3): every performance budget, measured in Chromium on the reference profile (4x CPU
@@ -40127,10 +40240,10 @@ Paths: `tests/e2e/perf.spec.ts`. SHA-256 `6de3cbc22b19a8e855e69d63f71bcb8685b99b
 // skewed by parallel work; its tests run one after another in one worker. The scenarios and the protocol (input to
 // painted result, nearest-rank p95 of at least 30 samples) are tests/perf/, shared with `npm run perf:ref`, which
 // measures them on the reference GPU; here the runner's software renderer stands in for it (withGpu).
-import { expect, test, type TestInfo } from '@playwright/test';
+import { expect, type TestInfo } from '@playwright/test';
 import { MIN_SAMPLES, inputToPaint } from '../perf/measure.ts';
 import { Lab, commands, model, startUp, stills, type Measured } from '../perf/scenarios.ts';
-import { withGpu } from './helpers.ts';
+import { test, withGpu } from './helpers.ts';
 
 test.use({ launchOptions: { args: ['--js-flags=--expose-gc'] } });
 test.describe.configure({ mode: 'default' });
@@ -40188,15 +40301,15 @@ test('a command timing includes the command, even when the button is released la
 
 ### tests/e2e/recovery.spec.ts
 
-Paths: `tests/e2e/recovery.spec.ts`. SHA-256 `cf2457d4099ebb9c94564fc9601d4efa774889644029a80965f8e8974c396394`, 5532 bytes.
+Paths: `tests/e2e/recovery.spec.ts`. SHA-256 `e2581a6189d98e465841cee0810582d7982a45757d10bfc34af1286893f33b7c`, 5532 bytes.
 
 ```ts
 // J4 + RQ-15, RQ-16, RQ-28 (MPES §8, §9): storage denied, unreadable save, bad imports, legacy
 // imports and a refused download, each with a designed message and no loss of the current game.
-import { expect, test } from '@playwright/test';
+import { expect } from '@playwright/test';
 import { readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { collectConsoleErrors, gameUrl, guardNetwork } from './helpers.ts';
+import { collectConsoleErrors, gameUrl, guardNetwork, test } from './helpers.ts';
 import { confirmDialog } from './roles.ts';
 
 const legacy = (name: string) => new URL(`../fixtures/legacy/${name}.json`, import.meta.url);
@@ -40312,7 +40425,7 @@ test('a refused download falls back to copyable backup text', async ({ page }) =
 
 ### tests/e2e/rehearsal.spec.ts
 
-Paths: `tests/e2e/rehearsal.spec.ts`. SHA-256 `dc92b8aa0c5abc32ec26f66f3dbf22fd71b9786486f78e6983b7e065d215df86`, 11490 bytes.
+Paths: `tests/e2e/rehearsal.spec.ts`. SHA-256 `74e3faa97ed9fd6fe9a850fda4661f1173ca5559ebcf2f0fe5904000d53dfbf4`, 11490 bytes.
 
 ```ts
 // G-PILOT substitute (MPES §16.6, owner-delegated): scripted classroom rehearsal in French with 10 teams
@@ -40320,8 +40433,8 @@ Paths: `tests/e2e/rehearsal.spec.ts`. SHA-256 `dc92b8aa0c5abc32ec26f66f3dbf22fd7
 // sale, a void, a student interruption and an instructor interruption are each recovered with the
 // documented controls. Results are scored against S1, S2, S4 and S5 and written as a JSON attachment.
 // Real-learner outcome S3 is out of reach for a script and stays a residual risk.
-import { expect, test, type Browser, type Page } from '@playwright/test';
-import { collectConsoleErrors, gameUrl, guardNetwork } from './helpers.ts';
+import { expect, type Browser, type Page } from '@playwright/test';
+import { collectConsoleErrors, gameUrl, guardNetwork, test } from './helpers.ts';
 import { startCents, winners, type OracleTeam } from './oracle.ts';
 import { act, confirmDialog, instructorSetup } from './roles.ts';
 
@@ -40532,13 +40645,15 @@ test('G-PILOT substitute: French classroom rehearsal, 10 teams, three student ta
 
 ### tests/e2e/render.spec.ts
 
-Paths: `tests/e2e/render.spec.ts`. SHA-256 `55def4ca56100811b80e48e3fa3887bb647fb681d88be743ce57b40dc22a18d8`, 2076 bytes.
+Paths: `tests/e2e/render.spec.ts`. SHA-256 `f5b119e6e94c98ec2bc394990bf9769cabec717e716c20614e13d25bd6467231`, 4632 bytes.
 
 ```ts
 // MPES §14 command response: a command, a saved field or a status message rebuilds the view once, never twice (G3: each
 // command used to render through the controller's subscription and again in the view, doubling the click-to-paint time).
-import { expect, test, type Page } from '@playwright/test';
-import { gameUrl, guardNetwork } from './helpers.ts';
+import { expect, type Page } from '@playwright/test';
+import { gameUrl, guardNetwork, test } from './helpers.ts';
+import { instructorLot, instructorSetup } from './roles.ts';
+import { TRACKER_OK } from '../perf/measure.ts';
 
 /** Counts full re-renders: each one empties the view's content element before rebuilding it. */
 async function countRenders(page: Page): Promise<void> {
@@ -40575,6 +40690,47 @@ test('each command, saved field and message renders the view once', async ({ pag
   // A field that saves as you type: one render per committed value.
   await page.locator('#plan-wtp').pressSequentially('5');
   expect(await renders(page), 'saved field').toBe(1);
+});
+
+/** Opens every closed panel the reader can see, nested ones as they appear; returns how many are open. */
+async function openAll(page: Page): Promise<number> {
+  const closed = page.locator('details:not([open]) > summary').filter({ visible: true });
+  while (await closed.count()) await closed.first().click();
+  return page.locator('details[open]').count();
+}
+
+// G3: a render rebuilt every panel closed, so typing in the tracker's scratch notes hid the field after the first
+// character (it saves as you type), and an opened guide, ledger or team list shut on the next click elsewhere.
+// A panel the reader opened stays open across renders; only the reader closes it.
+test('a panel the reader opened stays open through every render, on every page with panels', async ({ page, browser }) => {
+  guardNetwork(page);
+  await page.goto(gameUrl('?role=student&lang=en'));
+  await page.fill('#join-code', 'SEA3-T2-0123456789ABCDEF');
+  await page.selectOption('#join-mission', 'RECOVERY');
+  await page.click('#join'); await page.click('#record-practice'); await page.click('#student-planning');
+  const planning = await openAll(page);
+  expect(planning, 'planning panels').toBeGreaterThanOrEqual(2);
+  await page.locator('#plan-wtp').pressSequentially('5');
+  await expect(page.locator('details[open]'), 'planning, after a saved field').toHaveCount(planning);
+
+  await page.check('#plan-confirm'); await page.click('#student-start-auction');
+  await page.locator(TRACKER_OK).click();
+  await page.locator('details:has(#scratch-wtp) > summary').click();
+  await page.locator('#scratch-wtp').pressSequentially('42');
+  await expect(page.locator('#scratch-wtp'), 'the field typed in').toBeVisible();
+  await expect(page.locator('#scratch-wtp')).toBeFocused();
+  await expect(page.locator('#scratch-wtp')).toHaveValue('42');
+  await page.click('#lang-toggle');
+  await expect(page.locator('details:has(#scratch-wtp)'), 'after a language change').toHaveAttribute('open', '');
+
+  const ip = await (await browser.newContext()).newPage();
+  guardNetwork(ip);
+  await ip.goto(gameUrl('?role=instructor&lang=en'));
+  await instructorSetup(ip, { teams: 2, reveal: 'JIT', timed: false, missions: ['RECOVERY', 'TROOP'] });
+  const auction = await openAll(ip);
+  expect(auction, 'auction panels').toBeGreaterThanOrEqual(1);
+  await instructorLot(ip, [1], 'sell');
+  await expect(ip.locator('details[open]'), 'auction, after a sale').toHaveCount(auction);
 });
 ```
 
@@ -40658,15 +40814,15 @@ export async function studentRecord(page: Page, cardId: string, paidDollars: num
 
 ### tests/e2e/showcase.spec.ts
 
-Paths: `tests/e2e/showcase.spec.ts`. SHA-256 `ebfe6eb35dec21cb96ad2499e133c9772e857d6762f47b08849554065f5a3b54`, 39026 bytes.
+Paths: `tests/e2e/showcase.spec.ts`. SHA-256 `f839193d64b1c19fc43b6c8b5018bb456146595059cb06b460259b5e1219a6e7`, 41814 bytes.
 
 ```ts
 // War-room HUD and vehicle showcase (MPES §7.1, §10, §11): the default look of every view. The live lot shows the
 // card's photoreal render; the student tracker shows the team's vehicle with its real purchases, as a slowly turning
 // 3D model where WebGL works and as stacked still renders where it does not.
-import { expect, test, type Locator } from '@playwright/test';
+import { expect, type Locator } from '@playwright/test';
 import sharp from 'sharp';
-import { collectConsoleErrors, expectAccessible, gameUrl, guardNetwork, withGpu, withoutWebgl } from './helpers.ts';
+import { collectConsoleErrors, expectAccessible, gameUrl, guardNetwork, test, withGpu, withoutWebgl } from './helpers.ts';
 import { confirmDialog, instructorSetup, studentJoin } from './roles.ts';
 
 async function record(page: import('@playwright/test').Page, round: number, lot: number, card: string, paid: number): Promise<void> {
@@ -40989,6 +41145,50 @@ test('3D showcase does not turn by itself when the player prefers reduced motion
   await expect(stage).toHaveAttribute('data-azimuth', azimuth ?? '');
 });
 
+// G3, CI run 38958721130: on a machine without a graphics card the browser reads every new canvas frame back before it
+// shows it, waiting for the whole draw, and a purchase's draw also redrew the sun's shadow map: about twice a turning
+// draw (2-core trace: 14 ms against 7), so the purchase took 133 ms to appear (budget 100). The part is drawn first;
+// its shadow follows on the next paced draw. The shadow pass is the draw into the 1024 px shadow map (its viewport).
+test('3D showcase: a purchase is drawn at once without redrawing the shadow, which follows in the next draw', async ({ browser }) => {
+  const sp = await (await browser.newContext({ reducedMotion: 'reduce' })).newPage();
+  guardNetwork(sp);
+  await withGpu(sp);
+  await sp.addInitScript(() => {
+    const draws: { layers: string; shadow: boolean }[] = [];
+    (window as unknown as { seaDraws: typeof draws }).seaDraws = draws;
+    let shadow = false;
+    const viewport = WebGL2RenderingContext.prototype.viewport;
+    WebGL2RenderingContext.prototype.viewport = function (this: WebGL2RenderingContext, x: number, y: number, w: number, h: number) {
+      if (w === 1024 && h === 1024) shadow = true;
+      return viewport.call(this, x, y, w, h);
+    };
+    document.addEventListener('sea-drawing', () => { shadow = false; }, { capture: true });
+    document.addEventListener('sea-draw', event => {
+      const layers = (event.target as Element).closest('[data-layers]')?.getAttribute('data-layers') ?? '';
+      draws.push({ layers, shadow });
+    }, { capture: true });
+  });
+  await sp.goto(gameUrl('?role=student&lang=en'));
+  await studentJoin(sp, 'SEA3-T2-0123456789ABCDEF', 1, 'RECOVERY');
+  await sp.check('#plan-confirm');
+  await sp.click('#student-start-auction');
+  await confirmDialog(sp);
+  const stage = sp.locator('#showcase [role="img"]');
+  await expect(stage).toHaveAttribute('data-ready', 'true', { timeout: 30_000 });
+  const draws = () => sp.evaluate(() => (window as unknown as { seaDraws: { layers: string; shadow: boolean }[] }).seaDraws);
+  await expect.poll(async () => (await draws()).length, { timeout: 30_000 }).toBeGreaterThan(0);
+  await sp.waitForTimeout(1000);
+  const before = (await draws()).length;
+  await record(sp, 1, 7, 'ACC-F', 350000);
+  await expect(stage).toHaveAttribute('data-drawn', 'ACC-F', { timeout: 30_000 });
+  await sp.waitForTimeout(1500);
+  const after = (await draws()).slice(before);
+  const first = after.findIndex(d => d.layers === 'ACC-F');
+  expect(after[first], 'the draw that first shows the purchase').toEqual({ layers: 'ACC-F', shadow: false });
+  expect(after.slice(first + 1).filter(d => d.shadow), 'the shadow, in a later draw').toHaveLength(1);
+  expect(after.length - first, 'then the still stage stops drawing').toBeLessThanOrEqual(2);
+});
+
 test('stills fallback without WebGL: layers follow recorded purchases; one part per mount; process cards are badges', async ({ browser }) => {
   const ip = await (await browser.newContext()).newPage();
   const sp = await (await browser.newContext()).newPage();
@@ -41285,14 +41485,14 @@ test('projector theme: switched by hand, kept on navigation, and accessible (MPE
 
 ### tests/e2e/slice.spec.ts
 
-Paths: `tests/e2e/slice.spec.ts`. SHA-256 `1be347f45f1a0ea75585b1de81437686761f4a363de3f6464d36909916bf4555`, 6235 bytes.
+Paths: `tests/e2e/slice.spec.ts`. SHA-256 `65fd73185125938ed0f165ac89f4b0a35d69ccc3183d58ebb8323da5e20aae50`, 6235 bytes.
 
 ```ts
 // M2 vertical slice (MPES §17): both roles over file://, one full round, corrections, persistence,
 // export/import, EN/FR switching, confirmations, accessibility scans, no network.
-import { expect, test } from '@playwright/test';
+import { expect } from '@playwright/test';
 import { writeFileSync } from 'node:fs';
-import { collectConsoleErrors, expectAccessible, gameUrl, guardNetwork } from './helpers.ts';
+import { collectConsoleErrors, expectAccessible, gameUrl, guardNetwork, test } from './helpers.ts';
 import { act, confirmDialog, instructorLot, instructorSetup, studentJoin, studentRecord } from './roles.ts';
 
 test('one-round slice: instructor and student, corrections, backup round trip', async ({ browser }, info) => {
@@ -41408,15 +41608,15 @@ test('one-round slice: instructor and student, corrections, backup round trip', 
 
 ### tests/e2e/visual.spec.ts
 
-Paths: `tests/e2e/visual.spec.ts`. SHA-256 `09035a644a3180c2a97cdf882d76a6a71634ab160ff850245c5fc94b38a45142`, 4992 bytes.
+Paths: `tests/e2e/visual.spec.ts`. SHA-256 `9ec9b9530c4622bcdbcae037ff58aadcd07f1dc0b98e36e3c0cc4e2513ddb4d3`, 4992 bytes.
 
 ```ts
 // Screenshot baselines (MPES §16.3): every view of both roles in each phase a legacy fixture reaches, both themes
 // on the first screen, and the showcase for every vehicle and angle. Chromium only: the baselines are pixels.
 // Update deliberately with `npx playwright test tests/e2e/visual.spec.ts --update-snapshots` and review the diff.
-import { expect, test, type Page } from '@playwright/test';
+import { expect, type Page } from '@playwright/test';
 import { readFileSync } from 'node:fs';
-import { gameUrl, guardNetwork, withoutWebgl } from './helpers.ts';
+import { gameUrl, guardNetwork, test, withoutWebgl } from './helpers.ts';
 import { confirmDialog, studentJoin } from './roles.ts';
 
 // Edge reports browserName 'chromium' too; its channel tells it apart.
@@ -41782,7 +41982,7 @@ Paths: `tests/fixtures/legacy/student-practice.json`. SHA-256 `fbf972503388c8ac6
 
 ### tests/perf-ref/perf-ref.spec.ts
 
-Paths: `tests/perf-ref/perf-ref.spec.ts`. SHA-256 `6a4beaac646d99eb1b44fd1e0e9afe5316be6d16292dc14abf28dd15d6180162`, 6474 bytes.
+Paths: `tests/perf-ref/perf-ref.spec.ts`. SHA-256 `d020517b3f7406cb2721701b1ddf74fa40155d508e418d20d6ff8db1649be90f`, 7185 bytes.
 
 ```ts
 // G3 `npm run perf:ref` (MPES §14, §17): every §14 gate measured on the reference-laptop proxy, i.e. Chromium and
@@ -41807,7 +42007,10 @@ const OUT = process.env.PERF_REF_DIR ?? path.resolve('.artifacts/perf-ref', 'man
 const RUN_ID = process.env.PERF_REF_STAMP ?? 'manual';
 const IDLE_IDS = { Chooser: 'idleCpuChooserPct', Instructor: 'idleCpuInstructorPct', Tracker: 'idleCpuTrackerPct' } as const;
 
-/** Browser CPU over a quiet window: all processes (GPU included) in % of one core, and the page's main-thread busy share. */
+/** Browser CPU over a quiet window: all processes (GPU included) in % of one core, and the page's main-thread busy share.
+ *  Measured unthrottled: CPU throttling is emulated by keeping the renderer busy, so under it a blank page reads 81% of a
+ *  core (2.3% without). The throttle is the browser's, last setter wins, and it is cleared when the session that set it
+ *  detaches: this session restores the reference throttle and stays attached until the page closes. */
 async function idle(browser: Browser, page: Page, id: string, out: Measured): Promise<void> {
   if (IDLE_SECONDS <= 0) { out.notes[id] = 'idle window switched off (PERF_REF_IDLE_SECONDS=0)'; return; }
   try {
@@ -41822,15 +42025,22 @@ async function idle(browser: Browser, page: Page, id: string, out: Measured): Pr
       return metrics.find(m => m.name === 'TaskDuration')?.value ?? 0;
     };
     await pageCdp.send('Performance.enable');
-    await page.waitForTimeout(3000); // let start-up work finish before the window opens
-    const [cpu0, task0, t0] = [await cpu(), await task(), Date.now()];
-    await page.waitForTimeout(IDLE_SECONDS * 1000);
-    const [cpu1, task1, t1] = [await cpu(), await task(), Date.now()];
+    await pageCdp.send('Emulation.setCPUThrottlingRate', { rate: 1 });
+    let window: [number, number, number, number, number, number];
+    try {
+      await page.waitForTimeout(3000); // let start-up work finish before the window opens
+      const [cpu0, task0, t0] = [await cpu(), await task(), Date.now()];
+      await page.waitForTimeout(IDLE_SECONDS * 1000);
+      window = [cpu0, task0, t0, await cpu(), await task(), Date.now()];
+    } finally {
+      // Whatever happened, what is measured next runs at the reference throttle.
+      await pageCdp.send('Emulation.setCPUThrottlingRate', { rate: THROTTLE });
+    }
+    const [cpu0, task0, t0, cpu1, task1, t1] = window;
     const wall = (t1 - t0) / 1000;
     out.values[id] = round((cpu1 - cpu0) / wall * 100);
     const busy = round((task1 - task0) / wall * 100), old = out.values.idleMainThreadMaxPct;
     out.values.idleMainThreadMaxPct = old === null || old === undefined ? busy : Math.max(old, busy);
-    await pageCdp.detach();
     await browserCdp.detach();
   } catch (error) {
     out.notes[id] = `idle CPU could not be read: ${String(error).slice(0, 120)}`;
@@ -43218,11 +43428,12 @@ describe('no GitHub links in the README or the guides (D-13)', () => {
 
 ### tests/unit/e2e-config.test.ts
 
-Paths: `tests/unit/e2e-config.test.ts`. SHA-256 `b7bb3dfe9019edc54e8dcd32fb090fe07d8b74ec5df87e0ab52dc2f031fa8b59`, 2200 bytes.
+Paths: `tests/unit/e2e-config.test.ts`. SHA-256 `f963e93d4dacd32da1b7e707fa873191d3c3f59aa4882b0832ef794eb128a618`, 2928 bytes.
 
 ```ts
 // The browser suite keeps its heavy tests apart (playwright.config.ts): beside a software-WebGL showcase test on a CI
 // runner the one-round slice slowed from 17 s to 2 minutes and ran out of its time (run 38609311138, Edge).
+import { readdirSync, readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import config from '../../playwright.config.ts';
 
@@ -43256,6 +43467,17 @@ describe('browser suite projects', () => {
   it('measure performance after everything else', () => {
     const perf = projects.find(project => project.name === 'perf');
     if (perf) expect(perf.dependencies).toEqual(expect.arrayContaining([...light, ...heavy].map(project => project.name)));
+  });
+
+  // Contexts a test opens itself outlived it with Playwright's own `test` (G3, run 38958721130); helpers' `test` closes them.
+  it('take `test` from the helpers, which close the contexts a test opened, never from Playwright directly', () => {
+    const specs = readdirSync('tests/e2e').filter(file => file.endsWith('.spec.ts'));
+    expect(specs.length).toBeGreaterThan(10);
+    for (const file of specs) {
+      const source = readFileSync(`tests/e2e/${file}`, 'utf8');
+      expect(source, file).not.toMatch(/import \{[^}]*\btest\b[^}]*\} from '@playwright\/test'/);
+      expect(source, file).toMatch(/import \{[^}]*\btest\b[^}]*\} from '\.\/helpers\.ts'/);
+    }
   });
 });
 ```
@@ -44150,6 +44372,63 @@ describe('starting tier (MPES §10.3)', () => {
 });
 ```
 
+### tests/unit/panels.test.ts
+
+Paths: `tests/unit/panels.test.ts`. SHA-256 `d15e4b10994addaddbcac3e50ffac681465108ee927aca65104d51ba5d52caac`, 3091 bytes.
+
+```ts
+// MPES §7, Codex G3 review: a render keeps open each panel the reader opened, known by its id (source/ui/view.ts
+// panelKeys). A panel without an id would close on every render, and keying it by its place instead handed the
+// instructor ledger's open state to a team's panel when the phase changed. So every panel the interface builds has an
+// id. Read as TypeScript sees it: each `h('details', props, ...)` passes an object literal with an `id` property; the
+// check proves itself against a panel without one and against an id only mentioned in a comment.
+import { readdirSync, readFileSync } from 'node:fs';
+import ts from 'typescript';
+import { describe, expect, it } from 'vitest';
+
+/** The `h('details', ...)` calls in a source that pass no `id`, by line; a details made any other way counts too. */
+function panelsWithoutId(source: string): number[] {
+  const file = ts.createSourceFile('ui.ts', source, ts.ScriptTarget.Latest, true);
+  const faults: number[] = [];
+  const line = (node: ts.Node) => file.getLineAndCharacterOfPosition(node.getStart()).line + 1;
+  const visit = (node: ts.Node): void => {
+    const callee = ts.isCallExpression(node) ? node.expression : null;
+    const makes = callee && ((ts.isIdentifier(callee) && callee.text === 'h') || (ts.isPropertyAccessExpression(callee) && callee.name.text === 'createElement'));
+    if (makes && ts.isCallExpression(node) && node.arguments[0] && ts.isStringLiteral(node.arguments[0]) && node.arguments[0].text === 'details') {
+      const named = ts.isIdentifier(callee) && callee.text === 'h';
+      const props = node.arguments[1];
+      const id = props && ts.isObjectLiteralExpression(props) && props.properties.some(p =>
+        (ts.isPropertyAssignment(p) || ts.isShorthandPropertyAssignment(p)) && p.name.getText() === 'id');
+      if (!named || !id) faults.push(line(node));
+    }
+    ts.forEachChild(node, visit);
+  };
+  visit(file);
+  return faults;
+}
+
+describe('every panel has an id, so a render keeps it open (MPES §7)', () => {
+  it('holds for every interface source', () => {
+    const files = readdirSync('source/ui').filter(f => f.endsWith('.ts'));
+    const found = files.flatMap(f => {
+      const source = readFileSync(`source/ui/${f}`, 'utf8');
+      return panelsWithoutId(source).map(line => `${f}:${line}`);
+    });
+    expect(found).toEqual([]);
+    // Some panel is found at all, so a rename of `h` cannot pass the check by finding nothing.
+    expect(files.some(f => readFileSync(`source/ui/${f}`, 'utf8').includes("h('details', { "))).toBe(true);
+  });
+
+  it('fails a panel without an id, and one whose id is only in a comment', () => {
+    expect(panelsWithoutId("h('details', { class: 'panel' }, h('summary', {}))")).toEqual([1]);
+    expect(panelsWithoutId("h('details', {} /* id: 'x' */, h('summary', {}))")).toEqual([1]);
+    expect(panelsWithoutId("document.createElement('details')")).toEqual([1]);
+    expect(panelsWithoutId("h('details', { id }, h('summary', {}))")).toEqual([]);
+    expect(panelsWithoutId("h('details', { class: 'panel', id: 'ledger' })")).toEqual([]);
+  });
+});
+```
+
 ### tests/unit/perf-measure.test.ts
 
 Paths: `tests/unit/perf-measure.test.ts`. SHA-256 `77d839ae45ed8c8115812109d0ecea326caff92c7da6beec394209bbacdd0eea`, 776 bytes.
@@ -44178,10 +44457,11 @@ describe('perf measurement protocol (MPES §14)', () => {
 
 ### tests/unit/perf-ref-report.test.ts
 
-Paths: `tests/unit/perf-ref-report.test.ts`. SHA-256 `181b295cb62369d9caf4f9c709ef744a659d5cd64897371a2b31037cd97dac1b`, 4873 bytes.
+Paths: `tests/unit/perf-ref-report.test.ts`. SHA-256 `ffc26a7cd9b85c60d2e7bb4c83c47e03f1b7aa7234fd6fdfb190e58bba4863be`, 5866 bytes.
 
 ```ts
 import { describe, expect, it } from 'vitest';
+import { readFileSync } from 'node:fs';
 import { BROWSERS, KPIS, METRICS, PROFILES, buildReport, renderMarkdown, statusOf, type RunFile } from '../perf-ref/report.ts';
 
 const ID = 'run-1';
@@ -44272,6 +44552,20 @@ describe('perf:ref report', () => {
     const text = renderMarkdown(buildReport(complete(), at));
     for (const kpi of KPIS) expect(text).toContain(kpi);
     for (const metric of METRICS) expect(text).toContain(metric.label);
+  });
+});
+
+// The first idle baseline read 100% of a core on a page doing nothing: it was measured under the 4x CPU throttle, which
+// is emulated by keeping the renderer busy (a blank page: 81% throttled, 2.3% not). Detaching the session that set a
+// throttle clears it for the page, so the restore must come from a session that stays attached.
+describe('perf:ref idle windows', () => {
+  const spec = readFileSync('tests/perf-ref/perf-ref.spec.ts', 'utf8');
+  const start = spec.indexOf('async function idle('), idle = spec.slice(start, spec.indexOf('\n}\n', start));
+
+  it('measure unthrottled and restore the reference throttle, even on failure, on a session left attached', () => {
+    expect(idle).toMatch(/pageCdp\.send\('Emulation\.setCPUThrottlingRate', \{ rate: 1 \}\)/);
+    expect(idle).toMatch(/finally \{[^}]*pageCdp\.send\('Emulation\.setCPUThrottlingRate', \{ rate: THROTTLE \}\)/);
+    expect(idle).not.toMatch(/pageCdp\.detach\(\)/);
   });
 });
 ```
@@ -46159,5 +46453,5 @@ Keys and the commands that make each kind again:
 
 | Path | Bytes | SHA-256 | Why |
 |---|---:|---|---|
-| `docs/MPES.md` | 183774 | `928c8f312214d32ddd3495a7a208ce6bc2ffd3d9730c3fab2fefd998cab05300` | The specification, a clean-room document of its own (Omni 5.1.1 §333). |
+| `docs/MPES.md` | 187687 | `75d01216f1e243b4e63086938b261bc9de60a3f3d1fac0ba319a21b006c660d1` | The specification, a clean-room document of its own (Omni 5.1.1 §333). |
 | `docs/CODEBASE.md` | | | This file. |

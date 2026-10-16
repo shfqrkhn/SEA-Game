@@ -1,7 +1,7 @@
 // Owner request 2026-10-10 (MPES §6.5): the instructor chooses the bid increment at setup; students record the
 // resulting prices without knowing the choice.
-import { expect, test } from '@playwright/test';
-import { gameUrl, guardNetwork } from './helpers.ts';
+import { expect } from '@playwright/test';
+import { gameUrl, guardNetwork, test } from './helpers.ts';
 import { act, confirmDialog, moreOptions, studentJoin } from './roles.ts';
 
 test('a $100,000 bid increment raises each offer by $100,000 and the student records the price', async ({ browser }) => {

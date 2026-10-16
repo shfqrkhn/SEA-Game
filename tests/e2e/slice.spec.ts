@@ -1,8 +1,8 @@
 // M2 vertical slice (MPES §17): both roles over file://, one full round, corrections, persistence,
 // export/import, EN/FR switching, confirmations, accessibility scans, no network.
-import { expect, test } from '@playwright/test';
+import { expect } from '@playwright/test';
 import { writeFileSync } from 'node:fs';
-import { collectConsoleErrors, expectAccessible, gameUrl, guardNetwork } from './helpers.ts';
+import { collectConsoleErrors, expectAccessible, gameUrl, guardNetwork, test } from './helpers.ts';
 import { act, confirmDialog, instructorLot, instructorSetup, studentJoin, studentRecord } from './roles.ts';
 
 test('one-round slice: instructor and student, corrections, backup round trip', async ({ browser }, info) => {

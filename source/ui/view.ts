@@ -31,6 +31,17 @@ export interface RoleConfig<S extends RoleState> {
 type Tone = 'ok' | 'bad' | 'info';
 
 /**
+ * Which panel a details element is, from one render to the next: its id, which every panel on a page has
+ * (tests/e2e/render.spec.ts). Not its summary text, which counts and the language change, nor its place, which moves
+ * between phases and handed the ledger's open state to a team's panel (Codex G3 review).
+ */
+function panelKeys(content: Element): Map<HTMLDetailsElement, string> {
+  const keys = new Map<HTMLDetailsElement, string>();
+  content.querySelectorAll('details').forEach(panel => { if (panel.id) keys.set(panel, panel.id); });
+  return keys;
+}
+
+/**
  * On a phone each table row becomes a card (styles.css, owner FIX 2026-10-12): every data cell carries its column's
  * name for display, and explicit table roles keep the table's meaning for screen readers once rows stop displaying
  * as table rows. A column whose header is only hidden text (an action) gets no label.
@@ -152,7 +163,11 @@ export class RoleView<S extends RoleState> {
       let selection: [number | null, number | null] | null = null;
       try { if (active && 'selectionStart' in active && typeof active.selectionStart === 'number') selection = [active.selectionStart ?? null, active.selectionEnd ?? null]; } catch { selection = null; }
       nameDocument(this.lang, `${this.config.brand(this)} · ${this.t('app.title')}`);
+      // A panel the reader opened stays open: a render rebuilds every panel closed, and typing in the tracker's notes
+      // hid the field after its first character (G3). A render may open a panel; only the reader closes one.
+      const opened = new Set([...panelKeys(this.#content)].filter(([panel]) => panel.open).map(([, key]) => key));
       replaceChildren(this.#content, this.shell());
+      if (opened.size) for (const [panel, key] of panelKeys(this.#content)) if (opened.has(key)) panel.open = true;
       this.#statusLine.className = `page status-line ${this.#status?.tone === 'bad' ? 'error' : this.#status?.tone === 'ok' ? 'ok' : ''}`;
       if (this.#statusLine.textContent !== (this.#status?.text ?? '')) this.#statusLine.textContent = this.#status?.text ?? '';
       // Tables wider than the screen become labelled, focusable regions so they can be scrolled by keyboard (WCAG 2.1.1).

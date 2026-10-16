@@ -1,9 +1,9 @@
 // War-room HUD and vehicle showcase (MPES §7.1, §10, §11): the default look of every view. The live lot shows the
 // card's photoreal render; the student tracker shows the team's vehicle with its real purchases, as a slowly turning
 // 3D model where WebGL works and as stacked still renders where it does not.
-import { expect, test, type Locator } from '@playwright/test';
+import { expect, type Locator } from '@playwright/test';
 import sharp from 'sharp';
-import { collectConsoleErrors, expectAccessible, gameUrl, guardNetwork, withGpu, withoutWebgl } from './helpers.ts';
+import { collectConsoleErrors, expectAccessible, gameUrl, guardNetwork, test, withGpu, withoutWebgl } from './helpers.ts';
 import { confirmDialog, instructorSetup, studentJoin } from './roles.ts';
 
 async function record(page: import('@playwright/test').Page, round: number, lot: number, card: string, paid: number): Promise<void> {
@@ -324,6 +324,50 @@ test('3D showcase does not turn by itself when the player prefers reduced motion
   const azimuth = await stage.getAttribute('data-azimuth');
   await sp.waitForTimeout(1500);
   await expect(stage).toHaveAttribute('data-azimuth', azimuth ?? '');
+});
+
+// G3, CI run 38958721130: on a machine without a graphics card the browser reads every new canvas frame back before it
+// shows it, waiting for the whole draw, and a purchase's draw also redrew the sun's shadow map: about twice a turning
+// draw (2-core trace: 14 ms against 7), so the purchase took 133 ms to appear (budget 100). The part is drawn first;
+// its shadow follows on the next paced draw. The shadow pass is the draw into the 1024 px shadow map (its viewport).
+test('3D showcase: a purchase is drawn at once without redrawing the shadow, which follows in the next draw', async ({ browser }) => {
+  const sp = await (await browser.newContext({ reducedMotion: 'reduce' })).newPage();
+  guardNetwork(sp);
+  await withGpu(sp);
+  await sp.addInitScript(() => {
+    const draws: { layers: string; shadow: boolean }[] = [];
+    (window as unknown as { seaDraws: typeof draws }).seaDraws = draws;
+    let shadow = false;
+    const viewport = WebGL2RenderingContext.prototype.viewport;
+    WebGL2RenderingContext.prototype.viewport = function (this: WebGL2RenderingContext, x: number, y: number, w: number, h: number) {
+      if (w === 1024 && h === 1024) shadow = true;
+      return viewport.call(this, x, y, w, h);
+    };
+    document.addEventListener('sea-drawing', () => { shadow = false; }, { capture: true });
+    document.addEventListener('sea-draw', event => {
+      const layers = (event.target as Element).closest('[data-layers]')?.getAttribute('data-layers') ?? '';
+      draws.push({ layers, shadow });
+    }, { capture: true });
+  });
+  await sp.goto(gameUrl('?role=student&lang=en'));
+  await studentJoin(sp, 'SEA3-T2-0123456789ABCDEF', 1, 'RECOVERY');
+  await sp.check('#plan-confirm');
+  await sp.click('#student-start-auction');
+  await confirmDialog(sp);
+  const stage = sp.locator('#showcase [role="img"]');
+  await expect(stage).toHaveAttribute('data-ready', 'true', { timeout: 30_000 });
+  const draws = () => sp.evaluate(() => (window as unknown as { seaDraws: { layers: string; shadow: boolean }[] }).seaDraws);
+  await expect.poll(async () => (await draws()).length, { timeout: 30_000 }).toBeGreaterThan(0);
+  await sp.waitForTimeout(1000);
+  const before = (await draws()).length;
+  await record(sp, 1, 7, 'ACC-F', 350000);
+  await expect(stage).toHaveAttribute('data-drawn', 'ACC-F', { timeout: 30_000 });
+  await sp.waitForTimeout(1500);
+  const after = (await draws()).slice(before);
+  const first = after.findIndex(d => d.layers === 'ACC-F');
+  expect(after[first], 'the draw that first shows the purchase').toEqual({ layers: 'ACC-F', shadow: false });
+  expect(after.slice(first + 1).filter(d => d.shadow), 'the shadow, in a later draw').toHaveLength(1);
+  expect(after.length - first, 'then the still stage stops drawing').toBeLessThanOrEqual(2);
 });
 
 test('stills fallback without WebGL: layers follow recorded purchases; one part per mount; process cards are badges', async ({ browser }) => {

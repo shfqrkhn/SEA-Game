@@ -2,6 +2,18 @@
 
 Each entry: what happened, the rule it produced, and the check that now enforces it. Newest first. Examples come from SEA Game (a classroom auction game with photoreal vehicle renders and a real-time 3D showcase, one offline HTML file).
 
+## 2026-10-16 · Contexts left running, and a readback nobody asked for
+
+- **What happened:** one CI test took 43 s, then 1.4 min, then ran out of its 2 minutes, every step uniformly slow. Playwright closes only the contexts it made itself; tests that opened their own with `browser.newContext()` left them, each with a 3D view still animating, on a single-worker project. On the same run a purchase took 133 ms to appear in 3D (budget 100). Two plausible guesses (a smaller DOM update; the purchase queuing behind an animation frame) were measured on both arms and dropped. A trace then showed the browser, with no graphics card, reading each new WebGL frame back before compositing it, waiting for the whole software draw, and the purchase's draw also redrew the shadow map, doubling it. While checking the fix, a page rebuild was found to close every `<details>` panel the reader had opened.
+- **Rule:** close what a test opens in one shared fixture every spec must use. Measure a hypothesis before building on it. In a draw the player waits for, do only what they see now; let the rest follow a frame later. Carry opened panels across a rebuild.
+- **Check (as built in SEA Game):** an auto fixture closes every new context, a two-test spec proves the next test finds none, and a unit test fails any spec that bypasses the fixture; a browser test records which draw makes the shadow pass and fails if the purchase's first draw does; a browser test opens every panel on each page with panels and fails if a render closes one.
+
+## 2026-10-16 · An idle page at 100% of a core, measured by a busy instrument
+
+- **What happened:** the first reference-laptop baseline read idle CPU of 100 to 117% of a core on pages doing nothing. The pages were measured under Chrome's emulated 4x CPU slowdown, which works by keeping the renderer busy: a blank page read 81% throttled and 2.3% not. Probing the DevTools protocol also showed that the slowdown is the browser's, last setter wins, and closing the session that set it clears it, so a naive restore would have left later measurements unthrottled.
+- **Rule:** before trusting a measurement, measure nothing with the same instrument; the blank page is the harness's floor. Measure idle without emulated slowdown, and restore the slowdown in a `finally`, from a session that stays attached.
+- **Check (as built in SEA Game):** a unit test reads the idle window's code and fails unless it unthrottles, restores the throttle in a `finally`, and never detaches that session.
+
 ## 2026-10-16 · A thin margin, and a search where a formula would do
 
 - **What happened:** a purchase's 3D update had passed its 100 ms budget at 89 ms; on busier CI runners it measured 116 and 147. A CPU profile of one purchase showed the largest single cost was refitting the camera to the new kit: a numerical search (doubling, then bisection) for each view's distance placed a camera and projected the box about 1 300 times, inside the click.

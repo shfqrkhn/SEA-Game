@@ -1,5 +1,6 @@
 // The browser suite keeps its heavy tests apart (playwright.config.ts): beside a software-WebGL showcase test on a CI
 // runner the one-round slice slowed from 17 s to 2 minutes and ran out of its time (run 38609311138, Edge).
+import { readdirSync, readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import config from '../../playwright.config.ts';
 
@@ -33,5 +34,16 @@ describe('browser suite projects', () => {
   it('measure performance after everything else', () => {
     const perf = projects.find(project => project.name === 'perf');
     if (perf) expect(perf.dependencies).toEqual(expect.arrayContaining([...light, ...heavy].map(project => project.name)));
+  });
+
+  // Contexts a test opens itself outlived it with Playwright's own `test` (G3, run 38958721130); helpers' `test` closes them.
+  it('take `test` from the helpers, which close the contexts a test opened, never from Playwright directly', () => {
+    const specs = readdirSync('tests/e2e').filter(file => file.endsWith('.spec.ts'));
+    expect(specs.length).toBeGreaterThan(10);
+    for (const file of specs) {
+      const source = readFileSync(`tests/e2e/${file}`, 'utf8');
+      expect(source, file).not.toMatch(/import \{[^}]*\btest\b[^}]*\} from '@playwright\/test'/);
+      expect(source, file).toMatch(/import \{[^}]*\btest\b[^}]*\} from '\.\/helpers\.ts'/);
+    }
   });
 });
