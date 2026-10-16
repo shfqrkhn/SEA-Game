@@ -2,6 +2,12 @@
 
 Each entry: what happened, the rule it produced, and the check that now enforces it. Newest first. Examples come from SEA Game (a classroom auction game with photoreal vehicle renders and a real-time 3D showcase, one offline HTML file).
 
+## 2026-10-16 · A thin margin, and a search where a formula would do
+
+- **What happened:** a purchase's 3D update had passed its 100 ms budget at 89 ms; on busier CI runners it measured 116 and 147. A CPU profile of one purchase showed the largest single cost was refitting the camera to the new kit: a numerical search (doubling, then bisection) for each view's distance placed a camera and projected the box about 1 300 times, inside the click.
+- **Rule:** a budget met with thin margin will fail on a slow day; profile the operation and remove its largest cost rather than widen the budget. When a quantity has a closed form (here, a camera looking at its target keeps each point's cross offset fixed as it backs away, so the least distance is solved directly), solve it instead of searching on the user's click.
+- **Check (as built in SEA Game):** a unit test fails if fitting places any camera, and another holds the fit tight (the worst view at the margin to 10⁻⁶); the performance scenario still gates the update at 100 ms.
+
 ## 2026-10-16 · A test that was working, not hung, when its time ran out
 
 - **What happened:** the stills contrast test checked the front, the rear and all 24 turntable frames of a vehicle in one test, three screenshots a frame. On a slow CI runner it timed out at two minutes; the trace showed it on frame 23 of 24, every step merely slow. The same test took 50 to 84 seconds elsewhere in the same run.

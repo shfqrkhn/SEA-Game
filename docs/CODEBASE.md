@@ -27041,7 +27041,7 @@ Exportez une sauvegarde par **Menu → Exporter une sauvegarde** après la confi
 
 ### docs/HANDOVER.md
 
-Paths: `docs/HANDOVER.md`. SHA-256 `3aeacb1d50321345237d167c8163af43498c6e131541217a84312e6fb5b9915e`, 12915 bytes.
+Paths: `docs/HANDOVER.md`. SHA-256 `ccfdcda95e7aa68b733652e91bb3a8eb909cff843f1152c6ec2f358e2e05ae77`, 13017 bytes.
 
 ```markdown
 # Handover
@@ -27106,7 +27106,7 @@ Owner FIX 1 (stills and fit), FIX 2 (one click to close a round nobody can win i
 
 ## 5. Next action
 
-**Agent:** G3 on `g3/proxy-runtime` (PR #27): red run 38609311138 fixed (three causes in `docs/verification/0.6.0.0.md`: contrast at every turn step, eager chooser stills, heavy tests apart); get two consecutive green CI runs on one head; `npm run perf:ref` 12-KPI baseline in a quiet slot (MPES §14.1); finish the verification Checks; gallery and owner GO or FIX. Then G4 (stills to 3:1 in every view and frame, the pale RECCE roof, the light-theme stage contrast).
+**Agent:** G3 on `g3/proxy-runtime` (PR #27): red run 38609311138 fixed (three causes in `docs/verification/0.6.0.0.md`: contrast at every turn step, eager chooser stills, heavy tests apart), red runs 38921636256 (stills split in three) and 38931516133 (camera fit solved, not searched) fixed; get two consecutive green CI runs on one head; `npm run perf:ref` 12-KPI baseline in a quiet slot (MPES §14.1); finish the verification Checks; gallery and owner GO or FIX. Then G4 (stills to 3:1 in every view and frame, the pale RECCE roof, the light-theme stage contrast).
 **Owner:** `docs/owner/art-review.md` (5 minutes, reply GO or FIX).
 
 ## 6. Rollback
@@ -27700,7 +27700,7 @@ A read-only Codex session (gpt-6.1-sol, medium) reviewed the diff (`.artifacts/c
 
 ### docs/verification/0.6.0.0.md
 
-Paths: `docs/verification/0.6.0.0.md`. SHA-256 `67cb232fb190fbf5950ee5eb3f56b4f9ee35a5e88d988e1b0bae3781f85742df`, 25342 bytes.
+Paths: `docs/verification/0.6.0.0.md`. SHA-256 `6f9909e879b8a92d0f80973a976076dd1182969ac511ecd393f0d2222e06fc6d`, 28176 bytes.
 
 ```markdown
 # Verification record: 0.6.0.0 beta (G3 proxy and runtime) — in progress
@@ -27845,6 +27845,18 @@ Fix (no timeout changed): each mission's stills test is split into three, front 
 Local checks of the fix: the 18 split stills tests passed on Chromium (2.0 min); Codex review of the diff: no findings (it checked that the parts cover frames 0 to 23 and both views, none empty). Unit run beside an outside Rust build (CPU 100%, `rustc`): the same 5 s timeouts as before (`build.test.ts` deterministic and renders once, `renders.test.ts` orphans), 254 others passed; load, CI is the gate.
 
 `npm run perf:ref` first run (2026-10-16 11:44): Chromium all three profiles finished; Edge 1366x768 stopped once on a first 3D draw not shown within 10 s. Rerun alone it passed (6.9 min). Unreproduced; the full run is repeated in a quiet slot for the KPI table.
+
+### Red run 38931516133 (head 8ec383d): one cause
+
+Both jobs failed one check, `perf.spec.ts` 3D showcase: `modelUpdateP95Ms` 147.1 (verify (22)) and 115.9 ms (verify (24)), budget 100. The previous green run measured 89: the margin was thin, and runner variance pushed it over. A CPU profile of one purchase (unminified build, 4x throttle) found the largest single cost inside the click. A purchase refits the camera to the new kit (`fitTable`), and the fit searched for each view's distance numerically, placing a camera and projecting the box some 1 300 times a refit. That took 22 to 58 ms of a purchase. The rest of the purchase was the view rebuild and its layout (about 45 ms with the fit, 6 to 16 ms replacing the content).
+
+Fix (no budget changed): each view's distance is solved directly. The camera looks at the target, so a corner's offset across the view does not change with distance, and its depth grows one for one. The least distance that keeps it within the margin is its depth offset plus its larger cross offset over the margin times the view's slope. The fit places no camera at all now. Failing check first: a unit test that fails if fitting a drag table places a camera (it found 1 341). A second test holds the fit tight: at each height the worst sampled turn sits within 10⁻⁶ of the margin, which only the least distance can do. The existing framing tests (every 5° turn, every drag height, three kit shapes, three aspects) stay green.
+
+Codex review of the fix: one finding, P3, accepted. Straight up (polar 0), three.js nudges the camera's aim off the vertical but leaves its position, and the first solve moved both (extent 0.92039 against the margin 0.92 for the long kit). No player reaches it (drags stop at 0.6 rad), but the solve is now general: each side of the frame bounds the distance linearly from the camera's place and its aim taken apart. A failing pole test came first (polar 0 and 10⁻¹⁰ from either pole, three kits). Exactly straight down is left out: sin(π) is not quite 0, so the aim three.js takes is set by rounding, which no fit can match.
+
+Codex re-review of the general solve: no findings (it swept 1 296 cases over polars 0.6 to 1.45, FOV 20 to 60 and aspects 0.001 to 1000; both bounds hold and their denominators stay positive).
+
+Measured after the fix (local, the machine loaded by file sync at 94% CPU, so ratios only): the same distances as the search to five digits at all nine heights; a drag table 6 to 8 times faster warm in Node. The purchase profile repeated: `#update3d` 4.3 and 3.7 ms (was 27 to 58), the whole view rebuild 9.8 and 13.1 ms (was 44 to 67); the draw that follows (25 to 40 ms) is outside the click. The 360 px framing test passed alone (2.2 min); beside the sync load it and the perf scenario first timed out on clicks (load; CI is the gate).
 
 ## Checks
 
@@ -28126,12 +28138,18 @@ export default tseslint.config(
 
 ### library/LESSONS.md
 
-Paths: `library/LESSONS.md`. SHA-256 `20d8901ca738b4f12ec152e8190b2d4ef8b7cf33b9b887209cae4a9dd223a11d`, 13125 bytes.
+Paths: `library/LESSONS.md`. SHA-256 `ffc6e3188920c3e7f7be34a86f02546036a7fb052370cbfdc3a9c1ed5c9ba337`, 14162 bytes.
 
 ```markdown
 # Lessons learned
 
 Each entry: what happened, the rule it produced, and the check that now enforces it. Newest first. Examples come from SEA Game (a classroom auction game with photoreal vehicle renders and a real-time 3D showcase, one offline HTML file).
+
+## 2026-10-16 · A thin margin, and a search where a formula would do
+
+- **What happened:** a purchase's 3D update had passed its 100 ms budget at 89 ms; on busier CI runners it measured 116 and 147. A CPU profile of one purchase showed the largest single cost was refitting the camera to the new kit: a numerical search (doubling, then bisection) for each view's distance placed a camera and projected the box about 1 300 times, inside the click.
+- **Rule:** a budget met with thin margin will fail on a slow day; profile the operation and remove its largest cost rather than widen the budget. When a quantity has a closed form (here, a camera looking at its target keeps each point's cross offset fixed as it backs away, so the least distance is solved directly), solve it instead of searching on the user's click.
+- **Check (as built in SEA Game):** a unit test fails if fitting places any camera, and another holds the fit tight (the worst view at the margin to 10⁻⁶); the performance scenario still gates the update at 100 ms.
 
 ## 2026-10-16 · A test that was working, not hung, when its time ran out
 
@@ -28672,7 +28690,7 @@ Write so that another person or agent can resume development, operations and mai
 
 ### library/practices/performance.md
 
-Paths: `library/practices/performance.md`. SHA-256 `972dc95b6170fd25d7484d66e5ed3446deaf44457b7b990f75bf56bfa618f2ba`, 3197 bytes.
+Paths: `library/practices/performance.md`. SHA-256 `3121d1b40c80e4b089ce08238b0c7c0544957937cb3645be201d045f9ebf39a1`, 3419 bytes.
 
 ```markdown
 # Performance on ordinary laptops
@@ -28705,6 +28723,7 @@ Chromium and Edge forced onto an Intel integrated GPU (`--use-angle=d3d11 --enab
 - Fall back to layered stills when WebGL 2 is missing or the context is lost; recover from context loss, trusting `isContextLost()` over the events (a browser may announce a restore early, or restore silently).
 - Never write the document root's attributes (`lang`, `data-theme`, title) unless the value changed: even an unchanged write restyles the whole page.
 - Split a slow interaction timing into phases (handled, draw start, draw, paint) before fixing; profile one instance on an unminified build.
+- Keep work inside a click to what the click needs; where a quantity has a closed form (camera fit distance, a bound, a layout size) solve it rather than search; treat a budget met with thin margin as a defect to profile.
 - Own every GPU resource: dispose of geometries, materials, textures and render targets when a view closes (three.js does not free them for you); give shared resources a clear owner or a reference count; cancel loads no longer wanted; test repeated open and close for memory growth.
 - Count GPU memory, not file size: a 200 KB AVIF of 2048 px still takes about 16 MB decoded (more with mipmaps).
 - A visibility observer may go stale across a detach and re-attach on a loaded browser: when a view puts its canvas back on the page, ask afresh (drop pending records, unobserve, observe). Test with an observer that reports only once.
@@ -35691,7 +35710,7 @@ if (root) start(root);
 
 ### source/showcase/frame.ts
 
-Paths: `source/showcase/frame.ts`. SHA-256 `e8ca87b546c4f8809db8662364248bf452bb945db2763cefc8bcc6a6994bdf8c`, 4760 bytes.
+Paths: `source/showcase/frame.ts`. SHA-256 `8e7cf59f3fc294626ca3d2647f8e4826deadb35c3e798aeedb5f272228942c89`, 5462 bytes.
 
 ```ts
 // Framing and zoom for the 3D showcase (MPES §10.2): the camera stands far enough back that the vehicle as fitted, however
@@ -35720,6 +35739,7 @@ function corners(box: Box3): Vector3[] {
 
 const camera = new PerspectiveCamera();
 const point = new Vector3();
+const UP = new Vector3(0, 1, 0), across = new Vector3(), upward = new Vector3(), aim = new Vector3();
 
 /** How far the box's farthest corner projects from the frame centre, seen from `distance` along `direction`. */
 export function extentAt(box: Box3, target: Vector3, direction: Vector3, distance: number, fov: number, aspect: number, points = corners(box)): number {
@@ -35745,20 +35765,28 @@ export function extentAt(box: Box3, target: Vector3, direction: Vector3, distanc
  * at every sampled turn and at each polar angle given (the default view and the drag limits).
  */
 export function fitDistance(box: Box3, target: Vector3, polars: readonly number[], fov: number, aspect: number, margin = FIT_MARGIN): number {
-  const points = corners(box);
-  const radius = Math.max(...points.map(p => p.distanceTo(target)), 1e-3);
+  const points = corners(box).map(p => p.sub(target));
+  const radius = Math.max(...points.map(p => p.length()), 1e-3);
+  // Solved per view, not searched: with the camera at `s` along `place` and aiming along `aim`, a corner's offset across
+  // the view and its depth are both linear in `s`, so each side of the frame bounds `s` from below directly.
+  const slopeY = Math.tan((fov * Math.PI) / 360) * margin, slopeX = slopeY * aspect;
   let distance = radius * 1.01;
   for (const polar of polars) for (let i = 0; i < AZIMUTHS; i++) {
-    const direction = viewDirection(polar, (i / AZIMUTHS) * Math.PI * 2);
-    if (extentAt(box, target, direction, distance, fov, aspect, points) <= margin) continue;
-    // Extent falls as the camera backs away: bisect between this distance and one known to fit.
-    let near = distance, far = distance * 2;
-    while (extentAt(box, target, direction, far, fov, aspect, points) > margin) far *= 2;
-    for (let step = 0; step < 24; step++) {
-      const mid = (near + far) / 2;
-      if (extentAt(box, target, direction, mid, fov, aspect, points) > margin) near = mid; else far = mid;
+    const place = viewDirection(polar, (i / AZIMUTHS) * Math.PI * 2);
+    // The camera's axes as lookAt builds them (up is +Y). Straight up or down three.js nudges the aim, not the place.
+    aim.copy(place);
+    if (across.crossVectors(UP, aim).lengthSq() === 0) { aim.z += 0.0001; aim.normalize(); across.crossVectors(UP, aim); }
+    across.normalize();
+    upward.crossVectors(aim, across);
+    const depthRate = place.dot(aim);
+    for (const [axis, slope] of [[across, slopeX], [upward, slopeY]] as const) {
+      const drift = place.dot(axis);
+      for (const p of points) {
+        const offset = p.dot(axis), depth = p.dot(aim);
+        // |offset - s drift| <= slope (s depthRate - depth), on both sides.
+        distance = Math.max(distance, (offset + slope * depth) / (slope * depthRate + drift), (slope * depth - offset) / (slope * depthRate - drift));
+      }
     }
-    distance = far;
   }
   return distance;
 }
@@ -43360,13 +43388,13 @@ describe('money display', () => {
 
 ### tests/unit/frame.test.ts
 
-Paths: `tests/unit/frame.test.ts`. SHA-256 `ecef243c2de24f6eabbcd5d1f9600e1e61d7fbfc829082513952176e9b166c48`, 2752 bytes.
+Paths: `tests/unit/frame.test.ts`. SHA-256 `5aa2e02da5d0abd2e3af55b77d968ee845797f430eb37778bc6c5c34c62ac095`, 5050 bytes.
 
 ```ts
 // MPES §10.2 (owner FIX 2026-10-12): the 3D showcase frames the vehicle as fitted, however fully kitted out, every part
 // in view at every turn and at every height the player can drag to, and zooms in and out within set limits.
-import { describe, expect, it } from 'vitest';
-import { Box3, Vector3 } from 'three';
+import { describe, expect, it, vi } from 'vitest';
+import { Box3, Object3D, Vector3 } from 'three';
 import { distanceAt, extentAt, FIT_MARGIN, fitDistance, fitTable, viewDirection, ZOOM_IN_LIMIT, ZOOM_OUT_LIMIT, zoomed } from '../../source/showcase/frame.ts';
 
 const FOV = 30, POLARS = [0.6, 1.25, 1.45];
@@ -43401,6 +43429,43 @@ describe('showcase framing (MPES §10.2)', () => {
     }
     expect(distanceAt(table, 0.1)).toBe(table.distances[0]);
     expect(distanceAt(table, 3)).toBe(table.distances.at(-1));
+  });
+
+  // A purchase refits the camera inside the click: a numerical search placed the camera some 30 times a view, 13 000
+  // times a refit, 22 to 58 ms of a purchase at a 4x CPU throttle (red run 38931516133). Each view is now solved directly.
+  it('fits a whole drag table without placing a camera', () => {
+    const box = boxes.long, target = box.getCenter(new Vector3());
+    const lookAt = vi.spyOn(Object3D.prototype, 'lookAt');
+    try {
+      fitTable(box, target, 0.6, 1.45, FOV, 16 / 9);
+      expect(lookAt).not.toHaveBeenCalled();
+    } finally { lookAt.mockRestore(); }
+  });
+
+  for (const [name, box] of Object.entries(boxes)) for (const aspect of [16 / 9, 1, 9 / 16]) {
+    it(`fits the ${name} kit, aspect ${aspect.toFixed(2)}, as close as the margin allows at its worst view`, () => {
+      const target = box.getCenter(new Vector3());
+      for (const polar of POLARS) {
+        const distance = fitDistance(box, target, [polar], FOV, aspect);
+        let worst = 0;
+        for (let i = 0; i < 48; i++) worst = Math.max(worst, extentAt(box, target, viewDirection(polar, (i / 48) * Math.PI * 2), distance, FOV, aspect));
+        // At the margin at the worst sampled view: as close as it can stand.
+        expect(worst, `polar ${polar}`).toBeLessThanOrEqual(FIT_MARGIN + 1e-6);
+        expect(worst, `polar ${polar}`).toBeGreaterThan(FIT_MARGIN - 1e-6);
+      }
+    });
+  }
+
+  // Codex review: straight up, three.js tilts the camera's aim off the vertical but not its position. (Straight down,
+  // sin(pi) is not quite 0 and the aim three.js takes is set by rounding: no fit can match it, and no player reaches it.)
+  it('fits tight at the poles too, where the camera aim is nudged', () => {
+    for (const [name, box] of Object.entries(boxes)) for (const polar of [0, 1e-10, Math.PI - 1e-10]) {
+      const target = box.getCenter(new Vector3()), distance = fitDistance(box, target, [polar], FOV, 16 / 9);
+      let worst = 0;
+      for (let i = 0; i < 48; i++) worst = Math.max(worst, extentAt(box, target, viewDirection(polar, (i / 48) * Math.PI * 2), distance, FOV, 16 / 9));
+      expect(worst, `${name} at polar ${polar}`).toBeLessThanOrEqual(FIT_MARGIN + 1e-6);
+      expect(worst, `${name} at polar ${polar}`).toBeGreaterThan(FIT_MARGIN - 1e-6);
+    }
   });
 
   it('zooms in and out by steps, within its limits', () => {
@@ -46094,5 +46159,5 @@ Keys and the commands that make each kind again:
 
 | Path | Bytes | SHA-256 | Why |
 |---|---:|---|---|
-| `docs/MPES.md` | 183044 | `2930c22de5f2e86694e427fd9f935c7c90d9074d888e0ca858b4d35ab67f17f0` | The specification, a clean-room document of its own (Omni 5.1.1 §333). |
+| `docs/MPES.md` | 183774 | `928c8f312214d32ddd3495a7a208ce6bc2ffd3d9730c3fab2fefd998cab05300` | The specification, a clean-room document of its own (Omni 5.1.1 §333). |
 | `docs/CODEBASE.md` | | | This file. |
