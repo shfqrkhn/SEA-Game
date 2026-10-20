@@ -1,6 +1,8 @@
 // MPES §10.2: stacked part layers are drawn in manifest draw order (farthest from the camera first),
 // never in purchase order, so nearer parts always cover farther ones.
-import { describe, expect, it } from 'vitest';
+import { Box3, BoxGeometry, Mesh, MeshBasicMaterial } from 'three';
+import { describe, expect, it, vi } from 'vitest';
+import { includeStaticBounds } from '../../source/showcase/model.ts';
 import { DecodedImages, stackOrder } from '../../source/showcase/showcase.ts';
 import type { Render } from '../../source/showcase/renders.ts';
 
@@ -35,6 +37,25 @@ describe('showcase layer order (MPES §10.2)', () => {
     // Purchase order: CAP-B, then COM-A, then CAP-A. CAP-A replaces CAP-B in the module slot.
     const parts = ['CAP-B', 'COM-A', 'CAP-A'].map(id => ({ id, title: id }));
     expect(stackOrder(slotted, 'recce', 'front', parts).map(p => p.id)).toEqual(['CAP-A', 'COM-A']);
+  });
+});
+
+describe('showcase static layer bounds (G3)', () => {
+  it('measures each unchanged model layer once while unioning its bounds into each kit', () => {
+    const mesh = new Mesh(new BoxGeometry(2, 4, 6), new MeshBasicMaterial());
+    mesh.position.set(3, 5, 7);
+    const updateWorldMatrix = vi.spyOn(mesh, 'updateWorldMatrix');
+    const first = new Box3();
+    includeStaticBounds(first, mesh);
+    expect(first.min.toArray()).toEqual([2, 3, 4]);
+    expect(first.max.toArray()).toEqual([4, 7, 10]);
+    expect(updateWorldMatrix).toHaveBeenCalledTimes(1);
+
+    updateWorldMatrix.mockClear();
+    const second = new Box3();
+    includeStaticBounds(second, mesh);
+    expect(second.equals(first)).toBe(true);
+    expect(updateWorldMatrix).not.toHaveBeenCalled();
   });
 });
 

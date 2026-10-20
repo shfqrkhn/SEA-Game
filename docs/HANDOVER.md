@@ -1,6 +1,6 @@
 # Handover
 
-Updated 2026-10-14 (America/Toronto). Specification: [MPES](MPES.md) 4.5.0. Evidence: [verification/0.6.0.0.md](verification/0.6.0.0.md) (in progress), [verification/0.5.2.0.md](verification/0.5.2.0.md), [verification/0.5.1.0.md](verification/0.5.1.0.md), [verification/0.5.0.0.md](verification/0.5.0.0.md), [verification/spike-visual.md](verification/spike-visual.md).
+Updated 2026-10-20 (America/Toronto). Specification: [MPES](MPES.md) 4.5.2. Evidence: [verification/0.6.0.0.md](verification/0.6.0.0.md) (in progress), [verification/0.5.2.0.md](verification/0.5.2.0.md), [verification/0.5.1.0.md](verification/0.5.1.0.md), [verification/0.5.0.0.md](verification/0.5.0.0.md), [verification/spike-visual.md](verification/spike-visual.md).
 
 ## 1. Version and milestone
 
@@ -60,7 +60,7 @@ Owner FIX 1 (stills and fit), FIX 2 (one click to close a round nobody can win i
 
 ## 5. Next action
 
-**Agent:** G3 on `g3/proxy-runtime` (PR #27): red run 38609311138 fixed (three causes in `docs/verification/0.6.0.0.md`: contrast at every turn step, eager chooser stills, heavy tests apart), red runs 38921636256 (stills split in three) and 38931516133 (camera fit solved, not searched) fixed; red run 38958721130 fixed (tests' own browser contexts closed by the shared `test`; a purchase's 3D draw skips the shadow pass, which follows a frame later; opened panels stay open across renders); get two consecutive green CI runs on one head; `npm run perf:ref` 12-KPI baseline in a quiet slot (MPES §14.1); finish the verification Checks; gallery and owner GO or FIX. Then G4 (stills to 3:1 in every view and frame, the pale RECCE roof, the light-theme stage contrast).
+**Agent:** G3 on `g3/proxy-runtime` (PR #27): red runs 38609311138, 38921636256, 38931516133 and 38958721130 have their documented fixes. Red run 38976632856 missed the 3D update budget (p95 110.7 ms); the local repair caches unchanged model-layer bounds for purchase framing. `npm run verify` now passes locally, including the 3D update budget at p95 65.4 ms (max 73.9 ms); the CI result is still required to establish whether this repair fixes the hosted-run miss. Get two consecutive green CI runs on one head; run the `npm run perf:ref` 12-KPI baseline in a quiet slot (MPES §14.1); finish the verification Checks; gallery and owner GO or FIX before merge. Then G4 (stills to 3:1 in every view and frame, the pale RECCE roof, the light-theme stage contrast).
 **Owner:** `docs/owner/art-review.md` (5 minutes, reply GO or FIX).
 
 ## 6. Rollback

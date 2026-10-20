@@ -27041,12 +27041,12 @@ Exportez une sauvegarde par **Menu → Exporter une sauvegarde** après la confi
 
 ### docs/HANDOVER.md
 
-Paths: `docs/HANDOVER.md`. SHA-256 `6f9a93f042b9420c0661cb8da69e5d370f2a0a0d2b0d94dc9277fb98becfbf87`, 13215 bytes.
+Paths: `docs/HANDOVER.md`. SHA-256 `b9b062ce25b5e13ab7067b521ce93371d550692e51bdca77a077f55d6103b218`, 13211 bytes.
 
 ```markdown
 # Handover
 
-Updated 2026-10-14 (America/Toronto). Specification: [MPES](MPES.md) 4.5.0. Evidence: [verification/0.6.0.0.md](verification/0.6.0.0.md) (in progress), [verification/0.5.2.0.md](verification/0.5.2.0.md), [verification/0.5.1.0.md](verification/0.5.1.0.md), [verification/0.5.0.0.md](verification/0.5.0.0.md), [verification/spike-visual.md](verification/spike-visual.md).
+Updated 2026-10-20 (America/Toronto). Specification: [MPES](MPES.md) 4.5.2. Evidence: [verification/0.6.0.0.md](verification/0.6.0.0.md) (in progress), [verification/0.5.2.0.md](verification/0.5.2.0.md), [verification/0.5.1.0.md](verification/0.5.1.0.md), [verification/0.5.0.0.md](verification/0.5.0.0.md), [verification/spike-visual.md](verification/spike-visual.md).
 
 ## 1. Version and milestone
 
@@ -27106,7 +27106,7 @@ Owner FIX 1 (stills and fit), FIX 2 (one click to close a round nobody can win i
 
 ## 5. Next action
 
-**Agent:** G3 on `g3/proxy-runtime` (PR #27): red run 38609311138 fixed (three causes in `docs/verification/0.6.0.0.md`: contrast at every turn step, eager chooser stills, heavy tests apart), red runs 38921636256 (stills split in three) and 38931516133 (camera fit solved, not searched) fixed; red run 38958721130 fixed (tests' own browser contexts closed by the shared `test`; a purchase's 3D draw skips the shadow pass, which follows a frame later; opened panels stay open across renders); get two consecutive green CI runs on one head; `npm run perf:ref` 12-KPI baseline in a quiet slot (MPES §14.1); finish the verification Checks; gallery and owner GO or FIX. Then G4 (stills to 3:1 in every view and frame, the pale RECCE roof, the light-theme stage contrast).
+**Agent:** G3 on `g3/proxy-runtime` (PR #27): red runs 38609311138, 38921636256, 38931516133 and 38958721130 have their documented fixes. Red run 38976632856 missed the 3D update budget (p95 110.7 ms); the local repair caches unchanged model-layer bounds for purchase framing. `npm run verify` now passes locally, including the 3D update budget at p95 65.4 ms (max 73.9 ms); the CI result is still required to establish whether this repair fixes the hosted-run miss. Get two consecutive green CI runs on one head; run the `npm run perf:ref` 12-KPI baseline in a quiet slot (MPES §14.1); finish the verification Checks; gallery and owner GO or FIX before merge. Then G4 (stills to 3:1 in every view and frame, the pale RECCE roof, the light-theme stage contrast).
 **Owner:** `docs/owner/art-review.md` (5 minutes, reply GO or FIX).
 
 ## 6. Rollback
@@ -27700,12 +27700,12 @@ A read-only Codex session (gpt-6.1-sol, medium) reviewed the diff (`.artifacts/c
 
 ### docs/verification/0.6.0.0.md
 
-Paths: `docs/verification/0.6.0.0.md`. SHA-256 `1e668e702433ad17d2905dffd856cb8b13bc2302993488c8f82beaf3c41dc64b`, 34558 bytes.
+Paths: `docs/verification/0.6.0.0.md`. SHA-256 `34bd5ae96ebf5202aa61d19a3cb681d08a9b3976e5ac0cfea6e53c36a9c3b092`, 36450 bytes.
 
 ```markdown
 # Verification record: 0.6.0.0 beta (G3 proxy and runtime) — in progress
 
-Branch `g3/proxy-runtime`, from `main` at the 0.5.2.0 release. Specification: MPES 4.4.3 until this goal's changelog row. Environment: Windows 11 Enterprise, Node 24.20.0, Playwright browsers from `npm run browsers`.
+Branch `g3/proxy-runtime`, from `main` at the 0.5.2.0 release. Specification: MPES 4.5.2. Environment: Windows 11 Enterprise, Node 24.20.0, Playwright browsers from `npm run browsers`.
 
 ## First item: CI `showcaseUpdateMaxMs` 109, 162, 168 > 100 ms (verify (22))
 
@@ -27890,6 +27890,26 @@ Codex review of the diff (contexts fixture, open panels, shadow follow-up, new t
 ## Checks
 
 To be completed at close.
+
+## Red run 38976632856 (head b56520a): 3D update p95 110.7 ms
+
+`verify (22)` passed; `verify (24)` failed only the 3D showcase update budget. It measured 30 samples, with p95 110.7 ms and max 111.8 ms against the unchanged 100 ms limit. The phase p95s were 54.2 ms handling the purchase, 4.5 ms waiting for the draw, 10.9 ms drawing and 49.1 ms from draw to paint. The other 259 tests passed and 48 were skipped.
+
+The purchase changes which GLB child layers are visible, while their geometry and transforms remain static. `#frameCamera` previously rebuilt each visible child's world bounds by walking its mesh tree on every purchase. `includeStaticBounds` now measures a layer once and reuses its box for later unions; the unit test verifies the world bounds and that the unchanged node is not walked again. The 100 ms budget remains unchanged.
+
+### Checks for this fix
+
+| Check | Result |
+|---|---|
+| Original CI `verify (22)` on `b56520a` | PASS |
+| Original CI `verify (24)` on `b56520a` | FAIL, 3D update p95 110.7 ms (recorded above) |
+| `npm ci --no-audit --no-fund` | PASS; 176 packages installed |
+| Focused bounds unit test | PASS; `npm test -- tests/unit/showcase.test.ts`, 9 tests |
+| `npm run verify` | PASS; typecheck, lint, 272 unit tests, deterministic build, and 260 E2E/performance tests (48 skipped). Local 3D update p95 65.4 ms, max 73.9 ms against the 100 ms budget. |
+| GitHub CI for the fix | NOT_RUN |
+| Gallery and owner GO/FIX | NOT_RUN; required before merge by `AGENTS.md` rule 19 |
+
+After the evidence-table edit, a second `npm run verify` passed typecheck, lint, all unit tests, deterministic build check and build. I stopped that repeat before E2E finished because another Playwright matrix (`kit-r6`) was running on the same PC; the complete PASS above is the earlier full run, including all E2E and performance tests. This repeat was interrupted for resource contention, not a test failure.
 ```
 
 ### docs/verification/legibility.md
@@ -28167,12 +28187,18 @@ export default tseslint.config(
 
 ### library/LESSONS.md
 
-Paths: `library/LESSONS.md`. SHA-256 `22878a1f39b5cb14044e6fc767dafaa004691f18252c42042858650248230207`, 16677 bytes.
+Paths: `library/LESSONS.md`. SHA-256 `1a28bf7b4bb93513df11952feeb37e26541624629bf74375148deb037186ee53`, 17355 bytes.
 
 ```markdown
 # Lessons learned
 
 Each entry: what happened, the rule it produced, and the check that now enforces it. Newest first. Examples come from SEA Game (a classroom auction game with photoreal vehicle renders and a real-time 3D showcase, one offline HTML file).
+
+## 2026-10-20 · A static scene bound recomputed on every update
+
+- **What happened:** G3 CI measured a 3D purchase update at 110.7 ms p95 against the 100 ms budget. Camera framing walked every visible model layer's mesh tree again even though purchase updates only changed visibility and model transforms stayed fixed.
+- **Rule:** cache world bounds for immutable scene nodes after first use; union the cached boxes when visibility changes, and invalidate them if transforms or geometry change. Do not raise the interaction budget.
+- **Check (as built in SEA Game):** a unit test proves an unchanged layer is measured once; the performance scenario keeps the 100 ms p95 gate.
 
 ## 2026-10-16 · Contexts left running, and a readback nobody asked for
 
@@ -28287,7 +28313,7 @@ Each entry: what happened, the rule it produced, and the check that now enforces
 
 ### library/README.md
 
-Paths: `library/README.md`. SHA-256 `85d328041fb9846604a555e412179e731589481498b1822d66e159678d4a7534`, 2783 bytes.
+Paths: `library/README.md`. SHA-256 `024ccd1e80523b1cd2fc43fe1f3ae2b2c3effafb6169213d56d79c510ef5d57c`, 2892 bytes.
 
 ```markdown
 # Reusable library
@@ -28320,6 +28346,8 @@ MIT licence: see `LICENSE` in this folder, which travels with it. Third-party ma
 4. When the project teaches you something new, add a dated entry to `LESSONS.md` and fold the rule into the practice file it belongs to. Keep the library generic: project details only as marked examples.
 
 ## Library version
+
+0.1.1 (2026-10-20): added a performance lesson on caching static scene bounds, informed by G3 CI profiling.
 
 0.1.0 (2026-10-12): first cut from SEA Game 0.5.1.0, corrected after an independent review (licences, reduced motion, agent trust boundaries, accessibility, colour management, GPU resource ownership, flakiness).
 ```
@@ -28733,7 +28761,7 @@ Write so that another person or agent can resume development, operations and mai
 
 ### library/practices/performance.md
 
-Paths: `library/practices/performance.md`. SHA-256 `175ef557a89efbc1229ff9932f9a103fcace6f359fdc580ecb8896f3cf6c2c6d`, 4359 bytes.
+Paths: `library/practices/performance.md`. SHA-256 `132e801723067964cc5335bd6d5a3cdb561201e97d49a6029e43d984206b884e`, 4579 bytes.
 
 ```markdown
 # Performance on ordinary laptops
@@ -28767,6 +28795,7 @@ Chromium and Edge forced onto an Intel integrated GPU (`--use-angle=d3d11 --enab
 - Never write the document root's attributes (`lang`, `data-theme`, title) unless the value changed: even an unchanged write restyles the whole page.
 - Split a slow interaction timing into phases (handled, draw start, draw, paint) before fixing; profile one instance on an unminified build.
 - Keep work inside a click to what the click needs; where a quantity has a closed form (camera fit distance, a bound, a layout size) solve it rather than search; treat a budget met with thin margin as a defect to profile.
+- Cache world bounds for immutable scene nodes after first use; union cached boxes when visibility changes, and invalidate them if transforms or geometry change instead of traversing the scene graph on every camera fit.
 - Own every GPU resource: dispose of geometries, materials, textures and render targets when a view closes (three.js does not free them for you); give shared resources a clear owner or a reference count; cancel loads no longer wanted; test repeated open and close for memory growth.
 - Count GPU memory, not file size: a 200 KB AVIF of 2048 px still takes about 16 MB decoded (more with mipmaps).
 - A visibility observer may go stale across a detach and re-attach on a loaded browser: when a view puts its canvas back on the page, ask afresh (drop pending records, unobserve, observe). Test with an observer that reports only once.
@@ -35912,7 +35941,7 @@ export function vehicleGlb(glb: ArrayBuffer, vehicle: string): ArrayBuffer | nul
 
 ### source/showcase/model.ts
 
-Paths: `source/showcase/model.ts`. SHA-256 `0fdaf0a6ff366fd645435db1ae0c522cb401960eb289cdcdc2c17dd06ff7d37b`, 27373 bytes.
+Paths: `source/showcase/model.ts`. SHA-256 `56bd40ab6ed404b4ff1573cb706c62e100588cca9a951f6cfb79b60660eea818`, 27743 bytes.
 
 ```ts
 // Real-time vehicle showcase (MPES §10): the embedded glTF model on a slowly turning stage the player can drag.
@@ -35948,6 +35977,17 @@ const FILL_INTENSITY = 5.2;
 let packed: Promise<ArrayBuffer | null> | null = null;
 const libraries = new Map<string, Promise<Group | null>>();
 const preparing = new Set<string>();
+const worldBounds = new WeakMap<Object3D, Box3>();
+
+/** Adds a vehicle layer's static world bounds, measuring each loaded layer only once. */
+export function includeStaticBounds(target: Box3, node: Object3D): void {
+  let bounds = worldBounds.get(node);
+  if (!bounds) {
+    bounds = new Box3().setFromObject(node);
+    worldBounds.set(node, bounds);
+  }
+  target.union(bounds);
+}
 
 /** Base64 to bytes: the browser's own decoder where it has one (a quarter of the time), else atob. */
 function base64Bytes(text: string): Uint8Array<ArrayBuffer> {
@@ -36287,7 +36327,7 @@ export class ModelStage {
   #frameCamera(fresh: boolean): void {
     if (!this.#vehicle) return;
     const kit = new Box3();
-    for (const node of this.#vehicle.children) if (node.visible) kit.union(new Box3().setFromObject(node));
+    for (const node of this.#vehicle.children) if (node.visible) includeStaticBounds(kit, node);
     if (!fresh && kit.equals(this.#kit)) { this.#invalidate(); return; }
     const offset = this.#camera.position.clone().sub(this.#controls.target);
     this.#kit.copy(kit);
@@ -45126,12 +45166,14 @@ describe('unit-test scratch', () => {
 
 ### tests/unit/showcase.test.ts
 
-Paths: `tests/unit/showcase.test.ts`. SHA-256 `4af356e2c3c245fa61d3b62be6b663d5166eb6a3a6fa7a07f828426ef0bb0080`, 4407 bytes.
+Paths: `tests/unit/showcase.test.ts`. SHA-256 `b58b6524b40f865aa673b6a35de76e41cc1144db52ec024c99179f12806f523e`, 5322 bytes.
 
 ```ts
 // MPES §10.2: stacked part layers are drawn in manifest draw order (farthest from the camera first),
 // never in purchase order, so nearer parts always cover farther ones.
-import { describe, expect, it } from 'vitest';
+import { Box3, BoxGeometry, Mesh, MeshBasicMaterial } from 'three';
+import { describe, expect, it, vi } from 'vitest';
+import { includeStaticBounds } from '../../source/showcase/model.ts';
 import { DecodedImages, stackOrder } from '../../source/showcase/showcase.ts';
 import type { Render } from '../../source/showcase/renders.ts';
 
@@ -45166,6 +45208,25 @@ describe('showcase layer order (MPES §10.2)', () => {
     // Purchase order: CAP-B, then COM-A, then CAP-A. CAP-A replaces CAP-B in the module slot.
     const parts = ['CAP-B', 'COM-A', 'CAP-A'].map(id => ({ id, title: id }));
     expect(stackOrder(slotted, 'recce', 'front', parts).map(p => p.id)).toEqual(['CAP-A', 'COM-A']);
+  });
+});
+
+describe('showcase static layer bounds (G3)', () => {
+  it('measures each unchanged model layer once while unioning its bounds into each kit', () => {
+    const mesh = new Mesh(new BoxGeometry(2, 4, 6), new MeshBasicMaterial());
+    mesh.position.set(3, 5, 7);
+    const updateWorldMatrix = vi.spyOn(mesh, 'updateWorldMatrix');
+    const first = new Box3();
+    includeStaticBounds(first, mesh);
+    expect(first.min.toArray()).toEqual([2, 3, 4]);
+    expect(first.max.toArray()).toEqual([4, 7, 10]);
+    expect(updateWorldMatrix).toHaveBeenCalledTimes(1);
+
+    updateWorldMatrix.mockClear();
+    const second = new Box3();
+    includeStaticBounds(second, mesh);
+    expect(second.equals(first)).toBe(true);
+    expect(updateWorldMatrix).not.toHaveBeenCalled();
   });
 });
 
@@ -46453,5 +46514,5 @@ Keys and the commands that make each kind again:
 
 | Path | Bytes | SHA-256 | Why |
 |---|---:|---|---|
-| `docs/MPES.md` | 187687 | `75d01216f1e243b4e63086938b261bc9de60a3f3d1fac0ba319a21b006c660d1` | The specification, a clean-room document of its own (Omni 5.1.1 §333). |
+| `docs/MPES.md` | 188547 | `5d85544fe0851521396bdd8e178f7b05fb7cfe2836d73e4b514c829dbaf29af9` | The specification, a clean-room document of its own (Omni 5.1.1 §333). |
 | `docs/CODEBASE.md` | | | This file. |

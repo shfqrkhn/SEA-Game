@@ -29,6 +29,7 @@ Chromium and Edge forced onto an Intel integrated GPU (`--use-angle=d3d11 --enab
 - Never write the document root's attributes (`lang`, `data-theme`, title) unless the value changed: even an unchanged write restyles the whole page.
 - Split a slow interaction timing into phases (handled, draw start, draw, paint) before fixing; profile one instance on an unminified build.
 - Keep work inside a click to what the click needs; where a quantity has a closed form (camera fit distance, a bound, a layout size) solve it rather than search; treat a budget met with thin margin as a defect to profile.
+- Cache world bounds for immutable scene nodes after first use; union cached boxes when visibility changes, and invalidate them if transforms or geometry change instead of traversing the scene graph on every camera fit.
 - Own every GPU resource: dispose of geometries, materials, textures and render targets when a view closes (three.js does not free them for you); give shared resources a clear owner or a reference count; cancel loads no longer wanted; test repeated open and close for memory growth.
 - Count GPU memory, not file size: a 200 KB AVIF of 2048 px still takes about 16 MB decoded (more with mipmaps).
 - A visibility observer may go stale across a detach and re-attach on a loaded browser: when a view puts its canvas back on the page, ask afresh (drop pending records, unobserve, observe). Test with an observer that reports only once.

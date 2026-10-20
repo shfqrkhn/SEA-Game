@@ -31,6 +31,17 @@ const FILL_INTENSITY = 5.2;
 let packed: Promise<ArrayBuffer | null> | null = null;
 const libraries = new Map<string, Promise<Group | null>>();
 const preparing = new Set<string>();
+const worldBounds = new WeakMap<Object3D, Box3>();
+
+/** Adds a vehicle layer's static world bounds, measuring each loaded layer only once. */
+export function includeStaticBounds(target: Box3, node: Object3D): void {
+  let bounds = worldBounds.get(node);
+  if (!bounds) {
+    bounds = new Box3().setFromObject(node);
+    worldBounds.set(node, bounds);
+  }
+  target.union(bounds);
+}
 
 /** Base64 to bytes: the browser's own decoder where it has one (a quarter of the time), else atob. */
 function base64Bytes(text: string): Uint8Array<ArrayBuffer> {
@@ -370,7 +381,7 @@ export class ModelStage {
   #frameCamera(fresh: boolean): void {
     if (!this.#vehicle) return;
     const kit = new Box3();
-    for (const node of this.#vehicle.children) if (node.visible) kit.union(new Box3().setFromObject(node));
+    for (const node of this.#vehicle.children) if (node.visible) includeStaticBounds(kit, node);
     if (!fresh && kit.equals(this.#kit)) { this.#invalidate(); return; }
     const offset = this.#camera.position.clone().sub(this.#controls.target);
     this.#kit.copy(kit);

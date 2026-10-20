@@ -2,6 +2,12 @@
 
 Each entry: what happened, the rule it produced, and the check that now enforces it. Newest first. Examples come from SEA Game (a classroom auction game with photoreal vehicle renders and a real-time 3D showcase, one offline HTML file).
 
+## 2026-10-20 · A static scene bound recomputed on every update
+
+- **What happened:** G3 CI measured a 3D purchase update at 110.7 ms p95 against the 100 ms budget. Camera framing walked every visible model layer's mesh tree again even though purchase updates only changed visibility and model transforms stayed fixed.
+- **Rule:** cache world bounds for immutable scene nodes after first use; union the cached boxes when visibility changes, and invalidate them if transforms or geometry change. Do not raise the interaction budget.
+- **Check (as built in SEA Game):** a unit test proves an unchanged layer is measured once; the performance scenario keeps the 100 ms p95 gate.
+
 ## 2026-10-16 · Contexts left running, and a readback nobody asked for
 
 - **What happened:** one CI test took 43 s, then 1.4 min, then ran out of its 2 minutes, every step uniformly slow. Playwright closes only the contexts it made itself; tests that opened their own with `browser.newContext()` left them, each with a 3D view still animating, on a single-worker project. On the same run a purchase took 133 ms to appear in 3D (budget 100). Two plausible guesses (a smaller DOM update; the purchase queuing behind an animation frame) were measured on both arms and dropped. A trace then showed the browser, with no graphics card, reading each new WebGL frame back before compositing it, waiting for the whole software draw, and the purchase's draw also redrew the shadow map, doubling it. While checking the fix, a page rebuild was found to close every `<details>` panel the reader had opened.

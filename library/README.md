@@ -29,4 +29,6 @@ MIT licence: see `LICENSE` in this folder, which travels with it. Third-party ma
 
 ## Library version
 
+0.1.1 (2026-10-20): added a performance lesson on caching static scene bounds, informed by G3 CI profiling.
+
 0.1.0 (2026-10-12): first cut from SEA Game 0.5.1.0, corrected after an independent review (licences, reduced motion, agent trust boundaries, accessibility, colour management, GPU resource ownership, flakiness).
