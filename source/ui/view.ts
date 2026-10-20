@@ -175,10 +175,13 @@ export class RoleView<S extends RoleState> {
       this.#statusLine.className = `page status-line ${this.#status?.tone === 'bad' ? 'error' : this.#status?.tone === 'ok' ? 'ok' : ''}`;
       if (this.#statusLine.textContent !== (this.#status?.text ?? '')) this.#statusLine.textContent = this.#status?.text ?? '';
       // Tables wider than the screen become labelled, focusable regions so they can be scrolled by keyboard (WCAG 2.1.1).
-      // Their widths are read whenever the browser has laid them out (see #markWide), so a table that widens later (an
-      // opened panel, a resized window, text zoom) is marked too; reading them only here missed those (G3).
+      // They are marked here, so the page is laid out with them (the browser lays out a rebuilt page in this task
+      // anyway), and again whenever one changes size (see #wide), so a table that widens later (an opened panel, a
+      // resized window, text zoom) is marked too; reading them only here missed those (G3). Marking them only after
+      // layout instead made every render lay the page out twice (instructor bids p95 63 to 93 ms locally, G3).
       const wraps = [...this.#content.querySelectorAll<HTMLElement>('.table-wrap')];
       for (const wrap of wraps) labelCells(wrap);
+      this.#markWide(wraps);
       this.#wide.disconnect();
       for (const wrap of wraps) for (const box of [wrap, wrap.querySelector('table')]) if (box) this.#wide.observe(box);
       if (focusId) {
@@ -196,8 +199,8 @@ export class RoleView<S extends RoleState> {
   }
 
   /**
-   * Marks the tables that scroll sideways as labelled, focusable regions and unmarks those that no longer do. It runs
-   * after layout, before paint: every width is read before any table is marked, so the page is not laid out again.
+   * Marks the tables that scroll sideways as labelled, focusable regions and unmarks those that no longer do. Every
+   * width is read before any table is marked, so the page is laid out once, not once per table.
    */
   #markWide(wraps: readonly HTMLElement[]): void {
     const wide = wraps.map(wrap => wrap.scrollWidth > wrap.clientWidth + 1);

@@ -488,6 +488,10 @@ export class ModelStage {
     this.#unsent = [];
     this.#renderer.shadowMap.needsUpdate = false;
     for (const node of parts) node.visible = true;
+    // A part outside the current view is culled and so not sent; every mesh of the parts is drawn whatever the view
+    // (Codex review: COMBAT's SA-D, outside the opening still view, still uploaded in its purchase's draw).
+    const culled: Object3D[] = [];
+    for (const node of parts) node.traverse(child => { if (child.frustumCulled) { culled.push(child); child.frustumCulled = false; } });
     // A multisampled tier's target carries its own scissor, which three.js applies when it draws into the target.
     this.#renderer.setScissorTest(true);
     this.#renderer.setScissor(0, 0, 1, 1);
@@ -496,6 +500,7 @@ export class ModelStage {
       this.#renderer.setScissorTest(false);
       if (this.#target) { this.#target.scissorTest = false; this.#target.scissor.set(0, 0, this.#target.width, this.#target.height); }
       for (const node of parts) node.visible = false;
+      for (const node of culled) node.frustumCulled = true;
       this.#renderer.shadowMap.needsUpdate = shadow;
     }
   }
@@ -505,8 +510,10 @@ export class ModelStage {
     // browser reads each new frame back before showing it, waiting for the whole draw, and redrawing the shadow map
     // made a purchase's draw about twice a turning draw (G3, CI run 38958721130: 133 ms to show, budget 100).
     if (this.#shadowDue && !this.#urgent) { this.#renderer.shadowMap.needsUpdate = true; this.#shadowDue = false; }
-    this.#dirty = this.#shadowDue;
     const urgent = this.#urgent;
+    // An urgent draw never uploads; one that leaves parts unsent asks for a paced draw that does, or a still stage,
+    // drawn once on opening, would leave them for the first purchase (Codex review: COMBAT's SA-D, still).
+    this.#dirty = this.#shadowDue || (urgent && this.#unsent.length > 0);
     this.#urgent = false;
     this.#distance();
     if (this.#unsent.length && !urgent) this.#upload();
