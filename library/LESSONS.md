@@ -2,6 +2,12 @@
 
 Each entry: what happened, the rule it produced, and the check that now enforces it. Newest first. Examples come from SEA Game (a classroom auction game with photoreal vehicle renders and a real-time 3D showcase, one offline HTML file).
 
+## 2026-10-20 · Work that moved instead of going away, and a warm-up that warmed half
+
+- **What happened:** a 3D purchase took 121 ms to show on one CI run (budget 100). A profile showed a forced layout taking 9 of the click's 18 ms; removing it saved nothing, because a trace showed the browser lays out the rebuilt page inside the same mouse-up task anyway. Each part's shader had been compiled in advance, but in three.js geometry and textures upload on first draw, so every purchase uploaded its part inside the draw the player waited for, which itself began only after the page's layout. Every earlier local "unthrottled" comparison had actually run under the lab's 4x CPU slowdown. A table inside a closed panel measured 0 px at render, so it never became keyboard-scrollable when the panel opened.
+- **Rule:** trace what the browser does around your code before moving your own work, because removed work may simply move. Warm up everything a first use needs (shaders, buffers, textures). Start the draw the player waits for while the browser lays out, not after. Read the harness's settings before naming a run. Track sizes with a `ResizeObserver` rather than one read at render time.
+- **Check (as built in SEA Game):** a browser test fails unless a purchase's first draw runs inside its click and makes no buffer or texture upload; another fails unless a table that widens after render becomes a labelled, focusable region, and stops being one when it narrows.
+
 ## 2026-10-20 · A static scene bound recomputed on every update
 
 - **What happened:** G3 CI measured a 3D purchase update at 110.7 ms p95 against the 100 ms budget. Camera framing walked every visible model layer's mesh tree again even though purchase updates only changed visibility and model transforms stayed fixed.

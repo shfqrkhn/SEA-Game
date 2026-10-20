@@ -27041,7 +27041,7 @@ Exportez une sauvegarde par **Menu → Exporter une sauvegarde** après la confi
 
 ### docs/HANDOVER.md
 
-Paths: `docs/HANDOVER.md`. SHA-256 `b9b062ce25b5e13ab7067b521ce93371d550692e51bdca77a077f55d6103b218`, 13211 bytes.
+Paths: `docs/HANDOVER.md`. SHA-256 `8efb85856535fb7d4f095bea35d1816da32f98a1bb9a64f72350b6b6230323d8`, 13603 bytes.
 
 ```markdown
 # Handover
@@ -27106,7 +27106,7 @@ Owner FIX 1 (stills and fit), FIX 2 (one click to close a round nobody can win i
 
 ## 5. Next action
 
-**Agent:** G3 on `g3/proxy-runtime` (PR #27): red runs 38609311138, 38921636256, 38931516133 and 38958721130 have their documented fixes. Red run 38976632856 missed the 3D update budget (p95 110.7 ms); the local repair caches unchanged model-layer bounds for purchase framing. `npm run verify` now passes locally, including the 3D update budget at p95 65.4 ms (max 73.9 ms); the CI result is still required to establish whether this repair fixes the hosted-run miss. Get two consecutive green CI runs on one head; run the `npm run perf:ref` 12-KPI baseline in a quiet slot (MPES §14.1); finish the verification Checks; gallery and owner GO or FIX before merge. Then G4 (stills to 3:1 in every view and frame, the pale RECCE roof, the light-theme stage contrast).
+**Agent:** G3 on `g3/proxy-runtime` (PR #27): red runs 38609311138, 38921636256, 38931516133 and 38958721130 have their documented fixes. Red run 38976632856 (p95 110.7 ms) is fixed by caching unchanged layer bounds. Red run 39484500911 (p95 120.6 ms on `verify (22)`) is addressed in three ways: parts are uploaded to the graphics card before any purchase, a purchase is drawn inside its own click (`sea-rendered`), and wide tables are watched by a ResizeObserver, which also fixes a keyboard-access gap (`docs/verification/0.6.0.0.md`). Locally this PC's perf readings are currently noisy: HEAD and the fix fail the same budgets. CI decides; if the 3D update still misses on CI, keep the 100 ms budget and carry it as a named blocker with that evidence. Codex was out of usage on 2026-10-20 (until 17:39), so run its review of this diff then and record it. Get two consecutive green CI runs on one head; run the `npm run perf:ref` 12-KPI baseline in a quiet slot (MPES §14.1); finish the verification Checks; gallery and owner GO or FIX before merge. Then G4 (stills to 3:1 in every view and frame, the pale RECCE roof, the light-theme stage contrast).
 **Owner:** `docs/owner/art-review.md` (5 minutes, reply GO or FIX).
 
 ## 6. Rollback
@@ -27700,7 +27700,7 @@ A read-only Codex session (gpt-6.1-sol, medium) reviewed the diff (`.artifacts/c
 
 ### docs/verification/0.6.0.0.md
 
-Paths: `docs/verification/0.6.0.0.md`. SHA-256 `34bd5ae96ebf5202aa61d19a3cb681d08a9b3976e5ac0cfea6e53c36a9c3b092`, 36450 bytes.
+Paths: `docs/verification/0.6.0.0.md`. SHA-256 `36577fa85db6184c5178ba9ccf610f49931eddd8a9f8f5cd465b8597a3ed6dc4`, 41790 bytes.
 
 ```markdown
 # Verification record: 0.6.0.0 beta (G3 proxy and runtime) — in progress
@@ -27887,10 +27887,6 @@ Measured (local, four cores, software renderer, interleaved, 30 purchases each, 
 
 Codex review of the diff (contexts fixture, open panels, shadow follow-up, new tests): one finding, P3, accepted. Panels without a name were keyed by their place, so opening the instructor's ledger in the auction and moving on to the build phase would have handed its open state to Team 1's purchases panel (reproduced in Node with the actual key function). Fix: every panel the interface builds has its own id (ledger, each team's purchases, planning guide and requirements, tracker notes, build additions, the About licence texts) and a panel is known only by its id. Sibling check: `tests/unit/panels.test.ts` reads every interface source as TypeScript sees it and fails any `details` made without an id; it failed on the student pages before the ids were added (four panels) and proves itself against a panel without an id, an id only in a comment and a `createElement`. No finding on the shadow follow-up or the fixture.
 
-## Checks
-
-To be completed at close.
-
 ## Red run 38976632856 (head b56520a): 3D update p95 110.7 ms
 
 `verify (22)` passed; `verify (24)` failed only the 3D showcase update budget. It measured 30 samples, with p95 110.7 ms and max 111.8 ms against the unchanged 100 ms limit. The phase p95s were 54.2 ms handling the purchase, 4.5 ms waiting for the draw, 10.9 ms drawing and 49.1 ms from draw to paint. The other 259 tests passed and 48 were skipped.
@@ -27910,6 +27906,37 @@ The purchase changes which GLB child layers are visible, while their geometry an
 | Gallery and owner GO/FIX | NOT_RUN; required before merge by `AGENTS.md` rule 19 |
 
 After the evidence-table edit, a second `npm run verify` passed typecheck, lint, all unit tests, deterministic build check and build. I stopped that repeat before E2E finished because another Playwright matrix (`kit-r6`) was running on the same PC; the complete PASS above is the earlier full run, including all E2E and performance tests. This repeat was interrupted for resource contention, not a test failure.
+
+## Red run 39484500911 (head 800dd73): 3D update p95 120.6 ms
+
+`verify (24)` passed, with 3D update p95 64.4 ms. `verify (22)` failed only that budget: p95 120.6 ms against the unchanged 100 ms limit, with phase p95s of 59.1 ms handling the purchase and 52 ms from draw to paint. Across the G3 runs this check has read between 64 and 133 ms, with a median near 110, so each fix so far moved it by less than the spread between runs.
+
+What was measured locally. These are ratios only, because local timings are void and CI gates perf. Each A/B used 48 interleaved purchases, the software renderer and four pinned cores:
+
+- **The perf lab already throttles 4x.** `Lab.open` applies a 4x CPU throttle, so earlier "unthrottled" A/Bs were at 4x. `ab.spec.ts` gained a `RATE` setting that adds an extra throttle; 12x matches CI's slower runs.
+- **Our forced layout was not a cost.** A sampled profile showed the render taking 17.6 ms, of which 8.9 ms was reading table widths (a forced layout). A trace of the wait after the click shows that Blink lays out the rebuilt page inside the same input task anyway (`EventHandler::handleMouseReleaseEvent` runs `RunStyleAndLayoutLifecyclePhases`, 19 to 40 ms at 12x). Moving our read out moved that layout and saved no time: handling p50 15.3 to 9.5 ms, wait 1.6 to 8.6, total 30.9 against 32.6 at 4x.
+- **The first draw of a part uploaded it.** In three.js 0.186.1, `compileAsync` compiles shaders only. Geometry and textures go to the graphics card on first draw, so every purchase uploaded its new part inside its own draw.
+- **Turning frames do not cause the wait.** Under reduced motion the long waits stayed.
+- **Locally the total is bound to the frame.** The click lines up with a frame, so time saved inside the click shows up as a longer wait for the next one. At 12x, the old head against all three changes measured total p50 57 against 53.8 ms and p95 94 against 95.
+
+Three changes (no budget, timeout or test weakened):
+
+1. **Parts are sent to the graphics card before any purchase.** When the parts' shaders are compiled, the next paced draw first draws every part not yet shown into a single pixel, with the shadow map left as it is, then hides those parts again (`#upload` in `source/showcase/model.ts`). This asks for a draw, so a still stage uploads them too.
+2. **A purchase is drawn inside its own click.** The view dispatches `sea-rendered` after rebuilding a page (`source/ui/dom.ts`). An urgent change is then drawn at once, so without a graphics card the GPU process rasterises it while Blink does style, layout and paint, instead of in the next frame after them. The frame pacer takes no sample from that draw.
+3. **Wide tables are found by a `ResizeObserver`, not by forcing a layout (`source/ui/view.ts`).** This is also an accessibility fix. A table inside a closed panel measured 0 px when the page was rendered, so it was never made a keyboard-scrollable region when the panel opened, and it was not re-checked after a window resize or text zoom (WCAG 2.1.1).
+
+Failing checks first:
+
+- `tests/e2e/showcase.spec.ts`, "a purchase is drawn inside its click and sends nothing new to the graphics card". It records whether the draw that first shows a purchase ran inside the click, and counts that draw's buffer and texture uploads. On the old source it failed on Chromium and Firefox with the draw outside the click and 21 uploads; on the new source it passes.
+- `tests/e2e/render.spec.ts`, "a table wider than its frame scrolls by keyboard, and only while it is wider". It widens a tracker table after the render and expects a focusable labelled region that ArrowRight scrolls, then narrows it and expects the region removed. On the old source the widened table never became a region (no `tabindex`); on the new source it passes on Chromium and Firefox.
+
+The perf harness's phase watch (`tests/perf/scenarios.ts`) now ends the handling phase at a draw that happens inside the click, because the observer's callback runs after that draw.
+
+If CI still reads above 100 ms, `modelUpdateP95Ms` stays at 100 ms and is carried as a named blocker, with this evidence.
+
+Review: Codex was out of usage until 17:39, so the diff was reviewed by hand first. One finding, accepted. three.js applies a render target's own scissor when it draws into that target, so on a multisampled tier the upload drew the whole target rather than one pixel. That is wasted work on a paced draw, not wrong output and not purchase time. Fix: the upload sets the target's scissor too, and restores both. Codex's review of the same diff is recorded below when it has run.
+
+Local `npm run verify` on this diff: typecheck, lint, 272 unit tests, the deterministic build and 264 end-to-end and performance tests passed, 48 were skipped and two perf budgets failed: 3D update p95 187 ms and stills turntable step 51 ms. The same perf tests run on the HEAD source in the same machine state also failed: 3D update p95 159.1 ms, and stills step 64, 49 and 78 ms over three runs, against 35, 65 and 93 ms for this diff (angle change 26 to 75 ms for HEAD against 31 to 62 ms here). Both sources fail the same way in this state, so it is the machine's state, not this change; local timings are void and CI gates perf. While checking, `#markWide` was changed to write a table's attributes only when they change, so an unchanged table causes no new style work.
 ```
 
 ### docs/verification/legibility.md
@@ -28187,12 +28214,18 @@ export default tseslint.config(
 
 ### library/LESSONS.md
 
-Paths: `library/LESSONS.md`. SHA-256 `1a28bf7b4bb93513df11952feeb37e26541624629bf74375148deb037186ee53`, 17355 bytes.
+Paths: `library/LESSONS.md`. SHA-256 `3b0827a620c53cc09b05ea51ab00b89e4f2967a7e7e22b384ce9c4102dcc7642`, 18828 bytes.
 
 ```markdown
 # Lessons learned
 
 Each entry: what happened, the rule it produced, and the check that now enforces it. Newest first. Examples come from SEA Game (a classroom auction game with photoreal vehicle renders and a real-time 3D showcase, one offline HTML file).
+
+## 2026-10-20 · Work that moved instead of going away, and a warm-up that warmed half
+
+- **What happened:** a 3D purchase took 121 ms to show on one CI run (budget 100). A profile showed a forced layout taking 9 of the click's 18 ms; removing it saved nothing, because a trace showed the browser lays out the rebuilt page inside the same mouse-up task anyway. Each part's shader had been compiled in advance, but in three.js geometry and textures upload on first draw, so every purchase uploaded its part inside the draw the player waited for, which itself began only after the page's layout. Every earlier local "unthrottled" comparison had actually run under the lab's 4x CPU slowdown. A table inside a closed panel measured 0 px at render, so it never became keyboard-scrollable when the panel opened.
+- **Rule:** trace what the browser does around your code before moving your own work, because removed work may simply move. Warm up everything a first use needs (shaders, buffers, textures). Start the draw the player waits for while the browser lays out, not after. Read the harness's settings before naming a run. Track sizes with a `ResizeObserver` rather than one read at render time.
+- **Check (as built in SEA Game):** a browser test fails unless a purchase's first draw runs inside its click and makes no buffer or texture upload; another fails unless a table that widens after render becomes a labelled, focusable region, and stops being one when it narrows.
 
 ## 2026-10-20 · A static scene bound recomputed on every update
 
@@ -35941,7 +35974,7 @@ export function vehicleGlb(glb: ArrayBuffer, vehicle: string): ArrayBuffer | nul
 
 ### source/showcase/model.ts
 
-Paths: `source/showcase/model.ts`. SHA-256 `56bd40ab6ed404b4ff1573cb706c62e100588cca9a951f6cfb79b60660eea818`, 27743 bytes.
+Paths: `source/showcase/model.ts`. SHA-256 `61493e1349047f2a73d558a6ffc5e7c6ee443871226854f29b9d033b4953c87b`, 30325 bytes.
 
 ```ts
 // Real-time vehicle showcase (MPES §10): the embedded glTF model on a slowly turning stage the player can drag.
@@ -35957,6 +35990,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
+import { RENDERED } from '../ui/dom.ts';
 import { vehicleGlb } from './glb.ts';
 import { distanceAt, extentAt, fitTable, zoomed, type FitTable } from './frame.ts';
 import { premultipliedOutput } from './resolve.ts';
@@ -36086,6 +36120,8 @@ export class ModelStage {
   #urgent = false;
   /** The fitted parts changed since the shadow was drawn: the next paced draw redraws it, never the urgent one. */
   #shadowDue = false;
+  /** Parts not yet drawn once, so not yet on the graphics card: the next paced draw uploads them (see #upload). */
+  #unsent: Object3D[] = [];
   /** Index into TIERS: the resolution and edge smoothing this machine can draw in time (adaptive tiers). */
   #tier = 0;
   /** Where a multisampled tier draws the scene, then resolved to the canvas with tone mapping by #output; none on a
@@ -36174,6 +36210,7 @@ export class ModelStage {
     this.#resize.observe(this.canvas);
     document.addEventListener('visibilitychange', () => this.#loop(), { signal });
     for (const type of ['pointerdown', 'keydown', 'input']) document.addEventListener(type, this.#input, { capture: true, passive: true, signal });
+    document.addEventListener(RENDERED, () => this.#now(), { signal });
     // A lost graphics context (driver reset, GPU switch, sleep) stops the stage; three.js rebuilds the context when it is
     // restored, but what was drawn into textures is gone: the environment and the shadow are made again, then one draw.
     // The context, not the events, says whether it is back: Firefox on a software renderer announced a restore while the
@@ -36257,7 +36294,7 @@ export class ModelStage {
     // needs the parts shown: the browser finishes compiling them in parallel after they are hidden again.
     const parts = this.#vehicle!.children.filter(node => !node.visible);
     for (const node of parts) node.visible = true;
-    void this.#renderer.compileAsync(this.#scene, this.#camera).catch(() => undefined);
+    void this.#renderer.compileAsync(this.#scene, this.#camera).then(() => { this.#unsent = parts; this.#invalidate(); }, () => undefined);
     for (const node of parts) node.visible = false;
     return true;
   }
@@ -36376,7 +36413,7 @@ export class ModelStage {
    * Asks for a redraw: in the next paced frame, or, for a change the player asked for (`urgent`), in the next animation
    * frame whatever the pacer's wait. The pacer times a draw by the gap to the next frame, so the page work of a
    * purchase (its re-render) reads as drawing cost and stretched the wait to half a second (G3, CI showcase budget);
-   * one draw per action cannot load the machine. Nothing draws synchronously.
+   * one draw per action cannot load the machine. Only a rebuilt page draws an urgent change at once (see #now).
    */
   #invalidate(urgent = false): void {
     this.#dirty = true;
@@ -36419,14 +36456,39 @@ export class ModelStage {
     this.#output.render(this.#renderer, null as unknown as WebGLRenderTarget, this.#target, 0, false);
   }
 
+  /**
+   * Draws every part not yet shown into one pixel, once, before the next paced draw (asked for when the parts' shaders are
+   * compiled, so a stage that does not turn uploads them too) and drawn over by it: compiling a shader does not
+   * send a part's geometry and textures to the graphics card, so the first purchase of each part sent them inside its
+   * own draw (G3, CI run 39484500911). The same path as a real draw, so it compiles nothing new; the shadow waits.
+   */
+  #upload(): void {
+    const parts = this.#unsent.filter(node => !node.visible), shadow = this.#renderer.shadowMap.needsUpdate;
+    this.#unsent = [];
+    this.#renderer.shadowMap.needsUpdate = false;
+    for (const node of parts) node.visible = true;
+    // A multisampled tier's target carries its own scissor, which three.js applies when it draws into the target.
+    this.#renderer.setScissorTest(true);
+    this.#renderer.setScissor(0, 0, 1, 1);
+    if (this.#target) { this.#target.scissorTest = true; this.#target.scissor.set(0, 0, 1, 1); }
+    try { this.#render(); } finally {
+      this.#renderer.setScissorTest(false);
+      if (this.#target) { this.#target.scissorTest = false; this.#target.scissor.set(0, 0, this.#target.width, this.#target.height); }
+      for (const node of parts) node.visible = false;
+      this.#renderer.shadowMap.needsUpdate = shadow;
+    }
+  }
+
   #draw(): void {
     // A purchase is drawn at once; the sun's shadow of it follows in the next paced draw. Without a graphics card the
     // browser reads each new frame back before showing it, waiting for the whole draw, and redrawing the shadow map
     // made a purchase's draw about twice a turning draw (G3, CI run 38958721130: 133 ms to show, budget 100).
     if (this.#shadowDue && !this.#urgent) { this.#renderer.shadowMap.needsUpdate = true; this.#shadowDue = false; }
     this.#dirty = this.#shadowDue;
+    const urgent = this.#urgent;
     this.#urgent = false;
     this.#distance();
+    if (this.#unsent.length && !urgent) this.#upload();
     // Observable without reaching into the stage: the reference-laptop run brackets each draw's GPU time by these (§14.1).
     this.canvas.dispatchEvent(new Event('sea-drawing'));
     this.#render();
@@ -36449,6 +36511,20 @@ export class ModelStage {
   #stop(): void {
     cancelAnimationFrame(this.#frame);
     this.#frame = 0;
+    this.#pacer.pause();
+  }
+
+  /**
+   * Draws a change the player asked for at once, when the page around the stage has just been rebuilt (`RENDERED`):
+   * the graphics card draws it while the browser lays out and paints the new page, instead of after. Without a graphics
+   * card the browser waits for the whole draw before showing the frame, and the purchase's draw began only once that
+   * layout was done (G3, CI run 39484500911: 121 ms to show, budget 100). The pacer takes no sample from it: the page
+   * work after it is not drawing cost.
+   */
+  #now(): void {
+    if (!this.#urgent || !this.#dirty || this.#lost || !this.#visible || document.visibilityState !== 'visible' || !this.canvas.isConnected) return;
+    this.#draw();
+    this.#pacer.drew(performance.now());
     this.#pacer.pause();
   }
 
@@ -37264,7 +37340,7 @@ export function showDialog(options: DialogOptions): Promise<string> {
 
 ### source/ui/dom.ts
 
-Paths: `source/ui/dom.ts`. SHA-256 `882ace1c49f52c0124c1a1ccef72a1822e7b5927b6bab0767dc8add026ae1127`, 3832 bytes.
+Paths: `source/ui/dom.ts`. SHA-256 `387d85ce7b878a47d7eb4d042dbb313741775254b75e9fb207e981391e7e5a0f`, 3997 bytes.
 
 ```ts
 // Safe DOM construction (MPES C-11): text is always set as text, never parsed as HTML.
@@ -37335,6 +37411,9 @@ export function replaceChildren(parent: Element, ...children: Child[]): void {
   parent.replaceChildren();
   append(parent, children);
 }
+
+/** Dispatched on the document once a view has rebuilt its page, before the browser lays it out (see showcase/model.ts). */
+export const RENDERED = 'sea-rendered';
 
 /**
  * Names the document's language and title, writing only what changed. Writing the root's `lang`, even unchanged,
@@ -38785,7 +38864,7 @@ export function toggleTheme(): Theme {
 
 ### source/ui/view.ts
 
-Paths: `source/ui/view.ts`. SHA-256 `6536026da8169fb8720483ae8c75c494d8d9f550490969eadd6001e220c74b79`, 17562 bytes.
+Paths: `source/ui/view.ts`. SHA-256 `680a1aeaaad3946a3de7ea5ee6236e70e672b0429e1467a47a5fcca23507fd36`, 18873 bytes.
 
 ```ts
 // Shared role view: shell (header, progress, menu, notices), rendering with focus preservation,
@@ -38796,7 +38875,7 @@ import { makeBackup, parseBackup, MAX_BACKUP_BYTES, type BackupRole } from '../d
 import { DomainError } from '../domain/errors.ts';
 import { PHASES, type Phase } from '../domain/session.ts';
 import { showDialog } from './dialog.ts';
-import { h, nameDocument, replaceChildren, type Child } from './dom.ts';
+import { RENDERED, h, nameDocument, replaceChildren, type Child } from './dom.ts';
 import { otherLanguage, translate, type Language, type StringKey } from './i18n.ts';
 import { showAbout } from './about.ts';
 import { themeFrom, toggleTheme, withTheme } from './theme.ts';
@@ -38866,6 +38945,9 @@ export class RoleView<S extends RoleState> {
   #committing = false;
   readonly #content: HTMLElement;
   readonly #statusLine: HTMLElement;
+  /** Watches each table and its frame: a new table, a resized window, an opened panel or a wider table (a font, text
+   *  zoom) re-checks which tables scroll. */
+  readonly #wide = new ResizeObserver(entries => this.#markWide([...new Set(entries.map(entry => entry.target.closest<HTMLElement>('.table-wrap')!))]));
 
   constructor(root: HTMLElement, config: RoleConfig<S>) {
     this.root = root;
@@ -38958,19 +39040,16 @@ export class RoleView<S extends RoleState> {
       const opened = new Set([...panelKeys(this.#content)].filter(([panel]) => panel.open).map(([, key]) => key));
       replaceChildren(this.#content, this.shell());
       if (opened.size) for (const [panel, key] of panelKeys(this.#content)) if (opened.has(key)) panel.open = true;
+      document.dispatchEvent(new Event(RENDERED));
       this.#statusLine.className = `page status-line ${this.#status?.tone === 'bad' ? 'error' : this.#status?.tone === 'ok' ? 'ok' : ''}`;
       if (this.#statusLine.textContent !== (this.#status?.text ?? '')) this.#statusLine.textContent = this.#status?.text ?? '';
       // Tables wider than the screen become labelled, focusable regions so they can be scrolled by keyboard (WCAG 2.1.1).
-      // Every cell is labelled before any width is read, and every width is read before any region is marked, so the
-      // page lays out once per render rather than once per table.
+      // Their widths are read whenever the browser has laid them out (see #markWide), so a table that widens later (an
+      // opened panel, a resized window, text zoom) is marked too; reading them only here missed those (G3).
       const wraps = [...this.#content.querySelectorAll<HTMLElement>('.table-wrap')];
       for (const wrap of wraps) labelCells(wrap);
-      const wide = wraps.filter(wrap => wrap.scrollWidth > wrap.clientWidth + 1);
-      for (const wrap of wide) {
-        wrap.tabIndex = 0;
-        wrap.setAttribute('role', 'region');
-        wrap.setAttribute('aria-label', wrap.querySelector('caption')?.textContent || wrap.closest('section')?.querySelector('h1, h2, h3')?.textContent || this.t('common.purchases'));
-      }
+      this.#wide.disconnect();
+      for (const wrap of wraps) for (const box of [wrap, wrap.querySelector('table')]) if (box) this.#wide.observe(box);
       if (focusId) {
         const next = document.getElementById(focusId) as (HTMLElement & Partial<HTMLInputElement>) | null;
         if (next && next !== document.activeElement) {
@@ -38983,6 +39062,25 @@ export class RoleView<S extends RoleState> {
     } finally {
       this.#rendering = false;
     }
+  }
+
+  /**
+   * Marks the tables that scroll sideways as labelled, focusable regions and unmarks those that no longer do. It runs
+   * after layout, before paint: every width is read before any table is marked, so the page is not laid out again.
+   */
+  #markWide(wraps: readonly HTMLElement[]): void {
+    const wide = wraps.map(wrap => wrap.scrollWidth > wrap.clientWidth + 1);
+    wraps.forEach((wrap, i) => {
+      if (!wide[i]) {
+        if (wrap.hasAttribute('tabindex')) { wrap.removeAttribute('tabindex'); wrap.removeAttribute('role'); wrap.removeAttribute('aria-label'); }
+        return;
+      }
+      // Only a change is written, so an unchanged table costs the page no new style work.
+      const label = wrap.querySelector('caption')?.textContent || wrap.closest('section')?.querySelector('h1, h2, h3')?.textContent || this.t('common.purchases');
+      if (wrap.getAttribute('tabindex') !== '0') wrap.tabIndex = 0;
+      if (wrap.getAttribute('role') !== 'region') wrap.setAttribute('role', 'region');
+      if (wrap.getAttribute('aria-label') !== label) wrap.setAttribute('aria-label', label);
+    });
   }
 
   shell(): Child {
@@ -40685,14 +40783,14 @@ test('G-PILOT substitute: French classroom rehearsal, 10 teams, three student ta
 
 ### tests/e2e/render.spec.ts
 
-Paths: `tests/e2e/render.spec.ts`. SHA-256 `f5b119e6e94c98ec2bc394990bf9769cabec717e716c20614e13d25bd6467231`, 4632 bytes.
+Paths: `tests/e2e/render.spec.ts`. SHA-256 `4d2a8ee8c339b641eba3f799b992731aef9f73cea425403de9f1a1fc46448345`, 6304 bytes.
 
 ```ts
 // MPES §14 command response: a command, a saved field or a status message rebuilds the view once, never twice (G3: each
 // command used to render through the controller's subscription and again in the view, doubling the click-to-paint time).
 import { expect, type Page } from '@playwright/test';
 import { gameUrl, guardNetwork, test } from './helpers.ts';
-import { instructorLot, instructorSetup } from './roles.ts';
+import { confirmDialog, instructorLot, instructorSetup, studentJoin } from './roles.ts';
 import { TRACKER_OK } from '../perf/measure.ts';
 
 /** Counts full re-renders: each one empties the view's content element before rebuilding it. */
@@ -40771,6 +40869,35 @@ test('a panel the reader opened stays open through every render, on every page w
   expect(auction, 'auction panels').toBeGreaterThanOrEqual(1);
   await instructorLot(ip, [1], 'sell');
   await expect(ip.locator('details[open]'), 'auction, after a sale').toHaveCount(auction);
+});
+
+// WCAG 2.1.1: a table wider than its frame is a labelled, focusable region, so it scrolls by keyboard; one that fits is
+// not a tab stop. The view checks once the page is laid out (no width read inside a click, G3 CI run 39484500911), so
+// a table that widens or narrows later is marked or unmarked too.
+test('a table wider than its frame scrolls by keyboard, and only while it is wider', async ({ page }) => {
+  guardNetwork(page);
+  await page.goto(gameUrl('?role=student&lang=en'));
+  await studentJoin(page, 'SEA3-T2-0123456789ABCDEF', 1, 'COMBAT');
+  await page.check('#plan-confirm');
+  await page.click('#student-start-auction');
+  await confirmDialog(page);
+  await page.fill('#card-id', 'CAP-A');
+  await page.click('#load-card');
+  await page.fill('#paid', '400000');
+  await page.click('#record-win');
+  const wrap = page.locator('.table-wrap').filter({ has: page.locator('td', { hasText: 'CAP-A' }) });
+  await expect(wrap).toHaveCount(1);
+  await expect(wrap).not.toHaveAttribute('tabindex');
+  await wrap.locator('table').evaluate(table => { (table as HTMLElement).style.minWidth = '3000px'; });
+  await expect(wrap).toHaveAttribute('tabindex', '0');
+  await expect(wrap).toHaveAttribute('role', 'region');
+  await expect(wrap).toHaveAttribute('aria-label', /\S/);
+  await wrap.focus();
+  await page.keyboard.press('ArrowRight');
+  await expect.poll(() => wrap.evaluate(w => w.scrollLeft)).toBeGreaterThan(0);
+  await wrap.locator('table').evaluate(table => { (table as HTMLElement).style.minWidth = ''; });
+  await expect(wrap).not.toHaveAttribute('tabindex');
+  await expect(wrap).not.toHaveAttribute('role', 'region');
 });
 ```
 
@@ -40854,7 +40981,7 @@ export async function studentRecord(page: Page, cardId: string, paidDollars: num
 
 ### tests/e2e/showcase.spec.ts
 
-Paths: `tests/e2e/showcase.spec.ts`. SHA-256 `f839193d64b1c19fc43b6c8b5018bb456146595059cb06b460259b5e1219a6e7`, 41814 bytes.
+Paths: `tests/e2e/showcase.spec.ts`. SHA-256 `6f87ffdb9d1e74eb71683265ad64d185a8764ab14475256f622e920dcf06de92`, 44573 bytes.
 
 ```ts
 // War-room HUD and vehicle showcase (MPES §7.1, §10, §11): the default look of every view. The live lot shows the
@@ -41227,6 +41354,48 @@ test('3D showcase: a purchase is drawn at once without redrawing the shadow, whi
   expect(after[first], 'the draw that first shows the purchase').toEqual({ layers: 'ACC-F', shadow: false });
   expect(after.slice(first + 1).filter(d => d.shadow), 'the shadow, in a later draw').toHaveLength(1);
   expect(after.length - first, 'then the still stage stops drawing').toBeLessThanOrEqual(2);
+});
+
+// G3, CI run 39484500911: a purchase took 121 ms to appear (budget 100). Its draw began only in the next animation frame,
+// after the browser had laid out the rebuilt page, and without a graphics card the browser then waited for the whole
+// draw; it also sent the new part's geometry and textures to the graphics card, which compiling its shader had not.
+// Now the parts are sent once, before any purchase, and a purchase is drawn inside its own click.
+test('3D showcase: a purchase is drawn inside its click and sends nothing new to the graphics card', async ({ browser }) => {
+  const sp = await (await browser.newContext()).newPage();
+  guardNetwork(sp);
+  await withGpu(sp);
+  await sp.addInitScript(() => {
+    const draws: { layers: string; inClick: boolean; sent: number }[] = [];
+    (window as unknown as { seaDraws: typeof draws }).seaDraws = draws;
+    let clicking = false, sent = 0;
+    document.addEventListener('click', () => { clicking = true; }, { capture: true });
+    addEventListener('click', () => { clicking = false; });
+    const proto = WebGL2RenderingContext.prototype as unknown as Record<string, (...args: unknown[]) => unknown>;
+    for (const name of ['bufferData', 'texImage2D', 'texSubImage2D', 'texStorage2D', 'compressedTexImage2D']) {
+      const original = proto[name]!;
+      proto[name] = function (this: unknown, ...args: unknown[]) { sent++; return original.apply(this, args); };
+    }
+    document.addEventListener('sea-drawing', () => { sent = 0; }, { capture: true });
+    document.addEventListener('sea-draw', event => {
+      const layers = (event.target as Element).closest('[data-layers]')?.getAttribute('data-layers') ?? '';
+      draws.push({ layers, inClick: clicking, sent });
+    }, { capture: true });
+  });
+  await sp.goto(gameUrl('?role=student&lang=en'));
+  await studentJoin(sp, 'SEA3-T2-0123456789ABCDEF', 1, 'RECOVERY');
+  await sp.check('#plan-confirm');
+  await sp.click('#student-start-auction');
+  await confirmDialog(sp);
+  const stage = sp.locator('#showcase [role="img"]');
+  await expect(stage).toHaveAttribute('data-ready', 'true', { timeout: 30_000 });
+  const draws = () => sp.evaluate(() => (window as unknown as { seaDraws: { layers: string; inClick: boolean; sent: number }[] }).seaDraws);
+  await expect.poll(async () => (await draws()).length, { timeout: 30_000 }).toBeGreaterThan(3);
+  await sp.waitForTimeout(1000);
+  const before = (await draws()).length;
+  await record(sp, 1, 7, 'ACC-F', 350000);
+  await expect(stage).toHaveAttribute('data-drawn', 'ACC-F', { timeout: 30_000 });
+  const first = (await draws()).slice(before).find(d => d.layers === 'ACC-F');
+  expect(first, 'the draw that first shows the purchase').toEqual({ layers: 'ACC-F', inClick: true, sent: 0 });
 });
 
 test('stills fallback without WebGL: layers follow recorded purchases; one part per mount; process cards are badges', async ({ browser }) => {
@@ -42604,7 +42773,7 @@ export async function loadPurchase(page: Page, [round_, lot, card, paid]: typeof
 
 ### tests/perf/scenarios.ts
 
-Paths: `tests/perf/scenarios.ts`. SHA-256 `8a687c6128aeaf08aaefcdc38314e75378760004d678082bcff389378cb95740`, 23564 bytes.
+Paths: `tests/perf/scenarios.ts`. SHA-256 `8b78d302d383d5010f248d664cf2f8b6e2145f7fb810fd750d687edf93c8d7cc`, 23737 bytes.
 
 ```ts
 // The MPES §14 scenarios, run the same way by the CI gate (tests/e2e/perf.spec.ts, software graphics) and by the
@@ -42931,7 +43100,12 @@ async function phasesWatch(page: Page, token: string): Promise<void> {
     observer.observe(document, { subtree: true, attributes: true, attributeFilter: ['data-layers', 'data-drawn'] });
     // The canvas may be replaced by the command: listen where the events pass on their way, the document's capture phase.
     const done = new AbortController();
-    document.addEventListener('sea-drawing', () => { if (t.layers !== undefined && t.drawing === undefined) t.drawing = performance.now(); }, { capture: true, signal: done.signal });
+    // A purchase may draw inside its own click, before the observer's callback runs: then the handling ends at the draw.
+    document.addEventListener('sea-drawing', () => {
+      if (t.drawing !== undefined || !has('data-layers')) return;
+      t.drawing = performance.now();
+      t.layers ??= t.drawing;
+    }, { capture: true, signal: done.signal });
     document.addEventListener('sea-draw', () => { if (t.drawing !== undefined) { t.draw = performance.now(); done.abort(); } }, { capture: true, signal: done.signal });
   }, { selector: MODEL, token });
 }
@@ -46514,5 +46688,5 @@ Keys and the commands that make each kind again:
 
 | Path | Bytes | SHA-256 | Why |
 |---|---:|---|---|
-| `docs/MPES.md` | 188547 | `5d85544fe0851521396bdd8e178f7b05fb7cfe2836d73e4b514c829dbaf29af9` | The specification, a clean-room document of its own (Omni 5.1.1 §333). |
+| `docs/MPES.md` | 189810 | `d7dddb3ee669a5101e60f69e7196353d6d6211d032d624d6c5eabcf15b3a084b` | The specification, a clean-room document of its own (Omni 5.1.1 §333). |
 | `docs/CODEBASE.md` | | | This file. |

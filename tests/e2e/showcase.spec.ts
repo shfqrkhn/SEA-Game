@@ -370,6 +370,48 @@ test('3D showcase: a purchase is drawn at once without redrawing the shadow, whi
   expect(after.length - first, 'then the still stage stops drawing').toBeLessThanOrEqual(2);
 });
 
+// G3, CI run 39484500911: a purchase took 121 ms to appear (budget 100). Its draw began only in the next animation frame,
+// after the browser had laid out the rebuilt page, and without a graphics card the browser then waited for the whole
+// draw; it also sent the new part's geometry and textures to the graphics card, which compiling its shader had not.
+// Now the parts are sent once, before any purchase, and a purchase is drawn inside its own click.
+test('3D showcase: a purchase is drawn inside its click and sends nothing new to the graphics card', async ({ browser }) => {
+  const sp = await (await browser.newContext()).newPage();
+  guardNetwork(sp);
+  await withGpu(sp);
+  await sp.addInitScript(() => {
+    const draws: { layers: string; inClick: boolean; sent: number }[] = [];
+    (window as unknown as { seaDraws: typeof draws }).seaDraws = draws;
+    let clicking = false, sent = 0;
+    document.addEventListener('click', () => { clicking = true; }, { capture: true });
+    addEventListener('click', () => { clicking = false; });
+    const proto = WebGL2RenderingContext.prototype as unknown as Record<string, (...args: unknown[]) => unknown>;
+    for (const name of ['bufferData', 'texImage2D', 'texSubImage2D', 'texStorage2D', 'compressedTexImage2D']) {
+      const original = proto[name]!;
+      proto[name] = function (this: unknown, ...args: unknown[]) { sent++; return original.apply(this, args); };
+    }
+    document.addEventListener('sea-drawing', () => { sent = 0; }, { capture: true });
+    document.addEventListener('sea-draw', event => {
+      const layers = (event.target as Element).closest('[data-layers]')?.getAttribute('data-layers') ?? '';
+      draws.push({ layers, inClick: clicking, sent });
+    }, { capture: true });
+  });
+  await sp.goto(gameUrl('?role=student&lang=en'));
+  await studentJoin(sp, 'SEA3-T2-0123456789ABCDEF', 1, 'RECOVERY');
+  await sp.check('#plan-confirm');
+  await sp.click('#student-start-auction');
+  await confirmDialog(sp);
+  const stage = sp.locator('#showcase [role="img"]');
+  await expect(stage).toHaveAttribute('data-ready', 'true', { timeout: 30_000 });
+  const draws = () => sp.evaluate(() => (window as unknown as { seaDraws: { layers: string; inClick: boolean; sent: number }[] }).seaDraws);
+  await expect.poll(async () => (await draws()).length, { timeout: 30_000 }).toBeGreaterThan(3);
+  await sp.waitForTimeout(1000);
+  const before = (await draws()).length;
+  await record(sp, 1, 7, 'ACC-F', 350000);
+  await expect(stage).toHaveAttribute('data-drawn', 'ACC-F', { timeout: 30_000 });
+  const first = (await draws()).slice(before).find(d => d.layers === 'ACC-F');
+  expect(first, 'the draw that first shows the purchase').toEqual({ layers: 'ACC-F', inClick: true, sent: 0 });
+});
+
 test('stills fallback without WebGL: layers follow recorded purchases; one part per mount; process cards are badges', async ({ browser }) => {
   const ip = await (await browser.newContext()).newPage();
   const sp = await (await browser.newContext()).newPage();

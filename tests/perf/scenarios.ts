@@ -322,7 +322,12 @@ async function phasesWatch(page: Page, token: string): Promise<void> {
     observer.observe(document, { subtree: true, attributes: true, attributeFilter: ['data-layers', 'data-drawn'] });
     // The canvas may be replaced by the command: listen where the events pass on their way, the document's capture phase.
     const done = new AbortController();
-    document.addEventListener('sea-drawing', () => { if (t.layers !== undefined && t.drawing === undefined) t.drawing = performance.now(); }, { capture: true, signal: done.signal });
+    // A purchase may draw inside its own click, before the observer's callback runs: then the handling ends at the draw.
+    document.addEventListener('sea-drawing', () => {
+      if (t.drawing !== undefined || !has('data-layers')) return;
+      t.drawing = performance.now();
+      t.layers ??= t.drawing;
+    }, { capture: true, signal: done.signal });
     document.addEventListener('sea-draw', () => { if (t.drawing !== undefined) { t.draw = performance.now(); done.abort(); } }, { capture: true, signal: done.signal });
   }, { selector: MODEL, token });
 }

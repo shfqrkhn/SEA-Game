@@ -6,7 +6,7 @@ import { makeBackup, parseBackup, MAX_BACKUP_BYTES, type BackupRole } from '../d
 import { DomainError } from '../domain/errors.ts';
 import { PHASES, type Phase } from '../domain/session.ts';
 import { showDialog } from './dialog.ts';
-import { h, nameDocument, replaceChildren, type Child } from './dom.ts';
+import { RENDERED, h, nameDocument, replaceChildren, type Child } from './dom.ts';
 import { otherLanguage, translate, type Language, type StringKey } from './i18n.ts';
 import { showAbout } from './about.ts';
 import { themeFrom, toggleTheme, withTheme } from './theme.ts';
@@ -76,6 +76,9 @@ export class RoleView<S extends RoleState> {
   #committing = false;
   readonly #content: HTMLElement;
   readonly #statusLine: HTMLElement;
+  /** Watches each table and its frame: a new table, a resized window, an opened panel or a wider table (a font, text
+   *  zoom) re-checks which tables scroll. */
+  readonly #wide = new ResizeObserver(entries => this.#markWide([...new Set(entries.map(entry => entry.target.closest<HTMLElement>('.table-wrap')!))]));
 
   constructor(root: HTMLElement, config: RoleConfig<S>) {
     this.root = root;
@@ -168,19 +171,16 @@ export class RoleView<S extends RoleState> {
       const opened = new Set([...panelKeys(this.#content)].filter(([panel]) => panel.open).map(([, key]) => key));
       replaceChildren(this.#content, this.shell());
       if (opened.size) for (const [panel, key] of panelKeys(this.#content)) if (opened.has(key)) panel.open = true;
+      document.dispatchEvent(new Event(RENDERED));
       this.#statusLine.className = `page status-line ${this.#status?.tone === 'bad' ? 'error' : this.#status?.tone === 'ok' ? 'ok' : ''}`;
       if (this.#statusLine.textContent !== (this.#status?.text ?? '')) this.#statusLine.textContent = this.#status?.text ?? '';
       // Tables wider than the screen become labelled, focusable regions so they can be scrolled by keyboard (WCAG 2.1.1).
-      // Every cell is labelled before any width is read, and every width is read before any region is marked, so the
-      // page lays out once per render rather than once per table.
+      // Their widths are read whenever the browser has laid them out (see #markWide), so a table that widens later (an
+      // opened panel, a resized window, text zoom) is marked too; reading them only here missed those (G3).
       const wraps = [...this.#content.querySelectorAll<HTMLElement>('.table-wrap')];
       for (const wrap of wraps) labelCells(wrap);
-      const wide = wraps.filter(wrap => wrap.scrollWidth > wrap.clientWidth + 1);
-      for (const wrap of wide) {
-        wrap.tabIndex = 0;
-        wrap.setAttribute('role', 'region');
-        wrap.setAttribute('aria-label', wrap.querySelector('caption')?.textContent || wrap.closest('section')?.querySelector('h1, h2, h3')?.textContent || this.t('common.purchases'));
-      }
+      this.#wide.disconnect();
+      for (const wrap of wraps) for (const box of [wrap, wrap.querySelector('table')]) if (box) this.#wide.observe(box);
       if (focusId) {
         const next = document.getElementById(focusId) as (HTMLElement & Partial<HTMLInputElement>) | null;
         if (next && next !== document.activeElement) {
@@ -193,6 +193,25 @@ export class RoleView<S extends RoleState> {
     } finally {
       this.#rendering = false;
     }
+  }
+
+  /**
+   * Marks the tables that scroll sideways as labelled, focusable regions and unmarks those that no longer do. It runs
+   * after layout, before paint: every width is read before any table is marked, so the page is not laid out again.
+   */
+  #markWide(wraps: readonly HTMLElement[]): void {
+    const wide = wraps.map(wrap => wrap.scrollWidth > wrap.clientWidth + 1);
+    wraps.forEach((wrap, i) => {
+      if (!wide[i]) {
+        if (wrap.hasAttribute('tabindex')) { wrap.removeAttribute('tabindex'); wrap.removeAttribute('role'); wrap.removeAttribute('aria-label'); }
+        return;
+      }
+      // Only a change is written, so an unchanged table costs the page no new style work.
+      const label = wrap.querySelector('caption')?.textContent || wrap.closest('section')?.querySelector('h1, h2, h3')?.textContent || this.t('common.purchases');
+      if (wrap.getAttribute('tabindex') !== '0') wrap.tabIndex = 0;
+      if (wrap.getAttribute('role') !== 'region') wrap.setAttribute('role', 'region');
+      if (wrap.getAttribute('aria-label') !== label) wrap.setAttribute('aria-label', label);
+    });
   }
 
   shell(): Child {

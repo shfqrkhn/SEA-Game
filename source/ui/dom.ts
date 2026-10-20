@@ -67,6 +67,9 @@ export function replaceChildren(parent: Element, ...children: Child[]): void {
   append(parent, children);
 }
 
+/** Dispatched on the document once a view has rebuilt its page, before the browser lays it out (see showcase/model.ts). */
+export const RENDERED = 'sea-rendered';
+
 /**
  * Names the document's language and title, writing only what changed. Writing the root's `lang`, even unchanged,
  * restyles the whole page; inside a command that then replaced the focused button, it cost a full style and layout

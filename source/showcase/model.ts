@@ -11,6 +11,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
+import { RENDERED } from '../ui/dom.ts';
 import { vehicleGlb } from './glb.ts';
 import { distanceAt, extentAt, fitTable, zoomed, type FitTable } from './frame.ts';
 import { premultipliedOutput } from './resolve.ts';
@@ -140,6 +141,8 @@ export class ModelStage {
   #urgent = false;
   /** The fitted parts changed since the shadow was drawn: the next paced draw redraws it, never the urgent one. */
   #shadowDue = false;
+  /** Parts not yet drawn once, so not yet on the graphics card: the next paced draw uploads them (see #upload). */
+  #unsent: Object3D[] = [];
   /** Index into TIERS: the resolution and edge smoothing this machine can draw in time (adaptive tiers). */
   #tier = 0;
   /** Where a multisampled tier draws the scene, then resolved to the canvas with tone mapping by #output; none on a
@@ -228,6 +231,7 @@ export class ModelStage {
     this.#resize.observe(this.canvas);
     document.addEventListener('visibilitychange', () => this.#loop(), { signal });
     for (const type of ['pointerdown', 'keydown', 'input']) document.addEventListener(type, this.#input, { capture: true, passive: true, signal });
+    document.addEventListener(RENDERED, () => this.#now(), { signal });
     // A lost graphics context (driver reset, GPU switch, sleep) stops the stage; three.js rebuilds the context when it is
     // restored, but what was drawn into textures is gone: the environment and the shadow are made again, then one draw.
     // The context, not the events, says whether it is back: Firefox on a software renderer announced a restore while the
@@ -311,7 +315,7 @@ export class ModelStage {
     // needs the parts shown: the browser finishes compiling them in parallel after they are hidden again.
     const parts = this.#vehicle!.children.filter(node => !node.visible);
     for (const node of parts) node.visible = true;
-    void this.#renderer.compileAsync(this.#scene, this.#camera).catch(() => undefined);
+    void this.#renderer.compileAsync(this.#scene, this.#camera).then(() => { this.#unsent = parts; this.#invalidate(); }, () => undefined);
     for (const node of parts) node.visible = false;
     return true;
   }
@@ -430,7 +434,7 @@ export class ModelStage {
    * Asks for a redraw: in the next paced frame, or, for a change the player asked for (`urgent`), in the next animation
    * frame whatever the pacer's wait. The pacer times a draw by the gap to the next frame, so the page work of a
    * purchase (its re-render) reads as drawing cost and stretched the wait to half a second (G3, CI showcase budget);
-   * one draw per action cannot load the machine. Nothing draws synchronously.
+   * one draw per action cannot load the machine. Only a rebuilt page draws an urgent change at once (see #now).
    */
   #invalidate(urgent = false): void {
     this.#dirty = true;
@@ -473,14 +477,39 @@ export class ModelStage {
     this.#output.render(this.#renderer, null as unknown as WebGLRenderTarget, this.#target, 0, false);
   }
 
+  /**
+   * Draws every part not yet shown into one pixel, once, before the next paced draw (asked for when the parts' shaders are
+   * compiled, so a stage that does not turn uploads them too) and drawn over by it: compiling a shader does not
+   * send a part's geometry and textures to the graphics card, so the first purchase of each part sent them inside its
+   * own draw (G3, CI run 39484500911). The same path as a real draw, so it compiles nothing new; the shadow waits.
+   */
+  #upload(): void {
+    const parts = this.#unsent.filter(node => !node.visible), shadow = this.#renderer.shadowMap.needsUpdate;
+    this.#unsent = [];
+    this.#renderer.shadowMap.needsUpdate = false;
+    for (const node of parts) node.visible = true;
+    // A multisampled tier's target carries its own scissor, which three.js applies when it draws into the target.
+    this.#renderer.setScissorTest(true);
+    this.#renderer.setScissor(0, 0, 1, 1);
+    if (this.#target) { this.#target.scissorTest = true; this.#target.scissor.set(0, 0, 1, 1); }
+    try { this.#render(); } finally {
+      this.#renderer.setScissorTest(false);
+      if (this.#target) { this.#target.scissorTest = false; this.#target.scissor.set(0, 0, this.#target.width, this.#target.height); }
+      for (const node of parts) node.visible = false;
+      this.#renderer.shadowMap.needsUpdate = shadow;
+    }
+  }
+
   #draw(): void {
     // A purchase is drawn at once; the sun's shadow of it follows in the next paced draw. Without a graphics card the
     // browser reads each new frame back before showing it, waiting for the whole draw, and redrawing the shadow map
     // made a purchase's draw about twice a turning draw (G3, CI run 38958721130: 133 ms to show, budget 100).
     if (this.#shadowDue && !this.#urgent) { this.#renderer.shadowMap.needsUpdate = true; this.#shadowDue = false; }
     this.#dirty = this.#shadowDue;
+    const urgent = this.#urgent;
     this.#urgent = false;
     this.#distance();
+    if (this.#unsent.length && !urgent) this.#upload();
     // Observable without reaching into the stage: the reference-laptop run brackets each draw's GPU time by these (§14.1).
     this.canvas.dispatchEvent(new Event('sea-drawing'));
     this.#render();
@@ -503,6 +532,20 @@ export class ModelStage {
   #stop(): void {
     cancelAnimationFrame(this.#frame);
     this.#frame = 0;
+    this.#pacer.pause();
+  }
+
+  /**
+   * Draws a change the player asked for at once, when the page around the stage has just been rebuilt (`RENDERED`):
+   * the graphics card draws it while the browser lays out and paints the new page, instead of after. Without a graphics
+   * card the browser waits for the whole draw before showing the frame, and the purchase's draw began only once that
+   * layout was done (G3, CI run 39484500911: 121 ms to show, budget 100). The pacer takes no sample from it: the page
+   * work after it is not drawing cost.
+   */
+  #now(): void {
+    if (!this.#urgent || !this.#dirty || this.#lost || !this.#visible || document.visibilityState !== 'visible' || !this.canvas.isConnected) return;
+    this.#draw();
+    this.#pacer.drew(performance.now());
     this.#pacer.pause();
   }
 

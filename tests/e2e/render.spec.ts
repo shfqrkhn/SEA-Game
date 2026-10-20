@@ -2,7 +2,7 @@
 // command used to render through the controller's subscription and again in the view, doubling the click-to-paint time).
 import { expect, type Page } from '@playwright/test';
 import { gameUrl, guardNetwork, test } from './helpers.ts';
-import { instructorLot, instructorSetup } from './roles.ts';
+import { confirmDialog, instructorLot, instructorSetup, studentJoin } from './roles.ts';
 import { TRACKER_OK } from '../perf/measure.ts';
 
 /** Counts full re-renders: each one empties the view's content element before rebuilding it. */
@@ -81,4 +81,33 @@ test('a panel the reader opened stays open through every render, on every page w
   expect(auction, 'auction panels').toBeGreaterThanOrEqual(1);
   await instructorLot(ip, [1], 'sell');
   await expect(ip.locator('details[open]'), 'auction, after a sale').toHaveCount(auction);
+});
+
+// WCAG 2.1.1: a table wider than its frame is a labelled, focusable region, so it scrolls by keyboard; one that fits is
+// not a tab stop. The view checks once the page is laid out (no width read inside a click, G3 CI run 39484500911), so
+// a table that widens or narrows later is marked or unmarked too.
+test('a table wider than its frame scrolls by keyboard, and only while it is wider', async ({ page }) => {
+  guardNetwork(page);
+  await page.goto(gameUrl('?role=student&lang=en'));
+  await studentJoin(page, 'SEA3-T2-0123456789ABCDEF', 1, 'COMBAT');
+  await page.check('#plan-confirm');
+  await page.click('#student-start-auction');
+  await confirmDialog(page);
+  await page.fill('#card-id', 'CAP-A');
+  await page.click('#load-card');
+  await page.fill('#paid', '400000');
+  await page.click('#record-win');
+  const wrap = page.locator('.table-wrap').filter({ has: page.locator('td', { hasText: 'CAP-A' }) });
+  await expect(wrap).toHaveCount(1);
+  await expect(wrap).not.toHaveAttribute('tabindex');
+  await wrap.locator('table').evaluate(table => { (table as HTMLElement).style.minWidth = '3000px'; });
+  await expect(wrap).toHaveAttribute('tabindex', '0');
+  await expect(wrap).toHaveAttribute('role', 'region');
+  await expect(wrap).toHaveAttribute('aria-label', /\S/);
+  await wrap.focus();
+  await page.keyboard.press('ArrowRight');
+  await expect.poll(() => wrap.evaluate(w => w.scrollLeft)).toBeGreaterThan(0);
+  await wrap.locator('table').evaluate(table => { (table as HTMLElement).style.minWidth = ''; });
+  await expect(wrap).not.toHaveAttribute('tabindex');
+  await expect(wrap).not.toHaveAttribute('role', 'region');
 });
