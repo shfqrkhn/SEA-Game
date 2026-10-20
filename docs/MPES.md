@@ -271,7 +271,7 @@ Every package is pinned to an exact version in `package.json` (no ranges) and re
 | Property tests | `fast-check` 4.10.1 | Ledger replay, money sums, visible-lot monotonicity. |
 | Browser tests | `@playwright/test` 1.63.0, override `playwright-core` 1.63.0 | Chromium and Firefox downloaded by Playwright into `.artifacts/ms-playwright`; Edge is the copy installed with Windows (`channel: msedge`). |
 | Accessibility scan | `@axe-core/playwright` 4.13.0 | Automated part only; manual checks still needed (§12). |
-| Image encoding | sharp 0.35.5 (libvips 8.18.7, librsvg 2.63.2) | AVIF quality 65, 4:4:4; also the gallery's WebP and the review contact sheets. |
+| Image encoding | `sharp` 0.35.5 (libvips 8.18.7, librsvg 2.63.2) | AVIF quality 65, 4:4:4; also the gallery's WebP and the review contact sheets. |
 | Model packing | `@gltf-transform/core`, `@gltf-transform/extensions`, `@gltf-transform/functions`, all 4.5.0; `meshoptimizer` 1.1.1 | Merge, weld, reorder for locality, quantise and pack the exported models (§11.1). |
 | Imagery and models | Blender 5.2.2 LTS portable zip, build hash `d13f752e3b9c`, from `download.blender.org/release/Blender5.2/blender-5.2.2-windows-x64.zip`, SHA-256 `3849d17a682cba006075aaa3f3597ecb5c9c30ec31035b2e092c53e40679b535` | Unzipped into `.artifacts/tools/`; offline authoring only (§11.1), never a runtime dependency. Cycles on the GPU (OptiX) with OpenImageDenoise, CPU fallback. |
 | AI assistance | The owner's ChatGPT Codex desktop app and its bundled CLI | Concept images, modelling help, independent reviews (D-14, §19.6). Optional: nothing in the build or tests needs it. |

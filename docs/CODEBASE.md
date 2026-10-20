@@ -26849,7 +26849,7 @@ Exportez une sauvegarde par **Menu → Exporter une sauvegarde** après la confi
 
 ### docs/HANDOVER.md
 
-Paths: `docs/HANDOVER.md`. SHA-256 `f703f9f268086f3613c9b26666ff6c82e45f73bf6f53424576e660e7129df5c8`, 12066 bytes.
+Paths: `docs/HANDOVER.md`. SHA-256 `e5212937275ddc3323102b295b629f2605ae9e466e28316d610bb7645132e97b`, 12214 bytes.
 
 ```markdown
 # Handover
@@ -26911,7 +26911,7 @@ Shared rules for every goal: `AGENTS.md`. KPIs and priority: MPES §1.4.
 
 Owner FIX 1 (stills and fit), FIX 2 (one click to close a round nobody can win in; unsold cards listed with their effects) and FIX 3 (a part read as the end of a barrel: optics head raised, mast set back, mirrors lowered, `sightline.py` at any depth including hull fittings, 574 pairs recorded and only shrinking; full re-render, encode and pack done) are done and checked (`docs/verification/0.5.1.0.md`). The Codex review of FIX 2 is dispositioned; unit-test scratch now cleans up after itself. Prepared for G3 on local side branches by Sonnet agents (not merged, not run in a browser; review before merging into G3): `g3/perf-ref` (`npm run perf:ref` rig, protocol fragment) and `g3/caching` (CI download caches, encode cache). The owner said GO on the gallery (2026-10-12, "we can iterate later") and merged PR #22; tag `v0.5.1.0` is on `10e61e3`. A hand-uploaded root `index.html` made `main` red and let CI deploy a 0.5.0.0 build over it; branch `g2/pages` removes it, adds a check and sets the Pages source to GitHub Actions (`docs/verification/0.5.1.0.md` "Pages after the merge"). `g2/pages` merged as PR #23 after two green runs; the Pages SHA-256 equals the 0.5.1.0 build (630e6d52…1667). Owner FIX 4 (2026-10-12): the showcase could not zoom and cut off a fully kitted vehicle; on a phone the tables in the collapsible sections lost columns; the controls were long words. Fixed on `fix/showcase-mobile` as 0.5.2.0 (CI then found pause letting the turn coast on; fixed, with every control reporting its view at once, and Playwright now refuses a `dist/index.html` older than the source: run `npm run build` before any ad hoc Playwright run). At the owner's request (2026-10-13) it was merged into `main` (PR #24) and published through CI; a docs-only head merged without its own CI left `docs/CODEBASE.md` stale and failed `main` until `fix/codebase-sync` (`docs/verification/0.5.2.0.md` "Publication"). Merge only a head whose own CI is green: since 2026-10-13 `main` is protected (owner permission) and GitHub refuses a merge unless `verify (22)` and `verify (24)` passed on the up-to-date head, administrators included. The owner merged PR #25; `main` CI on `c2932eb` passed and Pages serves the 0.5.2.0 build (`fc7fd07d…0b88`). Owner GO on 0.5.2.0 (2026-10-13): tag `v0.5.2.0` on `c2932eb`, instructor zip `.artifacts/prototype/SEA-Game-prototype-0.5.2.0.zip` sent (`make.sh` now reads `gameVersion` from `package.json`). CI on `78cca1f` failed `showcaseUpdateMaxMs` once (109 ms against 100; `docs/verification/0.5.1.0.md` close-out): see timing note 3. Run only one Blender job at a time: the owner uses this PC.
 
-Security maintenance 0.5.2.1 is in progress on branch fix/security-sharp-0.35.5: sharp moves from 0.35.4 to patched 0.35.5, with its prebuilt binaries updated to sharp 0.35.5 and sharp-libvips 1.3.4. The local npm audit is clean; required PR CI remains the merge gate. No game source or assets changed.
+Security maintenance 0.5.2.1 is in progress on branch fix/security-sharp-0.35.5: sharp moves from 0.35.4 to patched 0.35.5, with its prebuilt binaries updated to sharp 0.35.5 and sharp-libvips 1.3.4. The local npm audit is clean. The first PR CI run (39475994487) failed the MPES exact-pin assertion because the sharp version row lacked inline-code formatting; that documentation mismatch is fixed in this follow-up. No game source or assets changed.
 
 ## 5. Next action
 
@@ -27509,7 +27509,7 @@ A read-only Codex session (gpt-6.1-sol, medium) reviewed the diff (`.artifacts/c
 
 ### docs/verification/0.5.2.1.md
 
-Paths: `docs/verification/0.5.2.1.md`. SHA-256 `6670256e63d1432431f14a5059c41c3bd9ebe6a36139344fc8e662b8fdeca202`, 1912 bytes.
+Paths: `docs/verification/0.5.2.1.md`. SHA-256 `eeb7b77ca13f94f69b76f5963a7b8920b0117f850d69a4970370b76006e38c5a`, 2103 bytes.
 
 ```markdown
 # Verification record: 0.5.2.1 build (security maintenance)
@@ -27532,6 +27532,7 @@ The upstream sharp advisory marks versions before 0.35.5 affected and 0.35.5 as 
 | Before update | npm audit --json against the main lockfile | FAIL — one high-severity finding: sharp below 0.35.5 (CVE-2026-96889, GHSA-wq5f-xc86-pv6w). |
 | Lock regeneration | npm install --package-lock-only --ignore-scripts --no-audit --no-fund --save-exact sharp@0.35.5 | PASS — exact pin and all sharp prebuilt packages updated; other dependencies were unchanged. |
 | After update | npm audit --json | PASS — 0 vulnerabilities. Node v24.20.0, npm 11.19.0. |
+| First PR CI run | GitHub Actions run 39475994487, npm test | FAIL — MPES exact-pin test required the sharp package name in inline code; the table formatting is fixed in this follow-up. |
 | Local full gate | npm run verify | NOT_RUN locally; the PR's required GitHub Actions workflow is the gate before merge. |
 | Owner gallery | npm run gallery | NOT_RUN — this maintenance change does not alter visual sources or assets. |
 
@@ -43778,5 +43779,5 @@ Keys and the commands that make each kind again:
 
 | Path | Bytes | SHA-256 | Why |
 |---|---:|---|---|
-| `docs/MPES.md` | 170123 | `d71ae166eb20649a33f1b337979c4977608711e961478eb4f1d9a97af318b3b3` | The specification, a clean-room document of its own (Omni 5.1.1 §333). |
+| `docs/MPES.md` | 170125 | `026dc625569d844b15cfe00e388a61c86e6070bde6ca223181d224e95edb00e6` | The specification, a clean-room document of its own (Omni 5.1.1 §333). |
 | `docs/CODEBASE.md` | | | This file. |
