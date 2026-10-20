@@ -1,7 +1,7 @@
 {
   "name": "sea-game",
   "version": "0.5.2",
-  "gameVersion": "0.5.2.0",
+  "gameVersion": "0.5.2.1",
   "private": true,
   "description": "Systems Engineering Awareness: offline single-file classroom auction game (EN/FR)",
   "license": "MIT",
@@ -36,7 +36,7 @@
     "eslint": "10.10.0",
     "fast-check": "4.10.1",
     "meshoptimizer": "1.1.1",
-    "sharp": "0.35.4",
+    "sharp": "0.35.5",
     "typescript": "6.0.3",
     "typescript-eslint": "8.70.1",
     "vitest": "5.0.1"

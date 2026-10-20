@@ -10,7 +10,7 @@ AI assistance (MPES D-14): `tools/concepts.ts` generates concept images with the
 |---|---|---|
 | Blender (portable zip) | 5.2.2 LTS, build hash `d13f752e3b9c` | `https://download.blender.org/release/Blender5.2/blender-5.2.2-windows-x64.zip`, SHA-256 `3849d17a682cba006075aaa3f3597ecb5c9c30ec31035b2e092c53e40679b535` |
 | Renderer | Cycles on the GPU (OptiX), OpenImageDenoise | Fixed seed `20261010`, fixed sample counts, no adaptive sampling. Falls back to the CPU (slow but identical in intent) when no NVIDIA GPU is present. |
-| Encoder | `sharp` 0.35.4 (libvips 8.18.6), pinned in `package.json` | AVIF, quality 65, 4:4:4 (chosen at the V1 spike) |
+| Encoder | sharp 0.35.5 (libvips 8.18.7, librsvg 2.63.2), pinned in package.json | AVIF, quality 65, 4:4:4 (chosen at the V1 spike) |
 
 Unzip Blender into `.artifacts/tools/` (git-ignored). Nothing is installed system-wide.
 

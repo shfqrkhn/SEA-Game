@@ -3,8 +3,8 @@
 | Field | Value |
 |---|---|
 | Document | Master Product and Engineering Specification (MPES) for the clean-room rebuild of **Systems Engineering Awareness (SEA Game)** |
-| Version | 4.4.3 | 2026-10-12 | G2 owner FIX 4 (0.5.2.0): the 3D showcase frames the vehicle as fitted, however fully kitted out, at every turn and drag height, zooms in and out by buttons, and its controls are signs (‖/▷, ↺, ↻, −, +) with names for assistive technology; on a phone every table shows all its columns, each row a labelled card (§7.1, §10.2, §20.1). |
-| Date | 2026-10-11 (America/Toronto) |
+| Version | 4.4.4 | 2026-10-20 | Security maintenance: pin sharp 0.35.5 with prebuilt libvips 8.18.7 and librsvg 2.63.2 to close CVE-2026-96889 (§5.4, §20.1). |
+| Date | 2026-10-20 (America/Toronto) |
 | Status | **ACCEPTED**. Owner delegated all remaining decisions and gates to the implementing agent on 2026-10-09 (§22) |
 | Supersedes | MPES 1.5.2 and every earlier handover, ledger, prompt and evidence packet for implementation purposes |
 | Owner | Repository owner (`shfqrkhn`) |
@@ -271,7 +271,7 @@ Every package is pinned to an exact version in `package.json` (no ranges) and re
 | Property tests | `fast-check` 4.10.1 | Ledger replay, money sums, visible-lot monotonicity. |
 | Browser tests | `@playwright/test` 1.63.0, override `playwright-core` 1.63.0 | Chromium and Firefox downloaded by Playwright into `.artifacts/ms-playwright`; Edge is the copy installed with Windows (`channel: msedge`). |
 | Accessibility scan | `@axe-core/playwright` 4.13.0 | Automated part only; manual checks still needed (§12). |
-| Image encoding | `sharp` 0.35.4 (libvips 8.18.6) | AVIF quality 65, 4:4:4; also the gallery's WebP and the review contact sheets. |
+| Image encoding | sharp 0.35.5 (libvips 8.18.7, librsvg 2.63.2) | AVIF quality 65, 4:4:4; also the gallery's WebP and the review contact sheets. |
 | Model packing | `@gltf-transform/core`, `@gltf-transform/extensions`, `@gltf-transform/functions`, all 4.5.0; `meshoptimizer` 1.1.1 | Merge, weld, reorder for locality, quantise and pack the exported models (§11.1). |
 | Imagery and models | Blender 5.2.2 LTS portable zip, build hash `d13f752e3b9c`, from `download.blender.org/release/Blender5.2/blender-5.2.2-windows-x64.zip`, SHA-256 `3849d17a682cba006075aaa3f3597ecb5c9c30ec31035b2e092c53e40679b535` | Unzipped into `.artifacts/tools/`; offline authoring only (§11.1), never a runtime dependency. Cycles on the GPU (OptiX) with OpenImageDenoise, CPU fallback. |
 | AI assistance | The owner's ChatGPT Codex desktop app and its bundled CLI | Concept images, modelling help, independent reviews (D-14, §19.6). Optional: nothing in the build or tests needs it. |
@@ -1254,14 +1254,14 @@ The repository root is `D:\VSCode\SEA-Game`. Source, tests, content, build, art 
 | `docs/RECOVERY_GUIDE.md` | Backup, restore and recovery steps, EN and FR. |
 | `docs/owner/art-review.md` | The owner's art review script (one page). Later owner-only steps go in `docs/owner/` too. |
 | `docs/owner/instructor-review.md` | A one-page guide for an instructor reviewing the prototype: how to open it, a solo two-tab walk-through, and five questions. |
-| `docs/verification/0.5.0.0.md`, `docs/verification/0.5.1.0.md`, `docs/verification/0.5.2.0.md`, `docs/verification/<version>.md` | Evidence for each released version, as text: every check with its command and PASS, FAIL, NOT_RUN or BLOCKED. |
+| `docs/verification/0.5.0.0.md`, `docs/verification/0.5.1.0.md`, `docs/verification/0.5.2.0.md`, `docs/verification/0.5.2.1.md`, `docs/verification/<version>.md` | Evidence for each released version, as text: every check with its command and PASS, FAIL, NOT_RUN or BLOCKED. |
 | `docs/verification/spike-visual.md` | V1 spike measurements and decision. |
 | `docs/verification/source-fidelity.md` | How the rules were checked against the previous application and the owner's course source. |
 | `docs/verification/legibility.md` | Research behind §10.5 component legibility (lighting, camera, shading, signalling, projector), with sources; weakly sourced points are marked. |
-| `library/README.md` | The owner's reusable cross-project library (version 0.1.0): what it holds and how to copy it into another project. It is not part of the game and the build never reads it. |
+| `library/README.md` | The owner's reusable cross-project library (version 0.1.1): what it holds and how to copy it into another project. It is not part of the game and the build never reads it. |
 | `library/LESSONS.md` | Dated lessons learned in this project, each with the rule it produced and the check that enforces it; every new lesson is added here as well as to this specification. |
 | `library/catalogue.md` | Verified free and open-source components, themes, icons, fonts, charts, 3D and render assets, media, test and accessibility tools, with licences and when to use each. |
-| `library/practices/delivery-loop.md`, `library/practices/visual-legibility.md`, `library/practices/asset-checks.md`, `library/practices/classroom-apps.md`, `library/practices/performance.md`, `library/practices/agents.md`, `library/practices/docs.md` | Practices generalised from this project: the goal loop, component legibility (§10.5), automated asset checks (§10.2), classroom apps, performance on ordinary laptops (§14), working with AI agents, documents. |
+| `library/practices/delivery-loop.md`, `library/practices/visual-legibility.md`, `library/practices/asset-checks.md`, `library/practices/classroom-apps.md`, `library/practices/performance.md`, `library/practices/agents.md`, `library/practices/docs.md`, `library/practices/dependency-security.md` | Practices generalised from this project: the goal loop, component legibility (§10.5), automated asset checks (§10.2), classroom apps, performance on ordinary laptops (§14), working with AI agents, documents and dependency security. |
 | `library/LICENSE` | The MIT licence copied with the library, so it travels when the folder is reused. |
 | `library/ui/tokens.css` | The two themes of §7.1 as reusable CSS custom properties, with measured contrast. A copy for other projects; the game's own stylesheet stays the source for the game. |
 | `content/renders/` | The encoded stills (§11.1). |
@@ -1353,6 +1353,7 @@ This section is the authoritative record of what this project has learned; `libr
 
 | Date | Lesson | Rule | Enforcing check |
 |---|---|---|---|
+| 2026-10-20 | The vetted catalogue listed sharp 0.35.5, but SEA Game's lock stayed on vulnerable 0.35.4; LocalFirstApps also has a nested lockfile. | Sweep every committed lockfile, reconcile exact project pins with vetted releases, and regenerate locks to patched versions. | Run npm audit at every lockfile root; the SEA Game audit moved from one high finding to zero. |
 | 2026-10-13 | A docs-only commit, made after the two green runs and merged without its own CI, left `docs/CODEBASE.md` stale; CI on `main` failed and Pages kept the old build. | Every commit, docs-only included, runs `npm run codebase` and the unit tests; merge only the head whose own CI is green. | `tests/unit/codebase.test.ts` (it caught this on `main`); branch protection on `main` (set 2026-10-13 with the owner's permission): `verify (22)` and `verify (24)` must pass on the up-to-date head, administrators included. |
 | 2026-10-13 | Pausing the showcase let the turn coast on for seconds on a slow renderer (CI found it); its fix then looked unfixed, because the test read a view reported only on the next paced draw (never while off screen) and ran against a build older than the source. | Pause and every control take effect, and report their state, at once; a test reads state that is current, never a value cached for drawing; no test runs against a build older than the source. | `tests/e2e/showcase.spec.ts` "paused means still" and zoom limit; `tests/e2e/fresh-build.ts`. |
 | 2026-10-12 | A showcase framed for one view cut off a fully kitted vehicle at other turns; framing every part in the catalogue instead shrank a bare vehicle to a speck; on a phone, wide tables inside collapsible sections lost their right-hand columns. | Frame what is shown, at every view the player can reach, and test the worst case (the full kit) at every turn; test every layout at phone width with the sections open, not only the first screen. | `tests/unit/frame.test.ts`; `tests/e2e/showcase.spec.ts` at 1280 and 360 px; `tests/e2e/mobile.spec.ts`. |
@@ -1454,6 +1455,7 @@ Reusable practices proven here, in brief:
 
 | Version | Date | Change |
 |---|---|---|
+| 4.4.4 | 2026-10-20 | Security maintenance: pin sharp 0.35.5 with prebuilt libvips 8.18.7 and librsvg 2.63.2, closing CVE-2026-96889; audit every committed lockfile (§5.4, §20.1). |
 | 4.4.3 | 2026-10-12 | G2 owner FIX 4 (0.5.2.0): showcase framing of the fitted vehicle at every turn and height, zoom buttons, sign controls; pause stops at once; the stage reports its view at once after each control; Playwright refuses a stale build; phone tables as labelled cards (§7.1, §10.2, §16, §20.1). |
 | 4.4.2 | 2026-10-12 | G2 owner FIX 3 of the stills: in the combat hero the crew cupola hid the heavy gun's muzzle and read as part of its barrel. Muzzle sightline check `art/blender/sightline.py` (§10.2, §18); the optics heads moved to the right of the roof, out of the auxiliary gun's line of fire: hero stills clean (two failed before), build stills from 334 failing pairs to 279, and G4 takes them to zero (§17). |
 | 4.4.1 | 2026-10-12 | G2 owner FIX 2: the unsold-card lists show each card's effects on one line, and every purchases table and the planning guide use the same localised words instead of capability codes; live lot card and controls one third and two thirds; card IDs never break (§7.2, §7.4, §5.6). |

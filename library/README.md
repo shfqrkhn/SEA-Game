@@ -11,6 +11,7 @@ MIT licence: see `LICENSE` in this folder, which travels with it. Third-party ma
 | `LESSONS.md` | Dated lessons learned, each with what went wrong, the rule it produced and how to check it. Read first. |
 | `catalogue.md` | Verified FOSS components, themes, icons, fonts, charts, 3D runtime, render assets, media tools, test and accessibility tools, with licences and when to use each. |
 | `practices/delivery-loop.md` | The goal loop: failing check first, sibling sweep, reviews, docs, two green CI runs, visual GO/FIX, tag, handoff. |
+| `practices/dependency-security.md` | How to sweep every project lockfile, align exact pins with vetted versions, regenerate locks and audit the result. |
 | `practices/visual-legibility.md` | Making every component readable in stills, 3D and on a projector: geometry, light, value, camera, signalling, measured checks. |
 | `practices/asset-checks.md` | Automated checks for generated 3D assets and renders: fit, overlap, budgets, sightlines; how to write them so they cannot be gamed. |
 | `practices/classroom-apps.md` | Teaching apps: pedagogy, workload, projector, offline single file, bilingual, accessibility. |
@@ -29,4 +30,4 @@ MIT licence: see `LICENSE` in this folder, which travels with it. Third-party ma
 
 ## Library version
 
-0.1.0 (2026-10-12): first cut from SEA Game 0.5.1.0, corrected after an independent review (licences, reduced motion, agent trust boundaries, accessibility, colour management, GPU resource ownership, flakiness).
+0.1.1 (2026-10-20): added the dependency-security practice after a cross-repository lockfile audit found that a vetted package version had not reached the project lock.

@@ -1,6 +1,6 @@
 # SEA Game codebase
 
-Version 0.5.2.0. Written by `npm run codebase` (scripts/codebase.ts); do not edit by hand. It holds all 1035 tracked files of the repository: 179 text files as 176 unique contents, 854 binary files by hash with the command that regenerates them, and 2 documents kept separately. With docs/MPES.md it is enough to rebuild the project.
+Version 0.5.2.1. Written by `npm run codebase` (scripts/codebase.ts); do not edit by hand. It holds all 1037 tracked files of the repository: 181 text files as 178 unique contents, 854 binary files by hash with the command that regenerates them, and 2 documents kept separately. With docs/MPES.md it is enough to rebuild the project.
 
 ## How to rebuild the tree
 
@@ -187,7 +187,7 @@ THE SOFTWARE.
 
 ### README.md
 
-Paths: `README.md`. SHA-256 `5cacff2748ce16358bcd2daf20a366ea5e05ed947a834d9dac4a6959b4f0aa57`, 3489 bytes.
+Paths: `README.md`. SHA-256 `85943654852528e6b4bfe10455a7de13480013d09dc9772994a73ecba595338d`, 3482 bytes.
 
 ````markdown
 # SEA Game: Systems Engineering Awareness
@@ -195,7 +195,7 @@ Paths: `README.md`. SHA-256 `5cacff2748ce16358bcd2daf20a366ea5e05ed947a834d9dac4
 A bilingual (English/French) classroom auction game. Teams plan a vehicle for a mission, bid for components in a facilitator-led auction, reconcile their build and submit a value-for-money bid. The whole game is one offline HTML file with every image embedded.
 
 - **Play:** open the game file (`SEA-Game-<version>.html` in a release package, or `dist/index.html` after a build) in a current Chrome, Edge or Firefox on **Windows 11** (the only supported platform). No installation, no network, no account.
-- **Status:** 0.5.2.0 beta (owner FIX 4: showcase zoom, full-kit framing, sign controls, phone tables), on tag `v0.5.1.0` (G2, owner GO 2026-10-12: owner fixes, six-vehicle chooser, muzzle sightline check, component legibility rules, review gallery, code-free specification, codebase file, backup preparation, creator credit, reusable library); not yet release-qualified. Next: G3 (proxy and runtime, 0.6.0.0). The rollback is tag `v4.1.0-dev.1`.
+- **Status:** latest accepted release 0.5.2.0 beta (tag v0.5.2.0; owner FIX 4: showcase zoom, full-kit framing, sign controls and phone tables), not yet release-qualified. Security maintenance build candidate 0.5.2.1 updates the offline image encoder; see [its verification record](docs/verification/0.5.2.1.md). Next: complete the 0.5.2.1 security-maintenance build, then G3 (proxy and runtime, 0.6.0.0). The rollback is tag v4.1.0-dev.1.
 - **Created by:** Shafiqur Rahman Khan, with AI assistance.
 - **Licence:** MIT, see [LICENSE](LICENSE).
 - **Specification:** [docs/MPES.md](docs/MPES.md). **Current state and next steps:** [docs/HANDOVER.md](docs/HANDOVER.md). **Working rules:** [AGENTS.md](AGENTS.md).
@@ -716,7 +716,7 @@ def _cab(b):
 
 ### art/README.md
 
-Paths: `art/README.md`. SHA-256 `7a2d6ec81b0194c1e9940851769d000cac3418b9de26afbc5154c2dd0deb46b8`, 12288 bytes.
+Paths: `art/README.md`. SHA-256 `3c3813c31ef18532a43b57b6187b79911ad1ee0c3430486ae0d0493dea33cda9`, 12300 bytes.
 
 ````markdown
 # Art pipeline (MPES §10, §11)
@@ -731,7 +731,7 @@ AI assistance (MPES D-14): `tools/concepts.ts` generates concept images with the
 |---|---|---|
 | Blender (portable zip) | 5.2.2 LTS, build hash `d13f752e3b9c` | `https://download.blender.org/release/Blender5.2/blender-5.2.2-windows-x64.zip`, SHA-256 `3849d17a682cba006075aaa3f3597ecb5c9c30ec31035b2e092c53e40679b535` |
 | Renderer | Cycles on the GPU (OptiX), OpenImageDenoise | Fixed seed `20261010`, fixed sample counts, no adaptive sampling. Falls back to the CPU (slow but identical in intent) when no NVIDIA GPU is present. |
-| Encoder | `sharp` 0.35.4 (libvips 8.18.6), pinned in `package.json` | AVIF, quality 65, 4:4:4 (chosen at the V1 spike) |
+| Encoder | sharp 0.35.5 (libvips 8.18.7, librsvg 2.63.2), pinned in package.json | AVIF, quality 65, 4:4:4 (chosen at the V1 spike) |
 
 Unzip Blender into `.artifacts/tools/` (git-ignored). Nothing is installed system-wide.
 
@@ -26849,16 +26849,16 @@ Exportez une sauvegarde par **Menu → Exporter une sauvegarde** après la confi
 
 ### docs/HANDOVER.md
 
-Paths: `docs/HANDOVER.md`. SHA-256 `6ffe4af79e4253be0271f6c52d79b2f1116f9aa070eef85248ac3abc27eb89f1`, 11650 bytes.
+Paths: `docs/HANDOVER.md`. SHA-256 `f703f9f268086f3613c9b26666ff6c82e45f73bf6f53424576e660e7129df5c8`, 12066 bytes.
 
 ```markdown
 # Handover
 
-Updated 2026-10-13 (America/Toronto). Specification: [MPES](MPES.md) 4.4.3. Evidence: [verification/0.5.2.0.md](verification/0.5.2.0.md), [verification/0.5.1.0.md](verification/0.5.1.0.md), [verification/0.5.0.0.md](verification/0.5.0.0.md), [verification/spike-visual.md](verification/spike-visual.md).
+Updated 2026-10-20 (America/Toronto). Specification: [MPES](MPES.md) 4.4.4. Evidence: [verification/0.5.2.1.md](verification/0.5.2.1.md), [verification/0.5.2.0.md](verification/0.5.2.0.md), [verification/0.5.1.0.md](verification/0.5.1.0.md), [verification/0.5.0.0.md](verification/0.5.0.0.md), [verification/spike-visual.md](verification/spike-visual.md).
 
 ## 1. Version and milestone
 
-Version 0.5.2.0 beta (four-part MAJOR.MINOR.PATCH.BUILD, MPES §19.2; 1.0.0.0 only once out of beta: MPES §19.2 exit criteria, including every owner gate). M0–M4, V1, V2 (goal G1, tag `v0.5.0.0`) and G2 (owner fixes and the docs regime, tag `v0.5.1.0`, owner GO 2026-10-12) are complete. 0.5.2.0 (tag `v0.5.2.0` on `c2932eb`, owner GO 2026-10-13) is owner FIX 4 on G2: showcase zoom, framing of the full kit at every turn and height, sign controls, and phone tables as labelled cards (`docs/verification/0.5.2.0.md`). The rollback is tag `v4.1.0-dev.1`.
+Current build candidate 0.5.2.1 is a BUILD revision for security maintenance; it updates the image-encoding tool and has no game-source or asset changes (docs/verification/0.5.2.1.md). The latest owner-approved release remains 0.5.2.0 (tag v0.5.2.0 on c2932eb, owner GO 2026-10-13). M0–M4, V1, V2 (goal G1, tag v0.5.0.0) and G2 (owner fixes and the docs regime, tag v0.5.1.0, owner GO 2026-10-12) are complete. 0.5.2.0 is owner FIX 4 on G2: showcase zoom, framing of the full kit at every turn and height, sign controls, and phone tables as labelled cards. The rollback is tag v4.1.0-dev.1.
 
 **Plan to beta exit (MPES §17), one PR and one tag per goal:**
 
@@ -26911,9 +26911,11 @@ Shared rules for every goal: `AGENTS.md`. KPIs and priority: MPES §1.4.
 
 Owner FIX 1 (stills and fit), FIX 2 (one click to close a round nobody can win in; unsold cards listed with their effects) and FIX 3 (a part read as the end of a barrel: optics head raised, mast set back, mirrors lowered, `sightline.py` at any depth including hull fittings, 574 pairs recorded and only shrinking; full re-render, encode and pack done) are done and checked (`docs/verification/0.5.1.0.md`). The Codex review of FIX 2 is dispositioned; unit-test scratch now cleans up after itself. Prepared for G3 on local side branches by Sonnet agents (not merged, not run in a browser; review before merging into G3): `g3/perf-ref` (`npm run perf:ref` rig, protocol fragment) and `g3/caching` (CI download caches, encode cache). The owner said GO on the gallery (2026-10-12, "we can iterate later") and merged PR #22; tag `v0.5.1.0` is on `10e61e3`. A hand-uploaded root `index.html` made `main` red and let CI deploy a 0.5.0.0 build over it; branch `g2/pages` removes it, adds a check and sets the Pages source to GitHub Actions (`docs/verification/0.5.1.0.md` "Pages after the merge"). `g2/pages` merged as PR #23 after two green runs; the Pages SHA-256 equals the 0.5.1.0 build (630e6d52…1667). Owner FIX 4 (2026-10-12): the showcase could not zoom and cut off a fully kitted vehicle; on a phone the tables in the collapsible sections lost columns; the controls were long words. Fixed on `fix/showcase-mobile` as 0.5.2.0 (CI then found pause letting the turn coast on; fixed, with every control reporting its view at once, and Playwright now refuses a `dist/index.html` older than the source: run `npm run build` before any ad hoc Playwright run). At the owner's request (2026-10-13) it was merged into `main` (PR #24) and published through CI; a docs-only head merged without its own CI left `docs/CODEBASE.md` stale and failed `main` until `fix/codebase-sync` (`docs/verification/0.5.2.0.md` "Publication"). Merge only a head whose own CI is green: since 2026-10-13 `main` is protected (owner permission) and GitHub refuses a merge unless `verify (22)` and `verify (24)` passed on the up-to-date head, administrators included. The owner merged PR #25; `main` CI on `c2932eb` passed and Pages serves the 0.5.2.0 build (`fc7fd07d…0b88`). Owner GO on 0.5.2.0 (2026-10-13): tag `v0.5.2.0` on `c2932eb`, instructor zip `.artifacts/prototype/SEA-Game-prototype-0.5.2.0.zip` sent (`make.sh` now reads `gameVersion` from `package.json`). CI on `78cca1f` failed `showcaseUpdateMaxMs` once (109 ms against 100; `docs/verification/0.5.1.0.md` close-out): see timing note 3. Run only one Blender job at a time: the owner uses this PC.
 
+Security maintenance 0.5.2.1 is in progress on branch fix/security-sharp-0.35.5: sharp moves from 0.35.4 to patched 0.35.5, with its prebuilt binaries updated to sharp 0.35.5 and sharp-libvips 1.3.4. The local npm audit is clean; required PR CI remains the merge gate. No game source or assets changed.
+
 ## 5. Next action
 
-**Agent:** start G3 (proxy + runtime, release 0.6.0.0): branch from `main` at `v0.5.2.0`; first step `npm run perf:ref` on the Intel UHD 770 proxy, measuring a baseline before any change.
+**Agent:** finish and review the security-maintenance PR for build 0.5.2.1, then resume G3 on its existing branch; the first G3 action is to measure the baseline with npm run perf:ref on the Intel UHD 770 proxy.
 **Owner:** `docs/owner/art-review.md` (5 minutes, reply GO or FIX).
 
 ## 6. Rollback
@@ -27505,6 +27507,39 @@ A read-only Codex session (gpt-6.1-sol, medium) reviewed the diff (`.artifacts/c
 | 2 | The label check examined only cells that already had a label and needed just one per table, so lost labels would pass | Confirmed: the test now reads each column's name from the header row and requires it on every data cell under a named column; PASS |
 ```
 
+### docs/verification/0.5.2.1.md
+
+Paths: `docs/verification/0.5.2.1.md`. SHA-256 `6670256e63d1432431f14a5059c41c3bd9ebe6a36139344fc8e662b8fdeca202`, 1912 bytes.
+
+```markdown
+# Verification record: 0.5.2.1 build (security maintenance)
+
+This is a BUILD revision: update the image-encoding toolchain for CVE-2026-96889. The latest accepted release remains 0.5.2.0. No game source, generated art or packed model was changed.
+
+## Change
+
+| Item | Before | After |
+|---|---|---|
+| Image encoder | sharp 0.35.4, bundled libvips 8.18.6 and librsvg before 2.63.2 | sharp 0.35.5, bundled libvips 8.18.7 and librsvg 2.63.2 |
+| Resolved prebuilt packages | sharp 0.35.4 and sharp-libvips 1.3.3 | sharp 0.35.5 and sharp-libvips 1.3.4 |
+
+The upstream sharp advisory marks versions before 0.35.5 affected and 0.35.5 as patched. The library catalogue already listed 0.35.5; the project pin and lockfile had not caught up.
+
+## Checks
+
+| Check | Command | Result |
+|---|---|---|
+| Before update | npm audit --json against the main lockfile | FAIL — one high-severity finding: sharp below 0.35.5 (CVE-2026-96889, GHSA-wq5f-xc86-pv6w). |
+| Lock regeneration | npm install --package-lock-only --ignore-scripts --no-audit --no-fund --save-exact sharp@0.35.5 | PASS — exact pin and all sharp prebuilt packages updated; other dependencies were unchanged. |
+| After update | npm audit --json | PASS — 0 vulnerabilities. Node v24.20.0, npm 11.19.0. |
+| Local full gate | npm run verify | NOT_RUN locally; the PR's required GitHub Actions workflow is the gate before merge. |
+| Owner gallery | npm run gallery | NOT_RUN — this maintenance change does not alter visual sources or assets. |
+
+## Repository sweep
+
+All six owned repositories were enumerated, and every committed npm lockfile was audited. The website repository's source-map-js pin is already fixed; its dependent braces audit failure is addressed by PR #86. FIFA-WC-Sim, LocalFirstApps (root and apps/flexx-files), and SEA Game had no other findings. The .github and profile repositories have no dependency lockfiles or runtime dependencies.
+```
+
 ### docs/verification/legibility.md
 
 Paths: `docs/verification/legibility.md`. SHA-256 `da0cb31a104792540a189739d3c26cc59c140e192da37fb8abd6e89a81d265d0`, 9940 bytes.
@@ -27780,12 +27815,18 @@ export default tseslint.config(
 
 ### library/LESSONS.md
 
-Paths: `library/LESSONS.md`. SHA-256 `219a2918e350c76c6157d655452b5dffa4a0e01314bbcdb3db7a56b086b84683`, 8117 bytes.
+Paths: `library/LESSONS.md`. SHA-256 `a8983c131a2d930bd077f1e1f134a57a631f21decb28e2845ee68f37b5ffd703`, 8754 bytes.
 
 ```markdown
 # Lessons learned
 
 Each entry: what happened, the rule it produced, and the check that now enforces it. Newest first. Examples come from SEA Game (a classroom auction game with photoreal vehicle renders and a real-time 3D showcase, one offline HTML file).
+
+## 2026-10-20 · The vetted version was newer than the project lock
+
+- **What happened:** the FOSS catalogue listed sharp 0.35.5, but SEA Game remained pinned to vulnerable 0.35.4; another owned repository also had a nested lockfile that a root-only scan would miss.
+- **Rule:** enumerate every committed dependency lockfile, reconcile exact project pins with vetted releases, and regenerate the lock to a patched version.
+- **Check (as used in this sweep):** run npm audit --json from every lockfile root and require zero findings; the SEA Game audit moved from one high finding to zero after updating sharp and its prebuilt binaries.
 
 ## 2026-10-13 · Green branch, red main
 
@@ -27858,7 +27899,7 @@ Each entry: what happened, the rule it produced, and the check that now enforces
 
 ### library/README.md
 
-Paths: `library/README.md`. SHA-256 `85d328041fb9846604a555e412179e731589481498b1822d66e159678d4a7534`, 2783 bytes.
+Paths: `library/README.md`. SHA-256 `38215240f05859a77ddb93e6f98288f0240c8337eaa815810775c29ad1c92c0a`, 2896 bytes.
 
 ```markdown
 # Reusable library
@@ -27874,6 +27915,7 @@ MIT licence: see `LICENSE` in this folder, which travels with it. Third-party ma
 | `LESSONS.md` | Dated lessons learned, each with what went wrong, the rule it produced and how to check it. Read first. |
 | `catalogue.md` | Verified FOSS components, themes, icons, fonts, charts, 3D runtime, render assets, media tools, test and accessibility tools, with licences and when to use each. |
 | `practices/delivery-loop.md` | The goal loop: failing check first, sibling sweep, reviews, docs, two green CI runs, visual GO/FIX, tag, handoff. |
+| `practices/dependency-security.md` | How to sweep every project lockfile, align exact pins with vetted versions, regenerate locks and audit the result. |
 | `practices/visual-legibility.md` | Making every component readable in stills, 3D and on a projector: geometry, light, value, camera, signalling, measured checks. |
 | `practices/asset-checks.md` | Automated checks for generated 3D assets and renders: fit, overlap, budgets, sightlines; how to write them so they cannot be gamed. |
 | `practices/classroom-apps.md` | Teaching apps: pedagogy, workload, projector, offline single file, bilingual, accessibility. |
@@ -27892,7 +27934,7 @@ MIT licence: see `LICENSE` in this folder, which travels with it. Third-party ma
 
 ## Library version
 
-0.1.0 (2026-10-12): first cut from SEA Game 0.5.1.0, corrected after an independent review (licences, reduced motion, agent trust boundaries, accessibility, colour management, GPU resource ownership, flakiness).
+0.1.1 (2026-10-20): added the dependency-security practice after a cross-repository lockfile audit found that a vetted package version had not reached the project lock.
 ```
 
 ### library/catalogue.md
@@ -28271,6 +28313,28 @@ The final deliverable is a local package that does not depend on any hosting: a 
 - Do not overwrite anyone's uncommitted work.
 ```
 
+### library/practices/dependency-security.md
+
+Paths: `library/practices/dependency-security.md`. SHA-256 `319b4fed84c954954c3be7b92005ae60759b3754709e3117edee43b0ab299c58`, 1125 bytes.
+
+```markdown
+# Dependency security
+
+A repository can pin an older vulnerable package even when a vetted catalogue already lists its patched release. Monorepos can also keep separate lockfiles below the root.
+
+## Sweep and update
+
+1. Enumerate every committed dependency manifest and lockfile, including nested applications and workspaces.
+2. Run the package manager's audit from each lockfile root and record the affected package, version range, severity and patched release.
+3. Update the project's exact direct pin to the patched release and regenerate its lockfile with the package manager. Do not hand-edit transitive lock entries.
+4. Review the lock diff to confirm only the intended package family and its necessary transitive updates changed.
+5. Re-run the audit from every lockfile root. Require zero findings before merge; use CI for the repository's normal quality gates.
+
+## Evidence
+
+Record the initial finding and the clean post-update audit in the version's verification record. If no fixed release exists, keep the finding visible and document the affected runtime path and mitigation rather than suppressing the advisory.
+```
+
 ### library/practices/docs.md
 
 Paths: `library/practices/docs.md`. SHA-256 `78248a8457e224eaa684070375dfbfe211ad5c6e6f42b83302a277f2ee487f54`, 2020 bytes.
@@ -28449,7 +28513,7 @@ a { color: var(--accent); }
 
 ### package-lock.json
 
-Paths: `package-lock.json`. SHA-256 `2b46683776f9ee6c6d1b153558b1fcccbb68209ebf02f21104a43564265bd206`, 134039 bytes.
+Paths: `package-lock.json`. SHA-256 `cd446ea06366fddd747a1774869d2f627cab4b1b7bf1831132fe0195c165dceb`, 134039 bytes.
 
 ```json
 {
@@ -28478,7 +28542,7 @@ Paths: `package-lock.json`. SHA-256 `2b46683776f9ee6c6d1b153558b1fcccbb68209ebf0
         "eslint": "10.10.0",
         "fast-check": "4.10.1",
         "meshoptimizer": "1.1.1",
-        "sharp": "0.35.4",
+        "sharp": "0.35.5",
         "typescript": "6.0.3",
         "typescript-eslint": "8.70.1",
         "vitest": "5.0.1"
@@ -29273,9 +29337,9 @@ Paths: `package-lock.json`. SHA-256 `2b46683776f9ee6c6d1b153558b1fcccbb68209ebf0
       }
     },
     "node_modules/@img/sharp-darwin-arm64": {
-      "version": "0.35.4",
-      "resolved": "https://registry.npmjs.org/@img/sharp-darwin-arm64/-/sharp-darwin-arm64-0.35.4.tgz",
-      "integrity": "sha512-Uhfl4V4lhP2nbUVF9+hyH1+luj86f1gUFeo8ALYxFoULoU+G87D43BfeMP8XHsk9boxAnCY/bf2EHwhA7MuGsA==",
+      "version": "0.35.5",
+      "resolved": "https://registry.npmjs.org/@img/sharp-darwin-arm64/-/sharp-darwin-arm64-0.35.5.tgz",
+      "integrity": "sha512-QRUlFQ0WxvdWyqqG/WtI3iupfD5rBzmCHXSdPsY91sAtVtTo7Q4cb6zOccZ3gqEqkr0f1As1ehLqmEpDsRf+lg==",
       "cpu": [
         "arm64"
       ],
@@ -29292,13 +29356,13 @@ Paths: `package-lock.json`. SHA-256 `2b46683776f9ee6c6d1b153558b1fcccbb68209ebf0
         "url": "https://opencollective.com/libvips"
       },
       "optionalDependencies": {
-        "@img/sharp-libvips-darwin-arm64": "1.3.3"
+        "@img/sharp-libvips-darwin-arm64": "1.3.4"
       }
     },
     "node_modules/@img/sharp-darwin-x64": {
-      "version": "0.35.4",
-      "resolved": "https://registry.npmjs.org/@img/sharp-darwin-x64/-/sharp-darwin-x64-0.35.4.tgz",
-      "integrity": "sha512-hWniXY3bG5qKpkKrAwPe4y+VTPmf086YQAnkxWh7uA1YrlRouWGa0M0Mxj3ZjnXFkv7/TD1bTy9lGUK26vRvWw==",
+      "version": "0.35.5",
+      "resolved": "https://registry.npmjs.org/@img/sharp-darwin-x64/-/sharp-darwin-x64-0.35.5.tgz",
+      "integrity": "sha512-+BR255RhDlpygUpOc/Jdt1nT6DQ3XG/ERo5wbcdOf5Q320dKtPCKPLR1LJs9VGXRaMa8l1uUa0tkCNOXiAxZUw==",
       "cpu": [
         "x64"
       ],
@@ -29315,13 +29379,13 @@ Paths: `package-lock.json`. SHA-256 `2b46683776f9ee6c6d1b153558b1fcccbb68209ebf0
         "url": "https://opencollective.com/libvips"
       },
       "optionalDependencies": {
-        "@img/sharp-libvips-darwin-x64": "1.3.3"
+        "@img/sharp-libvips-darwin-x64": "1.3.4"
       }
     },
     "node_modules/@img/sharp-freebsd-wasm32": {
-      "version": "0.35.4",
-      "resolved": "https://registry.npmjs.org/@img/sharp-freebsd-wasm32/-/sharp-freebsd-wasm32-0.35.4.tgz",
-      "integrity": "sha512-lIsKw/BU+kjB4eZjxrYrZmwOJYi3Ajrv66iAlBmUPyKc3HpnloevB1g3wxGD9P/5BbQ1brBGl65VRRrCvQDEqA==",
+      "version": "0.35.5",
+      "resolved": "https://registry.npmjs.org/@img/sharp-freebsd-wasm32/-/sharp-freebsd-wasm32-0.35.5.tgz",
+      "integrity": "sha512-Y/z91nEZ4uIBX5X3nfTovjU9lHNKFYbL2lpHCLVNmXQK03VIZvXBBt0KxbPGp2SdGSF+2mQU4e+hQaWOt86iAw==",
       "dev": true,
       "license": "Apache-2.0",
       "optional": true,
@@ -29329,7 +29393,7 @@ Paths: `package-lock.json`. SHA-256 `2b46683776f9ee6c6d1b153558b1fcccbb68209ebf0
         "freebsd"
       ],
       "dependencies": {
-        "@img/sharp-wasm32": "0.35.4"
+        "@img/sharp-wasm32": "0.35.5"
       },
       "engines": {
         "node": ">=20.9.0"
@@ -29339,9 +29403,9 @@ Paths: `package-lock.json`. SHA-256 `2b46683776f9ee6c6d1b153558b1fcccbb68209ebf0
       }
     },
     "node_modules/@img/sharp-libvips-darwin-arm64": {
-      "version": "1.3.3",
-      "resolved": "https://registry.npmjs.org/@img/sharp-libvips-darwin-arm64/-/sharp-libvips-darwin-arm64-1.3.3.tgz",
-      "integrity": "sha512-suTBPTDGrI9WodccaDdwZItTSaBYASlBk1NSfElSHrUfzu3szG6lvIF58+WiFvnfzuK8ZBFS5zE00PxqxnRiPg==",
+      "version": "1.3.4",
+      "resolved": "https://registry.npmjs.org/@img/sharp-libvips-darwin-arm64/-/sharp-libvips-darwin-arm64-1.3.4.tgz",
+      "integrity": "sha512-5R89nBYiRdUlSWJxPhO+GVtaXzXSxKnRu/xqMn3KTA3L9EB9Oy/P+Nn2f2vlhPuUdy/Zusb2DarbyTpGCfEDuw==",
       "cpu": [
         "arm64"
       ],
@@ -29356,9 +29420,9 @@ Paths: `package-lock.json`. SHA-256 `2b46683776f9ee6c6d1b153558b1fcccbb68209ebf0
       }
     },
     "node_modules/@img/sharp-libvips-darwin-x64": {
-      "version": "1.3.3",
-      "resolved": "https://registry.npmjs.org/@img/sharp-libvips-darwin-x64/-/sharp-libvips-darwin-x64-1.3.3.tgz",
-      "integrity": "sha512-FVJZ5mITMobmXIz/hPDTw0EintTW5H3WfrxwLqEqjiIihlu+hVRyGrFQ60xl0Lxn7Bt3zdpevPaQi0HEzqz9fw==",
+      "version": "1.3.4",
+      "resolved": "https://registry.npmjs.org/@img/sharp-libvips-darwin-x64/-/sharp-libvips-darwin-x64-1.3.4.tgz",
+      "integrity": "sha512-iR2OKH80yi0U+dUplyh3/xdpFvps6YkCwsXenIJxqxR1v9o+xtKTGbS9H7cps+2Vxjc8B1j96p75NmTGjIhtpQ==",
       "cpu": [
         "x64"
       ],
@@ -29373,9 +29437,9 @@ Paths: `package-lock.json`. SHA-256 `2b46683776f9ee6c6d1b153558b1fcccbb68209ebf0
       }
     },
     "node_modules/@img/sharp-libvips-linux-arm": {
-      "version": "1.3.3",
-      "resolved": "https://registry.npmjs.org/@img/sharp-libvips-linux-arm/-/sharp-libvips-linux-arm-1.3.3.tgz",
-      "integrity": "sha512-3rbU4vqXXc3hY/OiXdl52xZvT0F1yEngWfvqudtPJg/KkyiaQw2DRsFrNzpmLvfavbwOq3qXn36GP8obHRULQA==",
+      "version": "1.3.4",
+      "resolved": "https://registry.npmjs.org/@img/sharp-libvips-linux-arm/-/sharp-libvips-linux-arm-1.3.4.tgz",
+      "integrity": "sha512-LmRtTsOHuvM2+wlO2Db37dx5MiZhB0FvSunciw48YjdOkZz9KAiRbm8ujeMOA1INqmei5NapFxYEK1D1ZSidmw==",
       "cpu": [
         "arm"
       ],
@@ -29393,9 +29457,9 @@ Paths: `package-lock.json`. SHA-256 `2b46683776f9ee6c6d1b153558b1fcccbb68209ebf0
       }
     },
     "node_modules/@img/sharp-libvips-linux-arm64": {
-      "version": "1.3.3",
-      "resolved": "https://registry.npmjs.org/@img/sharp-libvips-linux-arm64/-/sharp-libvips-linux-arm64-1.3.3.tgz",
-      "integrity": "sha512-0DaL0A6Xu6sQSQFwe4iVCrKWU2cCTItnRsYsCdxAMm9NF6twAA9BKnoqy4hqz4+azQ0JHuA26qiUKsf1XJ/v5A==",
+      "version": "1.3.4",
+      "resolved": "https://registry.npmjs.org/@img/sharp-libvips-linux-arm64/-/sharp-libvips-linux-arm64-1.3.4.tgz",
+      "integrity": "sha512-Y3dgX/6lE2QhQb+Gxy0WZxfg9MEm/JBjamZpS2IklP7xIQoKN4hzAm7KcMVGtaVDt3neE9OKBC7vAfonA/Lr1A==",
       "cpu": [
         "arm64"
       ],
@@ -29413,9 +29477,9 @@ Paths: `package-lock.json`. SHA-256 `2b46683776f9ee6c6d1b153558b1fcccbb68209ebf0
       }
     },
     "node_modules/@img/sharp-libvips-linux-ppc64": {
-      "version": "1.3.3",
-      "resolved": "https://registry.npmjs.org/@img/sharp-libvips-linux-ppc64/-/sharp-libvips-linux-ppc64-1.3.3.tgz",
-      "integrity": "sha512-cdn1OvUBwsXhbC0zSzJnNzf5MZ/mTrobawDvNXBTxe8VtqKAm0sRuEY2Evzovb/w9JMk4TvRxqt1mekSuJz64w==",
+      "version": "1.3.4",
+      "resolved": "https://registry.npmjs.org/@img/sharp-libvips-linux-ppc64/-/sharp-libvips-linux-ppc64-1.3.4.tgz",
+      "integrity": "sha512-Le6boB8Tai0Nis+gIxIpKx68UDVVIqdR8Tin5Yf1z2LJJQLDJvCDRqRu+jC2qCoD+eIomonmOwB4smBRxfVpYQ==",
       "cpu": [
         "ppc64"
       ],
@@ -29433,9 +29497,9 @@ Paths: `package-lock.json`. SHA-256 `2b46683776f9ee6c6d1b153558b1fcccbb68209ebf0
       }
     },
     "node_modules/@img/sharp-libvips-linux-riscv64": {
-      "version": "1.3.3",
-      "resolved": "https://registry.npmjs.org/@img/sharp-libvips-linux-riscv64/-/sharp-libvips-linux-riscv64-1.3.3.tgz",
-      "integrity": "sha512-HjPVx7yKz+0lqdhDlTw1tt90wamBoxhiXpvl1XZpJLiHH4RCJ5yDTqH+VlYPv2fwFs89JFw4c1IexYOcQUi4IQ==",
+      "version": "1.3.4",
+      "resolved": "https://registry.npmjs.org/@img/sharp-libvips-linux-riscv64/-/sharp-libvips-linux-riscv64-1.3.4.tgz",
+      "integrity": "sha512-aHkkIEHPRdQEegJN20MLmGtxYD9R2wQr3Cwpddnu5+YKMt6Uzax7S9h5gpZTo8wyrGuZSlfQ63OevL5mTyOC7Q==",
       "cpu": [
         "riscv64"
       ],
@@ -29453,9 +29517,9 @@ Paths: `package-lock.json`. SHA-256 `2b46683776f9ee6c6d1b153558b1fcccbb68209ebf0
       }
     },
     "node_modules/@img/sharp-libvips-linux-s390x": {
-      "version": "1.3.3",
-      "resolved": "https://registry.npmjs.org/@img/sharp-libvips-linux-s390x/-/sharp-libvips-linux-s390x-1.3.3.tgz",
-      "integrity": "sha512-neWLh+3yCNThxnfy3c4BbVBeGgt9aftno+XbT56iK28RgeDs3UOFWviLWlUu0bArYVYJaFDK+RRohbicUNCm8Q==",
+      "version": "1.3.4",
+      "resolved": "https://registry.npmjs.org/@img/sharp-libvips-linux-s390x/-/sharp-libvips-linux-s390x-1.3.4.tgz",
+      "integrity": "sha512-ra/mB6MikESDUO7Yg+Mi95bFBb9GsObURuhnOv3OqknjGe9sZrG8tCe9q0xSIGrtLgvgw0gKnFWcK4blSgQOuQ==",
       "cpu": [
         "s390x"
       ],
@@ -29473,9 +29537,9 @@ Paths: `package-lock.json`. SHA-256 `2b46683776f9ee6c6d1b153558b1fcccbb68209ebf0
       }
     },
     "node_modules/@img/sharp-libvips-linux-x64": {
-      "version": "1.3.3",
-      "resolved": "https://registry.npmjs.org/@img/sharp-libvips-linux-x64/-/sharp-libvips-linux-x64-1.3.3.tgz",
-      "integrity": "sha512-4vKmvAst9nrowcqquKFAyZJUDolUaIp8uRiN0mWFguJ1IplC9/pitXtlnnlU4aa/eJw3J7i67V+pwUL+wZGdsA==",
+      "version": "1.3.4",
+      "resolved": "https://registry.npmjs.org/@img/sharp-libvips-linux-x64/-/sharp-libvips-linux-x64-1.3.4.tgz",
+      "integrity": "sha512-GJ//SSXbnwSDes02umB3nDJLFcQzw8a18V8fyhqr6tV515tOEMdImjjxj1AoafMRz56F3PHgftnj1QEKSU1zkw==",
       "cpu": [
         "x64"
       ],
@@ -29493,9 +29557,9 @@ Paths: `package-lock.json`. SHA-256 `2b46683776f9ee6c6d1b153558b1fcccbb68209ebf0
       }
     },
     "node_modules/@img/sharp-libvips-linuxmusl-arm64": {
-      "version": "1.3.3",
-      "resolved": "https://registry.npmjs.org/@img/sharp-libvips-linuxmusl-arm64/-/sharp-libvips-linuxmusl-arm64-1.3.3.tgz",
-      "integrity": "sha512-Y9kQaLMuNoB0bPYOOdcZMaseNrFpPodIWWMrx+CZyydf2xn68j9WYc6sWWRrDwNkzCQjKYfc68L7jKjGlHMibw==",
+      "version": "1.3.4",
+      "resolved": "https://registry.npmjs.org/@img/sharp-libvips-linuxmusl-arm64/-/sharp-libvips-linuxmusl-arm64-1.3.4.tgz",
+      "integrity": "sha512-hvulFwtjUcagsis6BBxHwGFwWoNZjgYmULGVrZcyfNbjA8hKILbRxGg15/7w5HDyXHXUos/j6baAWqnCyQ2DWA==",
       "cpu": [
         "arm64"
       ],
@@ -29513,9 +29577,9 @@ Paths: `package-lock.json`. SHA-256 `2b46683776f9ee6c6d1b153558b1fcccbb68209ebf0
       }
     },
     "node_modules/@img/sharp-libvips-linuxmusl-x64": {
-      "version": "1.3.3",
-      "resolved": "https://registry.npmjs.org/@img/sharp-libvips-linuxmusl-x64/-/sharp-libvips-linuxmusl-x64-1.3.3.tgz",
-      "integrity": "sha512-fj8Mv0HHfD1Rr+4I68+3agJynxDWtBFgicTbSOb9Bke6pIwzGcJ+RX/yHjmiEGFMCavY/dxvem7MyNaJF+wDiw==",
+      "version": "1.3.4",
+      "resolved": "https://registry.npmjs.org/@img/sharp-libvips-linuxmusl-x64/-/sharp-libvips-linuxmusl-x64-1.3.4.tgz",
+      "integrity": "sha512-6zXKeE/p39I1AmA3cJG35eyBGNqNddLnUXjhwBnsGjFPWqf5VKkDBEqaEkPDoTEtkxwi2vv8Tcr2mDyP4So7Fg==",
       "cpu": [
         "x64"
       ],
@@ -29533,9 +29597,9 @@ Paths: `package-lock.json`. SHA-256 `2b46683776f9ee6c6d1b153558b1fcccbb68209ebf0
       }
     },
     "node_modules/@img/sharp-linux-arm": {
-      "version": "0.35.4",
-      "resolved": "https://registry.npmjs.org/@img/sharp-linux-arm/-/sharp-linux-arm-0.35.4.tgz",
-      "integrity": "sha512-7OAS8gI0EReKGVN2HssHlM6umJgxF5VI3xN0p9FA91p/YO+ou5hiNghLdZ5BEHztwaaK5+bLKRf8x/o2L2nk9A==",
+      "version": "0.35.5",
+      "resolved": "https://registry.npmjs.org/@img/sharp-linux-arm/-/sharp-linux-arm-0.35.5.tgz",
+      "integrity": "sha512-LEaXK2WdXVK5ykcw0buWyPMsmLLL2vpHLD6yrNSW+JGEL3BZPA4tpKN6iaMc4AxTTAoaX/sU1rOL51lcIz48ZQ==",
       "cpu": [
         "arm"
       ],
@@ -29555,13 +29619,13 @@ Paths: `package-lock.json`. SHA-256 `2b46683776f9ee6c6d1b153558b1fcccbb68209ebf0
         "url": "https://opencollective.com/libvips"
       },
       "optionalDependencies": {
-        "@img/sharp-libvips-linux-arm": "1.3.3"
+        "@img/sharp-libvips-linux-arm": "1.3.4"
       }
     },
     "node_modules/@img/sharp-linux-arm64": {
-      "version": "0.35.4",
-      "resolved": "https://registry.npmjs.org/@img/sharp-linux-arm64/-/sharp-linux-arm64-0.35.4.tgz",
-      "integrity": "sha512-De4jpEnAU8Hd5oT0j1G3uL4ZvTuipVMn7YC6vPaJhy6/7EwEae0SVAoBrUMYQbkLGDm85taVWwuPc1a44LTzCQ==",
+      "version": "0.35.5",
+      "resolved": "https://registry.npmjs.org/@img/sharp-linux-arm64/-/sharp-linux-arm64-0.35.5.tgz",
+      "integrity": "sha512-LYVx5JTsOM2CBzmxreh+nl64/3H6Xb09iSLknqH47z2T2DFFxDeFLP5y4dJwe6H7uGQlHPyEEtIqyo3DYsRwdQ==",
       "cpu": [
         "arm64"
       ],
@@ -29581,13 +29645,13 @@ Paths: `package-lock.json`. SHA-256 `2b46683776f9ee6c6d1b153558b1fcccbb68209ebf0
         "url": "https://opencollective.com/libvips"
       },
       "optionalDependencies": {
-        "@img/sharp-libvips-linux-arm64": "1.3.3"
+        "@img/sharp-libvips-linux-arm64": "1.3.4"
       }
     },
     "node_modules/@img/sharp-linux-ppc64": {
-      "version": "0.35.4",
-      "resolved": "https://registry.npmjs.org/@img/sharp-linux-ppc64/-/sharp-linux-ppc64-0.35.4.tgz",
-      "integrity": "sha512-2oYZJeIl4kCcMGk4ouZVjnkCtFrpQFlNEtJ6GbxzhHQchwH0NH/qEb9ykmOl29dqwMq+JhFdZn+1ak2FKhI9fQ==",
+      "version": "0.35.5",
+      "resolved": "https://registry.npmjs.org/@img/sharp-linux-ppc64/-/sharp-linux-ppc64-0.35.5.tgz",
+      "integrity": "sha512-QVxAAq8evVRI9ia2vqgwrmWucn5Dfv+JdWzj75pD8omHLPSP7f8p20O8jxzjCcuCEQEOtYOZUmX1hkiZ0kdevA==",
       "cpu": [
         "ppc64"
       ],
@@ -29607,13 +29671,13 @@ Paths: `package-lock.json`. SHA-256 `2b46683776f9ee6c6d1b153558b1fcccbb68209ebf0
         "url": "https://opencollective.com/libvips"
       },
       "optionalDependencies": {
-        "@img/sharp-libvips-linux-ppc64": "1.3.3"
+        "@img/sharp-libvips-linux-ppc64": "1.3.4"
       }
     },
     "node_modules/@img/sharp-linux-riscv64": {
-      "version": "0.35.4",
-      "resolved": "https://registry.npmjs.org/@img/sharp-linux-riscv64/-/sharp-linux-riscv64-0.35.4.tgz",
-      "integrity": "sha512-cPbNChoRURAWdebDIHSenxRpgEdy7JkPydSnUxRm9VvKD7m0/xVaR/8Fzlu81pk5nHEvHH87UZUA7cTtwnbJSA==",
+      "version": "0.35.5",
+      "resolved": "https://registry.npmjs.org/@img/sharp-linux-riscv64/-/sharp-linux-riscv64-0.35.5.tgz",
+      "integrity": "sha512-LtdreXguaavKODPIfzJ4kffx7UNt1omwtK0rch4EBbbSTXPnxWmYSayXdLJw0fJzQ97kHt1gL/yh4tvU+nCyRQ==",
       "cpu": [
         "riscv64"
       ],
@@ -29633,13 +29697,13 @@ Paths: `package-lock.json`. SHA-256 `2b46683776f9ee6c6d1b153558b1fcccbb68209ebf0
         "url": "https://opencollective.com/libvips"
       },
       "optionalDependencies": {
-        "@img/sharp-libvips-linux-riscv64": "1.3.3"
+        "@img/sharp-libvips-linux-riscv64": "1.3.4"
       }
     },
     "node_modules/@img/sharp-linux-s390x": {
-      "version": "0.35.4",
-      "resolved": "https://registry.npmjs.org/@img/sharp-linux-s390x/-/sharp-linux-s390x-0.35.4.tgz",
-      "integrity": "sha512-RY0JFY8Fd6RonCBtHz+DvadaPkXDSI1AUn6yWL9TipqkZ1vY8w8evqdgyDFnkm4/K1ve1TvZiaePP5oSd4+WVQ==",
+      "version": "0.35.5",
+      "resolved": "https://registry.npmjs.org/@img/sharp-linux-s390x/-/sharp-linux-s390x-0.35.5.tgz",
+      "integrity": "sha512-UZasTOFiYzotTsGOCu42BfUzP6Tu6Do/947iRm1RsLKvlllxwGcn4RN27LibGWceix4Y+Pmw3jsnTcCQIgWjqA==",
       "cpu": [
         "s390x"
       ],
@@ -29659,13 +29723,13 @@ Paths: `package-lock.json`. SHA-256 `2b46683776f9ee6c6d1b153558b1fcccbb68209ebf0
         "url": "https://opencollective.com/libvips"
       },
       "optionalDependencies": {
-        "@img/sharp-libvips-linux-s390x": "1.3.3"
+        "@img/sharp-libvips-linux-s390x": "1.3.4"
       }
     },
     "node_modules/@img/sharp-linux-x64": {
-      "version": "0.35.4",
-      "resolved": "https://registry.npmjs.org/@img/sharp-linux-x64/-/sharp-linux-x64-0.35.4.tgz",
-      "integrity": "sha512-9qvvEAuk8k89TfWUoX2htWjbAMX8p+NxCppjpcg5k6xMsjhBQPTsoIh36h9Qde4WRuGpJeYnOjdosDn/cnv+OA==",
+      "version": "0.35.5",
+      "resolved": "https://registry.npmjs.org/@img/sharp-linux-x64/-/sharp-linux-x64-0.35.5.tgz",
+      "integrity": "sha512-SxFtLTeJInhAA9Q836kux2vZNeOBQEx658qvbboZScr0wIARym3IcGmW7KpVD5sbVg0Ojy+udFQdayYIZyoNog==",
       "cpu": [
         "x64"
       ],
@@ -29685,13 +29749,13 @@ Paths: `package-lock.json`. SHA-256 `2b46683776f9ee6c6d1b153558b1fcccbb68209ebf0
         "url": "https://opencollective.com/libvips"
       },
       "optionalDependencies": {
-        "@img/sharp-libvips-linux-x64": "1.3.3"
+        "@img/sharp-libvips-linux-x64": "1.3.4"
       }
     },
     "node_modules/@img/sharp-linuxmusl-arm64": {
-      "version": "0.35.4",
-      "resolved": "https://registry.npmjs.org/@img/sharp-linuxmusl-arm64/-/sharp-linuxmusl-arm64-0.35.4.tgz",
-      "integrity": "sha512-KB5jxpfWQTr0nc3xdHtWChdbifHrBGsd2SM62Eyxrl8afikm+f5qGBU75SJIZBT/S1MC8XyacdlXBMSWq6OURA==",
+      "version": "0.35.5",
+      "resolved": "https://registry.npmjs.org/@img/sharp-linuxmusl-arm64/-/sharp-linuxmusl-arm64-0.35.5.tgz",
+      "integrity": "sha512-9HbMclmI1zlNkFRs3z9/eBtDjfD0sGlrX1z6b1qwmiFY5ElDLh4BC0LPBdVp7z1DXFiKlIcznf+ZlsuZzLxQqg==",
       "cpu": [
         "arm64"
       ],
@@ -29711,13 +29775,13 @@ Paths: `package-lock.json`. SHA-256 `2b46683776f9ee6c6d1b153558b1fcccbb68209ebf0
         "url": "https://opencollective.com/libvips"
       },
       "optionalDependencies": {
-        "@img/sharp-libvips-linuxmusl-arm64": "1.3.3"
+        "@img/sharp-libvips-linuxmusl-arm64": "1.3.4"
       }
     },
     "node_modules/@img/sharp-linuxmusl-x64": {
-      "version": "0.35.4",
-      "resolved": "https://registry.npmjs.org/@img/sharp-linuxmusl-x64/-/sharp-linuxmusl-x64-0.35.4.tgz",
-      "integrity": "sha512-f+eZJZIQNEEd26RPSW+76chwOf1XtA2Y/O+5ocVyLliHkeih3e+jhLVBdNTd2rS3IbNXK8+ug93Vf5ZXtF5Lxg==",
+      "version": "0.35.5",
+      "resolved": "https://registry.npmjs.org/@img/sharp-linuxmusl-x64/-/sharp-linuxmusl-x64-0.35.5.tgz",
+      "integrity": "sha512-4KOphqB035HrVdqLZfCgMzzERrQkkzOwRhl4OAkRO1YCldbaFjySXMaK534Mo0V+LndnlJk+sbUyLeU0ULyD1A==",
       "cpu": [
         "x64"
       ],
@@ -29737,13 +29801,13 @@ Paths: `package-lock.json`. SHA-256 `2b46683776f9ee6c6d1b153558b1fcccbb68209ebf0
         "url": "https://opencollective.com/libvips"
       },
       "optionalDependencies": {
-        "@img/sharp-libvips-linuxmusl-x64": "1.3.3"
+        "@img/sharp-libvips-linuxmusl-x64": "1.3.4"
       }
     },
     "node_modules/@img/sharp-wasm32": {
-      "version": "0.35.4",
-      "resolved": "https://registry.npmjs.org/@img/sharp-wasm32/-/sharp-wasm32-0.35.4.tgz",
-      "integrity": "sha512-zQnl4Kwp7Q6NHsENtU2T/00Zi+w3AQNwz3+UaTyVBy2FpXrzXzGjndpK61onhZjRtRpQXxCTeqw19bVyXOh7jA==",
+      "version": "0.35.5",
+      "resolved": "https://registry.npmjs.org/@img/sharp-wasm32/-/sharp-wasm32-0.35.5.tgz",
+      "integrity": "sha512-Ptsga1su4tQx+LLF1ECS9U6nz5kmrXKo6XVbtR48Ke3ZRxxgaWBu7IDtEe1quo8hiupwm6WFqxVlXaSf7IINGQ==",
       "dev": true,
       "license": "Apache-2.0 AND LGPL-3.0-or-later AND MIT",
       "optional": true,
@@ -29758,9 +29822,9 @@ Paths: `package-lock.json`. SHA-256 `2b46683776f9ee6c6d1b153558b1fcccbb68209ebf0
       }
     },
     "node_modules/@img/sharp-webcontainers-wasm32": {
-      "version": "0.35.4",
-      "resolved": "https://registry.npmjs.org/@img/sharp-webcontainers-wasm32/-/sharp-webcontainers-wasm32-0.35.4.tgz",
-      "integrity": "sha512-ESfNkywmCfPNyaZjxooddJQiQ+l/nTpGEOGthxiLnIHXC/CmcBixnfwUleX9mCz9ovrUUvKMap/pm8RYbzfwaA==",
+      "version": "0.35.5",
+      "resolved": "https://registry.npmjs.org/@img/sharp-webcontainers-wasm32/-/sharp-webcontainers-wasm32-0.35.5.tgz",
+      "integrity": "sha512-hfhF/FmoQyTUkA0bIKFOtw536BQSeBMe6BF6QyWlrPxT754+TFLaZ7sKKTfvvM0yJgKgaYTwnFCIZ/GuDw5SUA==",
       "cpu": [
         "wasm32"
       ],
@@ -29768,7 +29832,7 @@ Paths: `package-lock.json`. SHA-256 `2b46683776f9ee6c6d1b153558b1fcccbb68209ebf0
       "license": "Apache-2.0",
       "optional": true,
       "dependencies": {
-        "@img/sharp-wasm32": "0.35.4"
+        "@img/sharp-wasm32": "0.35.5"
       },
       "engines": {
         "node": ">=20.9.0"
@@ -29778,9 +29842,9 @@ Paths: `package-lock.json`. SHA-256 `2b46683776f9ee6c6d1b153558b1fcccbb68209ebf0
       }
     },
     "node_modules/@img/sharp-win32-arm64": {
-      "version": "0.35.4",
-      "resolved": "https://registry.npmjs.org/@img/sharp-win32-arm64/-/sharp-win32-arm64-0.35.4.tgz",
-      "integrity": "sha512-iNdlBX9gLVvqe2I3uIJSIKTq6wckP/DYxZtcqxm09x5Gi24DnFBmPAWZmr60ZyYMG0xlzo6goG3670ar+RXvRw==",
+      "version": "0.35.5",
+      "resolved": "https://registry.npmjs.org/@img/sharp-win32-arm64/-/sharp-win32-arm64-0.35.5.tgz",
+      "integrity": "sha512-X4t7g+7ZA5DKblCBEXGjUqqemj4vczING/5viFwAL8h4N3qYeyjwdCvRLHi4EdOUI+2Z7UFlp1VM+p/AuEtm6Q==",
       "cpu": [
         "arm64"
       ],
@@ -29798,9 +29862,9 @@ Paths: `package-lock.json`. SHA-256 `2b46683776f9ee6c6d1b153558b1fcccbb68209ebf0
       }
     },
     "node_modules/@img/sharp-win32-ia32": {
-      "version": "0.35.4",
-      "resolved": "https://registry.npmjs.org/@img/sharp-win32-ia32/-/sharp-win32-ia32-0.35.4.tgz",
-      "integrity": "sha512-kqRsbaa5CS6KHlpxnN7WhE6vAAugXyZButpRdvDWetlv6Qv4N9WTcrWzF7tXfB9T7MsoadqdI8hmwLq6UlLvtw==",
+      "version": "0.35.5",
+      "resolved": "https://registry.npmjs.org/@img/sharp-win32-ia32/-/sharp-win32-ia32-0.35.5.tgz",
+      "integrity": "sha512-5Zm82LoBc43nhwNybZlG7Y1KO//Zhsn306fQl29ZOuStHLGTo3BWL83q3cznX0poxSAMuYL1On/BHBxkBeKr6A==",
       "cpu": [
         "ia32"
       ],
@@ -29818,9 +29882,9 @@ Paths: `package-lock.json`. SHA-256 `2b46683776f9ee6c6d1b153558b1fcccbb68209ebf0
       }
     },
     "node_modules/@img/sharp-win32-x64": {
-      "version": "0.35.4",
-      "resolved": "https://registry.npmjs.org/@img/sharp-win32-x64/-/sharp-win32-x64-0.35.4.tgz",
-      "integrity": "sha512-XtmnYhBcrORsJ4XJngyzr/EWP0hRZLAZRFaApdKuviyqF78+ylxh2y06ZmtULAMOnObJ3ucpN0AcwSWnMowTRg==",
+      "version": "0.35.5",
+      "resolved": "https://registry.npmjs.org/@img/sharp-win32-x64/-/sharp-win32-x64-0.35.5.tgz",
+      "integrity": "sha512-x76eH0vEiHlcMQu8Y8IenntaACtddpT6W0wmXtWrnKcnKI7ME5DdgqhAD6SEWOEl1v2zDvkZDhFA9KnURwpfqg==",
       "cpu": [
         "x64"
       ],
@@ -32022,9 +32086,9 @@ Paths: `package-lock.json`. SHA-256 `2b46683776f9ee6c6d1b153558b1fcccbb68209ebf0
       }
     },
     "node_modules/sharp": {
-      "version": "0.35.4",
-      "resolved": "https://registry.npmjs.org/sharp/-/sharp-0.35.4.tgz",
-      "integrity": "sha512-n++8XWcj+jCOr2IOl7h8LbKnGBDY4aPbmprMONBNFdn0ImXqpGVv5zliDs0V9HbmbCQLpbuo2ej9rAoOQTvMDA==",
+      "version": "0.35.5",
+      "resolved": "https://registry.npmjs.org/sharp/-/sharp-0.35.5.tgz",
+      "integrity": "sha512-Ywn4OnzGukp7CDMrp08RQ50YKmuwG47brZgIVPTvBaaAfQlRlygrRqSrxdCiL9M+LlzLBiJ68IR1QqvzHyjC7g==",
       "dev": true,
       "license": "Apache-2.0",
       "dependencies": {
@@ -32039,31 +32103,31 @@ Paths: `package-lock.json`. SHA-256 `2b46683776f9ee6c6d1b153558b1fcccbb68209ebf0
         "url": "https://opencollective.com/libvips"
       },
       "optionalDependencies": {
-        "@img/sharp-darwin-arm64": "0.35.4",
-        "@img/sharp-darwin-x64": "0.35.4",
-        "@img/sharp-freebsd-wasm32": "0.35.4",
-        "@img/sharp-libvips-darwin-arm64": "1.3.3",
-        "@img/sharp-libvips-darwin-x64": "1.3.3",
-        "@img/sharp-libvips-linux-arm": "1.3.3",
-        "@img/sharp-libvips-linux-arm64": "1.3.3",
-        "@img/sharp-libvips-linux-ppc64": "1.3.3",
-        "@img/sharp-libvips-linux-riscv64": "1.3.3",
-        "@img/sharp-libvips-linux-s390x": "1.3.3",
-        "@img/sharp-libvips-linux-x64": "1.3.3",
-        "@img/sharp-libvips-linuxmusl-arm64": "1.3.3",
-        "@img/sharp-libvips-linuxmusl-x64": "1.3.3",
-        "@img/sharp-linux-arm": "0.35.4",
-        "@img/sharp-linux-arm64": "0.35.4",
-        "@img/sharp-linux-ppc64": "0.35.4",
-        "@img/sharp-linux-riscv64": "0.35.4",
-        "@img/sharp-linux-s390x": "0.35.4",
-        "@img/sharp-linux-x64": "0.35.4",
-        "@img/sharp-linuxmusl-arm64": "0.35.4",
-        "@img/sharp-linuxmusl-x64": "0.35.4",
-        "@img/sharp-webcontainers-wasm32": "0.35.4",
-        "@img/sharp-win32-arm64": "0.35.4",
-        "@img/sharp-win32-ia32": "0.35.4",
-        "@img/sharp-win32-x64": "0.35.4"
+        "@img/sharp-darwin-arm64": "0.35.5",
+        "@img/sharp-darwin-x64": "0.35.5",
+        "@img/sharp-freebsd-wasm32": "0.35.5",
+        "@img/sharp-libvips-darwin-arm64": "1.3.4",
+        "@img/sharp-libvips-darwin-x64": "1.3.4",
+        "@img/sharp-libvips-linux-arm": "1.3.4",
+        "@img/sharp-libvips-linux-arm64": "1.3.4",
+        "@img/sharp-libvips-linux-ppc64": "1.3.4",
+        "@img/sharp-libvips-linux-riscv64": "1.3.4",
+        "@img/sharp-libvips-linux-s390x": "1.3.4",
+        "@img/sharp-libvips-linux-x64": "1.3.4",
+        "@img/sharp-libvips-linuxmusl-arm64": "1.3.4",
+        "@img/sharp-libvips-linuxmusl-x64": "1.3.4",
+        "@img/sharp-linux-arm": "0.35.5",
+        "@img/sharp-linux-arm64": "0.35.5",
+        "@img/sharp-linux-ppc64": "0.35.5",
+        "@img/sharp-linux-riscv64": "0.35.5",
+        "@img/sharp-linux-s390x": "0.35.5",
+        "@img/sharp-linux-x64": "0.35.5",
+        "@img/sharp-linuxmusl-arm64": "0.35.5",
+        "@img/sharp-linuxmusl-x64": "0.35.5",
+        "@img/sharp-webcontainers-wasm32": "0.35.5",
+        "@img/sharp-win32-arm64": "0.35.5",
+        "@img/sharp-win32-ia32": "0.35.5",
+        "@img/sharp-win32-x64": "0.35.5"
       },
       "peerDependenciesMeta": {
         "@types/node": {
@@ -32498,13 +32562,13 @@ Paths: `package-lock.json`. SHA-256 `2b46683776f9ee6c6d1b153558b1fcccbb68209ebf0
 
 ### package.json
 
-Paths: `package.json`. SHA-256 `089c1f8f37a85f58f864fc82666b184db97a778d7d73fa94edf76c5dea8e97cb`, 1470 bytes.
+Paths: `package.json`. SHA-256 `e57ca78f8730228e846638016d682902af61f2a9d374b8064a420450c0562d89`, 1470 bytes.
 
 ```json
 {
   "name": "sea-game",
   "version": "0.5.2",
-  "gameVersion": "0.5.2.0",
+  "gameVersion": "0.5.2.1",
   "private": true,
   "description": "Systems Engineering Awareness: offline single-file classroom auction game (EN/FR)",
   "license": "MIT",
@@ -32539,7 +32603,7 @@ Paths: `package.json`. SHA-256 `089c1f8f37a85f58f864fc82666b184db97a778d7d73fa94
     "eslint": "10.10.0",
     "fast-check": "4.10.1",
     "meshoptimizer": "1.1.1",
-    "sharp": "0.35.4",
+    "sharp": "0.35.5",
     "typescript": "6.0.3",
     "typescript-eslint": "8.70.1",
     "vitest": "5.0.1"
@@ -43714,5 +43778,5 @@ Keys and the commands that make each kind again:
 
 | Path | Bytes | SHA-256 | Why |
 |---|---:|---|---|
-| `docs/MPES.md` | 169668 | `09225c2edd3612658d4620aba7de0f06347940a919f7d9aa27146abbf0b2ddf8` | The specification, a clean-room document of its own (Omni 5.1.1 §333). |
+| `docs/MPES.md` | 170123 | `d71ae166eb20649a33f1b337979c4977608711e961478eb4f1d9a97af318b3b3` | The specification, a clean-room document of its own (Omni 5.1.1 §333). |
 | `docs/CODEBASE.md` | | | This file. |

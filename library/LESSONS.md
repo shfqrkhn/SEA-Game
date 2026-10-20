@@ -2,6 +2,12 @@
 
 Each entry: what happened, the rule it produced, and the check that now enforces it. Newest first. Examples come from SEA Game (a classroom auction game with photoreal vehicle renders and a real-time 3D showcase, one offline HTML file).
 
+## 2026-10-20 · The vetted version was newer than the project lock
+
+- **What happened:** the FOSS catalogue listed sharp 0.35.5, but SEA Game remained pinned to vulnerable 0.35.4; another owned repository also had a nested lockfile that a root-only scan would miss.
+- **Rule:** enumerate every committed dependency lockfile, reconcile exact project pins with vetted releases, and regenerate the lock to a patched version.
+- **Check (as used in this sweep):** run npm audit --json from every lockfile root and require zero findings; the SEA Game audit moved from one high finding to zero after updating sharp and its prebuilt binaries.
+
 ## 2026-10-13 · Green branch, red main
 
 - **What happened:** after two green CI runs, a small docs-only commit was added and the pull request merged straight away. The generated codebase document embeds every doc, so it went stale; CI on `main` failed and the Pages deploy was skipped, leaving the old site live.
