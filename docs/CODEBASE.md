@@ -27041,7 +27041,7 @@ Exportez une sauvegarde par **Menu → Exporter une sauvegarde** après la confi
 
 ### docs/HANDOVER.md
 
-Paths: `docs/HANDOVER.md`. SHA-256 `6a418263cc46139d69de00a87fa058598293329df2602e10af2f3a72bda7f24c`, 13625 bytes.
+Paths: `docs/HANDOVER.md`. SHA-256 `5ef2c556e053ee2496377115ec82ee60555a0d74e05f6546955429b069cfae87`, 14131 bytes.
 
 ```markdown
 # Handover
@@ -27106,7 +27106,7 @@ Owner FIX 1 (stills and fit), FIX 2 (one click to close a round nobody can win i
 
 ## 5. Next action
 
-**Agent:** G3 on `g3/proxy-runtime` (PR #27): red runs 38609311138, 38921636256, 38931516133 and 38958721130 have their documented fixes. Red run 38976632856 (p95 110.7 ms) is fixed by caching unchanged layer bounds. Red run 39484500911 (p95 120.6 ms on `verify (22)`) is addressed in three ways: parts are uploaded to the graphics card before any purchase, a purchase is drawn inside its own click (`sea-rendered`), and wide tables are watched by a ResizeObserver, which also fixes a keyboard-access gap (`docs/verification/0.6.0.0.md`). Locally this PC's perf readings are currently noisy: HEAD and the fix fail the same budgets. CI decides; if the 3D update still misses on CI, keep the 100 ms budget and carry it as a named blocker with that evidence. Codex's review found one P2 (parts outside the view, and still stages, were not uploaded), fixed with a failing check first. Get two consecutive green CI runs on one head; run the `npm run perf:ref` 12-KPI baseline in a quiet slot (MPES §14.1); finish the verification Checks; gallery and owner GO or FIX before merge. Then G4 (stills to 3:1 in every view and frame, the pale RECCE roof, the light-theme stage contrast).
+**Agent:** G3 on `g3/proxy-runtime` (PR #27): red runs 38609311138, 38921636256, 38931516133 and 38958721130 have their documented fixes. Red run 38976632856 (p95 110.7 ms) is fixed by caching unchanged layer bounds. Red run 39484500911 (p95 120.6 ms on `verify (22)`) is addressed in three ways: parts are uploaded to the graphics card before any purchase, a purchase is drawn inside its own click (`sea-rendered`), and wide tables are watched by a ResizeObserver, which also fixes a keyboard-access gap (`docs/verification/0.6.0.0.md`). Locally this PC's perf readings are currently noisy: HEAD and the fix fail the same budgets. CI decides; if the 3D update still misses on CI, keep the 100 ms budget and carry it as a named blocker with that evidence. Codex's review found one P2 (parts outside the view, and still stages, were not uploaded), fixed with a failing check first. Red run 39508660281 (p95 128.2 ms on `verify (24)`, now mostly paint after the draw): a render now changes only what changed (`morph` in `source/ui/dom.ts`), so unchanged elements cost no style or layout and keep focus, scroll and caret; handlers go through one listener per event type. Codex's three P2s on it (stale saving-field handlers, a select's new choice, the caret on a tidied value) are fixed with failing checks first, as is a CSP fault (inline styles are copied only through the style object). Get two consecutive green CI runs on one head; run the `npm run perf:ref` 12-KPI baseline in a quiet slot (MPES §14.1); finish the verification Checks; gallery and owner GO or FIX before merge. Then G4 (stills to 3:1 in every view and frame, the pale RECCE roof, the light-theme stage contrast).
 **Owner:** `docs/owner/art-review.md` (5 minutes, reply GO or FIX).
 
 ## 6. Rollback
@@ -27700,7 +27700,7 @@ A read-only Codex session (gpt-6.1-sol, medium) reviewed the diff (`.artifacts/c
 
 ### docs/verification/0.6.0.0.md
 
-Paths: `docs/verification/0.6.0.0.md`. SHA-256 `59ad97fa943520f9c2b75dd5dfbe249c758db5da5a8e144300d09332cf3b583e`, 43984 bytes.
+Paths: `docs/verification/0.6.0.0.md`. SHA-256 `0efe353464ab7784396aa4b8c3caf835363e32e7c89f6f982afe4f6bea43e2a3`, 49291 bytes.
 
 ```markdown
 # Verification record: 0.6.0.0 beta (G3 proxy and runtime) — in progress
@@ -27948,6 +27948,35 @@ Local `npm run verify` after the Codex fix: typecheck, lint, 272 unit tests, the
 Cause, by reading: every render rebuilds its tables, and marking them only in the observer's callback, after layout, changed attributes on new elements every frame. The render now marks the tables itself, as before (the browser lays the rebuilt page out in that task anyway). The observer only re-checks later changes, and with change-only writes its first callback after a render writes nothing.
 
 A second A/B of three rounds was void: another project's `npm run verify`, with its own browsers, started on this PC during it (HEAD max 333.8 ms, this 578.6). The keyboard-region test and the render, mobile, accessibility and layout specs pass on Chromium, Firefox and Edge (34 tests). CI decides the timings.
+
+## Red run 39508660281 (head 7a537f4): 3D update p95 128.2 ms
+
+`verify (22)` passed. `verify (24)` failed only the 3D update budget: 30 samples, p95 128.2 ms, max 132 ms against the unchanged 100 ms limit. Phase p95s were 35.4 ms handling, 0 ms waiting, 10.8 ms drawing and 84.3 ms from draw to paint. Handling fell from 59.1 ms in the last red run, so the purchase is now drawn inside its click as intended. The time is now in the paint that follows.
+
+What was measured locally. These are ratios only: local timings are void and CI gates perf.
+
+- **Trace of one purchase (4x, software renderer).** After the click, Blink restyles and lays out the whole page (about 10 ms). Every render replaced the page's whole content, so every element was new. The frame commit then reads the canvas back (about 5 ms).
+- **A lower-resolution tier was tried and rejected.** A 0.35 render scale cut total p50 only from 57 to 49 ms. That is about 14%, short of what the budget needs, and it costs every player sharpness.
+
+The change: **a render changes only what changed** (`morph` in `source/ui/dom.ts`). The view builds the new page aside, then makes the live page match it. An element with the same tag and id (an input also the same type) is kept: it takes the new attributes, handlers, value and checked state, and its children are matched the same way. An element found among its siblings by id is moved, not rebuilt. The showcase's stage, the same node in both pages, is left alone. Handlers go through one listener per event type, which calls the element's current handler, so a kept element never keeps an old one. A kept element costs no new style or layout, and it keeps its focus, its scroll and its caret. This helps every command on a slow laptop, not just the 3D purchase.
+
+Two consequences were found and fixed before review ended:
+
+1. **Inline style.** A bar's width is set through the CSSOM, which the content security policy allows. Morph copied it as a `style` attribute, which the policy refuses (`style-src-attr`). Firefox logged one error per bar, and the journey, slice, rehearsal and showcase specs failed on their zero-console-error check (13 tests). Styles are now copied through the CSSOM (`style.cssText`) and never as attributes.
+2. **Stale handlers (Codex P2).** `savingInput` added its listeners directly and kept the value it was built with. A field kept across a render therefore compared against an old value, so on lot 2 a typed price matching lot 1's was not saved. Its listeners now go through `on` (the handler registry) and read the live field. A sweep found no other direct listener on a view-built element. The menu's `document` keydown is page-level, and the import picker is built per use.
+
+Failing check first: `tests/e2e/render.spec.ts`, "a render keeps every unchanged element, its focus and its scroll". It tags the brand, the language button, the menu button, the card field and the heading, then loads a card, records a win and loads a wrong card. It expects none of the tagged elements replaced, a widened table's scroll kept, and focus kept on the language button after Enter. On `7a537f4` it failed (every tagged element replaced); on this source it passes on Chromium, Firefox and Edge.
+
+Failing check for the Codex P2: `tests/e2e/render.spec.ts`, "a kept field saves against the current value, not the one it was built with". It types 42 into the lot 1 scratch note, records a win, pastes 42 into the lot 2 note (one input event) and reloads. On morph with the old `savingInput`, it failed on Chromium and Firefox (lot 2 note empty after reload); on this source it passes on Chromium, Firefox and Edge.
+
+The 13 tests that failed on the first morph build (the journey, slice, rehearsal, accessibility and showcase specs, light and heavy) were rerun after both fixes: 121 passed. This includes the Firefox keyboard journey, which had stopped at "#menu-button not reachable with Tab"; it was not traced further because it passes with both fixes.
+
+Codex's second review (GPT-6.1 Sol, medium, the whole morph diff) found two P2s. Both were accepted and fixed, each with a failing check first:
+
+1. **Caret moved when a saved value was tidied.** Writing the saved value back into the focused field (`0123` saved as `123`) put the caret at the end, so the next digit went in the wrong place. The view restored the caret only when focus had moved. A focused field given a new value now keeps its caret, clamped to the new length. Check: `render.spec.ts`, "a kept field keeps its caret when its saved value is tidied". Before the fix it failed on Chromium and Firefox (caret 3, expected 1); after, it passes.
+2. **A select lost its new choice.** The new value was read after the children were matched. A newly chosen option moved into the live select left the new one falling back to its first option, which was then copied over the choice. Value and checked state are now read before the children move. Check: `render.spec.ts`, "morph keeps a select on the option the new page chose, when that option is new". It bundles `dom.ts` into a blank page and calls `morph` directly. Before the fix it failed on Chromium and Firefox (A, expected B); after, it passes.
+
+`render.spec.ts` passes 21 of 21 on Chromium, Firefox and Edge; there are 272 unit tests, plus typecheck and lint.
 ```
 
 ### docs/verification/legibility.md
@@ -28225,7 +28254,7 @@ export default tseslint.config(
 
 ### library/LESSONS.md
 
-Paths: `library/LESSONS.md`. SHA-256 `eba8e6e7c6a082f91122de9a52efd0a76a09009f68ecb672851ed5a14c55cf79`, 18935 bytes.
+Paths: `library/LESSONS.md`. SHA-256 `5e1f5c23252241a1495ab2a517a7443daf9835c0d5ad8371802a10481a003c2e`, 20116 bytes.
 
 ```markdown
 # Lessons learned
@@ -28353,6 +28382,12 @@ Each entry: what happened, the rule it produced, and the check that now enforces
 
 - **What happened:** tests timed out when other work loaded the PC; once, test scratch had piled up and slowed a test 16-fold.
 - **Rule:** never raise a timeout or budget to pass. Find the cause (here: scratch not cleaned up), fix it, add a check (scratch is removed after each run), and record the evidence of any one-off with the date.
+
+## 2026-10-21 · Change only what changed; keep handlers swappable
+
+- **What happened:** after two fixes, a 3D purchase still read 128 ms against a 100 ms budget on CI. A trace showed every command replacing the whole page, so the browser restyled and laid out all of it each time. Switching to changing only what changed exposed two hidden faults. A width set through the style object was copied as a `style` attribute, which a strict content policy refuses. A field kept across renders also kept the handler of the render that built it, with that render's value.
+- **Rule:** build the new page aside, then change the live one only where it differs (match by tag and id), so unchanged elements cost nothing and keep focus and scroll. Route every handler through one listener per event type that calls the element's current handler, and never let a handler hold a value from the render that built it. Copy styles through the style object, not as attributes.
+- **Check:** a browser test tags elements and asserts that none is replaced by a render, that focus and scroll survive, and that a kept field saves against the current value. Every browser test fails on any console error.
 ```
 
 ### library/README.md
@@ -37358,7 +37393,7 @@ export function showDialog(options: DialogOptions): Promise<string> {
 
 ### source/ui/dom.ts
 
-Paths: `source/ui/dom.ts`. SHA-256 `387d85ce7b878a47d7eb4d042dbb313741775254b75e9fb207e981391e7e5a0f`, 3997 bytes.
+Paths: `source/ui/dom.ts`. SHA-256 `b23e952270a036808032b008feb831c2d76aeae3ea3bc45f8739c85f6f5ec205`, 8825 bytes.
 
 ```ts
 // Safe DOM construction (MPES C-11): text is always set as text, never parsed as HTML.
@@ -37387,6 +37422,19 @@ export function append(parent: Node, children: readonly Child[]): void {
   }
 }
 
+/** Each element's handlers, by event type. One listener per type calls the current one, so a render that keeps the
+ *  element (morph) swaps its handlers without removing listeners. */
+const handlers = new WeakMap<EventTarget, Record<string, Handler>>();
+function call(this: EventTarget, event: Event): void { handlers.get(this)?.[event.type]?.call(this, event); }
+function listen(element: Element, on: Readonly<Record<string, Handler>>): void {
+  const own = handlers.get(element) ?? {};
+  for (const [type, handler] of Object.entries(on)) {
+    if (!own[type]) element.addEventListener(type, call);
+    own[type] = handler;
+  }
+  handlers.set(element, own);
+}
+
 function apply(element: Element, props: Props): void {
   if (props.class) element.setAttribute('class', props.class);
   if (props.id) element.id = props.id;
@@ -37396,7 +37444,7 @@ function apply(element: Element, props: Props): void {
     if (name === 'style' || /^on/i.test(name)) throw new Error(`Unsafe attribute: ${name}`);
     element.setAttribute(name, value === true ? '' : String(value));
   }
-  if (props.on) for (const [type, handler] of Object.entries(props.on)) element.addEventListener(type, handler);
+  if (props.on) listen(element, props.on);
   if (element instanceof HTMLInputElement || element instanceof HTMLTextAreaElement || element instanceof HTMLSelectElement) {
     if (props.value !== undefined) element.value = props.value;
   } else if (props.value !== undefined) {
@@ -37428,6 +37476,74 @@ export function svg<K extends keyof SVGElementTagNameMap>(tag: K, attributes: Re
 export function replaceChildren(parent: Element, ...children: Child[]): void {
   parent.replaceChildren();
   append(parent, children);
+}
+
+/**
+ * Makes `parent`'s children match `next`'s, keeping every element that is still the same element: same tag, same id
+ * (an input also the same type). A kept element takes the new one's attributes, handlers, value and checked state, and
+ * its children are matched the same way; an element that is not kept is replaced by the new one. A child that is the
+ * very same node in both (the showcase's stage) is left as it is. A rebuilt page made the browser restyle and lay out
+ * all of it after every command (G3 CI run 39508660281: about 30 ms of a 3D purchase on the runner); a kept element
+ * costs nothing, keeps its focus, its scroll and its caret, and a panel stays open (only the reader closes one).
+ */
+export function morph(parent: Element, next: Element): void {
+  // An element with an id is found wherever it was among its siblings, so a field added before it does not replace it.
+  const byId = new Map<string, Element>();
+  for (const child of parent.children) if (child.id) byId.set(child.id, child);
+  let old = parent.firstChild;
+  for (const node of [...next.childNodes]) {
+    const found = node instanceof Element && node.id ? byId.get(node.id) : undefined;
+    if (old && same(old, node)) {
+      if (old !== node) update(old, node);
+      old = old.nextSibling;
+    } else if (found && found !== old && found.parentNode === parent && same(found, node)) {
+      parent.insertBefore(found, old);
+      update(found, node);
+    } else {
+      parent.insertBefore(node, old);
+    }
+  }
+  while (old) { const after = old.nextSibling; parent.removeChild(old); old = after; }
+}
+
+function same(old: Node, node: Node): boolean {
+  if (old === node) return true;
+  if (old.nodeType !== node.nodeType) return false;
+  if (!(old instanceof Element) || !(node instanceof Element)) return old.nodeType === Node.TEXT_NODE || old.nodeType === Node.COMMENT_NODE;
+  return old.namespaceURI === node.namespaceURI && old.tagName === node.tagName && old.id === node.id
+    && (!(old instanceof HTMLInputElement) || old.type === (node as HTMLInputElement).type);
+}
+
+function update(old: Node, node: Node): void {
+  if (!(old instanceof Element) || !(node instanceof Element)) {
+    if (old.nodeValue !== node.nodeValue) old.nodeValue = node.nodeValue;
+    return;
+  }
+  // A style is only ever set through the CSSOM (a bar's width): the policy refuses it as an attribute (style-src-attr).
+  for (const { name } of [...old.attributes]) if (name !== 'style' && !node.hasAttribute(name) && !(name === 'open' && old instanceof HTMLDetailsElement)) old.removeAttribute(name);
+  for (const { name, value } of node.attributes) if (name !== 'style' && old.getAttribute(name) !== value) old.setAttribute(name, value);
+  if (old instanceof HTMLElement || old instanceof SVGElement) {
+    const style = (node as HTMLElement).style.cssText;
+    if (old.style.cssText !== style) old.style.cssText = style;
+  }
+  const on = handlers.get(node);
+  for (const type of Object.keys(handlers.get(old) ?? {})) if (!on?.[type]) delete handlers.get(old)![type];
+  if (on) listen(old, on);
+  // Read before the children move: a select's new chosen option, moved into the live select, leaves the new one
+  // falling back to its first option.
+  const value = (node as HTMLInputElement).value, checked = (node as HTMLInputElement).checked;
+  morph(old, node);
+  if ((old instanceof HTMLInputElement || old instanceof HTMLTextAreaElement || old instanceof HTMLSelectElement) && old.value !== value) {
+    // A field being typed in whose saved value is written back tidied (0123 as 123) keeps its caret where it was.
+    const caret = old === document.activeElement && !(old instanceof HTMLSelectElement) ? selection(old) : null;
+    old.value = value;
+    if (caret) try { (old as HTMLInputElement).setSelectionRange(Math.min(caret[0], value.length), Math.min(caret[1], value.length)); } catch { /* no caret */ }
+  }
+  if (old instanceof HTMLInputElement && old.checked !== checked) old.checked = checked;
+}
+
+function selection(field: HTMLInputElement | HTMLTextAreaElement): [number, number] | null {
+  try { return field.selectionStart === null || field.selectionEnd === null ? null : [field.selectionStart, field.selectionEnd]; } catch { return null; }
 }
 
 /** Dispatched on the document once a view has rebuilt its page, before the browser lays it out (see showcase/model.ts). */
@@ -38882,7 +38998,7 @@ export function toggleTheme(): Theme {
 
 ### source/ui/view.ts
 
-Paths: `source/ui/view.ts`. SHA-256 `f71b09d05fe869783bf2b063373d54f9be13cda310c9108deac69de7b91fa518`, 19112 bytes.
+Paths: `source/ui/view.ts`. SHA-256 `3833cca9980deebe2ba69c91516c06e19a77533965fd2e45af5c3d29a05687df`, 19885 bytes.
 
 ```ts
 // Shared role view: shell (header, progress, menu, notices), rendering with focus preservation,
@@ -38893,7 +39009,7 @@ import { makeBackup, parseBackup, MAX_BACKUP_BYTES, type BackupRole } from '../d
 import { DomainError } from '../domain/errors.ts';
 import { PHASES, type Phase } from '../domain/session.ts';
 import { showDialog } from './dialog.ts';
-import { RENDERED, h, nameDocument, replaceChildren, type Child } from './dom.ts';
+import { RENDERED, append, h, morph, nameDocument, replaceChildren, type Child } from './dom.ts';
 import { otherLanguage, translate, type Language, type StringKey } from './i18n.ts';
 import { showAbout } from './about.ts';
 import { themeFrom, toggleTheme, withTheme } from './theme.ts';
@@ -39010,10 +39126,12 @@ export class RoleView<S extends RoleState> {
       if (result.ok) { this.drafts.delete(id); current = value; this.render(); }
       else if (report) this.say(this.t(`error.${result.code}` as StringKey), 'bad');
     };
-    const input = h('input', { id, ...props, value: this.draft(id, current) });
-    input.addEventListener('input', () => { this.drafts.set(id, input.value); commit(input.value, false); });
-    input.addEventListener('change', () => { if (this.drafts.has(id)) commit(input.value, true); });
-    return input;
+    // Through `on`, so a render that keeps the field swaps in this render's `current`; the value is the live field's.
+    const field = (event: Event) => (event.currentTarget as HTMLInputElement).value;
+    return h('input', { id, ...props, value: this.draft(id, current), on: {
+      input: event => { this.drafts.set(id, field(event)); commit(field(event), false); },
+      change: event => { if (this.drafts.has(id)) commit(field(event), true); },
+    } });
   }
 
   /** Ask first; refuse if anything changed while the dialog was open (MPES §7.5). */
@@ -39056,18 +39174,25 @@ export class RoleView<S extends RoleState> {
       // A panel the reader opened stays open: a render rebuilds every panel closed, and typing in the tracker's notes
       // hid the field after its first character (G3). A render may open a panel; only the reader closes one.
       const opened = new Set([...panelKeys(this.#content)].filter(([panel]) => panel.open).map(([, key]) => key));
-      replaceChildren(this.#content, this.shell());
+      // The new page is built aside and the live one changed only where they differ (morph): the table roles and the
+      // wide tables' marks are put on the new page first, so a table that is unchanged is not changed at all.
+      const next = document.createElement('div'), before = [...this.#content.querySelectorAll<HTMLElement>('.table-wrap')];
+      append(next, [this.shell()]);
+      [...next.querySelectorAll<HTMLElement>('.table-wrap')].forEach((wrap, i) => {
+        labelCells(wrap);
+        for (const name of ['tabindex', 'role', 'aria-label']) { const value = before[i]?.getAttribute(name); if (value != null) wrap.setAttribute(name, value); }
+      });
+      morph(this.#content, next);
       if (opened.size) for (const [panel, key] of panelKeys(this.#content)) if (opened.has(key)) panel.open = true;
       document.dispatchEvent(new Event(RENDERED));
       this.#statusLine.className = `page status-line ${this.#status?.tone === 'bad' ? 'error' : this.#status?.tone === 'ok' ? 'ok' : ''}`;
       if (this.#statusLine.textContent !== (this.#status?.text ?? '')) this.#statusLine.textContent = this.#status?.text ?? '';
       // Tables wider than the screen become labelled, focusable regions so they can be scrolled by keyboard (WCAG 2.1.1).
-      // They are marked here, so the page is laid out with them (the browser lays out a rebuilt page in this task
+      // They are checked here, so the page is laid out with them (the browser lays out a changed page in this task
       // anyway), and again whenever one changes size (see #wide), so a table that widens later (an opened panel, a
       // resized window, text zoom) is marked too; reading them only here missed those (G3). Marking them only after
       // layout instead made every render lay the page out twice (instructor bids p95 63 to 93 ms locally, G3).
       const wraps = [...this.#content.querySelectorAll<HTMLElement>('.table-wrap')];
-      for (const wrap of wraps) labelCells(wrap);
       this.#markWide(wraps);
       this.#wide.disconnect();
       for (const wrap of wraps) for (const box of [wrap, wrap.querySelector('table')]) if (box) this.#wide.observe(box);
@@ -40804,24 +40929,23 @@ test('G-PILOT substitute: French classroom rehearsal, 10 teams, three student ta
 
 ### tests/e2e/render.spec.ts
 
-Paths: `tests/e2e/render.spec.ts`. SHA-256 `4d2a8ee8c339b641eba3f799b992731aef9f73cea425403de9f1a1fc46448345`, 6304 bytes.
+Paths: `tests/e2e/render.spec.ts`. SHA-256 `ebc7e6feec5e1a3311abbb9a8632015636421337330deb650fd45b86c7e027f8`, 12005 bytes.
 
 ```ts
 // MPES §14 command response: a command, a saved field or a status message rebuilds the view once, never twice (G3: each
 // command used to render through the controller's subscription and again in the view, doubling the click-to-paint time).
 import { expect, type Page } from '@playwright/test';
+import { build } from 'esbuild';
 import { gameUrl, guardNetwork, test } from './helpers.ts';
 import { confirmDialog, instructorLot, instructorSetup, studentJoin } from './roles.ts';
 import { TRACKER_OK } from '../perf/measure.ts';
 
-/** Counts full re-renders: each one empties the view's content element before rebuilding it. */
+/** Counts re-renders: the view announces each one on the document (RENDERED, source/ui/dom.ts). */
 async function countRenders(page: Page): Promise<void> {
   await page.evaluate(() => {
     const w = window as unknown as { seaRenders: number };
     w.seaRenders = 0;
-    const content = document.querySelector('#app > div')!;
-    new MutationObserver(records => { for (const r of records) if (r.target === content && r.removedNodes.length) w.seaRenders++; })
-      .observe(content, { childList: true });
+    document.addEventListener('sea-rendered', () => { w.seaRenders++; });
   });
 }
 const renders = (page: Page) => page.evaluate(() => { const w = window as unknown as { seaRenders: number }; const n = w.seaRenders; w.seaRenders = 0; return n; });
@@ -40849,6 +40973,107 @@ test('each command, saved field and message renders the view once', async ({ pag
   // A field that saves as you type: one render per committed value.
   await page.locator('#plan-wtp').pressSequentially('5');
   expect(await renders(page), 'saved field').toBe(1);
+});
+
+// G3 CI run 39508660281: every render replaced the whole page, so the browser restyled and laid out all of it after
+// each command (about 10 ms of a purchase at 4x CPU locally, 30 on the CI runner, over the 100 ms budget). A render
+// now changes only what changed: an element that is the same before and after is the same element, keeps its focus
+// and its scroll, and costs no new layout.
+test('a render keeps every unchanged element, its focus and its scroll', async ({ page }) => {
+  guardNetwork(page);
+  await page.goto(gameUrl('?role=student&lang=en'));
+  await studentJoin(page, 'SEA3-T2-0123456789ABCDEF', 1, 'COMBAT');
+  await page.check('#plan-confirm');
+  await page.click('#student-start-auction');
+  await confirmDialog(page);
+  // The elements on the page now; afterwards, those of them that were replaced (no longer on the page).
+  const tag = () => page.evaluate(() => {
+    const els = [...document.querySelectorAll('.topbar .brand, #lang-toggle, #menu-button, #card-id, #main h1')];
+    (window as unknown as { seaTagged: Element[] }).seaTagged = els;
+    return els.length;
+  });
+  const replaced = () => page.evaluate(() => (window as unknown as { seaTagged: Element[] }).seaTagged
+    .filter(el => !el.isConnected).map(el => el.id || el.className || el.tagName));
+  expect(await tag()).toBe(5);
+  await page.fill('#card-id', 'CAP-A');
+  await page.click('#load-card');
+  expect(await replaced(), 'after loading a card').toEqual([]);
+  await page.fill('#paid', '400000');
+  await page.click('#record-win');
+  await expect(page.locator('td', { hasText: 'CAP-A' })).toHaveCount(1);
+  expect(await replaced(), 'after recording a purchase').toEqual([]);
+
+  // A scrolled table keeps its scroll, and a focused button its focus, through the next command.
+  const wrap = page.locator('.table-wrap').filter({ has: page.locator('td', { hasText: 'CAP-A' }) });
+  await page.evaluate(() => document.styleSheets[0]!.insertRule('.table-wrap table { min-width: 3000px; }', document.styleSheets[0]!.cssRules.length));
+  await expect(wrap).toHaveAttribute('tabindex', '0');
+  await wrap.evaluate(w => { w.scrollLeft = 200; });
+  await page.fill('#card-id', 'CAP-B');
+  await page.click('#load-card'); // not this lot's card: the view renders with a message
+  await expect(page.locator('.status-line')).toContainText('does not belong');
+  expect(await wrap.evaluate(w => w.scrollLeft), 'the table scrolled').toBe(200);
+  await page.locator('#lang-toggle').focus();
+  await page.keyboard.press('Enter');
+  await expect(page.locator('#lang-toggle'), 'the button pressed').toBeFocused();
+  expect(await replaced(), 'after a language change').toEqual([]);
+});
+
+// Codex on the morph (G3): a field that saves as you type kept the listeners of the render that built it, with that
+// render's value, so on the next lot a value equal to the last lot's was taken as unchanged and never saved.
+test('a kept field saves against the current value, not the one it was built with', async ({ page }) => {
+  guardNetwork(page);
+  await page.goto(gameUrl('?role=student&lang=en'));
+  await studentJoin(page, 'SEA3-T2-0123456789ABCDEF', 1, 'COMBAT');
+  await page.check('#plan-confirm');
+  await page.click('#student-start-auction');
+  await confirmDialog(page);
+  await page.locator('details:has(#scratch-wtp) > summary').click();
+  await page.locator('#scratch-wtp').pressSequentially('42');
+  await page.fill('#card-id', 'CAP-A');
+  await page.click('#load-card');
+  await page.fill('#paid', '400000');
+  await page.click('#record-win');
+  await expect(page.locator('#track-heading')).toHaveText('Round 1 · Lot 2 of 10');
+  await expect(page.locator('#scratch-wtp')).toHaveValue('');
+  await page.locator('#scratch-wtp').fill('42'); // one input event, as a paste
+  await page.reload();
+  await expect(page.locator('#track-heading')).toHaveText('Round 1 · Lot 2 of 10');
+  await expect(page.locator('#scratch-wtp'), 'lot 2 note saved').toHaveValue('42');
+});
+
+// Codex on the morph (G3): a kept field given back its saved value tidied (0123 saved as 123) lost its caret to the
+// end, so the next digit went in the wrong place; a select given a new chosen option kept the old one.
+test('a kept field keeps its caret when its saved value is tidied', async ({ page }) => {
+  guardNetwork(page);
+  await page.goto(gameUrl('?role=student&lang=en'));
+  await studentJoin(page, 'SEA3-T2-0123456789ABCDEF', 1, 'COMBAT');
+  const field = page.locator('#plan-wtp');
+  await field.fill('123');
+  await field.press('Home');
+  await page.keyboard.type('0');
+  await expect(field).toHaveValue('123');
+  expect(await field.evaluate((f: HTMLInputElement) => [f.selectionStart, f.selectionEnd])).toEqual([1, 1]);
+  await page.keyboard.type('4');
+  await expect(field).toHaveValue('1423');
+});
+
+test('morph keeps a select on the option the new page chose, when that option is new', async ({ page }) => {
+  const { outputFiles } = await build({ entryPoints: ['source/ui/dom.ts'], bundle: true, format: 'iife', globalName: 'seaDom', write: false });
+  await page.setContent('<div id="live"></div>');
+  await page.addScriptTag({ content: outputFiles[0]!.text });
+  expect(await page.evaluate(() => {
+    const { h, morph } = (window as unknown as { seaDom: typeof import('../../source/ui/dom.ts') }).seaDom;
+    const page = (chosen: string, ...values: string[]) => {
+      const next = document.createElement('div');
+      next.append(h('select', { id: 'pick' }, ...values.map(value => h('option', { value, text: value, selected: value === chosen }))));
+      return next;
+    };
+    const live = document.getElementById('live')!;
+    morph(live, page('A', 'A'));
+    const select = live.querySelector('select')!;
+    morph(live, page('B', 'A', 'B'));
+    return [live.querySelector('select') === select, select.value];
+  })).toEqual([true, 'B']);
 });
 
 /** Opens every closed panel the reader can see, nested ones as they appear; returns how many are open. */
@@ -46713,5 +46938,5 @@ Keys and the commands that make each kind again:
 
 | Path | Bytes | SHA-256 | Why |
 |---|---:|---|---|
-| `docs/MPES.md` | 189884 | `906769e38bae2bda91e6cec4117e3c19813828803552f2eedea74e6697eff249` | The specification, a clean-room document of its own (Omni 5.1.1 §333). |
+| `docs/MPES.md` | 191781 | `64ea5635c87995799886e3ef4cae19507047224f213adc398d5693e63f6642cf` | The specification, a clean-room document of its own (Omni 5.1.1 §333). |
 | `docs/CODEBASE.md` | | | This file. |

@@ -123,3 +123,9 @@ Each entry: what happened, the rule it produced, and the check that now enforces
 
 - **What happened:** tests timed out when other work loaded the PC; once, test scratch had piled up and slowed a test 16-fold.
 - **Rule:** never raise a timeout or budget to pass. Find the cause (here: scratch not cleaned up), fix it, add a check (scratch is removed after each run), and record the evidence of any one-off with the date.
+
+## 2026-10-21 · Change only what changed; keep handlers swappable
+
+- **What happened:** after two fixes, a 3D purchase still read 128 ms against a 100 ms budget on CI. A trace showed every command replacing the whole page, so the browser restyled and laid out all of it each time. Switching to changing only what changed exposed two hidden faults. A width set through the style object was copied as a `style` attribute, which a strict content policy refuses. A field kept across renders also kept the handler of the render that built it, with that render's value.
+- **Rule:** build the new page aside, then change the live one only where it differs (match by tag and id), so unchanged elements cost nothing and keep focus and scroll. Route every handler through one listener per event type that calls the element's current handler, and never let a handler hold a value from the render that built it. Copy styles through the style object, not as attributes.
+- **Check:** a browser test tags elements and asserts that none is replaced by a render, that focus and scroll survive, and that a kept field saves against the current value. Every browser test fails on any console error.

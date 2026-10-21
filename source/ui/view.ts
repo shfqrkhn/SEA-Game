@@ -6,7 +6,7 @@ import { makeBackup, parseBackup, MAX_BACKUP_BYTES, type BackupRole } from '../d
 import { DomainError } from '../domain/errors.ts';
 import { PHASES, type Phase } from '../domain/session.ts';
 import { showDialog } from './dialog.ts';
-import { RENDERED, h, nameDocument, replaceChildren, type Child } from './dom.ts';
+import { RENDERED, append, h, morph, nameDocument, replaceChildren, type Child } from './dom.ts';
 import { otherLanguage, translate, type Language, type StringKey } from './i18n.ts';
 import { showAbout } from './about.ts';
 import { themeFrom, toggleTheme, withTheme } from './theme.ts';
@@ -123,10 +123,12 @@ export class RoleView<S extends RoleState> {
       if (result.ok) { this.drafts.delete(id); current = value; this.render(); }
       else if (report) this.say(this.t(`error.${result.code}` as StringKey), 'bad');
     };
-    const input = h('input', { id, ...props, value: this.draft(id, current) });
-    input.addEventListener('input', () => { this.drafts.set(id, input.value); commit(input.value, false); });
-    input.addEventListener('change', () => { if (this.drafts.has(id)) commit(input.value, true); });
-    return input;
+    // Through `on`, so a render that keeps the field swaps in this render's `current`; the value is the live field's.
+    const field = (event: Event) => (event.currentTarget as HTMLInputElement).value;
+    return h('input', { id, ...props, value: this.draft(id, current), on: {
+      input: event => { this.drafts.set(id, field(event)); commit(field(event), false); },
+      change: event => { if (this.drafts.has(id)) commit(field(event), true); },
+    } });
   }
 
   /** Ask first; refuse if anything changed while the dialog was open (MPES §7.5). */
@@ -169,18 +171,25 @@ export class RoleView<S extends RoleState> {
       // A panel the reader opened stays open: a render rebuilds every panel closed, and typing in the tracker's notes
       // hid the field after its first character (G3). A render may open a panel; only the reader closes one.
       const opened = new Set([...panelKeys(this.#content)].filter(([panel]) => panel.open).map(([, key]) => key));
-      replaceChildren(this.#content, this.shell());
+      // The new page is built aside and the live one changed only where they differ (morph): the table roles and the
+      // wide tables' marks are put on the new page first, so a table that is unchanged is not changed at all.
+      const next = document.createElement('div'), before = [...this.#content.querySelectorAll<HTMLElement>('.table-wrap')];
+      append(next, [this.shell()]);
+      [...next.querySelectorAll<HTMLElement>('.table-wrap')].forEach((wrap, i) => {
+        labelCells(wrap);
+        for (const name of ['tabindex', 'role', 'aria-label']) { const value = before[i]?.getAttribute(name); if (value != null) wrap.setAttribute(name, value); }
+      });
+      morph(this.#content, next);
       if (opened.size) for (const [panel, key] of panelKeys(this.#content)) if (opened.has(key)) panel.open = true;
       document.dispatchEvent(new Event(RENDERED));
       this.#statusLine.className = `page status-line ${this.#status?.tone === 'bad' ? 'error' : this.#status?.tone === 'ok' ? 'ok' : ''}`;
       if (this.#statusLine.textContent !== (this.#status?.text ?? '')) this.#statusLine.textContent = this.#status?.text ?? '';
       // Tables wider than the screen become labelled, focusable regions so they can be scrolled by keyboard (WCAG 2.1.1).
-      // They are marked here, so the page is laid out with them (the browser lays out a rebuilt page in this task
+      // They are checked here, so the page is laid out with them (the browser lays out a changed page in this task
       // anyway), and again whenever one changes size (see #wide), so a table that widens later (an opened panel, a
       // resized window, text zoom) is marked too; reading them only here missed those (G3). Marking them only after
       // layout instead made every render lay the page out twice (instructor bids p95 63 to 93 ms locally, G3).
       const wraps = [...this.#content.querySelectorAll<HTMLElement>('.table-wrap')];
-      for (const wrap of wraps) labelCells(wrap);
       this.#markWide(wraps);
       this.#wide.disconnect();
       for (const wrap of wraps) for (const box of [wrap, wrap.querySelector('table')]) if (box) this.#wide.observe(box);
