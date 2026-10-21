@@ -193,7 +193,11 @@ export class RoleView<S extends RoleState> {
       this.#markWide(wraps);
       this.#wide.disconnect();
       for (const wrap of wraps) for (const box of [wrap, wrap.querySelector('table')]) if (box) this.#wide.observe(box);
-      if (focusId) {
+      // The control pressed may be gone (a recorded win's button): focus then goes to the page, not to nothing, so the
+      // keyboard carries on from the top of what changed and a screen reader reads it (WCAG 2.4.3).
+      if (active && active !== document.body && !active.isConnected && !(focusId && document.getElementById(focusId))) {
+        this.#content.querySelector<HTMLElement>('#main')?.focus({ preventScroll: true });
+      } else if (focusId) {
         const next = document.getElementById(focusId) as (HTMLElement & Partial<HTMLInputElement>) | null;
         if (next && next !== document.activeElement) {
           next.focus({ preventScroll: true });

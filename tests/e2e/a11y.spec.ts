@@ -5,13 +5,17 @@ import { expect, type Page } from '@playwright/test';
 import { expectAccessible, gameUrl, guardNetwork, test } from './helpers.ts';
 import { confirmDialog, instructorSetup, studentJoin } from './roles.ts';
 
-/** Tab until the element with `id` has focus (fails after 60 presses), proving it is reachable by keyboard. */
-async function tabTo(page: Page, id: string): Promise<void> {
+/**
+ * Tab until the element with `id` has focus (fails after 60 presses), proving it is reachable by keyboard; `back`
+ * uses Shift+Tab, as a player does for a control above. Forward from the page's last control, Firefox leaves the page
+ * for its own toolbar rather than wrapping, so a control above is reached going back.
+ */
+async function tabTo(page: Page, id: string, key: 'Tab' | 'Shift+Tab' = 'Tab'): Promise<void> {
   for (let i = 0; i < 60; i++) {
     if (await page.evaluate(target => document.activeElement?.id === target, id)) return;
-    await page.keyboard.press('Tab');
+    await page.keyboard.press(key);
   }
-  throw new Error(`#${id} not reachable with Tab`);
+  throw new Error(`#${id} not reachable with ${key}`);
 }
 
 async function focusVisible(page: Page): Promise<boolean> {
@@ -61,7 +65,10 @@ test('J6: student journey with the keyboard only', async ({ page }) => {
   await page.keyboard.press('Enter');
   await expect(page.locator('#track-heading')).toHaveText('Round 1 · Lot 2 of 10');
   await expect(page.locator('main')).toContainText('Spent: $300,000');
-  await tabTo(page, 'menu-button');
+  // The pressed button is gone with its lot: focus goes to the page, never to nothing (WCAG 2.4.3).
+  await expect(page.locator('#main'), 'focus after the recorded win').toBeFocused();
+  await tabTo(page, 'card-id');
+  await tabTo(page, 'menu-button', 'Shift+Tab');
   await page.keyboard.press('Enter');
   await expect(page.getByRole('dialog', { name: 'Menu' })).toBeVisible();
   await page.keyboard.press('Escape');

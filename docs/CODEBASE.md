@@ -27041,7 +27041,7 @@ Exportez une sauvegarde par **Menu → Exporter une sauvegarde** après la confi
 
 ### docs/HANDOVER.md
 
-Paths: `docs/HANDOVER.md`. SHA-256 `5ef2c556e053ee2496377115ec82ee60555a0d74e05f6546955429b069cfae87`, 14131 bytes.
+Paths: `docs/HANDOVER.md`. SHA-256 `c15a00402ffc84bc98b6e7b30d9b4668c8ddd7b9bb2233fc0a288e1af253631c`, 14312 bytes.
 
 ```markdown
 # Handover
@@ -27106,7 +27106,7 @@ Owner FIX 1 (stills and fit), FIX 2 (one click to close a round nobody can win i
 
 ## 5. Next action
 
-**Agent:** G3 on `g3/proxy-runtime` (PR #27): red runs 38609311138, 38921636256, 38931516133 and 38958721130 have their documented fixes. Red run 38976632856 (p95 110.7 ms) is fixed by caching unchanged layer bounds. Red run 39484500911 (p95 120.6 ms on `verify (22)`) is addressed in three ways: parts are uploaded to the graphics card before any purchase, a purchase is drawn inside its own click (`sea-rendered`), and wide tables are watched by a ResizeObserver, which also fixes a keyboard-access gap (`docs/verification/0.6.0.0.md`). Locally this PC's perf readings are currently noisy: HEAD and the fix fail the same budgets. CI decides; if the 3D update still misses on CI, keep the 100 ms budget and carry it as a named blocker with that evidence. Codex's review found one P2 (parts outside the view, and still stages, were not uploaded), fixed with a failing check first. Red run 39508660281 (p95 128.2 ms on `verify (24)`, now mostly paint after the draw): a render now changes only what changed (`morph` in `source/ui/dom.ts`), so unchanged elements cost no style or layout and keep focus, scroll and caret; handlers go through one listener per event type. Codex's three P2s on it (stale saving-field handlers, a select's new choice, the caret on a tidied value) are fixed with failing checks first, as is a CSP fault (inline styles are copied only through the style object). Get two consecutive green CI runs on one head; run the `npm run perf:ref` 12-KPI baseline in a quiet slot (MPES §14.1); finish the verification Checks; gallery and owner GO or FIX before merge. Then G4 (stills to 3:1 in every view and frame, the pale RECCE roof, the light-theme stage contrast).
+**Agent:** G3 on `g3/proxy-runtime` (PR #27): red runs 38609311138, 38921636256, 38931516133 and 38958721130 have their documented fixes. Red run 38976632856 (p95 110.7 ms) is fixed by caching unchanged layer bounds. Red run 39484500911 (p95 120.6 ms on `verify (22)`) is addressed in three ways: parts are uploaded to the graphics card before any purchase, a purchase is drawn inside its own click (`sea-rendered`), and wide tables are watched by a ResizeObserver, which also fixes a keyboard-access gap (`docs/verification/0.6.0.0.md`). Locally this PC's perf readings are currently noisy: HEAD and the fix fail the same budgets. CI decides; if the 3D update still misses on CI, keep the 100 ms budget and carry it as a named blocker with that evidence. Codex's review found one P2 (parts outside the view, and still stages, were not uploaded), fixed with a failing check first. Red run 39508660281 (p95 128.2 ms on `verify (24)`, now mostly paint after the draw): a render now changes only what changed (`morph` in `source/ui/dom.ts`), so unchanged elements cost no style or layout and keep focus, scroll and caret; handlers go through one listener per event type. Codex's three P2s on it (stale saving-field handlers, a select's new choice, the caret on a tidied value) are fixed with failing checks first, as is a CSP fault (inline styles are copied only through the style object). Firefox J6 also failed: the pressed button went away and focus was left mid-page. When the focused control is gone, focus now goes to the page (`#main`), with failing checks first. Get two consecutive green CI runs on one head; run the `npm run perf:ref` 12-KPI baseline in a quiet slot (MPES §14.1); finish the verification Checks; gallery and owner GO or FIX before merge. Then G4 (stills to 3:1 in every view and frame, the pale RECCE roof, the light-theme stage contrast).
 **Owner:** `docs/owner/art-review.md` (5 minutes, reply GO or FIX).
 
 ## 6. Rollback
@@ -27700,7 +27700,7 @@ A read-only Codex session (gpt-6.1-sol, medium) reviewed the diff (`.artifacts/c
 
 ### docs/verification/0.6.0.0.md
 
-Paths: `docs/verification/0.6.0.0.md`. SHA-256 `0efe353464ab7784396aa4b8c3caf835363e32e7c89f6f982afe4f6bea43e2a3`, 49291 bytes.
+Paths: `docs/verification/0.6.0.0.md`. SHA-256 `cb50e8515fc2290370f6d00e07a954fdac5a6ea28c4db4940f9b52a46669bdf4`, 50721 bytes.
 
 ```markdown
 # Verification record: 0.6.0.0 beta (G3 proxy and runtime) — in progress
@@ -27969,7 +27969,7 @@ Failing check first: `tests/e2e/render.spec.ts`, "a render keeps every unchanged
 
 Failing check for the Codex P2: `tests/e2e/render.spec.ts`, "a kept field saves against the current value, not the one it was built with". It types 42 into the lot 1 scratch note, records a win, pastes 42 into the lot 2 note (one input event) and reloads. On morph with the old `savingInput`, it failed on Chromium and Firefox (lot 2 note empty after reload); on this source it passes on Chromium, Firefox and Edge.
 
-The 13 tests that failed on the first morph build (the journey, slice, rehearsal, accessibility and showcase specs, light and heavy) were rerun after both fixes: 121 passed. This includes the Firefox keyboard journey, which had stopped at "#menu-button not reachable with Tab"; it was not traced further because it passes with both fixes.
+The 13 tests that failed on the first morph build (the journey, slice, rehearsal, accessibility and showcase specs, light and heavy) were rerun after both fixes: 121 passed. This includes the Firefox keyboard journey, which had stopped at "#menu-button not reachable with Tab"; that run passed it, but a later run failed it again; it is traced and fixed below.
 
 Codex's second review (GPT-6.1 Sol, medium, the whole morph diff) found two P2s. Both were accepted and fixed, each with a failing check first:
 
@@ -27977,6 +27977,10 @@ Codex's second review (GPT-6.1 Sol, medium, the whole morph diff) found two P2s.
 2. **A select lost its new choice.** The new value was read after the children were matched. A newly chosen option moved into the live select left the new one falling back to its first option, which was then copied over the choice. Value and checked state are now read before the children move. Check: `render.spec.ts`, "morph keeps a select on the option the new page chose, when that option is new". It bundles `dom.ts` into a blank page and calls `morph` directly. Before the fix it failed on Chromium and Firefox (A, expected B); after, it passes.
 
 `render.spec.ts` passes 21 of 21 on Chromium, Firefox and Edge; there are 272 unit tests, plus typecheck and lint.
+
+Local `npm run verify` on `9543772` failed one test: the Firefox keyboard journey (J6), "#menu-button not reachable with Tab", the same failure seen once before. Cause, from a probe that logged focus after each Tab: once a render kept the rest of the page, the pressed "Record win" button went away with its lot and left focus on nothing, mid-page. Tab then went on from there to the showcase's zoom button, the page's last control. From the last control, Firefox leaves the page for its own toolbar rather than wrapping (Chromium wraps), so the menu above was never reached. The old full rebuild had hidden this, because Tab restarted from the top. Either way, a screen reader heard nothing about the new lot.
+
+Fix: when a render removes the focused control and no control with its id remains, focus moves to the page (`#main`, the skip link's target) (WCAG 2.4.3). J6 now expects focus on the page after the recorded win, then tabs forward to the next card's field and back (Shift+Tab) to the menu, as a player would. A sibling sweep found the instructor's "Reveal" and "Open bidding" buttons, which also go away when pressed. `render.spec.ts`, "a pressed button that goes away leaves focus on the page, not on nothing", covers them. On `9543772` both checks failed on Chromium and Firefox (focus on nothing); with the fix the render and accessibility specs pass on Chromium, Firefox and Edge (31 tests).
 ```
 
 ### docs/verification/legibility.md
@@ -28254,7 +28258,7 @@ export default tseslint.config(
 
 ### library/LESSONS.md
 
-Paths: `library/LESSONS.md`. SHA-256 `5e1f5c23252241a1495ab2a517a7443daf9835c0d5ad8371802a10481a003c2e`, 20116 bytes.
+Paths: `library/LESSONS.md`. SHA-256 `9cd670430f492a94915be82c46ca61d21f079eb5c3f3a0f82d8a94ada262c071`, 20298 bytes.
 
 ```markdown
 # Lessons learned
@@ -28386,7 +28390,7 @@ Each entry: what happened, the rule it produced, and the check that now enforces
 ## 2026-10-21 · Change only what changed; keep handlers swappable
 
 - **What happened:** after two fixes, a 3D purchase still read 128 ms against a 100 ms budget on CI. A trace showed every command replacing the whole page, so the browser restyled and laid out all of it each time. Switching to changing only what changed exposed two hidden faults. A width set through the style object was copied as a `style` attribute, which a strict content policy refuses. A field kept across renders also kept the handler of the render that built it, with that render's value.
-- **Rule:** build the new page aside, then change the live one only where it differs (match by tag and id), so unchanged elements cost nothing and keep focus and scroll. Route every handler through one listener per event type that calls the element's current handler, and never let a handler hold a value from the render that built it. Copy styles through the style object, not as attributes.
+- **Rule:** build the new page aside, then change the live one only where it differs (match by tag and id), so unchanged elements cost nothing and keep focus and scroll. Route every handler through one listener per event type that calls the element's current handler, and never let a handler hold a value from the render that built it. Copy styles through the style object, not as attributes. When a pressed control goes away, move focus to the page, never leave it on nothing; test keyboard reach in Firefox, which leaves the page past its last control instead of wrapping.
 - **Check:** a browser test tags elements and asserts that none is replaced by a render, that focus and scroll survive, and that a kept field saves against the current value. Every browser test fails on any console error.
 ```
 
@@ -38998,7 +39002,7 @@ export function toggleTheme(): Theme {
 
 ### source/ui/view.ts
 
-Paths: `source/ui/view.ts`. SHA-256 `3833cca9980deebe2ba69c91516c06e19a77533965fd2e45af5c3d29a05687df`, 19885 bytes.
+Paths: `source/ui/view.ts`. SHA-256 `f838bed9f89c1896dda568fc902ca87c5864ce37128afc4b2882bc1dd21eda8d`, 20325 bytes.
 
 ```ts
 // Shared role view: shell (header, progress, menu, notices), rendering with focus preservation,
@@ -39196,7 +39200,11 @@ export class RoleView<S extends RoleState> {
       this.#markWide(wraps);
       this.#wide.disconnect();
       for (const wrap of wraps) for (const box of [wrap, wrap.querySelector('table')]) if (box) this.#wide.observe(box);
-      if (focusId) {
+      // The control pressed may be gone (a recorded win's button): focus then goes to the page, not to nothing, so the
+      // keyboard carries on from the top of what changed and a screen reader reads it (WCAG 2.4.3).
+      if (active && active !== document.body && !active.isConnected && !(focusId && document.getElementById(focusId))) {
+        this.#content.querySelector<HTMLElement>('#main')?.focus({ preventScroll: true });
+      } else if (focusId) {
         const next = document.getElementById(focusId) as (HTMLElement & Partial<HTMLInputElement>) | null;
         if (next && next !== document.activeElement) {
           next.focus({ preventScroll: true });
@@ -39367,7 +39375,7 @@ export class RoleView<S extends RoleState> {
 
 ### tests/e2e/a11y.spec.ts
 
-Paths: `tests/e2e/a11y.spec.ts`. SHA-256 `bfee91b0053311c8acfeb6bb0d75ee9890dcfa92b1c7867abaf6cc53a8656e61`, 5016 bytes.
+Paths: `tests/e2e/a11y.spec.ts`. SHA-256 `d45dd913691a8af2d7a8357adb2d0f5949cd8509523055f6f93a439736af1430`, 5499 bytes.
 
 ```ts
 // J6 + RQ-20/RQ-21 (MPES §12, §16.3): keyboard-only student journey and axe scans of every main view
@@ -39377,13 +39385,17 @@ import { expect, type Page } from '@playwright/test';
 import { expectAccessible, gameUrl, guardNetwork, test } from './helpers.ts';
 import { confirmDialog, instructorSetup, studentJoin } from './roles.ts';
 
-/** Tab until the element with `id` has focus (fails after 60 presses), proving it is reachable by keyboard. */
-async function tabTo(page: Page, id: string): Promise<void> {
+/**
+ * Tab until the element with `id` has focus (fails after 60 presses), proving it is reachable by keyboard; `back`
+ * uses Shift+Tab, as a player does for a control above. Forward from the page's last control, Firefox leaves the page
+ * for its own toolbar rather than wrapping, so a control above is reached going back.
+ */
+async function tabTo(page: Page, id: string, key: 'Tab' | 'Shift+Tab' = 'Tab'): Promise<void> {
   for (let i = 0; i < 60; i++) {
     if (await page.evaluate(target => document.activeElement?.id === target, id)) return;
-    await page.keyboard.press('Tab');
+    await page.keyboard.press(key);
   }
-  throw new Error(`#${id} not reachable with Tab`);
+  throw new Error(`#${id} not reachable with ${key}`);
 }
 
 async function focusVisible(page: Page): Promise<boolean> {
@@ -39433,7 +39445,10 @@ test('J6: student journey with the keyboard only', async ({ page }) => {
   await page.keyboard.press('Enter');
   await expect(page.locator('#track-heading')).toHaveText('Round 1 · Lot 2 of 10');
   await expect(page.locator('main')).toContainText('Spent: $300,000');
-  await tabTo(page, 'menu-button');
+  // The pressed button is gone with its lot: focus goes to the page, never to nothing (WCAG 2.4.3).
+  await expect(page.locator('#main'), 'focus after the recorded win').toBeFocused();
+  await tabTo(page, 'card-id');
+  await tabTo(page, 'menu-button', 'Shift+Tab');
   await page.keyboard.press('Enter');
   await expect(page.getByRole('dialog', { name: 'Menu' })).toBeVisible();
   await page.keyboard.press('Escape');
@@ -40929,7 +40944,7 @@ test('G-PILOT substitute: French classroom rehearsal, 10 teams, three student ta
 
 ### tests/e2e/render.spec.ts
 
-Paths: `tests/e2e/render.spec.ts`. SHA-256 `ebc7e6feec5e1a3311abbb9a8632015636421337330deb650fd45b86c7e027f8`, 12005 bytes.
+Paths: `tests/e2e/render.spec.ts`. SHA-256 `ba072ac4b19c8d75bbf5405a3398069a996d4cf181c089fb91caa89392e24492`, 12915 bytes.
 
 ```ts
 // MPES §14 command response: a command, a saved field or a status message rebuilds the view once, never twice (G3: each
@@ -41074,6 +41089,22 @@ test('morph keeps a select on the option the new page chose, when that option is
     morph(live, page('B', 'A', 'B'));
     return [live.querySelector('select') === select, select.value];
   })).toEqual([true, 'B']);
+});
+
+// G3: once a render kept the rest of the page, a pressed button that went away with its step left focus on nothing,
+// mid-page, and the keyboard carried on from there (Firefox then left the page at its last control). Focus goes to
+// the page instead, on every page whose buttons go away when pressed (the
+// student's recorded win: J6 in a11y.spec.ts).
+test('a pressed button that goes away leaves focus on the page, not on nothing', async ({ page }) => {
+  guardNetwork(page);
+  await page.goto(gameUrl('?role=instructor&lang=en'));
+  await instructorSetup(page, { teams: 2, reveal: 'MANUAL', timed: false, missions: ['TROOP', 'MINE'] });
+  for (const id of ['reveal', 'open-bidding']) {
+    await page.locator(`#${id}`).focus();
+    await page.keyboard.press('Enter');
+    await expect(page.locator(`#${id}`)).toHaveCount(0);
+    await expect(page.locator('#main'), `after ${id}`).toBeFocused();
+  }
 });
 
 /** Opens every closed panel the reader can see, nested ones as they appear; returns how many are open. */
@@ -46938,5 +46969,5 @@ Keys and the commands that make each kind again:
 
 | Path | Bytes | SHA-256 | Why |
 |---|---:|---|---|
-| `docs/MPES.md` | 191781 | `64ea5635c87995799886e3ef4cae19507047224f213adc398d5693e63f6642cf` | The specification, a clean-room document of its own (Omni 5.1.1 §333). |
+| `docs/MPES.md` | 192154 | `3f0a5ab9259a16d36e90d0ac8a83d514a631f8879d98f3e578d5e95340125c4c` | The specification, a clean-room document of its own (Omni 5.1.1 §333). |
 | `docs/CODEBASE.md` | | | This file. |

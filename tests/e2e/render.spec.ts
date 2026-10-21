@@ -142,6 +142,22 @@ test('morph keeps a select on the option the new page chose, when that option is
   })).toEqual([true, 'B']);
 });
 
+// G3: once a render kept the rest of the page, a pressed button that went away with its step left focus on nothing,
+// mid-page, and the keyboard carried on from there (Firefox then left the page at its last control). Focus goes to
+// the page instead, on every page whose buttons go away when pressed (the
+// student's recorded win: J6 in a11y.spec.ts).
+test('a pressed button that goes away leaves focus on the page, not on nothing', async ({ page }) => {
+  guardNetwork(page);
+  await page.goto(gameUrl('?role=instructor&lang=en'));
+  await instructorSetup(page, { teams: 2, reveal: 'MANUAL', timed: false, missions: ['TROOP', 'MINE'] });
+  for (const id of ['reveal', 'open-bidding']) {
+    await page.locator(`#${id}`).focus();
+    await page.keyboard.press('Enter');
+    await expect(page.locator(`#${id}`)).toHaveCount(0);
+    await expect(page.locator('#main'), `after ${id}`).toBeFocused();
+  }
+});
+
 /** Opens every closed panel the reader can see, nested ones as they appear; returns how many are open. */
 async function openAll(page: Page): Promise<number> {
   const closed = page.locator('details:not([open]) > summary').filter({ visible: true });
