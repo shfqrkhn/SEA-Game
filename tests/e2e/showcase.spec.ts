@@ -15,21 +15,22 @@ async function record(page: import('@playwright/test').Page, round: number, lot:
   await page.click('#record-win');
 }
 
-/** Lowest still contrast of the brighter vehicle pixels allowed until G4 (see the per-mission tests). */
-const STILLS_CONTRAST_FLOOR = 2.1;
 /**
- * Lowest whole-vehicle contrast (the vehicle's silhouette, see vehicleContrast) allowed until G4 lifts the stills to 3
- * (MPES §10.5). Measured on 2026-10-14 on Chromium, Firefox and Edge: 3D 3.16 to 3.72, stills 1.56 to 1.66. These floors
- * may only rise: the 3D floor already holds the whole vehicle to WCAG 3:1.
+ * Contrast floors until G4 lifts every still to 3 (MPES §10.5). Each is the least value measured on Chromium, Firefox
+ * and Edge on 2026-10-22, unrounded and cut to three decimals (docs/verification/0.6.0.0.md). They may only rise.
  */
-const WHOLE_CONTRAST_FLOOR = { live: 3, stills: 1.5 };
+/** The brighter vehicle pixels in the front and rear stills (see the per-mission tests). */
+const STILLS_CONTRAST_FLOOR = 2.106;
 /**
- * Lowest contrast allowed in the turntable stills until G4: the frames that show the side turned from the render's key
- * light are darker than the front and rear views (least 1.60 bright, 1.32 whole on all three engines on 2026-10-16,
- * docs/verification/0.6.0.0.md; the floor is that, rounded down). An open
- * G4 item lifts every frame to 3 (MPES §10.5). This floor may only rise.
+ * The whole vehicle (its silhouette, see vehicleContrast). The 3D floor already holds it to WCAG 3:1 (measured
+ * 2026-10-14: 3D 3.16 to 3.72); the stills floor is their front and rear views.
  */
-const TURNTABLE_FLOOR = { bright: 1.55, whole: 1.3 };
+const WHOLE_CONTRAST_FLOOR = { live: 3, stills: 1.558 };
+/**
+ * The turntable stills: the frames that show the side turned from the render's key light are darker than the front and
+ * rear views (displayed least 1.60 bright and 1.32 whole on 2026-10-16 and 2026-10-22).
+ */
+const TURNTABLE_FLOOR = { bright: 1.596, whole: 1.317 };
 
 /**
  * The vehicle's luminance contrast with its stage (WCAG 1.4.11 asks 3:1 of a graphic that carries meaning). A dim

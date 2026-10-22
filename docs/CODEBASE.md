@@ -27041,7 +27041,7 @@ Exportez une sauvegarde par **Menu → Exporter une sauvegarde** après la confi
 
 ### docs/HANDOVER.md
 
-Paths: `docs/HANDOVER.md`. SHA-256 `ee4fcd3418bd95ea3878a55c42bd4851a051ccd753117d612c1c3af5090dd00d`, 15508 bytes.
+Paths: `docs/HANDOVER.md`. SHA-256 `b3327c07ca71f16e576b05d14b38ef6f6bfec225656ba50cb2815d0a2d49532d`, 16014 bytes.
 
 ```markdown
 # Handover
@@ -27106,7 +27106,7 @@ Owner FIX 1 (stills and fit), FIX 2 (one click to close a round nobody can win i
 
 ## 5. Next action
 
-**Agent:** G3 on `g3/proxy-runtime` (PR #27): red runs 38609311138, 38921636256, 38931516133 and 38958721130 have their documented fixes. Red run 38976632856 (p95 110.7 ms) is fixed by caching unchanged layer bounds. Red run 39484500911 (p95 120.6 ms on `verify (22)`) is addressed in three ways: parts are uploaded to the graphics card before any purchase, a purchase is drawn inside its own click (`sea-rendered`), and wide tables are watched by a ResizeObserver, which also fixes a keyboard-access gap (`docs/verification/0.6.0.0.md`). Locally this PC's perf readings are currently noisy: HEAD and the fix fail the same budgets. CI decides; if the 3D update still misses on CI, keep the 100 ms budget and carry it as a named blocker with that evidence. Codex's review found one P2 (parts outside the view, and still stages, were not uploaded), fixed with a failing check first. Red run 39508660281 (p95 128.2 ms on `verify (24)`, now mostly paint after the draw): a render now changes only what changed (`morph` in `source/ui/dom.ts`), so unchanged elements cost no style or layout and keep focus, scroll and caret; handlers go through one listener per event type. Codex's three P2s on it (stale saving-field handlers, a select's new choice, the caret on a tidied value) are fixed with failing checks first, as is a CSP fault (inline styles are copied only through the style object). Firefox J6 also failed: the pressed button went away and focus was left mid-page. When the focused control is gone, focus now goes to the page (`#main`), with failing checks first. Red run 39605918008 (p95 118 and 124 ms, about 70 in paint): the perf check now takes and uploads a browser-wide trace when the 3D update budget is breached (`SEA_TRACE=1` forces it, `SEA_TRACE_WHY=1` adds invalidation reasons). That trace found two causes: the HUD grid was a background fixed to the page, so it was repainted whenever the page grew, and the live showcase was appended into the page built aside, which took it and its canvas off the page on every purchase. The grid is now its own fixed layer, and live elements are held by stand-ins (`keep` in `dom.ts`), each change with a failing check first. Red run 39785345173 (p95 136.9 and 117 ms): the CI trace showed that the runner's software compositor reads back the software-drawn canvas, waiting about 36 ms for a draw that began only about 40 ms into the purchase, after the page had changed. A purchase is now drawn as soon as the showcase marks its stage, before the page changes (`now` in `source/showcase/model.ts`), with a failing check first (`beforePage` in `showcase.spec.ts`). If CI still breaches, keep the 100 ms budget and offer GO with that named blocker: the path exists only in a GPU-less browser that fakes WebGL. Get two consecutive green CI runs on one head; run the `npm run perf:ref` 12-KPI baseline in a quiet slot (MPES §14.1); finish the verification Checks; gallery and owner GO or FIX before merge. Then G4 (stills to 3:1 in every view and frame, the pale RECCE roof, the light-theme stage contrast).
+**Agent:** G3 on `g3/proxy-runtime` (PR #27): red runs 38609311138, 38921636256, 38931516133 and 38958721130 have their documented fixes. Red run 38976632856 (p95 110.7 ms) is fixed by caching unchanged layer bounds. Red run 39484500911 (p95 120.6 ms on `verify (22)`) is addressed in three ways: parts are uploaded to the graphics card before any purchase, a purchase is drawn inside its own click (`sea-rendered`), and wide tables are watched by a ResizeObserver, which also fixes a keyboard-access gap (`docs/verification/0.6.0.0.md`). Locally this PC's perf readings are currently noisy: HEAD and the fix fail the same budgets. CI decides; if the 3D update still misses on CI, keep the 100 ms budget and carry it as a named blocker with that evidence. Codex's review found one P2 (parts outside the view, and still stages, were not uploaded), fixed with a failing check first. Red run 39508660281 (p95 128.2 ms on `verify (24)`, now mostly paint after the draw): a render now changes only what changed (`morph` in `source/ui/dom.ts`), so unchanged elements cost no style or layout and keep focus, scroll and caret; handlers go through one listener per event type. Codex's three P2s on it (stale saving-field handlers, a select's new choice, the caret on a tidied value) are fixed with failing checks first, as is a CSP fault (inline styles are copied only through the style object). Firefox J6 also failed: the pressed button went away and focus was left mid-page. When the focused control is gone, focus now goes to the page (`#main`), with failing checks first. Red run 39605918008 (p95 118 and 124 ms, about 70 in paint): the perf check now takes and uploads a browser-wide trace when the 3D update budget is breached (`SEA_TRACE=1` forces it, `SEA_TRACE_WHY=1` adds invalidation reasons). That trace found two causes: the HUD grid was a background fixed to the page, so it was repainted whenever the page grew, and the live showcase was appended into the page built aside, which took it and its canvas off the page on every purchase. The grid is now its own fixed layer, and live elements are held by stand-ins (`keep` in `dom.ts`), each change with a failing check first. Red run 39785345173 (p95 136.9 and 117 ms): the CI trace showed that the runner's software compositor reads back the software-drawn canvas, waiting about 36 ms for a draw that began only about 40 ms into the purchase, after the page had changed. A purchase is now drawn as soon as the showcase marks its stage, before the page changes (`now` in `source/showcase/model.ts`), with a failing check first (`beforePage` in `showcase.spec.ts`). Red run 39798712823 (p95 122.4 ms): the fix held (graphics work starts at 14 ms, not about 41), and what remains is the software renderer itself, about 69 ms of software GL plus the compositor readback. The 100 ms budget stays and the check stays red; this is named blocker G3-B1 (`docs/verification/0.6.0.0.md`), owned by G4. `npm run perf:ref` ran (12-KPI before/after table in the verification file; three named open items carried to G4 and G5), and the stills contrast floors were raised to the measured minimum. PR #28 (sharp 0.35.5 security bump, worktree `.artifacts/worktrees/security-sharp-20261020`) is open separately; fold it into G4 or merge it on its own green CI. Next: gallery and owner GO or FIX, offering "GO = merge with blocker G3-B1"; on GO, merge commit, tag v0.6.0.0, check the Pages SHA-256, make a fresh instructor zip. Then G4 (stills to 3:1 in every view and frame, the pale RECCE roof, the light-theme stage contrast).
 **Owner:** `docs/owner/art-review.md` (5 minutes, reply GO or FIX).
 
 ## 6. Rollback
@@ -27700,7 +27700,7 @@ A read-only Codex session (gpt-6.1-sol, medium) reviewed the diff (`.artifacts/c
 
 ### docs/verification/0.6.0.0.md
 
-Paths: `docs/verification/0.6.0.0.md`. SHA-256 `7821b7a5eb43166d97ea47c268dd2bda554e50f32defc31de5d89b58246a3433`, 60003 bytes.
+Paths: `docs/verification/0.6.0.0.md`. SHA-256 `5cbd89fb7fec9aa0f92b5678dddb50fc6534a570dc5450c68a6922acaa4480a3`, 67102 bytes.
 
 ```markdown
 # Verification record: 0.6.0.0 beta (G3 proxy and runtime) — in progress
@@ -28042,6 +28042,96 @@ Review of this change. Codex (gpt-6.1-sol) was at its usage limit (until 13:35),
 - **Same end of measurement.** `data-drawn` is set by the draw as before, so the budget's end point is unchanged.
 
 Regression after the change: the showcase, render, a11y, journey and visual specs on Chromium, Firefox and Edge, light and heavy, gave 198 passed (48 skipped by project). Unit tests: 272 passed.
+
+## Red run 39798712823 (head 2ac1d39): 3D update p95 122.4 ms. Named blocker
+
+`verify (22)` failed only the 3D update budget: p95 122.4 ms, max 122.9, against the unchanged 100 ms limit. Phase p95s: 21.6 ms handling (was 57.5), 0 ms waiting, 10.8 ms drawing, 91 ms from draw to paint. Every other test passed, and the stills update p95 was 80.2 ms.
+
+The CI breach trace (`playwright-windows-22`, medians over 30 purchases, ms after the press) shows the fix held:
+
+| Phase | e4e2e64 | 2ac1d39 |
+|---|---|---|
+| Graphics work starts | about 41 | 14.0 |
+| First layout | 26–31 | 32.2 |
+| `sea-rendered` | 38–49 | 41.9 |
+| Software GL work on the draw | about 60 | 69.2 |
+| Compositor readback wait | 68 → 105 | 55.6 → 95.5 |
+| Frame shown (first swap) | 110–114 | 99.5 (p90 116.4) |
+
+The draw now starts before the page changes, and the handling work fell from 57.5 to 21.6 ms. What remains is the software renderer's own cost: about 69 ms of software GL for one draw at the cheapest tier (`modelTier` 3: half resolution, no multisampling, baked shadow), then the software compositor reading the canvas back. Nothing in the page's own work is left on the path.
+
+**Decision (goal rule: one bounded fix, then a named blocker).** The 100 ms budget stays. The CI check stays red on this one metric and is not skipped, muted or loosened.
+
+**Named blocker G3-B1:** on CI's GPU-less runners, a purchase in the 3D showcase reaches the screen in about 122 ms (p95). The cause is software WebGL (SwiftShader) plus a software compositor that reads every canvas frame back.
+
+- No player meets this path: a browser on a software renderer is given the stills (`a software renderer gets the stills`, passing on Chromium, Firefox and Edge).
+- A graphics card composites without a readback. On the UHD 770 reference proxy (§14.1, 4x throttle), the same update is 81.5 ms p95, within budget.
+- The way out is owned by G4 (assets and the 3D update budget): a cheaper draw or measuring the 3D budget on a GPU runner. Either needs evidence before the check changes.
+
+The owner is offered "GO = merge with blocker".
+
+## Reference proxy: before and after (MPES §14.1)
+
+`npm run perf:ref` on 2ac1d39, 2026-10-22 10:47, on a quiet PC: CI was running remotely, nothing heavy was running locally, and Codex was idle. It completed six runs: Chromium 153 and Edge 155, each on three screen profiles, on the Intel UHD 770 through ANGLE Direct3D 11, with 4x CPU throttling. State BASELINE, report `.artifacts/perf-ref/20261022T104721/report.md`. "Before" is `.artifacts/perf-ref/head-8ec383d`: the 0.5.2.0 release commit G3 branched from, also a complete BASELINE. Its idle readings are void, because they measured the throttle (see "perf:ref idle windows measured the throttle, not the page"). The `base-v0.5.2.0` attempt is INCOMPLETE (its first 3D draw was not shown within 10 s) and is not used. Each value is the worst over every run.
+
+| KPI (§1.4) | Before (0.5.2.0) | After (2ac1d39) | Detail |
+|---|---|---|---|
+| Teaching effectiveness | NOT_RUN | NOT_RUN | Owner rubric and pre/post check (BLOCKED-owner; G5) |
+| Classroom reliability | NOT_RUN | NOT_RUN | Fault tests, e2e (G5); 0 page errors on the proxy |
+| Instructor workload | NOT_RUN | NOT_RUN | Click and key counts (G5); owner dry run |
+| Learnability | NOT_RUN | NOT_RUN | Scripted novice e2e (G5); owner dry run |
+| Responsive interface | FAIL | FAIL | INP 5624 → 800 ms (200); longest task 3520 → 588 ms (200); LCP 1648 → 828 ms (2500); CLS 0 → 0.008 (0.1) |
+| Browser performance | FAIL | FAIL | 15 metrics now pass that failed or were void before; 5 still over budget (below) |
+| Visual realism | NOT_RUN | NOT_RUN | Owner side-by-side (G4) |
+| Runs in any classroom | PASS | PASS | 0 page and console errors |
+| Accessibility and language | NOT_RUN | NOT_RUN | axe and manual passes (G6) |
+| Privacy and security | PASS | PASS | 0 network requests besides the file |
+| Maintainability after handoff | NOT_RUN | NOT_RUN | `npm run check`, two identical builds (passes in `npm run verify`) |
+| Longevity and zero cost | NOT_RUN | NOT_RUN | Dependency and API review (G6) |
+
+Browser performance metrics, before → after (budget):
+
+- **Command response:** p95 170.3 → 33.4 ms (100), worst 388.1 → 51.3 ms.
+- **Start-up:**
+  - Chooser interactive 1060 → 730 ms (2000).
+  - Instructor with the largest saved state 1676 → 829 ms (3000).
+- **Stills:**
+  - Update p95 145.2 → 48.5 ms (100).
+  - Angle change 171 → 32 ms (50).
+  - Turntable step 196 → 33 ms (50).
+- **3D showcase:**
+  - Model ready 7491.5 → 1005.6 ms (3000).
+  - Update p95 206.1 → 81.5 ms (100).
+  - Draw main-thread time p95 25.4 → 5.4 ms (33); GPU time of a draw 1.7 → 1.6 ms (16).
+  - Draw gap p95 126 → 50.4 ms.
+  - Settled tier 1 → 0 (full resolution).
+- **Memory and size:**
+  - Memory growth 0 → 0 MB (5).
+  - HTML 21.7 MB (50).
+- **Idle CPU:** chooser 0.6 % and instructor 0.3 % (3), both now measured without the throttle.
+
+Still over budget on the proxy. These are named open items, carried forward, never a lowered budget:
+
+1. **Interaction to next paint, 800 ms, and the longest task, 588 ms (200 each).** Both occur only on the 1366×768 profile, which runs first after the browser starts and also holds the idle windows. The other profiles read 248–408 ms and 233–383 ms. The command p95 is 33 ms, so the worst interaction is a one-off (a first click while the model decodes), not the auction. G4 traces it, and moves or splits the work it finds (the 3D update work is in G4's scope).
+2. **Renderer and GPU process memory with the showcase:**
+   - 3D 570.2 MB, against 400 (§10.3) and the 300 proxy target (§14);
+   - stills 478.8 MB, against 400.
+
+   The page's own heap is 111 and 15 MB. The rest is Chromium's process overhead plus textures. G4 builds the assets and owns the texture budget.
+3. **Idle CPU with the 3D showcase turning: 16.9 % of a core, main-thread share 8.2 % (3).** The tracker's showcase turns by design (owner direction: an auto-rotating showcase), so the page is never idle. G5 (projector, workload) brings it within the 3 % budget, for example by resting the turn after a quiet period; the budget stays.
+
+## Contrast floors raised to the measured minimum
+
+The stills contrast tests (`tests/e2e/showcase.spec.ts`, the `*-heavy` projects) were run on 2ac1d39 on 2026-10-22 on Chromium, Firefox and Edge. The floors now sit at the least value measured, unrounded and cut to three decimals. The annotations round to two decimals, and floors set at those rounded values failed 23 tests, because the unrounded values were a little lower. The floors may only rise; G4 lifts every still to 3:1.
+
+| Floor | Least measured (unrounded) | Old → new |
+|---|---|---|
+| Front and rear stills, brighter pixels | 2.1069 | 2.1 → 2.106 |
+| Front and rear stills, whole vehicle | 1.5584 | 1.5 → 1.558 |
+| Turntable stills, brighter pixels | 1.5960 | 1.55 → 1.596 |
+| Turntable stills, whole vehicle | 1.3171 | 1.3 → 1.317 |
+
+Rerun with the new floors: 54 passed on chromium-heavy, firefox-heavy and msedge-heavy.
 ```
 
 ### docs/verification/legibility.md
@@ -41487,7 +41577,7 @@ export async function studentRecord(page: Page, cardId: string, paidDollars: num
 
 ### tests/e2e/showcase.spec.ts
 
-Paths: `tests/e2e/showcase.spec.ts`. SHA-256 `9345da58b16d776feafad0d77a795c89d5e4f2c75ce3f560dcdeaf77f4e8bd67`, 45529 bytes.
+Paths: `tests/e2e/showcase.spec.ts`. SHA-256 `477b4c0a6285bc2cbf8d2123ddae4abd15f945729fe6cb7ef216323ff82e6146`, 45462 bytes.
 
 ```ts
 // War-room HUD and vehicle showcase (MPES §7.1, §10, §11): the default look of every view. The live lot shows the
@@ -41507,21 +41597,22 @@ async function record(page: import('@playwright/test').Page, round: number, lot:
   await page.click('#record-win');
 }
 
-/** Lowest still contrast of the brighter vehicle pixels allowed until G4 (see the per-mission tests). */
-const STILLS_CONTRAST_FLOOR = 2.1;
 /**
- * Lowest whole-vehicle contrast (the vehicle's silhouette, see vehicleContrast) allowed until G4 lifts the stills to 3
- * (MPES §10.5). Measured on 2026-10-14 on Chromium, Firefox and Edge: 3D 3.16 to 3.72, stills 1.56 to 1.66. These floors
- * may only rise: the 3D floor already holds the whole vehicle to WCAG 3:1.
+ * Contrast floors until G4 lifts every still to 3 (MPES §10.5). Each is the least value measured on Chromium, Firefox
+ * and Edge on 2026-10-22, unrounded and cut to three decimals (docs/verification/0.6.0.0.md). They may only rise.
  */
-const WHOLE_CONTRAST_FLOOR = { live: 3, stills: 1.5 };
+/** The brighter vehicle pixels in the front and rear stills (see the per-mission tests). */
+const STILLS_CONTRAST_FLOOR = 2.106;
 /**
- * Lowest contrast allowed in the turntable stills until G4: the frames that show the side turned from the render's key
- * light are darker than the front and rear views (least 1.60 bright, 1.32 whole on all three engines on 2026-10-16,
- * docs/verification/0.6.0.0.md; the floor is that, rounded down). An open
- * G4 item lifts every frame to 3 (MPES §10.5). This floor may only rise.
+ * The whole vehicle (its silhouette, see vehicleContrast). The 3D floor already holds it to WCAG 3:1 (measured
+ * 2026-10-14: 3D 3.16 to 3.72); the stills floor is their front and rear views.
  */
-const TURNTABLE_FLOOR = { bright: 1.55, whole: 1.3 };
+const WHOLE_CONTRAST_FLOOR = { live: 3, stills: 1.558 };
+/**
+ * The turntable stills: the frames that show the side turned from the render's key light are darker than the front and
+ * rear views (displayed least 1.60 bright and 1.32 whole on 2026-10-16 and 2026-10-22).
+ */
+const TURNTABLE_FLOOR = { bright: 1.596, whole: 1.317 };
 
 /**
  * The vehicle's luminance contrast with its stage (WCAG 1.4.11 asks 3:1 of a graphic that carries meaning). A dim
