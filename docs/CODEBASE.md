@@ -28421,7 +28421,7 @@ export default tseslint.config(
 
 ### library/LESSONS.md
 
-Paths: `library/LESSONS.md`. SHA-256 `ba066368cb92b6f31eb7f630b80c2e713735e2bee40cd87bff874aee36d85aa2`, 22557 bytes.
+Paths: `library/LESSONS.md`. SHA-256 `ddfec622e386c10a90dc05211dfa93a281d6c4156bc255a106eba073d0bcd554`, 23136 bytes.
 
 ```markdown
 # Lessons learned
@@ -28567,6 +28567,12 @@ Each entry: what happened, the rule it produced, and the check that now enforces
 - **What happened:** with layout and paint cut, a 3D purchase still read about 120–137 ms on CI. The CI trace showed the runner, which has no graphics card, reading back each new frame of the canvas and waiting about 36 ms for the software draw. That draw only began about 40 ms into the purchase, after the page had been changed and laid out.
 - **Rule:** when one step must wait on another unit (a GPU, a worker), send that work as early as its inputs are known, before the cheap main-thread work that does not depend on it. Measure the order in a trace (start of the GPU work against the first layout), not just the total.
 - **Check:** a browser test records whether the purchase's draw came before the page's render event, and fails if it did not.
+
+## 2026-10-22 · A push that did not wait for its gate
+
+- **What happened:** a one-line shell chain read the gate's log and then pushed; the log read succeeded, so the push went out although the gate had exited 1 (one perf test, on a busy PC).
+- **Rule:** make the push depend on the gate's own exit code (`npm run verify && git push`), never on a later command in the chain; read the result before anything leaves the machine.
+- **Check (as built in SEA Game):** the agent loop runs `verify` and `push` as one `&&` chain; a slip is recorded in the version's verification file.
 ```
 
 ### library/README.md
