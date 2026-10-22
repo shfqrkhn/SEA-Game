@@ -27041,16 +27041,16 @@ Exportez une sauvegarde par **Menu → Exporter une sauvegarde** après la confi
 
 ### docs/HANDOVER.md
 
-Paths: `docs/HANDOVER.md`. SHA-256 `b3327c07ca71f16e576b05d14b38ef6f6bfec225656ba50cb2815d0a2d49532d`, 16014 bytes.
+Paths: `docs/HANDOVER.md`. SHA-256 `2e03944128e6f69c9285623acff960eb38c42b0a92f945628e6ee89b84cea8be`, 13471 bytes.
 
 ```markdown
 # Handover
 
-Updated 2026-10-22 (America/Toronto). Specification: [MPES](MPES.md) 4.5.5. Evidence: [verification/0.6.0.0.md](verification/0.6.0.0.md) (in progress), [verification/0.5.2.0.md](verification/0.5.2.0.md), [verification/0.5.1.0.md](verification/0.5.1.0.md), [verification/0.5.0.0.md](verification/0.5.0.0.md), [verification/spike-visual.md](verification/spike-visual.md).
+Updated 2026-10-22 (America/Toronto). Specification: [MPES](MPES.md) 4.5.5. Evidence: [verification/0.6.0.0.md](verification/0.6.0.0.md), [verification/0.5.2.0.md](verification/0.5.2.0.md), [verification/0.5.1.0.md](verification/0.5.1.0.md), [verification/0.5.0.0.md](verification/0.5.0.0.md), [verification/spike-visual.md](verification/spike-visual.md).
 
 ## 1. Version and milestone
 
-Version 0.5.2.0 beta (four-part MAJOR.MINOR.PATCH.BUILD, MPES §19.2; 1.0.0.0 only once out of beta: MPES §19.2 exit criteria, including every owner gate). M0–M4, V1, V2 (goal G1, tag `v0.5.0.0`) and G2 (owner fixes and the docs regime, tag `v0.5.1.0`, owner GO 2026-10-12) are complete. 0.5.2.0 (tag `v0.5.2.0` on `c2932eb`, owner GO 2026-10-13) is owner FIX 4 on G2: showcase zoom, framing of the full kit at every turn and height, sign controls, and phone tables as labelled cards (`docs/verification/0.5.2.0.md`). G3 (0.6.0.0, branch `g3/proxy-runtime`, draft PR #27) is in progress. The rollback is tag `v4.1.0-dev.1`.
+Version 0.6.0.0 beta (four-part MAJOR.MINOR.PATCH.BUILD, MPES §19.2; 1.0.0.0 only once out of beta: MPES §19.2 exit criteria, including every owner gate). M0–M4, V1, V2 (goal G1, tag `v0.5.0.0`) and G2 (owner fixes and the docs regime, tag `v0.5.1.0`, owner GO 2026-10-12) are complete. 0.5.2.0 (tag `v0.5.2.0` on `c2932eb`, owner GO 2026-10-13) is owner FIX 4 on G2: showcase zoom, framing of the full kit at every turn and height, sign controls, and phone tables as labelled cards (`docs/verification/0.5.2.0.md`). G3 (0.6.0.0, tag `v0.6.0.0`, owner GO 2026-10-22) is the proxy and runtime goal: the stills, command and 3D update budgets on the reference proxy, with named blocker G3-B1 (`docs/verification/0.6.0.0.md`). The rollback is tag `v4.1.0-dev.1`.
 
 **Plan to beta exit (MPES §17), one PR and one tag per goal:**
 
@@ -27106,7 +27106,7 @@ Owner FIX 1 (stills and fit), FIX 2 (one click to close a round nobody can win i
 
 ## 5. Next action
 
-**Agent:** G3 on `g3/proxy-runtime` (PR #27): red runs 38609311138, 38921636256, 38931516133 and 38958721130 have their documented fixes. Red run 38976632856 (p95 110.7 ms) is fixed by caching unchanged layer bounds. Red run 39484500911 (p95 120.6 ms on `verify (22)`) is addressed in three ways: parts are uploaded to the graphics card before any purchase, a purchase is drawn inside its own click (`sea-rendered`), and wide tables are watched by a ResizeObserver, which also fixes a keyboard-access gap (`docs/verification/0.6.0.0.md`). Locally this PC's perf readings are currently noisy: HEAD and the fix fail the same budgets. CI decides; if the 3D update still misses on CI, keep the 100 ms budget and carry it as a named blocker with that evidence. Codex's review found one P2 (parts outside the view, and still stages, were not uploaded), fixed with a failing check first. Red run 39508660281 (p95 128.2 ms on `verify (24)`, now mostly paint after the draw): a render now changes only what changed (`morph` in `source/ui/dom.ts`), so unchanged elements cost no style or layout and keep focus, scroll and caret; handlers go through one listener per event type. Codex's three P2s on it (stale saving-field handlers, a select's new choice, the caret on a tidied value) are fixed with failing checks first, as is a CSP fault (inline styles are copied only through the style object). Firefox J6 also failed: the pressed button went away and focus was left mid-page. When the focused control is gone, focus now goes to the page (`#main`), with failing checks first. Red run 39605918008 (p95 118 and 124 ms, about 70 in paint): the perf check now takes and uploads a browser-wide trace when the 3D update budget is breached (`SEA_TRACE=1` forces it, `SEA_TRACE_WHY=1` adds invalidation reasons). That trace found two causes: the HUD grid was a background fixed to the page, so it was repainted whenever the page grew, and the live showcase was appended into the page built aside, which took it and its canvas off the page on every purchase. The grid is now its own fixed layer, and live elements are held by stand-ins (`keep` in `dom.ts`), each change with a failing check first. Red run 39785345173 (p95 136.9 and 117 ms): the CI trace showed that the runner's software compositor reads back the software-drawn canvas, waiting about 36 ms for a draw that began only about 40 ms into the purchase, after the page had changed. A purchase is now drawn as soon as the showcase marks its stage, before the page changes (`now` in `source/showcase/model.ts`), with a failing check first (`beforePage` in `showcase.spec.ts`). Red run 39798712823 (p95 122.4 ms): the fix held (graphics work starts at 14 ms, not about 41), and what remains is the software renderer itself, about 69 ms of software GL plus the compositor readback. The 100 ms budget stays and the check stays red; this is named blocker G3-B1 (`docs/verification/0.6.0.0.md`), owned by G4. `npm run perf:ref` ran (12-KPI before/after table in the verification file; three named open items carried to G4 and G5), and the stills contrast floors were raised to the measured minimum. PR #28 (sharp 0.35.5 security bump, worktree `.artifacts/worktrees/security-sharp-20261020`) is open separately; fold it into G4 or merge it on its own green CI. Next: gallery and owner GO or FIX, offering "GO = merge with blocker G3-B1"; on GO, merge commit, tag v0.6.0.0, check the Pages SHA-256, make a fresh instructor zip. Then G4 (stills to 3:1 in every view and frame, the pale RECCE roof, the light-theme stage contrast).
+**Agent:** G3 (0.6.0.0) is complete: owner GO 2026-10-22, merged into `main` with named blocker G3-B1 (the 3D update p95 reached 122–132 ms on GPU-less CI runners on some runs; run 39827140601 was all green; budget 100 kept; `docs/verification/0.6.0.0.md`). Next is G4 (0.7.0.0) from `main` at `v0.6.0.0`, per the plan in `.artifacts/tmp/g4-plan.md`: first PR #28 (sharp 0.35.5, rebase onto main; rename its 0.5.2.1 or fold it into 0.7.0.0); clear G3-B1 with a cheaper last drawing tier (Lambert, no environment map), failing checks first, and never by weakening the CI check; then stills ≥3:1 in every view and frame (floors raised from 2.106/1.558/1.596/1.317), the pale RECCE roof, light-theme stage contrast (no check yet), the §10.5 ID-mask check (none yet), sightline 574→0, renderer+GPU memory ≤400 MB (570/479), and the first-click INP and long task ≤200 ms (800/588), traced first.
 **Owner:** `docs/owner/art-review.md` (5 minutes, reply GO or FIX).
 
 ## 6. Rollback
@@ -27700,10 +27700,10 @@ A read-only Codex session (gpt-6.1-sol, medium) reviewed the diff (`.artifacts/c
 
 ### docs/verification/0.6.0.0.md
 
-Paths: `docs/verification/0.6.0.0.md`. SHA-256 `6e188b8fd326bd7842ec3cff093e782993db0f7de849249f599776aec0d8765b`, 68860 bytes.
+Paths: `docs/verification/0.6.0.0.md`. SHA-256 `63da0e82ac99b709f9e4af662ae9f060821967b0205b975440fdb0e410a2c2b4`, 68947 bytes.
 
 ```markdown
-# Verification record: 0.6.0.0 beta (G3 proxy and runtime) — in progress
+# Verification record: 0.6.0.0 beta (G3 proxy and runtime)
 
 Branch `g3/proxy-runtime`, from `main` at the 0.5.2.0 release. Specification: MPES 4.5.5. Environment: Windows 11 Enterprise, Node 24.20.0, Playwright browsers from `npm run browsers`.
 
@@ -28142,8 +28142,8 @@ Rerun with the new floors: 54 passed on chromium-heavy, firefox-heavy and msedge
 | Unit and property | `npm test` | PASS, 27 files, 272 tests |
 | Full gate on `9cb4c8f` | `npm run verify` (typecheck, lint, unit, build check, build, Playwright in Chromium, Firefox and Edge, then perf; `.artifacts/tmp/verify-9cb4c8f.log`) | PASS: 293 passed, 48 skipped by project. Local 3D update p95 71.7 ms (local timings void; CI gates perf). Rerun on `4ccf7bd` (docs only since `9cb4c8f`; `.artifacts/tmp/verify-4ccf7bd.log`): 292 passed, 1 failed, the 3D update p95 120.3 ms (max 208.7) with the PC busy (CPU 34 %, browsers and OneDrive sync running). Local timings are void, so this is not evidence either way. The push of `4ccf7bd` went out before this result was read: a process slip, recorded here. CI on `4ccf7bd` decides |
 | Reference proxy | `npm run perf:ref` on `2ac1d39` | BASELINE, six runs; table above; three named open items carried to G4 and G5 |
-| CI, two consecutive green runs on one head | GitHub Actions `ci.yml` | NOT MET, blocker G3-B1. Run 39798712823 on `2ac1d39`: both jobs failed only the 3D update budget (122.4, 130.9 ms). Run 39805360140 on `9cb4c8f`: `verify (22)` PASS; `verify (24)` failed only the 3D update budget (132.1 ms), 292 passed. The budget stays 100 and the check stays on |
-| Owner visual check | `npm run gallery` → `.artifacts/review/0.6.0.0.html` (94 shots, 72 changed, 0 missing) | Sent 2026-10-22, offered as "GO = merge with blocker G3-B1"; awaiting the owner |
+| CI, two consecutive green runs on one head | GitHub Actions `ci.yml` | NOT MET, blocker G3-B1. Run 39798712823 on `2ac1d39`: both jobs failed only the 3D update budget (122.4, 130.9 ms). Run 39805360140 on `9cb4c8f`: `verify (22)` PASS; `verify (24)` failed only the 3D update budget (132.1 ms), 292 passed. Run 39827140601 on `4ccf7bd` (docs only since `9cb4c8f`): both jobs PASS, the first all-green G3 run. The budget stays 100 and the check stays on |
+| Owner visual check | `npm run gallery` → `.artifacts/review/0.6.0.0.html` (94 shots, 72 changed, 0 missing) | Sent 2026-10-22, offered as "GO = merge with blocker G3-B1"; owner GO 2026-10-22 |
 ```
 
 ### docs/verification/legibility.md
