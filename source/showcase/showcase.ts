@@ -193,6 +193,8 @@ export class Showcase {
     element.setAttribute('aria-label', label);
     element.setAttribute('data-layers', shown.map(p => p.id).sort().join(' '));
     element.setAttribute('data-ready', 'true');
+    // Drawn now, before the page changes, so the graphics card draws it while the browser updates the page.
+    stage.now();
     // Signs, not words: the name is the button's accessible name and its tooltip. The pause button keeps its name and
     // reports its state with aria-pressed; its sign and tooltip say what a press does next.
     const sign = (id: string, name: string, mark: string, click: (button: HTMLElement) => void) =>

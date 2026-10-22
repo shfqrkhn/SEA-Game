@@ -543,6 +543,14 @@ export class ModelStage {
   }
 
   /**
+   * Draws a change the player asked for at once, from the showcase as soon as it has marked what the stage shows, before
+   * the page around it changes: without a graphics card the browser waits for the whole draw before showing the frame,
+   * and the draw began only after the page had changed and been laid out (G3 CI run 39785345173: about 40 ms into a
+   * purchase, then about 60 ms of drawing). A stage not yet on the page draws on `RENDERED` instead.
+   */
+  now(): void { this.#now(); }
+
+  /**
    * Draws a change the player asked for at once, when the page around the stage has just been rebuilt (`RENDERED`):
    * the graphics card draws it while the browser lays out and paints the new page, instead of after. Without a graphics
    * card the browser waits for the whole draw before showing the frame, and the purchase's draw began only once that

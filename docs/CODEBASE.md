@@ -27041,12 +27041,12 @@ Exportez une sauvegarde par **Menu → Exporter une sauvegarde** après la confi
 
 ### docs/HANDOVER.md
 
-Paths: `docs/HANDOVER.md`. SHA-256 `f7ee1a42234733fec0e90f9087c0e179ec4ee23b932e6246293a2f486f3714fd`, 14925 bytes.
+Paths: `docs/HANDOVER.md`. SHA-256 `ee4fcd3418bd95ea3878a55c42bd4851a051ccd753117d612c1c3af5090dd00d`, 15508 bytes.
 
 ```markdown
 # Handover
 
-Updated 2026-10-22 (America/Toronto). Specification: [MPES](MPES.md) 4.5.4. Evidence: [verification/0.6.0.0.md](verification/0.6.0.0.md) (in progress), [verification/0.5.2.0.md](verification/0.5.2.0.md), [verification/0.5.1.0.md](verification/0.5.1.0.md), [verification/0.5.0.0.md](verification/0.5.0.0.md), [verification/spike-visual.md](verification/spike-visual.md).
+Updated 2026-10-22 (America/Toronto). Specification: [MPES](MPES.md) 4.5.5. Evidence: [verification/0.6.0.0.md](verification/0.6.0.0.md) (in progress), [verification/0.5.2.0.md](verification/0.5.2.0.md), [verification/0.5.1.0.md](verification/0.5.1.0.md), [verification/0.5.0.0.md](verification/0.5.0.0.md), [verification/spike-visual.md](verification/spike-visual.md).
 
 ## 1. Version and milestone
 
@@ -27106,7 +27106,7 @@ Owner FIX 1 (stills and fit), FIX 2 (one click to close a round nobody can win i
 
 ## 5. Next action
 
-**Agent:** G3 on `g3/proxy-runtime` (PR #27): red runs 38609311138, 38921636256, 38931516133 and 38958721130 have their documented fixes. Red run 38976632856 (p95 110.7 ms) is fixed by caching unchanged layer bounds. Red run 39484500911 (p95 120.6 ms on `verify (22)`) is addressed in three ways: parts are uploaded to the graphics card before any purchase, a purchase is drawn inside its own click (`sea-rendered`), and wide tables are watched by a ResizeObserver, which also fixes a keyboard-access gap (`docs/verification/0.6.0.0.md`). Locally this PC's perf readings are currently noisy: HEAD and the fix fail the same budgets. CI decides; if the 3D update still misses on CI, keep the 100 ms budget and carry it as a named blocker with that evidence. Codex's review found one P2 (parts outside the view, and still stages, were not uploaded), fixed with a failing check first. Red run 39508660281 (p95 128.2 ms on `verify (24)`, now mostly paint after the draw): a render now changes only what changed (`morph` in `source/ui/dom.ts`), so unchanged elements cost no style or layout and keep focus, scroll and caret; handlers go through one listener per event type. Codex's three P2s on it (stale saving-field handlers, a select's new choice, the caret on a tidied value) are fixed with failing checks first, as is a CSP fault (inline styles are copied only through the style object). Firefox J6 also failed: the pressed button went away and focus was left mid-page. When the focused control is gone, focus now goes to the page (`#main`), with failing checks first. Red run 39605918008 (p95 118 and 124 ms, about 70 in paint): the perf check now takes and uploads a browser-wide trace when the 3D update budget is breached (`SEA_TRACE=1` forces it, `SEA_TRACE_WHY=1` adds invalidation reasons). That trace found two causes: the HUD grid was a background fixed to the page, so it was repainted whenever the page grew, and the live showcase was appended into the page built aside, which took it and its canvas off the page on every purchase. The grid is now its own fixed layer, and live elements are held by stand-ins (`keep` in `dom.ts`), each change with a failing check first. Get two consecutive green CI runs on one head; run the `npm run perf:ref` 12-KPI baseline in a quiet slot (MPES §14.1); finish the verification Checks; gallery and owner GO or FIX before merge. Then G4 (stills to 3:1 in every view and frame, the pale RECCE roof, the light-theme stage contrast).
+**Agent:** G3 on `g3/proxy-runtime` (PR #27): red runs 38609311138, 38921636256, 38931516133 and 38958721130 have their documented fixes. Red run 38976632856 (p95 110.7 ms) is fixed by caching unchanged layer bounds. Red run 39484500911 (p95 120.6 ms on `verify (22)`) is addressed in three ways: parts are uploaded to the graphics card before any purchase, a purchase is drawn inside its own click (`sea-rendered`), and wide tables are watched by a ResizeObserver, which also fixes a keyboard-access gap (`docs/verification/0.6.0.0.md`). Locally this PC's perf readings are currently noisy: HEAD and the fix fail the same budgets. CI decides; if the 3D update still misses on CI, keep the 100 ms budget and carry it as a named blocker with that evidence. Codex's review found one P2 (parts outside the view, and still stages, were not uploaded), fixed with a failing check first. Red run 39508660281 (p95 128.2 ms on `verify (24)`, now mostly paint after the draw): a render now changes only what changed (`morph` in `source/ui/dom.ts`), so unchanged elements cost no style or layout and keep focus, scroll and caret; handlers go through one listener per event type. Codex's three P2s on it (stale saving-field handlers, a select's new choice, the caret on a tidied value) are fixed with failing checks first, as is a CSP fault (inline styles are copied only through the style object). Firefox J6 also failed: the pressed button went away and focus was left mid-page. When the focused control is gone, focus now goes to the page (`#main`), with failing checks first. Red run 39605918008 (p95 118 and 124 ms, about 70 in paint): the perf check now takes and uploads a browser-wide trace when the 3D update budget is breached (`SEA_TRACE=1` forces it, `SEA_TRACE_WHY=1` adds invalidation reasons). That trace found two causes: the HUD grid was a background fixed to the page, so it was repainted whenever the page grew, and the live showcase was appended into the page built aside, which took it and its canvas off the page on every purchase. The grid is now its own fixed layer, and live elements are held by stand-ins (`keep` in `dom.ts`), each change with a failing check first. Red run 39785345173 (p95 136.9 and 117 ms): the CI trace showed that the runner's software compositor reads back the software-drawn canvas, waiting about 36 ms for a draw that began only about 40 ms into the purchase, after the page had changed. A purchase is now drawn as soon as the showcase marks its stage, before the page changes (`now` in `source/showcase/model.ts`), with a failing check first (`beforePage` in `showcase.spec.ts`). If CI still breaches, keep the 100 ms budget and offer GO with that named blocker: the path exists only in a GPU-less browser that fakes WebGL. Get two consecutive green CI runs on one head; run the `npm run perf:ref` 12-KPI baseline in a quiet slot (MPES §14.1); finish the verification Checks; gallery and owner GO or FIX before merge. Then G4 (stills to 3:1 in every view and frame, the pale RECCE roof, the light-theme stage contrast).
 **Owner:** `docs/owner/art-review.md` (5 minutes, reply GO or FIX).
 
 ## 6. Rollback
@@ -27700,7 +27700,7 @@ A read-only Codex session (gpt-6.1-sol, medium) reviewed the diff (`.artifacts/c
 
 ### docs/verification/0.6.0.0.md
 
-Paths: `docs/verification/0.6.0.0.md`. SHA-256 `3e5598b834268430ce0611f0070f79b45e2cd1405b2c67829d03533485db020c`, 55951 bytes.
+Paths: `docs/verification/0.6.0.0.md`. SHA-256 `7821b7a5eb43166d97ea47c268dd2bda554e50f32defc31de5d89b58246a3433`, 60003 bytes.
 
 ```markdown
 # Verification record: 0.6.0.0 beta (G3 proxy and runtime) — in progress
@@ -28013,6 +28013,35 @@ Codex review (GPT-6.1 Sol, medium, the whole diff) found three issues. All were 
 3. **P3: the light-theme case tested the dark theme.** The theme comes from `?theme=light`, not from the system colour scheme. The grid check now opens each theme by its parameter and asserts `data-theme` before measuring.
 
 `render.spec.ts` passes 33 of 33 on Chromium, Firefox and Edge.
+
+## Red run 39785345173 (head e4e2e64): 3D update p95 136.9 and 117 ms
+
+Both `verify (22)` and `verify (24)` failed only the 3D update budget: p95 136.9 and 117 ms against the unchanged 100 ms limit. Phase p95s were 57.5 and 48.8 ms handling, 0 ms waiting, 13.8 and 10.6 ms drawing, and 69.5 and 62.3 ms from draw to paint. Every other test passed: 116 on `verify (22)` and 292 on `verify (24)`. This time CI uploaded the breach trace (`trace.json.gz` in the `playwright-windows-22` and `-24` artifacts).
+
+What the CI trace shows. These are medians over 30 purchases, in ms after the press, and both runners agree:
+
+- Raster is about 5 ms a purchase: the grid fix held.
+- The click runs from 4 to 59 ms. The first layout runs at 26–31, and `sea-rendered` fires at 38–49, which is when the purchase's draw is sent.
+- The software GL starts the draw at about 41 ms and works on it for about 60 ms.
+- The compositor reads the canvas back to show the frame (`LayerTreeHost::DoUpdateLayers > GLES2::ReadPixels`). That waits from about 68 to 105 ms for the draw to finish: 35.7 ms a purchase, the single largest item. The frame is shown at about 110–114 ms.
+
+The runners have no graphics card, so their WebGL is software and their compositor is software too. That is why each new frame of the canvas is read back, and why the draw itself is slow. The draw is already at the cheapest tier (`modelTier` 3: half resolution, no multisampling), and the shadow map is already baked and redrawn only in a later paced draw. So the critical path was the draw starting late: it waited for the whole page to be changed and laid out.
+
+The change: **a purchase is drawn before the page changes.** The showcase marks what the stage shows (`data-layers`) and then asks for the draw at once (`stage.now()`, in `source/showcase/showcase.ts`). This happens while the new page is still being built, so the software GL draws while the browser changes and lays out the page, instead of after. The stage is never off the page now (`keep`), so it can draw then. A stage not yet on the page (its first appearance) still draws on `sea-rendered`.
+
+Failing check first: `tests/e2e/showcase.spec.ts`, "a purchase is drawn inside its click and sends nothing new to the graphics card", now also records whether the purchase's draw came before `sea-rendered` (`beforePage`). On `e4e2e64` it failed on Chromium and Firefox in both cases, turning and still (`beforePage: false`). With the change it passes on Chromium, Firefox and Edge (6 tests).
+
+Local trace with the change (`SEA_TRACE=1`, perf project; the order counts locally, the times do not): over 30 purchases, the graphics work now starts at a median of 8 ms after the press. That is before the first layout (15.6 ms) and before `sea-rendered` (20.2 ms); before the change it started after both. CI decides whether the budget holds. If it does not, the 100 ms budget stays and the remaining cost is named as a blocker: the software compositor reads back a software-drawn canvas. No player meets this path, because a software renderer gets stills and a graphics card composites without a readback.
+
+Review of this change. Codex (gpt-6.1-sol) was at its usage limit (until 13:35), so it reviews later. Self-review found no fault:
+
+- **No double draw.** `#draw` clears the dirty flag, so the later `sea-rendered` listener draws nothing.
+- **Same guards as before.** `now()` keeps every guard of `#now`: urgent, dirty, not lost, visible, the document visible and the canvas on the page.
+- **First appearance.** A stage appearing for the first time is not on the page yet, so it still draws on `sea-rendered`.
+- **No new frame on fallback.** A mission switch or a failed `show` returns stills before `now()` is reached.
+- **Same end of measurement.** `data-drawn` is set by the draw as before, so the budget's end point is unchanged.
+
+Regression after the change: the showcase, render, a11y, journey and visual specs on Chromium, Firefox and Edge, light and heavy, gave 198 passed (48 skipped by project). Unit tests: 272 passed.
 ```
 
 ### docs/verification/legibility.md
@@ -28290,7 +28319,7 @@ export default tseslint.config(
 
 ### library/LESSONS.md
 
-Paths: `library/LESSONS.md`. SHA-256 `1e33489a0ab406eec1a147d0e0f181c440b9c4a80f81d8a4b801b743a8356c4b`, 21724 bytes.
+Paths: `library/LESSONS.md`. SHA-256 `ba066368cb92b6f31eb7f630b80c2e713735e2bee40cd87bff874aee36d85aa2`, 22557 bytes.
 
 ```markdown
 # Lessons learned
@@ -28430,6 +28459,12 @@ Each entry: what happened, the rule it produced, and the check that now enforces
 - **What happened:** after a render changed only what changed, a 3D purchase still read about 120 ms on CI, most of it in paint. The perf check was changed to take a trace when its budget was breached, and the trace showed two causes. A background fixed to the page itself was painted again across the whole page whenever the page grew. A live section with a canvas had been placed into the page built aside, and placing an element elsewhere takes it out of the document. It was then laid out and painted again, and its canvas detached, on every update.
 - **Rule:** when a budget fails only on CI, make the check take a trace on the breach and upload it, and fix what the trace shows. A local trace's counts are valid where its timings are not. Never move a live element into a page built aside: put a shallow stand-in there and let the reconciler swap the live element in, untouched. Before an element that stays, drop the siblings that went away rather than moving the element back over them. Put a fixed decoration on its own fixed layer, sized to the window.
 - **Check:** a mutation observer counts no removal of the live section or its canvas over several updates; a unit check of the reconciler asserts that only the dropped nodes are removed; the decoration is asserted to be a fixed layer and not a background of the page.
+
+## 2026-10-22 · Start the slow work first; let the page update while it runs
+
+- **What happened:** with layout and paint cut, a 3D purchase still read about 120–137 ms on CI. The CI trace showed the runner, which has no graphics card, reading back each new frame of the canvas and waiting about 36 ms for the software draw. That draw only began about 40 ms into the purchase, after the page had been changed and laid out.
+- **Rule:** when one step must wait on another unit (a GPU, a worker), send that work as early as its inputs are known, before the cheap main-thread work that does not depend on it. Measure the order in a trace (start of the GPU work against the first layout), not just the total.
+- **Check:** a browser test records whether the purchase's draw came before the page's render event, and fails if it did not.
 ```
 
 ### library/README.md
@@ -36062,7 +36097,7 @@ export function vehicleGlb(glb: ArrayBuffer, vehicle: string): ArrayBuffer | nul
 
 ### source/showcase/model.ts
 
-Paths: `source/showcase/model.ts`. SHA-256 `a781973b5d9b3c8b1fe66b1f2f80bde682af613c87f045f84f1fd35c0975f82c`, 31047 bytes.
+Paths: `source/showcase/model.ts`. SHA-256 `45d8bac506d2e921bf1b2491192b50004a08da6200a174345b670a99d5377027`, 31552 bytes.
 
 ```ts
 // Real-time vehicle showcase (MPES §10): the embedded glTF model on a slowly turning stage the player can drag.
@@ -36610,6 +36645,14 @@ export class ModelStage {
   }
 
   /**
+   * Draws a change the player asked for at once, from the showcase as soon as it has marked what the stage shows, before
+   * the page around it changes: without a graphics card the browser waits for the whole draw before showing the frame,
+   * and the draw began only after the page had changed and been laid out (G3 CI run 39785345173: about 40 ms into a
+   * purchase, then about 60 ms of drawing). A stage not yet on the page draws on `RENDERED` instead.
+   */
+  now(): void { this.#now(); }
+
+  /**
    * Draws a change the player asked for at once, when the page around the stage has just been rebuilt (`RENDERED`):
    * the graphics card draws it while the browser lays out and paints the new page, instead of after. Without a graphics
    * card the browser waits for the whole draw before showing the frame, and the purchase's draw began only once that
@@ -36852,7 +36895,7 @@ export function premultipliedOutput(fragment: string): string {
 
 ### source/showcase/showcase.ts
 
-Paths: `source/showcase/showcase.ts`. SHA-256 `9968d41f3503d1cea0e208ebdb32be09e70bfd2b82f280cef329c2061ee0ebaf`, 19798 bytes.
+Paths: `source/showcase/showcase.ts`. SHA-256 `0d10d8c116bca2c2cde3fcee37a484959dcaaedd0cc6e272b9ab75fd72686172`, 19924 bytes.
 
 ```ts
 // Vehicle showcase (MPES §10): the team's vehicle with its installed parts, as a slowly turning 3D model the
@@ -37050,6 +37093,8 @@ export class Showcase {
     element.setAttribute('aria-label', label);
     element.setAttribute('data-layers', shown.map(p => p.id).sort().join(' '));
     element.setAttribute('data-ready', 'true');
+    // Drawn now, before the page changes, so the graphics card draws it while the browser updates the page.
+    stage.now();
     // Signs, not words: the name is the button's accessible name and its tooltip. The pause button keeps its name and
     // reports its state with aria-pressed; its sign and tooltip say what a press does next.
     const sign = (id: string, name: string, mark: string, click: (button: HTMLElement) => void) =>
@@ -41442,7 +41487,7 @@ export async function studentRecord(page: Page, cardId: string, paidDollars: num
 
 ### tests/e2e/showcase.spec.ts
 
-Paths: `tests/e2e/showcase.spec.ts`. SHA-256 `41aac55618f4b3ce45307d2a5ef818f29eb4a934e6c6627aa12b7ba27d0a0ba7`, 45069 bytes.
+Paths: `tests/e2e/showcase.spec.ts`. SHA-256 `9345da58b16d776feafad0d77a795c89d5e4f2c75ce3f560dcdeaf77f4e8bd67`, 45529 bytes.
 
 ```ts
 // War-room HUD and vehicle showcase (MPES §7.1, §10, §11): the default look of every view. The live lot shows the
@@ -41821,7 +41866,9 @@ test('3D showcase: a purchase is drawn at once without redrawing the shadow, whi
 // after the browser had laid out the rebuilt page, and without a graphics card the browser then waited for the whole
 // draw; it also sent the new part's geometry and textures to the graphics card, which compiling its shader had not.
 // Now the parts are sent once, before any purchase, and a purchase is drawn inside its own click. Codex review: a part
-// outside the opening view (COMBAT's SA-D, still stage) was culled from that upload, so it is checked too.
+// outside the opening view (COMBAT's SA-D, still stage) was culled from that upload, so it is checked too. G3 CI run
+// 39785345173: the draw began only once the new page was in place and laid out, so without a graphics card the frame
+// waited about 60 ms more for it; it is now sent before the page changes (`beforePage`), and drawn while the page is.
 for (const { mission, round, lot, card, paid, motion } of [
   { mission: 'RECOVERY', round: 1, lot: 7, card: 'ACC-F', paid: 350000, motion: 'no-preference' },
   { mission: 'COMBAT', round: 2, lot: 6, card: 'SA-D', paid: 900000, motion: 'reduce' },
@@ -41830,10 +41877,11 @@ for (const { mission, round, lot, card, paid, motion } of [
   guardNetwork(sp);
   await withGpu(sp);
   await sp.addInitScript(() => {
-    const draws: { layers: string; inClick: boolean; sent: number }[] = [];
+    const draws: { layers: string; inClick: boolean; beforePage: boolean; sent: number }[] = [];
     (window as unknown as { seaDraws: typeof draws }).seaDraws = draws;
-    let clicking = false, sent = 0;
-    document.addEventListener('click', () => { clicking = true; }, { capture: true });
+    let clicking = false, rendered = false, sent = 0;
+    document.addEventListener('click', () => { clicking = true; rendered = false; }, { capture: true });
+    document.addEventListener('sea-rendered', () => { rendered = true; }, { capture: true });
     addEventListener('click', () => { clicking = false; });
     const proto = WebGL2RenderingContext.prototype as unknown as Record<string, (...args: unknown[]) => unknown>;
     for (const name of ['bufferData', 'texImage2D', 'texSubImage2D', 'texStorage2D', 'compressedTexImage2D']) {
@@ -41843,7 +41891,7 @@ for (const { mission, round, lot, card, paid, motion } of [
     document.addEventListener('sea-drawing', () => { sent = 0; }, { capture: true });
     document.addEventListener('sea-draw', event => {
       const layers = (event.target as Element).closest('[data-layers]')?.getAttribute('data-layers') ?? '';
-      draws.push({ layers, inClick: clicking, sent });
+      draws.push({ layers, inClick: clicking, beforePage: !rendered, sent });
     }, { capture: true });
   });
   await sp.goto(gameUrl('?role=student&lang=en'));
@@ -41853,14 +41901,14 @@ for (const { mission, round, lot, card, paid, motion } of [
   await confirmDialog(sp);
   const stage = sp.locator('#showcase [role="img"]');
   await expect(stage).toHaveAttribute('data-ready', 'true', { timeout: 30_000 });
-  const draws = () => sp.evaluate(() => (window as unknown as { seaDraws: { layers: string; inClick: boolean; sent: number }[] }).seaDraws);
+  const draws = () => sp.evaluate(() => (window as unknown as { seaDraws: { layers: string; inClick: boolean; beforePage: boolean; sent: number }[] }).seaDraws);
   await expect.poll(async () => (await draws()).length, { timeout: 30_000 }).toBeGreaterThan(motion === 'reduce' ? 0 : 3);
   await sp.waitForTimeout(1000);
   const before = (await draws()).length;
   await record(sp, round, lot, card, paid);
   await expect(stage).toHaveAttribute('data-drawn', card, { timeout: 30_000 });
   const first = (await draws()).slice(before).find(d => d.layers === card);
-  expect(first, 'the draw that first shows the purchase').toEqual({ layers: card, inClick: true, sent: 0 });
+  expect(first, 'the draw that first shows the purchase').toEqual({ layers: card, inClick: true, beforePage: true, sent: 0 });
 });
 
 test('stills fallback without WebGL: layers follow recorded purchases; one part per mount; process cards are badges', async ({ browser }) => {
@@ -47153,5 +47201,5 @@ Keys and the commands that make each kind again:
 
 | Path | Bytes | SHA-256 | Why |
 |---|---:|---|---|
-| `docs/MPES.md` | 193975 | `f606b76644af6263270d5d8233666985809bc203018a43e42d9bfef3e564cb5e` | The specification, a clean-room document of its own (Omni 5.1.1 §333). |
+| `docs/MPES.md` | 194986 | `624560e7eeaceab53f39204fd1f51b4b93a7ee9fdbefd33100a49cefc850ee96` | The specification, a clean-room document of its own (Omni 5.1.1 §333). |
 | `docs/CODEBASE.md` | | | This file. |
