@@ -235,14 +235,17 @@ summary { cursor: pointer; font-weight: 600; min-height: 32px; }
 }
 
 /* ---- War-room HUD (MPES §7.1, D-07): the look of every view. ---- */
-body {
-  background-color: var(--paper);
+/* The grid is its own fixed layer the size of the window: a background fixed to the page itself is repainted with the
+   whole page whenever the page grows (a purchase), about 45 tiles each (G3 CI run 39605918008). */
+body { background-color: var(--paper); }
+body::before {
+  content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
   background-image:
     radial-gradient(ellipse at 50% 0%, var(--glow), transparent 60%),
     repeating-linear-gradient(0deg, var(--grid-line) 0 1px, transparent 1px 48px),
     repeating-linear-gradient(90deg, var(--grid-line) 0 1px, transparent 1px 48px);
-  background-attachment: fixed;
 }
+@media print { body::before { display: none; } }
 h1, h2, h3, legend, th {
   text-transform: uppercase; letter-spacing: .08em; font-family: var(--mono); font-weight: 600;
 }

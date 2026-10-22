@@ -9,7 +9,7 @@ import { add } from '../domain/money.ts';
 import { validateStudent } from '../domain/saves.ts';
 import * as S from '../domain/student.ts';
 import { cardDetails, complianceText, gapMeter, missionName, missionTable, purchasesTable, presentationQuestions } from './components.ts';
-import { h, type Child } from './dom.ts';
+import { h, keep, type Child } from './dom.ts';
 import { labelled, money, signed } from './format.ts';
 import type { Language, StringKey } from './i18n.ts';
 import { practiceCard } from './instructor.ts';
@@ -19,11 +19,12 @@ import { Showcase } from '../showcase/showcase.ts';
 import { renders, VEHICLE } from '../showcase/renders.ts';
 
 let showcase: Showcase | null = null;
-/** The vehicle showcase (MPES §10): one per page, so its 3D stage, view and turntable frame persist. */
+/** The vehicle showcase (MPES §10): one per page, so its 3D stage, view and turntable frame persist. It keeps its own
+ *  section up to date, so the page holds it kept (`keep`), never moved out and back. */
 function showcaseFor(v: View, mission: MissionId): Child {
   const s = joined(v), t = v.t;
   showcase ??= new Showcase();
-  return showcase.update(mission, s.team.purchases.map(p => ({ id: p.id, title: p.title[v.lang], category: p.cat })),
+  return keep(showcase.update(mission, s.team.purchases.map(p => ({ id: p.id, title: p.title[v.lang], category: p.cat })),
     t('showcase.summary', { mission: missionName(mission, v.lang), n: s.team.purchases.length }), {
       title: t('showcase.title'), view: t('showcase.view'), front: t('showcase.front'), rear: t('showcase.rear'),
       turntable: t('showcase.turntable'), rotate: t('showcase.rotate'), installed: t('showcase.installed'), none: t('showcase.none'),
@@ -31,7 +32,7 @@ function showcaseFor(v: View, mission: MissionId): Child {
       process: t('showcase.process'), slotNote: t('showcase.slotNote'),
       drag: t('showcase.drag'), pause: t('showcase.pause'), resume: t('showcase.resume'), left: t('showcase.left'), right: t('showcase.right'),
       zoomIn: t('showcase.zoomIn'), zoomOut: t('showcase.zoomOut'),
-    }, s.currentCard && { id: s.currentCard.id, title: s.currentCard.title[v.lang], category: s.currentCard.cat });
+    }, s.currentCard && { id: s.currentCard.id, title: s.currentCard.title[v.lang], category: s.currentCard.cat }));
 }
 
 type View = RoleView<S.StudentState>;

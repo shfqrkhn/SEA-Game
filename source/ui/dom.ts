@@ -83,26 +83,66 @@ export function replaceChildren(parent: Element, ...children: Child[]): void {
 /**
  * Makes `parent`'s children match `next`'s, keeping every element that is still the same element: same tag, same id
  * (an input also the same type). A kept element takes the new one's attributes, handlers, value and checked state, and
- * its children are matched the same way; an element that is not kept is replaced by the new one. A child that is the
- * very same node in both (the showcase's stage) is left as it is. A rebuilt page made the browser restyle and lay out
+ * its children are matched the same way; an element that is not kept is replaced by the new one. A stand-in (`keep`)
+ * is replaced by its live element, which is left as it is. A rebuilt page made the browser restyle and lay out
  * all of it after every command (G3 CI run 39508660281: about 30 ms of a 3D purchase on the runner); a kept element
  * costs nothing, keeps its focus, its scroll and its caret, and a panel stays open (only the reader closes one).
  */
+const standIns = new WeakMap<Node, Element>();
+/** Marks a stand-in, so one inside a new part of the page is found when that part is inserted. Never on the page. */
+const STAND_IN = 'data-stand-in';
+
+/**
+ * A stand-in for an element its owner keeps up to date itself (the showcase, its 3D stage): a page built aside holds
+ * the stand-in, and `morph` puts the live element in its place, untouched. Building the page with the live element
+ * itself would take it out of the document until `morph` put it back: laid out and painted again, its canvas
+ * detached, on every render (G3 CI run 39605918008).
+ */
+export function keep(live: Element): Element {
+  const standIn = live.cloneNode(false) as Element;
+  standIn.setAttribute(STAND_IN, '');
+  standIns.set(standIn, live);
+  return standIn;
+}
+
+/** Inserts a new part of the page, each stand-in in it replaced by its live element. */
+function insert(parent: Element, node: Node, before: Node | null): void {
+  if (node instanceof Element) for (const standIn of node.querySelectorAll(`[${STAND_IN}]`)) standIn.replaceWith(standIns.get(standIn)!);
+  parent.insertBefore(node, before);
+}
+
 export function morph(parent: Element, next: Element): void {
   // An element with an id is found wherever it was among its siblings, so a field added before it does not replace it.
-  const byId = new Map<string, Element>();
+  const byId = new Map<string, Element>(), wanted = new Set<string>();
   for (const child of parent.children) if (child.id) byId.set(child.id, child);
+  for (const child of next.children) if (child.id) wanted.add(child.id);
   let old = parent.firstChild;
-  for (const node of [...next.childNodes]) {
-    const found = node instanceof Element && node.id ? byId.get(node.id) : undefined;
-    if (old && same(old, node)) {
+  const children = [...next.childNodes];
+  // Whether an old node is still wanted further on: by its id, or, without one, by a later new node it would match.
+  const wantedLater = (node: ChildNode, from: number): boolean => node instanceof Element && node.id ? wanted.has(node.id)
+    : children.slice(from).some(later => !(later instanceof Element && later.id) && same(node, standIns.get(later) ?? later));
+  for (const [index, child] of children.entries()) {
+    const live = standIns.get(child), node = live ?? child;
+    const found = live ?? (node instanceof Element && node.id ? byId.get(node.id) : undefined);
+    if (live && old === live) {
+      old = live.nextSibling;
+    } else if (live && live.parentNode !== parent) {
+      parent.insertBefore(live, old);
+    } else if (old && same(old, node)) {
       if (old !== node) update(old, node);
       old = old.nextSibling;
     } else if (found && found !== old && found.parentNode === parent && same(found, node)) {
-      parent.insertBefore(found, old);
-      update(found, node);
+      // What went away before a kept element is dropped, not jumped over: moving the kept one takes it off the page and
+      // lays it out and paints it again (G3 CI run 39605918008: the 3D stage, on every purchase). Only a node the
+      // new page still wants, met first, means a real change of order (one without an id included: Codex P2).
+      while (old && old !== found && !wantedLater(old, index + 1)) {
+        const after = old.nextSibling; parent.removeChild(old); old = after;
+      }
+      if (old === found) old = found.nextSibling;
+      else parent.insertBefore(found, old);
+      if (!live) update(found, node);
     } else {
-      parent.insertBefore(node, old);
+      insert(parent, node, old);
     }
   }
   while (old) { const after = old.nextSibling; parent.removeChild(old); old = after; }

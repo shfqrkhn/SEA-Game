@@ -27041,12 +27041,12 @@ Exportez une sauvegarde par **Menu → Exporter une sauvegarde** après la confi
 
 ### docs/HANDOVER.md
 
-Paths: `docs/HANDOVER.md`. SHA-256 `c15a00402ffc84bc98b6e7b30d9b4668c8ddd7b9bb2233fc0a288e1af253631c`, 14312 bytes.
+Paths: `docs/HANDOVER.md`. SHA-256 `f7ee1a42234733fec0e90f9087c0e179ec4ee23b932e6246293a2f486f3714fd`, 14925 bytes.
 
 ```markdown
 # Handover
 
-Updated 2026-10-20 (America/Toronto). Specification: [MPES](MPES.md) 4.5.2. Evidence: [verification/0.6.0.0.md](verification/0.6.0.0.md) (in progress), [verification/0.5.2.0.md](verification/0.5.2.0.md), [verification/0.5.1.0.md](verification/0.5.1.0.md), [verification/0.5.0.0.md](verification/0.5.0.0.md), [verification/spike-visual.md](verification/spike-visual.md).
+Updated 2026-10-22 (America/Toronto). Specification: [MPES](MPES.md) 4.5.4. Evidence: [verification/0.6.0.0.md](verification/0.6.0.0.md) (in progress), [verification/0.5.2.0.md](verification/0.5.2.0.md), [verification/0.5.1.0.md](verification/0.5.1.0.md), [verification/0.5.0.0.md](verification/0.5.0.0.md), [verification/spike-visual.md](verification/spike-visual.md).
 
 ## 1. Version and milestone
 
@@ -27106,7 +27106,7 @@ Owner FIX 1 (stills and fit), FIX 2 (one click to close a round nobody can win i
 
 ## 5. Next action
 
-**Agent:** G3 on `g3/proxy-runtime` (PR #27): red runs 38609311138, 38921636256, 38931516133 and 38958721130 have their documented fixes. Red run 38976632856 (p95 110.7 ms) is fixed by caching unchanged layer bounds. Red run 39484500911 (p95 120.6 ms on `verify (22)`) is addressed in three ways: parts are uploaded to the graphics card before any purchase, a purchase is drawn inside its own click (`sea-rendered`), and wide tables are watched by a ResizeObserver, which also fixes a keyboard-access gap (`docs/verification/0.6.0.0.md`). Locally this PC's perf readings are currently noisy: HEAD and the fix fail the same budgets. CI decides; if the 3D update still misses on CI, keep the 100 ms budget and carry it as a named blocker with that evidence. Codex's review found one P2 (parts outside the view, and still stages, were not uploaded), fixed with a failing check first. Red run 39508660281 (p95 128.2 ms on `verify (24)`, now mostly paint after the draw): a render now changes only what changed (`morph` in `source/ui/dom.ts`), so unchanged elements cost no style or layout and keep focus, scroll and caret; handlers go through one listener per event type. Codex's three P2s on it (stale saving-field handlers, a select's new choice, the caret on a tidied value) are fixed with failing checks first, as is a CSP fault (inline styles are copied only through the style object). Firefox J6 also failed: the pressed button went away and focus was left mid-page. When the focused control is gone, focus now goes to the page (`#main`), with failing checks first. Get two consecutive green CI runs on one head; run the `npm run perf:ref` 12-KPI baseline in a quiet slot (MPES §14.1); finish the verification Checks; gallery and owner GO or FIX before merge. Then G4 (stills to 3:1 in every view and frame, the pale RECCE roof, the light-theme stage contrast).
+**Agent:** G3 on `g3/proxy-runtime` (PR #27): red runs 38609311138, 38921636256, 38931516133 and 38958721130 have their documented fixes. Red run 38976632856 (p95 110.7 ms) is fixed by caching unchanged layer bounds. Red run 39484500911 (p95 120.6 ms on `verify (22)`) is addressed in three ways: parts are uploaded to the graphics card before any purchase, a purchase is drawn inside its own click (`sea-rendered`), and wide tables are watched by a ResizeObserver, which also fixes a keyboard-access gap (`docs/verification/0.6.0.0.md`). Locally this PC's perf readings are currently noisy: HEAD and the fix fail the same budgets. CI decides; if the 3D update still misses on CI, keep the 100 ms budget and carry it as a named blocker with that evidence. Codex's review found one P2 (parts outside the view, and still stages, were not uploaded), fixed with a failing check first. Red run 39508660281 (p95 128.2 ms on `verify (24)`, now mostly paint after the draw): a render now changes only what changed (`morph` in `source/ui/dom.ts`), so unchanged elements cost no style or layout and keep focus, scroll and caret; handlers go through one listener per event type. Codex's three P2s on it (stale saving-field handlers, a select's new choice, the caret on a tidied value) are fixed with failing checks first, as is a CSP fault (inline styles are copied only through the style object). Firefox J6 also failed: the pressed button went away and focus was left mid-page. When the focused control is gone, focus now goes to the page (`#main`), with failing checks first. Red run 39605918008 (p95 118 and 124 ms, about 70 in paint): the perf check now takes and uploads a browser-wide trace when the 3D update budget is breached (`SEA_TRACE=1` forces it, `SEA_TRACE_WHY=1` adds invalidation reasons). That trace found two causes: the HUD grid was a background fixed to the page, so it was repainted whenever the page grew, and the live showcase was appended into the page built aside, which took it and its canvas off the page on every purchase. The grid is now its own fixed layer, and live elements are held by stand-ins (`keep` in `dom.ts`), each change with a failing check first. Get two consecutive green CI runs on one head; run the `npm run perf:ref` 12-KPI baseline in a quiet slot (MPES §14.1); finish the verification Checks; gallery and owner GO or FIX before merge. Then G4 (stills to 3:1 in every view and frame, the pale RECCE roof, the light-theme stage contrast).
 **Owner:** `docs/owner/art-review.md` (5 minutes, reply GO or FIX).
 
 ## 6. Rollback
@@ -27700,7 +27700,7 @@ A read-only Codex session (gpt-6.1-sol, medium) reviewed the diff (`.artifacts/c
 
 ### docs/verification/0.6.0.0.md
 
-Paths: `docs/verification/0.6.0.0.md`. SHA-256 `cb50e8515fc2290370f6d00e07a954fdac5a6ea28c4db4940f9b52a46669bdf4`, 50721 bytes.
+Paths: `docs/verification/0.6.0.0.md`. SHA-256 `3e5598b834268430ce0611f0070f79b45e2cd1405b2c67829d03533485db020c`, 55951 bytes.
 
 ```markdown
 # Verification record: 0.6.0.0 beta (G3 proxy and runtime) — in progress
@@ -27981,6 +27981,38 @@ Codex's second review (GPT-6.1 Sol, medium, the whole morph diff) found two P2s.
 Local `npm run verify` on `9543772` failed one test: the Firefox keyboard journey (J6), "#menu-button not reachable with Tab", the same failure seen once before. Cause, from a probe that logged focus after each Tab: once a render kept the rest of the page, the pressed "Record win" button went away with its lot and left focus on nothing, mid-page. Tab then went on from there to the showcase's zoom button, the page's last control. From the last control, Firefox leaves the page for its own toolbar rather than wrapping (Chromium wraps), so the menu above was never reached. The old full rebuild had hidden this, because Tab restarted from the top. Either way, a screen reader heard nothing about the new lot.
 
 Fix: when a render removes the focused control and no control with its id remains, focus moves to the page (`#main`, the skip link's target) (WCAG 2.4.3). J6 now expects focus on the page after the recorded win, then tabs forward to the next card's field and back (Shift+Tab) to the menu, as a player would. A sibling sweep found the instructor's "Reveal" and "Open bidding" buttons, which also go away when pressed. `render.spec.ts`, "a pressed button that goes away leaves focus on the page, not on nothing", covers them. On `9543772` both checks failed on Chromium and Firefox (focus on nothing); with the fix the render and accessibility specs pass on Chromium, Firefox and Edge (31 tests).
+
+## Red run 39605918008 (head 53701bb): 3D update p95 118 and 124 ms
+
+Both `verify (22)` and `verify (24)` failed only the 3D update budget: p95 118 and 124 ms against the unchanged 100 ms limit, about 70 ms of it from draw to paint. This is the one bounded fix the goal allows. The perf spec now uploads evidence when that budget is breached.
+
+**Trace on breach** (`tests/e2e/perf.spec.ts`, `traceAgain`). When `modelUpdateP95Ms` exceeds 100 ms (or `SEA_TRACE` is set), the 3D scenario runs a second time under a browser-wide Chromium trace. The trace covers the timeline, frames, `cc`, `gpu`, `viz` and user timing, and each purchase's press is marked `sea-purchase`. Its timings are not the gate. The gzipped trace is written to the test's output folder, which CI uploads on failure. `SEA_TRACE_WHY` adds Blink's invalidation-tracking categories, which name why each element was restyled or repainted.
+
+What the trace showed locally. Counts of tiles and invalidations are deterministic, so they are valid on this PC; timings are void.
+
+1. **The HUD grid was painted again with the whole page.** It was a `background-attachment: fixed` background on `body`. Each purchase grows the page, and Chromium then repainted the whole page's background: about 45 raster tiles a purchase, and roughly 16 ms of raster at 4x.
+2. **The showcase and its 3D canvas left the page on every purchase.** The view builds the new page aside, and the student page put the live showcase section into it. Appending an element elsewhere takes it out of the document. `morph` then put it back, so the section was laid out and painted again and the canvas was detached and reattached. Separately, `morph` moved a kept element back over siblings that were going away, rather than dropping those siblings, which is another removal from the page. The 3D stage's own section was also rebuilt with `replaceChildren` on each update. A mutation probe counted 10 removals of the showcase or its canvas over three purchases.
+
+Changes (no budget, timeout or test weakened):
+
+1. **The grid is its own fixed layer** (`body::before`, `position: fixed`, the size of the window, behind the page; `source/ui/styles.css`). It looks the same, and it is hidden in print. Raster per purchase fell from 15.9 to 3.7 ms in the local trace (ratio only), and tiles from 45.5 to 40.5.
+2. **A live element is kept, never moved** (`keep` in `source/ui/dom.ts`). A page built aside holds a shallow stand-in for an element its owner keeps up to date (the showcase, the 3D stage). `morph` puts the live element in the stand-in's place, including inside a newly inserted part of the page. The showcase morphs its own section with the stage kept (`source/showcase/showcase.ts`). Before a kept element, `morph` now drops the old siblings the new page no longer wants; it moves the kept element only when one the new page still wants comes first.
+
+Failing checks first (each red on the old source, green on the new):
+
+- `render.spec.ts`, "morph drops what went away instead of moving what stayed". On the old `morph` the stage and the paragraph after it were removed and reinserted; now only the two dropped paragraphs are removed, and a real reorder still works.
+- `render.spec.ts`, "a recorded purchase leaves the showcase and its 3D canvas on the page, in 3D and in stills". It records three purchases with a mutation observer on the page. Before, it counted removals of the showcase or canvas; now it counts none, with and without a graphics card.
+- `render.spec.ts`, "the HUD grid is its own fixed layer, never a background of the page", in the dark and light themes. On the old stylesheet the grid was a fixed background of `body` and there was no `::before` layer.
+
+Regression before review: the render, accessibility, showcase, visual and layout specs on Chromium, Firefox and Edge (light and heavy projects): 199 passed and 2 failed. The two failures were this change's own test, on Firefox and Edge, whose stills case relied on the browser having no WebGL. That case now turns WebGL off itself (`withoutWebgl`), as the showcase spec does. The visual baselines passed unchanged, so the grid layer looks as before.
+
+Codex review (GPT-6.1 Sol, medium, the whole diff) found three issues. All were accepted and fixed:
+
+1. **P2: a surviving node without an id was dropped when the page reordered.** Morphing `[div with a focused field, section#stage]` into `[section#stage, that div]` removed the div and rebuilt it, so the field lost its focus. Before a kept element, an old node is now dropped only if no later node of the new page wants it: by its id, or, without one, by a later new node it would match. Failing check first: the morph test now also makes that reorder with focus in the field. On the first version of this change it failed on Chromium (field replaced, focus lost); now it passes.
+2. **P2: the stills case did not turn WebGL off.** The same fix as the regression failure above.
+3. **P3: the light-theme case tested the dark theme.** The theme comes from `?theme=light`, not from the system colour scheme. The grid check now opens each theme by its parameter and asserts `data-theme` before measuring.
+
+`render.spec.ts` passes 33 of 33 on Chromium, Firefox and Edge.
 ```
 
 ### docs/verification/legibility.md
@@ -28258,7 +28290,7 @@ export default tseslint.config(
 
 ### library/LESSONS.md
 
-Paths: `library/LESSONS.md`. SHA-256 `9cd670430f492a94915be82c46ca61d21f079eb5c3f3a0f82d8a94ada262c071`, 20298 bytes.
+Paths: `library/LESSONS.md`. SHA-256 `1e33489a0ab406eec1a147d0e0f181c440b9c4a80f81d8a4b801b743a8356c4b`, 21724 bytes.
 
 ```markdown
 # Lessons learned
@@ -28392,6 +28424,12 @@ Each entry: what happened, the rule it produced, and the check that now enforces
 - **What happened:** after two fixes, a 3D purchase still read 128 ms against a 100 ms budget on CI. A trace showed every command replacing the whole page, so the browser restyled and laid out all of it each time. Switching to changing only what changed exposed two hidden faults. A width set through the style object was copied as a `style` attribute, which a strict content policy refuses. A field kept across renders also kept the handler of the render that built it, with that render's value.
 - **Rule:** build the new page aside, then change the live one only where it differs (match by tag and id), so unchanged elements cost nothing and keep focus and scroll. Route every handler through one listener per event type that calls the element's current handler, and never let a handler hold a value from the render that built it. Copy styles through the style object, not as attributes. When a pressed control goes away, move focus to the page, never leave it on nothing; test keyboard reach in Firefox, which leaves the page past its last control instead of wrapping.
 - **Check:** a browser test tags elements and asserts that none is replaced by a render, that focus and scroll survive, and that a kept field saves against the current value. Every browser test fails on any console error.
+
+## 2026-10-22 · Keep live elements on the page; fixed backgrounds belong on their own layer
+
+- **What happened:** after a render changed only what changed, a 3D purchase still read about 120 ms on CI, most of it in paint. The perf check was changed to take a trace when its budget was breached, and the trace showed two causes. A background fixed to the page itself was painted again across the whole page whenever the page grew. A live section with a canvas had been placed into the page built aside, and placing an element elsewhere takes it out of the document. It was then laid out and painted again, and its canvas detached, on every update.
+- **Rule:** when a budget fails only on CI, make the check take a trace on the breach and upload it, and fix what the trace shows. A local trace's counts are valid where its timings are not. Never move a live element into a page built aside: put a shallow stand-in there and let the reconciler swap the live element in, untouched. Before an element that stays, drop the siblings that went away rather than moving the element back over them. Put a fixed decoration on its own fixed layer, sized to the window.
+- **Check:** a mutation observer counts no removal of the live section or its canvas over several updates; a unit check of the reconciler asserts that only the dropped nodes are removed; the decoration is asserted to be a fixed layer and not a background of the page.
 ```
 
 ### library/README.md
@@ -36814,7 +36852,7 @@ export function premultipliedOutput(fragment: string): string {
 
 ### source/showcase/showcase.ts
 
-Paths: `source/showcase/showcase.ts`. SHA-256 `4439de7dafc8f6e0be8d5414b8596adc66a61edc120e7b7b49f57c9aa72adc1b`, 19669 bytes.
+Paths: `source/showcase/showcase.ts`. SHA-256 `9968d41f3503d1cea0e208ebdb32be09e70bfd2b82f280cef329c2061ee0ebaf`, 19798 bytes.
 
 ```ts
 // Vehicle showcase (MPES §10): the team's vehicle with its installed parts, as a slowly turning 3D model the
@@ -36823,7 +36861,7 @@ Paths: `source/showcase/showcase.ts`. SHA-256 `4439de7dafc8f6e0be8d5414b8596adc6
 // the installed parts as text and show process cards as badges.
 import type { Group } from 'three';
 import type { MissionId } from '../domain/data.ts';
-import { h } from '../ui/dom.ts';
+import { append, h, keep, morph } from '../ui/dom.ts';
 import { loadVehicle, ModelStage, partSlots, webglAvailable } from './model.ts';
 import { renders, VEHICLE, type Render } from './renders.ts';
 
@@ -37027,11 +37065,13 @@ export class Showcase {
       sign('showcase-left', text.left, '↺', () => stage.turn(-TURN_STEP)), sign('showcase-right', text.right, '↻', () => stage.turn(TURN_STEP)),
       sign('showcase-zoom-out', text.zoomOut, '−', () => stage.zoom(-1)), sign('showcase-zoom-in', text.zoomIn, '+', () => stage.zoom(1)));
     const slotNote = shown.length < physical.filter(p => slots.has(p.id)).length ? h('p', { class: 'muted small', text: text.slotNote }) : '';
-    const focused = document.activeElement?.id;
-    this.element.replaceChildren(h('h2', { id: 'showcase-heading', text: text.title }), element,
-      h('p', { class: 'muted small', text: text.drag }), slotNote, controls, ...this.#lists(parts, text));
+    // Morphed, the stage kept: rebuilt, the canvas left the page and came back on every purchase (G3 CI run 39605918008),
+    // and a kept control keeps its focus.
+    const next = document.createElement('section');
+    append(next, [h('h2', { id: 'showcase-heading', text: text.title }), keep(element),
+      h('p', { class: 'muted small', text: text.drag }), slotNote, controls, ...this.#lists(parts, text)]);
+    morph(this.element, next);
     stage.attached();
-    if (focused?.startsWith('showcase-')) document.getElementById(focused)?.focus();
     return this.element;
   }
 
@@ -37397,7 +37437,7 @@ export function showDialog(options: DialogOptions): Promise<string> {
 
 ### source/ui/dom.ts
 
-Paths: `source/ui/dom.ts`. SHA-256 `b23e952270a036808032b008feb831c2d76aeae3ea3bc45f8739c85f6f5ec205`, 8825 bytes.
+Paths: `source/ui/dom.ts`. SHA-256 `11376306814d270839f5101ff6c2828890439844b9be94dbb15d814a75ff52a2`, 11263 bytes.
 
 ```ts
 // Safe DOM construction (MPES C-11): text is always set as text, never parsed as HTML.
@@ -37485,26 +37525,66 @@ export function replaceChildren(parent: Element, ...children: Child[]): void {
 /**
  * Makes `parent`'s children match `next`'s, keeping every element that is still the same element: same tag, same id
  * (an input also the same type). A kept element takes the new one's attributes, handlers, value and checked state, and
- * its children are matched the same way; an element that is not kept is replaced by the new one. A child that is the
- * very same node in both (the showcase's stage) is left as it is. A rebuilt page made the browser restyle and lay out
+ * its children are matched the same way; an element that is not kept is replaced by the new one. A stand-in (`keep`)
+ * is replaced by its live element, which is left as it is. A rebuilt page made the browser restyle and lay out
  * all of it after every command (G3 CI run 39508660281: about 30 ms of a 3D purchase on the runner); a kept element
  * costs nothing, keeps its focus, its scroll and its caret, and a panel stays open (only the reader closes one).
  */
+const standIns = new WeakMap<Node, Element>();
+/** Marks a stand-in, so one inside a new part of the page is found when that part is inserted. Never on the page. */
+const STAND_IN = 'data-stand-in';
+
+/**
+ * A stand-in for an element its owner keeps up to date itself (the showcase, its 3D stage): a page built aside holds
+ * the stand-in, and `morph` puts the live element in its place, untouched. Building the page with the live element
+ * itself would take it out of the document until `morph` put it back: laid out and painted again, its canvas
+ * detached, on every render (G3 CI run 39605918008).
+ */
+export function keep(live: Element): Element {
+  const standIn = live.cloneNode(false) as Element;
+  standIn.setAttribute(STAND_IN, '');
+  standIns.set(standIn, live);
+  return standIn;
+}
+
+/** Inserts a new part of the page, each stand-in in it replaced by its live element. */
+function insert(parent: Element, node: Node, before: Node | null): void {
+  if (node instanceof Element) for (const standIn of node.querySelectorAll(`[${STAND_IN}]`)) standIn.replaceWith(standIns.get(standIn)!);
+  parent.insertBefore(node, before);
+}
+
 export function morph(parent: Element, next: Element): void {
   // An element with an id is found wherever it was among its siblings, so a field added before it does not replace it.
-  const byId = new Map<string, Element>();
+  const byId = new Map<string, Element>(), wanted = new Set<string>();
   for (const child of parent.children) if (child.id) byId.set(child.id, child);
+  for (const child of next.children) if (child.id) wanted.add(child.id);
   let old = parent.firstChild;
-  for (const node of [...next.childNodes]) {
-    const found = node instanceof Element && node.id ? byId.get(node.id) : undefined;
-    if (old && same(old, node)) {
+  const children = [...next.childNodes];
+  // Whether an old node is still wanted further on: by its id, or, without one, by a later new node it would match.
+  const wantedLater = (node: ChildNode, from: number): boolean => node instanceof Element && node.id ? wanted.has(node.id)
+    : children.slice(from).some(later => !(later instanceof Element && later.id) && same(node, standIns.get(later) ?? later));
+  for (const [index, child] of children.entries()) {
+    const live = standIns.get(child), node = live ?? child;
+    const found = live ?? (node instanceof Element && node.id ? byId.get(node.id) : undefined);
+    if (live && old === live) {
+      old = live.nextSibling;
+    } else if (live && live.parentNode !== parent) {
+      parent.insertBefore(live, old);
+    } else if (old && same(old, node)) {
       if (old !== node) update(old, node);
       old = old.nextSibling;
     } else if (found && found !== old && found.parentNode === parent && same(found, node)) {
-      parent.insertBefore(found, old);
-      update(found, node);
+      // What went away before a kept element is dropped, not jumped over: moving the kept one takes it off the page and
+      // lays it out and paints it again (G3 CI run 39605918008: the 3D stage, on every purchase). Only a node the
+      // new page still wants, met first, means a real change of order (one without an id included: Codex P2).
+      while (old && old !== found && !wantedLater(old, index + 1)) {
+        const after = old.nextSibling; parent.removeChild(old); old = after;
+      }
+      if (old === found) old = found.nextSibling;
+      else parent.insertBefore(found, old);
+      if (!live) update(found, node);
     } else {
-      parent.insertBefore(node, old);
+      insert(parent, node, old);
     }
   }
   while (old) { const after = old.nextSibling; parent.removeChild(old); old = after; }
@@ -38273,7 +38353,7 @@ export function reflow(source: string): Block[] {
 
 ### source/ui/student.ts
 
-Paths: `source/ui/student.ts`. SHA-256 `c897f2f5289cdff58111a49371b46985fc24461e8748cd520da6561be78a984d`, 24672 bytes.
+Paths: `source/ui/student.ts`. SHA-256 `23569bbcea16e572018d10006c03f60d20b55e8dd70fb4a677015b050c275369`, 24787 bytes.
 
 ```ts
 // Student companion (MPES §7.3).
@@ -38287,7 +38367,7 @@ import { add } from '../domain/money.ts';
 import { validateStudent } from '../domain/saves.ts';
 import * as S from '../domain/student.ts';
 import { cardDetails, complianceText, gapMeter, missionName, missionTable, purchasesTable, presentationQuestions } from './components.ts';
-import { h, type Child } from './dom.ts';
+import { h, keep, type Child } from './dom.ts';
 import { labelled, money, signed } from './format.ts';
 import type { Language, StringKey } from './i18n.ts';
 import { practiceCard } from './instructor.ts';
@@ -38297,11 +38377,12 @@ import { Showcase } from '../showcase/showcase.ts';
 import { renders, VEHICLE } from '../showcase/renders.ts';
 
 let showcase: Showcase | null = null;
-/** The vehicle showcase (MPES §10): one per page, so its 3D stage, view and turntable frame persist. */
+/** The vehicle showcase (MPES §10): one per page, so its 3D stage, view and turntable frame persist. It keeps its own
+ *  section up to date, so the page holds it kept (`keep`), never moved out and back. */
 function showcaseFor(v: View, mission: MissionId): Child {
   const s = joined(v), t = v.t;
   showcase ??= new Showcase();
-  return showcase.update(mission, s.team.purchases.map(p => ({ id: p.id, title: p.title[v.lang], category: p.cat })),
+  return keep(showcase.update(mission, s.team.purchases.map(p => ({ id: p.id, title: p.title[v.lang], category: p.cat })),
     t('showcase.summary', { mission: missionName(mission, v.lang), n: s.team.purchases.length }), {
       title: t('showcase.title'), view: t('showcase.view'), front: t('showcase.front'), rear: t('showcase.rear'),
       turntable: t('showcase.turntable'), rotate: t('showcase.rotate'), installed: t('showcase.installed'), none: t('showcase.none'),
@@ -38309,7 +38390,7 @@ function showcaseFor(v: View, mission: MissionId): Child {
       process: t('showcase.process'), slotNote: t('showcase.slotNote'),
       drag: t('showcase.drag'), pause: t('showcase.pause'), resume: t('showcase.resume'), left: t('showcase.left'), right: t('showcase.right'),
       zoomIn: t('showcase.zoomIn'), zoomOut: t('showcase.zoomOut'),
-    }, s.currentCard && { id: s.currentCard.id, title: s.currentCard.title[v.lang], category: s.currentCard.cat });
+    }, s.currentCard && { id: s.currentCard.id, title: s.currentCard.title[v.lang], category: s.currentCard.cat }));
 }
 
 type View = RoleView<S.StudentState>;
@@ -38635,7 +38716,7 @@ export function startStudent(root: HTMLElement, lang: Language, storage: Storage
 
 ### source/ui/styles.css
 
-Paths: `source/ui/styles.css`. SHA-256 `97104ed93f9df9259bf246f5d90e55d3329b3ffd197a21f7a93cbdc49cb0caf0`, 21233 bytes.
+Paths: `source/ui/styles.css`. SHA-256 `56303241bb10e9b862e231d0b6210b9461487ad8110f2864276e186716cc89d7`, 21561 bytes.
 
 ```css
 /* SEA Game design system (MPES §7.1): one set of tokens for both roles. */
@@ -38875,14 +38956,17 @@ summary { cursor: pointer; font-weight: 600; min-height: 32px; }
 }
 
 /* ---- War-room HUD (MPES §7.1, D-07): the look of every view. ---- */
-body {
-  background-color: var(--paper);
+/* The grid is its own fixed layer the size of the window: a background fixed to the page itself is repainted with the
+   whole page whenever the page grows (a purchase), about 45 tiles each (G3 CI run 39605918008). */
+body { background-color: var(--paper); }
+body::before {
+  content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
   background-image:
     radial-gradient(ellipse at 50% 0%, var(--glow), transparent 60%),
     repeating-linear-gradient(0deg, var(--grid-line) 0 1px, transparent 1px 48px),
     repeating-linear-gradient(90deg, var(--grid-line) 0 1px, transparent 1px 48px);
-  background-attachment: fixed;
 }
+@media print { body::before { display: none; } }
 h1, h2, h3, legend, th {
   text-transform: uppercase; letter-spacing: .08em; font-family: var(--mono); font-weight: 600;
 }
@@ -40530,7 +40614,7 @@ export function dollars(cents: number): string {
 
 ### tests/e2e/perf.spec.ts
 
-Paths: `tests/e2e/perf.spec.ts`. SHA-256 `6b9d9d892e617ded9256830ce831ad39cf01aa8282ea10d80ec2ba4f4b20414b`, 3685 bytes.
+Paths: `tests/e2e/perf.spec.ts`. SHA-256 `663562b084a2015fb60bee1eff8d17657adc05a90d4db0ec19546e070e4a2b6a`, 5385 bytes.
 
 ```ts
 // RQ-26 (MPES §14, §10.3): every performance budget, measured in Chromium on the reference profile (4x CPU
@@ -40539,7 +40623,9 @@ Paths: `tests/e2e/perf.spec.ts`. SHA-256 `6b9d9d892e617ded9256830ce831ad39cf01aa
 // skewed by parallel work; its tests run one after another in one worker. The scenarios and the protocol (input to
 // painted result, nearest-rank p95 of at least 30 samples) are tests/perf/, shared with `npm run perf:ref`, which
 // measures them on the reference GPU; here the runner's software renderer stands in for it (withGpu).
-import { expect, type TestInfo } from '@playwright/test';
+import { writeFileSync } from 'node:fs';
+import { gzipSync } from 'node:zlib';
+import { expect, type Browser, type TestInfo } from '@playwright/test';
 import { MIN_SAMPLES, inputToPaint } from '../perf/measure.ts';
 import { Lab, commands, model, startUp, stills, type Measured } from '../perf/scenarios.ts';
 import { test, withGpu } from './helpers.ts';
@@ -40570,8 +40656,30 @@ test('command response and memory growth (MPES §14)', async ({ browser }, info)
   expect(v.memoryGrowthMB).toBeLessThanOrEqual(5);
 });
 
+/**
+ * A budget missed on the runner, where nobody can profile, leaves a Chromium trace of a second run (traced, so not
+ * the one measured) in the failure's artifacts: where the time went is then read, not guessed (G3 run 39605918008).
+ */
+async function traceAgain(browser: Browser, info: TestInfo): Promise<void> {
+  // The whole browser, not a page: the model scenario closes its pages before the trace is collected.
+  await browser.startTracing(undefined, { categories: TRACE });
+  await model(new Lab(browser, {}, async page => {
+    await withGpu(page);
+    // Marks each purchase's press in the trace, so its time is read apart from the page's start.
+    await page.addInitScript(() => addEventListener('pointerdown', event => {
+      if ((event.target as Element | null)?.closest?.('#record-win')) performance.mark('sea-purchase');
+    }, { capture: true }));
+  }));
+  // A file in the test's output folder, which CI uploads on failure (an attachment's body alone is never written).
+  const path = info.outputPath('trace.json.gz');
+  writeFileSync(path, gzipSync(await browser.stopTracing()));
+  await info.attach('trace.json.gz', { path, contentType: 'application/gzip' });
+}
+const TRACE = ['devtools.timeline', 'disabled-by-default-devtools.timeline', 'disabled-by-default-devtools.timeline.frame', 'blink.user_timing', 'cc', 'gpu', 'viz', 'toplevel', ...(process.env.SEA_TRACE_WHY ? ['disabled-by-default-blink.invalidation', 'disabled-by-default-devtools.timeline.invalidationTracking'] : [])];
+
 test('3D showcase (MPES §14, §10.3)', async ({ browser }, info) => {
   const v = await report(info, await model(new Lab(browser, {}, withGpu)));
+  if (Number(v.modelUpdateP95Ms) > 100 || process.env.SEA_TRACE) await traceAgain(browser, info);
   expect(v.modelReadyMs).toBeLessThanOrEqual(3000);
   expect(v.modelUpdateSamples).toBeGreaterThanOrEqual(MIN_SAMPLES);
   expect(v.modelUpdateP95Ms).toBeLessThanOrEqual(100);
@@ -40944,16 +41052,16 @@ test('G-PILOT substitute: French classroom rehearsal, 10 teams, three student ta
 
 ### tests/e2e/render.spec.ts
 
-Paths: `tests/e2e/render.spec.ts`. SHA-256 `ba072ac4b19c8d75bbf5405a3398069a996d4cf181c089fb91caa89392e24492`, 12915 bytes.
+Paths: `tests/e2e/render.spec.ts`. SHA-256 `4f10e1a86e0d131dc8160eb18d371f53f0c38fa95f99011b272b6bf5518d4146`, 17860 bytes.
 
 ```ts
 // MPES §14 command response: a command, a saved field or a status message rebuilds the view once, never twice (G3: each
 // command used to render through the controller's subscription and again in the view, doubling the click-to-paint time).
 import { expect, type Page } from '@playwright/test';
 import { build } from 'esbuild';
-import { gameUrl, guardNetwork, test } from './helpers.ts';
+import { gameUrl, guardNetwork, test, withGpu, withoutWebgl } from './helpers.ts';
 import { confirmDialog, instructorLot, instructorSetup, studentJoin } from './roles.ts';
-import { TRACKER_OK } from '../perf/measure.ts';
+import { PURCHASES, TRACKER_OK, loadPurchase, openTracker } from '../perf/measure.ts';
 
 /** Counts re-renders: the view announces each one on the document (RENDERED, source/ui/dom.ts). */
 async function countRenders(page: Page): Promise<void> {
@@ -41073,9 +41181,7 @@ test('a kept field keeps its caret when its saved value is tidied', async ({ pag
 });
 
 test('morph keeps a select on the option the new page chose, when that option is new', async ({ page }) => {
-  const { outputFiles } = await build({ entryPoints: ['source/ui/dom.ts'], bundle: true, format: 'iife', globalName: 'seaDom', write: false });
-  await page.setContent('<div id="live"></div>');
-  await page.addScriptTag({ content: outputFiles[0]!.text });
+  await domPage(page);
   expect(await page.evaluate(() => {
     const { h, morph } = (window as unknown as { seaDom: typeof import('../../source/ui/dom.ts') }).seaDom;
     const page = (chosen: string, ...values: string[]) => {
@@ -41089,6 +41195,84 @@ test('morph keeps a select on the option the new page chose, when that option is
     morph(live, page('B', 'A', 'B'));
     return [live.querySelector('select') === select, select.value];
   })).toEqual([true, 'B']);
+});
+
+/** dom.ts bundled into the page as `seaDom`, on an empty page with one `#live` element to morph. */
+async function domPage(page: Page): Promise<void> {
+  const { outputFiles } = await build({ entryPoints: ['source/ui/dom.ts'], bundle: true, format: 'iife', globalName: 'seaDom', write: false });
+  await page.setContent('<div id="live"></div>');
+  await page.addScriptTag({ content: outputFiles[0]!.text });
+}
+
+// G3 CI run 39605918008: when a line before the showcase went away, morph moved the showcase back in front of it
+// instead of dropping the line, so the whole stage left the page and came back (laid out and painted again) on every
+// purchase. A kept element stays where it is; only a real change of order moves one.
+test('morph drops what went away instead of moving what stayed', async ({ page }) => {
+  await domPage(page);
+  expect(await page.evaluate(() => {
+    const { h, morph } = (window as unknown as { seaDom: typeof import('../../source/ui/dom.ts') }).seaDom;
+    const live = document.getElementById('live')!;
+    const next = (...children: HTMLElement[]) => { const div = document.createElement('div'); div.append(...children); return div; };
+    morph(live, next(h('p', { text: 'Recorded.' }), h('p', { id: 'note', text: 'Note' }), h('section', { id: 'stage' }, h('canvas')), h('p', { id: 'after' })));
+    const stage = live.querySelector('#stage')!, observer = new MutationObserver(() => undefined);
+    observer.observe(live, { childList: true });
+    morph(live, next(h('section', { id: 'stage' }, h('canvas')), h('p', { id: 'after' })));
+    const dropped = observer.takeRecords().flatMap(m => [...m.removedNodes].map(n => (n as Element).id || n.nodeName));
+    // A real change of order still gives the new order, every element kept.
+    const after = live.querySelector('#after')!;
+    morph(live, next(h('p', { id: 'after' }), h('section', { id: 'stage' }, h('canvas'))));
+    const kept = live.querySelector('#stage') === stage && live.querySelector('#after') === after, order = [...live.children].map(c => c.id);
+    // So does one where the element that moves ahead has no id (Codex P2): a part with no id that stays is kept too,
+    // with the field in it and its focus.
+    morph(live, next(h('div', {}, h('input', { id: 'field' })), h('section', { id: 'stage' }, h('canvas'))));
+    const field = live.querySelector('input')!;
+    field.focus();
+    morph(live, next(h('section', { id: 'stage' }, h('canvas')), h('div', {}, h('input', { id: 'field' }))));
+    return {
+      dropped, kept, order,
+      field: live.querySelector('input') === field, focused: document.activeElement === field, reordered: [...live.children].map(c => c.tagName),
+    };
+  })).toEqual({ dropped: ['P', 'note'], kept: true, order: ['after', 'stage'], field: true, focused: true, reordered: ['SECTION', 'DIV'] });
+});
+
+test('a recorded purchase leaves the showcase and its 3D canvas on the page, in 3D and in stills', async ({ browser }) => {
+  for (const gpu of [true, false]) {
+    const context = await browser.newContext();
+    const page = await context.newPage();
+    guardNetwork(page);
+    await (gpu ? withGpu : withoutWebgl)(page);
+    await openTracker(page, gameUrl('?role=student&lang=en'));
+    await page.locator(gpu ? '#showcase canvas' : '#showcase img').first().waitFor();
+    await page.evaluate(() => {
+      const w = window as unknown as { seaMoved: number };
+      w.seaMoved = 0;
+      new MutationObserver(list => { for (const m of list) for (const n of m.removedNodes) if (n instanceof Element && (n.matches('#showcase, canvas') || n.querySelector('#showcase, canvas'))) w.seaMoved++; })
+        .observe(document.body, { childList: true, subtree: true });
+    });
+    for (const purchase of PURCHASES) {
+      await loadPurchase(page, purchase);
+      await page.click('#record-win');
+      await expect(page.locator('#record-win')).toHaveCount(0);
+    }
+    expect(await page.evaluate(() => (window as unknown as { seaMoved: number }).seaMoved), gpu ? '3D' : 'stills').toBe(0);
+    await context.close();
+  }
+});
+
+// G3 CI run 39605918008: the HUD grid, a background fixed to the page itself, was painted again with the whole page
+// each time the page grew (about 45 tiles a purchase). It lives on its own layer, fixed and the size of the window.
+test('the HUD grid is its own fixed layer, never a background of the page', async ({ page }) => {
+  guardNetwork(page);
+  for (const theme of ['dark', 'light'] as const) {
+    await page.goto(gameUrl(`?role=student&lang=en${theme === 'light' ? '&theme=light' : ''}`));
+    await expect(page.locator('html')).toHaveAttribute('data-theme', theme);
+    const style = await page.evaluate(() => {
+      const body = getComputedStyle(document.body), grid = getComputedStyle(document.body, '::before');
+      return { page: body.backgroundImage, attachment: body.backgroundAttachment, position: grid.position, image: grid.backgroundImage };
+    });
+    expect(style, theme).toMatchObject({ page: 'none', attachment: 'scroll', position: 'fixed' });
+    expect(style.image, theme).toContain('repeating-linear-gradient');
+  }
 });
 
 // G3: once a render kept the rest of the page, a pressed button that went away with its step left focus on nothing,
@@ -46969,5 +47153,5 @@ Keys and the commands that make each kind again:
 
 | Path | Bytes | SHA-256 | Why |
 |---|---:|---|---|
-| `docs/MPES.md` | 192154 | `3f0a5ab9259a16d36e90d0ac8a83d514a631f8879d98f3e578d5e95340125c4c` | The specification, a clean-room document of its own (Omni 5.1.1 §333). |
+| `docs/MPES.md` | 193975 | `f606b76644af6263270d5d8233666985809bc203018a43e42d9bfef3e564cb5e` | The specification, a clean-room document of its own (Omni 5.1.1 §333). |
 | `docs/CODEBASE.md` | | | This file. |

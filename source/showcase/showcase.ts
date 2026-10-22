@@ -4,7 +4,7 @@
 // the installed parts as text and show process cards as badges.
 import type { Group } from 'three';
 import type { MissionId } from '../domain/data.ts';
-import { h } from '../ui/dom.ts';
+import { append, h, keep, morph } from '../ui/dom.ts';
 import { loadVehicle, ModelStage, partSlots, webglAvailable } from './model.ts';
 import { renders, VEHICLE, type Render } from './renders.ts';
 
@@ -208,11 +208,13 @@ export class Showcase {
       sign('showcase-left', text.left, '↺', () => stage.turn(-TURN_STEP)), sign('showcase-right', text.right, '↻', () => stage.turn(TURN_STEP)),
       sign('showcase-zoom-out', text.zoomOut, '−', () => stage.zoom(-1)), sign('showcase-zoom-in', text.zoomIn, '+', () => stage.zoom(1)));
     const slotNote = shown.length < physical.filter(p => slots.has(p.id)).length ? h('p', { class: 'muted small', text: text.slotNote }) : '';
-    const focused = document.activeElement?.id;
-    this.element.replaceChildren(h('h2', { id: 'showcase-heading', text: text.title }), element,
-      h('p', { class: 'muted small', text: text.drag }), slotNote, controls, ...this.#lists(parts, text));
+    // Morphed, the stage kept: rebuilt, the canvas left the page and came back on every purchase (G3 CI run 39605918008),
+    // and a kept control keeps its focus.
+    const next = document.createElement('section');
+    append(next, [h('h2', { id: 'showcase-heading', text: text.title }), keep(element),
+      h('p', { class: 'muted small', text: text.drag }), slotNote, controls, ...this.#lists(parts, text)]);
+    morph(this.element, next);
     stage.attached();
-    if (focused?.startsWith('showcase-')) document.getElementById(focused)?.focus();
     return this.element;
   }
 

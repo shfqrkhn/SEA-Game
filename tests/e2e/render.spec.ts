@@ -2,9 +2,9 @@
 // command used to render through the controller's subscription and again in the view, doubling the click-to-paint time).
 import { expect, type Page } from '@playwright/test';
 import { build } from 'esbuild';
-import { gameUrl, guardNetwork, test } from './helpers.ts';
+import { gameUrl, guardNetwork, test, withGpu, withoutWebgl } from './helpers.ts';
 import { confirmDialog, instructorLot, instructorSetup, studentJoin } from './roles.ts';
-import { TRACKER_OK } from '../perf/measure.ts';
+import { PURCHASES, TRACKER_OK, loadPurchase, openTracker } from '../perf/measure.ts';
 
 /** Counts re-renders: the view announces each one on the document (RENDERED, source/ui/dom.ts). */
 async function countRenders(page: Page): Promise<void> {
@@ -124,9 +124,7 @@ test('a kept field keeps its caret when its saved value is tidied', async ({ pag
 });
 
 test('morph keeps a select on the option the new page chose, when that option is new', async ({ page }) => {
-  const { outputFiles } = await build({ entryPoints: ['source/ui/dom.ts'], bundle: true, format: 'iife', globalName: 'seaDom', write: false });
-  await page.setContent('<div id="live"></div>');
-  await page.addScriptTag({ content: outputFiles[0]!.text });
+  await domPage(page);
   expect(await page.evaluate(() => {
     const { h, morph } = (window as unknown as { seaDom: typeof import('../../source/ui/dom.ts') }).seaDom;
     const page = (chosen: string, ...values: string[]) => {
@@ -140,6 +138,84 @@ test('morph keeps a select on the option the new page chose, when that option is
     morph(live, page('B', 'A', 'B'));
     return [live.querySelector('select') === select, select.value];
   })).toEqual([true, 'B']);
+});
+
+/** dom.ts bundled into the page as `seaDom`, on an empty page with one `#live` element to morph. */
+async function domPage(page: Page): Promise<void> {
+  const { outputFiles } = await build({ entryPoints: ['source/ui/dom.ts'], bundle: true, format: 'iife', globalName: 'seaDom', write: false });
+  await page.setContent('<div id="live"></div>');
+  await page.addScriptTag({ content: outputFiles[0]!.text });
+}
+
+// G3 CI run 39605918008: when a line before the showcase went away, morph moved the showcase back in front of it
+// instead of dropping the line, so the whole stage left the page and came back (laid out and painted again) on every
+// purchase. A kept element stays where it is; only a real change of order moves one.
+test('morph drops what went away instead of moving what stayed', async ({ page }) => {
+  await domPage(page);
+  expect(await page.evaluate(() => {
+    const { h, morph } = (window as unknown as { seaDom: typeof import('../../source/ui/dom.ts') }).seaDom;
+    const live = document.getElementById('live')!;
+    const next = (...children: HTMLElement[]) => { const div = document.createElement('div'); div.append(...children); return div; };
+    morph(live, next(h('p', { text: 'Recorded.' }), h('p', { id: 'note', text: 'Note' }), h('section', { id: 'stage' }, h('canvas')), h('p', { id: 'after' })));
+    const stage = live.querySelector('#stage')!, observer = new MutationObserver(() => undefined);
+    observer.observe(live, { childList: true });
+    morph(live, next(h('section', { id: 'stage' }, h('canvas')), h('p', { id: 'after' })));
+    const dropped = observer.takeRecords().flatMap(m => [...m.removedNodes].map(n => (n as Element).id || n.nodeName));
+    // A real change of order still gives the new order, every element kept.
+    const after = live.querySelector('#after')!;
+    morph(live, next(h('p', { id: 'after' }), h('section', { id: 'stage' }, h('canvas'))));
+    const kept = live.querySelector('#stage') === stage && live.querySelector('#after') === after, order = [...live.children].map(c => c.id);
+    // So does one where the element that moves ahead has no id (Codex P2): a part with no id that stays is kept too,
+    // with the field in it and its focus.
+    morph(live, next(h('div', {}, h('input', { id: 'field' })), h('section', { id: 'stage' }, h('canvas'))));
+    const field = live.querySelector('input')!;
+    field.focus();
+    morph(live, next(h('section', { id: 'stage' }, h('canvas')), h('div', {}, h('input', { id: 'field' }))));
+    return {
+      dropped, kept, order,
+      field: live.querySelector('input') === field, focused: document.activeElement === field, reordered: [...live.children].map(c => c.tagName),
+    };
+  })).toEqual({ dropped: ['P', 'note'], kept: true, order: ['after', 'stage'], field: true, focused: true, reordered: ['SECTION', 'DIV'] });
+});
+
+test('a recorded purchase leaves the showcase and its 3D canvas on the page, in 3D and in stills', async ({ browser }) => {
+  for (const gpu of [true, false]) {
+    const context = await browser.newContext();
+    const page = await context.newPage();
+    guardNetwork(page);
+    await (gpu ? withGpu : withoutWebgl)(page);
+    await openTracker(page, gameUrl('?role=student&lang=en'));
+    await page.locator(gpu ? '#showcase canvas' : '#showcase img').first().waitFor();
+    await page.evaluate(() => {
+      const w = window as unknown as { seaMoved: number };
+      w.seaMoved = 0;
+      new MutationObserver(list => { for (const m of list) for (const n of m.removedNodes) if (n instanceof Element && (n.matches('#showcase, canvas') || n.querySelector('#showcase, canvas'))) w.seaMoved++; })
+        .observe(document.body, { childList: true, subtree: true });
+    });
+    for (const purchase of PURCHASES) {
+      await loadPurchase(page, purchase);
+      await page.click('#record-win');
+      await expect(page.locator('#record-win')).toHaveCount(0);
+    }
+    expect(await page.evaluate(() => (window as unknown as { seaMoved: number }).seaMoved), gpu ? '3D' : 'stills').toBe(0);
+    await context.close();
+  }
+});
+
+// G3 CI run 39605918008: the HUD grid, a background fixed to the page itself, was painted again with the whole page
+// each time the page grew (about 45 tiles a purchase). It lives on its own layer, fixed and the size of the window.
+test('the HUD grid is its own fixed layer, never a background of the page', async ({ page }) => {
+  guardNetwork(page);
+  for (const theme of ['dark', 'light'] as const) {
+    await page.goto(gameUrl(`?role=student&lang=en${theme === 'light' ? '&theme=light' : ''}`));
+    await expect(page.locator('html')).toHaveAttribute('data-theme', theme);
+    const style = await page.evaluate(() => {
+      const body = getComputedStyle(document.body), grid = getComputedStyle(document.body, '::before');
+      return { page: body.backgroundImage, attachment: body.backgroundAttachment, position: grid.position, image: grid.backgroundImage };
+    });
+    expect(style, theme).toMatchObject({ page: 'none', attachment: 'scroll', position: 'fixed' });
+    expect(style.image, theme).toContain('repeating-linear-gradient');
+  }
 });
 
 // G3: once a render kept the rest of the page, a pressed button that went away with its step left focus on nothing,
