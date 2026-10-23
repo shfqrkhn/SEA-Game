@@ -45,7 +45,7 @@ Licence and latest version as published on the npm registry (`npm view <package>
 | axe-core | MPL-2.0 (file-level copyleft: fine as a test tool. If shipped, even unmodified or minified, recipients must get the MPL notice and access to the covered source form; modified MPL files stay MPL) | 4.14.0 |
 | pa11y | LGPL-3.0-only (test tool only) | 10.0.0 |
 | lighthouse | Apache-2.0 | 13.5.0 |
-| vitest | MIT | 5.0.4 |
+| vitest | MIT | 5.0.5 |
 | fast-check | MIT | 4.10.2 |
 | @adobe/leonardo-contrast-colors | Apache-2.0 | 1.1.0 |
 

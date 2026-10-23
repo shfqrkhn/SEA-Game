@@ -1,6 +1,6 @@
 # SEA Game codebase
 
-Version 0.6.0.0. Written by `npm run codebase` (scripts/codebase.ts); do not edit by hand. It holds all 1054 tracked files of the repository: 198 text files as 195 unique contents, 854 binary files by hash with the command that regenerates them, and 2 documents kept separately. With docs/MPES.md it is enough to rebuild the project.
+Version 0.6.0.0. Written by `npm run codebase` (scripts/codebase.ts); do not edit by hand. It holds all 1055 tracked files of the repository: 199 text files as 196 unique contents, 854 binary files by hash with the command that regenerates them, and 2 documents kept separately. With docs/MPES.md it is enough to rebuild the project.
 
 ## How to rebuild the tree
 
@@ -203,7 +203,7 @@ THE SOFTWARE.
 
 ### README.md
 
-Paths: `README.md`. SHA-256 `0397bce8e01fd8b68658d0cbca82429de0ed3d81ab3e1b600744b6a1fb3a4164`, 3640 bytes.
+Paths: `README.md`. SHA-256 `c7ea5b4de5e5aec63e096b4385fdecc884fd69f126eb87b103d4aa46a85ce2d0`, 3400 bytes.
 
 ````markdown
 # SEA Game: Systems Engineering Awareness
@@ -211,7 +211,7 @@ Paths: `README.md`. SHA-256 `0397bce8e01fd8b68658d0cbca82429de0ed3d81ab3e1b60074
 A bilingual (English/French) classroom auction game. Teams plan a vehicle for a mission, bid for components in a facilitator-led auction, reconcile their build and submit a value-for-money bid. The whole game is one offline HTML file with every image embedded.
 
 - **Play:** open the game file (`SEA-Game-<version>.html` in a release package, or `dist/index.html` after a build) in a current Chrome, Edge or Firefox on **Windows 11** (the only supported platform). No installation, no network, no account.
-- **Status:** 0.6.0.0 beta in progress (G3 proxy and runtime: adaptive quality tiers, timed starting tier, context-loss recovery, the `npm run perf:ref` protocol), after 0.5.2.0 (owner FIX 4: showcase zoom, full-kit framing, sign controls, phone tables), on tag `v0.5.1.0` (G2, owner GO 2026-10-12: owner fixes, six-vehicle chooser, muzzle sightline check, component legibility rules, review gallery, code-free specification, codebase file, backup preparation, creator credit, reusable library); not yet release-qualified. Next: G3 (proxy and runtime, 0.6.0.0). The rollback is tag `v4.1.0-dev.1`.
+- **Status:** 0.6.0.0 beta (tag `v0.6.0.0`, G3 proxy and runtime, owner GO 2026-10-22, with named blocker G3-B1), **shelved indefinitely since 2026-10-23**; not yet release-qualified. To resume: [docs/HANDOVER.md](docs/HANDOVER.md) section 5 and `RESTORE.md`. Next goal: G4 (hyper-real assets and the 3D budget, 0.7.0.0). The rollback is tag `v4.1.0-dev.1`.
 - **Created by:** Shafiqur Rahman Khan, with AI assistance.
 - **Licence:** MIT, see [LICENSE](LICENSE).
 - **Specification:** [docs/MPES.md](docs/MPES.md). **Current state and next steps:** [docs/HANDOVER.md](docs/HANDOVER.md). **Working rules:** [AGENTS.md](AGENTS.md).
@@ -836,7 +836,7 @@ Every check is reported PASS, FAIL, NOT_RUN or BLOCKED with the command that pro
 
 ### art/README.md
 
-Paths: `art/README.md`. SHA-256 `50f382a2410bc638fe653b49a527aedb3150738b4befca1f92457364560c71ee`, 12402 bytes.
+Paths: `art/README.md`. SHA-256 `39236a02c5043884391506d7f8ed7b04d5fb9244ab9b4ed239c32727bdf19f0f`, 12418 bytes.
 
 ````markdown
 # Art pipeline (MPES §10, §11)
@@ -851,7 +851,7 @@ AI assistance (MPES D-14): `tools/concepts.ts` generates concept images with the
 |---|---|---|
 | Blender (portable zip) | 5.2.2 LTS, build hash `d13f752e3b9c` | `https://download.blender.org/release/Blender5.2/blender-5.2.2-windows-x64.zip`, SHA-256 `3849d17a682cba006075aaa3f3597ecb5c9c30ec31035b2e092c53e40679b535` |
 | Renderer | Cycles on the GPU (OptiX), OpenImageDenoise | Fixed seed `20261010`, fixed sample counts, no adaptive sampling. Falls back to the CPU (slow but identical in intent) when no NVIDIA GPU is present. |
-| Encoder | `sharp` 0.35.4 (libvips 8.18.6), pinned in `package.json` | AVIF, quality 65, 4:4:4 (chosen at the V1 spike) |
+| Encoder | `sharp` 0.35.5 (libvips 8.18.7, librsvg 2.63.2), pinned in `package.json` | AVIF, quality 65, 4:4:4 (chosen at the V1 spike) |
 
 Unzip Blender into `.artifacts/tools/` (git-ignored). Nothing is installed system-wide.
 
@@ -27041,22 +27041,22 @@ Exportez une sauvegarde par **Menu → Exporter une sauvegarde** après la confi
 
 ### docs/HANDOVER.md
 
-Paths: `docs/HANDOVER.md`. SHA-256 `2e03944128e6f69c9285623acff960eb38c42b0a92f945628e6ee89b84cea8be`, 13471 bytes.
+Paths: `docs/HANDOVER.md`. SHA-256 `85e77d8da502a82093f5fd6445ef8fd32493ea0dddc385486a14d4fb8545d625`, 18433 bytes.
 
-```markdown
+````markdown
 # Handover
 
-Updated 2026-10-22 (America/Toronto). Specification: [MPES](MPES.md) 4.5.5. Evidence: [verification/0.6.0.0.md](verification/0.6.0.0.md), [verification/0.5.2.0.md](verification/0.5.2.0.md), [verification/0.5.1.0.md](verification/0.5.1.0.md), [verification/0.5.0.0.md](verification/0.5.0.0.md), [verification/spike-visual.md](verification/spike-visual.md).
+Updated 2026-10-23 (America/Toronto). **Shelved indefinitely after G3** (owner, 2026-10-23); to resume, read section 5. Specification: [MPES](MPES.md) 4.5.6 (shelving: §19.7). Evidence: [verification/0.6.0.0.md](verification/0.6.0.0.md), [verification/0.5.2.0.md](verification/0.5.2.0.md), [verification/0.5.1.0.md](verification/0.5.1.0.md), [verification/0.5.0.0.md](verification/0.5.0.0.md), [verification/spike-visual.md](verification/spike-visual.md).
 
 ## 1. Version and milestone
 
-Version 0.6.0.0 beta (four-part MAJOR.MINOR.PATCH.BUILD, MPES §19.2; 1.0.0.0 only once out of beta: MPES §19.2 exit criteria, including every owner gate). M0–M4, V1, V2 (goal G1, tag `v0.5.0.0`) and G2 (owner fixes and the docs regime, tag `v0.5.1.0`, owner GO 2026-10-12) are complete. 0.5.2.0 (tag `v0.5.2.0` on `c2932eb`, owner GO 2026-10-13) is owner FIX 4 on G2: showcase zoom, framing of the full kit at every turn and height, sign controls, and phone tables as labelled cards (`docs/verification/0.5.2.0.md`). G3 (0.6.0.0, tag `v0.6.0.0`, owner GO 2026-10-22) is the proxy and runtime goal: the stills, command and 3D update budgets on the reference proxy, with named blocker G3-B1 (`docs/verification/0.6.0.0.md`). The rollback is tag `v4.1.0-dev.1`.
+Version 0.6.0.0 beta (four-part MAJOR.MINOR.PATCH.BUILD, MPES §19.2; 1.0.0.0 only once out of beta: MPES §19.2 exit criteria, including every owner gate). M0–M4, V1, V2 (goal G1, tag `v0.5.0.0`) and G2 (owner fixes and the docs regime, tag `v0.5.1.0`, owner GO 2026-10-12) are complete. 0.5.2.0 (tag `v0.5.2.0` on `c2932eb`, owner GO 2026-10-13) is owner FIX 4 on G2: showcase zoom, framing of the full kit at every turn and height, sign controls, and phone tables as labelled cards (`docs/verification/0.5.2.0.md`). G3 (0.6.0.0, tag `v0.6.0.0`, owner GO 2026-10-22) is the proxy and runtime goal: the stills, command and 3D update budgets on the reference proxy, with named blocker G3-B1 (`docs/verification/0.6.0.0.md`). The rollback is tag `v4.1.0-dev.1`. The dependency security sweep (sharp 0.35.5, vitest 5.0.5, npm audit 4 findings to 0, build byte-identical) is folded into 0.6.0.0; PR #28 (its 0.5.2.1 branch) is closed as folded in.
 
 **Plan to beta exit (MPES §17), one PR and one tag per goal:**
 
 | Goal | Version | Content |
 |---|---|---|
-| G3 proxy + runtime | 0.6.0.0 | `npm run perf:ref` on the Intel UHD 770 proxy (D-16), every §14 gate, baked lighting, adaptive tiers, context-loss recovery, touchpad and panel safety |
+| G3 proxy + runtime (done) | 0.6.0.0 | `npm run perf:ref` on the Intel UHD 770 proxy (D-16), every §14 gate, baked lighting, adaptive tiers, context-loss recovery, touchpad and panel safety |
 | G4 hyper-real assets | 0.7.0.0 | vehicles, parts and cards raised towards the Codex concepts within budgets; textures and decals where they pay |
 | G5 classroom | 0.8.0.0 | UX, workload, teaching aids, game feel §7.7, projector mode §7.8, fault tests |
 | G6 hardening | 0.9.0.0 | manual accessibility, Windows 11 matrix, egress, security and content review, `npm run package` |
@@ -27093,26 +27093,70 @@ Shared rules for every goal: `AGENTS.md`. KPIs and priority: MPES §1.4.
 ## 3. Not done
 
 - **Owner art judgement:** BLOCKED-owner, script `docs/owner/art-review.md`.
-- **G3–G8:** above. `npm run perf:ref` exists (MPES §14.1); its first 12-KPI baseline waits for a quiet slot on this PC.
+- **G4–G8:** above. `npm run perf:ref` (MPES §14.1) has a six-run baseline on `2ac1d39` (`docs/verification/0.6.0.0.md` "Reference proxy").
+- **Named blocker G3-B1:** the 3D update p95 is 118–132 ms on GPU-less CI runners on some runs (budget 100, kept; the check stays on). Run 39827140601 was all green; 39849202659 failed `verify (24)` at 118 ms. Players do not meet this path: a software renderer gets the stills; CI reaches 3D only because tests spoof a GPU (`withGpu()`). G4 clears it (section 5).
+- **Open perf items (budgets kept):** renderer plus GPU memory with 3D on 570/479 MB against 400; first-click INP and long task on the first-run 1366×768 profile 800/588 ms against 200; turning-showcase idle CPU 16.9 % against 3 % (G5).
 - **Known timing note:** `tests/unit/codebase.test.ts` usually runs in under half a second but once took 7.1 s (2026-10-11, cause unknown, result correct, not reproduced in 22 runs); it has an explicit 60 s bound with that evidence in a comment. Watch for a repeat.
 - **Known timing note 2:** `tests/unit/build.test.ts` "is deterministic" once timed out (63 s against 5 s) while other projects' test runs loaded this PC (2026-10-12); it passed in 5.3 s on re-run. The same day `tests/unit/archive.test.ts` "refuses a path that holds a tracked file" timed out the same way (5 s; 80 ms alone); its scratch clones had piled up in `.artifacts/tmp` and are now removed after each run (`tests/unit/scratch.test.ts`). On 2026-10-12 at 97% CPU two Firefox tests (`layout.spec.ts` live lot, `showcase.spec.ts` every vehicle) timed out with an unchanged build and passed alone. If either repeats on a quiet machine, find the cause; do not raise the timeout.
 - **Known timing note 3:** CI failed the showcase update budget once too (109 ms against 100, `78cca1f`, 2026-10-12). With Windows Defender and other projects busy, the local perf project fails a 3D update budget in about half of its runs, at the previous commit as often as now (A/B in `docs/verification/0.5.1.0.md`). Run it on a quiet machine; never raise the budgets. G3's `perf:ref` protocol is meant to settle this.
 - **Whole-vehicle contrast (for G4):** measured on the vehicle's silhouette (stage shot on black and on white) at every view the player can reach. In 3D, with the camera-relative fill added after red run 38609311138, every vehicle holds at least 3:1 at all 16 turn steps (least 3.23, RECOVERY's rear view; `docs/verification/0.6.0.0.md`). In stills the front and rear views stand at about 1.6:1 whole on the dark stage and the turntable frames lower; their floors in `tests/e2e/showcase.spec.ts` are the measured least values and may only rise; G4 lifts every still view and frame to 3 through lighting, value separation and the re-render (MPES §10.5). Also for G4: the RECCE roof is pale in 3D side view (realism, under 1% clipped); the vehicle on the light theme's white stage is not yet contrast-checked.
 - **Residual risks:** real learners (S3); Narrator and NVDA users; no physical laptop test (D-16); CI runs Windows Server, not Windows 11; art quality is the owner's judgement.
 
-## 4. In-progress work
+## 4. In-progress work (shelved state)
 
-Owner FIX 1 (stills and fit), FIX 2 (one click to close a round nobody can win in; unsold cards listed with their effects) and FIX 3 (a part read as the end of a barrel: optics head raised, mast set back, mirrors lowered, `sightline.py` at any depth including hull fittings, 574 pairs recorded and only shrinking; full re-render, encode and pack done) are done and checked (`docs/verification/0.5.1.0.md`). The Codex review of FIX 2 is dispositioned; unit-test scratch now cleans up after itself. Prepared for G3 on local side branches by Sonnet agents (not merged, not run in a browser; review before merging into G3): `g3/perf-ref` (`npm run perf:ref` rig, protocol fragment) and `g3/caching` (CI download caches, encode cache). The owner said GO on the gallery (2026-10-12, "we can iterate later") and merged PR #22; tag `v0.5.1.0` is on `10e61e3`. A hand-uploaded root `index.html` made `main` red and let CI deploy a 0.5.0.0 build over it; branch `g2/pages` removes it, adds a check and sets the Pages source to GitHub Actions (`docs/verification/0.5.1.0.md` "Pages after the merge"). `g2/pages` merged as PR #23 after two green runs; the Pages SHA-256 equals the 0.5.1.0 build (630e6d52…1667). Owner FIX 4 (2026-10-12): the showcase could not zoom and cut off a fully kitted vehicle; on a phone the tables in the collapsible sections lost columns; the controls were long words. Fixed on `fix/showcase-mobile` as 0.5.2.0 (CI then found pause letting the turn coast on; fixed, with every control reporting its view at once, and Playwright now refuses a `dist/index.html` older than the source: run `npm run build` before any ad hoc Playwright run). At the owner's request (2026-10-13) it was merged into `main` (PR #24) and published through CI; a docs-only head merged without its own CI left `docs/CODEBASE.md` stale and failed `main` until `fix/codebase-sync` (`docs/verification/0.5.2.0.md` "Publication"). Merge only a head whose own CI is green: since 2026-10-13 `main` is protected (owner permission) and GitHub refuses a merge unless `verify (22)` and `verify (24)` passed on the up-to-date head, administrators included. The owner merged PR #25; `main` CI on `c2932eb` passed and Pages serves the 0.5.2.0 build (`fc7fd07d…0b88`). Owner GO on 0.5.2.0 (2026-10-13): tag `v0.5.2.0` on `c2932eb`, instructor zip `.artifacts/prototype/SEA-Game-prototype-0.5.2.0.zip` sent (`make.sh` now reads `gameVersion` from `package.json`). CI on `78cca1f` failed `showcaseUpdateMaxMs` once (109 ms against 100; `docs/verification/0.5.1.0.md` close-out): see timing note 3. Run only one Blender job at a time: the owner uses this PC.
+Nothing is in progress. The history of every earlier fix and publication is in `docs/verification/` (one file per version) and `git log`.
 
-## 5. Next action
+- **Branches:** `main` holds G3 (PR #27, merge commit, tag `v0.6.0.0`; the annotated tag's message records the close-out: CI run, Pages SHA-256 against the local build, instructor zip). PR #28 (`fix/security-sharp-0.35.5`) is closed, folded into 0.6.0.0; its branch is kept. Older side branches (`g3/caching`, `g3/perf-ref`, `fix/g3-static-bounds-20261020`) are merged or superseded; their worktrees are archived under `_archive/recycle/2026-10-20/`, `2026-10-22/` and `2026-10-23/` (read-only; nothing depends on them).
+- **Cleanup:** the owner asked for it (2026-10-23). `npm run archive:prep -- --apply` removed only what a command brings back (packages, builds, browsers, caches, the Blender download, gallery captures, `.artifacts/tmp`) and wrote `RESTORE.md` at the root with the steps back and the expected build hash.
+- **Kept:** git history and tags, every tracked file, render masters, models, concepts, logs and evidence in `.artifacts/` (instructor zips in `.artifacts/prototype/`, review galleries in `.artifacts/review/`), `_archive/`, and the owner's local governance file `docs/Omni_5.1.1.md` (never committed).
+- **GitHub:** temporary QA space; the owner may delete it. Branch protection on `main` requires `verify (22)` and `verify (24)`. Local continuity needs nothing from GitHub.
+- **Owner-only:** `docs/owner/art-review.md` (BLOCKED-owner) and instructor replies to `docs/owner/instructor-review.md`.
 
-**Agent:** G3 (0.6.0.0) is complete: owner GO 2026-10-22, merged into `main` with named blocker G3-B1 (the 3D update p95 reached 122–132 ms on GPU-less CI runners on some runs; run 39827140601 was all green; budget 100 kept; `docs/verification/0.6.0.0.md`). Next is G4 (0.7.0.0) from `main` at `v0.6.0.0`, per the plan in `.artifacts/tmp/g4-plan.md`: first PR #28 (sharp 0.35.5, rebase onto main; rename its 0.5.2.1 or fold it into 0.7.0.0); clear G3-B1 with a cheaper last drawing tier (Lambert, no environment map), failing checks first, and never by weakening the CI check; then stills ≥3:1 in every view and frame (floors raised from 2.106/1.558/1.596/1.317), the pale RECCE roof, light-theme stage contrast (no check yet), the §10.5 ID-mask check (none yet), sightline 574→0, renderer+GPU memory ≤400 MB (570/479), and the first-click INP and long task ≤200 ms (800/588), traced first.
-**Owner:** `docs/owner/art-review.md` (5 minutes, reply GO or FIX).
+## 5. Next action: resume
+
+**Restore** (any agent): read `AGENTS.md`, this file and MPES §19.7. Install Node 22 or 24 and Git, then follow `RESTORE.md`: `npm ci`, `npm run browsers`, `npm run build` and compare its SHA-256 with `RESTORE.md` (0.6.0.0 builds `818b432d…2923`), then `npm run verify`. Blender 5.2.2 (MPES §5.4, `art/README.md`) is needed only for art. Before new work, audit every pin against the registry and its advisories (`npm audit`, `library/practices/dependency-security.md`): time will have passed. If GitHub is gone, the local `npm run verify` and `npm run perf:ref` are the gate; a new CI keeps Node 22 and 24 and every budget.
+
+**G4 (0.7.0.0) plan**, from `main` at `v0.6.0.0`, each item failing check first:
+
+1. **G3-B1:** a tier 4 in `source/showcase/pace.ts`: Lambert on the vertex colours, no environment map, pixel ratio about 0.35–0.4. `startTier` already falls to the last tier when nothing fits a 30 fps frame. Probe: Lambert instead of standard 62 → 22 ms, no environment 26–30 ms; estimated p95 near 80 ms, unverified; CI judges. Checks first: `tests/unit/pace.test.ts` `startTier(() => 1000)` returns 4 (3 today); a contrast test forcing tier 4 still holds whole-vehicle contrast ≥ 3; the existing `tests/e2e/perf.spec.ts` gate. Not allowed: replacing the CI 3D gate with machine-independent checks (that weakens a check), or a paid GPU runner (breaks zero cost). If it fails, keep the budget and the check and carry G3-B1.
+2. **Stills contrast ≥ 3:1** in every view and turntable frame: the floors in `tests/e2e/showcase.spec.ts` (today 2.106, 1.558, 1.596, 1.317) all raised to 3, then lighting, value separation and re-render (MPES §10.5).
+3. **No checks exist yet** for the pale RECCE roof in 3D side view, the §10.5 ID-mask check, and the vehicle on the light theme's stage (`--stage` #ffffff to #dfe6e1 in `source/ui/styles.css`; the contrast tests run dark only): write them first.
+4. **Sightline:** `art/blender/sightline-baseline.json` 574 pairs → 0 (empty it so all fail, then fix the art). Heavy and serial: renders, export, sightline, fit, overlap; one Blender job at a time.
+5. **Memory** ≤ 400 MB (`machine()` in `tests/perf/scenarios.ts`, `processMB()` in `tests/perf/measure.ts`). Suspects, unverified: the base64 model held as script text and its inflated buffer, decoded stills, the tier-0 multisampled target and shadow map.
+6. **First-click INP and long task** ≤ 200 ms, trace first. Suspects, unverified: model inflate and parse, `compileAsync`, `#calibrate()` (blocking readPixels), idle `prepareVehicle` near the first click.
+7. Then G5–G8 as in section 1 and MPES §17.
+
+**Goal prompt** to paste as `/goal` (under 4 000 characters):
+
+```text
+/goal SEA Game: resume after shelving; G4-G8 to 1.0.0.0 (else 0.9.x + named blockers).
+READ: AGENTS.md, docs/HANDOVER.md (section 5 = G4 plan), MPES §10.5 §14 §17 §19.2 §19.7 §20.1 §21, docs/verification/, RESTORE.md.
+FIRST: restore per RESTORE.md; build hash must match; npm run verify green; npm audit every lockfile, fix to 0 (BUILD bump if alone); check GitHub/CI still exist, else local verify+perf:ref gate.
+GOALS (one PR from main, one tag each):
+G4 0.7.0.0 assets + 3D budget: clear G3-B1 via tier 4 (Lambert, no env map), evidence first; stills >=3:1 every view, raise floors; pale RECCE roof, light-theme stage contrast, §10.5 ID-mask checks (write them); sightline 574->0; fit/overlap/tris green; memory <=400 MB; first-click INP+long task <=200 ms, trace first; Codex art+modelling, CC0.
+G5 0.8.0.0 classroom: turning-showcase idle CPU <=3 %; instructor replies (docs/owner/); workload, learnability, objectives+debrief, §7.7 feel, §7.8 projector, fault tests, scripted rehearsal, grandma test.
+G6 0.9.0.0 hardening: axe, keyboard (Chromium+Firefox+Edge), WCAG 2.2 AA, 320/360 px reflow, Narrator/NVDA scripts, Windows 11 matrix, egress, security+content+dependency review, Codex French review, npm run package.
+G7 0.9.1.0 RC: freeze; three §21 passes; perf:ref 12 KPIs PASS or named; local handoff: git bundle+tags, HTML+SHA256SUMS, art sources, docs, library/, RESTORE.md; fresh restore reproduces build hash.
+G8 1.0.0.0 only when every §19.2 criterion has evidence, owner's included.
+LOOP PER GOAL:
+1 Branch main at last tag; bump gameVersion once; changelog row.
+2 Each item: failing check first, proven red on old code, then green; every angle/view/state/theme/browser. Never weaken tests/budgets/timeouts; floors only rise.
+3 Codex (gpt-6.1-sol, medium, stdin closed) reviews each substantial diff; dispositions in verification/<ver>.md.
+4 Docs current (MPES no code); lessons to §20.1+library/. EVERY commit: npm run codebase, tsc, eslint, unit; stage named files only.
+5 npm run verify && git push (never push on a later command). CI via one read, never poll; two greens on one head. Red: logs+trace, cause, failing check, one bounded fix; still red: budget kept, named blocker, offer GO = merge with blocker.
+6 perf:ref quiet slot; npm run gallery -- --notes <plain notes>; send it; ask GO or FIX; stop.
+7 FIX: every item+siblings, repeat 4-6. GO: merge commit; tag; Pages SHA-256 = local build; instructor zip (.artifacts/prototype/make.sh); archive worktrees.
+SPEED: worktree lanes prep next goal and commit what they write; heavy runs serial (Blender, perf, verify, gallery).
+RULES: AGENTS.md 1-22 bind; ask nothing but GO/FIX; work only in repo; never delete (archive to _archive/recycle/<date>/); never stage docs/Omni_5.1.1.md, dist/, builds. Never mute/skip CI; never kill others' processes. FOSS: licence checked, catalogue, THIRD_PARTY_NOTICES. Credit only where build.test.ts pins it; licence SEA Game authors. Any defect: fix siblings, add a check. Priority: teaching+reliability > learnability+workload > performance+any classroom > realism > maintainability. <=50 MB, <=30 fps, <= half the machine, iGPU-safe.
+DONE: v1.0.0.0 per §19.2 (or 0.9.x+blockers); handoff restored, hash-verified; library/ current; owner GO.
+```
+
+**Owner:** `docs/owner/art-review.md` (5 minutes, reply GO or FIX) whenever the project resumes.
 
 ## 6. Rollback
 
 Tag `v4.1.0-dev.1` (the previous application) or `v0.5.0.0` (the rebuild before G2). A tag's built file comes from `git archive <tag>`, `npm ci`, `npm run build`. Old material sits in `_archive/` (read-only; recycled files in `_archive/recycle/<date>/`) until the owner deletes it.
-```
+````
 
 ### docs/RECOVERY_GUIDE.md
 
@@ -27700,7 +27744,7 @@ A read-only Codex session (gpt-6.1-sol, medium) reviewed the diff (`.artifacts/c
 
 ### docs/verification/0.6.0.0.md
 
-Paths: `docs/verification/0.6.0.0.md`. SHA-256 `63da0e82ac99b709f9e4af662ae9f060821967b0205b975440fdb0e410a2c2b4`, 68947 bytes.
+Paths: `docs/verification/0.6.0.0.md`. SHA-256 `d4943d103f493d77553b185bb04977cda24acce5c33b5e569180f4bafb336fe1`, 70276 bytes.
 
 ```markdown
 # Verification record: 0.6.0.0 beta (G3 proxy and runtime)
@@ -28133,6 +28177,21 @@ The stills contrast tests (`tests/e2e/showcase.spec.ts`, the `*-heavy` projects)
 
 Rerun with the new floors: 54 passed on chromium-heavy, firefox-heavy and msedge-heavy.
 
+## Dependency security sweep before shelving (2026-10-23)
+
+Before the project was shelved, `npm audit` on `g3/proxy-runtime` reported 4 findings (1 high, 3 moderate): `sharp` below 0.35.5 (the fix sat on the unmerged branch `fix/security-sharp-0.35.5`, PR #28, numbered 0.5.2.1 and never tagged) and an advisory in the test runner. Both are folded into 0.6.0.0, which is not yet tagged, so the version is not bumped again (AGENTS rule 17). PR #28 is closed as folded in; its branch is kept.
+
+| Package | Before | After |
+|---|---|---|
+| `sharp` (image encoding, offline only) | 0.35.4 (libvips 8.18.6) | 0.35.5 (libvips 8.18.7, librsvg 2.63.2) |
+| `vitest`, `@vitest/coverage-v8` (tests only) | 5.0.1 | 5.0.5 |
+
+| Check | Command | Result |
+|---|---|---|
+| Audit before | `npm audit` | FAIL: 4 findings (1 high, 3 moderate) |
+| Audit after | `npm audit` | PASS: 0 findings |
+| Build unchanged | `npm run build`, SHA-256 of `dist/index.html` before and after | PASS: byte-identical, `818b432db856079465f0eb71c64619d2ad855cde2609293362839c9cf2112923` (22 757 314 bytes); no shipped code changed |
+
 ## Checks
 
 | Check | Command | Result |
@@ -28143,6 +28202,7 @@ Rerun with the new floors: 54 passed on chromium-heavy, firefox-heavy and msedge
 | Full gate on `9cb4c8f` | `npm run verify` (typecheck, lint, unit, build check, build, Playwright in Chromium, Firefox and Edge, then perf; `.artifacts/tmp/verify-9cb4c8f.log`) | PASS: 293 passed, 48 skipped by project. Local 3D update p95 71.7 ms (local timings void; CI gates perf). Rerun on `4ccf7bd` (docs only since `9cb4c8f`; `.artifacts/tmp/verify-4ccf7bd.log`): 292 passed, 1 failed, the 3D update p95 120.3 ms (max 208.7) with the PC busy (CPU 34 %, browsers and OneDrive sync running). Local timings are void, so this is not evidence either way. The push of `4ccf7bd` went out before this result was read: a process slip, recorded here. CI on `4ccf7bd` decides |
 | Reference proxy | `npm run perf:ref` on `2ac1d39` | BASELINE, six runs; table above; three named open items carried to G4 and G5 |
 | CI, two consecutive green runs on one head | GitHub Actions `ci.yml` | NOT MET, blocker G3-B1. Run 39798712823 on `2ac1d39`: both jobs failed only the 3D update budget (122.4, 130.9 ms). Run 39805360140 on `9cb4c8f`: `verify (22)` PASS; `verify (24)` failed only the 3D update budget (132.1 ms), 292 passed. Run 39827140601 on `4ccf7bd` (docs only since `9cb4c8f`): both jobs PASS, the first all-green G3 run. The budget stays 100 and the check stays on |
+| CI after the owner's GO | GitHub Actions `ci.yml` | Run 39849202659 on `298951c` (docs only): `verify (22)` PASS; `verify (24)` failed only the 3D update budget (118 ms). The shelving head's run is recorded in `docs/HANDOVER.md` |
 | Owner visual check | `npm run gallery` → `.artifacts/review/0.6.0.0.html` (94 shots, 72 changed, 0 missing) | Sent 2026-10-22, offered as "GO = merge with blocker G3-B1"; owner GO 2026-10-22 |
 ```
 
@@ -28421,12 +28481,24 @@ export default tseslint.config(
 
 ### library/LESSONS.md
 
-Paths: `library/LESSONS.md`. SHA-256 `ddfec622e386c10a90dc05211dfa93a281d6c4156bc255a106eba073d0bcd554`, 23136 bytes.
+Paths: `library/LESSONS.md`. SHA-256 `2a6cb2ac496555e72272a5cf5d2475ca6b53994d707b25da93f9ec92011ba6cc`, 24688 bytes.
 
 ```markdown
 # Lessons learned
 
 Each entry: what happened, the rule it produced, and the check that now enforces it. Newest first. Examples come from SEA Game (a classroom auction game with photoreal vehicle renders and a real-time 3D showcase, one offline HTML file).
+
+## 2026-10-23 · Shelving: an open fix on a side branch, and a plan lost with its worktree
+
+- **What happened:** before shelving, an audit of the working branch found four findings (one high): the security fix sat on an unmerged side branch, and the test runner had its own advisory. Earlier, a worktree holding only an untracked file (a lane's plan) was removed as "unchanged" and the file was lost; it had to be rewritten from the lane's report.
+- **Rule:** before shelving or handing over, audit every lockfile and fold in or close every open branch, and record each branch's state in the handover. Anything a lane writes is committed or copied into the main checkout before its worktree can be removed; plans live in tracked documents, never in a scratch folder that a cleanup removes.
+- **Check (as built in SEA Game):** the zero-finding audit is in the version's verification file; the next goal's plan and a ready goal prompt are in the handover; the cleanup writes `RESTORE.md`.
+
+## 2026-10-20 · The vetted version was newer than the project lock
+
+- **What happened:** the FOSS catalogue listed sharp 0.35.5, but SEA Game remained pinned to vulnerable 0.35.4; another owned repository also had a nested lockfile that a root-only scan would miss.
+- **Rule:** enumerate every committed dependency lockfile, reconcile exact project pins with vetted releases, and regenerate the lock to a patched version.
+- **Check (as used in this sweep):** run npm audit from every lockfile root and require zero findings (`practices/dependency-security.md`).
 
 ## 2026-10-20 · Work that moved instead of going away, and a warm-up that warmed half
 
@@ -28577,7 +28649,7 @@ Each entry: what happened, the rule it produced, and the check that now enforces
 
 ### library/README.md
 
-Paths: `library/README.md`. SHA-256 `024ccd1e80523b1cd2fc43fe1f3ae2b2c3effafb6169213d56d79c510ef5d57c`, 2892 bytes.
+Paths: `library/README.md`. SHA-256 `501ef59ff648797144adb4745149b1530bed727b8df47c0fba4656044f8fc94d`, 3182 bytes.
 
 ```markdown
 # Reusable library
@@ -28598,6 +28670,7 @@ MIT licence: see `LICENSE` in this folder, which travels with it. Third-party ma
 | `practices/classroom-apps.md` | Teaching apps: pedagogy, workload, projector, offline single file, bilingual, accessibility. |
 | `practices/performance.md` | Budgets for old integrated-GPU laptops and how to measure them on a proxy. |
 | `practices/agents.md` | Working with AI agents: headless Codex reviews, parallel lanes, evidence rules, one heavy job at a time. |
+| `practices/dependency-security.md` | Sweeping every lockfile for advisories, reconciling pins with vetted releases, evidence before merge. |
 | `practices/docs.md` | Documents that let anyone rebuild and maintain the project: a code-free specification, a lossless code file, a handover. |
 | `LICENSE` | The MIT licence for this library. |
 | `ui/tokens.css` | Two tested themes (dark "war-room" and light "projector") as CSS custom properties, with contrast notes. |
@@ -28611,6 +28684,8 @@ MIT licence: see `LICENSE` in this folder, which travels with it. Third-party ma
 
 ## Library version
 
+0.1.2 (2026-10-23): dependency-security practice; lessons on the lockfile sweep and on shelving (open branches, lane files lost with a worktree).
+
 0.1.1 (2026-10-20): added a performance lesson on caching static scene bounds, informed by G3 CI profiling.
 
 0.1.0 (2026-10-12): first cut from SEA Game 0.5.1.0, corrected after an independent review (licences, reduced motion, agent trust boundaries, accessibility, colour management, GPU resource ownership, flakiness).
@@ -28618,7 +28693,7 @@ MIT licence: see `LICENSE` in this folder, which travels with it. Third-party ma
 
 ### library/catalogue.md
 
-Paths: `library/catalogue.md`. SHA-256 `9de30172d867e393a3e806fa7cb3c471bec3743135282f5d817381d06157aa1c`, 22597 bytes.
+Paths: `library/catalogue.md`. SHA-256 `db9fc77bde2718a0b36116a5232295918de45b25aa1920cac5ab79441103c31a`, 22597 bytes.
 
 ```markdown
 # Reusable building blocks catalogue
@@ -28668,7 +28743,7 @@ Licence and latest version as published on the npm registry (`npm view <package>
 | axe-core | MPL-2.0 (file-level copyleft: fine as a test tool. If shipped, even unmodified or minified, recipients must get the MPL notice and access to the covered source form; modified MPL files stay MPL) | 4.14.0 |
 | pa11y | LGPL-3.0-only (test tool only) | 10.0.0 |
 | lighthouse | Apache-2.0 | 13.5.0 |
-| vitest | MIT | 5.0.4 |
+| vitest | MIT | 5.0.5 |
 | fast-check | MIT | 4.10.2 |
 | @adobe/leonardo-contrast-colors | Apache-2.0 | 1.1.0 |
 
@@ -28824,7 +28899,7 @@ Serious-game rule. Feedback must work without motion, sound or colour alone. Kee
 
 ### library/practices/agents.md
 
-Paths: `library/practices/agents.md`. SHA-256 `6b2eeda883c1d66ceffc57dac7d044c8b4bcc97c15217aa19d240fe90e83f883`, 2574 bytes.
+Paths: `library/practices/agents.md`. SHA-256 `6619009a8653787c15100a40f8e22c825596893ab363cb978167ee6102cb0537`, 2779 bytes.
 
 ````markdown
 # Working with AI agents
@@ -28832,7 +28907,7 @@ Paths: `library/practices/agents.md`. SHA-256 `6b2eeda883c1d66ceffc57dac7d044c8b
 ## Roles
 
 - **Lead agent:** owns the goal, integrates, verifies everything others return, updates the docs.
-- **Parallel lanes** (cheaper model, isolated worktree, background): prepare later work that needs no heavy runs (research, drafts, scripts, side branches). Lanes do not edit the shared docs, the specification or the version; they write fragments that the lead integrates. They may run typecheck, lint and single unit-test files only.
+- **Parallel lanes** (cheaper model, isolated worktree, background): prepare later work that needs no heavy runs (research, drafts, scripts, side branches). Lanes do not edit the shared docs, the specification or the version; they write fragments that the lead integrates. They may run typecheck, lint and single unit-test files only. A lane commits what it writes on its branch (or the lead copies it into the main checkout) before its worktree is removed: a worktree holding only untracked files looks unchanged to a cleanup and is lost.
 - **Independent reviewer** (a second vendor's model, read-only): reviews each substantial diff, the gallery, and translated text. Every finding gets a disposition with evidence.
 
 ## Codex CLI headless (example, Windows)
@@ -28996,9 +29071,31 @@ The final deliverable is a local package that does not depend on any hosting: a 
 - Do not overwrite anyone's uncommitted work.
 ```
 
+### library/practices/dependency-security.md
+
+Paths: `library/practices/dependency-security.md`. SHA-256 `319b4fed84c954954c3be7b92005ae60759b3754709e3117edee43b0ab299c58`, 1125 bytes.
+
+```markdown
+# Dependency security
+
+A repository can pin an older vulnerable package even when a vetted catalogue already lists its patched release. Monorepos can also keep separate lockfiles below the root.
+
+## Sweep and update
+
+1. Enumerate every committed dependency manifest and lockfile, including nested applications and workspaces.
+2. Run the package manager's audit from each lockfile root and record the affected package, version range, severity and patched release.
+3. Update the project's exact direct pin to the patched release and regenerate its lockfile with the package manager. Do not hand-edit transitive lock entries.
+4. Review the lock diff to confirm only the intended package family and its necessary transitive updates changed.
+5. Re-run the audit from every lockfile root. Require zero findings before merge; use CI for the repository's normal quality gates.
+
+## Evidence
+
+Record the initial finding and the clean post-update audit in the version's verification record. If no fixed release exists, keep the finding visible and document the affected runtime path and mitigation rather than suppressing the advisory.
+```
+
 ### library/practices/docs.md
 
-Paths: `library/practices/docs.md`. SHA-256 `78248a8457e224eaa684070375dfbfe211ad5c6e6f42b83302a277f2ee487f54`, 2020 bytes.
+Paths: `library/practices/docs.md`. SHA-256 `2d5b260e33a05f9c8fb420d15d846817f04cbdd45e883e12e981b714056ac14c`, 2658 bytes.
 
 ```markdown
 # Documents that keep a project alive
@@ -29021,6 +29118,13 @@ Write so that another person or agent can resume development, operations and mai
 - Withdraw a status claim as soon as evidence contradicts it.
 - Test that the specification is code-free and complete; a model given only the specification should be able to plan the rebuild (try it and fix the gaps).
 - Plain English: short sentences, active voice, no jargon a newcomer would need to look up.
+
+## Shelving a project
+
+- Merge or close every open branch and record each one's state; audit every lockfile and fold in pending security fixes.
+- Tag the last goal; check the published file's hash against a local build; archive worktrees instead of deleting them.
+- Move every plan, prompt and note out of scratch folders into tracked documents: the handover gets a "Shelved state" and a "Resume" section with the next goal's plan and a ready goal prompt.
+- Clean only what a command brings back, and write the restore steps (`RESTORE.md`) with the expected build hash. On resumption, re-audit dependencies first, since time has passed.
 ```
 
 ### library/practices/performance.md
@@ -29186,7 +29290,7 @@ a { color: var(--accent); }
 
 ### package-lock.json
 
-Paths: `package-lock.json`. SHA-256 `16d1847b103895666a8194a0826854ef72b8225dcaa7b044265691d969494ac6`, 134039 bytes.
+Paths: `package-lock.json`. SHA-256 `a74d2d9f3137b7a656728f59642ad94104b2538a58f2047f4623946540608632`, 133369 bytes.
 
 ```json
 {
@@ -29210,15 +29314,15 @@ Paths: `package-lock.json`. SHA-256 `16d1847b103895666a8194a0826854ef72b8225dcaa
         "@playwright/test": "1.63.0",
         "@types/node": "24.19.0",
         "@types/three": "0.186.0",
-        "@vitest/coverage-v8": "5.0.1",
+        "@vitest/coverage-v8": "5.0.5",
         "esbuild": "0.28.2",
         "eslint": "10.10.0",
         "fast-check": "4.10.1",
         "meshoptimizer": "1.1.1",
-        "sharp": "0.35.4",
+        "sharp": "0.35.5",
         "typescript": "6.0.3",
         "typescript-eslint": "8.70.1",
-        "vitest": "5.0.1"
+        "vitest": "5.0.5"
       },
       "engines": {
         "node": ">=22"
@@ -30010,9 +30114,9 @@ Paths: `package-lock.json`. SHA-256 `16d1847b103895666a8194a0826854ef72b8225dcaa
       }
     },
     "node_modules/@img/sharp-darwin-arm64": {
-      "version": "0.35.4",
-      "resolved": "https://registry.npmjs.org/@img/sharp-darwin-arm64/-/sharp-darwin-arm64-0.35.4.tgz",
-      "integrity": "sha512-Uhfl4V4lhP2nbUVF9+hyH1+luj86f1gUFeo8ALYxFoULoU+G87D43BfeMP8XHsk9boxAnCY/bf2EHwhA7MuGsA==",
+      "version": "0.35.5",
+      "resolved": "https://registry.npmjs.org/@img/sharp-darwin-arm64/-/sharp-darwin-arm64-0.35.5.tgz",
+      "integrity": "sha512-QRUlFQ0WxvdWyqqG/WtI3iupfD5rBzmCHXSdPsY91sAtVtTo7Q4cb6zOccZ3gqEqkr0f1As1ehLqmEpDsRf+lg==",
       "cpu": [
         "arm64"
       ],
@@ -30029,13 +30133,13 @@ Paths: `package-lock.json`. SHA-256 `16d1847b103895666a8194a0826854ef72b8225dcaa
         "url": "https://opencollective.com/libvips"
       },
       "optionalDependencies": {
-        "@img/sharp-libvips-darwin-arm64": "1.3.3"
+        "@img/sharp-libvips-darwin-arm64": "1.3.4"
       }
     },
     "node_modules/@img/sharp-darwin-x64": {
-      "version": "0.35.4",
-      "resolved": "https://registry.npmjs.org/@img/sharp-darwin-x64/-/sharp-darwin-x64-0.35.4.tgz",
-      "integrity": "sha512-hWniXY3bG5qKpkKrAwPe4y+VTPmf086YQAnkxWh7uA1YrlRouWGa0M0Mxj3ZjnXFkv7/TD1bTy9lGUK26vRvWw==",
+      "version": "0.35.5",
+      "resolved": "https://registry.npmjs.org/@img/sharp-darwin-x64/-/sharp-darwin-x64-0.35.5.tgz",
+      "integrity": "sha512-+BR255RhDlpygUpOc/Jdt1nT6DQ3XG/ERo5wbcdOf5Q320dKtPCKPLR1LJs9VGXRaMa8l1uUa0tkCNOXiAxZUw==",
       "cpu": [
         "x64"
       ],
@@ -30052,13 +30156,13 @@ Paths: `package-lock.json`. SHA-256 `16d1847b103895666a8194a0826854ef72b8225dcaa
         "url": "https://opencollective.com/libvips"
       },
       "optionalDependencies": {
-        "@img/sharp-libvips-darwin-x64": "1.3.3"
+        "@img/sharp-libvips-darwin-x64": "1.3.4"
       }
     },
     "node_modules/@img/sharp-freebsd-wasm32": {
-      "version": "0.35.4",
-      "resolved": "https://registry.npmjs.org/@img/sharp-freebsd-wasm32/-/sharp-freebsd-wasm32-0.35.4.tgz",
-      "integrity": "sha512-lIsKw/BU+kjB4eZjxrYrZmwOJYi3Ajrv66iAlBmUPyKc3HpnloevB1g3wxGD9P/5BbQ1brBGl65VRRrCvQDEqA==",
+      "version": "0.35.5",
+      "resolved": "https://registry.npmjs.org/@img/sharp-freebsd-wasm32/-/sharp-freebsd-wasm32-0.35.5.tgz",
+      "integrity": "sha512-Y/z91nEZ4uIBX5X3nfTovjU9lHNKFYbL2lpHCLVNmXQK03VIZvXBBt0KxbPGp2SdGSF+2mQU4e+hQaWOt86iAw==",
       "dev": true,
       "license": "Apache-2.0",
       "optional": true,
@@ -30066,7 +30170,7 @@ Paths: `package-lock.json`. SHA-256 `16d1847b103895666a8194a0826854ef72b8225dcaa
         "freebsd"
       ],
       "dependencies": {
-        "@img/sharp-wasm32": "0.35.4"
+        "@img/sharp-wasm32": "0.35.5"
       },
       "engines": {
         "node": ">=20.9.0"
@@ -30076,9 +30180,9 @@ Paths: `package-lock.json`. SHA-256 `16d1847b103895666a8194a0826854ef72b8225dcaa
       }
     },
     "node_modules/@img/sharp-libvips-darwin-arm64": {
-      "version": "1.3.3",
-      "resolved": "https://registry.npmjs.org/@img/sharp-libvips-darwin-arm64/-/sharp-libvips-darwin-arm64-1.3.3.tgz",
-      "integrity": "sha512-suTBPTDGrI9WodccaDdwZItTSaBYASlBk1NSfElSHrUfzu3szG6lvIF58+WiFvnfzuK8ZBFS5zE00PxqxnRiPg==",
+      "version": "1.3.4",
+      "resolved": "https://registry.npmjs.org/@img/sharp-libvips-darwin-arm64/-/sharp-libvips-darwin-arm64-1.3.4.tgz",
+      "integrity": "sha512-5R89nBYiRdUlSWJxPhO+GVtaXzXSxKnRu/xqMn3KTA3L9EB9Oy/P+Nn2f2vlhPuUdy/Zusb2DarbyTpGCfEDuw==",
       "cpu": [
         "arm64"
       ],
@@ -30093,9 +30197,9 @@ Paths: `package-lock.json`. SHA-256 `16d1847b103895666a8194a0826854ef72b8225dcaa
       }
     },
     "node_modules/@img/sharp-libvips-darwin-x64": {
-      "version": "1.3.3",
-      "resolved": "https://registry.npmjs.org/@img/sharp-libvips-darwin-x64/-/sharp-libvips-darwin-x64-1.3.3.tgz",
-      "integrity": "sha512-FVJZ5mITMobmXIz/hPDTw0EintTW5H3WfrxwLqEqjiIihlu+hVRyGrFQ60xl0Lxn7Bt3zdpevPaQi0HEzqz9fw==",
+      "version": "1.3.4",
+      "resolved": "https://registry.npmjs.org/@img/sharp-libvips-darwin-x64/-/sharp-libvips-darwin-x64-1.3.4.tgz",
+      "integrity": "sha512-iR2OKH80yi0U+dUplyh3/xdpFvps6YkCwsXenIJxqxR1v9o+xtKTGbS9H7cps+2Vxjc8B1j96p75NmTGjIhtpQ==",
       "cpu": [
         "x64"
       ],
@@ -30110,9 +30214,9 @@ Paths: `package-lock.json`. SHA-256 `16d1847b103895666a8194a0826854ef72b8225dcaa
       }
     },
     "node_modules/@img/sharp-libvips-linux-arm": {
-      "version": "1.3.3",
-      "resolved": "https://registry.npmjs.org/@img/sharp-libvips-linux-arm/-/sharp-libvips-linux-arm-1.3.3.tgz",
-      "integrity": "sha512-3rbU4vqXXc3hY/OiXdl52xZvT0F1yEngWfvqudtPJg/KkyiaQw2DRsFrNzpmLvfavbwOq3qXn36GP8obHRULQA==",
+      "version": "1.3.4",
+      "resolved": "https://registry.npmjs.org/@img/sharp-libvips-linux-arm/-/sharp-libvips-linux-arm-1.3.4.tgz",
+      "integrity": "sha512-LmRtTsOHuvM2+wlO2Db37dx5MiZhB0FvSunciw48YjdOkZz9KAiRbm8ujeMOA1INqmei5NapFxYEK1D1ZSidmw==",
       "cpu": [
         "arm"
       ],
@@ -30130,9 +30234,9 @@ Paths: `package-lock.json`. SHA-256 `16d1847b103895666a8194a0826854ef72b8225dcaa
       }
     },
     "node_modules/@img/sharp-libvips-linux-arm64": {
-      "version": "1.3.3",
-      "resolved": "https://registry.npmjs.org/@img/sharp-libvips-linux-arm64/-/sharp-libvips-linux-arm64-1.3.3.tgz",
-      "integrity": "sha512-0DaL0A6Xu6sQSQFwe4iVCrKWU2cCTItnRsYsCdxAMm9NF6twAA9BKnoqy4hqz4+azQ0JHuA26qiUKsf1XJ/v5A==",
+      "version": "1.3.4",
+      "resolved": "https://registry.npmjs.org/@img/sharp-libvips-linux-arm64/-/sharp-libvips-linux-arm64-1.3.4.tgz",
+      "integrity": "sha512-Y3dgX/6lE2QhQb+Gxy0WZxfg9MEm/JBjamZpS2IklP7xIQoKN4hzAm7KcMVGtaVDt3neE9OKBC7vAfonA/Lr1A==",
       "cpu": [
         "arm64"
       ],
@@ -30150,9 +30254,9 @@ Paths: `package-lock.json`. SHA-256 `16d1847b103895666a8194a0826854ef72b8225dcaa
       }
     },
     "node_modules/@img/sharp-libvips-linux-ppc64": {
-      "version": "1.3.3",
-      "resolved": "https://registry.npmjs.org/@img/sharp-libvips-linux-ppc64/-/sharp-libvips-linux-ppc64-1.3.3.tgz",
-      "integrity": "sha512-cdn1OvUBwsXhbC0zSzJnNzf5MZ/mTrobawDvNXBTxe8VtqKAm0sRuEY2Evzovb/w9JMk4TvRxqt1mekSuJz64w==",
+      "version": "1.3.4",
+      "resolved": "https://registry.npmjs.org/@img/sharp-libvips-linux-ppc64/-/sharp-libvips-linux-ppc64-1.3.4.tgz",
+      "integrity": "sha512-Le6boB8Tai0Nis+gIxIpKx68UDVVIqdR8Tin5Yf1z2LJJQLDJvCDRqRu+jC2qCoD+eIomonmOwB4smBRxfVpYQ==",
       "cpu": [
         "ppc64"
       ],
@@ -30170,9 +30274,9 @@ Paths: `package-lock.json`. SHA-256 `16d1847b103895666a8194a0826854ef72b8225dcaa
       }
     },
     "node_modules/@img/sharp-libvips-linux-riscv64": {
-      "version": "1.3.3",
-      "resolved": "https://registry.npmjs.org/@img/sharp-libvips-linux-riscv64/-/sharp-libvips-linux-riscv64-1.3.3.tgz",
-      "integrity": "sha512-HjPVx7yKz+0lqdhDlTw1tt90wamBoxhiXpvl1XZpJLiHH4RCJ5yDTqH+VlYPv2fwFs89JFw4c1IexYOcQUi4IQ==",
+      "version": "1.3.4",
+      "resolved": "https://registry.npmjs.org/@img/sharp-libvips-linux-riscv64/-/sharp-libvips-linux-riscv64-1.3.4.tgz",
+      "integrity": "sha512-aHkkIEHPRdQEegJN20MLmGtxYD9R2wQr3Cwpddnu5+YKMt6Uzax7S9h5gpZTo8wyrGuZSlfQ63OevL5mTyOC7Q==",
       "cpu": [
         "riscv64"
       ],
@@ -30190,9 +30294,9 @@ Paths: `package-lock.json`. SHA-256 `16d1847b103895666a8194a0826854ef72b8225dcaa
       }
     },
     "node_modules/@img/sharp-libvips-linux-s390x": {
-      "version": "1.3.3",
-      "resolved": "https://registry.npmjs.org/@img/sharp-libvips-linux-s390x/-/sharp-libvips-linux-s390x-1.3.3.tgz",
-      "integrity": "sha512-neWLh+3yCNThxnfy3c4BbVBeGgt9aftno+XbT56iK28RgeDs3UOFWviLWlUu0bArYVYJaFDK+RRohbicUNCm8Q==",
+      "version": "1.3.4",
+      "resolved": "https://registry.npmjs.org/@img/sharp-libvips-linux-s390x/-/sharp-libvips-linux-s390x-1.3.4.tgz",
+      "integrity": "sha512-ra/mB6MikESDUO7Yg+Mi95bFBb9GsObURuhnOv3OqknjGe9sZrG8tCe9q0xSIGrtLgvgw0gKnFWcK4blSgQOuQ==",
       "cpu": [
         "s390x"
       ],
@@ -30210,9 +30314,9 @@ Paths: `package-lock.json`. SHA-256 `16d1847b103895666a8194a0826854ef72b8225dcaa
       }
     },
     "node_modules/@img/sharp-libvips-linux-x64": {
-      "version": "1.3.3",
-      "resolved": "https://registry.npmjs.org/@img/sharp-libvips-linux-x64/-/sharp-libvips-linux-x64-1.3.3.tgz",
-      "integrity": "sha512-4vKmvAst9nrowcqquKFAyZJUDolUaIp8uRiN0mWFguJ1IplC9/pitXtlnnlU4aa/eJw3J7i67V+pwUL+wZGdsA==",
+      "version": "1.3.4",
+      "resolved": "https://registry.npmjs.org/@img/sharp-libvips-linux-x64/-/sharp-libvips-linux-x64-1.3.4.tgz",
+      "integrity": "sha512-GJ//SSXbnwSDes02umB3nDJLFcQzw8a18V8fyhqr6tV515tOEMdImjjxj1AoafMRz56F3PHgftnj1QEKSU1zkw==",
       "cpu": [
         "x64"
       ],
@@ -30230,9 +30334,9 @@ Paths: `package-lock.json`. SHA-256 `16d1847b103895666a8194a0826854ef72b8225dcaa
       }
     },
     "node_modules/@img/sharp-libvips-linuxmusl-arm64": {
-      "version": "1.3.3",
-      "resolved": "https://registry.npmjs.org/@img/sharp-libvips-linuxmusl-arm64/-/sharp-libvips-linuxmusl-arm64-1.3.3.tgz",
-      "integrity": "sha512-Y9kQaLMuNoB0bPYOOdcZMaseNrFpPodIWWMrx+CZyydf2xn68j9WYc6sWWRrDwNkzCQjKYfc68L7jKjGlHMibw==",
+      "version": "1.3.4",
+      "resolved": "https://registry.npmjs.org/@img/sharp-libvips-linuxmusl-arm64/-/sharp-libvips-linuxmusl-arm64-1.3.4.tgz",
+      "integrity": "sha512-hvulFwtjUcagsis6BBxHwGFwWoNZjgYmULGVrZcyfNbjA8hKILbRxGg15/7w5HDyXHXUos/j6baAWqnCyQ2DWA==",
       "cpu": [
         "arm64"
       ],
@@ -30250,9 +30354,9 @@ Paths: `package-lock.json`. SHA-256 `16d1847b103895666a8194a0826854ef72b8225dcaa
       }
     },
     "node_modules/@img/sharp-libvips-linuxmusl-x64": {
-      "version": "1.3.3",
-      "resolved": "https://registry.npmjs.org/@img/sharp-libvips-linuxmusl-x64/-/sharp-libvips-linuxmusl-x64-1.3.3.tgz",
-      "integrity": "sha512-fj8Mv0HHfD1Rr+4I68+3agJynxDWtBFgicTbSOb9Bke6pIwzGcJ+RX/yHjmiEGFMCavY/dxvem7MyNaJF+wDiw==",
+      "version": "1.3.4",
+      "resolved": "https://registry.npmjs.org/@img/sharp-libvips-linuxmusl-x64/-/sharp-libvips-linuxmusl-x64-1.3.4.tgz",
+      "integrity": "sha512-6zXKeE/p39I1AmA3cJG35eyBGNqNddLnUXjhwBnsGjFPWqf5VKkDBEqaEkPDoTEtkxwi2vv8Tcr2mDyP4So7Fg==",
       "cpu": [
         "x64"
       ],
@@ -30270,9 +30374,9 @@ Paths: `package-lock.json`. SHA-256 `16d1847b103895666a8194a0826854ef72b8225dcaa
       }
     },
     "node_modules/@img/sharp-linux-arm": {
-      "version": "0.35.4",
-      "resolved": "https://registry.npmjs.org/@img/sharp-linux-arm/-/sharp-linux-arm-0.35.4.tgz",
-      "integrity": "sha512-7OAS8gI0EReKGVN2HssHlM6umJgxF5VI3xN0p9FA91p/YO+ou5hiNghLdZ5BEHztwaaK5+bLKRf8x/o2L2nk9A==",
+      "version": "0.35.5",
+      "resolved": "https://registry.npmjs.org/@img/sharp-linux-arm/-/sharp-linux-arm-0.35.5.tgz",
+      "integrity": "sha512-LEaXK2WdXVK5ykcw0buWyPMsmLLL2vpHLD6yrNSW+JGEL3BZPA4tpKN6iaMc4AxTTAoaX/sU1rOL51lcIz48ZQ==",
       "cpu": [
         "arm"
       ],
@@ -30292,13 +30396,13 @@ Paths: `package-lock.json`. SHA-256 `16d1847b103895666a8194a0826854ef72b8225dcaa
         "url": "https://opencollective.com/libvips"
       },
       "optionalDependencies": {
-        "@img/sharp-libvips-linux-arm": "1.3.3"
+        "@img/sharp-libvips-linux-arm": "1.3.4"
       }
     },
     "node_modules/@img/sharp-linux-arm64": {
-      "version": "0.35.4",
-      "resolved": "https://registry.npmjs.org/@img/sharp-linux-arm64/-/sharp-linux-arm64-0.35.4.tgz",
-      "integrity": "sha512-De4jpEnAU8Hd5oT0j1G3uL4ZvTuipVMn7YC6vPaJhy6/7EwEae0SVAoBrUMYQbkLGDm85taVWwuPc1a44LTzCQ==",
+      "version": "0.35.5",
+      "resolved": "https://registry.npmjs.org/@img/sharp-linux-arm64/-/sharp-linux-arm64-0.35.5.tgz",
+      "integrity": "sha512-LYVx5JTsOM2CBzmxreh+nl64/3H6Xb09iSLknqH47z2T2DFFxDeFLP5y4dJwe6H7uGQlHPyEEtIqyo3DYsRwdQ==",
       "cpu": [
         "arm64"
       ],
@@ -30318,13 +30422,13 @@ Paths: `package-lock.json`. SHA-256 `16d1847b103895666a8194a0826854ef72b8225dcaa
         "url": "https://opencollective.com/libvips"
       },
       "optionalDependencies": {
-        "@img/sharp-libvips-linux-arm64": "1.3.3"
+        "@img/sharp-libvips-linux-arm64": "1.3.4"
       }
     },
     "node_modules/@img/sharp-linux-ppc64": {
-      "version": "0.35.4",
-      "resolved": "https://registry.npmjs.org/@img/sharp-linux-ppc64/-/sharp-linux-ppc64-0.35.4.tgz",
-      "integrity": "sha512-2oYZJeIl4kCcMGk4ouZVjnkCtFrpQFlNEtJ6GbxzhHQchwH0NH/qEb9ykmOl29dqwMq+JhFdZn+1ak2FKhI9fQ==",
+      "version": "0.35.5",
+      "resolved": "https://registry.npmjs.org/@img/sharp-linux-ppc64/-/sharp-linux-ppc64-0.35.5.tgz",
+      "integrity": "sha512-QVxAAq8evVRI9ia2vqgwrmWucn5Dfv+JdWzj75pD8omHLPSP7f8p20O8jxzjCcuCEQEOtYOZUmX1hkiZ0kdevA==",
       "cpu": [
         "ppc64"
       ],
@@ -30344,13 +30448,13 @@ Paths: `package-lock.json`. SHA-256 `16d1847b103895666a8194a0826854ef72b8225dcaa
         "url": "https://opencollective.com/libvips"
       },
       "optionalDependencies": {
-        "@img/sharp-libvips-linux-ppc64": "1.3.3"
+        "@img/sharp-libvips-linux-ppc64": "1.3.4"
       }
     },
     "node_modules/@img/sharp-linux-riscv64": {
-      "version": "0.35.4",
-      "resolved": "https://registry.npmjs.org/@img/sharp-linux-riscv64/-/sharp-linux-riscv64-0.35.4.tgz",
-      "integrity": "sha512-cPbNChoRURAWdebDIHSenxRpgEdy7JkPydSnUxRm9VvKD7m0/xVaR/8Fzlu81pk5nHEvHH87UZUA7cTtwnbJSA==",
+      "version": "0.35.5",
+      "resolved": "https://registry.npmjs.org/@img/sharp-linux-riscv64/-/sharp-linux-riscv64-0.35.5.tgz",
+      "integrity": "sha512-LtdreXguaavKODPIfzJ4kffx7UNt1omwtK0rch4EBbbSTXPnxWmYSayXdLJw0fJzQ97kHt1gL/yh4tvU+nCyRQ==",
       "cpu": [
         "riscv64"
       ],
@@ -30370,13 +30474,13 @@ Paths: `package-lock.json`. SHA-256 `16d1847b103895666a8194a0826854ef72b8225dcaa
         "url": "https://opencollective.com/libvips"
       },
       "optionalDependencies": {
-        "@img/sharp-libvips-linux-riscv64": "1.3.3"
+        "@img/sharp-libvips-linux-riscv64": "1.3.4"
       }
     },
     "node_modules/@img/sharp-linux-s390x": {
-      "version": "0.35.4",
-      "resolved": "https://registry.npmjs.org/@img/sharp-linux-s390x/-/sharp-linux-s390x-0.35.4.tgz",
-      "integrity": "sha512-RY0JFY8Fd6RonCBtHz+DvadaPkXDSI1AUn6yWL9TipqkZ1vY8w8evqdgyDFnkm4/K1ve1TvZiaePP5oSd4+WVQ==",
+      "version": "0.35.5",
+      "resolved": "https://registry.npmjs.org/@img/sharp-linux-s390x/-/sharp-linux-s390x-0.35.5.tgz",
+      "integrity": "sha512-UZasTOFiYzotTsGOCu42BfUzP6Tu6Do/947iRm1RsLKvlllxwGcn4RN27LibGWceix4Y+Pmw3jsnTcCQIgWjqA==",
       "cpu": [
         "s390x"
       ],
@@ -30396,13 +30500,13 @@ Paths: `package-lock.json`. SHA-256 `16d1847b103895666a8194a0826854ef72b8225dcaa
         "url": "https://opencollective.com/libvips"
       },
       "optionalDependencies": {
-        "@img/sharp-libvips-linux-s390x": "1.3.3"
+        "@img/sharp-libvips-linux-s390x": "1.3.4"
       }
     },
     "node_modules/@img/sharp-linux-x64": {
-      "version": "0.35.4",
-      "resolved": "https://registry.npmjs.org/@img/sharp-linux-x64/-/sharp-linux-x64-0.35.4.tgz",
-      "integrity": "sha512-9qvvEAuk8k89TfWUoX2htWjbAMX8p+NxCppjpcg5k6xMsjhBQPTsoIh36h9Qde4WRuGpJeYnOjdosDn/cnv+OA==",
+      "version": "0.35.5",
+      "resolved": "https://registry.npmjs.org/@img/sharp-linux-x64/-/sharp-linux-x64-0.35.5.tgz",
+      "integrity": "sha512-SxFtLTeJInhAA9Q836kux2vZNeOBQEx658qvbboZScr0wIARym3IcGmW7KpVD5sbVg0Ojy+udFQdayYIZyoNog==",
       "cpu": [
         "x64"
       ],
@@ -30422,13 +30526,13 @@ Paths: `package-lock.json`. SHA-256 `16d1847b103895666a8194a0826854ef72b8225dcaa
         "url": "https://opencollective.com/libvips"
       },
       "optionalDependencies": {
-        "@img/sharp-libvips-linux-x64": "1.3.3"
+        "@img/sharp-libvips-linux-x64": "1.3.4"
       }
     },
     "node_modules/@img/sharp-linuxmusl-arm64": {
-      "version": "0.35.4",
-      "resolved": "https://registry.npmjs.org/@img/sharp-linuxmusl-arm64/-/sharp-linuxmusl-arm64-0.35.4.tgz",
-      "integrity": "sha512-KB5jxpfWQTr0nc3xdHtWChdbifHrBGsd2SM62Eyxrl8afikm+f5qGBU75SJIZBT/S1MC8XyacdlXBMSWq6OURA==",
+      "version": "0.35.5",
+      "resolved": "https://registry.npmjs.org/@img/sharp-linuxmusl-arm64/-/sharp-linuxmusl-arm64-0.35.5.tgz",
+      "integrity": "sha512-9HbMclmI1zlNkFRs3z9/eBtDjfD0sGlrX1z6b1qwmiFY5ElDLh4BC0LPBdVp7z1DXFiKlIcznf+ZlsuZzLxQqg==",
       "cpu": [
         "arm64"
       ],
@@ -30448,13 +30552,13 @@ Paths: `package-lock.json`. SHA-256 `16d1847b103895666a8194a0826854ef72b8225dcaa
         "url": "https://opencollective.com/libvips"
       },
       "optionalDependencies": {
-        "@img/sharp-libvips-linuxmusl-arm64": "1.3.3"
+        "@img/sharp-libvips-linuxmusl-arm64": "1.3.4"
       }
     },
     "node_modules/@img/sharp-linuxmusl-x64": {
-      "version": "0.35.4",
-      "resolved": "https://registry.npmjs.org/@img/sharp-linuxmusl-x64/-/sharp-linuxmusl-x64-0.35.4.tgz",
-      "integrity": "sha512-f+eZJZIQNEEd26RPSW+76chwOf1XtA2Y/O+5ocVyLliHkeih3e+jhLVBdNTd2rS3IbNXK8+ug93Vf5ZXtF5Lxg==",
+      "version": "0.35.5",
+      "resolved": "https://registry.npmjs.org/@img/sharp-linuxmusl-x64/-/sharp-linuxmusl-x64-0.35.5.tgz",
+      "integrity": "sha512-4KOphqB035HrVdqLZfCgMzzERrQkkzOwRhl4OAkRO1YCldbaFjySXMaK534Mo0V+LndnlJk+sbUyLeU0ULyD1A==",
       "cpu": [
         "x64"
       ],
@@ -30474,13 +30578,13 @@ Paths: `package-lock.json`. SHA-256 `16d1847b103895666a8194a0826854ef72b8225dcaa
         "url": "https://opencollective.com/libvips"
       },
       "optionalDependencies": {
-        "@img/sharp-libvips-linuxmusl-x64": "1.3.3"
+        "@img/sharp-libvips-linuxmusl-x64": "1.3.4"
       }
     },
     "node_modules/@img/sharp-wasm32": {
-      "version": "0.35.4",
-      "resolved": "https://registry.npmjs.org/@img/sharp-wasm32/-/sharp-wasm32-0.35.4.tgz",
-      "integrity": "sha512-zQnl4Kwp7Q6NHsENtU2T/00Zi+w3AQNwz3+UaTyVBy2FpXrzXzGjndpK61onhZjRtRpQXxCTeqw19bVyXOh7jA==",
+      "version": "0.35.5",
+      "resolved": "https://registry.npmjs.org/@img/sharp-wasm32/-/sharp-wasm32-0.35.5.tgz",
+      "integrity": "sha512-Ptsga1su4tQx+LLF1ECS9U6nz5kmrXKo6XVbtR48Ke3ZRxxgaWBu7IDtEe1quo8hiupwm6WFqxVlXaSf7IINGQ==",
       "dev": true,
       "license": "Apache-2.0 AND LGPL-3.0-or-later AND MIT",
       "optional": true,
@@ -30495,9 +30599,9 @@ Paths: `package-lock.json`. SHA-256 `16d1847b103895666a8194a0826854ef72b8225dcaa
       }
     },
     "node_modules/@img/sharp-webcontainers-wasm32": {
-      "version": "0.35.4",
-      "resolved": "https://registry.npmjs.org/@img/sharp-webcontainers-wasm32/-/sharp-webcontainers-wasm32-0.35.4.tgz",
-      "integrity": "sha512-ESfNkywmCfPNyaZjxooddJQiQ+l/nTpGEOGthxiLnIHXC/CmcBixnfwUleX9mCz9ovrUUvKMap/pm8RYbzfwaA==",
+      "version": "0.35.5",
+      "resolved": "https://registry.npmjs.org/@img/sharp-webcontainers-wasm32/-/sharp-webcontainers-wasm32-0.35.5.tgz",
+      "integrity": "sha512-hfhF/FmoQyTUkA0bIKFOtw536BQSeBMe6BF6QyWlrPxT754+TFLaZ7sKKTfvvM0yJgKgaYTwnFCIZ/GuDw5SUA==",
       "cpu": [
         "wasm32"
       ],
@@ -30505,7 +30609,7 @@ Paths: `package-lock.json`. SHA-256 `16d1847b103895666a8194a0826854ef72b8225dcaa
       "license": "Apache-2.0",
       "optional": true,
       "dependencies": {
-        "@img/sharp-wasm32": "0.35.4"
+        "@img/sharp-wasm32": "0.35.5"
       },
       "engines": {
         "node": ">=20.9.0"
@@ -30515,9 +30619,9 @@ Paths: `package-lock.json`. SHA-256 `16d1847b103895666a8194a0826854ef72b8225dcaa
       }
     },
     "node_modules/@img/sharp-win32-arm64": {
-      "version": "0.35.4",
-      "resolved": "https://registry.npmjs.org/@img/sharp-win32-arm64/-/sharp-win32-arm64-0.35.4.tgz",
-      "integrity": "sha512-iNdlBX9gLVvqe2I3uIJSIKTq6wckP/DYxZtcqxm09x5Gi24DnFBmPAWZmr60ZyYMG0xlzo6goG3670ar+RXvRw==",
+      "version": "0.35.5",
+      "resolved": "https://registry.npmjs.org/@img/sharp-win32-arm64/-/sharp-win32-arm64-0.35.5.tgz",
+      "integrity": "sha512-X4t7g+7ZA5DKblCBEXGjUqqemj4vczING/5viFwAL8h4N3qYeyjwdCvRLHi4EdOUI+2Z7UFlp1VM+p/AuEtm6Q==",
       "cpu": [
         "arm64"
       ],
@@ -30535,9 +30639,9 @@ Paths: `package-lock.json`. SHA-256 `16d1847b103895666a8194a0826854ef72b8225dcaa
       }
     },
     "node_modules/@img/sharp-win32-ia32": {
-      "version": "0.35.4",
-      "resolved": "https://registry.npmjs.org/@img/sharp-win32-ia32/-/sharp-win32-ia32-0.35.4.tgz",
-      "integrity": "sha512-kqRsbaa5CS6KHlpxnN7WhE6vAAugXyZButpRdvDWetlv6Qv4N9WTcrWzF7tXfB9T7MsoadqdI8hmwLq6UlLvtw==",
+      "version": "0.35.5",
+      "resolved": "https://registry.npmjs.org/@img/sharp-win32-ia32/-/sharp-win32-ia32-0.35.5.tgz",
+      "integrity": "sha512-5Zm82LoBc43nhwNybZlG7Y1KO//Zhsn306fQl29ZOuStHLGTo3BWL83q3cznX0poxSAMuYL1On/BHBxkBeKr6A==",
       "cpu": [
         "ia32"
       ],
@@ -30555,9 +30659,9 @@ Paths: `package-lock.json`. SHA-256 `16d1847b103895666a8194a0826854ef72b8225dcaa
       }
     },
     "node_modules/@img/sharp-win32-x64": {
-      "version": "0.35.4",
-      "resolved": "https://registry.npmjs.org/@img/sharp-win32-x64/-/sharp-win32-x64-0.35.4.tgz",
-      "integrity": "sha512-XtmnYhBcrORsJ4XJngyzr/EWP0hRZLAZRFaApdKuviyqF78+ylxh2y06ZmtULAMOnObJ3ucpN0AcwSWnMowTRg==",
+      "version": "0.35.5",
+      "resolved": "https://registry.npmjs.org/@img/sharp-win32-x64/-/sharp-win32-x64-0.35.5.tgz",
+      "integrity": "sha512-x76eH0vEiHlcMQu8Y8IenntaACtddpT6W0wmXtWrnKcnKI7ME5DdgqhAD6SEWOEl1v2zDvkZDhFA9KnURwpfqg==",
       "cpu": [
         "x64"
       ],
@@ -30627,9 +30731,9 @@ Paths: `package-lock.json`. SHA-256 `16d1847b103895666a8194a0826854ef72b8225dcaa
       "license": "MIT"
     },
     "node_modules/@oxc-project/types": {
-      "version": "0.153.0",
-      "resolved": "https://registry.npmjs.org/@oxc-project/types/-/types-0.153.0.tgz",
-      "integrity": "sha512-jSNrRIyvPVLL5E1z/tS5zLAprosGz/FuI1PWwEOz59j3E4TTTzSpqKb/RDGqJhhW0QHYISGXxq582wGx6T11Tw==",
+      "version": "0.155.0",
+      "resolved": "https://registry.npmjs.org/@oxc-project/types/-/types-0.155.0.tgz",
+      "integrity": "sha512-SeE8JPwW1xs1tHeNycjUtUBdhorRa8o4jlvjwk49R7/Z291i+4DQa7JJIgOm/TaYQZx+QrPQbVJ/9c8dMIZN8Q==",
       "dev": true,
       "license": "MIT",
       "peer": true,
@@ -30654,9 +30758,9 @@ Paths: `package-lock.json`. SHA-256 `16d1847b103895666a8194a0826854ef72b8225dcaa
       }
     },
     "node_modules/@rolldown/binding-android-arm-eabi": {
-      "version": "1.2.13",
-      "resolved": "https://registry.npmjs.org/@rolldown/binding-android-arm-eabi/-/binding-android-arm-eabi-1.2.13.tgz",
-      "integrity": "sha512-Vu/NICrgdRvUOeaJZIyB2FP63s6fO/4ud5l8dXmxDx9yDyn+mN0y+gsvsVviSli+T361Aqo0h46EuMoobrwawA==",
+      "version": "1.2.15",
+      "resolved": "https://registry.npmjs.org/@rolldown/binding-android-arm-eabi/-/binding-android-arm-eabi-1.2.15.tgz",
+      "integrity": "sha512-aLcgK9gIJ3YRvrrtfSBbRa27F5WrpiTaPulnFpsHPxpUHgFlSgnU4854MHwoRGEBhfRJDWCS2WQ7lIjskE9Olw==",
       "cpu": [
         "arm"
       ],
@@ -30672,9 +30776,9 @@ Paths: `package-lock.json`. SHA-256 `16d1847b103895666a8194a0826854ef72b8225dcaa
       }
     },
     "node_modules/@rolldown/binding-android-arm64": {
-      "version": "1.2.13",
-      "resolved": "https://registry.npmjs.org/@rolldown/binding-android-arm64/-/binding-android-arm64-1.2.13.tgz",
-      "integrity": "sha512-6LEoIrGy5vvCd2boNnv2soPSUZj/PRvhp8R/t9KlX+mIZxThIE/ZqxrGXxmuNX0FuvQFvLdZr7S4HrYpYBVhEQ==",
+      "version": "1.2.15",
+      "resolved": "https://registry.npmjs.org/@rolldown/binding-android-arm64/-/binding-android-arm64-1.2.15.tgz",
+      "integrity": "sha512-xD7DdZCrbThKuxNg7ooQmvp07ys4J/pnSEMTG3/OdOWl6daC67m/Q4fL78sRHMxTH/N4fGUbYhcPM0MF5WFHkg==",
       "cpu": [
         "arm64"
       ],
@@ -30690,9 +30794,9 @@ Paths: `package-lock.json`. SHA-256 `16d1847b103895666a8194a0826854ef72b8225dcaa
       }
     },
     "node_modules/@rolldown/binding-darwin-arm64": {
-      "version": "1.2.13",
-      "resolved": "https://registry.npmjs.org/@rolldown/binding-darwin-arm64/-/binding-darwin-arm64-1.2.13.tgz",
-      "integrity": "sha512-CaJSRzlQ6Q+zkDMVA9OkVxBjVoPRCDEE3v0FSJ9kIQBgRjFApA3Si4ijhbNVUji7ZJt+PfO0e46qy4nPInHUPA==",
+      "version": "1.2.15",
+      "resolved": "https://registry.npmjs.org/@rolldown/binding-darwin-arm64/-/binding-darwin-arm64-1.2.15.tgz",
+      "integrity": "sha512-m2WuQ6r0B4OTYxyPpNLtXaMRbRDUbG8YQV2Q3KTdSSK8Th6KHCnC8jVCJt8bvYeSB5WivkkNbc85mKadaSdOxA==",
       "cpu": [
         "arm64"
       ],
@@ -30708,9 +30812,9 @@ Paths: `package-lock.json`. SHA-256 `16d1847b103895666a8194a0826854ef72b8225dcaa
       }
     },
     "node_modules/@rolldown/binding-darwin-x64": {
-      "version": "1.2.13",
-      "resolved": "https://registry.npmjs.org/@rolldown/binding-darwin-x64/-/binding-darwin-x64-1.2.13.tgz",
-      "integrity": "sha512-e4r340I5hxSzJkD3YJBxgzq/rJ3wwxwdLLb2FPt1Zpyem20nrQPT11DDEEkazwxaHumH8wpglsp/Ozgj/wT6mw==",
+      "version": "1.2.15",
+      "resolved": "https://registry.npmjs.org/@rolldown/binding-darwin-x64/-/binding-darwin-x64-1.2.15.tgz",
+      "integrity": "sha512-5RtnsHM36nodM9WbMy+zip0LGS/G+y5wro5RHrpOlr4ac24+1zSi9kiV2MP1myZeZ/ifEHfulQcWjnAXzc2C2A==",
       "cpu": [
         "x64"
       ],
@@ -30726,9 +30830,9 @@ Paths: `package-lock.json`. SHA-256 `16d1847b103895666a8194a0826854ef72b8225dcaa
       }
     },
     "node_modules/@rolldown/binding-freebsd-x64": {
-      "version": "1.2.13",
-      "resolved": "https://registry.npmjs.org/@rolldown/binding-freebsd-x64/-/binding-freebsd-x64-1.2.13.tgz",
-      "integrity": "sha512-hoBWDZ4/K/mJKVMbsgUd1jfpA2DiOrJ54mpegObU9TBHBBrtX4FLIXJJQRDPZ/2Dn91GvPob+Z2hwKJzf4E5SQ==",
+      "version": "1.2.15",
+      "resolved": "https://registry.npmjs.org/@rolldown/binding-freebsd-x64/-/binding-freebsd-x64-1.2.15.tgz",
+      "integrity": "sha512-g3l09pyFqhu+135JKkbkwiKGQmwU5hUMUPJ4VdBADvuqR8d33L6H578rh8m7rtxbdp+VmX/+nzI7nvhSZlzpUQ==",
       "cpu": [
         "x64"
       ],
@@ -30744,9 +30848,9 @@ Paths: `package-lock.json`. SHA-256 `16d1847b103895666a8194a0826854ef72b8225dcaa
       }
     },
     "node_modules/@rolldown/binding-linux-arm-gnueabihf": {
-      "version": "1.2.13",
-      "resolved": "https://registry.npmjs.org/@rolldown/binding-linux-arm-gnueabihf/-/binding-linux-arm-gnueabihf-1.2.13.tgz",
-      "integrity": "sha512-oF9fZu3vTWnTiVAkDFxU9PJLt1nh20K9RRpuHsR7ZnE2L7XookBbDBVLojCVSLGbvtSlxeUNnjAj6DbNsKyzbg==",
+      "version": "1.2.15",
+      "resolved": "https://registry.npmjs.org/@rolldown/binding-linux-arm-gnueabihf/-/binding-linux-arm-gnueabihf-1.2.15.tgz",
+      "integrity": "sha512-nIe3VugI97nGQtspPxDqA4sXMUpeiocKIP/CqpY/u/vgbT+alX+cVxu1C/oVBPKg4feNTmYovE91v4DgXvXNwQ==",
       "cpu": [
         "arm"
       ],
@@ -30762,9 +30866,9 @@ Paths: `package-lock.json`. SHA-256 `16d1847b103895666a8194a0826854ef72b8225dcaa
       }
     },
     "node_modules/@rolldown/binding-linux-arm64-gnu": {
-      "version": "1.2.13",
-      "resolved": "https://registry.npmjs.org/@rolldown/binding-linux-arm64-gnu/-/binding-linux-arm64-gnu-1.2.13.tgz",
-      "integrity": "sha512-DTpb/+jMiqWMPgphn4ksW1zW+XLJ6dJJ9FMvnIk9I291LhCctMPhMYJrP5t9p6C9qa3KXadDdUEZHBaPh3kNxQ==",
+      "version": "1.2.15",
+      "resolved": "https://registry.npmjs.org/@rolldown/binding-linux-arm64-gnu/-/binding-linux-arm64-gnu-1.2.15.tgz",
+      "integrity": "sha512-iTBjXx+B5QSvgI89lJfmqh4wTh8NabR1YZIIN3hNx4zSG0EVfVqkOvLulNpG4251pbd6/IAmZ/LefVk1Y4rPhw==",
       "cpu": [
         "arm64"
       ],
@@ -30783,9 +30887,9 @@ Paths: `package-lock.json`. SHA-256 `16d1847b103895666a8194a0826854ef72b8225dcaa
       }
     },
     "node_modules/@rolldown/binding-linux-arm64-musl": {
-      "version": "1.2.13",
-      "resolved": "https://registry.npmjs.org/@rolldown/binding-linux-arm64-musl/-/binding-linux-arm64-musl-1.2.13.tgz",
-      "integrity": "sha512-xU+Kvv9N2A3SY35zFh1FWWNjxbadE/BKeqnkXe7vScU4GZsw757BlVmDLITZEq8DPpk6m7uoDYkK7P+x/uU5Ow==",
+      "version": "1.2.15",
+      "resolved": "https://registry.npmjs.org/@rolldown/binding-linux-arm64-musl/-/binding-linux-arm64-musl-1.2.15.tgz",
+      "integrity": "sha512-uN26XOnVR7rqQupG3V9oAG2EGGatWjcJHOeDOHUFCh4TBWmP2tHTFoVN13aYbwfm0aHqJAEmcwhAu6sooIjfqQ==",
       "cpu": [
         "arm64"
       ],
@@ -30804,9 +30908,9 @@ Paths: `package-lock.json`. SHA-256 `16d1847b103895666a8194a0826854ef72b8225dcaa
       }
     },
     "node_modules/@rolldown/binding-linux-ppc64-gnu": {
-      "version": "1.2.13",
-      "resolved": "https://registry.npmjs.org/@rolldown/binding-linux-ppc64-gnu/-/binding-linux-ppc64-gnu-1.2.13.tgz",
-      "integrity": "sha512-XMk/hnhh25oQ756Lclb1Q11h4ll0xC0Esa5w4Vzp+mAE2S3AGJgeM0SonrIgY8fHhjarb6hcoTuwoFG0VVP2ig==",
+      "version": "1.2.15",
+      "resolved": "https://registry.npmjs.org/@rolldown/binding-linux-ppc64-gnu/-/binding-linux-ppc64-gnu-1.2.15.tgz",
+      "integrity": "sha512-9nWkcdd+H+XhaA3fQIwpHnKIrfx/PQ6rO0pivr78Og07tXlUlctBBJoEYLPfhTmCR/QxEVdn6uPjHV5SymPhdw==",
       "cpu": [
         "ppc64"
       ],
@@ -30825,9 +30929,9 @@ Paths: `package-lock.json`. SHA-256 `16d1847b103895666a8194a0826854ef72b8225dcaa
       }
     },
     "node_modules/@rolldown/binding-linux-s390x-gnu": {
-      "version": "1.2.13",
-      "resolved": "https://registry.npmjs.org/@rolldown/binding-linux-s390x-gnu/-/binding-linux-s390x-gnu-1.2.13.tgz",
-      "integrity": "sha512-U1BoTHYmlywE2n3HUWjzZ+8EQsKr+OwpxYuDWaubx42tUL8QSL7nOqRz/NVHanibbFP3M1Rxuprz/wNcbMKjqw==",
+      "version": "1.2.15",
+      "resolved": "https://registry.npmjs.org/@rolldown/binding-linux-s390x-gnu/-/binding-linux-s390x-gnu-1.2.15.tgz",
+      "integrity": "sha512-Ggh0ciFjLwIusLSLz7LZYEaGdxOAUJXI+Qu5JCbhPJJHEt8vP+IjRATTJheiJsdzzTYgUiHUiw3X1Ea3ZpMBdA==",
       "cpu": [
         "s390x"
       ],
@@ -30846,9 +30950,9 @@ Paths: `package-lock.json`. SHA-256 `16d1847b103895666a8194a0826854ef72b8225dcaa
       }
     },
     "node_modules/@rolldown/binding-linux-x64-gnu": {
-      "version": "1.2.13",
-      "resolved": "https://registry.npmjs.org/@rolldown/binding-linux-x64-gnu/-/binding-linux-x64-gnu-1.2.13.tgz",
-      "integrity": "sha512-J4cm80Pc6wEwV5AZ42o62sIQgDk+Y7R2s646jIwuvO+4V46QB58N4vVuMPWCBaNgursXLpmUWJV//WQAkPvHBQ==",
+      "version": "1.2.15",
+      "resolved": "https://registry.npmjs.org/@rolldown/binding-linux-x64-gnu/-/binding-linux-x64-gnu-1.2.15.tgz",
+      "integrity": "sha512-FHg60rS6DBePAYZ9X9F67x+JObFdmgn6tupA1C/a3B+CufFmTD4mX+e8M75tCiAO3foR/6xwVBI0KQiI7sn/rw==",
       "cpu": [
         "x64"
       ],
@@ -30867,9 +30971,9 @@ Paths: `package-lock.json`. SHA-256 `16d1847b103895666a8194a0826854ef72b8225dcaa
       }
     },
     "node_modules/@rolldown/binding-linux-x64-musl": {
-      "version": "1.2.13",
-      "resolved": "https://registry.npmjs.org/@rolldown/binding-linux-x64-musl/-/binding-linux-x64-musl-1.2.13.tgz",
-      "integrity": "sha512-W0euZS40U4V6JkmEnVCIX9mcsL6cbXQ4X8c2w+MMOIjFg68TXUW+u3RT+2e1t1pv9mg/EP3pDtK3POXdQ7Rxyw==",
+      "version": "1.2.15",
+      "resolved": "https://registry.npmjs.org/@rolldown/binding-linux-x64-musl/-/binding-linux-x64-musl-1.2.15.tgz",
+      "integrity": "sha512-/cvV/7v5VGz/moiz0XKRj2dE8DzsKyhIu1KpOvJGPjRywg3yscON889UGvAe8zfiJLHup7VLjBduoGWi3HusWQ==",
       "cpu": [
         "x64"
       ],
@@ -30888,9 +30992,9 @@ Paths: `package-lock.json`. SHA-256 `16d1847b103895666a8194a0826854ef72b8225dcaa
       }
     },
     "node_modules/@rolldown/binding-openharmony-arm64": {
-      "version": "1.2.13",
-      "resolved": "https://registry.npmjs.org/@rolldown/binding-openharmony-arm64/-/binding-openharmony-arm64-1.2.13.tgz",
-      "integrity": "sha512-do/AF/4n9MRshia3a5aXoy8xM2c6mgfT6D7H/dY6my5z+hfCIR4ab7mk4IRj++nsEQpKy39kd0DQnDq+r692tw==",
+      "version": "1.2.15",
+      "resolved": "https://registry.npmjs.org/@rolldown/binding-openharmony-arm64/-/binding-openharmony-arm64-1.2.15.tgz",
+      "integrity": "sha512-MyzC5Hrv/sm+Z7TSGKP/j8001RO2xQm1zOpCNVL4j0cY/VhBZviludA2YFQ7i4lH6ZAXxQm0lcMdBzM+99mE7w==",
       "cpu": [
         "arm64"
       ],
@@ -30906,9 +31010,9 @@ Paths: `package-lock.json`. SHA-256 `16d1847b103895666a8194a0826854ef72b8225dcaa
       }
     },
     "node_modules/@rolldown/binding-win32-arm64-msvc": {
-      "version": "1.2.13",
-      "resolved": "https://registry.npmjs.org/@rolldown/binding-win32-arm64-msvc/-/binding-win32-arm64-msvc-1.2.13.tgz",
-      "integrity": "sha512-6FtUf2cJZobutJdxnGYX8z0vtbgqU0b2v8vfBhkXb9wp2MppMFtkunE+IaOntyi01rkIQoPW2GHABtfzsC0BRQ==",
+      "version": "1.2.15",
+      "resolved": "https://registry.npmjs.org/@rolldown/binding-win32-arm64-msvc/-/binding-win32-arm64-msvc-1.2.15.tgz",
+      "integrity": "sha512-+PgYiS+AH5omy6L45ZLxybasauJaj3M8buoT83D+nzPmCayXlxUV9hydhciCKVyIg0B/v0BtXPDE1uGqNwCPpg==",
       "cpu": [
         "arm64"
       ],
@@ -30924,9 +31028,9 @@ Paths: `package-lock.json`. SHA-256 `16d1847b103895666a8194a0826854ef72b8225dcaa
       }
     },
     "node_modules/@rolldown/binding-win32-x64-msvc": {
-      "version": "1.2.13",
-      "resolved": "https://registry.npmjs.org/@rolldown/binding-win32-x64-msvc/-/binding-win32-x64-msvc-1.2.13.tgz",
-      "integrity": "sha512-UKhFaZTeTcbKrb3iU82m17jVcPEAoqDkCN5MBqgPyZSwp/cQmib21crTS0DdH7T1B7wZRWEI89YQAOJMet5yhg==",
+      "version": "1.2.15",
+      "resolved": "https://registry.npmjs.org/@rolldown/binding-win32-x64-msvc/-/binding-win32-x64-msvc-1.2.15.tgz",
+      "integrity": "sha512-HFZd2QNQYn1JbIi+Hpd7H+r/lkWxcfIu28nirZ6eCn2LafuvmExMlb/P96Sfx5tf7pPArw39IdhmCF8vmV+NhQ==",
       "cpu": [
         "x64"
       ],
@@ -31272,27 +31376,27 @@ Paths: `package-lock.json`. SHA-256 `16d1847b103895666a8194a0826854ef72b8225dcaa
       }
     },
     "node_modules/@vitest/coverage-v8": {
-      "version": "5.0.1",
-      "resolved": "https://registry.npmjs.org/@vitest/coverage-v8/-/coverage-v8-5.0.1.tgz",
-      "integrity": "sha512-FRC8ACiudC3dI6MTplzRSYWHDRnIv2IPfbzs4FdoJNsMal/35sWV8hwIfV8ZcqzSPy+uXHeMVONt9CEqtOU17w==",
+      "version": "5.0.5",
+      "resolved": "https://registry.npmjs.org/@vitest/coverage-v8/-/coverage-v8-5.0.5.tgz",
+      "integrity": "sha512-4KpkGdIrSqBihx/JyP/e+S+IKB98etg1XDQiLAxksLfcShnwi1VReGeOT9NI43hLHbknosKp/1CCLn9Zgcs8mg==",
       "dev": true,
       "license": "MIT",
       "dependencies": {
         "@bcoe/v8-coverage": "^1.0.2",
-        "@vitest/istanbul-lib-coverage": "^1.0.0",
-        "@vitest/istanbul-lib-report": "^1.0.0",
-        "ast-v8-to-istanbul": "^1.0.5",
-        "magicast": "^0.5.4",
-        "obug": "^2.1.4",
-        "std-env": "^4.2.0",
-        "tinyrainbow": "^3.1.1"
+        "@vitest/istanbul-lib-coverage": "^1.0.2",
+        "@vitest/istanbul-lib-report": "^1.0.2",
+        "ast-v8-to-istanbul": "^1.0.7",
+        "magicast": "^0.5.5",
+        "obug": "^3.0.0",
+        "std-env": "^4.3.0",
+        "tinyrainbow": "^3.2.0"
       },
       "funding": {
         "url": "https://opencollective.com/vitest"
       },
       "peerDependencies": {
-        "@vitest/browser": "5.0.1",
-        "vitest": "5.0.1"
+        "@vitest/browser": "5.0.5",
+        "vitest": "5.0.5"
       },
       "peerDependenciesMeta": {
         "@vitest/browser": {
@@ -31324,22 +31428,22 @@ Paths: `package-lock.json`. SHA-256 `16d1847b103895666a8194a0826854ef72b8225dcaa
       }
     },
     "node_modules/@vitest/mocker": {
-      "version": "5.0.1",
-      "resolved": "https://registry.npmjs.org/@vitest/mocker/-/mocker-5.0.1.tgz",
-      "integrity": "sha512-6K1DoBNAPGvuOcSsGA4D6x+5zEEff/KmOOP3uetT2TrGpVfI+HRHRnJJfKi5ib/g1vx8IYHQD8s0pbJz8WQI7Q==",
+      "version": "5.0.5",
+      "resolved": "https://registry.npmjs.org/@vitest/mocker/-/mocker-5.0.5.tgz",
+      "integrity": "sha512-xLL3lkDegJZw+MGoGaCCsFayDZthGgpAtr3Vziyfc4p7xH89K7KRPcRBBh/kEYm0Aqkt5DtTmkYpBtRV/FrHZg==",
       "dev": true,
       "license": "MIT",
       "dependencies": {
         "@jridgewell/trace-mapping": "0.3.31",
-        "@vitest/spy": "5.0.1",
+        "@vitest/spy": "5.0.5",
         "estree-walker": "^3.0.3",
-        "magic-string": "^1.2.3"
+        "magic-string": "^1.4.3"
       },
       "funding": {
         "url": "https://opencollective.com/vitest"
       },
       "peerDependencies": {
-        "msw": "^2.4.9",
+        "msw": "^2.4.9 || ^3.0.0",
         "vite": "^6.0.0 || ^7.0.0 || ^8.0.0"
       },
       "peerDependenciesMeta": {
@@ -31352,9 +31456,9 @@ Paths: `package-lock.json`. SHA-256 `16d1847b103895666a8194a0826854ef72b8225dcaa
       }
     },
     "node_modules/@vitest/spy": {
-      "version": "5.0.1",
-      "resolved": "https://registry.npmjs.org/@vitest/spy/-/spy-5.0.1.tgz",
-      "integrity": "sha512-rbto/mF/SGERxEgYOek7Xm6B9b+y+mVoo+f4b2LymYO8zM1b7uB5nHuhVMTP2hxdzgxvGiZYGxGIaMvL5y180Q==",
+      "version": "5.0.5",
+      "resolved": "https://registry.npmjs.org/@vitest/spy/-/spy-5.0.5.tgz",
+      "integrity": "sha512-lwJRExuH417257Q5wv9QYugN9IMJkoxcrKrYxGPQkBzl7wlNpTUxD/5yNX4ESKVUIShKPgkGchYPFMWOOk0wzw==",
       "dev": true,
       "license": "MIT",
       "funding": {
@@ -32483,9 +32587,9 @@ Paths: `package-lock.json`. SHA-256 `16d1847b103895666a8194a0826854ef72b8225dcaa
       }
     },
     "node_modules/obug": {
-      "version": "2.2.1",
-      "resolved": "https://registry.npmjs.org/obug/-/obug-2.2.1.tgz",
-      "integrity": "sha512-XrsrhT5sybtKI6wakr2SPOlGZWWYbUXZ7a0jT8/QOeAPau+1X/bSegNe5YR75oJmEZQbKningirmGOEJCIk61Q==",
+      "version": "3.0.0",
+      "resolved": "https://registry.npmjs.org/obug/-/obug-3.0.0.tgz",
+      "integrity": "sha512-5vvB5+W7ePv+p3uqxi+RcW1XAzLW0/hxt3/4X4Lc4qHudzOhmBiBwOY6DRob4WnanAEGvNcLjF+KNOufrUoEQw==",
       "dev": true,
       "funding": [
         "https://github.com/sponsors/sxzz",
@@ -32617,9 +32721,9 @@ Paths: `package-lock.json`. SHA-256 `16d1847b103895666a8194a0826854ef72b8225dcaa
       }
     },
     "node_modules/postcss": {
-      "version": "8.5.29",
-      "resolved": "https://registry.npmjs.org/postcss/-/postcss-8.5.29.tgz",
-      "integrity": "sha512-49cGhUbXj8Qenv0iTMxA1cFBzxXoctpC9Ujd77t1WcbJIr6nF/eI7g/8MgxrYldFRuAXvja7xQRwavoW7kgrxQ==",
+      "version": "8.5.31",
+      "resolved": "https://registry.npmjs.org/postcss/-/postcss-8.5.31.tgz",
+      "integrity": "sha512-YUbWYCgErwnMAVkjUnYa+KlMBzGpHwiIt/DE7f0G33AuX2LH9UcTk6KgWxd3zRU+pN3u/C+Xl3EnMLM4Hea7Sg==",
       "dev": true,
       "funding": [
         {
@@ -32638,7 +32742,7 @@ Paths: `package-lock.json`. SHA-256 `16d1847b103895666a8194a0826854ef72b8225dcaa
       "license": "MIT",
       "peer": true,
       "dependencies": {
-        "nanoid": "^3.3.19",
+        "nanoid": "^3.3.20",
         "picocolors": "^1.1.1",
         "source-map-js": "^1.2.2"
       },
@@ -32711,14 +32815,14 @@ Paths: `package-lock.json`. SHA-256 `16d1847b103895666a8194a0826854ef72b8225dcaa
       "license": "MIT"
     },
     "node_modules/rolldown": {
-      "version": "1.2.13",
-      "resolved": "https://registry.npmjs.org/rolldown/-/rolldown-1.2.13.tgz",
-      "integrity": "sha512-/5apOkwWxtACcQtZ5WlrAsKS4JwXVThQPJZ3RqIruRY9UG9M8e0VlXN068xum/JRKA4aIUoJ13ghe/kGCvidiQ==",
+      "version": "1.2.15",
+      "resolved": "https://registry.npmjs.org/rolldown/-/rolldown-1.2.15.tgz",
+      "integrity": "sha512-6odND+fel5zVw3I4Yc2e69gvguDnX0CAAGiNDZSq4ik5WUcaLrkD2GLuog0XcODbor31hZ5ayEMgVDno+KPV5g==",
       "dev": true,
       "license": "MIT",
       "peer": true,
       "dependencies": {
-        "@oxc-project/types": "=0.153.0",
+        "@oxc-project/types": "=0.155.0",
         "@rolldown/pluginutils": "^1.0.0"
       },
       "bin": {
@@ -32728,21 +32832,21 @@ Paths: `package-lock.json`. SHA-256 `16d1847b103895666a8194a0826854ef72b8225dcaa
         "node": "^20.19.0 || >=22.12.0"
       },
       "optionalDependencies": {
-        "@rolldown/binding-android-arm-eabi": "1.2.13",
-        "@rolldown/binding-android-arm64": "1.2.13",
-        "@rolldown/binding-darwin-arm64": "1.2.13",
-        "@rolldown/binding-darwin-x64": "1.2.13",
-        "@rolldown/binding-freebsd-x64": "1.2.13",
-        "@rolldown/binding-linux-arm-gnueabihf": "1.2.13",
-        "@rolldown/binding-linux-arm64-gnu": "1.2.13",
-        "@rolldown/binding-linux-arm64-musl": "1.2.13",
-        "@rolldown/binding-linux-ppc64-gnu": "1.2.13",
-        "@rolldown/binding-linux-s390x-gnu": "1.2.13",
-        "@rolldown/binding-linux-x64-gnu": "1.2.13",
-        "@rolldown/binding-linux-x64-musl": "1.2.13",
-        "@rolldown/binding-openharmony-arm64": "1.2.13",
-        "@rolldown/binding-win32-arm64-msvc": "1.2.13",
-        "@rolldown/binding-win32-x64-msvc": "1.2.13"
+        "@rolldown/binding-android-arm-eabi": "1.2.15",
+        "@rolldown/binding-android-arm64": "1.2.15",
+        "@rolldown/binding-darwin-arm64": "1.2.15",
+        "@rolldown/binding-darwin-x64": "1.2.15",
+        "@rolldown/binding-freebsd-x64": "1.2.15",
+        "@rolldown/binding-linux-arm-gnueabihf": "1.2.15",
+        "@rolldown/binding-linux-arm64-gnu": "1.2.15",
+        "@rolldown/binding-linux-arm64-musl": "1.2.15",
+        "@rolldown/binding-linux-ppc64-gnu": "1.2.15",
+        "@rolldown/binding-linux-s390x-gnu": "1.2.15",
+        "@rolldown/binding-linux-x64-gnu": "1.2.15",
+        "@rolldown/binding-linux-x64-musl": "1.2.15",
+        "@rolldown/binding-openharmony-arm64": "1.2.15",
+        "@rolldown/binding-win32-arm64-msvc": "1.2.15",
+        "@rolldown/binding-win32-x64-msvc": "1.2.15"
       }
     },
     "node_modules/semver": {
@@ -32759,9 +32863,9 @@ Paths: `package-lock.json`. SHA-256 `16d1847b103895666a8194a0826854ef72b8225dcaa
       }
     },
     "node_modules/sharp": {
-      "version": "0.35.4",
-      "resolved": "https://registry.npmjs.org/sharp/-/sharp-0.35.4.tgz",
-      "integrity": "sha512-n++8XWcj+jCOr2IOl7h8LbKnGBDY4aPbmprMONBNFdn0ImXqpGVv5zliDs0V9HbmbCQLpbuo2ej9rAoOQTvMDA==",
+      "version": "0.35.5",
+      "resolved": "https://registry.npmjs.org/sharp/-/sharp-0.35.5.tgz",
+      "integrity": "sha512-Ywn4OnzGukp7CDMrp08RQ50YKmuwG47brZgIVPTvBaaAfQlRlygrRqSrxdCiL9M+LlzLBiJ68IR1QqvzHyjC7g==",
       "dev": true,
       "license": "Apache-2.0",
       "dependencies": {
@@ -32776,31 +32880,31 @@ Paths: `package-lock.json`. SHA-256 `16d1847b103895666a8194a0826854ef72b8225dcaa
         "url": "https://opencollective.com/libvips"
       },
       "optionalDependencies": {
-        "@img/sharp-darwin-arm64": "0.35.4",
-        "@img/sharp-darwin-x64": "0.35.4",
-        "@img/sharp-freebsd-wasm32": "0.35.4",
-        "@img/sharp-libvips-darwin-arm64": "1.3.3",
-        "@img/sharp-libvips-darwin-x64": "1.3.3",
-        "@img/sharp-libvips-linux-arm": "1.3.3",
-        "@img/sharp-libvips-linux-arm64": "1.3.3",
-        "@img/sharp-libvips-linux-ppc64": "1.3.3",
-        "@img/sharp-libvips-linux-riscv64": "1.3.3",
-        "@img/sharp-libvips-linux-s390x": "1.3.3",
-        "@img/sharp-libvips-linux-x64": "1.3.3",
-        "@img/sharp-libvips-linuxmusl-arm64": "1.3.3",
-        "@img/sharp-libvips-linuxmusl-x64": "1.3.3",
-        "@img/sharp-linux-arm": "0.35.4",
-        "@img/sharp-linux-arm64": "0.35.4",
-        "@img/sharp-linux-ppc64": "0.35.4",
-        "@img/sharp-linux-riscv64": "0.35.4",
-        "@img/sharp-linux-s390x": "0.35.4",
-        "@img/sharp-linux-x64": "0.35.4",
-        "@img/sharp-linuxmusl-arm64": "0.35.4",
-        "@img/sharp-linuxmusl-x64": "0.35.4",
-        "@img/sharp-webcontainers-wasm32": "0.35.4",
-        "@img/sharp-win32-arm64": "0.35.4",
-        "@img/sharp-win32-ia32": "0.35.4",
-        "@img/sharp-win32-x64": "0.35.4"
+        "@img/sharp-darwin-arm64": "0.35.5",
+        "@img/sharp-darwin-x64": "0.35.5",
+        "@img/sharp-freebsd-wasm32": "0.35.5",
+        "@img/sharp-libvips-darwin-arm64": "1.3.4",
+        "@img/sharp-libvips-darwin-x64": "1.3.4",
+        "@img/sharp-libvips-linux-arm": "1.3.4",
+        "@img/sharp-libvips-linux-arm64": "1.3.4",
+        "@img/sharp-libvips-linux-ppc64": "1.3.4",
+        "@img/sharp-libvips-linux-riscv64": "1.3.4",
+        "@img/sharp-libvips-linux-s390x": "1.3.4",
+        "@img/sharp-libvips-linux-x64": "1.3.4",
+        "@img/sharp-libvips-linuxmusl-arm64": "1.3.4",
+        "@img/sharp-libvips-linuxmusl-x64": "1.3.4",
+        "@img/sharp-linux-arm": "0.35.5",
+        "@img/sharp-linux-arm64": "0.35.5",
+        "@img/sharp-linux-ppc64": "0.35.5",
+        "@img/sharp-linux-riscv64": "0.35.5",
+        "@img/sharp-linux-s390x": "0.35.5",
+        "@img/sharp-linux-x64": "0.35.5",
+        "@img/sharp-linuxmusl-arm64": "0.35.5",
+        "@img/sharp-linuxmusl-x64": "0.35.5",
+        "@img/sharp-webcontainers-wasm32": "0.35.5",
+        "@img/sharp-win32-arm64": "0.35.5",
+        "@img/sharp-win32-ia32": "0.35.5",
+        "@img/sharp-win32-x64": "0.35.5"
       },
       "peerDependenciesMeta": {
         "@types/node": {
@@ -32831,13 +32935,6 @@ Paths: `package-lock.json`. SHA-256 `16d1847b103895666a8194a0826854ef72b8225dcaa
         "node": ">=8"
       }
     },
-    "node_modules/siginfo": {
-      "version": "2.0.0",
-      "resolved": "https://registry.npmjs.org/siginfo/-/siginfo-2.0.0.tgz",
-      "integrity": "sha512-ybx0WO1/8bSBLEWXZvEd7gMW3Sn3JFlW3TvX1nREbDLRNQNaeNN8WK0meBwPdAaOI7TtRRRJn/Es1zhrrCHu7g==",
-      "dev": true,
-      "license": "ISC"
-    },
     "node_modules/source-map-js": {
       "version": "1.2.2",
       "resolved": "https://registry.npmjs.org/source-map-js/-/source-map-js-1.2.2.tgz",
@@ -32847,13 +32944,6 @@ Paths: `package-lock.json`. SHA-256 `16d1847b103895666a8194a0826854ef72b8225dcaa
       "engines": {
         "node": ">=0.10.0"
       }
-    },
-    "node_modules/stackback": {
-      "version": "0.0.2",
-      "resolved": "https://registry.npmjs.org/stackback/-/stackback-0.0.2.tgz",
-      "integrity": "sha512-1XMJE5fQo1jGH6Y/7ebnwPOBEkIEnT4QF32d5R1+VXdXveM0IBMJt8zfaxX1P3QhVwrYe+576+jkANtSS2mBbw==",
-      "dev": true,
-      "license": "MIT"
     },
     "node_modules/std-env": {
       "version": "4.3.0",
@@ -32869,9 +32959,9 @@ Paths: `package-lock.json`. SHA-256 `16d1847b103895666a8194a0826854ef72b8225dcaa
       "license": "MIT"
     },
     "node_modules/tinybench": {
-      "version": "6.1.4",
-      "resolved": "https://registry.npmjs.org/tinybench/-/tinybench-6.1.4.tgz",
-      "integrity": "sha512-9APumHG7r4yOk4X4WlkmE71aZcv1gvin1czO3OQ1U9iJcFA5Ja/ygyb0vPOVHTthFozUYs8CLoLUlM8grb2lTQ==",
+      "version": "6.2.2",
+      "resolved": "https://registry.npmjs.org/tinybench/-/tinybench-6.2.2.tgz",
+      "integrity": "sha512-nIZ2N2dFpjBsg2hgitKu7mA+FvsIJuGJOwysRngmVRRmWgR/UyPjwJj8c/fT/dhm8EkHnF5EOogRf+0Z2qrimA==",
       "dev": true,
       "license": "MIT",
       "engines": {
@@ -32879,9 +32969,9 @@ Paths: `package-lock.json`. SHA-256 `16d1847b103895666a8194a0826854ef72b8225dcaa
       }
     },
     "node_modules/tinyexec": {
-      "version": "1.3.0",
-      "resolved": "https://registry.npmjs.org/tinyexec/-/tinyexec-1.3.0.tgz",
-      "integrity": "sha512-QKAl9m8gWWGHV8jZcPeym6j+XULi6tOf1mT83WYJ4Lk2ytW/uwAWkrP0uFsdoYMdueVJ0qs26wZ+23xeB4ibNQ==",
+      "version": "1.3.1",
+      "resolved": "https://registry.npmjs.org/tinyexec/-/tinyexec-1.3.1.tgz",
+      "integrity": "sha512-GCvB3aoys96IuDFBMcTB46JOR6mdMtAToqwiW8JlWhsoh1mhHi/xn9ss/Dg7N555GiJyEt2qzoG/NHCwM6h1EA==",
       "dev": true,
       "license": "MIT",
       "engines": {
@@ -33012,17 +33102,17 @@ Paths: `package-lock.json`. SHA-256 `16d1847b103895666a8194a0826854ef72b8225dcaa
       }
     },
     "node_modules/vite": {
-      "version": "8.3.4",
-      "resolved": "https://registry.npmjs.org/vite/-/vite-8.3.4.tgz",
-      "integrity": "sha512-IftLE8phJhdNRIGNEV4JCCvfNScoZQVfcXaN8TQropWGJtOHcu+iAB9pHcuGvmEb/kddw0LBe/jS8ztdC6xdiQ==",
+      "version": "8.3.5",
+      "resolved": "https://registry.npmjs.org/vite/-/vite-8.3.5.tgz",
+      "integrity": "sha512-z1YpjieJ9g0ebTmQpLBv/oq9E3F9EIlOe+7LahW8SrE3LTiG3udBRUXQOlYXP9b+IC2q2phHeVxj9xGlw34OEQ==",
       "dev": true,
       "license": "MIT",
       "peer": true,
       "dependencies": {
         "lightningcss": "^1.33.0",
         "picomatch": "^4.0.7",
-        "postcss": "^8.5.29",
-        "rolldown": "~1.2.12",
+        "postcss": "^8.5.30",
+        "rolldown": "~1.2.14",
         "tinyglobby": "^0.2.17"
       },
       "bin": {
@@ -33039,7 +33129,7 @@ Paths: `package-lock.json`. SHA-256 `16d1847b103895666a8194a0826854ef72b8225dcaa
       },
       "peerDependencies": {
         "@types/node": "^20.19.0 || >=22.12.0",
-        "@vitejs/devtools": "^0.7.1",
+        "@vitejs/devtools": "^0.7.1 || ^0.8.0",
         "esbuild": "^0.27.0 || ^0.28.0",
         "jiti": ">=1.21.0",
         "less": "^4.0.0",
@@ -33091,25 +33181,25 @@ Paths: `package-lock.json`. SHA-256 `16d1847b103895666a8194a0826854ef72b8225dcaa
       }
     },
     "node_modules/vitest": {
-      "version": "5.0.1",
-      "resolved": "https://registry.npmjs.org/vitest/-/vitest-5.0.1.tgz",
-      "integrity": "sha512-iA95lQbKEkvrtTkdAgnWbXfbipWiiWe/hDl2P5tMi6WFwD76G0NxXAGp/M9EOcYupeGJRr6wppMc7CoA41TQjg==",
+      "version": "5.0.5",
+      "resolved": "https://registry.npmjs.org/vitest/-/vitest-5.0.5.tgz",
+      "integrity": "sha512-cPODOMF8YnkiiYtDdHo6n4wWmBrOBBbOIYH2d33M4l3CdNn72h+qMmO6uXffUN6A5AZFXNND/d+krS9mgkXRfg==",
       "dev": true,
       "license": "MIT",
       "dependencies": {
         "@types/chai": "^5.2.2",
-        "@vitest/mocker": "5.0.1",
-        "chai": "^6.2.2",
+        "@vitest/mocker": "5.0.5",
+        "chai": "^6.3.0",
         "es-module-lexer": "^2.3.2",
         "expect-type": "^1.4.0",
-        "magic-string": "^1.2.3",
-        "obug": "^2.1.4",
+        "magic-string": "^1.4.3",
+        "obug": "^3.0.0",
         "picomatch": "^4.0.7",
-        "std-env": "^4.2.0",
-        "tinybench": "6.1.4",
-        "tinyexec": "1.3.0",
+        "std-env": "^4.3.0",
+        "tinybench": "^6.2.2",
+        "tinyexec": "^1.3.1",
         "tinyglobby": "^0.2.17",
-        "why-is-node-running": "^2.3.0"
+        "why-is-node-running": "3.2.1"
       },
       "bin": {
         "vitest": "vitest.mjs"
@@ -33124,12 +33214,12 @@ Paths: `package-lock.json`. SHA-256 `16d1847b103895666a8194a0826854ef72b8225dcaa
         "@edge-runtime/vm": "*",
         "@opentelemetry/api": "^1.9.0",
         "@types/node": "^22.0.0 || >=24.0.0",
-        "@vitest/browser-playwright": "5.0.1",
-        "@vitest/browser-preview": "5.0.1",
+        "@vitest/browser-playwright": "5.0.5",
+        "@vitest/browser-preview": "5.0.5",
         "@vitest/browser-webdriverio": "^5.0.0-beta.5 || >=5.0.0",
-        "@vitest/coverage-istanbul": "5.0.1",
-        "@vitest/coverage-v8": "5.0.1",
-        "@vitest/ui": "5.0.1",
+        "@vitest/coverage-istanbul": "5.0.5",
+        "@vitest/coverage-v8": "5.0.5",
+        "@vitest/ui": "5.0.5",
         "happy-dom": "*",
         "jsdom": "*",
         "vite": "^6.4.0 || ^7.0.0 || ^8.0.0"
@@ -33190,20 +33280,16 @@ Paths: `package-lock.json`. SHA-256 `16d1847b103895666a8194a0826854ef72b8225dcaa
       }
     },
     "node_modules/why-is-node-running": {
-      "version": "2.3.0",
-      "resolved": "https://registry.npmjs.org/why-is-node-running/-/why-is-node-running-2.3.0.tgz",
-      "integrity": "sha512-hUrmaWBdVDcxvYqnyh09zunKzROWjbZTiNy8dBEjkS7ehEDQibXJ7XvlmtbwuTclUiIyN+CyXQD4Vmko8fNm8w==",
+      "version": "3.2.1",
+      "resolved": "https://registry.npmjs.org/why-is-node-running/-/why-is-node-running-3.2.1.tgz",
+      "integrity": "sha512-Tb2FUhB4vUsGQlfSquQLYkApkuPAFQXGFzxWKHHumVz2dK+X1RUm/HnID4+TfIGYJ1kTcwOaCk/buYCEJr6YjQ==",
       "dev": true,
       "license": "MIT",
-      "dependencies": {
-        "siginfo": "^2.0.0",
-        "stackback": "0.0.2"
-      },
       "bin": {
         "why-is-node-running": "cli.js"
       },
       "engines": {
-        "node": ">=8"
+        "node": ">=20.11"
       }
     },
     "node_modules/word-wrap": {
@@ -33235,7 +33321,7 @@ Paths: `package-lock.json`. SHA-256 `16d1847b103895666a8194a0826854ef72b8225dcaa
 
 ### package.json
 
-Paths: `package.json`. SHA-256 `ac63da86526a1197fb4bf0fd93b5c0c130bb2c872a836f8aa0436c904fe00bf2`, 1561 bytes.
+Paths: `package.json`. SHA-256 `70f582f396139d4cd8c3ea78431fffb58a8ac776697aacc050cf233dbb950e2f`, 1561 bytes.
 
 ```json
 {
@@ -33272,15 +33358,15 @@ Paths: `package.json`. SHA-256 `ac63da86526a1197fb4bf0fd93b5c0c130bb2c872a836f8a
     "@playwright/test": "1.63.0",
     "@types/node": "24.19.0",
     "@types/three": "0.186.0",
-    "@vitest/coverage-v8": "5.0.1",
+    "@vitest/coverage-v8": "5.0.5",
     "esbuild": "0.28.2",
     "eslint": "10.10.0",
     "fast-check": "4.10.1",
     "meshoptimizer": "1.1.1",
-    "sharp": "0.35.4",
+    "sharp": "0.35.5",
     "typescript": "6.0.3",
     "typescript-eslint": "8.70.1",
-    "vitest": "5.0.1"
+    "vitest": "5.0.5"
   },
   "overrides": {
     "playwright-core": "1.63.0"
@@ -47310,5 +47396,5 @@ Keys and the commands that make each kind again:
 
 | Path | Bytes | SHA-256 | Why |
 |---|---:|---|---|
-| `docs/MPES.md` | 194986 | `624560e7eeaceab53f39204fd1f51b4b93a7ee9fdbefd33100a49cefc850ee96` | The specification, a clean-room document of its own (Omni 5.1.1 §333). |
+| `docs/MPES.md` | 198813 | `44081599bbb9223c0df1d6bfd3e18627faebab28096e9be096c635bede23ba6c` | The specification, a clean-room document of its own (Omni 5.1.1 §333). |
 | `docs/CODEBASE.md` | | | This file. |

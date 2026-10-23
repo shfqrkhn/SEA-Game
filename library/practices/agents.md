@@ -3,7 +3,7 @@
 ## Roles
 
 - **Lead agent:** owns the goal, integrates, verifies everything others return, updates the docs.
-- **Parallel lanes** (cheaper model, isolated worktree, background): prepare later work that needs no heavy runs (research, drafts, scripts, side branches). Lanes do not edit the shared docs, the specification or the version; they write fragments that the lead integrates. They may run typecheck, lint and single unit-test files only.
+- **Parallel lanes** (cheaper model, isolated worktree, background): prepare later work that needs no heavy runs (research, drafts, scripts, side branches). Lanes do not edit the shared docs, the specification or the version; they write fragments that the lead integrates. They may run typecheck, lint and single unit-test files only. A lane commits what it writes on its branch (or the lead copies it into the main checkout) before its worktree is removed: a worktree holding only untracked files looks unchanged to a cleanup and is lost.
 - **Independent reviewer** (a second vendor's model, read-only): reviews each substantial diff, the gallery, and translated text. Every finding gets a disposition with evidence.
 
 ## Codex CLI headless (example, Windows)

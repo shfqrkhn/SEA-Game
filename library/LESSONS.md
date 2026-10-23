@@ -2,6 +2,18 @@
 
 Each entry: what happened, the rule it produced, and the check that now enforces it. Newest first. Examples come from SEA Game (a classroom auction game with photoreal vehicle renders and a real-time 3D showcase, one offline HTML file).
 
+## 2026-10-23 · Shelving: an open fix on a side branch, and a plan lost with its worktree
+
+- **What happened:** before shelving, an audit of the working branch found four findings (one high): the security fix sat on an unmerged side branch, and the test runner had its own advisory. Earlier, a worktree holding only an untracked file (a lane's plan) was removed as "unchanged" and the file was lost; it had to be rewritten from the lane's report.
+- **Rule:** before shelving or handing over, audit every lockfile and fold in or close every open branch, and record each branch's state in the handover. Anything a lane writes is committed or copied into the main checkout before its worktree can be removed; plans live in tracked documents, never in a scratch folder that a cleanup removes.
+- **Check (as built in SEA Game):** the zero-finding audit is in the version's verification file; the next goal's plan and a ready goal prompt are in the handover; the cleanup writes `RESTORE.md`.
+
+## 2026-10-20 · The vetted version was newer than the project lock
+
+- **What happened:** the FOSS catalogue listed sharp 0.35.5, but SEA Game remained pinned to vulnerable 0.35.4; another owned repository also had a nested lockfile that a root-only scan would miss.
+- **Rule:** enumerate every committed dependency lockfile, reconcile exact project pins with vetted releases, and regenerate the lock to a patched version.
+- **Check (as used in this sweep):** run npm audit from every lockfile root and require zero findings (`practices/dependency-security.md`).
+
 ## 2026-10-20 · Work that moved instead of going away, and a warm-up that warmed half
 
 - **What happened:** a 3D purchase took 121 ms to show on one CI run (budget 100). A profile showed a forced layout taking 9 of the click's 18 ms; removing it saved nothing, because a trace showed the browser lays out the rebuilt page inside the same mouse-up task anyway. Each part's shader had been compiled in advance, but in three.js geometry and textures upload on first draw, so every purchase uploaded its part inside the draw the player waited for, which itself began only after the page's layout. Every earlier local "unthrottled" comparison had actually run under the lab's 4x CPU slowdown. A table inside a closed panel measured 0 px at render, so it never became keyboard-scrollable when the panel opened.

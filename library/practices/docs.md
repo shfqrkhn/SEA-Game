@@ -18,3 +18,10 @@ Write so that another person or agent can resume development, operations and mai
 - Withdraw a status claim as soon as evidence contradicts it.
 - Test that the specification is code-free and complete; a model given only the specification should be able to plan the rebuild (try it and fix the gaps).
 - Plain English: short sentences, active voice, no jargon a newcomer would need to look up.
+
+## Shelving a project
+
+- Merge or close every open branch and record each one's state; audit every lockfile and fold in pending security fixes.
+- Tag the last goal; check the published file's hash against a local build; archive worktrees instead of deleting them.
+- Move every plan, prompt and note out of scratch folders into tracked documents: the handover gets a "Shelved state" and a "Resume" section with the next goal's plan and a ready goal prompt.
+- Clean only what a command brings back, and write the restore steps (`RESTORE.md`) with the expected build hash. On resumption, re-audit dependencies first, since time has passed.
