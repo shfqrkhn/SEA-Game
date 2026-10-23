@@ -203,7 +203,7 @@ THE SOFTWARE.
 
 ### README.md
 
-Paths: `README.md`. SHA-256 `c7ea5b4de5e5aec63e096b4385fdecc884fd69f126eb87b103d4aa46a85ce2d0`, 3400 bytes.
+Paths: `README.md`. SHA-256 `11369bc649803fd28c0be0f1c5c6f9e874cfde3b03fe12b5335dab0e7d18e17f`, 3499 bytes.
 
 ````markdown
 # SEA Game: Systems Engineering Awareness
@@ -211,7 +211,7 @@ Paths: `README.md`. SHA-256 `c7ea5b4de5e5aec63e096b4385fdecc884fd69f126eb87b103d
 A bilingual (English/French) classroom auction game. Teams plan a vehicle for a mission, bid for components in a facilitator-led auction, reconcile their build and submit a value-for-money bid. The whole game is one offline HTML file with every image embedded.
 
 - **Play:** open the game file (`SEA-Game-<version>.html` in a release package, or `dist/index.html` after a build) in a current Chrome, Edge or Firefox on **Windows 11** (the only supported platform). No installation, no network, no account.
-- **Status:** 0.6.0.0 beta (tag `v0.6.0.0`, G3 proxy and runtime, owner GO 2026-10-22, with named blocker G3-B1), **shelved indefinitely since 2026-10-23**; not yet release-qualified. To resume: [docs/HANDOVER.md](docs/HANDOVER.md) section 5 and `RESTORE.md`. Next goal: G4 (hyper-real assets and the 3D budget, 0.7.0.0). The rollback is tag `v4.1.0-dev.1`.
+- **Status:** 0.6.0.0 beta (tag `v0.6.0.0` on branch `g3/proxy-runtime`, G3 proxy and runtime, owner GO 2026-10-22, with named blocker G3-B1; not yet in `main`, which holds 0.5.2.0, because CI fails G3-B1 there), **shelved indefinitely since 2026-10-23**; not yet release-qualified. To resume: [docs/HANDOVER.md](docs/HANDOVER.md) section 5 and `RESTORE.md`. Next goal: G4 (hyper-real assets and the 3D budget, 0.7.0.0). The rollback is tag `v4.1.0-dev.1`.
 - **Created by:** Shafiqur Rahman Khan, with AI assistance.
 - **Licence:** MIT, see [LICENSE](LICENSE).
 - **Specification:** [docs/MPES.md](docs/MPES.md). **Current state and next steps:** [docs/HANDOVER.md](docs/HANDOVER.md). **Working rules:** [AGENTS.md](AGENTS.md).
@@ -27041,7 +27041,7 @@ Exportez une sauvegarde par **Menu → Exporter une sauvegarde** après la confi
 
 ### docs/HANDOVER.md
 
-Paths: `docs/HANDOVER.md`. SHA-256 `85e77d8da502a82093f5fd6445ef8fd32493ea0dddc385486a14d4fb8545d625`, 18433 bytes.
+Paths: `docs/HANDOVER.md`. SHA-256 `b50bb54f582ec23ecea8c9a659cef1aad0ea2edfe8341f5abdf45a304593c077`, 19308 bytes.
 
 ````markdown
 # Handover
@@ -27050,7 +27050,7 @@ Updated 2026-10-23 (America/Toronto). **Shelved indefinitely after G3** (owner, 
 
 ## 1. Version and milestone
 
-Version 0.6.0.0 beta (four-part MAJOR.MINOR.PATCH.BUILD, MPES §19.2; 1.0.0.0 only once out of beta: MPES §19.2 exit criteria, including every owner gate). M0–M4, V1, V2 (goal G1, tag `v0.5.0.0`) and G2 (owner fixes and the docs regime, tag `v0.5.1.0`, owner GO 2026-10-12) are complete. 0.5.2.0 (tag `v0.5.2.0` on `c2932eb`, owner GO 2026-10-13) is owner FIX 4 on G2: showcase zoom, framing of the full kit at every turn and height, sign controls, and phone tables as labelled cards (`docs/verification/0.5.2.0.md`). G3 (0.6.0.0, tag `v0.6.0.0`, owner GO 2026-10-22) is the proxy and runtime goal: the stills, command and 3D update budgets on the reference proxy, with named blocker G3-B1 (`docs/verification/0.6.0.0.md`). The rollback is tag `v4.1.0-dev.1`. The dependency security sweep (sharp 0.35.5, vitest 5.0.5, npm audit 4 findings to 0, build byte-identical) is folded into 0.6.0.0; PR #28 (its 0.5.2.1 branch) is closed as folded in.
+Version 0.6.0.0 beta (four-part MAJOR.MINOR.PATCH.BUILD, MPES §19.2; 1.0.0.0 only once out of beta: MPES §19.2 exit criteria, including every owner gate). M0–M4, V1, V2 (goal G1, tag `v0.5.0.0`) and G2 (owner fixes and the docs regime, tag `v0.5.1.0`, owner GO 2026-10-12) are complete. 0.5.2.0 (tag `v0.5.2.0` on `c2932eb`, owner GO 2026-10-13) is owner FIX 4 on G2: showcase zoom, framing of the full kit at every turn and height, sign controls, and phone tables as labelled cards (`docs/verification/0.5.2.0.md`). G3 (0.6.0.0, owner GO 2026-10-22 "merge with blocker G3-B1") is the proxy and runtime goal: the stills, command and 3D update budgets on the reference proxy, with named blocker G3-B1 (`docs/verification/0.6.0.0.md`). **G3 is not merged into `main`:** CI on the final head failed `verify (22)` on the 3D update budget in all three attempts, and branch protection refuses a merge without both checks green (never bypassed). Tag `v0.6.0.0` is on the head of `g3/proxy-runtime`; `main` and Pages still hold 0.5.2.0. The rollback is tag `v4.1.0-dev.1`. The dependency security sweep (sharp 0.35.5, vitest 5.0.5, npm audit 4 findings to 0, build byte-identical) is folded into 0.6.0.0; PR #28 (its 0.5.2.1 branch) is closed as folded in.
 
 **Plan to beta exit (MPES §17), one PR and one tag per goal:**
 
@@ -27106,7 +27106,7 @@ Shared rules for every goal: `AGENTS.md`. KPIs and priority: MPES §1.4.
 
 Nothing is in progress. The history of every earlier fix and publication is in `docs/verification/` (one file per version) and `git log`.
 
-- **Branches:** `main` holds G3 (PR #27, merge commit, tag `v0.6.0.0`; the annotated tag's message records the close-out: CI run, Pages SHA-256 against the local build, instructor zip). PR #28 (`fix/security-sharp-0.35.5`) is closed, folded into 0.6.0.0; its branch is kept. Older side branches (`g3/caching`, `g3/perf-ref`, `fix/g3-static-bounds-20261020`) are merged or superseded; their worktrees are archived under `_archive/recycle/2026-10-20/`, `2026-10-22/` and `2026-10-23/` (read-only; nothing depends on them).
+- **Branches:** `main` is at 0.5.2.0 (tag `v0.5.2.0`). G3 is on `g3/proxy-runtime`, tag `v0.6.0.0` on its head, PR #27 open: CI run 39957527228 on `1a4721f` (the shelving commit) failed `verify (22)` only on the 3D update budget in all three attempts (122.4, 126, 119.2 ms; `verify (24)` passed each time); the annotated tag's message records the close-out (instructor zip). Pages was not updated. PR #28 (`fix/security-sharp-0.35.5`) is closed, folded into 0.6.0.0; its branch is kept. Older side branches (`g3/caching`, `g3/perf-ref`, `fix/g3-static-bounds-20261020`) are merged or superseded; their worktrees are archived under `_archive/recycle/2026-10-20/`, `2026-10-22/` and `2026-10-23/` (read-only; nothing depends on them).
 - **Cleanup:** the owner asked for it (2026-10-23). `npm run archive:prep -- --apply` removed only what a command brings back (packages, builds, browsers, caches, the Blender download, gallery captures, `.artifacts/tmp`) and wrote `RESTORE.md` at the root with the steps back and the expected build hash.
 - **Kept:** git history and tags, every tracked file, render masters, models, concepts, logs and evidence in `.artifacts/` (instructor zips in `.artifacts/prototype/`, review galleries in `.artifacts/review/`), `_archive/`, and the owner's local governance file `docs/Omni_5.1.1.md` (never committed).
 - **GitHub:** temporary QA space; the owner may delete it. Branch protection on `main` requires `verify (22)` and `verify (24)`. Local continuity needs nothing from GitHub.
@@ -27116,7 +27116,7 @@ Nothing is in progress. The history of every earlier fix and publication is in `
 
 **Restore** (any agent): read `AGENTS.md`, this file and MPES §19.7. Install Node 22 or 24 and Git, then follow `RESTORE.md`: `npm ci`, `npm run browsers`, `npm run build` and compare its SHA-256 with `RESTORE.md` (0.6.0.0 builds `818b432d…2923`), then `npm run verify`. Blender 5.2.2 (MPES §5.4, `art/README.md`) is needed only for art. Before new work, audit every pin against the registry and its advisories (`npm audit`, `library/practices/dependency-security.md`): time will have passed. If GitHub is gone, the local `npm run verify` and `npm run perf:ref` are the gate; a new CI keeps Node 22 and 24 and every budget.
 
-**G4 (0.7.0.0) plan**, from `main` at `v0.6.0.0`, each item failing check first:
+**G4 (0.7.0.0) plan**, on a branch from tag `v0.6.0.0` (G3 is not in `main` yet), each item failing check first. Step 0: open a PR from that branch, or rebase PR #27; G3 reaches `main` only together with a green run, which G3-B1's fix (item 1) should bring; then merge commit, Pages SHA-256 check, and G4 continues from `main`.
 
 1. **G3-B1:** a tier 4 in `source/showcase/pace.ts`: Lambert on the vertex colours, no environment map, pixel ratio about 0.35–0.4. `startTier` already falls to the last tier when nothing fits a 30 fps frame. Probe: Lambert instead of standard 62 → 22 ms, no environment 26–30 ms; estimated p95 near 80 ms, unverified; CI judges. Checks first: `tests/unit/pace.test.ts` `startTier(() => 1000)` returns 4 (3 today); a contrast test forcing tier 4 still holds whole-vehicle contrast ≥ 3; the existing `tests/e2e/perf.spec.ts` gate. Not allowed: replacing the CI 3D gate with machine-independent checks (that weakens a check), or a paid GPU runner (breaks zero cost). If it fails, keep the budget and the check and carry G3-B1.
 2. **Stills contrast ≥ 3:1** in every view and turntable frame: the floors in `tests/e2e/showcase.spec.ts` (today 2.106, 1.558, 1.596, 1.317) all raised to 3, then lighting, value separation and re-render (MPES §10.5).
@@ -27131,7 +27131,7 @@ Nothing is in progress. The history of every earlier fix and publication is in `
 ```text
 /goal SEA Game: resume after shelving; G4-G8 to 1.0.0.0 (else 0.9.x + named blockers).
 READ: AGENTS.md, docs/HANDOVER.md (section 5 = G4 plan), MPES §10.5 §14 §17 §19.2 §19.7 §20.1 §21, docs/verification/, RESTORE.md.
-FIRST: restore per RESTORE.md; build hash must match; npm run verify green; npm audit every lockfile, fix to 0 (BUILD bump if alone); check GitHub/CI still exist, else local verify+perf:ref gate.
+FIRST: restore per RESTORE.md; G3 is tag v0.6.0.0 on g3/proxy-runtime, not in main (PR #27 open, blocked by G3-B1): branch G4 from that tag; build hash must match; npm run verify green; npm audit every lockfile, fix to 0 (BUILD bump if alone); check GitHub/CI still exist, else local verify+perf:ref gate.
 GOALS (one PR from main, one tag each):
 G4 0.7.0.0 assets + 3D budget: clear G3-B1 via tier 4 (Lambert, no env map), evidence first; stills >=3:1 every view, raise floors; pale RECCE roof, light-theme stage contrast, §10.5 ID-mask checks (write them); sightline 574->0; fit/overlap/tris green; memory <=400 MB; first-click INP+long task <=200 ms, trace first; Codex art+modelling, CC0.
 G5 0.8.0.0 classroom: turning-showcase idle CPU <=3 %; instructor replies (docs/owner/); workload, learnability, objectives+debrief, §7.7 feel, §7.8 projector, fault tests, scripted rehearsal, grandma test.
@@ -27744,7 +27744,7 @@ A read-only Codex session (gpt-6.1-sol, medium) reviewed the diff (`.artifacts/c
 
 ### docs/verification/0.6.0.0.md
 
-Paths: `docs/verification/0.6.0.0.md`. SHA-256 `d4943d103f493d77553b185bb04977cda24acce5c33b5e569180f4bafb336fe1`, 70276 bytes.
+Paths: `docs/verification/0.6.0.0.md`. SHA-256 `1fd92deab4a7a9d06e7aeb08942b411983d7a6f275ec07a6635bf8d2cb93c5eb`, 70541 bytes.
 
 ```markdown
 # Verification record: 0.6.0.0 beta (G3 proxy and runtime)
@@ -28202,7 +28202,7 @@ Before the project was shelved, `npm audit` on `g3/proxy-runtime` reported 4 fin
 | Full gate on `9cb4c8f` | `npm run verify` (typecheck, lint, unit, build check, build, Playwright in Chromium, Firefox and Edge, then perf; `.artifacts/tmp/verify-9cb4c8f.log`) | PASS: 293 passed, 48 skipped by project. Local 3D update p95 71.7 ms (local timings void; CI gates perf). Rerun on `4ccf7bd` (docs only since `9cb4c8f`; `.artifacts/tmp/verify-4ccf7bd.log`): 292 passed, 1 failed, the 3D update p95 120.3 ms (max 208.7) with the PC busy (CPU 34 %, browsers and OneDrive sync running). Local timings are void, so this is not evidence either way. The push of `4ccf7bd` went out before this result was read: a process slip, recorded here. CI on `4ccf7bd` decides |
 | Reference proxy | `npm run perf:ref` on `2ac1d39` | BASELINE, six runs; table above; three named open items carried to G4 and G5 |
 | CI, two consecutive green runs on one head | GitHub Actions `ci.yml` | NOT MET, blocker G3-B1. Run 39798712823 on `2ac1d39`: both jobs failed only the 3D update budget (122.4, 130.9 ms). Run 39805360140 on `9cb4c8f`: `verify (22)` PASS; `verify (24)` failed only the 3D update budget (132.1 ms), 292 passed. Run 39827140601 on `4ccf7bd` (docs only since `9cb4c8f`): both jobs PASS, the first all-green G3 run. The budget stays 100 and the check stays on |
-| CI after the owner's GO | GitHub Actions `ci.yml` | Run 39849202659 on `298951c` (docs only): `verify (22)` PASS; `verify (24)` failed only the 3D update budget (118 ms). The shelving head's run is recorded in `docs/HANDOVER.md` |
+| CI after the owner's GO | GitHub Actions `ci.yml` | Run 39849202659 on `298951c` (docs only): `verify (22)` PASS; `verify (24)` failed only the 3D update budget (118 ms). Run 39957527228 on `1a4721f` (the shelving commit, dependency sweep and docs): `verify (24)` PASS; `verify (22)` failed only the 3D update budget in all three attempts (122.4, 126, 119.2 ms). Branch protection refuses the merge; it was not bypassed and the budget stays 100. G3 is tagged on the branch and is not in `main` |
 | Owner visual check | `npm run gallery` → `.artifacts/review/0.6.0.0.html` (94 shots, 72 changed, 0 missing) | Sent 2026-10-22, offered as "GO = merge with blocker G3-B1"; owner GO 2026-10-22 |
 ```
 
@@ -28481,12 +28481,18 @@ export default tseslint.config(
 
 ### library/LESSONS.md
 
-Paths: `library/LESSONS.md`. SHA-256 `2a6cb2ac496555e72272a5cf5d2475ca6b53994d707b25da93f9ec92011ba6cc`, 24688 bytes.
+Paths: `library/LESSONS.md`. SHA-256 `4c2d63a8126f5e209b88f67df9188a58ceb9cc74bcd70e6f0254e1b8b9509c4b`, 25417 bytes.
 
 ```markdown
 # Lessons learned
 
 Each entry: what happened, the rule it produced, and the check that now enforces it. Newest first. Examples come from SEA Game (a classroom auction game with photoreal vehicle renders and a real-time 3D showcase, one offline HTML file).
+
+## 2026-10-23 · A GO to merge that the host could not honour
+
+- **What happened:** the owner said GO to merge a goal with a named blocker (a perf budget failing on GPU-less CI runners). The final head failed that check in three attempts, and branch protection requires it, so no merge was possible without bypassing protection.
+- **Rule:** a "merge with blocker" GO holds only while the host can merge. Never bypass a required check, and never rerun until luck passes. Tag the goal on its branch, keep the PR open, and let the next goal bring it to the main branch together with the fix.
+- **Check (as built in SEA Game):** branch protection requires both CI jobs; the handover records the unmerged state and where the tag is.
 
 ## 2026-10-23 · Shelving: an open fix on a side branch, and a plan lost with its worktree
 
@@ -47396,5 +47402,5 @@ Keys and the commands that make each kind again:
 
 | Path | Bytes | SHA-256 | Why |
 |---|---:|---|---|
-| `docs/MPES.md` | 198813 | `44081599bbb9223c0df1d6bfd3e18627faebab28096e9be096c635bede23ba6c` | The specification, a clean-room document of its own (Omni 5.1.1 §333). |
+| `docs/MPES.md` | 199697 | `8abc5750710e291e8cc6b4d845a5ddb0af94c98c3ba8bdf07439ebf2f102115e` | The specification, a clean-room document of its own (Omni 5.1.1 §333). |
 | `docs/CODEBASE.md` | | | This file. |

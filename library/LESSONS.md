@@ -2,6 +2,12 @@
 
 Each entry: what happened, the rule it produced, and the check that now enforces it. Newest first. Examples come from SEA Game (a classroom auction game with photoreal vehicle renders and a real-time 3D showcase, one offline HTML file).
 
+## 2026-10-23 · A GO to merge that the host could not honour
+
+- **What happened:** the owner said GO to merge a goal with a named blocker (a perf budget failing on GPU-less CI runners). The final head failed that check in three attempts, and branch protection requires it, so no merge was possible without bypassing protection.
+- **Rule:** a "merge with blocker" GO holds only while the host can merge. Never bypass a required check, and never rerun until luck passes. Tag the goal on its branch, keep the PR open, and let the next goal bring it to the main branch together with the fix.
+- **Check (as built in SEA Game):** branch protection requires both CI jobs; the handover records the unmerged state and where the tag is.
+
 ## 2026-10-23 · Shelving: an open fix on a side branch, and a plan lost with its worktree
 
 - **What happened:** before shelving, an audit of the working branch found four findings (one high): the security fix sat on an unmerged side branch, and the test runner had its own advisory. Earlier, a worktree holding only an untracked file (a lane's plan) was removed as "unchanged" and the file was lost; it had to be rewritten from the lane's report.
